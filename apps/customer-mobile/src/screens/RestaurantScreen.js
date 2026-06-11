@@ -47,7 +47,7 @@ const RestaurantScreen = () => {
     const fadeAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
     (0, react_1.useEffect)(() => {
         loadData();
-    }, [fadeAnim]);
+    }, []);
     const loadData = (0, react_1.useCallback)(async () => {
         try {
             setRestaurant({

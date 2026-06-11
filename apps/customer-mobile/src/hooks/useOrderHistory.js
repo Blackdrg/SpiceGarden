@@ -48,7 +48,6 @@ const useOrderHistory = () => {
     const [error, setError] = (0, react_1.useState)(null);
     const [page, setPage] = (0, react_1.useState)(1);
     const [hasMore, setHasMore] = (0, react_1.useState)(true);
-    const [retryCount, setRetryCount] = (0, react_1.useState)(0);
     // Load orders from API/service
     const loadHistory = (0, react_1.useCallback)(async (pageNum = 1, append = false) => {
         try {
@@ -86,7 +85,7 @@ const useOrderHistory = () => {
     // Load initial data
     (0, react_1.useEffect)(() => {
         loadHistory();
-    }, [loadHistory, retryCount]);
+    }, [loadHistory]);
     // Filter orders based on selected status
     const filteredOrders = (0, react_1.useMemo)(() => {
         if (filter === 'all')
@@ -108,9 +107,10 @@ const useOrderHistory = () => {
         }
     }, [hasMore, loadingMore, page, loadHistory]);
     // Retry failed load
-    const handleRetry = (0, react_1.useCallback)(() => {
-        setRetryCount(prev => prev + 1);
-    }, []);
+    const handleRetry = (0, react_1.useCallback)(async () => {
+        setPage(1);
+        await loadHistory(1);
+    }, [loadHistory]);
     // Handle filter change
     const handleFilterChange = (0, react_1.useCallback)((newFilter) => {
         setFilter(newFilter);

@@ -14,7 +14,6 @@ export const useOrderHistory = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [retryCount, setRetryCount] = useState(0);
 
   // Load orders from API/service
   const loadHistory = useCallback(async (pageNum = 1, append = false) => {
@@ -53,7 +52,7 @@ export const useOrderHistory = () => {
   // Load initial data
   useEffect(() => {
     loadHistory();
-  }, [loadHistory, retryCount]);
+  }, [loadHistory]);
 
   // Filter orders based on selected status
   const filteredOrders = useMemo(() => {
@@ -78,9 +77,10 @@ export const useOrderHistory = () => {
   }, [hasMore, loadingMore, page, loadHistory]);
 
   // Retry failed load
-  const handleRetry = useCallback(() => {
-    setRetryCount(prev => prev + 1);
-  }, []);
+  const handleRetry = useCallback(async () => {
+    setPage(1);
+    await loadHistory(1);
+  }, [loadHistory]);
 
   // Handle filter change
   const handleFilterChange = useCallback((newFilter: OrderStatusType | 'all') => {

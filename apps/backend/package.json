@@ -7,7 +7,7 @@
     "start": "node dist/src/main.js",
     "dev": "nest start --watch",
     "build": "nest build",
-    "lint": "npx eslint@8.57.0 . --ext .ts --ext .tsx",
+    "lint": "eslint .",
     "test": "jest --testPathIgnorePatterns=test/mongo-connection.spec.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage --coverageThreshold={\\\"global\\\":{\\\"branches\\\":80,\\\"functions\\\":80,\\\"lines\\\":80,\\\"statements\\\":80}} --testPathIgnorePatterns=test/mongo-connection.spec.ts",

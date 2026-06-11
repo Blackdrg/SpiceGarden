@@ -1,4 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PaymentGateway } from './payment-gateway.interface';
+import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
 function safeParse<T = unknown>(json: string): T | undefined {
   try {
@@ -7,7 +10,6 @@ function safeParse<T = unknown>(json: string): T | undefined {
     return undefined;
   }
 }
-import { PaymentGateway } from './payment-gateway.interface';
 
 @Injectable()
 export class CashOnDeliveryGateway implements PaymentGateway {
@@ -18,9 +20,10 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     currency: string = 'inr',
     userId: string = null,
     metadata: unknown = {}
-  ): Promise<unknown> {
+  ): Promise<PaymentIntent> {
     const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
+    const meta = metadata as Record<string, unknown> | undefined;
     return {
       id: codPaymentId,
       amount,
@@ -29,7 +32,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
       client_secret: codPaymentId,
       payment_method: 'cod',
       metadata: {
-        ...metadata,
+        ...meta,
         userId,
         paymentMethod: 'cash_on_delivery',
         instruction: 'Pay cash to driver on delivery',
@@ -40,7 +43,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<unknown> {
+  ): Promise<PaymentResult> {
     if (!paymentId?.startsWith('cod_')) {
       throw new Error('Invalid COD payment ID');
     }
@@ -59,7 +62,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     amount: number | null = null,
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<unknown> {
+  ): Promise<RefundResult> {
     this.logger.warn(`COD refund requested - no action taken. Amount: ${amount}, Payment: ${paymentId}`);
     return {
       id: `refund_${Date.now()}`,
@@ -73,15 +76,11 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<unknown> {
-    return safeParse(payload.toString());
+  ): Promise<GatewayEvent> {
+    return { data: { object: {} } };
   }
 
   getGatewayName(): string {
     return 'cod';
-  }
-
-  supportsCOD(): boolean {
-    return true;
   }
 }

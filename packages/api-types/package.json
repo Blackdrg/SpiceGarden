@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint ."
   },
   "devDependencies": {
     "typescript": "5.2.2",

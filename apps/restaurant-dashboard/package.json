@@ -6,7 +6,7 @@
     "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3003",
-    "lint": "npx eslint@8.57.0 src --ext .ts,.tsx",
+    "lint": "eslint src",
     "test:unit": "echo \"no unit tests\"",
     "test:integration": "echo \"no integration tests\"",
     "test:e2e": "echo \"no e2e tests\"",

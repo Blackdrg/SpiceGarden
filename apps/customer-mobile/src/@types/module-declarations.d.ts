@@ -1,4 +1,3 @@
-/* eslint-disable */
 declare module 'expo-haptics' {
   export enum NotificationFeedbackType {
     Error = 'Error',

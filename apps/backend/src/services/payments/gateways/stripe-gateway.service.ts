@@ -1,8 +1,8 @@
-
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Stripe } from 'stripe';
 import { PaymentGateway } from './payment-gateway.interface';
+import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
 @Injectable()
 export class StripeGateway implements PaymentGateway {
@@ -13,7 +13,7 @@ export class StripeGateway implements PaymentGateway {
     this.stripe = new Stripe(
       this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
       {
-        apiVersion: '2024-04-10' as unknown,
+        apiVersion: '2024-04-10',
       }
     );
   }
@@ -22,21 +22,26 @@ export class StripeGateway implements PaymentGateway {
     amount: number,
     currency: string = 'usd',
     userId: string = null,
-    metadata: unknown = {}
-  ): Promise<unknown> {
+    metadata: Record<string, unknown> = {}
+  ): Promise<PaymentIntent> {
     try {
-      // Create payment intent
       const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Stripe expects cents
+        amount: Math.round(amount * 100),
         currency,
         metadata: {
           ...metadata,
           userId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
 
-      return paymentIntent;
+      return {
+        id: paymentIntent.id,
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        status: paymentIntent.status,
+        client_secret: paymentIntent.client_secret || undefined,
+      };
     } catch (error) {
       this.logger.error('Stripe payment intent creation failed:', error);
       throw error;
@@ -46,16 +51,20 @@ export class StripeGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<unknown> {
+  ): Promise<PaymentResult> {
     try {
-      // Retrieve payment intent from Stripe
       const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
-      
-       if (paymentIntent.status === 'succeeded') {
-         return paymentIntent;
-       } else {
-         throw new BadRequestException(`Payment not successful: ${paymentIntent.status}`);
-       }
+
+      if (paymentIntent.status === 'succeeded') {
+        return {
+          id: paymentIntent.id,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          status: paymentIntent.status,
+        };
+      } else {
+        throw new BadRequestException(`Payment not successful: ${paymentIntent.status}`);
+      }
     } catch (error) {
       this.logger.error('Stripe payment confirmation failed:', error);
       throw error;
@@ -64,34 +73,35 @@ export class StripeGateway implements PaymentGateway {
 
   async refundPayment(
     paymentId: string,
-    amount: number | null = null, // null for full refund
+    amount: number | null = null,
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<unknown> {
+  ): Promise<RefundResult> {
     try {
-      // Get original payment
       const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
-      
-      // Validate refund amount
+
       const refundAmount = amount ?? (paymentIntent.amount / 100);
       const maxRefund = paymentIntent.amount / 100;
-      
-       if (refundAmount > maxRefund) {
-         throw new BadRequestException(`Refund amount cannot exceed original payment: ${maxRefund}`);
-       }
-      
+
+      if (refundAmount > maxRefund) {
+        throw new BadRequestException(`Refund amount cannot exceed original payment: ${maxRefund}`);
+      }
+
       if (refundAmount <= 0) {
         throw new BadRequestException('Refund amount must be greater than zero');
       }
 
-      // Create refund
       const refund = await this.stripe.refunds.create({
         payment_intent: paymentId,
         amount: Math.round(refundAmount * 100),
-        reason: reason as unknown
+        reason: reason as 'duplicate' | 'fraudulent' | 'requested_by_customer',
       });
 
-      return refund;
+      return {
+        id: refund.id,
+        amount: refund.amount,
+        status: refund.status,
+      };
     } catch (error) {
       this.logger.error('Stripe payment refund failed:', error);
       throw error;
@@ -102,10 +112,14 @@ export class StripeGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<unknown> {
+  ): Promise<GatewayEvent> {
     try {
       const event = this.stripe.webhooks.constructEvent(payload, signature, secret);
-      return event;
+      return {
+        data: {
+          object: (event.data?.object as unknown) as Record<string, unknown> || {},
+        },
+      };
     } catch (error) {
       this.logger.error('Stripe webhook verification failed:', error);
       throw error;

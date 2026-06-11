@@ -14,7 +14,7 @@
     "dist": "npm run build && npx electron-builder --win --publish=never",
     "dist:installer": "npm run build && npx electron-builder --win --ia32 --publish=never",
     "dist:portable": "npm run build && npx electron-builder --win --portable --publish=never",
-    "lint": "npx eslint@8.57.0 . --ext .ts --ext .tsx",
+    "lint": "eslint .",
     "test:unit": "echo \"no unit tests\"",
     "test:integration": "echo \"no integration tests\"",
     "test:e2e": "echo \"no e2e tests\"",

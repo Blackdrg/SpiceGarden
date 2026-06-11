@@ -11,10 +11,10 @@
     "build": "npm run --workspaces build",
     "lint": "npm run --workspaces lint",
     "format": "npm run --workspaces format",
-    "test:unit": "npm run --workspaces test:unit",
-    "test:integration": "npm run --workspaces test:integration",
-    "test:e2e": "npm run --workspaces test:e2e",
-    "test:all": "npm run --workspaces test:all"
+    "test:unit": "npm run --workspaces --if-present test:unit",
+    "test:integration": "npm run --workspaces --if-present test:integration",
+    "test:e2e": "npm run --workspaces --if-present test:e2e",
+    "test:all": "npm run --workspaces --if-present test:all"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

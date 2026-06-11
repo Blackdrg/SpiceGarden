@@ -7,7 +7,7 @@
     "start:ci": "cross-env CI=true npx expo start --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "lint": "npx eslint@8.57.0 . --ext .ts --ext .tsx",
+    "lint": "eslint .",
     "test:unit": "echo \"no unit tests\"",
     "test:integration": "echo \"no integration tests\"",
     "test:e2e": "echo \"no e2e tests\"",
@@ -28,7 +28,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "18.2.45",
-    "@types/react-native": "~0.73.0",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
     "cross-env": "^10.1.0",

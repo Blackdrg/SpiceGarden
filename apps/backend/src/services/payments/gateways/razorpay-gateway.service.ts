@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException, InternalServerErrorException }
 import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
+import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
 function safeParse<T = unknown>(json: string): T | undefined {
   try {
@@ -10,8 +11,6 @@ function safeParse<T = unknown>(json: string): T | undefined {
     return undefined;
   }
 }
-
-
 
 @Injectable()
 export class RazorpayGateway implements PaymentGateway {
@@ -27,8 +26,8 @@ export class RazorpayGateway implements PaymentGateway {
   private async razorpayRequest(
     method: string,
     endpoint: string,
-    data: unknown = {}
-  ): Promise<unknown> {
+    data: Record<string, unknown> = {}
+  ): Promise<Record<string, unknown>> {
     try {
       const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
 
@@ -42,11 +41,12 @@ export class RazorpayGateway implements PaymentGateway {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.description || `Razorpay API error: ${response.status}`);
+        const errorData = (await response.json().catch(() => ({}))) as Record<string, unknown>;
+        const desc = (errorData.error as Record<string, unknown> | undefined)?.description;
+        throw new Error((typeof desc === 'string' ? desc : null) || `Razorpay API error: ${response.status}`);
       }
 
-      return await response.json();
+      return (await response.json()) as Record<string, unknown>;
     } catch (error) {
       this.logger.error(`Razorpay API request failed: ${endpoint}`, error);
       throw error;
@@ -58,29 +58,31 @@ export class RazorpayGateway implements PaymentGateway {
     currency: string = 'inr',
     userId: string = null,
     metadata: unknown = {}
-  ): Promise<unknown> {
+  ): Promise<PaymentIntent> {
     try {
       const amountInPaise = Math.round(amount * 100);
 
-      const paymentData = {
+      const meta = metadata as Record<string, unknown> | undefined;
+
+      const paymentData: Record<string, unknown> = {
         amount: amountInPaise,
         currency: currency.toLowerCase(),
         receipt: `receipt_${Date.now()}_${userId || 'guest'}`,
         notes: {
-          ...metadata,
+          ...meta,
           userId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
 
       const payment = await this.razorpayRequest('POST', 'orders', paymentData);
 
       return {
-        id: payment.id,
-        amount: payment.amount / 100,
-        currency: payment.currency,
-        status: payment.status,
-        client_secret: payment.id
+        id: payment.id as string,
+        amount: (payment.amount as number) / 100,
+        currency: payment.currency as string,
+        status: payment.status as string,
+        client_secret: payment.id as string | undefined,
       };
     } catch (error) {
       this.logger.error('Razorpay payment intent creation failed:', error);
@@ -91,16 +93,16 @@ export class RazorpayGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<unknown> {
+  ): Promise<PaymentResult> {
     try {
       const order = await this.razorpayRequest('GET', `orders/${paymentId}`);
 
       if (order.status === 'paid' || order.status === 'captured') {
         return {
-          id: order.id,
-          amount: order.amount / 100,
-          currency: order.currency,
-          status: order.status
+          id: order.id as string,
+          amount: (order.amount as number) / 100,
+          currency: order.currency as string,
+          status: order.status as string,
         };
       } else {
         throw new BadRequestException(`Payment not successful: ${order.status}`);
@@ -116,13 +118,17 @@ export class RazorpayGateway implements PaymentGateway {
     amount: number | null = null,
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<unknown> {
+  ): Promise<RefundResult> {
     try {
       const order = await this.razorpayRequest('GET', `orders/${paymentId}`);
-      
-      const paymentIdToRefund = order.payments?.items?.[0]?.id || paymentId;
-      const refundAmount = amount ?? (order.amount / 100);
-      const maxRefund = order.amount / 100;
+
+      const payments = (order.payments as Record<string, unknown> | undefined);
+      const items = (payments?.items as Record<string, unknown>[] | undefined);
+      const firstPayment = items?.[0] as Record<string, unknown> | undefined;
+      const paymentIdToRefund = (firstPayment?.id as string | undefined) || paymentId;
+      const orderAmount = order.amount as number;
+      const refundAmount = amount ?? (orderAmount / 100);
+      const maxRefund = orderAmount / 100;
 
       if (refundAmount > maxRefund) {
         throw new BadRequestException(`Refund amount cannot exceed original amount: ${maxRefund}`);
@@ -132,20 +138,20 @@ export class RazorpayGateway implements PaymentGateway {
         throw new BadRequestException('Refund amount must be greater than zero');
       }
 
-      const refundData = {
+      const refundData: Record<string, unknown> = {
         amount: Math.round(refundAmount * 100),
         notes: {
           reason,
-          userId
-        }
+          userId,
+        },
       };
 
       const refund = await this.razorpayRequest('POST', `payments/${paymentIdToRefund}/refund`, refundData);
 
       return {
-        id: refund.id,
-        amount: refund.amount / 100,
-        status: refund.status
+        id: refund.id as string,
+        amount: (refund.amount as number) / 100,
+        status: refund.status as string,
       };
     } catch (error) {
       this.logger.error('Razorpay payment refund failed:', error);
@@ -157,9 +163,8 @@ export class RazorpayGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<unknown> {
+  ): Promise<GatewayEvent> {
     try {
-
       const expectedSignature = crypto
         .createHmac('sha256', secret)
         .update(payload.toString())
@@ -169,7 +174,12 @@ export class RazorpayGateway implements PaymentGateway {
         throw new Error('Invalid webhook signature');
       }
 
-      return safeParse(payload.toString());
+      const parsed = safeParse<Record<string, unknown>>(payload.toString());
+      return {
+        data: {
+          object: (parsed?.entity || parsed || {}) as Record<string, unknown>,
+        },
+      };
     } catch (error) {
       this.logger.error('Razorpay webhook verification failed:', error);
       throw error;

@@ -27,13 +27,6 @@ const SearchScreen = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  // Reserved for advanced search filters (next sprints)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeFilters, setActiveFilters] = useState<{
-    rating: number | null;
-    maxDistance: number | null;
-    dietary: string[];
-  }>({ rating: null, maxDistance: null, dietary: [] });
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showRecent, setShowRecent] = useState(true);
   const [isOffline, setIsOffline] = useState(false);

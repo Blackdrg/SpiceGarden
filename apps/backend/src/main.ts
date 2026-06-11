@@ -16,7 +16,6 @@ async function bootstrap() {
 
   // Initialize Sentry if available
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Sentry = await import("@sentry/node");
     const dsn = configService.get<string>("SENTRY_DSN");
     if (Sentry && dsn) {

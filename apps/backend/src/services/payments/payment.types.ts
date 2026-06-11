@@ -2,29 +2,29 @@ export interface PaymentIntent {
   id: string;
   amount: number;
   currency: string;
-  // Extend as needed
+  status?: string;
+  client_secret?: string;
+  payment_method?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PaymentResult {
   id: string;
   amount: number;
   currency: string;
-  // Extend as needed
+  status?: string;
+  payment_method?: string;
 }
 
 export interface RefundResult {
   id: string;
   amount: number;
-  // Extend as needed
+  status?: string;
+  note?: string;
 }
 
 export interface GatewayEvent {
   data: {
-    object: {
-      id?: string;
-      amount?: number;
-      currency?: string;
-      metadata?: { userId?: string };
-    };
+    object: Record<string, unknown>;
   };
 }

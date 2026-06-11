@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { RestaurantEntity } from './restaurant.entity';
 import { MenuCategoryEntity } from './menu-category.entity';
 
@@ -46,8 +46,8 @@ export class RestaurantBranchEntity {
   @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.branches)
   restaurant!: RestaurantEntity;
 
-  @OneToMany('MenuCategoryEntity', (category: unknown) => category.branch)
-  categories!: unknown[];
+  @OneToMany(() => MenuCategoryEntity, (category) => category.branch)
+  categories!: MenuCategoryEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;

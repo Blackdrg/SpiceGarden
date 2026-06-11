@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps */
 import React from 'react';
 import { View, Text } from 'react-native';
 

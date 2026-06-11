@@ -69,19 +69,12 @@ export class RetryService {
         const result = await operation();
         return { success: true, result, attempts };
       } catch (error) {
-        lastError = error as Error;
-
-        const retryableErrors = [
-          'network_error',
-          'timeout',
-          'rate_limit',
-          'service_unavailable',
-          'temporary_failure',
-        ];
+        const err = error as Error & { type?: string };
+        lastError = err;
 
         const isRetryable = retryableErrors.some(re =>
           lastError.message.toLowerCase().includes(re) ||
-          (lastError as unknown).type === 'api_connection_error'
+          (lastError as Error & { type?: string }).type === 'api_connection_error'
         );
 
         if (!isRetryable || attempt === maxAttempts) {

@@ -73,7 +73,7 @@ export class PaymentService {
         null,
         false,
         request,
-        (error as unknown).message
+        (error as Error).message
       );
       
       this.logger.error('Payment intent creation failed:', error);
@@ -189,7 +189,7 @@ export class PaymentService {
         paymentId,
         false,
         request,
-        (error as unknown).message
+        (error as Error).message
       );
 
       this.logger.error('Payment confirmation failed:', error);
@@ -269,7 +269,7 @@ export class PaymentService {
         paymentId,
         false,
         request,
-        (error as unknown).message
+        (error as Error).message
       );
       
       this.logger.error('Payment refund failed:', error);
@@ -289,17 +289,17 @@ export class PaymentService {
     try {
       const gateway = this.gatewayFactory.getGateway(gatewayName);
       const event = await gateway.constructEvent(payload, signature, secret);
-      
-      // Log webhook receipt
+
+      const obj = event.data.object;
       await this.auditService.logPaymentEvent(
         'webhook_received',
-        (event.data.object as unknown)?.metadata?.userId || 'unknown',
-        (event.data.object as unknown)?.amount / 100 || 0,
-        (event.data.object as unknown)?.currency || 'usd',
+        (obj.metadata as Record<string, unknown> | undefined)?.userId as string || 'unknown',
+        typeof obj.amount === 'number' ? obj.amount / 100 : 0,
+        (obj.currency as string | undefined) || 'usd',
         gateway.getGatewayName(),
-        (event.data.object as unknown)?.id || 'unknown',
+        (obj.id as string | undefined) || 'unknown',
         true,
-        null // Webhooks don't have request objects in the same way
+        null
       );
 
       return event;

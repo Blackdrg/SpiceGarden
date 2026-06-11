@@ -17,7 +17,10 @@ jest.mock('@nestjs/core', () => {
 // Mock @nestjs/typeorm
 jest.mock('@nestjs/typeorm', () => ({
   InjectRepository: () => jest.fn(),
-  getRepositoryToken: (entity: unknown) => `REPOSITORY_${entity?.name || entity}`,
+  getRepositoryToken: (entity: unknown) => {
+    const name = typeof entity === 'function' ? entity.name : undefined;
+    return `REPOSITORY_${name || entity}`;
+  },
 }));
 
 // Mock typeorm

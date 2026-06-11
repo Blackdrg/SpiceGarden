@@ -37,7 +37,6 @@ export const isTrackable = (status: string): boolean => {
 /**
  * Group orders by status
  */
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-unknown, react-hooks/exhaustive-deps */
 import { Order } from '../services/order.service';
 
 export const groupOrdersByStatus = (orders: Order[]): Record<string, Order[]> => {

@@ -8,7 +8,7 @@ export class OrderEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @OneToMany('OrderItemEntity', (item: unknown) => item.order)
+  @OneToMany(() => OrderItemEntity, (item) => item.order)
   items!: OrderItemEntity[];
 
   @Column()
@@ -16,6 +16,9 @@ export class OrderEntity {
 
   @Column()
   restaurantId!: string;
+
+  @Column({ nullable: true })
+  branchId!: string;
 
   @Column({ nullable: true })
   driverId!: string;
@@ -36,7 +39,7 @@ export class OrderEntity {
   subtotal!: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  tax!: number; // Total tax amount (for backward compatibility)
+  tax!: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
   deliveryFee!: number;
@@ -55,6 +58,9 @@ export class OrderEntity {
 
   @Column()
   deliveryAddressId!: string;
+
+  @Column({ nullable: true })
+  deliveredAt!: Date;
 
   @OneToOne(() => GSTDetailEntity, gstDetail => gstDetail.order)
   gstDetail?: GSTDetailEntity;

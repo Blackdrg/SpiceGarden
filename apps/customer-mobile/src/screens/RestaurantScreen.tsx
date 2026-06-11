@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // import { DESIGN_TOKENS } from '@spicegarden/ui';
 // import { STRINGS } from '../constants/strings';
 // import { formatCurrency } from '../utils/currency';
@@ -38,11 +36,8 @@ const RestaurantScreen = () => {
   const scaleAnims = useRef(new Map<string, Animated.Value>()).current;
 
   useEffect(() => {
-    const restaurantIdFromRoute = null; // get from route params
-    setRestaurantId(restaurantIdFromRoute);
     loadData();
-    // loadCartCount();
-  }, [restaurantId, fadeAnim]);
+  }, []);
 
   const loadData = useCallback(async () => {
     try {

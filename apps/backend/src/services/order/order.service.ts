@@ -12,6 +12,23 @@ import { LoggingService } from '../../logging/logging.service';
 import { sanitizeForLog } from '../../logging/logging.service';
 import * as crypto from 'crypto';
 
+type OrderItem = { id: string; name: string; price: number; quantity: number };
+
+type OrderDataInput = {
+  userId: string;
+  restaurantId: string;
+  grandTotal: number;
+  driverId?: string;
+  items?: OrderItem[];
+  subtotal?: number;
+  tax?: number;
+  deliveryFee?: number;
+  discount?: number;
+  tip?: number;
+  couponId?: string;
+  deliveryAddressId?: string;
+};
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -33,23 +50,23 @@ export class OrderService {
       if (!item || typeof item !== 'object') {
         throw new BadRequestException('Invalid order item');
       }
-      const anyItem = item as unknown;
-      if (!anyItem.id || typeof anyItem.id !== 'string' || anyItem.id.trim().length === 0) {
+      const anyItem = item as Record<string, unknown>;
+      if (!anyItem.id || typeof anyItem.id !== 'string' || (anyItem.id as string).trim().length === 0) {
         throw new BadRequestException('Invalid order item ID');
       }
-      if (!anyItem.name || typeof anyItem.name !== 'string' || anyItem.name.trim().length === 0) {
+      if (!anyItem.name || typeof anyItem.name !== 'string' || (anyItem.name as string).trim().length === 0) {
         throw new BadRequestException('Invalid order item name');
       }
-      if (typeof anyItem.price !== 'number' || !Number.isFinite(anyItem.price) || anyItem.price < 0) {
+      if (typeof anyItem.price !== 'number' || !Number.isFinite(anyItem.price as number) || (anyItem.price as number) < 0) {
         throw new BadRequestException('Invalid order item price');
       }
-      if (!Number.isInteger(anyItem.quantity) || anyItem.quantity < 1) {
+      if (!Number.isInteger(anyItem.quantity as number) || (anyItem.quantity as number) < 1) {
         throw new BadRequestException('Invalid order item quantity');
       }
     }
   }
 
-  validateOrderTotals(orderData: unknown): boolean {
+  validateOrderTotals(orderData: OrderDataInput): boolean {
     const subtotal = Number(orderData.subtotal) || 0;
     const tax = Number(orderData.tax) || 0;
     const deliveryFee = Number(orderData.deliveryFee) || 0;
@@ -74,26 +91,27 @@ export class OrderService {
   }
 
   async placeOrder(orderData: unknown, idempotencyKey?: string): Promise<Order> {
-    if (!orderData.userId || !orderData.restaurantId || !orderData.grandTotal) {
+    const data = orderData as OrderDataInput;
+    if (!data.userId || !data.restaurantId || !data.grandTotal) {
       throw new BadRequestException('Missing required order data: userId, restaurantId, or grandTotal');
     }
 
-    if (orderData.items) {
-      this.validateOrderItems(orderData.items);
+    if (data.items) {
+      this.validateOrderItems(data.items);
     }
 
-    this.validateOrderTotals(orderData);
+    this.validateOrderTotals(data);
 
     if (idempotencyKey) {
       const existing = await this.idempotency.validateOrCreate(
         idempotencyKey,
         'place_order',
-        orderData.userId,
-        { restaurantId: orderData.restaurantId, grandTotal: orderData.grandTotal }
+        data.userId,
+        { restaurantId: data.restaurantId, grandTotal: data.grandTotal }
       );
 
       if (existing.isDuplicate && existing.response) {
-        return existing.response;
+        return existing.response as Order;
       }
     }
 
@@ -102,20 +120,20 @@ export class OrderService {
 
     const order: Order = {
       id: orderId,
-      userId: orderData.userId,
-      restaurantId: orderData.restaurantId,
-      driverId: orderData.driverId,
+      userId: data.userId,
+      restaurantId: data.restaurantId,
+      driverId: data.driverId,
       orderNumber: `ORD-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${orderId.slice(0,6).toUpperCase()}`,
       status: OrderStatus.PLACED,
       paymentStatus: PaymentStatus.PENDING,
-      subtotal: Number(orderData.subtotal) || 0,
-      tax: Number(orderData.tax) || 0,
-      deliveryFee: Number(orderData.deliveryFee) || 0,
-      discount: Number(orderData.discount) || 0,
-      tip: Number(orderData.tip) || 0,
-      grandTotal: Number(orderData.grandTotal),
-      couponId: orderData.couponId,
-      deliveryAddressId: orderData.deliveryAddressId || '',
+      subtotal: Number(data.subtotal) || 0,
+      tax: Number(data.tax) || 0,
+      deliveryFee: Number(data.deliveryFee) || 0,
+      discount: Number(data.discount) || 0,
+      tip: Number(data.tip) || 0,
+      grandTotal: Number(data.grandTotal),
+      couponId: data.couponId,
+      deliveryAddressId: data.deliveryAddressId || '',
       createdAt: now,
       updatedAt: now,
     };
@@ -130,7 +148,7 @@ export class OrderService {
       return savedOrder;
     } catch (error) {
       this.loggingService.secureError('[OrderService] Failed to place order', error, 'OrderService');
-      if ((error as unknown)?.code === '23505') {
+      if ((error as { code?: string })?.code === '23505') {
         throw new ConflictException('Order creation failed due to duplicate');
       }
       throw new InternalServerErrorException('Order placement failed due to internal processing error');
@@ -260,7 +278,7 @@ export class OrderService {
 
     try {
       order.status = OrderStatus.CANCELLED;
-      order.driverId = null;
+      order.driverId = '' as any;
       order.updatedAt = new Date();
 
       const savedOrder = await this.orderRepo.save(order);
@@ -361,7 +379,7 @@ export class OrderService {
       },
     });
 
-    const resolvedOrders = [];
+    const resolvedOrders: Order[] = [];
 
     for (const order of stuckOrders) {
       try {

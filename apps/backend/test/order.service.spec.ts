@@ -86,7 +86,7 @@ describe('Order Service - Isolated Unit Tests', () => {
 
   describe('Order Placement Validation', () => {
     it('should reject missing userId', () => {
-      const orderData = { restaurantId: 'rest123', grandTotal: 25.99 } as unknown;
+      const orderData: { userId?: string; restaurantId: string; grandTotal: number } = { restaurantId: 'rest123', grandTotal: 25.99 };
       expect(orderData.userId).toBeUndefined();
     });
 
