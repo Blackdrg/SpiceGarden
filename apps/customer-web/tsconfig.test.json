@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@spicegarden/shared/*": ["../../packages/shared/*"],
+      "@spicegarden/ui/*": ["../../packages/ui/src/*"]
+    }
+  }
+}

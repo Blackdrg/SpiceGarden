@@ -13,11 +13,11 @@ export class MenuCategoryEntity {
   @Column({ default: 0 })
   sortOrder!: number;
 
-  @ManyToOne('RestaurantBranchEntity', (branch: any) => branch.categories)
-  branch!: any;
+  @ManyToOne(() => RestaurantBranchEntity, (branch) => branch.categories)
+  branch!: RestaurantBranchEntity;
 
-  @OneToMany('MenuItemEntity', (item: any) => item.category)
-  items!: any[];
+  @OneToMany(() => MenuItemEntity, (item) => item.category)
+  items!: MenuItemEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;

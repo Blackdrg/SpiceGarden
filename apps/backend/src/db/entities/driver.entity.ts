@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { MenuCategoryEntity } from './menu-category.entity'; // if needed for relations later
 
 @Entity('drivers')
 export class DriverEntity {
@@ -35,7 +36,7 @@ export class DriverEntity {
   rating!: number;
 
   @Column({ type: 'point', nullable: true, transformer: {
-    from: (v: any) => v,
+    from: (v: unknown) => v as unknown,
     to: (v: { lat: number; lng: number }) => `(${v.lng} ${v.lat})`,
   }})
   currentLocation!: { lat: number; lng: number };
@@ -43,14 +44,14 @@ export class DriverEntity {
   @Column({ default: 0 })
   totalDeliveries!: number;
 
-   @Column({ default: 0 })
-   totalDistance!: number;
+  @Column({ default: 0 })
+  totalDistance!: number;
 
-   @Column({ default: 0 })
-   failureCount!: number;
+  @Column({ default: 0 })
+  failureCount!: number;
 
-   @Column({ nullable: true })
-   lastLocationUpdate?: Date;
+  @Column({ nullable: true })
+  lastLocationUpdate?: Date;
 
   @Column('decimal', { precision: 5, scale: 2, default: 0 })
   averageSpeed!: number;

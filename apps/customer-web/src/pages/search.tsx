@@ -31,7 +31,7 @@ const SearchPage = () => {
            ? `/restaurants/search?q=${encodeURIComponent(query)}` 
            : '/restaurants', {
            method: 'GET',
-           headers: {} // Add any needed headers here
+           headers: {} // Add unknown needed headers here
          });
          setRestaurants(data);
        } catch (error) {

@@ -1,0 +1,100 @@
+syntax = "proto3";
+package spicegarden.restaurants.v1;
+
+service RestaurantService {
+  rpc GetAllRestaurants(GetAllRequest) returns (RestaurantsListResponse);
+  rpc SearchRestaurants(SearchRequest) returns (RestaurantsListResponse);
+  rpc GetNearby(NearbyRequest) returns (RestaurantsListResponse);
+  rpc GetRestaurantDetails(GetDetailsRequest) returns (RestaurantDetailsResponse);
+  rpc UpdateBranchStatus(UpdateStatusRequest) returns (BranchStatusResponse);
+  rpc GetMenuItems(GetMenuItemsRequest) returns (MenuItemsResponse);
+  rpc GetMenuCategories(GetCategoriesRequest) returns (CategoriesResponse);
+}
+
+message GetAllRequest {}
+
+message SearchRequest {
+  string query = 1;
+}
+
+message NearbyRequest {
+  double lat = 1;
+  double lng = 2;
+  double radius = 3;
+}
+
+message GetDetailsRequest {
+  string slug = 1;
+}
+
+message RestaurantResponse {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string description = 4;
+  string image_url = 5;
+  double rating = 6;
+  RestaurantLocation location = 7;
+  repeated string cuisines = 8;
+  bool is_online = 9;
+}
+
+message RestaurantLocation {
+  string address = 1;
+  string city = 2;
+  double lat = 3;
+  double lng = 4;
+}
+
+message RestaurantsListResponse {
+  repeated RestaurantResponse restaurants = 1;
+}
+
+message RestaurantDetailsResponse {
+  RestaurantResponse restaurant = 1;
+  repeated MenuCategory categories = 2;
+}
+
+message UpdateStatusRequest {
+  string branch_id = 1;
+  bool is_online = 2;
+}
+
+message BranchStatusResponse {
+  string branch_id = 1;
+  bool is_online = 2;
+  string updated_at = 3;
+}
+
+message GetMenuItemsRequest {
+  string restaurant_id = 1;
+  string category = 2;
+}
+
+message MenuItemResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  string image = 5;
+  string category_id = 6;
+  bool is_available = 7;
+}
+
+message MenuItemsResponse {
+  repeated MenuItemResponse items = 1;
+}
+
+message GetCategoriesRequest {
+  string restaurant_id = 1;
+}
+
+message MenuCategory {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message CategoriesResponse {
+  repeated MenuCategory categories = 1;
+}

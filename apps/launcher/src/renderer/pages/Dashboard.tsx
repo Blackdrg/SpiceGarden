@@ -1,29 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ServiceStatusCard } from '../components/ServiceStatusCard';
-import { useQuery } from '@tanstack/react-query';
+
+type ServiceStatus = {
+  name: string;
+  status: 'running' | 'stopped' | 'error';
+  uptime?: number;
+};
+
+type SystemInfo = {
+  cpu?: { usage?: number };
+  memory?: { usagePercent?: string };
+  os?: { platform?: string };
+};
+
+declare global {
+  interface Window {
+    electronAPI: {
+      getServiceStatus: () => Promise<ServiceStatus[]>;
+      startAll: () => Promise<void>;
+      stopAll: () => Promise<void>;
+      restartServices: () => Promise<void>;
+      openUrl: (url: string) => Promise<void>;
+      resetDatabase: () => Promise<void>;
+      getSystemInfo: () => Promise<SystemInfo>;
+      getDockerStatus: () => Promise<Record<string, unknown>>;
+    };
+  }
+}
 
 export const Dashboard: React.FC = () => {
-  const { data: serviceStatus, refetch } = useQuery({
-    queryKey: ['service-status'],
-    queryFn: () => (window as any).electronAPI.getServiceStatus()
-  });
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus[]>([]);
+  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
 
-  const { data: systemInfo } = useQuery({
-    queryKey: ['system-info'],
-    queryFn: () => (window as any).electronAPI.getSystemInfo()
-  });
-
-  const { data: dockerStatus } = useQuery({
-    queryKey: ['docker-status'],
-    queryFn: () => (window as any).electronAPI.getDockerStatus()
-  });
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, 5000);
+  useEffect(() => {
+    const fetchData = async () => {
+      const status = await window.electronAPI.getServiceStatus();
+      setServiceStatus(status);
+      const sysInfo = await window.electronAPI.getSystemInfo();
+      setSystemInfo(sysInfo);
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, [refetch]);
+  }, []);
 
   return (
     <div className="dashboard">
@@ -35,20 +54,20 @@ export const Dashboard: React.FC = () => {
       <section className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="action-buttons">
-          <button onClick={() => (window as any).electronAPI.startAll()}>Start All</button>
-          <button onClick={() => (window as any).electronAPI.stopAll()}>Stop All</button>
-          <button onClick={() => (window as any).electronAPI.restartServices()}>Restart</button>
-          <button onClick={() => (window as any).electronAPI.openUrl('http://localhost:3001')}>
+          <button onClick={() => window.electronAPI.startAll()}>Start All</button>
+          <button onClick={() => window.electronAPI.stopAll()}>Stop All</button>
+          <button onClick={() => window.electronAPI.restartServices()}>Restart</button>
+          <button onClick={() => window.electronAPI.openUrl('http://localhost:3001')}>
             Open Customer App
           </button>
-          <button onClick={() => (window as any).electronAPI.openUrl('http://localhost:3002')}>
+          <button onClick={() => window.electronAPI.openUrl('http://localhost:3002')}>
             Open Restaurant Dashboard
           </button>
-          <button onClick={() => (window as any).electronAPI.openUrl('http://localhost:3003')}>
+          <button onClick={() => window.electronAPI.openUrl('http://localhost:3003')}>
             Open Admin Dashboard
           </button>
-          <button onClick={() => (window as any).electronAPI.resetDatabase()}>Reset Database</button>
-          <button onClick={() => (window as any).electronAPI.openUrl('file://' + process.cwd() + '/launcher-logs')}>
+          <button onClick={() => window.electronAPI.resetDatabase()}>Reset Database</button>
+          <button onClick={() => window.electronAPI.openUrl('file://' + process.cwd() + '/launcher-logs')}>
             Open Logs
           </button>
         </div>
@@ -57,7 +76,7 @@ export const Dashboard: React.FC = () => {
       <section className="services-section">
         <h2>Services Status</h2>
         <div className="services-grid">
-          {serviceStatus?.map((service: any) => (
+          {serviceStatus?.map((service) => (
             <ServiceStatusCard key={service.name} {...service} />
           ))}
         </div>

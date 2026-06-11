@@ -23,7 +23,7 @@ const OffersPage = () => {
   const [activeTab] = useState<'home' | 'search' | 'offers' | 'account'>('offers');
 
   const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code).catch(() => {});
+    navigator.clipboard.writeText(code).catch(() => null);
   };
 
   return (
@@ -55,7 +55,7 @@ const OffersPage = () => {
         <p style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>Share your code — earn &#8377;100 for every friend's first order.</p>
         <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
           <div style={{ flex: 1, background: '#f5f5f5', padding: '10px 12px', borderRadius: 8, fontFamily: 'monospace', fontWeight: 'bold', textAlign: 'center' }}>SPICE123</div>
-          <Button label="Share" onClick={() => {}} />
+          <Button label="Share" onClick={() => null} />
         </div>
       </Card>
 

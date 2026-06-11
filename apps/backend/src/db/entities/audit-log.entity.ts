@@ -20,7 +20,7 @@ export class AuditLogEntity {
   entityId: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: any;
+  metadata: unknown;
 
   @Column({ nullable: true })
   ipAddress: string;

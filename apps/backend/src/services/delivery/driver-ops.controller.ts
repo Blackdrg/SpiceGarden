@@ -16,7 +16,7 @@ export class DriverOpsController {
   ) {}
 
   @Post('onboarding')
-  async startOnboarding(@Body() body: any) {
+  async startOnboarding(@Body() body: unknown) {
     return this.onboardingService.startOnboarding(body.userId, body.data);
   }
 
@@ -24,7 +24,7 @@ export class DriverOpsController {
   async uploadDocument(@Body() body: { driverId: string; type: string; url: string; expiryDate?: string }) {
     return this.onboardingService.uploadDocument(
       body.driverId,
-      body.type as any,
+      body.type as unknown,
       body.url,
       body.expiryDate ? new Date(body.expiryDate) : undefined,
     );
@@ -37,7 +37,7 @@ export class DriverOpsController {
 
   @Put('documents/:id/verify')
   async verifyDocument(@Param('id') id: string, @Body() body: { status: string; notes?: string; verifierId?: string }) {
-    return this.onboardingService.verifyDocument(id, body.status as any, body.notes, body.verifierId);
+    return this.onboardingService.verifyDocument(id, body.status as unknown, body.notes, body.verifierId);
   }
 
   @Get('onboarding/:id/status')

@@ -9,8 +9,8 @@ export class SubscriptionEntity {
   @Column()
   userId!: string;
 
-  @ManyToOne('UserEntity')
-  user!: any;
+  @ManyToOne(() => UserEntity)
+  user!: UserEntity;
 
   @Column()
   planName!: string; // e.g., 'Gold', 'Premium'
@@ -22,7 +22,7 @@ export class SubscriptionEntity {
   expiryDate!: Date;
 
   @Column({ type: 'jsonb', nullable: true })
-  benefits!: any;
+  benefits!: unknown;
 
   @CreateDateColumn()
   createdAt!: Date;

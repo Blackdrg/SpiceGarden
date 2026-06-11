@@ -42,13 +42,19 @@ export class DriverFleetController {
 
   @Post('penalties')
   @ApiOperation({ summary: 'Issue a penalty to driver' })
-  issuePenalty(@Body() body: any) {
+  issuePenalty(@Body() body: unknown) {
     return this.fleetService.issuePenalty(body.driverId, body);
   }
 
-  @Get('performance/:driverId?')
+  @Get('performance')
   @ApiOperation({ summary: 'Get performance ranking' })
-  getPerformance(@Param('driverId') driverId?: string) {
+  getPerformance() {
+    return this.fleetService.getPerformanceRanking();
+  }
+
+  @Get('performance/:driverId')
+  @ApiOperation({ summary: 'Get driver performance' })
+  getDriverPerformance(@Param('driverId') driverId: string) {
     return this.fleetService.getPerformanceRanking(driverId);
   }
 

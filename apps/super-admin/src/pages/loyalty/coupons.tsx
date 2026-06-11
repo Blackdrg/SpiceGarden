@@ -4,7 +4,7 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function LoyaltyCoupons() {
-  const [coupons, setCoupons] = useState<any[]>([]);
+  const [coupons, setCoupons] = useState<unknown[]>([]);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
   const [loading, setLoading] = useState(true);
@@ -88,7 +88,7 @@ export default function LoyaltyCoupons() {
         <p style={{ color: '#71717a' }}>Loading...</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {coupons.filter((c: any) => c.status === 'active').map((c: any) => (
+          {coupons.filter((c: unknown) => c.status === 'active').map((c: unknown) => (
             <div key={c.id} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 6, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontWeight: 600, color: '#f97316' }}>{c.code}</span>
@@ -97,7 +97,7 @@ export default function LoyaltyCoupons() {
               <span style={{ fontSize: 12, color: '#4ade80' }}>Active</span>
             </div>
           ))}
-          {coupons.filter((c: any) => c.status === 'active').length === 0 && (
+          {coupons.filter((c: unknown) => c.status === 'active').length === 0 && (
             <p style={{ color: '#71717a', fontSize: 13 }}>No active coupons</p>
           )}
         </div>

@@ -7,7 +7,7 @@ import { NotificationService } from '../../services/notifications/notification.s
 export class OrderProcessor {
   constructor(private notificationService: NotificationService) {}
 
-  async processOrderLifecycle(job: any) {
+  async processOrderLifecycle(job: unknown) {
     const { orderId, status, userId } = job;
     console.log(`Processing order ${orderId} lifecycle transition to ${status}`);
 

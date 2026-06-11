@@ -1,0 +1,213 @@
+{
+  "project": {
+    "name": "SpiceGarden Threat Model",
+    "id": "spicegarden-threat-model",
+    "owner": "Security Team",
+    "rev": "1.0",
+    "version": "7.0"
+  },
+  "threats": [
+    {
+      "id": "T001",
+      "name": "User Credential Theft",
+      "description": "Attacker gains user credentials through phishing or breach",
+      "severity": "High",
+      "likelihood": "Medium",
+      "impact": "User accounts compromised, unauthorized access to orders and payments",
+      "STRIDE": "Spoofing",
+      "mitigations": [
+        "JWT token refresh mechanism",
+        "Rate limiting on auth endpoints",
+        "Multi-factor authentication (recommended)",
+        "Argon2 password hashing"
+      ]
+    },
+    {
+      "id": "T002",
+      "name": "Payment Fraud",
+      "description": "Fraudulent payment attempts through stolen cards or card testing",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Financial loss, chargebacks, brand damage",
+      "STRIDE": "Tampering",
+      "mitigations": [
+        "FraudHardeningService checks velocity and patterns",
+        "PaymentHardeningService validates amounts and limits",
+        "Card testing detection (small amount heuristic)",
+        "IP reputation checks",
+        "Prepaid card flagging"
+      ]
+    },
+    {
+      "id": "T003",
+      "name": "Session Hijacking",
+      "description": "Attacker steals active session token",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "Unauthorized account access within session window",
+      "STRIDE": "Hijacking",
+      "mitigations": [
+        "HTTPS enforced",
+        "Short session expiry (90 days max)",
+        "Device fingerprinting for anomaly detection",
+        "IP-based session validation"
+      ]
+    },
+    {
+      "id": "T004",
+      "name": "Database Injection",
+      "description": "SQL/NoSQL injection attacks on API endpoints",
+      "severity": "High",
+      "likelihood": "Low",
+      "impact": "Data breach, unauthorized data access",
+      "STRIDE": "Injection",
+      "mitigations": [
+        "express-mongo-sanitize middleware",
+        "ValidationPipe with whitelist",
+        "TypeORM parameterized queries",
+        "Input sanitization in all controllers"
+      ]
+    },
+    {
+      "id": "T005",
+      "name": "Rate Limiting Bypass",
+      "description": "Attacker bypasses rate limiting to overwhelm services",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "DoS, resource exhaustion",
+      "STRIDE": "Denial of Service",
+      "mitigations": [
+        "ThrottlerModule for API rate limiting",
+        "express-rate-limit for auth endpoints",
+        "IP-based rate limiting",
+        "Request size limits (10kb)"
+      ]
+    },
+    {
+      "id": "T006",
+      "name": "PII Data Exposure",
+      "description": "Personal data exposed through logs or API response",
+      "severity": "Medium",
+      "likelihood": "Low",
+      "impact": "Privacy violation, GDPR non-compliance",
+      "STRIDE": "Information Disclosure",
+      "mitigations": [
+        "EncryptionService for PII fields",
+        "Audit log filtering for sensitive data",
+        "Logging masking for credit card data",
+        "Access control on user data endpoints"
+      ]
+    },
+    {
+      "id": "T007",
+      "name": "Webhook Replay Attack",
+      "description": "Attacker replays valid webhook events for duplicate processing",
+      "severity": "High",
+      "likelihood": "Low",
+      "impact": "Duplicate payments, fraudulent refunds",
+      "STRIDE": "Replay",
+      "mitigations": [
+        "IdempotencyService validates unique keys",
+        "Stripe webhook signature validation",
+        "Idempotency key enforcement on payments",
+        "Processing timestamp checks"
+      ]
+    },
+    {
+      "id": "T008",
+      "name": "Insecure Direct Object Reference",
+      "description": "Attacker accesses other user's orders/payment data via ID manipulation",
+      "severity": "Medium",
+      "likelihood": "Medium",
+      "impact": "Privacy breach, unauthorized data access",
+      "STRIDE": "Information Disclosure",
+      "mitigations": [
+        "Role-based access control (RBAC)",
+        "User ID verification in all queries",
+        "Ownership checks before data access",
+        "Policy enforcement at service level"
+      ]
+    }
+  ],
+  "trustZones": [
+    {
+      "id": "TZ01",
+      "name": "Public Zone",
+      "description": "Internet-facing components",
+      "elements": ["Web Client", "Mobile Client", "Load Balancer"]
+    },
+    {
+      "id": "TZ02",
+      "name": "Application Zone",
+      "description": "Backend application services",
+      "elements": ["NestJS Backend", "Auth Service", "Payment Service", "Order Service"]
+    },
+    {
+      "id": "TZ03",
+      "name": "Data Zone",
+      "description": "Data storage and caching",
+      "elements": ["PostgreSQL", "Redis", "MongoDB"]
+    },
+    {
+      "id": "TZ04",
+      "name": "Monitoring Zone",
+      "description": "Observability and metrics",
+      "elements": ["Prometheus", "Grafana", "OpenSearch"]
+    }
+  ],
+  "dataflows": [
+    {
+      "id": "DF01",
+      "name": "User Login",
+      "source": "TZ01",
+      "destination": "TZ02",
+      "protocol": "HTTPS",
+      "data": "Credentials",
+      "biDirectional": false,
+      "isEncrypted": true
+    },
+    {
+      "id": "DF02",
+      "name": "Payment Processing",
+      "source": "TZ02",
+      "destination": "External",
+      "protocol": "HTTPS",
+      "data": "Payment Token",
+      "biDirectional": true,
+      "isEncrypted": true
+    },
+    {
+      "id": "DF03",
+      "name": "Order Data",
+      "source": "TZ02",
+      "destination": "TZ03",
+      "protocol": "Internal",
+      "data": "Order Records",
+      "biDirectional": true,
+      "isEncrypted": false
+    },
+    {
+      "id": "DF04",
+      "name": "Audit Logs",
+      "source": "TZ02",
+      "destination": "TZ04",
+      "protocol": "Internal",
+      "data": "Security Events",
+      "biDirectional": false,
+      "isEncrypted": true
+    }
+  ],
+  "riskRating": {
+    "methodology": "DREAD",
+    "scores": {
+      "T001": "6",
+      "T002": "5",
+      "T003": "4",
+      "T004": "8",
+      "T005": "3",
+      "T006": "5",
+      "T007": "8",
+      "T008": "6"
+    }
+  }
+}

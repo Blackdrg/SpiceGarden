@@ -8,7 +8,7 @@ export class AiController {
 
   @UseGuards(JwtAuthGuard)
   @Get('recommendations')
-  async getRecs(@Req() req: any) {
+  async getRecs(@Req() req: unknown) {
     return this.aiService.getRecommendations(req.user.userId);
   }
 

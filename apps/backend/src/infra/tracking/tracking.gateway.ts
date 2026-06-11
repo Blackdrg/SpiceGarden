@@ -34,7 +34,7 @@ interface LocationUpdate {
 interface AcknowledgedMessage {
   id: string;
   event: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
   ack?: boolean;
 }
@@ -63,7 +63,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly logger = new Logger(TrackingGateway.name);
   private readonly connectedClients = new Map<string, SocketConnection>();
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
-  private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
+  private readonly pendingAcks = new Map<string, { resolve: (value: unknown) => void; reject: (reason?: unknown) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
 
   constructor(
@@ -200,7 +200,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     return { status: 'ok', messageId };
   }
 
-  async publish(topic: string, data: any, requireAck: boolean = false): Promise<any> {
+  async publish(topic: string, data: unknown, requireAck: boolean = false): Promise<unknown> {
     const messageId = `pub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {
@@ -211,7 +211,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     return { status: 'sent', messageId };
   }
 
-  async publishToRoom(room: string, data: any, requireAck: boolean = false): Promise<any> {
+  async publishToRoom(room: string, data: unknown, requireAck: boolean = false): Promise<unknown> {
     const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {
@@ -251,7 +251,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     const timeout = 30000;
   }
 
-  private async waitForAcknowledgement(roomOrTopic: string, data: any): Promise<any> {
+  private async waitForAcknowledgement(roomOrTopic: string, data: unknown): Promise<unknown> {
     const messageId = data.messageId;
     
     return new Promise((resolve, reject) => {

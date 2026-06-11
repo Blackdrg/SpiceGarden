@@ -36,7 +36,7 @@ export class DeliveryService {
     private dataSource: DataSource
   ) {}
 
-  async registerDriver(userId: string, data: any) {
+  async registerDriver(userId: string, data: unknown) {
     const driver = this.driverRepo.create({
       userId,
       ...data,

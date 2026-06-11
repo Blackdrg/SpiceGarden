@@ -1,4 +1,4 @@
 declare module 'crypto-js' {
-  export const AES: any;
-  export const enc: any;
+  export const AES: unknown;
+  export const enc: unknown;
 }

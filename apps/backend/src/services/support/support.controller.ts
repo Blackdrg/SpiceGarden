@@ -17,22 +17,22 @@ export class SupportController {
 
   @Post('disputes')
   async raiseDispute(@Body() body: { orderId: string; customerId: string; type: string; description: string }) {
-    return this.supportService.raiseDispute(body.orderId, body.customerId, body.type as any, body.description);
+    return this.supportService.raiseDispute(body.orderId, body.customerId, body.type as unknown, body.description);
   }
 
   @Get('disputes')
-  async getDisputes(@Query() query: any) {
+  async getDisputes(@Query() query: unknown) {
     return this.supportService.getDisputes(query);
   }
 
   @Put('disputes/:id/review')
-  async reviewDispute(@Param('id') id: string, @Body() body: any) {
+  async reviewDispute(@Param('id') id: string, @Body() body: unknown) {
     return this.supportService.reviewDispute(id, body.reviewerId, body.status, body.notes);
   }
 
   @Post('refunds')
   async requestRefund(@Body() body: { orderId: string; requestedBy: string; type: string; amount: number; reason: string }) {
-    return this.supportService.requestRefund(body.orderId, body.requestedBy, body.type as any, body.amount, body.reason);
+    return this.supportService.requestRefund(body.orderId, body.requestedBy, body.type as unknown, body.amount, body.reason);
   }
 
   @Put('refunds/:id/process')

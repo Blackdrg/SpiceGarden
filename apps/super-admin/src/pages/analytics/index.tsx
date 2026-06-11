@@ -4,7 +4,7 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function AnalyticsOverview() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
   const [period, setPeriod] = useState('30');
   const [loading, setLoading] = useState(true);
 

@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-06-10T04:13:38.667Z",
+  "summary": {
+    "totalVulnerabilities": 0,
+    "securityScore": "GOOD",
+    "recommendations": [
+      "Continue regular security audits"
+    ]
+  }
+}

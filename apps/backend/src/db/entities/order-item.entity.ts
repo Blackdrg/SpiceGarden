@@ -11,13 +11,13 @@ export class OrderItemEntity {
   @Column()
   orderId!: string;
 
-  @ManyToOne('OrderEntity')
+  @ManyToOne(() => OrderEntity)
   order!: OrderEntity;
 
   @Column()
   menuItemId!: string;
 
-  @ManyToOne('MenuItemEntity')
+  @ManyToOne(() => MenuItemEntity)
   menuItem!: MenuItemEntity;
 
   @Column({ nullable: true })
@@ -39,10 +39,10 @@ export class OrderItemEntity {
   instructions!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  variants!: any;
+  variants!: unknown;
 
   @Column({ type: 'jsonb', nullable: true })
-  addons!: any;
+  addons!: unknown;
 
   // Tax breakdown for this item
   @Column('decimal', { precision: 10, scale: 2, default: 0 })

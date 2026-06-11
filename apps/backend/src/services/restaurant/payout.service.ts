@@ -33,7 +33,7 @@ export class PayoutService {
   ): Promise<PayoutReportEntity> {
     const orders = await this.orderRepo.find({
       where: {
-        restaurantId: restaurantId as any,
+        restaurantId: restaurantId as unknown,
         status: OrderStatus.DELIVERED,
         createdAt: Between(periodStart, periodEnd),
       },
@@ -44,8 +44,8 @@ export class PayoutService {
 
     const commissionRules = await this.commissionRepo.find({
       where: {
-        restaurantId: restaurantId as any,
-        status: 'active' as any,
+        restaurantId: restaurantId as unknown,
+        status: 'active' as unknown,
       },
     });
 
@@ -93,8 +93,8 @@ export class PayoutService {
 
   async getPayoutHistory(restaurantId: string, limit: number = 10): Promise<PayoutReportEntity[]> {
     return this.payoutRepo.find({
-      where: { restaurantId: restaurantId as any },
-      order: { createdAt: 'DESC' } as any,
+      where: { restaurantId: restaurantId as unknown },
+      order: { createdAt: 'DESC' } as unknown,
       take: limit,
     });
   }
@@ -115,25 +115,25 @@ export class PayoutService {
   }
 
   async getPendingPayouts(restaurantId?: string): Promise<PayoutReportEntity[]> {
-    const where: any = { status: PayoutStatus.PENDING };
+    const where: unknown = { status: PayoutStatus.PENDING };
     if (restaurantId) {
-      where.restaurantId = restaurantId as any;
+      where.restaurantId = restaurantId as unknown;
     }
 
     return this.payoutRepo.find({
       where,
       relations: ['restaurant'],
-      order: { createdAt: 'ASC' } as any,
+      order: { createdAt: 'ASC' } as unknown,
     });
   }
 
-  async getPayoutSummary(restaurantId: string, month: number, year: number): Promise<any> {
+  async getPayoutSummary(restaurantId: string, month: number, year: number): Promise<unknown> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const payouts = await this.payoutRepo.find({
       where: {
-        restaurantId: restaurantId as any,
+        restaurantId: restaurantId as unknown,
         periodStart: Between(startDate, endDate),
       },
     });

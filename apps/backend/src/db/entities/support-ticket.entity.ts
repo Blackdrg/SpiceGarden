@@ -69,8 +69,8 @@ export class SupportTicketEntity {
   @Column({ nullable: true })
   slaBreachedAt!: Date;
 
-  @OneToMany('TicketMessageEntity', (message: any) => message.ticket)
-  messages!: any[];
+  @OneToMany('TicketMessageEntity', (message: unknown) => message.ticket)
+  messages!: unknown[];
 
   @Column('simple-json', { nullable: true })
   metadata!: {

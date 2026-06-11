@@ -23,8 +23,8 @@ export class MenuModerationService {
     menuItemId: string,
     restaurantId: string,
     action: ModerationAction,
-    data: any,
-    originalData?: any,
+    data: unknown,
+    originalData?: unknown,
   ): Promise<MenuModerationEntity> {
     const menuItem = await this.itemRepo.findOne({ where: { id: menuItemId } });
     if (!menuItem) {
@@ -51,8 +51,8 @@ export class MenuModerationService {
     return saved;
   }
 
-  private detectAIFlags(data: any): { priceAnomaly?: boolean; descriptionIssue?: boolean; imageProblem?: boolean; duplicateDetected?: boolean } {
-    const flags: any = {};
+  private detectAIFlags(data: unknown): { priceAnomaly?: boolean; descriptionIssue?: boolean; imageProblem?: boolean; duplicateDetected?: boolean } {
+    const flags: unknown = {};
 
     if (data?.basePrice && (data.basePrice < 10 || data.basePrice > 5000)) {
       flags.priceAnomaly = true;
@@ -69,12 +69,12 @@ export class MenuModerationService {
     return flags;
   }
 
-  private shouldFlagForReview(flags: any): boolean {
-    return Object.values(flags).some((v: any) => v === true);
+  private shouldFlagForReview(flags: unknown): boolean {
+    return Object.values(flags).some((v: unknown) => v === true);
   }
 
   async getPendingModerations(restaurantId?: string, priorityOnly: boolean = false): Promise<MenuModerationEntity[]> {
-    const where: any = { status: ModerationStatus.PENDING };
+    const where: unknown = { status: ModerationStatus.PENDING };
     if (restaurantId) {
       where.restaurantId = restaurantId;
     }
@@ -125,8 +125,8 @@ export class MenuModerationService {
     }
   }
 
-  async getModerationStats(restaurantId?: string): Promise<any> {
-    const where: any = {};
+  async getModerationStats(restaurantId?: string): Promise<unknown> {
+    const where: unknown = {};
     if (restaurantId) {
       where.restaurantId = restaurantId;
     }
@@ -151,7 +151,7 @@ export class MenuModerationService {
     };
   }
 
-  private async getAverageReviewTime(where: any): Promise<number> {
+  private async getAverageReviewTime(where: unknown): Promise<number> {
     const result = await this.moderationRepo
       .createQueryBuilder('moderation')
       .select('AVG(TIMESTAMPDIFF(HOUR, moderation.createdAt, moderation.reviewedAt))', 'avgHours')

@@ -14,7 +14,7 @@ export class AddressService {
     return this.addressRepo.find({ where: { userId } });
   }
 
-  async addAddress(userId: string, data: any) {
+  async addAddress(userId: string, data: unknown) {
     if (data.isDefault) {
       await this.addressRepo.update({ userId }, { isDefault: false });
     }

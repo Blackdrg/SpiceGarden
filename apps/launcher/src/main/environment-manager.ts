@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { StoreManager } from './store-manager';
+import { StoreManager, Secrets } from './store-manager';
 import * as crypto from 'crypto';
 import * as child_process from 'child_process';
 
@@ -118,13 +118,16 @@ export class EnvironmentManager {
   }
 
    async generateEnv(): Promise<{ success: boolean; path: string }> {
-     let secrets = this.storeManager.getSecrets();
-     if (!secrets) {
-       this.generateSecrets();
-       secrets = this.storeManager.getSecrets();
-     }
+      let secrets = this.storeManager.getSecrets();
+      if (!secrets) {
+        this.generateSecrets();
+        secrets = this.storeManager.getSecrets();
+      }
+      if (!secrets) {
+        throw new Error('Failed to generate secrets for environment configuration.');
+      }
 
-     const envContent = this.buildEnvContent(secrets);
+      const envContent = this.buildEnvContent(secrets);
      const envPath = path.join(process.cwd(), '.env');
      fs.writeFileSync(envPath, envContent);
 
@@ -162,7 +165,7 @@ export class EnvironmentManager {
     this.storeManager.saveSecrets(secrets);
   }
 
-   private buildEnvContent(secrets: Record<string, string>): string {
+   private buildEnvContent(secrets: Secrets): string {
     return `# SpiceGarden Environment Configuration - Auto Generated
 # Generated on ${new Date().toISOString()}
 

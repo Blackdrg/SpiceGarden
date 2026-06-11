@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, TextInput, FlatList, Animated
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
-import { Skeleton } from '../components/SkeletonLoader';
+import { STORAGE_KEYS } from '../constants/storage.keys';
+import { safeParse } from '../utils/safe-parse';
+import SkeletonRect from '../components/SkeletonLoader';
 
 const API_URL = 'http://localhost:3001';
 
@@ -60,9 +62,10 @@ const SearchScreen = () => {
 
   const loadRecentSearches = async () => {
     try {
-      const recent = await AsyncStorage.getItem('sg_recent_searches');
+      const recent = await AsyncStorage.getItem(STORAGE_KEYS.RECENT_SEARCHES);
       if (recent) {
-        setRecentSearches(JSON.parse(recent));
+        const parsed = safeParse<string[]>(recent);
+        if (parsed) setRecentSearches(parsed);
       }
     } catch (e) {
       console.error('Failed to load recent searches:', e);
@@ -72,15 +75,12 @@ const SearchScreen = () => {
   const saveRecentSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     
-    const updated = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
-    setRecentSearches(updated);
-    
-    try {
-      await AsyncStorage.setItem('sg_recent_searches', JSON.stringify(updated));
-    } catch (e) {
-      console.error('Failed to save recent search:', e);
-    }
-  }, [recentSearches]);
+    setRecentSearches(prev => {
+      const updated = [searchQuery, ...prev.filter(s => s !== searchQuery)].slice(0, 5);
+      AsyncStorage.setItem(STORAGE_KEYS.RECENT_SEARCHES, JSON.stringify(updated)).catch(() => undefined);
+      return updated;
+    });
+  }, []);
 
   const search = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -93,7 +93,7 @@ const SearchScreen = () => {
     setShowRecent(false);
 
     try {
-      const token = await AsyncStorage.getItem('sg_token');
+      const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
       const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
@@ -106,7 +106,7 @@ const SearchScreen = () => {
 
       const data = await response.json();
       setResults(data.results || []);
-      await saveRecentSearch(searchQuery);
+      saveRecentSearch(searchQuery);
     } catch (error) {
       setResults([]);
       if ((error as Error).message.includes('Network')) {
@@ -115,12 +115,12 @@ const SearchScreen = () => {
     } finally {
       setLoading(false);
     }
-  }, [recentSearches, saveRecentSearch]);
+  }, [saveRecentSearch]);
 
   const clearRecent = async () => {
     setRecentSearches([]);
     try {
-      await AsyncStorage.removeItem('sg_recent_searches');
+      await AsyncStorage.removeItem(STORAGE_KEYS.RECENT_SEARCHES);
     } catch (e) {
       console.error('Failed to clear recent searches:', e);
     }
@@ -172,11 +172,11 @@ const SearchScreen = () => {
 
   const renderSkeleton = () => (
     <View style={styles.resultCard}>
-      <Skeleton width={50} height={50} borderRadius={8} />
+      <SkeletonRect width={50} height={50} borderRadius={8} />
       <View style={{ flex: 1, marginLeft: 12 }}>
-        <Skeleton width="70%" height={20} style={{ marginBottom: 6 }} />
-        <Skeleton width="50%" height={16} style={{ marginBottom: 4 }} />
-        <Skeleton width="90%" height={14} />
+        <SkeletonRect width="70%" height={20} style={{ marginBottom: 6 }} />
+        <SkeletonRect width="50%" height={16} style={{ marginBottom: 4 }} />
+        <SkeletonRect width="90%" height={14} />
       </View>
     </View>
   );
@@ -288,21 +288,21 @@ const SearchScreen = () => {
                 </TouchableOpacity>
               )}
             </View>
-            {recentSearches.length > 0 ? (
-              recentSearches.map((search, index) => (
-                <TouchableOpacity 
-                  key={index}
-                  style={styles.recentItem}
-                  onPress={() => {
-                    setQuery(search);
-                    search(search);
-                  }}
-                  accessibilityLabel={`Search for ${search}`}
-                >
-                  <Text style={styles.recentIcon}>🕒</Text>
-                  <Text style={styles.recentSearchText}>{search}</Text>
-                </TouchableOpacity>
-              ))
+{recentSearches.length > 0 ? (
+               recentSearches.map((recentItem, index) => (
+                 <TouchableOpacity 
+                   key={index}
+                   style={styles.recentItem}
+                   onPress={() => {
+                     setQuery(recentItem);
+                     search(recentItem);
+                   }}
+                   accessibilityLabel={`Search for ${recentItem}`}
+                 >
+                   <Text style={styles.recentIcon}>🕒</Text>
+                   <Text style={styles.recentSearchText}>{recentItem}</Text>
+                 </TouchableOpacity>
+               ))
             ) : (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyText}>No recent searches</Text>

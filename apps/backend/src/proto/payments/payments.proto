@@ -1,0 +1,57 @@
+syntax = "proto3";
+package spicegarden.payments.v1;
+
+service PaymentService {
+  rpc CreatePaymentIntent(CreateIntentRequest) returns (PaymentIntentResponse);
+  rpc ProcessRefund(ProcessRefundRequest) returns (RefundResponse);
+  rpc ConfirmPayment(ConfirmPaymentRequest) returns (PaymentConfirmResponse);
+  rpc GetGateways(GetGatewaysRequest) returns (GatewaysResponse);
+}
+
+message CreateIntentRequest {
+  double amount = 1;
+  string currency = 2;
+  string user_id = 3;
+  string order_id = 4;
+  string payment_method_id = 5;
+  string gateway = 6;
+  string idempotency_key = 7;
+}
+
+message PaymentIntentResponse {
+  string client_secret = 1;
+  string gateway = 2;
+  string intent_id = 3;
+}
+
+message ProcessRefundRequest {
+  string payment_intent_id = 1;
+  double amount = 2;
+  string user_id = 3;
+  string reason = 4;
+  string gateway = 5;
+  string idempotency_key = 6;
+}
+
+message RefundResponse {
+  string refund_id = 1;
+  string status = 2;
+  double amount = 3;
+}
+
+message ConfirmPaymentRequest {
+  string payment_intent_id = 1;
+  string user_id = 2;
+}
+
+message PaymentConfirmResponse {
+  string order_id = 1;
+  string payment_status = 2;
+}
+
+message GetGatewaysRequest {}
+
+message GatewaysResponse {
+  repeated string available_gateways = 1;
+  string primary_gateway = 2;
+}

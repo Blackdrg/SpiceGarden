@@ -9,8 +9,8 @@ export class MenuAddonEntity {
   @Column()
   menuItemId!: string;
 
-  @ManyToOne('MenuItemEntity')
-  menuItem!: any;
+  @ManyToOne(() => MenuItemEntity, (menuItem) => menuItem.addons)
+  menuItem!: MenuItemEntity;
 
   @Column()
   addonName!: string;

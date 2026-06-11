@@ -35,7 +35,7 @@ export class AiService {
     // 2. Suggest top-rated items from these categories that the user hasn't ordered recently
     if (preferredCategoryIds.size > 0) {
       return this.menuRepo.find({
-        where: { category: { id: Array.from(preferredCategoryIds)[0] } as any },
+        where: { category: { id: Array.from(preferredCategoryIds)[0] } as unknown },
         take: 5,
       });
     }

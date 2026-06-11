@@ -1,0 +1,184 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-headless
+  labels:
+    app: redis-cluster
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+  - port: 6379
+    name: clients
+  - port: 16379
+    name: gossip
+  clusterIP: None
+  selector:
+    app: redis-cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster
+  labels:
+    app: redis-cluster
+spec:
+  ports:
+  - port: 6379
+    name: redis
+  selector:
+    app: redis-cluster
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-cluster
+  labels:
+    app: redis-cluster
+spec:
+  serviceName: redis-headless
+  replicas: 6
+  selector:
+    matchLabels:
+      app: redis-cluster
+  template:
+    metadata:
+      labels:
+        app: redis-cluster
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      initContainers:
+      - name: redis-cluster-init
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            # Wait for all pods to be ready
+            for i in 1 2 3 4 5 6; do
+              host="redis-cluster-$((i-1)).redis-headless"
+              until redis-cli -h $host ping >/dev/null 2>&1; do
+                echo "Waiting for $host..."
+                sleep 5
+              done
+            done
+            # Create cluster if not exists
+            if ! redis-cli -h redis-cluster-0 cluster nodes | grep -q "handshake\|fail"; then
+              echo "Creating Redis cluster..."
+              redis-cli --cluster create \
+                $(for i in 0 1 2 3 4 5; do echo -n "redis-cluster-$i.redis-headless:6379 "; done) \
+                --cluster-replicas 1 --cluster-yes
+            fi
+        env:
+        - name: POD_NAMES
+          value: "redis-cluster"
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        command:
+          - "redis-server"
+          - "--cluster-enabled"
+          - "yes"
+          - "--cluster-config-file"
+          - "nodes.conf"
+          - "--cluster-node-timeout"
+          - "5000"
+          - "--appendonly"
+          - "yes"
+          - "--maxmemory"
+          - "2gb"
+          - "--maxmemory-policy"
+          - "allkeys-lru"
+          - "--tcp-keepalive"
+          - "300"
+          - "--timeout"
+          - "600"
+        ports:
+        - containerPort: 6379
+          name: clients
+        - containerPort: 16379
+          name: gossip
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
+        livenessProbe:
+          exec:
+            command:
+            - "redis-cli"
+            - "ping"
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+        readinessProbe:
+          exec:
+            command:
+            - "redis-cli"
+            - "ping"
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+        volumeMounts:
+        - name: data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: fast-ssd
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redis-cluster-hpa
+  labels:
+    app: redis-cluster
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: redis-cluster
+  minReplicas: 6
+  maxReplicas: 12
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 75
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 600
+      policies:
+      - type: Percent
+        value: 20
+        periodSeconds: 120
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Max

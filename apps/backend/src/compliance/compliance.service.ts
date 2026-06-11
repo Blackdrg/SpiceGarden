@@ -88,7 +88,7 @@ export class ComplianceService {
    * Export user data (GDPR right to access)
    * @param userId The user ID to export
    */
-  async exportUserData(userId: string): Promise<any> {
+  async exportUserData(userId: string): Promise<unknown> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
     });
@@ -130,7 +130,7 @@ export class ComplianceService {
   /**
    * Get data retention statistics
    */
-  async getRetentionStatistics(): Promise<any> {
+  async getRetentionStatistics(): Promise<unknown> {
     const now = new Date();
     const sessionCutoff = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
     const auditCutoff = new Date(now.getTime() - 3 * 365 * 24 * 60 * 60 * 1000);

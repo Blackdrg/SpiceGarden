@@ -54,7 +54,7 @@ const SubscriptionsPage = () => {
 
       <Card title="Explore More Plans" isElevated style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
         <p style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>Save on every order. Gold, Premium, Family options available.</p>
-        <Button label="View All Plans" onClick={() => {}} />
+        <Button label="View All Plans" onClick={() => null} />
       </Card>
 
       {/* Bottom nav */}

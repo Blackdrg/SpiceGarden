@@ -4,47 +4,46 @@
   "description": "Enterprise Windows Launcher for SpiceGarden Food Delivery Platform",
   "private": true,
   "main": "dist/main/main.js",
-    "scripts": {
-      "dev": "concurrently \"npm:dev:main\" \"npm:dev:renderer\"",
-      "dev:main": "wait-on http://localhost:3000 && electron .",
-      "dev:renderer": "webpack serve --config webpack.renderer.config.js",
-      "build": "npm run build:main && npm run build:renderer",
-      "build:main": "tsc -p tsconfig.main.json",
-      "build:renderer": "webpack --config webpack.renderer.config.js",
-      "dist": "npm run build && npx electron-builder --win --publish=never",
-      "dist:installer": "npm run build && npx electron-builder --win --ia32 --publish=never",
-      "dist:portable": "npm run build && npx electron-builder --win --portable --publish=never",
-      "lint": "eslint . --ext .ts --ext .tsx",
-      "test:unit": "echo \"no unit tests\"",
-      "test:integration": "echo \"no integration tests\"",
-      "test:e2e": "echo \"no e2e tests\"",
-      "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
-    },
+  "scripts": {
+    "dev": "npm run build:main && concurrently \"npm:dev:build:main\" \"npm:dev:renderer\" \"npm:dev:electron\"",
+    "dev:main": "wait-on http://localhost:3001 && electron .",
+    "dev:renderer": "webpack serve --config webpack.renderer.config.js",
+    "build": "npm run build:main && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "webpack --config webpack.renderer.config.js",
+    "dist": "npm run build && npx electron-builder --win --publish=never",
+    "dist:installer": "npm run build && npx electron-builder --win --ia32 --publish=never",
+    "dist:portable": "npm run build && npx electron-builder --win --portable --publish=never",
+    "lint": "npx eslint@8.57.0 . --ext .ts --ext .tsx",
+    "test:unit": "echo \"no unit tests\"",
+    "test:integration": "echo \"no integration tests\"",
+    "test:e2e": "echo \"no e2e tests\"",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+  },
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "electron-updater": "^6.3.0",
-    "node-notifier": "^10.0.1",
     "electron-store": "^8.2.0",
-    "systeminformation": "^5.21.0"
+    "electron-updater": "^6.3.0",
+    "jest": "26.6.3",
+    "node-notifier": "^6.0.0",
+    "systeminformation": "^5.29.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "electron": "32.3.3",
-    "electron-builder": "^24.13.3",
+    "concurrently": "^8.2.0",
+    "css-loader": "^7.0.0",
+    "electron": "^39.8.4",
+    "electron-builder": "^26.8.1",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.0",
+    "ts-loader": "^9.0.0",
     "typescript": "^5.0.0",
+    "wait-on": "^7.2.0",
     "webpack": "^5.90.0",
     "webpack-cli": "^5.1.0",
-    "webpack-dev-server": "^4.15.0",
-    "html-webpack-plugin": "^5.5.0",
-    "concurrently": "^8.2.0",
-    "wait-on": "^7.2.0",
-    "style-loader": "^3.3.0",
-    "css-loader": "^7.0.0",
-    "ts-loader": "^9.0.0"
+    "webpack-dev-server": "^4.15.2"
   },
   "build": {
     "appId": "com.spicegarden.launcher",
@@ -60,7 +59,9 @@
       "main": "dist/main/main.js"
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "nsis": {
       "oneClick": false,

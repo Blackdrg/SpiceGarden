@@ -39,7 +39,7 @@ export class AuthService {
     return this.sessionRepo.save(session);
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<unknown> {
     if (!email || !pass) {
       throw new UnauthorizedException('Credentials required');
     }
@@ -57,7 +57,7 @@ export class AuthService {
     throw new UnauthorizedException('Invalid email or password');
   }
 
-async login(user: any, deviceInfo: { name: string; type: string; ip: string }) {
+async login(user: unknown, deviceInfo: { name: string; type: string; ip: string }) {
     const payload = { email: user.email, sub: user.id, role: user.role };
     const accessToken = this.jwtService.sign(payload);
     

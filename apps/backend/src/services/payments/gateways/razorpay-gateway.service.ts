@@ -1,6 +1,17 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
+
+function safeParse<T = unknown>(json: string): T | undefined {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return undefined;
+  }
+}
+
+
 
 @Injectable()
 export class RazorpayGateway implements PaymentGateway {
@@ -16,8 +27,8 @@ export class RazorpayGateway implements PaymentGateway {
   private async razorpayRequest(
     method: string,
     endpoint: string,
-    data: any = {}
-  ): Promise<any> {
+    data: unknown = {}
+  ): Promise<unknown> {
     try {
       const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
 
@@ -46,8 +57,8 @@ export class RazorpayGateway implements PaymentGateway {
     amount: number,
     currency: string = 'inr',
     userId: string = null,
-    metadata: any = {}
-  ): Promise<any> {
+    metadata: unknown = {}
+  ): Promise<unknown> {
     try {
       const amountInPaise = Math.round(amount * 100);
 
@@ -80,7 +91,7 @@ export class RazorpayGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       const order = await this.razorpayRequest('GET', `orders/${paymentId}`);
 
@@ -105,7 +116,7 @@ export class RazorpayGateway implements PaymentGateway {
     amount: number | null = null,
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       const order = await this.razorpayRequest('GET', `orders/${paymentId}`);
       
@@ -146,9 +157,9 @@ export class RazorpayGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
-      const crypto = require('crypto');
+
       const expectedSignature = crypto
         .createHmac('sha256', secret)
         .update(payload.toString())
@@ -158,7 +169,7 @@ export class RazorpayGateway implements PaymentGateway {
         throw new Error('Invalid webhook signature');
       }
 
-      return JSON.parse(payload.toString());
+      return safeParse(payload.toString());
     } catch (error) {
       this.logger.error('Razorpay webhook verification failed:', error);
       throw error;

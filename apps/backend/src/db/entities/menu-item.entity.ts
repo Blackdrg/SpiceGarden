@@ -28,8 +28,8 @@ export class MenuItemEntity {
   @Column({ default: 'available' })
   status!: string;
 
-  @ManyToOne('MenuCategoryEntity', (category: any) => category.items)
-  category!: any;
+  @ManyToOne(() => MenuCategoryEntity, (category) => category.items)
+  category!: MenuCategoryEntity;
 
   @Column({ nullable: true })
   hsnSacId?: string; // Reference to HSN/SAC code

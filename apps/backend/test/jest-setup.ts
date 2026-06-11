@@ -2,21 +2,22 @@
 
 // Mock @nestjs/core logger first
 jest.mock('@nestjs/core', () => {
-  return {
+  const actual = jest.requireActual('@nestjs/core');
+  return Object.assign(function () {}, actual, {
     Logger: class MockLogger {
       log() {}
       error() {}
       warn() {}
       debug() {}
       verbose() {}
-    }
-  };
+    },
+  });
 });
 
 // Mock @nestjs/typeorm
 jest.mock('@nestjs/typeorm', () => ({
   InjectRepository: () => jest.fn(),
-  getRepositoryToken: (entity: any) => `REPOSITORY_${entity?.name || entity}`,
+  getRepositoryToken: (entity: unknown) => `REPOSITORY_${entity?.name || entity}`,
 }));
 
 // Mock typeorm
@@ -68,7 +69,7 @@ jest.mock('@nestjs/config', () => ({
 
 // Mock @nestjs/mongoose
 jest.mock('@nestjs/mongoose', () => ({
-  MongooseModule: { forRoot: jest.fn().mockReturnValue({}) },
+  MongooseModule: { forRoot: jest.fn().mockReturnValue({}), forFeature: jest.fn().mockReturnValue({}) },
   InjectModel: () => jest.fn(),
 }));
 
@@ -89,6 +90,8 @@ jest.mock('stripe', () => {
 });
 
 // Mock crypto
+const actualCrypto = jest.requireActual('crypto');
 jest.mock('crypto', () => ({
+  ...actualCrypto,
   randomUUID: () => 'mock-uuid',
 }));

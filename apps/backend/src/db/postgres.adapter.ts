@@ -17,14 +17,14 @@ export class PostgresAdapter<T> implements IDatabaseAdapter<T> {
       await this.dataSource.destroy();
     }
   }
-  async query(query: string, params?: any[]): Promise<any> {
+  async query(query: string, params?: unknown[]): Promise<unknown> {
     return this.dataSource.query(query, params);
   }
-  async findOne(filter: any): Promise<T | null> {
+  async findOne(filter: unknown): Promise<T | null> {
     // This is a generic adapter, actual implementation would need entity type
     return null; 
   }
-  async findMany(filter: any): Promise<T[]> { return []; }
+  async findMany(filter: unknown): Promise<T[]> { return []; }
   async create(data: Partial<T>): Promise<T> { return data as T; }
   async update(id: string, data: Partial<T>): Promise<T> { return data as T; }
   async delete(id: string): Promise<boolean> { return true; }

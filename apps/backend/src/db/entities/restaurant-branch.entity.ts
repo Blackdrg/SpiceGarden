@@ -46,8 +46,8 @@ export class RestaurantBranchEntity {
   @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.branches)
   restaurant!: RestaurantEntity;
 
-  @OneToMany('MenuCategoryEntity', (category: any) => category.branch)
-  categories!: any[];
+  @OneToMany('MenuCategoryEntity', (category: unknown) => category.branch)
+  categories!: unknown[];
 
   @CreateDateColumn()
   createdAt!: Date;

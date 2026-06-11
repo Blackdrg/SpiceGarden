@@ -1,0 +1,107 @@
+syntax = "proto3";
+package spicegarden.driverfleet.v1;
+
+service DriverFleetService {
+  rpc GetDriverShifts(GetDriverShiftsRequest) returns (ShiftsResponse);
+  rpc GetDriverEarnings(GetDriverEarningsRequest) returns (EarningsResponse);
+  rpc CalculateIncentives(CalculateIncentivesRequest) returns (IncentivesResponse);
+  rpc IssuePenalty(IssuePenaltyRequest) returns (PenaltyResponse);
+  rpc GetPerformanceRanking(GetPerformanceRequest) returns (PerformanceResponse);
+  rpc GetDriverSchedule(GetScheduleRequest) returns (ScheduleResponse);
+}
+
+message GetDriverShiftsRequest {
+  string driver_id = 1;
+}
+
+message ShiftData {
+  string id = 1;
+  string driver_id = 2;
+  string status = 3;
+  string started_at = 4;
+  string ended_at = 5;
+  double total_hours = 6;
+  int32 total_deliveries = 7;
+}
+
+message ShiftsResponse {
+  repeated ShiftData shifts = 1;
+}
+
+message GetDriverEarningsRequest {
+  string driver_id = 1;
+  string start = 2;
+  string end = 3;
+}
+
+message EarningsResponse {
+  double total_earnings = 1;
+  double weekly_earnings = 2;
+  double today_earnings = 3;
+  double incentives = 4;
+  double penalties = 5;
+}
+
+message CalculateIncentivesRequest {
+  string driver_id = 1;
+}
+
+message IncentivesResponse {
+  repeated IncentiveData incentives = 1;
+  double total_amount = 2;
+}
+
+message IncentiveData {
+  string id = 1;
+  string type = 2;
+  double amount = 3;
+  string description = 4;
+  bool is_paid = 5;
+}
+
+message IssuePenaltyRequest {
+  string driver_id = 1;
+  PenaltyData penalty = 2;
+}
+
+message PenaltyData {
+  string type = 1;
+  double amount = 2;
+  string order_id = 3;
+  string description = 4;
+  string issued_by = 5;
+}
+
+message PenaltyResponse {
+  string penalty_id = 1;
+  string status = 2;
+  string created_at = 3;
+}
+
+message GetPerformanceRequest {
+  string driver_id = 1;
+}
+
+message PerformanceResponse {
+  string driver_id = 1;
+  double avg_rating = 2;
+  int32 total_deliveries = 3;
+  double on_time_rate = 4;
+  double acceptance_rate = 5;
+  int32 rank = 6;
+}
+
+message GetScheduleRequest {
+  string driver_id = 1;
+}
+
+message ScheduleResponse {
+  repeated ScheduleEntry entries = 1;
+}
+
+message ScheduleEntry {
+  string date = 1;
+  string shift_start = 2;
+  string shift_end = 3;
+  string assigned_zone = 4;
+}

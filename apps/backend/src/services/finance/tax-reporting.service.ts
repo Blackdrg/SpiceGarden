@@ -25,13 +25,13 @@ export class TaxReportingService {
     private dataSource: DataSource,
   ) {}
 
-  async generateGSTReport(restaurantId: string, month: number, year: number): Promise<any> {
+  async generateGSTReport(restaurantId: string, month: number, year: number): Promise<unknown> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const orders = await this.orderRepo.find({
       where: {
-        restaurantId: restaurantId as any,
+        restaurantId: restaurantId as unknown,
         createdAt: Between(startDate, endDate),
       },
       relations: ['gstDetail', 'items', 'items.menuItem'],
@@ -67,7 +67,7 @@ export class TaxReportingService {
     };
   }
 
-  private async getHSNBreakdown(orders: any[]): Promise<any[]> {
+  private async getHSNBreakdown(orders: unknown[]): Promise<unknown[]> {
     const hsnMap = new Map<string, {
       hsnCode: string;
       taxableValue: number;
@@ -107,9 +107,9 @@ export class TaxReportingService {
     return Array.from(hsnMap.values());
   }
 
-  async exportGSTR1(restaurantId: string, month: number, year: number): Promise<any[]> {
+  async exportGSTR1(restaurantId: string, month: number, year: number): Promise<unknown[]> {
     const report = await this.generateGSTReport(restaurantId, month, year);
-    return report.invoices.map((inv: any) => ({
+    return report.invoices.map((inv: unknown) => ({
       'Invoice Number': inv.invoiceNumber,
       'Invoice Date': inv.date,
       'Customer Name': 'Customer',
@@ -125,7 +125,7 @@ export class TaxReportingService {
     }));
   }
 
-  async getTaxLiability(reportingMonth: Date): Promise<any> {
+  async getTaxLiability(reportingMonth: Date): Promise<unknown> {
     const month = reportingMonth.getMonth() + 1;
     const year = reportingMonth.getFullYear();
 
@@ -147,7 +147,7 @@ export class TaxReportingService {
     };
   }
 
-  async getMonthlyTaxSummary(restaurantId: string, months: number = 12): Promise<any[]> {
+  async getMonthlyTaxSummary(restaurantId: string, months: number = 12): Promise<unknown[]> {
     const summaries = [];
     const now = new Date();
 

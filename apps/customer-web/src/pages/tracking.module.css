@@ -1,0 +1,143 @@
+/* tracking.module.css */
+/* Modern, glassmorphism-inspired styles for the Tracking page */
+
+/* Container with subtle glass effect */
+.container {
+  padding: var(--spacing-md, 1rem);
+  min-height: 100vh;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.5rem);
+}
+
+.title {
+  margin-bottom: var(--spacing-lg, 1.5rem);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-primary, #ff6f61);
+}
+
+.loadingContainer {
+  padding: var(--spacing-md, 1rem);
+  min-height: 100vh;
+  background: rgba(250, 250, 250, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.5rem);
+  margin-bottom: var(--spacing-xl, 2rem);
+}
+
+.statusStep {
+  display: flex;
+  align-items: center;
+}
+
+.iconDone {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-success, #4caf50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.iconPending {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.stepLabel {
+  margin-left: var(--spacing-sm, 0.75rem);
+  font-weight: 500;
+}
+
+.liveTrackingCard {
+  background: rgba(255, 255, 255, 0.85);
+-webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: var(--spacing-lg, 1.5rem);
+  margin-top: var(--spacing-lg, 1.5rem);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.driverInfo {
+  text-align: center;
+  margin-bottom: var(--spacing-lg, 1.5rem);
+}
+
+.eta {
+  color: var(--color-primary, #ff6f61);
+  font-weight: 600;
+}
+
+.locationInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm, 0.75rem);
+}
+
+.buttonGroup {
+  margin-top: var(--spacing-md, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.75rem);
+}
+
+.orderDetailsCard {
+  background: rgba(255, 255, 255, 0.85);
+-webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: var(--spacing-lg, 1.5rem);
+  margin-top: var(--spacing-lg, 1.5rem);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.detailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.75rem);
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-sm, 0.75rem);
+  border-bottom: 1px solid #eee;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-top: var(--spacing-sm, 0.75rem);
+}
+
+.contactRestaurantDiv {
+  margin-top: var(--spacing-lg, 1.5rem);
+  text-align: center;
+}
+
+/* Simple fade‑in animation for cards */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

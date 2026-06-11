@@ -9,7 +9,7 @@ const ProfilePage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state: RootState) => state.auth);
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);

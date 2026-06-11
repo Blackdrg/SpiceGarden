@@ -13,7 +13,7 @@ export class StripeGateway implements PaymentGateway {
     this.stripe = new Stripe(
       this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
       {
-        apiVersion: '2024-04-10' as any,
+        apiVersion: '2024-04-10' as unknown,
       }
     );
   }
@@ -22,8 +22,8 @@ export class StripeGateway implements PaymentGateway {
     amount: number,
     currency: string = 'usd',
     userId: string = null,
-    metadata: any = {}
-  ): Promise<any> {
+    metadata: unknown = {}
+  ): Promise<unknown> {
     try {
       // Create payment intent
       const paymentIntent = await this.stripe.paymentIntents.create({
@@ -46,16 +46,16 @@ export class StripeGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       // Retrieve payment intent from Stripe
       const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
       
-      if (paymentIntent.status === 'succeeded') {
-        return paymentIntent;
-      } else {
-        throw new BadRequestException(Payment not successful: );
-      }
+       if (paymentIntent.status === 'succeeded') {
+         return paymentIntent;
+       } else {
+         throw new BadRequestException(`Payment not successful: ${paymentIntent.status}`);
+       }
     } catch (error) {
       this.logger.error('Stripe payment confirmation failed:', error);
       throw error;
@@ -67,7 +67,7 @@ export class StripeGateway implements PaymentGateway {
     amount: number | null = null, // null for full refund
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       // Get original payment
       const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
@@ -76,9 +76,9 @@ export class StripeGateway implements PaymentGateway {
       const refundAmount = amount ?? (paymentIntent.amount / 100);
       const maxRefund = paymentIntent.amount / 100;
       
-      if (refundAmount > maxRefund) {
-        throw new BadRequestException(Refund amount cannot exceed original payment: {maxRefund});
-      }
+       if (refundAmount > maxRefund) {
+         throw new BadRequestException(`Refund amount cannot exceed original payment: ${maxRefund}`);
+       }
       
       if (refundAmount <= 0) {
         throw new BadRequestException('Refund amount must be greater than zero');
@@ -88,7 +88,7 @@ export class StripeGateway implements PaymentGateway {
       const refund = await this.stripe.refunds.create({
         payment_intent: paymentId,
         amount: Math.round(refundAmount * 100),
-        reason: reason as any
+        reason: reason as unknown
       });
 
       return refund;
@@ -102,7 +102,7 @@ export class StripeGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       const event = this.stripe.webhooks.constructEvent(payload, signature, secret);
       return event;

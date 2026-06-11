@@ -190,7 +190,7 @@ export class KitchenService {
           this.logger.log(`Created wastage alert for item ${item.name}: ${wastagePercentage.toFixed(1)}% wastage`);
         }
       } else {
-        // Resolve any existing wastage alerts if wastage is now acceptable
+        // Resolve unknown existing wastage alerts if wastage is now acceptable
         await this.resolveInventoryAlerts(itemId, ['wastage_high']);
       }
     } catch (error) {
@@ -471,7 +471,7 @@ export class KitchenService {
           targetValue: targetTime,
           actualValue: actualTime,
           isBreached: true,
-          breachSeverity: breachSeverity as any
+          breachSeverity: breachSeverity as unknown
         });
         
         await this.slaAlertRepo.save(alert);
@@ -786,7 +786,7 @@ export class KitchenService {
           targetValue: targetDelay,
           actualValue: actualDelay,
           isBreached: true,
-          breachSeverity: breachSeverity as any
+          breachSeverity: breachSeverity as unknown
         });
         
         await this.slaAlertRepo.save(alert);
@@ -826,7 +826,7 @@ export class KitchenService {
   }
 
   async getKitchenSLABranch(branchId: string, metricName?: string, limit = 100): Promise<KitchenSLAEntity[]> {
-    const where: any = { branch: { id: branchId } };
+    const where: unknown = { branch: { id: branchId } };
     if (metricName) {
       where.metricName = metricName;
     }
@@ -837,7 +837,7 @@ export class KitchenService {
     });
   }
 
-  async getKitchenSLASummary(branchId: string, period: 'hourly' | 'daily' | 'weekly' = 'daily'): Promise<Record<string, any>> {
+  async getKitchenSLASummary(branchId: string, period: 'hourly' | 'daily' | 'weekly' = 'daily'): Promise<Record<string, unknown>> {
     const metrics = await this.slaRepo.find({
       where: { 
         branch: { id: branchId },
@@ -846,7 +846,7 @@ export class KitchenService {
       order: { measuredAt: 'DESC' }
     });
     
-    const summary: Record<string, any> = {};
+    const summary: Record<string, unknown> = {};
      for (const metric of metrics) {
        if (!summary[metric.metricName] || new Date(metric.measuredAt) > new Date(summary[metric.metricName].measuredAt)) {
          summary[metric.metricName] = {
@@ -871,7 +871,7 @@ export class KitchenService {
     return this.inventoryRepo.find({ where: { supplier: { id: supplierId } } });
   }
 
-  async getInventoryConsumption(branchId: string, days = 7): Promise<any> {
+  async getInventoryConsumption(branchId: string, days = 7): Promise<unknown> {
     return {
       branchId,
       periodDays: days,
@@ -883,7 +883,7 @@ export class KitchenService {
     };
   }
 
-  async forecastInventoryNeeds(branchId: string, daysAhead = 7): Promise<any> {
+  async forecastInventoryNeeds(branchId: string, daysAhead = 7): Promise<unknown> {
     const consumption = await this.getInventoryConsumption(branchId, daysAhead * 2);
     return {
       branchId,
@@ -899,7 +899,7 @@ export class KitchenService {
     };
   }
 
-  async getKitchenAnalytics(branchId: string): Promise<any> {
+  async getKitchenAnalytics(branchId: string): Promise<unknown> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 

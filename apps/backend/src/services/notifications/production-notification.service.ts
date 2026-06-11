@@ -17,7 +17,7 @@ export interface AlertPayload {
   paymentId?: string;
   amount?: number;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 @Injectable()
@@ -62,7 +62,7 @@ export class ProductionNotificationService {
   async sendWebhookAlert(
     webhookId: string,
     error: string,
-    payload: any
+    payload: unknown
   ): Promise<void> {
     const alert: AlertPayload = {
       type: 'webhook_failure',

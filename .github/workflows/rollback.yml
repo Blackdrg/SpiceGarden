@@ -1,0 +1,80 @@
+name: Rollback Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for rollback'
+        required: true
+        type: string
+      revision:
+        description: 'Revision to rollback to (leave empty for previous revision)'
+        required: false
+        type: string
+  issues:
+    types: [labeled]
+
+env:
+  NAMESPACE: spicegarden-production
+  DEPLOYMENT: spicegarden-backend
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v2
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Record current revision before rollback
+        run: |
+          CURRENT_REVISION=$(kubectl rollout history deployment/${{ env.DEPLOYMENT }} -n ${{ env.NAMESPACE }} | tail -1 | awk '{print $1}')
+          echo "Current revision: $CURRENT_REVISION"
+          echo "current_revision=$CURRENT_REVISION" >> $GITHUB_ENV
+
+      - name: Execute rollback
+        run: |
+          if [ -n "${{ github.event.inputs.revision }}" ]; then
+            echo "Rolling back to revision: ${{ github.event.inputs.revision }}"
+            kubectl rollout undo deployment/${{ env.DEPLOYMENT }} -n ${{ env.NAMESPACE }} --to-revision=${{ github.event.inputs.revision }}
+          else
+            echo "Rolling back to previous revision"
+            kubectl rollout undo deployment/${{ env.DEPLOYMENT }} -n ${{ env.NAMESPACE }}
+          fi
+
+      - name: Wait for rollback to complete
+        run: |
+          kubectl rollout status deployment/${{ env.DEPLOYMENT }} -n ${{ env.NAMESPACE }} --timeout=180s
+
+      - name: Verify rollback
+        run: |
+          NEW_REVISION=$(kubectl get deployment/${{ env.DEPLOYMENT }} -n ${{ env.NAMESPACE }} -o jsonpath='{.metadata.annotations.deployment\.kubernetes\.io/revision}')
+          echo "New revision: $NEW_REVISION"
+          echo "new_revision=$NEW_REVISION" >> $GITHUB_ENV
+
+      - name: Run smoke test
+        run: |
+          kubectl get pods -n ${{ env.NAMESPACE }} -l app=${{ env.DEPLOYMENT }} -o jsonpath='{.items[0].metadata.name}' | xargs -I {} kubectl exec -n ${{ env.NAMESPACE }} {} -- curl -f http://localhost:3001/health
+
+      - name: Create rollback tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REASON="${{ github.event.inputs.reason }}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          echo "Created rollback: ${{ env.current_revision }} -> ${{ env.new_revision }} at $TIMESTAMP"
+          echo "Reason: $REASON"
+
+      - name: Notify rollback
+        run: |
+          echo "Rollback completed: ${{ env.current_revision }} -> ${{ env.new_revision }}"
+          if [ -n "${{ github.event.inputs.reason }}" ]; then
+            echo "Reason: ${{ github.event.inputs.reason }}"
+          fi

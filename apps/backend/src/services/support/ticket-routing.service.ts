@@ -65,8 +65,8 @@ export class TicketRoutingService {
 
   private async findAvailableAgent(roles: string[], priority: TicketPriority): Promise<UserEntity | null> {
     const agents = await this.userRepo.find({
-      where: { role: 1 } as any,
-      order: { createdAt: 'ASC' } as any,
+      where: { role: 1 } as unknown,
+      order: { createdAt: 'ASC' } as unknown,
     });
 
     return agents[0] || null;
@@ -87,7 +87,7 @@ export class TicketRoutingService {
       escalatedToId: escalatedTo,
       escalatedAt: new Date(),
       priority: this.getEscalatedPriority(ticket.priority, newLevel),
-    } as any);
+    } as unknown);
 
     return this.ticketRepo.findOne({ where: { id: ticketId } });
   }
@@ -105,7 +105,7 @@ export class TicketRoutingService {
 
   async autoAssignBySLA(): Promise<void> {
     const unassignedTickets = await this.ticketRepo.find({
-      where: { status: TicketStatus.OPEN } as any,
+      where: { status: TicketStatus.OPEN } as unknown,
     });
 
     for (const ticket of unassignedTickets) {
@@ -113,7 +113,7 @@ export class TicketRoutingService {
     }
   }
 
-  async getQueueStats(): Promise<any> {
+  async getQueueStats(): Promise<unknown> {
     const [
       openTickets,
       inProgress,
@@ -137,14 +137,14 @@ export class TicketRoutingService {
   private async getTicketsByPriority(): Promise<Record<string, number>> {
     const counts: Record<string, number> = {};
     for (const priority of Object.values(TicketPriority)) {
-      counts[priority] = await this.ticketRepo.count({ where: { priority } } as any);
+      counts[priority] = await this.ticketRepo.count({ where: { priority } } as unknown);
     }
     return counts;
   }
 
   async getOverdueTickets(): Promise<SupportTicketEntity[]> {
     return this.ticketRepo.find({
-      where: { status: TicketStatus.IN_PROGRESS } as any,
+      where: { status: TicketStatus.IN_PROGRESS } as unknown,
     });
   }
 }

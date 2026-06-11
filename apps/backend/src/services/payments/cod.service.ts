@@ -23,7 +23,7 @@ export class CodService {
       status: 'requires_capture',
       payment_method: 'cod',
       metadata,
-    } as any;
+    } as unknown;
   }
 
   async confirmPayment(
@@ -36,7 +36,7 @@ export class CodService {
       amount: 0,
       currency: 'usd',
       status: 'succeeded',
-    } as any;
+    } as unknown;
   }
 
   async refundPayment(
@@ -52,6 +52,6 @@ export class CodService {
       currency: 'usd',
       status: 'succeeded',
       metadata: { reason },
-    } as any;
+    } as unknown;
   }
 }

@@ -8,7 +8,7 @@ export class OrderEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @OneToMany('OrderItemEntity', (item: any) => item.order)
+  @OneToMany('OrderItemEntity', (item: unknown) => item.order)
   items!: OrderItemEntity[];
 
   @Column()

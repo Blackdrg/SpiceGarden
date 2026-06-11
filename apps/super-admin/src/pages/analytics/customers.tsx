@@ -4,8 +4,8 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function AnalyticsCustomers() {
-  const [churn, setChurn] = useState<any>(null);
-  const [repeat, setRepeat] = useState<any>(null);
+  const [churn, setChurn] = useState<unknown>(null);
+  const [repeat, setRepeat] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function AnalyticsCustomers() {
             {repeat?.topRepeatCustomers?.length > 0 && (
               <div>
                 <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#71717a' }}>Top Customers</h3>
-                {repeat.topRepeatCustomers.slice(0, 5).map((c: any) => (
+                {repeat.topRepeatCustomers.slice(0, 5).map((c: unknown) => (
                   <div key={c.userId} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #27272a', fontSize: 13 }}>
                     <span>{c.userId.slice(0, 10)}</span>
                     <span style={{ color: '#a1a1aa' }}>{c.orderCount} orders · ₹{c.totalSpent?.toFixed(0)}</span>

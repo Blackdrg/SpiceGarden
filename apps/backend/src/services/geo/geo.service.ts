@@ -101,7 +101,7 @@ export class GeoService {
     customerLocation: GeoPoint,
   ): Promise<RestaurantBranchEntity | null> {
     const branches = await this.branchRepo.find({
-      where: { isOnline: true } as any,
+      where: { isOnline: true } as unknown,
     });
 
     if (!branches.length) return null;

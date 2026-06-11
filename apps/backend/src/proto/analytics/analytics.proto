@@ -1,0 +1,74 @@
+syntax = "proto3";
+package spicegarden.analytics.v1;
+
+service AnalyticsService {
+  rpc GetTopDishes(GetTopDishesRequest) returns (TopDishesResponse);
+  rpc GetChurnAnalysis(GetChurnRequest) returns (ChurnResponse);
+  rpc GetRepeatUsers(GetRepeatUsersRequest) returns (RepeatUsersResponse);
+  rpc GetDeliveryHeatmap(GetHeatmapRequest) returns (HeatmapResponse);
+  rpc GetPlatformAnalytics(GetPlatformAnalyticsRequest) returns (PlatformAnalyticsResponse);
+}
+
+message GetTopDishesRequest {
+  string restaurant_id = 1;
+  int32 period_days = 2;
+}
+
+message TopDishesResponse {
+  repeated TopDish dishes = 1;
+}
+
+message TopDish {
+  string id = 1;
+  string name = 2;
+  int32 total_orders = 3;
+  double total_revenue = 4;
+  double avg_rating = 5;
+}
+
+message GetChurnRequest {
+  string restaurant_id = 1;
+  int32 period_days = 2;
+}
+
+message ChurnResponse {
+  double churn_rate = 1;
+  int32 total_customers = 2;
+  int32 churned_customers = 3;
+  repeated string churn_reasons = 4;
+}
+
+message GetRepeatUsersRequest {
+  string restaurant_id = 1;
+  int32 period_days = 2;
+}
+
+message RepeatUsersResponse {
+  double repeat_rate = 1;
+  int32 repeat_users = 2;
+  int32 total_users = 3;
+}
+
+message GetHeatmapRequest {
+  string restaurant_id = 1;
+  int32 period_days = 2;
+}
+
+message HeatmapResponse {
+  repeated HeatmapPoint points = 1;
+}
+
+message HeatmapPoint {
+  double lat = 1;
+  double lng = 2;
+  int32 order_count = 3;
+}
+
+message GetPlatformAnalyticsRequest {}
+
+message PlatformAnalyticsResponse {
+  int32 total_orders = 1;
+  double total_revenue = 2;
+  int32 active_users = 3;
+  int32 active_restaurants = 4;
+}

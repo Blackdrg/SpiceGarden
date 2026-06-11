@@ -1,0 +1,31 @@
+{
+  "browsers": ["chrome", "safari", "firefox", "edge"],
+  "devices": [
+    {
+      "name": "Desktop Chrome",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "Mobile Safari",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "Mobile Chrome",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      "width": 393,
+      "height": 851
+    }
+  ],
+  "testViewports": [
+    { "name": "Mobile S", "width": 320, "height": 568 },
+    { "name": "Mobile M", "width": 375, "height": 667 },
+    { "name": "Mobile L", "width": 414, "height": 896 },
+    { "name": "Tablet", "width": 768, "height": 1024 },
+    { "name": "Laptop", "width": 1024, "height": 768 },
+    { "name": "Desktop", "width": 1200, "height": 800 }
+  ]
+}

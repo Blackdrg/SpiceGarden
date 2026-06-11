@@ -28,7 +28,7 @@ export class CustomerSupportService {
     customerId: string,
     type: DisputeType,
     description: string,
-    evidence?: any,
+    evidence?: unknown,
   ): Promise<DisputeEntity> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
     if (!order) {
@@ -36,7 +36,7 @@ export class CustomerSupportService {
     }
 
     const existingDispute = await this.disputeRepo.findOne({
-      where: { orderId: orderId as any, status: DisputeStatus.RAISED } as any,
+      where: { orderId: orderId as unknown, status: DisputeStatus.RAISED } as unknown,
     });
     if (existingDispute) {
       throw new BadRequestException('Dispute already exists for this order');
@@ -61,15 +61,15 @@ export class CustomerSupportService {
     restaurantId?: string;
     driverId?: string;
   }): Promise<DisputeEntity[]> {
-    const where: any = {};
+    const where: unknown = {};
     if (filter?.status) where.status = filter.status;
-    if (filter?.customerId) where.customerId = filter.customerId as any;
-    if (filter?.restaurantId) where.restaurantId = filter.restaurantId as any;
-    if (filter?.driverId) where.driverId = filter.driverId as any;
+    if (filter?.customerId) where.customerId = filter.customerId as unknown;
+    if (filter?.restaurantId) where.restaurantId = filter.restaurantId as unknown;
+    if (filter?.driverId) where.driverId = filter.driverId as unknown;
 
     return this.disputeRepo.find({
       where,
-      order: { createdAt: 'DESC' } as any,
+      order: { createdAt: 'DESC' } as unknown,
     });
   }
 
@@ -130,7 +130,7 @@ export class CustomerSupportService {
     type: RefundType,
     amount: number,
     reason: string,
-    evidence?: any,
+    evidence?: unknown,
   ): Promise<RefundEntity> {
     const refund = this.refundRepo.create({
       orderId,
@@ -179,18 +179,18 @@ export class CustomerSupportService {
     status?: RefundStatus;
     orderId?: string;
   }): Promise<RefundEntity[]> {
-    const where: any = {};
+    const where: unknown = {};
     if (filter?.status) where.status = filter.status;
-    if (filter?.orderId) where.orderId = filter.orderId as any;
+    if (filter?.orderId) where.orderId = filter.orderId as unknown;
 
     return this.refundRepo.find({
       where,
-      order: { createdAt: 'DESC' } as any,
+      order: { createdAt: 'DESC' } as unknown,
     });
   }
 
-  async getDisputeStats(startDate?: Date, endDate?: Date): Promise<any> {
-    const where: any = {};
+  async getDisputeStats(startDate?: Date, endDate?: Date): Promise<unknown> {
+    const where: unknown = {};
     if (startDate && endDate) {
       where.createdAt = Between(startDate, endDate);
     }
@@ -202,8 +202,8 @@ export class CustomerSupportService {
       avgResolutionTime,
     ] = await Promise.all([
       this.disputeRepo.count({ where }),
-      this.disputeRepo.count({ where: { ...where, status: DisputeStatus.RESOLVED_CREDIT } as any }),
-      this.disputeRepo.count({ where: { ...where, status: DisputeStatus.RESOLVED_REFUND } as any }),
+      this.disputeRepo.count({ where: { ...where, status: DisputeStatus.RESOLVED_CREDIT } as unknown }),
+      this.disputeRepo.count({ where: { ...where, status: DisputeStatus.RESOLVED_REFUND } as unknown }),
       this.getAverageResolutionTime(where),
     ]);
 
@@ -215,7 +215,7 @@ export class CustomerSupportService {
     };
   }
 
-  private async getAverageResolutionTime(where: any): Promise<number> {
+  private async getAverageResolutionTime(where: unknown): Promise<number> {
     const result = await this.disputeRepo
       .createQueryBuilder('dispute')
       .select('AVG(TIMESTAMPDIFF(HOUR, dispute.createdAt, dispute.resolvedAt))', 'avgHours')

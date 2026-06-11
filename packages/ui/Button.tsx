@@ -2,7 +2,8 @@ import React from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
 interface ButtonProps {
-  label: string;
+  label?: string;
+  children?: React.ReactNode;
   onClick: () => void;
   variant?: 'primary' | 'secondary' | 'ghost' | 'destructive' | 'loading' | 'outline';
   size?: 'sm' | 'md' | 'lg';
@@ -14,6 +15,7 @@ interface ButtonProps {
 
 export const Button = ({ 
   label, 
+  children,
   onClick, 
   variant = 'primary', 
   size = 'md',

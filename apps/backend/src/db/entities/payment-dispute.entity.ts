@@ -10,6 +10,9 @@ export class PaymentDisputeEntity {
    order!: OrderEntity;
 
    @Column()
+   orderId!: string; // Foreign key to order
+
+   @Column()
    disputeId!: string; // External dispute ID from payment processor (Stripe, etc.)
 
    @Column()
@@ -25,7 +28,7 @@ export class PaymentDisputeEntity {
    reason!: string; // Reason provided by customer for dispute
 
    @Column('simple-json', { nullable: true })
-   evidence?: any; // Evidence submitted for dispute resolution
+   evidence?: unknown; // Evidence submitted for dispute resolution
 
    @Column()
    status!: 'warning' | 'needs_response' | 'under_review' | 'won' | 'lost'; // Dispute status

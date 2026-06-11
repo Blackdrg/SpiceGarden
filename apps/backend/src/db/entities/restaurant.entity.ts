@@ -7,10 +7,10 @@ export class RestaurantEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
+  @Column({ nullable: true })
   name!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   slug!: string;
 
   @Column({ nullable: true })

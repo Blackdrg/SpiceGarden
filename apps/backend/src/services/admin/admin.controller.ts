@@ -6,12 +6,12 @@ export class AdminController {
   constructor(private adminService: AdminService) {}
 
   @Get('dashboard')
-  async getStats(@Query() query: any) {
+  async getStats(@Query() query: unknown) {
     return this.adminService.getDashboardStats(query.branchId);
   }
 
   @Get('stats')
-  async getFullStats(@Query() query: any) {
+  async getFullStats(@Query() query: unknown) {
     return this.adminService.getDashboardStats(query.branchId);
   }
 
@@ -21,7 +21,7 @@ export class AdminController {
   }
 
   @Post('users/ban')
-  async banUser(@Body() body: { userId: string; reason: string }, @Req() req: any) {
+  async banUser(@Body() body: { userId: string; reason: string }, @Req() req: unknown) {
     return this.adminService.banUser(body.userId, body.reason);
   }
 }

@@ -71,7 +71,7 @@ export class HeatmapService {
 
     // Add current driver locations as heatmap points
     const onlineDrivers = await this.driverRepo.find({
-      where: { isOnline: true, isAvailable: false } as any,
+      where: { isOnline: true, isAvailable: false } as unknown,
     });
 
     onlineDrivers.forEach(driver => {

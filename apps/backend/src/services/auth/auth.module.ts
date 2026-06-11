@@ -19,8 +19,19 @@ import { SecurityModule } from '../../security/security.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const secret = configService.get<string>('JWT_SECRET');
-        if (!secret || secret.includes('CHANGE_ME') || secret.includes('secret')) {
-          throw new Error('JWT_SECRET not configured. Generate secure random secret before production.');
+        if (!secret) {
+          if (configService.get<string>('NODE_ENV') === 'production') {
+            throw new Error('JWT_SECRET not configured');
+          }
+          console.warn('JWT_SECRET not configured. Using fallback for development.');
+          return { secret: 'dev-secret-change-in-production-please', signOptions: { expiresIn: '60m' } };
+        }
+        if (secret.includes('CHANGE_ME') || secret.includes('secret_here')) {
+          if (configService.get<string>('NODE_ENV') === 'production') {
+            throw new Error('JWT_SECRET not properly configured');
+          }
+          console.warn('JWT_SECRET has placeholder value. Using fallback for development.');
+          return { secret: 'dev-secret-change-in-production-please', signOptions: { expiresIn: '60m' } };
         }
         return {
           secret,

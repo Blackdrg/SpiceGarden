@@ -22,7 +22,7 @@ export class RestaurantOpsController {
   ) {}
 
   @Post('onboarding')
-  async startOnboarding(@Body() body: any) {
+  async startOnboarding(@Body() body: unknown) {
     return this.opsService.startOnboarding(body.userId, body.restaurantData);
   }
 
@@ -32,17 +32,17 @@ export class RestaurantOpsController {
   }
 
   @Put('onboarding/:id/step')
-  async updateOnboardingStep(@Param('id') id: string, @Body() body: { step: string; data?: any }) {
-    return this.opsService.updateStep(id, body.step as any, body.data);
+  async updateOnboardingStep(@Param('id') id: string, @Body() body: { step: string; data?: unknown }) {
+    return this.opsService.updateStep(id, body.step as unknown, body.data);
   }
 
   @Post('onboarding/:id/complete')
-  async completeOnboarding(@Param('id') id: string, @Req() req: any) {
+  async completeOnboarding(@Param('id') id: string, @Req() req: unknown) {
     return this.opsService.completeOnboarding(id, req.user.id);
   }
 
   @Post('moderation')
-  async submitForModeration(@Body() body: any) {
+  async submitForModeration(@Body() body: unknown) {
     return this.moderationService.submitForModeration(
       body.menuItemId,
       body.restaurantId,
@@ -58,7 +58,7 @@ export class RestaurantOpsController {
   }
 
   @Put('moderation/:id/review')
-  async reviewModeration(@Param('id') id: string, @Body() body: any, @Req() req: any) {
+  async reviewModeration(@Param('id') id: string, @Body() body: unknown, @Req() req: unknown) {
     return this.moderationService.reviewModeration(id, req.user.id, body.status, body.notes);
   }
 
@@ -82,12 +82,12 @@ export class RestaurantOpsController {
   }
 
   @Post('branch')
-  async createBranch(@Body() body: any) {
+  async createBranch(@Body() body: unknown) {
     return this.branchService.createBranch(body.restaurantId, body.branchData);
   }
 
   @Put('branch/:id')
-  async updateBranch(@Param('id') id: string, @Body() body: any) {
+  async updateBranch(@Param('id') id: string, @Body() body: unknown) {
     return this.branchService.updateBranch(id, body);
   }
 
@@ -102,7 +102,7 @@ export class RestaurantOpsController {
   }
 
   @Post('commission')
-  async createCommissionRule(@Body() body: any) {
+  async createCommissionRule(@Body() body: unknown) {
     return this.commissionService.createCommissionRule(body.restaurantId, body.ruleData);
   }
 

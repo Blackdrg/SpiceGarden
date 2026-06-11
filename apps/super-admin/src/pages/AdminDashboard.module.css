@@ -1,0 +1,552 @@
+.container {
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  background: #1e2a3a;
+  color: white;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.brandHeader {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid #2a3a4a;
+}
+
+.brandTitle {
+  font-size: 1.0625rem; /* 17px */
+  font-weight: bold;
+  color: #f04e31;
+}
+
+.brandSubtitle {
+  font-size: 0.6875rem; /* 11px */
+  color: #7a8a9a;
+  margin-top: 0.1875rem; /* 3px */
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* 4px */
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* 12px */
+  padding: 0.75rem 1.25rem; /* 12px 20px */
+  color: white;
+  text-decoration: none;
+  font-size: 0.875rem; /* 14px */
+}
+
+.navLinkActive {
+  color: #f04e31;
+}
+
+.main {
+  margin-left: 220px;
+  padding: 1.5rem; /* 24px */
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem; /* 16px */
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.chartsContainer {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem; /* 24px */
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.chartWrapper {
+  height: 280px;
+}
+
+.liveOrderFeed {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.emptyFeed {
+  color: #aaa;
+  text-align: center;
+  padding: 1.25rem; /* 20px */
+}
+
+.liveOrderItem {
+  padding: 0.625rem 0; /* 10px 0 */
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.liveOrderId {
+  font-weight: 600;
+  font-size: 0.875rem; /* 14px */
+}
+
+.liveOrderMeta {
+  font-size: 0.75rem; /* 12px */
+  color: #888;
+}
+
+.liveOrderAmount {
+  color: #4caf50;
+  font-weight: bold;
+  font-size: 0.875rem; /* 14px */
+}
+
+.alertsContainer {
+  display: flex;
+  gap: 1rem; /* 16px */
+  flex-wrap: wrap;
+}
+
+.alertItem {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: #fff5f5;
+  border-left: 4px solid #ff4444;
+  border-radius: 0.375rem;
+  min-width: 13.75rem;
+}
+
+.normalBranches {
+  flex: 1;
+  padding: 0.75rem 1rem; /* 12px 16px */
+  background: #f5fff5;
+  border-left: 4px solid #4caf50;
+  border-radius: 0.375rem; /* 6px */
+  min-width: 13.75rem; /* 220px */
+}
+
+.ordersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem; /* 12px */
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.orderTableWrapper {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem; /* 13px */
+}
+
+.tableHeader {
+  border-bottom: 2px solid #eee;
+}
+
+.tableHeaderCell {
+  text-align: left;
+  padding: 0.5rem 0.75rem; /* 8px 12px */
+  color: #888;
+  font-weight: 600;
+  font-size: 0.6875rem; /* 11px */
+  text-transform: uppercase;
+}
+
+.tableRow {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tableCellOrderId {
+  padding: 0.625rem 0.75rem; /* 10px 12px */
+  font-weight: bold;
+}
+
+.tableCellBranch {
+  padding: 0.625rem 0.75rem;
+  color: #666;
+}
+
+.tableCellAmount {
+  padding: 0.625rem 0.75rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.tableCellEta {
+  padding: 0.625rem 0.75rem;
+  color: #888;
+}
+
+.tableCellStatus {
+  padding: 0.625rem 0.75rem;
+}
+
+.statusBadge {
+  padding: 0.125rem 0.625rem; /* 2px 10px */
+  border-radius: 0.75rem; /* 12px */
+  font-size: 0.6875rem; /* 11px */
+  font-weight: bold;
+  background: #e8f5e8; /* default */
+  color: #555;
+}
+
+.ageCell {
+  padding: 0.625rem 0.75rem;
+  color: #999;
+  font-size: 0.75rem; /* 12px */
+}
+
+.emptyOrders {
+  text-align: center;
+  padding: 2.5rem; /* 40px */
+  color: #aaa;
+}
+
+.branchesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem; /* 20px */
+}
+
+.branchInfo {
+  margin-bottom: 12px;
+}
+
+.branchPrep {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.branchPrepBar {
+  height: 8px;
+  border-radius: 4px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.branchButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.heatmapContainer {
+  width: 100%;
+  display: grid;
+  gap: 1px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.refundItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.fraudCard {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.buttonPrimary {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #f04e31;
+  color: white;
+  cursor: pointer;
+}
+
+.buttonSecondary {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #f0f0f0;
+  color: #333;
+  cursor: pointer;
+}
+
+.ticketsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.filterButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.filterButton:hover {
+  background: #f5f5f5;
+}
+
+.kpiCard {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.kpiValue {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.kpiDelta {
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.cardTitle {
+  margin: 0 0 4px 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.cardSubtitle {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.branchesFilterGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.supportTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.ticketFilterRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ticketItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ticketMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ticketIcon {
+  font-size: 16px;
+}
+
+.ticketId {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.ticketSeverity {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.ticketSeverityLow { background: #2196f322; color: #2196f3; }
+.ticketSeverityMedium { background: #ff980022; color: #ff9800; }
+.ticketSeverityHigh { background: #ff444422; color: #ff4444; }
+.ticketSeverityCritical { background: #9c27b022; color: #9c27b0; }
+
+.ticketTime {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.ticketDescription {
+  margin: 2px 0 4px;
+  color: #555;
+  font-size: 13px;
+}
+
+.ticketFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticketReporter {
+  font-size: 12px;
+  color: #888;
+}
+
+.ticketActions {
+  display: flex;
+  gap: 6px;
+}
+
+.refundItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.refundAmount {
+  font-weight: bold;
+  color: #ff4444;
+}
+
+.refundDescription {
+  color: #666;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+
+.fraudItemHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.fraudId {
+  color: #f04e31;
+}
+
+.fraudDescription {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.noRefunds {
+  color: #aaa;
+  text-align: center;
+  padding: 20px;
+}
+
+.branchStatusRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.branchProgressBar {
+  height: 8px;
+  border-radius: 4px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.branchProgressFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s;
+}
+
+.branchButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.branchButtonPrimary {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #f04e31;
+  color: white;
+}
+
+.branchButtonSecondary {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.col2Container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.refundActions {
+  display: flex;
+  gap: 6px;
+}
+
+.fraudActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Global styles for box-sizing and button font inheritance */
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}

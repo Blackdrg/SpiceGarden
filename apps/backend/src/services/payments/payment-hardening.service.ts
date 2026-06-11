@@ -37,7 +37,7 @@ export class PaymentHardeningService {
     this.stripe = new Stripe(
       this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
       {
-        apiVersion: '2024-04-10' as any,
+        apiVersion: '2024-04-10' as unknown,
       }
     );
   }
@@ -142,7 +142,7 @@ export class PaymentHardeningService {
       where: {
         userId,
         operation: 'create_payment_intent',
-        createdAt: MoreThanOrEqual(oneHourAgo) as any
+        createdAt: MoreThanOrEqual(oneHourAgo) as unknown
       }
     });
 
@@ -179,8 +179,8 @@ export class PaymentHardeningService {
     idempotencyKey: string,
     operation: string,
     userId: string,
-    requestPayload: any
-  ): Promise<{ isDuplicate: boolean; existingResponse?: any }> {
+    requestPayload: unknown
+  ): Promise<{ isDuplicate: boolean; existingResponse?: unknown }> {
     if (!idempotencyKey) {
       return { isDuplicate: false };
     }
@@ -218,7 +218,7 @@ export class PaymentHardeningService {
   async completeIdempotency(
     idempotencyKey: string,
     operation: string,
-    responsePayload: any,
+    responsePayload: unknown,
     statusCode: number = 200
   ): Promise<void> {
     await this.idempotencyRepo.update(
@@ -257,7 +257,7 @@ export class PaymentHardeningService {
       where: {
         userId,
         operation: 'create_payment_intent',
-        createdAt: MoreThanOrEqual(new Date(Date.now() - 24 * 60 * 60 * 1000)) as any
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 24 * 60 * 60 * 1000)) as unknown
       }
     });
 
@@ -354,7 +354,7 @@ export class PaymentHardeningService {
     }
   }
 
-  async handleChargeback(paymentIntentId: string, dispute: any): Promise<any> {
+  async handleChargeback(paymentIntentId: string, dispute: unknown): Promise<unknown> {
     await this.auditService.logPaymentEvent(
       'chargeback_received',
       dispute.customer || 'unknown',
@@ -384,7 +384,7 @@ export class PaymentHardeningService {
     };
   }
 
-  async createPaymentRetry(paymentIntentId: string, retryAttempt: number): Promise<any> {
+  async createPaymentRetry(paymentIntentId: string, retryAttempt: number): Promise<unknown> {
     const existingIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
     if (!existingIntent) {
       throw new BadRequestException('Payment intent not found');

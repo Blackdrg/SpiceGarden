@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
 import Head from 'next/head';
+import { Button } from '@spicegarden/ui';
 
 export default function OnboardingGST() {
   const [form, setForm] = useState({

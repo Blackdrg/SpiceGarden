@@ -1,0 +1,100 @@
+syntax = "proto3";
+package spicegarden.wallet.v1;
+
+service WalletService {
+  rpc GetWallet(GetWalletRequest) returns (WalletResponse);
+  rpc GetTransactions(GetTransactionsRequest) returns (TransactionsResponse);
+  rpc CreditWallet(CreditWalletRequest) returns (WalletTransactionResponse);
+  rpc DebitWallet(DebitWalletRequest) returns (WalletTransactionResponse);
+  rpc ProcessCODPayment(ProcessCODRequest) returns (CODResponse);
+  rpc ConfirmCODCollection(ConfirmCODRequest) returns (CODResponse);
+  rpc RefundCOD(RefundCODRequest) returns (CODResponse);
+  rpc PreventDuplicatePayment(PreventDuplicateRequest) returns (DuplicateCheckResponse);
+}
+
+message GetWalletRequest {
+  string user_id = 1;
+}
+
+message WalletResponse {
+  string user_id = 1;
+  double balance = 2;
+  string currency = 3;
+  string updated_at = 4;
+}
+
+message GetTransactionsRequest {
+  string user_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message WalletTransaction {
+  string id = 1;
+  string user_id = 2;
+  string type = 3;
+  double amount = 4;
+  string description = 5;
+  string reference_id = 6;
+  string created_at = 7;
+}
+
+message TransactionsResponse {
+  repeated WalletTransaction transactions = 1;
+  int32 total = 2;
+}
+
+message CreditWalletRequest {
+  string user_id = 1;
+  double amount = 2;
+  string description = 3;
+  string reference_id = 4;
+}
+
+message DebitWalletRequest {
+  string user_id = 1;
+  double amount = 2;
+  string description = 3;
+  string reference_id = 4;
+}
+
+message WalletTransactionResponse {
+  string transaction_id = 1;
+  double new_balance = 2;
+  string status = 3;
+}
+
+message ProcessCODRequest {
+  string order_id = 1;
+  double amount = 2;
+  string user_id = 3;
+}
+
+message ConfirmCODRequest {
+  string order_id = 1;
+  double amount = 2;
+  string user_id = 3;
+}
+
+message RefundCODRequest {
+  string order_id = 1;
+  double amount = 2;
+  string user_id = 3;
+  string reason = 4;
+}
+
+message CODResponse {
+  string order_id = 1;
+  string status = 2;
+  double amount = 3;
+}
+
+message PreventDuplicateRequest {
+  string user_id = 1;
+  string order_id = 2;
+  double amount = 3;
+}
+
+message DuplicateCheckResponse {
+  bool allowed = 1;
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+package spicegarden.search.v1;
+
+service SearchService {
+  rpc Search(SearchRequest) returns (SearchResultsResponse);
+  rpc GetTrending(TrendingRequest) returns (SearchResultsResponse);
+  rpc GetRecommended(RecommendedRequest) returns (SearchResultsResponse);
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+
+message TrendingRequest {
+  int32 limit = 1;
+}
+
+message RecommendedRequest {
+  string user_id = 1;
+  int32 limit = 2;
+}
+
+message SearchResultItem {
+  string id = 1;
+  string type = 2;
+  string name = 3;
+  string description = 4;
+  string image_url = 5;
+  double rating = 6;
+}
+
+message SearchResultsResponse {
+  repeated SearchResultItem results = 1;
+}

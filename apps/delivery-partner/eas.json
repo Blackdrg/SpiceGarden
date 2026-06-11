@@ -1,0 +1,29 @@
+{
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug",
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease",
+        "minSdkVersion": 24,
+        "targetSdkVersion": 34,
+        "proguardEnabled": true
+      },
+      "ios": {
+        "buildType": "release"
+      }
+    }
+  },
+  "cli": {
+    "version": 3
+  }
+}

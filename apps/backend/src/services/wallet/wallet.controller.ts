@@ -12,18 +12,18 @@ export class WalletController {
   constructor(private readonly walletService: WalletService) { }
 
   @Get()
-  async getWallet(@Request() req: any) {
+  async getWallet(@Request() req: unknown) {
     return await this.walletService.getWallet(req.user.id);
   }
 
   @Get('balance')
-  async getBalance(@Request() req: any) {
+  async getBalance(@Request() req: unknown) {
     return await this.walletService.getWalletBalance(req.user.id);
   }
 
   @Get('transactions')
   async getTransactions(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('limit') limit: number = 20,
     @Body('offset') offset: number = 0,
   ) {
@@ -32,7 +32,7 @@ export class WalletController {
 
   @Post('credit')
   async creditWallet(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('amount') amount: number,
     @Body('description') description: string,
     @Body('referenceId') referenceId?: string,
@@ -47,7 +47,7 @@ export class WalletController {
 
   @Post('debit')
   async debitWallet(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('amount') amount: number,
     @Body('description') description: string,
     @Body('referenceId') referenceId?: string,
@@ -62,7 +62,7 @@ export class WalletController {
 
   @Post('compensate')
   async compensateUser(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('amount') amount: number,
     @Body('reason') reason: string,
   ) {
@@ -71,7 +71,7 @@ export class WalletController {
 
   @Post('cod/process')
   async processCODPayment(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
   ) {
@@ -80,7 +80,7 @@ export class WalletController {
 
   @Post('cod/confirm')
   async confirmCODCollection(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
   ) {
@@ -89,7 +89,7 @@ export class WalletController {
 
   @Post('cod/refund')
   async refundCOD(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
     @Body('reason') reason: string,
@@ -99,7 +99,7 @@ export class WalletController {
 
   @Post('prevent-duplicate')
   async preventDuplicatePayment(
-    @Request() req: any,
+    @Request() req: unknown,
     @Body('orderId') orderId: string,
     @Body('amount') amount: number,
   ) {

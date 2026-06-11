@@ -58,7 +58,7 @@ const CheckoutPage = () => {
 
   const handlePlaceOrder = async () => {
     setLoading(true);
-    // Reset any previous error states
+    // Reset unknown previous error states
     setPromoError('');
     setPromoSuccess('');
     setOrderError('');

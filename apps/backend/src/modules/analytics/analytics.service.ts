@@ -20,7 +20,7 @@ export class AnalyticsService {
     private dataSource: DataSource,
   ) {}
 
-  async getTopDishes(restaurantId?: string, period = 30): Promise<any> {
+  async getTopDishes(restaurantId?: string, period = 30): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -60,7 +60,7 @@ export class AnalyticsService {
     return { period: `Last ${period} days`, dishes };
   }
 
-  async getChurnAnalysis(restaurantId?: string, period = 90): Promise<any> {
+  async getChurnAnalysis(restaurantId?: string, period = 90): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -101,7 +101,7 @@ export class AnalyticsService {
     };
   }
 
-  async getRepeatUsers(restaurantId?: string, period = 90): Promise<any> {
+  async getRepeatUsers(restaurantId?: string, period = 90): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -154,7 +154,7 @@ export class AnalyticsService {
     };
   }
 
-  async getConversionRate(restaurantId?: string, period = 30): Promise<any> {
+  async getConversionRate(restaurantId?: string, period = 30): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -198,7 +198,7 @@ export class AnalyticsService {
     };
   }
 
-  async getDeliveryHeatmap(restaurantId?: string, period = 30): Promise<any> {
+  async getDeliveryHeatmap(restaurantId?: string, period = 30): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -257,7 +257,7 @@ export class AnalyticsService {
     };
   }
 
-  async getPeakHours(restaurantId?: string, period = 30): Promise<any> {
+  async getPeakHours(restaurantId?: string, period = 30): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -298,7 +298,7 @@ export class AnalyticsService {
     };
   }
 
-  async getRestaurantAnalytics(restaurantId: string): Promise<any> {
+  async getRestaurantAnalytics(restaurantId: string): Promise<unknown> {
     const [topDishes, churn, repeat, conversion, heatmap, peakHours] = await Promise.all([
       this.getTopDishes(restaurantId),
       this.getChurnAnalysis(restaurantId),
@@ -320,7 +320,7 @@ export class AnalyticsService {
     };
   }
 
-  async getPlatformAnalytics(): Promise<any> {
+  async getPlatformAnalytics(): Promise<unknown> {
     const topDishes = await this.getTopDishes(undefined);
     const churn = await this.getChurnAnalysis(undefined);
     const repeat = await this.getRepeatUsers(undefined);

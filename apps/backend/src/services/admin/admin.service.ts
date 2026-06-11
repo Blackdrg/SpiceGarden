@@ -23,7 +23,7 @@ export class AdminService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let where: any = { createdAt: Between(today, new Date()) };
+    let where: unknown = { createdAt: Between(today, new Date()) };
     if (branchId) {
       where = { ...where, restaurantId: branchId };
     }
@@ -90,7 +90,7 @@ export class AdminService {
     }));
   }
 
-  async logAction(action: string, userId: string, entityType: string, entityId: string, metadata: any) {
+  async logAction(action: string, userId: string, entityType: string, entityId: string, metadata: unknown) {
     const log = this.auditRepo.create({
       action,
       performedBy: userId,
@@ -110,7 +110,7 @@ export class AdminService {
   }
 
   async banUser(userId: string, reason: string) {
-    await this.userRepo.update(userId, { status: 'suspended' as any });
+    await this.userRepo.update(userId, { status: 'suspended' as unknown });
     return { success: true };
   }
 }

@@ -70,7 +70,7 @@ export class FraudHardeningService {
     const hourlyTransactions = await this.fraudFlagRepo.count({
       where: {
         userId,
-        createdAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as any
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as unknown
       }
     });
 
@@ -148,7 +148,7 @@ export class FraudHardeningService {
     orderId?: string;
     ipAddress?: string;
     userAgent?: string;
-    cardInfo?: any;
+    cardInfo?: unknown;
     riskScore: number;
     reasons: string[];
   }): Promise<PaymentFraudFlagEntity> {
@@ -211,7 +211,7 @@ export class FraudHardeningService {
       where: {
         userId,
         isBlocked: true,
-        blockedAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as any
+        blockedAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as unknown
       }
     });
 
@@ -221,12 +221,12 @@ export class FraudHardeningService {
   async getFraudHistory(userId: string, limit: number = 50): Promise<PaymentFraudFlagEntity[]> {
     return this.fraudFlagRepo.find({
       where: { userId },
-      order: { createdAt: 'DESC' as any },
+      order: { createdAt: 'DESC' as unknown },
       take: limit,
     });
   }
 
-  async getFraudStats(): Promise<any> {
+  async getFraudStats(): Promise<unknown> {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -240,10 +240,10 @@ export class FraudHardeningService {
         .getRawOne()
         .then(r => Number(r?.count || 0)),
       this.fraudFlagRepo.count({
-        where: { createdAt: MoreThanOrEqual(twentyFourHoursAgo) as any }
+        where: { createdAt: MoreThanOrEqual(twentyFourHoursAgo) as unknown }
       }),
       this.fraudFlagRepo.count({
-        where: { createdAt: MoreThanOrEqual(sevenDaysAgo) as any }
+        where: { createdAt: MoreThanOrEqual(sevenDaysAgo) as unknown }
       }),
     ]);
 

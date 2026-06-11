@@ -31,8 +31,8 @@ type Order = {
   prepStartedAt?: Date;
 };
 
-type OrderStatus = 'new' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed';
-type ServiceType = 'delivery' | 'dine-in' | 'takeaway';
+type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed';
+type ServiceType = 'delivery' | 'dine-in' | 'dine_in' | 'takeaway';
 
 // ── Pre-seeded demo data ────────────────────────────────────────────────────
 
@@ -167,13 +167,14 @@ export default function KitchenDashboard() {
   // ── Derived data ──────────────────────────────────────────────────────────
 
   const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
-  const statusLabels: Record<OrderStatus, string> = {
-    new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE',
-  };
-  const statusColors: Record<OrderStatus, string> = {
+  const statusLabels = {
+    new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
+  } as const satisfies Record<OrderStatus, string>;
+  const statusColors = {
     new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
     ready: '#4caf50', delayed: '#ff4444', completed: '#999', pickedup: '#ff9800', delivered: '#4caf50',
-  };
+    cancelled: '#888',
+  } as const satisfies Record<OrderStatus, string>;
 
   const counts = Object.fromEntries(statuses.map((s) => [s, orders.filter((o) => o.status === s).length])) as Record<OrderStatus, number>;
 
@@ -185,7 +186,7 @@ export default function KitchenDashboard() {
 
   const tryPlay = (base64: string) => {
     const el = new Audio(`data:audio/wav;base64,${base64}`);
-    el.play().catch(() => {});
+    el.play().catch(() => null);
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -428,7 +429,7 @@ export default function KitchenDashboard() {
            ].map((t) => (
              <div
                key={t.key}
-               onClick={() => setActiveTab(t.key)}
+                onClick={() => setActiveTab(t.key as 'kitchen' | 'inventory')}
                style={{
                  display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer',
                  color: activeTab === t.key ? '#f04e31' : '#666', fontSize: '10px',
@@ -464,10 +465,10 @@ interface OrderCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const SERVICE_LABEL: Record<ServiceType, string> = {
-  dine_in: 'DINE IN', takeaway: 'TAKEAWAY', delivery: 'DELIVERY',
+  dine_in: 'DINE IN', 'dine-in': 'DINE IN', takeaway: 'TAKEAWAY', delivery: 'DELIVERY',
 };
 const SERVICE_COLOR: Record<ServiceType, string> = {
-  dine_in: '#9c27b0', takeaway: '#ff9800', delivery: '#2196f3',
+  dine_in: '#9c27b0', 'dine-in': '#9c27b0', takeaway: '#ff9800', delivery: '#2196f3',
 };
 
 function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, onPark }: OrderCardProps) {
@@ -576,6 +577,7 @@ function statusColor(s: OrderStatus): string {
   const colors: Record<OrderStatus, string> = {
     new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
     ready: '#4caf50', delayed: '#ff4444', completed: '#444', pickedup: '#ff9800', delivered: '#4caf50',
+    cancelled: '#888',
   };
   return colors[s];
 }

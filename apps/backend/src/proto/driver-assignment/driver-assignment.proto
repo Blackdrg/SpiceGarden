@@ -1,0 +1,166 @@
+syntax = "proto3";
+package spicegarden.driverassignment.v1;
+
+service DriverAssignmentService {
+  rpc AssignDriverToOrder(AssignDriverRequest) returns (AssignmentResponse);
+  rpc AssignBatchDelivery(BatchAssignRequest) returns (BatchAssignResponse);
+  rpc ReassignOrder(ReassignRequest) returns (AssignmentResponse);
+  rpc GetDriverAssignments(GetAssignmentsRequest) returns (AssignmentsResponse);
+  rpc GetOrderAssignments(GetOrderAssignmentsRequest) returns (AssignmentsResponse);
+  rpc UpdateAssignmentStatus(UpdateAssignmentStatusRequest) returns (AssignmentResponse);
+  rpc UpdateAssignmentRoute(UpdateRouteRequest) returns (AssignmentResponse);
+  rpc GetAvailableDrivers(GetAvailableDriversRequest) returns (DriversListResponse);
+  rpc CalculateETA(CalculateETARequest) returns (ETAResponse);
+  rpc RecordDeliverySLA(RecordSLARequest) returns (SLAResponse);
+  rpc GetDeliverySLAMetrics(GetSLAMetricsRequest) returns (SLAMetricsResponse);
+  rpc RecordFraudIncident(RecordFraudRequest) returns (FraudResponse);
+}
+
+message AssignDriverRequest {
+  string order_id = 1;
+}
+
+message AssignmentResponse {
+  string assignment_id = 1;
+  string order_id = 2;
+  string driver_id = 3;
+  string status = 4;
+  int32 estimated_time_minutes = 5;
+  string assigned_at = 6;
+}
+
+message BatchAssignRequest {
+  repeated string order_ids = 1;
+  string driver_id = 2;
+}
+
+message BatchAssignResponse {
+  repeated AssignmentResponse assignments = 1;
+  int32 success_count = 2;
+  int32 failure_count = 3;
+}
+
+message ReassignRequest {
+  string assignment_id = 1;
+  string new_driver_id = 2;
+  string reason = 3;
+}
+
+message GetAssignmentsRequest {
+  string driver_id = 1;
+  string status = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message GetOrderAssignmentsRequest {
+  string order_id = 1;
+}
+
+message AssignmentsResponse {
+  repeated AssignmentResponse assignments = 1;
+  int32 total = 2;
+}
+
+message UpdateAssignmentStatusRequest {
+  string assignment_id = 1;
+  string status = 2;
+  int32 actual_time_minutes = 3;
+}
+
+message UpdateRouteRequest {
+  string assignment_id = 1;
+  RouteData route_data = 2;
+}
+
+message RouteData {
+  LocationData start = 1;
+  LocationData end = 2;
+  repeated LocationData waypoints = 3;
+}
+
+message LocationData {
+  double lat = 1;
+  double lng = 2;
+  double heading = 3;
+  double speed = 4;
+}
+
+message GetAvailableDriversRequest {
+  double lat = 1;
+  double lng = 2;
+  double radius = 3;
+}
+
+message DriversListResponse {
+  repeated DriverData drivers = 1;
+}
+
+message DriverData {
+  string id = 1;
+  string name = 2;
+  double distance_km = 3;
+  double rating = 4;
+  bool is_available = 5;
+}
+
+message CalculateETARequest {
+  string order_id = 1;
+  string driver_id = 2;
+}
+
+message ETAResponse {
+  string order_id = 1;
+  int32 eta_minutes = 2;
+  double distance_km = 3;
+}
+
+message RecordSLARequest {
+  string driver_id = 1;
+  string branch_id = 2;
+  string metric_name = 3;
+  double value = 4;
+  string unit = 5;
+}
+
+message SLAResponse {
+  bool success = 1;
+  string recorded_at = 2;
+}
+
+message GetSLAMetricsRequest {
+  string driver_id = 1;
+  string branch_id = 2;
+  string metric_name = 3;
+  int32 limit = 4;
+}
+
+message SLAMetricsResponse {
+  repeated SLAData metrics = 1;
+}
+
+message SLAData {
+  string id = 1;
+  string driver_id = 2;
+  string branch_id = 3;
+  string metric_name = 4;
+  double value = 5;
+  string unit = 6;
+  double target_value = 7;
+  string recorded_at = 8;
+}
+
+message RecordFraudRequest {
+  string driver_id = 1;
+  string order_id = 2;
+  string branch_id = 3;
+  string fraud_type = 4;
+  string evidence_json = 5;
+  string severity = 6;
+}
+
+message FraudResponse {
+  string fraud_id = 1;
+  string status = 2;
+  string recorded_at = 3;
+}

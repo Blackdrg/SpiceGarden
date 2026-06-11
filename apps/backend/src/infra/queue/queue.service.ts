@@ -11,7 +11,7 @@ export class QueueService {
     private readonly orderRepo: Repository<OrderEntity>,
   ) {}
 
-  async enqueue(queueName: string, data: any) {
+  async enqueue(queueName: string, data: unknown) {
     // In-memory simulation of queue processing for now
     console.log(`[QueueService] Processing job for ${queueName}:`, data);
     

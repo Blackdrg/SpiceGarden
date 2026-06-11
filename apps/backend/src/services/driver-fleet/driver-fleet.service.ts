@@ -30,7 +30,7 @@ export class DriverFleetService {
     if (driver.kycStatus !== 'approved') throw new BadRequestException('KYC not approved');
 
     const activeShift = await this.shiftRepo.findOne({
-      where: { driverId, status: DriverShiftStatus.ACTIVE } as any,
+      where: { driverId, status: DriverShiftStatus.ACTIVE } as unknown,
     });
     if (activeShift) throw new BadRequestException('Already has an active shift');
 
@@ -63,13 +63,13 @@ export class DriverFleetService {
     });
   }
 
-  async getEarnings(driverId: string, period: { start: Date; end: Date }): Promise<any> {
+  async getEarnings(driverId: string, period: { start: Date; end: Date }): Promise<unknown> {
     const earnings = await this.shiftRepo.find({
       where: {
         driverId,
         status: DriverShiftStatus.COMPLETED,
         startTime: Between(period.start, period.end),
-      } as any,
+      } as unknown,
       order: { startTime: 'DESC' },
     });
 
@@ -98,17 +98,17 @@ export class DriverFleetService {
     };
   }
 
-  async calculateIncentives(driverId: string): Promise<any> {
+  async calculateIncentives(driverId: string): Promise<unknown> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) throw new NotFoundException('Driver not found');
 
     const score = await this.scoreRepo.findOne({
-      where: { driver: { id: driverId } } as any,
+      where: { driver: { id: driverId } } as unknown,
       order: { createdAt: 'DESC' },
     });
 
     let bonusAmount = 0;
-    const bonuses: any[] = [];
+    const bonuses: unknown[] = [];
 
     if (score && score.customerRating >= 4.5) {
       const amount = Math.round(score.totalDeliveries * 5);
@@ -133,7 +133,7 @@ export class DriverFleetService {
     return { driverId, score, bonuses, totalBonus: bonusAmount };
   }
 
-  async issuePenalty(driverId: string, data: any): Promise<DriverPenaltyEntity> {
+  async issuePenalty(driverId: string, data: unknown): Promise<DriverPenaltyEntity> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) throw new NotFoundException('Driver not found');
 
@@ -149,7 +149,7 @@ export class DriverFleetService {
     return this.penaltyRepo.save(penalty);
   }
 
-  async getPerformanceRanking(driverId?: string): Promise<any> {
+  async getPerformanceRanking(driverId?: string): Promise<unknown> {
     let query = this.scoreRepo.createQueryBuilder('score');
     if (driverId) {
       query = query.where('score.driverId = :driverId', { driverId });
@@ -161,7 +161,7 @@ export class DriverFleetService {
 
     const rankings = scores.map((s, idx) => ({
       rank: idx + 1,
-      driverId: (s.driver as any).id,
+      driverId: (s.driver as unknown).id,
       overallScore: s.overallScore,
       onTimeRate: s.onTimeDeliveryRate,
       acceptanceRate: s.acceptanceRate,
@@ -179,7 +179,7 @@ export class DriverFleetService {
     };
   }
 
-  async getDriverSchedule(driverId: string, days = 14): Promise<any> {
+  async getDriverSchedule(driverId: string, days = 14): Promise<unknown> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 1);
     const endDate = new Date();
@@ -189,7 +189,7 @@ export class DriverFleetService {
       where: {
         driverId,
         startTime: Between(startDate, endDate),
-      } as any,
+      } as unknown,
       order: { startTime: 'DESC' },
     });
 

@@ -1,0 +1,119 @@
+"use strict";
+var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
+    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+    var _, done = false;
+    for (var i = decorators.length - 1; i >= 0; i--) {
+        var context = {};
+        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
+        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
+        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
+        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+        if (kind === "accessor") {
+            if (result === void 0) continue;
+            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
+            if (_ = accept(result.get)) descriptor.get = _;
+            if (_ = accept(result.set)) descriptor.set = _;
+            if (_ = accept(result.init)) initializers.unshift(_);
+        }
+        else if (_ = accept(result)) {
+            if (kind === "field") initializers.unshift(_);
+            else descriptor[key] = _;
+        }
+    }
+    if (target) Object.defineProperty(target, contextIn.name, descriptor);
+    done = true;
+};
+var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
+    var useValue = arguments.length > 2;
+    for (var i = 0; i < initializers.length; i++) {
+        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    }
+    return useValue ? value : void 0;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RestaurantServiceModule = void 0;
+const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const restaurant_service_1 = require("./restaurant.service");
+const restaurant_controller_1 = require("./restaurant.controller");
+const restaurant_ops_controller_1 = require("./restaurant-ops.controller");
+const restaurant_ops_service_1 = require("./restaurant-ops.service");
+const menu_moderation_service_1 = require("./menu-moderation.service");
+const payout_service_1 = require("./payout.service");
+const branch_management_service_1 = require("./branch-management.service");
+const commission_service_1 = require("./commission.service");
+const onboarding_service_1 = require("./onboarding.service");
+const onboarding_controller_1 = require("./onboarding.controller");
+const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
+const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
+const menu_category_entity_1 = require("../../db/entities/menu-category.entity");
+const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
+const inventory_item_entity_1 = require("../../db/entities/inventory-item.entity");
+const restaurant_onboarding_entity_1 = require("../../db/entities/restaurant-onboarding.entity");
+const menu_moderation_entity_1 = require("../../db/entities/menu-moderation.entity");
+const payout_report_entity_1 = require("../../db/entities/payout-report.entity");
+const commission_rule_entity_1 = require("../../db/entities/commission-rule.entity");
+const order_entity_1 = require("../../db/entities/order.entity");
+const gst_detail_entity_1 = require("../../db/entities/gst-detail.entity");
+const user_entity_1 = require("../../db/entities/user.entity");
+let RestaurantServiceModule = (() => {
+    let _classDecorators = [(0, common_1.Module)({
+            imports: [
+                typeorm_1.TypeOrmModule.forFeature([
+                    restaurant_entity_1.RestaurantEntity,
+                    restaurant_branch_entity_1.RestaurantBranchEntity,
+                    menu_category_entity_1.MenuCategoryEntity,
+                    menu_item_entity_1.MenuItemEntity,
+                    inventory_item_entity_1.InventoryItemEntity,
+                    restaurant_onboarding_entity_1.RestaurantOnboardingEntity,
+                    menu_moderation_entity_1.MenuModerationEntity,
+                    payout_report_entity_1.PayoutReportEntity,
+                    commission_rule_entity_1.CommissionRuleEntity,
+                    order_entity_1.OrderEntity,
+                    gst_detail_entity_1.GSTDetailEntity,
+                    user_entity_1.UserEntity,
+                ]),
+            ],
+            providers: [
+                restaurant_service_1.RestaurantService,
+                restaurant_ops_service_1.RestaurantOpsService,
+                menu_moderation_service_1.MenuModerationService,
+                payout_service_1.PayoutService,
+                branch_management_service_1.BranchManagementService,
+                commission_service_1.CommissionService,
+                onboarding_service_1.RestaurantOnboardingService
+            ],
+            controllers: [
+                restaurant_controller_1.RestaurantController,
+                restaurant_ops_controller_1.RestaurantOpsController,
+                onboarding_controller_1.RestaurantOnboardingController
+            ],
+            exports: [
+                restaurant_service_1.RestaurantService,
+                restaurant_ops_service_1.RestaurantOpsService,
+                menu_moderation_service_1.MenuModerationService,
+                payout_service_1.PayoutService,
+                branch_management_service_1.BranchManagementService,
+                commission_service_1.CommissionService,
+                onboarding_service_1.RestaurantOnboardingService
+            ],
+        })];
+    let _classDescriptor;
+    let _classExtraInitializers = [];
+    let _classThis;
+    var RestaurantServiceModule = class {
+        static { _classThis = this; }
+        static {
+            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+            RestaurantServiceModule = _classThis = _classDescriptor.value;
+            if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+            __runInitializers(_classThis, _classExtraInitializers);
+        }
+    };
+    return RestaurantServiceModule = _classThis;
+})();
+exports.RestaurantServiceModule = RestaurantServiceModule;

@@ -30,12 +30,12 @@ export class BranchManagementService {
     }
 
     const branch = this.branchRepo.create({
-      restaurant: { id: restaurantId } as any,
+      restaurant: { id: restaurantId } as unknown,
       branchName: branchData.branchName,
       address: branchData.address,
       openingTime: branchData.openingTime || '09:00',
       closingTime: branchData.closingTime || '21:00',
-      location: { lat: branchData.lat, lng: branchData.lng } as any,
+      location: { lat: branchData.lat, lng: branchData.lng } as unknown,
       isOnline: false,
     });
 
@@ -53,7 +53,7 @@ export class BranchManagementService {
     const updatePayload = { ...rest };
     
     if (lat !== undefined && lng !== undefined) {
-      (updatePayload as any).location = { lat, lng };
+      (updatePayload as unknown).location = { lat, lng };
     }
 
     await this.branchRepo.update(branchId, updatePayload);
@@ -82,14 +82,14 @@ export class BranchManagementService {
 
   async getBranchesByRestaurant(restaurantId: string): Promise<RestaurantBranchEntity[]> {
     return this.branchRepo.find({
-      where: { restaurant: { id: restaurantId } } as any,
+      where: { restaurant: { id: restaurantId } } as unknown,
       relations: ['restaurant'],
-      order: { branchName: 'ASC' } as any,
+      order: { branchName: 'ASC' } as unknown,
     });
   }
 
   async getAllBranches(filter?: { isOnline?: boolean; restaurantId?: string }): Promise<RestaurantBranchEntity[]> {
-    const where: any = {};
+    const where: unknown = {};
     if (filter?.isOnline !== undefined) {
       where.isOnline = filter.isOnline;
     }
@@ -100,7 +100,7 @@ export class BranchManagementService {
     return this.branchRepo.find({
       where,
       relations: ['restaurant'],
-      order: { branchName: 'ASC' } as any,
+      order: { branchName: 'ASC' } as unknown,
     });
   }
 

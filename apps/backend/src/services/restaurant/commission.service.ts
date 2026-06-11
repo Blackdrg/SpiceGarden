@@ -43,7 +43,7 @@ export class CommissionService {
   }
 
   async getCommissionRules(restaurantId: string, activeOnly: boolean = true): Promise<CommissionRuleEntity[]> {
-    const where: any = { restaurantId: restaurantId as any };
+    const where: unknown = { restaurantId: restaurantId as unknown };
     if (activeOnly) {
       where.status = CommissionStatus.ACTIVE;
     }
@@ -57,7 +57,7 @@ export class CommissionService {
   async calculateCommission(restaurantId: string, orderAmount: number, categoryId?: string): Promise<number> {
     const rules = await this.commissionRepo.find({
       where: {
-        restaurantId: restaurantId as any,
+        restaurantId: restaurantId as unknown,
         status: CommissionStatus.ACTIVE,
       },
     });
@@ -98,10 +98,10 @@ export class CommissionService {
     return this.updateCommissionRule(ruleId, { status: CommissionStatus.CANCELLED });
   }
 
-  async getCommissionHistory(restaurantId: string, limit: number = 20): Promise<any[]> {
+  async getCommissionHistory(restaurantId: string, limit: number = 20): Promise<unknown[]> {
     // This would typically aggregate from orders/payouts
     const rules = await this.commissionRepo.find({
-      where: { restaurantId: restaurantId as any },
+      where: { restaurantId: restaurantId as unknown },
       order: { createdAt: 'DESC' },
       take: limit,
     });

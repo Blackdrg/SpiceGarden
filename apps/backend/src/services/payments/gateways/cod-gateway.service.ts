@@ -1,4 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
+
+function safeParse<T = unknown>(json: string): T | undefined {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return undefined;
+  }
+}
 import { PaymentGateway } from './payment-gateway.interface';
 
 @Injectable()
@@ -9,8 +17,8 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     amount: number,
     currency: string = 'inr',
     userId: string = null,
-    metadata: any = {}
-  ): Promise<any> {
+    metadata: unknown = {}
+  ): Promise<unknown> {
     const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     return {
@@ -32,7 +40,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
   async confirmPayment(
     paymentId: string,
     userId: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     if (!paymentId?.startsWith('cod_')) {
       throw new Error('Invalid COD payment ID');
     }
@@ -51,7 +59,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     amount: number | null = null,
     userId: string,
     reason: string = 'requested_by_customer'
-  ): Promise<any> {
+  ): Promise<unknown> {
     this.logger.warn(`COD refund requested - no action taken. Amount: ${amount}, Payment: ${paymentId}`);
     return {
       id: `refund_${Date.now()}`,
@@ -65,8 +73,8 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     payload: Buffer,
     signature: string,
     secret: string
-  ): Promise<any> {
-    return JSON.parse(payload.toString());
+  ): Promise<unknown> {
+    return safeParse(payload.toString());
   }
 
   getGatewayName(): string {

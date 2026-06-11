@@ -73,7 +73,7 @@ export class PaymentService {
         null,
         false,
         request,
-        (error as any).message
+        (error as unknown).message
       );
       
       this.logger.error('Payment intent creation failed:', error);
@@ -189,7 +189,7 @@ export class PaymentService {
         paymentId,
         false,
         request,
-        (error as any).message
+        (error as unknown).message
       );
 
       this.logger.error('Payment confirmation failed:', error);
@@ -269,7 +269,7 @@ export class PaymentService {
         paymentId,
         false,
         request,
-        (error as any).message
+        (error as unknown).message
       );
       
       this.logger.error('Payment refund failed:', error);
@@ -293,11 +293,11 @@ export class PaymentService {
       // Log webhook receipt
       await this.auditService.logPaymentEvent(
         'webhook_received',
-        (event.data.object as any)?.metadata?.userId || 'unknown',
-        (event.data.object as any)?.amount / 100 || 0,
-        (event.data.object as any)?.currency || 'usd',
+        (event.data.object as unknown)?.metadata?.userId || 'unknown',
+        (event.data.object as unknown)?.amount / 100 || 0,
+        (event.data.object as unknown)?.currency || 'usd',
         gateway.getGatewayName(),
-        (event.data.object as any)?.id || 'unknown',
+        (event.data.object as unknown)?.id || 'unknown',
         true,
         null // Webhooks don't have request objects in the same way
       );

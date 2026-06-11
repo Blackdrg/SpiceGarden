@@ -1,0 +1,110 @@
+syntax = "proto3";
+package spicegarden.notifications.v1;
+
+service NotificationService {
+  rpc RegisterDevice(RegisterDeviceRequest) returns (DeviceResponse);
+  rpc UnregisterDevice(UnregisterDeviceRequest) returns (DeviceResponse);
+  rpc GetPreferences(GetPreferencesRequest) returns (PreferencesResponse);
+  rpc UpdatePreferences(UpdatePreferencesRequest) returns (PreferencesResponse);
+  rpc QueueNotification(QueueNotificationRequest) returns (QueueNotificationResponse);
+  rpc GetNotificationById(GetNotificationRequest) returns (NotificationResponse);
+  rpc GetNotificationsForRecipient(GetNotificationsForRecipientRequest) returns (NotificationsListResponse);
+  rpc CancelNotification(CancelNotificationRequest) returns (Empty);
+  rpc GetNotificationStats(GetNotificationStatsRequest) returns (NotificationStatsResponse);
+}
+
+message RegisterDeviceRequest {
+  string user_id = 1;
+  string fcm_token = 2;
+  string apns_token = 3;
+  DeviceRegistrationInfo device_info = 4;
+}
+
+message DeviceRegistrationInfo {
+  string name = 1;
+  string type = 2;
+  string user_agent = 3;
+  string ip = 4;
+}
+
+message DeviceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UnregisterDeviceRequest {
+  string user_id = 1;
+  string fcm_token = 2;
+  string apns_token = 3;
+}
+
+message GetPreferencesRequest {
+  string user_id = 1;
+}
+
+message PreferencesResponse {
+  string user_id = 1;
+  repeated string enabled_types = 2;
+  repeated string enabled_channels = 3;
+}
+
+message UpdatePreferencesRequest {
+  string user_id = 1;
+  repeated string enabled_types = 2;
+  repeated string enabled_channels = 3;
+}
+
+message QueueNotificationRequest {
+  string recipient_id = 1;
+  string recipient_type = 2;
+  string notification_type = 3;
+  map<string, string> payload = 4;
+  string provider = 5;
+  int32 max_attempts = 6;
+  string callback_url = 7;
+}
+
+message QueueNotificationResponse {
+  string notification_id = 1;
+  string status = 2;
+  string queued_at = 3;
+}
+
+message GetNotificationRequest {
+  string notification_id = 1;
+}
+
+message NotificationResponse {
+  string id = 1;
+  string recipient_id = 2;
+  string notification_type = 3;
+  string status = 4;
+  map<string, string> payload = 5;
+  string created_at = 6;
+}
+
+message GetNotificationsForRecipientRequest {
+  string recipient_id = 1;
+  string recipient_type = 2;
+  int32 limit = 3;
+}
+
+message NotificationsListResponse {
+  repeated NotificationResponse notifications = 1;
+  int32 total = 2;
+}
+
+message CancelNotificationRequest {
+  string notification_id = 1;
+}
+
+message GetNotificationStatsRequest {}
+
+message NotificationStatsResponse {
+  int32 queued = 1;
+  int32 sent = 2;
+  int32 failed = 3;
+  int32 total = 4;
+}
+
+message Empty {}

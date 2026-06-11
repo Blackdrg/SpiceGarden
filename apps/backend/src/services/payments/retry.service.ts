@@ -81,7 +81,7 @@ export class RetryService {
 
         const isRetryable = retryableErrors.some(re =>
           lastError.message.toLowerCase().includes(re) ||
-          (lastError as any).type === 'api_connection_error'
+          (lastError as unknown).type === 'api_connection_error'
         );
 
         if (!isRetryable || attempt === maxAttempts) {
@@ -125,7 +125,7 @@ export class RetryService {
     return result.affected || 0;
   }
 
-  async getRetryStats(): Promise<any> {
+  async getRetryStats(): Promise<unknown> {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 

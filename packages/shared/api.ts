@@ -72,13 +72,13 @@ async function makeRequest<T>(endpoint: string, options: RequestOptions = {}): P
 
 export const authApi = {
   login: (email: string, password: string) => 
-    api<{ access_token: string; refresh_token: string; user: any }>('/auth/login', {
+    api<{ access_token: string; refresh_token: string; user: unknown }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
   
   register: (data: { fullName: string; email: string; phone: string; password: string }) =>
-    api<{ access_token: string; refresh_token: string; user: any }>('/auth/register', {
+    api<{ access_token: string; refresh_token: string; user: unknown }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -94,7 +94,7 @@ export const authApi = {
 export const restaurantsApi = {
   list: async (lat?: number, lng?: number) => {
     try {
-      return await api<any[]>('/restaurants', { 
+      return await api<unknown[]>('/restaurants', { 
         method: 'GET',
         headers: lat && lng ? { 'x-location': `${lat},${lng}` } : undefined,
       });
@@ -108,30 +108,30 @@ export const restaurantsApi = {
     }
   },
   
-  get: (id: string) => api<any>(`/restaurants/${id}`),
+  get: (id: string) => api<unknown>(`/restaurants/${id}`),
   
-  search: (query: string) => api<any[]>(`/restaurants/search?q=${encodeURIComponent(query)}`),
+  search: (query: string) => api<unknown[]>(`/restaurants/search?q=${encodeURIComponent(query)}`),
 };
 
 export const ordersApi = {
-  list: (token: string) => api<any[]>('/orders', { token }),
+  list: (token: string) => api<unknown[]>('/orders', { token }),
   
-  get: (id: string, token: string) => api<any>(`/orders/${id}`, { token }),
+  get: (id: string, token: string) => api<unknown>(`/orders/${id}`, { token }),
   
-  create: (data: any, token: string) =>
-    api<any>('/orders', {
+  create: (data: unknown, token: string) =>
+    api<unknown>('/orders', {
       method: 'POST',
       body: JSON.stringify(data),
       token,
     }),
   
-  track: (id: string) => api<any>(`/orders/${id}/track`),
+  track: (id: string) => api<unknown>(`/orders/${id}/track`),
 };
 
 export const menuApi = {
-  list: (restaurantId: string) => api<any[]>(`/restaurants/${restaurantId}/menu`),
+  list: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/menu`),
   
-  categories: (restaurantId: string) => api<any[]>(`/restaurants/${restaurantId}/categories`),
+  categories: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/categories`),
 };
 
 export default {

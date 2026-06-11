@@ -1,13 +1,14 @@
 import { app, BrowserWindow, ipcMain, shell, dialog, Menu, Tray } from 'electron';
 import * as path from 'path';
-import * as fs from 'fs';
-import * as os from 'os';
 import * as si from 'systeminformation';
 import { StoreManager } from './store-manager';
 import { DockerManager } from './docker-manager';
 import { EnvironmentManager } from './environment-manager';
 import { ProcessManager } from './process-manager';
 import { AutoUpdater } from './auto-updater';
+
+
+
 
 /**
  * System diagnostics information returned by getSystemInfo.
@@ -32,6 +33,8 @@ interface SystemInfo {
   };
 }
 
+
+
 const isDev = process.env.NODE_ENV === 'development';
 
 class SpiceGardenLauncher {
@@ -44,8 +47,19 @@ class SpiceGardenLauncher {
   private appPath: string;
   private autoUpdater: AutoUpdater;
 
+  private _appPath?: string;
+  private getAppPath(): string {
+    if (!this._appPath) {
+      try {
+        this._appPath = app.getAppPath ? app.getAppPath() : process.cwd();
+      } catch {
+        this._appPath = process.cwd();
+      }
+    }
+    return this._appPath;
+  }
+
   constructor() {
-    this.appPath = app.getAppPath();
     this.storeManager = new StoreManager();
     this.dockerManager = new DockerManager(this.storeManager);
     this.envManager = new EnvironmentManager(this.storeManager);
@@ -195,8 +209,8 @@ class SpiceGardenLauncher {
       return await this.envManager.checkPorts();
     });
 
-    ipcMain.handle('get-logs', async (_, options: LogOptions) => {
-      return await this.processManager.getLogs(options.service, options.lines);
+    ipcMain.handle('get-logs', async (_, service?: string, lines?: number) => {
+      return await this.processManager.getLogs(service, lines);
     });
   }
 

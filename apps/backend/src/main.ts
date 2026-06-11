@@ -4,10 +4,10 @@ import { MetricsService } from "./metrics/metrics.service";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
+import mongoSanitize from "express-mongo-sanitize";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
@@ -17,7 +17,7 @@ async function bootstrap() {
   // Initialize Sentry if available
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Sentry = require("@sentry/node");
+    const Sentry = await import("@sentry/node");
     const dsn = configService.get<string>("SENTRY_DSN");
     if (Sentry && dsn) {
       Sentry.init({
@@ -31,11 +31,46 @@ async function bootstrap() {
     // Sentry not installed - continue without error tracking
   }
 
+  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
+  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
+  const sanitizeMiddleware = mongoSanitize();
+  const safeMongoSanitize = (req, res, next) => {
+    try {
+      sanitizeMiddleware(req, res, next);
+    } catch (error) {
+      // If we get a "Cannot set property" error, fall back to sanitizing individually
+      if (error.message.includes('Cannot set property') && error.message.includes('which has only a getter')) {
+        // Sanitize each property individually to avoid setting getters
+        if (req.body) {
+          req.body = mongoSanitize.sanitize(req.body);
+        }
+        if (req.params) {
+          req.params = mongoSanitize.sanitize(req.params);
+        }
+        if (req.query) {
+          // For query, we can't reassign the property but we can modify the object
+          // Create a sanitized version and copy properties
+          const sanitizedQuery = mongoSanitize.sanitize(req.query);
+          // Clear existing properties and add sanitized ones
+          Object.keys(req.query).forEach(key => {
+            delete req.query[key];
+          });
+          Object.keys(sanitizedQuery).forEach(key => {
+            req.query[key] = sanitizedQuery[key];
+          });
+        }
+        next();
+      } else {
+        next(error);
+      }
+    }
+  };
+
   // Security middleware
   app.use(helmet());
   
   // Prevent NoSQL injection
-  app.use(mongoSanitize());
+  app.use(safeMongoSanitize);
   
   // Prevent HTTP parameter pollution
   app.use(hpp());

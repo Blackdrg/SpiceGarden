@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["index.ts", "analytics.ts"],
+  "exclude": ["node_modules", "dist"]
+}

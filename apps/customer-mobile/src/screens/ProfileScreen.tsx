@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { STRINGS } from '../constants/strings';
+import Toast from 'react-native-root-toast';
+import { safeParse } from '../utils/safe-parse';
 
 // Strict union for profile navigation destinations
 type ProfileScreen =
@@ -43,7 +47,7 @@ const ProfileScreen = () => {
       try {
         const userJson = await AsyncStorage.getItem('sg_user');
         if (userJson) {
-          const user = JSON.parse(userJson);
+          const user = safeParse(userJson) as unknown;
           setUserData({
             fullName: user.name || '',
             email: user.email || '',
@@ -98,10 +102,21 @@ const ProfileScreen = () => {
         phone: editFormData.phone,
       });
       
+      Toast.show(STRINGS.cart.profileSaveSuccess, {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        backgroundColor: DESIGN_TOKENS.colors.success,
+        textColor: 'white',
+      });
+      
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to save profile:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Toast.show(STRINGS.cart.profileSaveError, {
+        duration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        backgroundColor: DESIGN_TOKENS.colors.danger,
+        textColor: 'white',
+      });
     }
   };
 
@@ -109,9 +124,20 @@ const ProfileScreen = () => {
     try {
       await AsyncStorage.removeItem('sg_token');
       await AsyncStorage.removeItem('sg_user');
+      Toast.show(STRINGS.cart.logoutSuccess, {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        backgroundColor: DESIGN_TOKENS.colors.primary,
+        textColor: 'white',
+      });
       navigation.replace('Auth');
     } catch (error) {
-      console.error('Failed to logout:', error);
+      Toast.show(STRINGS.orderHistory.reorderError, {
+        duration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        backgroundColor: DESIGN_TOKENS.colors.danger,
+        textColor: 'white',
+      });
     }
   };
 

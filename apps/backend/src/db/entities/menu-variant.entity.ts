@@ -9,14 +9,17 @@ export class MenuVariantEntity {
   @Column()
   menuItemId!: string;
 
-  @ManyToOne('MenuItemEntity')
-  menuItem!: any;
+  @ManyToOne(() => MenuItemEntity)
+  menuItem!: MenuItemEntity;
 
-  @Column()
-  name!: string; // e.g., 'Small', 'Medium', 'Large'
+  @Column('simple-json', { nullable: true })
+  payload!: unknown;
 
   @Column('decimal', { precision: 10, scale: 2 })
   price!: number;
+
+  @Column('simple-json', { nullable: true })
+  metadata!: unknown;
 
   @CreateDateColumn()
   createdAt!: Date;

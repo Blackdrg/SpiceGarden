@@ -1,96 +1,65 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Animated, Easing, Alert, ScrollView } from 'react-native';
-import { useRoute, useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { CartItem } from './CartScreen';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types';
+import { safeParse } from '../utils/safe-parse';
+import { safeGetItem } from '../utils/secure-storage';
+import { STORAGE_KEYS } from '../constants/storage.keys';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
-type CheckoutParams = { cartItems?: CartItem[] };
-const CheckoutScreen = () => {
-  const route = useRoute<RouteProp<Record<string, CheckoutParams>, string>>();
-  const navigation = useNavigation<NavigationProp<Record<string, CheckoutParams>>>();
-  const { cartItems = [] } = route.params ?? {};
-  
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'cash'>('card');
+interface CartItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+type PaymentMethod = 'card' | 'upi' | 'cash';
+
+interface CheckoutScreenProps {
+  navigation: CheckoutScreenNavigationProp;
+  route?: { params?: { cartItems?: CartItem[] } };
+}
+
+const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) => {
+  const [address, setAddress] = useState('');
+  const [cartItems] = useState<CartItem[]>(route?.params?.cartItems || []);
   const [tip, setTip] = useState(0);
   const [promoCode, setPromoCode] = useState('');
-  const [promoMessage, setPromoMessage] = useState('');
   const [promoError, setPromoError] = useState('');
+  const [promoMessage, setPromoMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState('Home - Sector 17, Chandigarh');
-
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    const loadAddress = async () => {
+      const addressJson = await safeGetItem(STORAGE_KEYS.ADDRESS);
+      if (addressJson && addressJson.trim().length > 0) {
+        try {
+          const parsed = safeParse(addressJson);
+          if (parsed && typeof parsed === 'string' && parsed.trim().length > 0) {
+            setAddress(parsed);
+          }
+        } catch {
+          await AsyncStorage.removeItem(STORAGE_KEYS.ADDRESS);
+        }
+      }
+    };
+    loadAddress();
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: DESIGN_TOKENS.motion.page,
-      easing: Easing.out(Easing.quad),
+      duration: 300,
       useNativeDriver: true,
     }).start();
-
-    AsyncStorage.getItem('sg_address').then((addressJson) => {
-      if (addressJson) {
-        setAddress(JSON.parse(addressJson));
-      }
-    }).catch((error) => {
-      console.error('Failed to load address:', error);
-    });
   }, [fadeAnim]);
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
-
-  const calculateTax = () => {
-    return calculateSubtotal() * 0.05;
-  };
-
-  const calculatePromoDiscount = () => {
-    if (!promoCode) return 0;
-    const subtotal = calculateSubtotal();
-    
-    if (promoCode.toUpperCase() === 'WELCOME50') {
-      return Math.min(subtotal * 0.5, 100);
-    } else if (promoCode.toUpperCase() === 'SAVE20') {
-      return Math.min(subtotal * 0.2, 50);
-    }
-    return 0;
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const tax = calculateTax();
-    const promoDiscount = calculatePromoDiscount();
-    return subtotal + tax + tip + 20 - promoDiscount;
-  };
-
-  const applyPromo = () => {
-    if (!promoCode.trim()) {
-      setPromoError('Please enter a promo code');
-      setPromoMessage('');
-      return;
-    }
-
-    const discount = calculatePromoDiscount();
-    if (discount > 0) {
-      setPromoMessage(`Applied! You saved ₹${discount.toFixed(0)}`);
-      setPromoError('');
-    } else {
-      setPromoError('Invalid promo code');
-      setPromoMessage('');
-    }
-  };
-
   const handlePlaceOrder = async () => {
-    if (!cartItems || cartItems.length === 0) {
-      Alert.alert('Error', 'Your cart is empty');
-      return;
-    }
-
     setLoading(true);
-    
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 1.05,
@@ -107,16 +76,41 @@ const CheckoutScreen = () => {
     ]).start();
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      await AsyncStorage.removeItem('sg_cart');
-      
+      await AsyncStorage.removeItem(STORAGE_KEYS.CART);
       const orderId = 'SG' + Math.floor(Math.random() * 900000 + 100000).toString();
       navigation.navigate('Tracking', { orderId });
-    } catch (error) {
-      console.error('Failed to place order:', error);
+    } catch {
       navigation.navigate('Tracking');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const calculateSubtotal = () => {
+    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
+
+  const calculateTax = (rate: number = 0.05) => {
+    return calculateSubtotal() * rate;
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const tax = calculateTax();
+    return subtotal + tax + tip - calculatePromoDiscount();
+  };
+
+  const calculatePromoDiscount = () => {
+    return 0;
+  };
+
+  const applyPromo = () => {
+    if (promoCode.trim() === '') {
+      setPromoError('Enter a promo code');
+      setPromoMessage('');
+    } else {
+      setPromoError('');
+      setPromoMessage('Promo applied');
     }
   };
 
@@ -124,7 +118,7 @@ const CheckoutScreen = () => {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Your cart is empty</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel='Browse Restaurants' accessibilityRole='button'>
           <Text style={styles.primaryButtonText}>Browse Restaurants</Text>
         </TouchableOpacity>
       </View>
@@ -132,37 +126,29 @@ const CheckoutScreen = () => {
   }
 
   return (
-    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+    <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity 
-            onPress={() => navigation.goBack()} 
-            style={styles.backButton}
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel='Go back' accessibilityRole='button'>
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
           <Text style={styles.headerText}>Checkout</Text>
         </View>
-
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Delivery Address</Text>
             <View style={styles.addressRow}>
               <Text style={styles.addressText}>{address}</Text>
-              <TouchableOpacity style={styles.editButton}>
+              <TouchableOpacity style={styles.editButton} accessibilityLabel='Change address' accessibilityRole='button' onPress={() => navigation.navigate('Address')}>
                 <Text style={styles.editButtonText}>Change</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              Items ({cartItems.reduce((sum, item) => sum + item.quantity, 0)})
-            </Text>
+            <Text style={styles.sectionTitle}>Items ({cartItems.reduce((sum, i) => sum + i.quantity, 0)})</Text>
             <View style={styles.itemsList}>
-              {cartItems.map((item) => (
+              {cartItems.map(item => (
                 <View key={item.id} style={styles.itemRow}>
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemText}>×{item.quantity}</Text>
@@ -175,13 +161,13 @@ const CheckoutScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Method</Text>
             <View style={styles.paymentOptions}>
-              {(['card', 'upi', 'cash'] as const).map((method) => (
+              {['card', 'upi', 'cash'].map(method => (
                 <TouchableOpacity
                   key={method}
-                  onPress={() => setPaymentMethod(method)}
+                  onPress={() => setPaymentMethod(method as PaymentMethod)}
                   style={[styles.paymentOption, paymentMethod === method && styles.selectedPaymentOption]}
                   accessibilityLabel={`Pay with ${method}`}
-                  accessibilityRole="radio"
+                  accessibilityRole='radio'
                   accessibilityState={{ checked: paymentMethod === method }}
                 >
                   <Text style={styles.paymentOptionText}>
@@ -195,18 +181,16 @@ const CheckoutScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tip</Text>
             <View style={styles.tipOptions}>
-              {([0, 30, 50, 100] as const).map((tipAmount) => (
+              {[0, 30, 50, 100].map(tipAmount => (
                 <TouchableOpacity
                   key={tipAmount}
                   onPress={() => setTip(tipAmount)}
                   style={[styles.tipOption, tip === tipAmount && styles.selectedTipOption]}
                   accessibilityLabel={`Add ₹${tipAmount} tip`}
-                  accessibilityRole="radio"
+                  accessibilityRole='radio'
                   accessibilityState={{ checked: tip === tipAmount }}
                 >
-                  <Text style={styles.tipOptionText}>
-                    {tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}
-                  </Text>
+                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -216,13 +200,13 @@ const CheckoutScreen = () => {
             <Text style={styles.sectionTitle}>Promo Code</Text>
             <View style={styles.promoRow}>
               <TextInput
-                placeholder="Enter promo code"
+                placeholder='Enter promo code'
                 value={promoCode}
                 onChangeText={setPromoCode}
                 style={styles.promoInput}
-                accessibilityLabel="Promo code input"
+                accessibilityLabel='Promo code input'
               />
-              <TouchableOpacity onPress={applyPromo} style={styles.promoButton}>
+              <TouchableOpacity onPress={applyPromo} style={styles.promoButton} accessibilityLabel='Apply promo' accessibilityRole='button'>
                 <Text style={styles.promoButtonText}>Apply</Text>
               </TouchableOpacity>
             </View>
@@ -262,20 +246,15 @@ const CheckoutScreen = () => {
             </View>
           </View>
         </ScrollView>
-
-        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <TouchableOpacity
-            onPress={handlePlaceOrder}
-            style={[styles.placeOrderButton, loading && styles.buttonLoading]}
-            accessibilityLabel="Place your order"
-            accessibilityRole="button"
-            accessibilityState={{ disabled: loading }}
-          >
-            <Text style={styles.placeOrderButtonText}>
-              {loading ? 'Processing...' : `Place Order • ₹${calculateTotal().toFixed(0)}`}
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
+        <TouchableOpacity
+          onPress={handlePlaceOrder}
+          style={[styles.placeOrderButton, loading && styles.buttonLoading]}
+          accessibilityLabel='Place your order'
+          accessibilityRole='button'
+          accessibilityState={{ disabled: loading }}
+        >
+          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order • ₹${calculateTotal().toFixed(0)}`}</Text>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );

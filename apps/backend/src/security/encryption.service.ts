@@ -1,55 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class EncryptionService {
-  private secretKey: string;
+  private readonly secretKey: string;
 
   constructor(private configService: ConfigService) {
     this.secretKey = this.configService.get<string>('ENCRYPTION_SECRET');
     if (!this.secretKey || this.secretKey.includes('CHANGE_ME')) {
-      throw new Error('ENCRYPTION_SECRET not configured. Set secure random secret before starting.');
+      throw new Error(
+        'ENCRYPTION_SECRET not configured. Set secure random secret before starting.',
+      );
     }
   }
 
   encrypt(text: string): string {
-    // @ts-ignore
-    const CryptoJS = require('crypto-js');
     return CryptoJS.AES.encrypt(text, this.secretKey).toString();
   }
 
   decrypt(ciphertext: string): string {
-    // @ts-ignore
-    const CryptoJS = require('crypto-js');
-    const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    try {
+      const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch {
+      throw new Error('Decryption failed');
+    }
   }
 
-  // Encrypt PII fields
-  encryptPiiFields(obj: any, fields: string[]): any {
-    const encryptedObj = { ...obj };
+  encryptPiiFields(obj: unknown, fields: string[]): unknown {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    const encrypted = { ...(obj as Record<string, unknown>) };
     for (const field of fields) {
-      if (encryptedObj[field] && typeof encryptedObj[field] === 'string') {
-        encryptedObj[field] = this.encrypt(encryptedObj[field]);
+      const value = encrypted[field];
+      if (typeof value === 'string') {
+        encrypted[field] = this.encrypt(value);
       }
     }
-    return encryptedObj;
+    return encrypted as unknown;
   }
 
-  // Decrypt PII fields
-  decryptPiiFields(obj: any, fields: string[]): any {
-    const decryptedObj = { ...obj };
+  decryptPiiFields(obj: unknown, fields: string[]): unknown {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    const decrypted = { ...(obj as Record<string, unknown>) };
     for (const field of fields) {
-      if (decryptedObj[field] && typeof decryptedObj[field] === 'string') {
+      const value = decrypted[field];
+      if (typeof value === 'string') {
         try {
-          decryptedObj[field] = this.decrypt(decryptedObj[field]);
+          decrypted[field] = this.decrypt(value);
         } catch (error) {
-          // If decryption fails, return original value (might not be encrypted)
-          console.warn(`Failed to decrypt field ${field}:`, (error as Error).message);
+          const errMsg = error instanceof Error ? error.message : 'unknown';
+          throw new Error(`Failed to decrypt field ${field}: ${errMsg}`);
         }
       }
     }
-    return decryptedObj;
+    return decrypted as unknown;
   }
 }
-

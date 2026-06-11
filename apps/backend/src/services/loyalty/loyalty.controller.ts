@@ -12,7 +12,7 @@ export class LoyaltyController {
 
   @Post('coupons')
   @ApiOperation({ summary: 'Create a new coupon' })
-  createCoupon(@Body() data: any) {
+  createCoupon(@Body() data: unknown) {
     return this.loyaltyService.createCoupon(data);
   }
 
@@ -24,7 +24,7 @@ export class LoyaltyController {
 
   @Get('coupons')
   @ApiOperation({ summary: 'Get all coupons' })
-  getCoupons(@Query() filters: any) {
+  getCoupons(@Query() filters: unknown) {
     return this.loyaltyService.getAllCoupons(filters);
   }
 

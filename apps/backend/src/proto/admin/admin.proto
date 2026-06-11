@@ -1,0 +1,83 @@
+syntax = "proto3";
+package spicegarden.admin.v1;
+
+service AdminService {
+  rpc GetDashboardStats(GetDashboardStatsRequest) returns (DashboardStatsResponse);
+  rpc GetAllOrders(GetOrdersRequest) returns (OrdersListResponse);
+  rpc BanUser(BanUserRequest) returns (ActionResponse);
+}
+
+message GetDashboardStatsRequest {
+  string branch_id = 1;
+}
+
+message DashboardStatsResponse {
+  StatsData stats = 1;
+  repeated RevenuePoint revenue_data = 2;
+  repeated BranchData branches = 3;
+  repeated TicketData tickets = 4;
+}
+
+message StatsData {
+  double revenue = 1;
+  int32 orders = 2;
+  int32 drivers_online = 3;
+  int32 complaints = 4;
+  int32 refunds = 5;
+  int32 fraud_alerts = 6;
+  int32 active_branches = 7;
+  int32 pending_withdrawals = 8;
+}
+
+message RevenuePoint {
+  string time = 1;
+  int32 revenue = 2;
+  int32 orders = 3;
+}
+
+message BranchData {
+  string name = 1;
+  string status = 2;
+  int32 order_count = 3;
+  int32 avg_prep_mins = 4;
+  int32 drivers_assigned = 5;
+}
+
+message TicketData {
+  string id = 1;
+  string type = 2;
+  string status = 3;
+  string priority = 4;
+  string created_at = 5;
+}
+
+message GetOrdersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message OrdersListResponse {
+  repeated OrderData orders = 1;
+  int32 total = 2;
+}
+
+message OrderData {
+  string id = 1;
+  string order_number = 2;
+  string user_id = 3;
+  string restaurant_id = 4;
+  string status = 5;
+  double grand_total = 6;
+  string payment_status = 7;
+  string created_at = 8;
+}
+
+message BanUserRequest {
+  string user_id = 1;
+  string reason = 2;
+}
+
+message ActionResponse {
+  bool success = 1;
+  string message = 2;
+}

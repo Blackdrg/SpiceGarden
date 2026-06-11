@@ -1,0 +1,158 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k) {
+    if (k === undefined) k = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k, desc);
+}) : (function(o, m, k, k) {
+    if (k === undefined) k = k;
+    o[k] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = ; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProcessManager = void ;
+const child_process_ = require("child_process");
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
+class ProcessManager {
+    storeManager;
+    dockerManager;
+    services = [
+        { name: 'PostgreSQL', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'Redis', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'MongoDB', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'OpenSearch', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'Prometheus', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'Grafana', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'AlertManager', type: 'docker', startCmd: 'compose.dev.yaml', port:  },
+        { name: 'Backend', type: 'node', startCmd: 'npm run dev', cwd: 'apps/backend', port:  },
+        { name: 'Customer Web', type: 'node', startCmd: 'npm run dev -- -p ', cwd: 'apps/customer-web', port:  },
+        { name: 'Restaurant Dashboard', type: 'node', startCmd: 'npm run dev -- -p ', cwd: 'apps/restaurant-dashboard', port:  },
+        { name: 'Admin Dashboard', type: 'node', startCmd: 'npm run dev -- -p ', cwd: 'apps/super-admin', port:  }
+    ];
+    processes = new Map();
+    logsPath;
+    constructor(storeManager, dockerManager) {
+        this.storeManager = storeManager;
+        this.dockerManager = dockerManager;
+        this.logsPath = path.join(process.cwd(), 'launcher-logs');
+        if (!fs.existsSync(this.logsPath)) {
+            fs.mkdirSync(this.logsPath, { recursive: true });
+        }
+    }
+    async startAll() {
+        const results = {};
+        const dockerResult = await this.dockerManager.startInfrastructure();
+        results['Infrastructure'] = dockerResult.success ? true : dockerResult.error || 'failed';
+        await this.delay();
+        for (const service of this.services.filter(s => s.type === 'node')) {
+            const result = await this.startService(service.name);
+            results[service.name] = result.success ? true : result.error || 'failed';
+        }
+        return { success: Object.values(results).every(r => r === true), results };
+    }
+    async stopAll() {
+        const results = {};
+        for (const service of this.services.filter(s => s.type === 'node')) {
+            const proc = this.processes.get(service.name);
+            if (proc) {
+                proc.kill();
+                this.processes.delete(service.name);
+            }
+            results[service.name] = true;
+        }
+        const dockerResult = await this.dockerManager.stopInfrastructure();
+        results['Infrastructure'] = dockerResult.success ? true : dockerResult.error || 'failed';
+        return { success: Object.values(results).every(r => r === true), results };
+    }
+    async restart() {
+        await this.stopAll();
+        await this.delay();
+        return await this.startAll();
+    }
+    async getStatus() {
+        const statuses = [];
+        for (const service of this.services) {
+            const status = {
+                name: service.name,
+                status: 'stopped',
+                port: service.port
+            };
+            const proc = this.processes.get(service.name);
+            if (proc && !proc.killed) {
+                status.status = 'running';
+                status.pid = proc.pid;
+            }
+            else if (service.type === 'docker') {
+                const dockerStatuses = await this.dockerManager.getStatus();
+                const dockerStatus = dockerStatuses.find(s => s.name === service.name.toLowerCase());
+                if (dockerStatus) {
+                    status.status = dockerStatus.status;
+                }
+            }
+            statuses.push(status);
+        }
+        return statuses;
+    }
+    async startService(serviceName) {
+        const service = this.services.find(s => s.name === serviceName);
+        if (!service)
+            return { success: false, error: 'Service not found' };
+        try {
+            const proc = (, child_process_.spawn)(service.startCmd, {
+                shell: true,
+                cwd: service.cwd ? path.join(process.cwd(), service.cwd) : process.cwd()
+            });
+            this.processes.set(serviceName, proc);
+            const logFile = fs.createWriteStream(path.join(this.logsPath, `${serviceName.toLowerCase().replace(/\s+/g, '-')}.log`));
+            proc.stdout?.pipe(logFile);
+            proc.stderr?.pipe(logFile);
+            return { success: true };
+        }
+        catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            return { success: false, error: errorMessage };
+        }
+    }
+    async getLogs(service, lines = ) {
+        const serviceName = (service || 'all').toLowerCase().replace(/\s+/g, '-');
+        const logFile = path.join(this.logsPath, `${serviceName}.log`);
+        if (fs.existsSync(logFile)) {
+            const content = fs.readFileSync(logFile, 'utf-');
+            if (lines && lines > ) {
+                const allLines = content.split(/\r?\n/);
+                const sliced = allLines.slice(-lines);
+                return sliced.join('\n');
+            }
+            return content;
+        }
+        return '';
+    }
+    delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+}
+exports.ProcessManager = ProcessManager;

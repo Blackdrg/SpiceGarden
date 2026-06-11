@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { describe, beforeEach, it, expect, jest } from '@jest/globals';
 import HomePage from '@/pages/index';
 
 describe('HomePage', () => {

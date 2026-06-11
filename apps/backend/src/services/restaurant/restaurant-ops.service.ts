@@ -32,7 +32,7 @@ export class RestaurantOpsService {
     name: string;
     slug: string;
     description?: string;
-    businessDetails?: any;
+    businessDetails?: unknown;
   }): Promise<RestaurantOnboardingEntity> {
     // Check if slug exists
     const existing = await this.restaurantRepo.findOne({ where: { slug: restaurantData.slug } });
@@ -58,13 +58,13 @@ export class RestaurantOpsService {
     return this.onboardingRepo.save(onboarding);
   }
 
-  async updateStep(onboardingId: string, step: OnboardingStep, data?: any): Promise<RestaurantOnboardingEntity> {
+  async updateStep(onboardingId: string, step: OnboardingStep, data?: unknown): Promise<RestaurantOnboardingEntity> {
     const onboarding = await this.onboardingRepo.findOne({ where: { id: onboardingId } });
     if (!onboarding) {
       throw new NotFoundException('Onboarding not found');
     }
 
-    let updateData: any = { currentStep: step };
+    let updateData: unknown = { currentStep: step };
 
     switch (step) {
       case OnboardingStep.DOCUMENT_UPLOAD:
@@ -98,7 +98,7 @@ export class RestaurantOpsService {
     return this.onboardingRepo.findOne({ where: { id: onboardingId } });
   }
 
-  async getOnboardingProgress(onboardingId: string): Promise<any> {
+  async getOnboardingProgress(onboardingId: string): Promise<unknown> {
     const onboarding = await this.onboardingRepo.findOne({
       where: { id: onboardingId },
       relations: ['restaurant'],

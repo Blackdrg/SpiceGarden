@@ -10,7 +10,7 @@ const HistoryPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<unknown[]>([]);
   const [filter, setFilter] = useState<'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +37,12 @@ setError(null);
          const response = await ordersApi.list(user.token);
          const data = response.data;
          // Transform API response to match our interface
-         const transformedOrders = data.map((order: any) => ({
+         const transformedOrders = data.map((order: unknown) => ({
           id: order.id,
           date: new Date(order.createdAt).toISOString().split('T')[0],
           time: new Date(order.createdAt).toISOString().split('T')[1].substring(0, 5),
           restaurant: order.restaurant?.name || 'Unknown Restaurant',
-          items: order.items?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0,
+          items: order.items?.reduce((sum: number, item: unknown) => sum + item.quantity, 0) || 0,
           amount: order.grandTotal || 0,
           status: order.status,
           rating: order.rating || 0,
@@ -75,7 +75,7 @@ setError(null);
       const response = await ordersApi.get(orderId, user?.token || '');
       const order = response.data;
       // Add items to cart
-      const cartItems = order.items?.map((item: any) => ({
+      const cartItems = order.items?.map((item: unknown) => ({
         id: item.menuItemId || item.id,
         name: item.name,
         price: item.price,
@@ -127,7 +127,7 @@ setError(null);
           <Button
             key={f.key}
             label={f.label}
-            onClick={() => setFilter(f.key as any)}
+            onClick={() => setFilter(f.key as unknown)}
             variant={filter === f.key ? 'primary' : 'secondary'}
           />
         ))}

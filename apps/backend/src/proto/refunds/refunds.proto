@@ -1,0 +1,64 @@
+syntax = "proto3";
+package spicegarden.refunds.v1;
+
+service RefundService {
+  rpc CreateRefundRequest(CreateRefundRequest) returns (RefundResponse);
+  rpc ApproveRefund(ApproveRefundRequest) returns (RefundResponse);
+  rpc RejectRefund(RejectRefundRequest) returns (RefundResponse);
+  rpc ProcessRefund(ProcessRefundRequest) returns (RefundResponse);
+  rpc GetRefundRequest(GetRefundRequest) returns (RefundResponse);
+  rpc GetRefundsForOrder(GetRefundsForOrderRequest) returns (RefundsListResponse);
+  rpc GetRefundsByStatus(GetRefundsByStatusRequest) returns (RefundsListResponse);
+}
+
+message CreateRefundRequest {
+  string order_id = 1;
+  string requested_by = 2;
+  double amount = 3;
+  string reason = 4;
+  string request_type = 5;
+}
+
+message ApproveRefundRequest {
+  string approval_id = 1;
+  string approver_id = 2;
+  string notes = 3;
+}
+
+message RejectRefundRequest {
+  string approval_id = 1;
+  string approver_id = 2;
+  string reason = 3;
+}
+
+message ProcessRefundRequest {
+  string approval_id = 1;
+  string processed_by = 2;
+  string gateway = 3;
+}
+
+message GetRefundRequest {
+  string approval_id = 1;
+}
+
+message GetRefundsForOrderRequest {
+  string order_id = 1;
+}
+
+message GetRefundsByStatusRequest {
+  string status = 1;
+}
+
+message RefundResponse {
+  string id = 1;
+  string order_id = 2;
+  string status = 3;
+  double amount = 4;
+  string reason = 5;
+  string created_at = 6;
+}
+
+message RefundsListResponse {
+  repeated RefundResponse refunds = 1;
+  int32 total = 2;
+}

@@ -1,0 +1,55 @@
+syntax = "proto3";
+package spicegarden.auth.v1;
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (LoginResponse);
+  rpc ValidateSocialUser(SocialLoginRequest) returns (LoginResponse);
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+  DeviceInfo device_info = 3;
+}
+
+message RegisterRequest {
+  string email = 1;
+  string phone = 2;
+  string full_name = 3;
+  string password = 4;
+  DeviceInfo device_info = 5;
+}
+
+message SocialLoginRequest {
+  string email = 1;
+  string full_name = 2;
+  string profile_image = 3;
+  string social_id = 4;
+  SocialProvider provider = 5;
+  DeviceInfo device_info = 6;
+}
+
+enum SocialProvider {
+  GOOGLE = 0;
+  FACEBOOK = 1;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  UserInfo user = 3;
+}
+
+message DeviceInfo {
+  string name = 1;
+  string type = 2;
+  string ip = 3;
+}
+
+message UserInfo {
+  string id = 1;
+  string email = 2;
+  string full_name = 3;
+  string role = 4;
+}

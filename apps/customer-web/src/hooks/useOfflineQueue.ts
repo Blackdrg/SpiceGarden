@@ -30,20 +30,20 @@ export const useNetworkStatus = () => {
 interface QueuedRequest<T> {
   id: string;
   endpoint: string;
-  options: any;
+  options: unknown;
   resolve: (_value: T | PromiseLike<T>) => void;
-  reject: (_reason?: any) => void;
+  reject: (_reason?: unknown) => void;
 }
 
 export const useOfflineQueue = () => {
   const { isOnline } = useNetworkStatus();
-  const [queue, setQueue] = useState<QueuedRequest<any>[]>([]);
+  const [queue, setQueue] = useState<QueuedRequest<unknown>[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
    // Add a request to the queue
    const enqueueRequest = useCallback(<T>(
      endpoint: string,
-     options: any = {}
+     options: unknown = {}
    ): Promise<T> => {
      return new Promise<T>((resolve, reject) => {
        const id = Math.random().toString(36).substr(2, 9);
@@ -106,7 +106,7 @@ export const useOfflineQueue = () => {
     // Simulate API call - replace with actual API calls in real implementation
     const simulateApiCall = useCallback(async (
       endpoint: string,
-      options: any = {}
+      options: unknown = {}
     ) => {
       // In a real implementation, options would contain method, headers, body, etc.
       // For simulation, we'll just acknowledge we received it

@@ -31,7 +31,7 @@ jest.mock('typeorm', () => ({
 // Mock for @nestjs/typeorm
 jest.mock('@nestjs/typeorm', () => ({
   InjectRepository: () => jest.fn(),
-  getRepositoryToken: (entity: any) => `REPOSITORY_${entity.name}`,
+  getRepositoryToken: (entity: unknown) => `REPOSITORY_${entity.name}`,
 }));
 
 // Mock for @nestjs/common
@@ -63,7 +63,7 @@ jest.mock('@nestjs/config', () => ({
 
 // Mock for @nestjs/mongoose
 jest.mock('@nestjs/mongoose', () => ({
-  MongooseModule: { forRoot: jest.fn().mockReturnValue({}) },
+  MongooseModule: { forRoot: jest.fn().mockReturnValue({}), forFeature: jest.fn().mockReturnValue({}) },
   InjectModel: () => jest.fn(),
 }));
 

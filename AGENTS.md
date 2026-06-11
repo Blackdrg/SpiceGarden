@@ -45,3 +45,29 @@
 - `kubectl apply -f infra/k8s/production-hardened.yaml` - Deploy hardened production
 - `kubectl apply -f infra/k8s/staging.yaml` - Deploy staging environment
 - `kubectl apply -f infra/k8s/cdn-ingress.yaml` - Deploy CDN/Ingress
+
+## Feature Freeze (Effective Immediately)
+
+Feature growth is completely frozen. No exceptions require explicit approval.
+
+**Hard rules:**
+- No new modules
+- No new AI features
+- No redesign
+- No extra dashboards
+- No new frontend routes
+
+**Only permitted work:**
+- Bug fixing
+- Reliability improvements
+- Deployment fixes
+- Production hardening
+
+**Frozen areas (no changes without approval):**
+- Backend APIs
+- DB schema
+- Auth flow
+- Payment flow
+- Order lifecycle
+- WebSocket contracts
+- Frontend routes

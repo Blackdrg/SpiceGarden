@@ -9,8 +9,8 @@ export class WalletTransactionEntity {
   @Column()
   walletId!: string;
 
-  @ManyToOne('WalletEntity')
-  wallet!: any;
+  @ManyToOne(() => WalletEntity)
+  wallet!: WalletEntity;
 
   @Column('decimal', { precision: 12, scale: 2 })
   amount!: number;

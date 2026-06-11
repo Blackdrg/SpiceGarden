@@ -85,7 +85,7 @@ export class EnhancedDeliveryService {
     ]);
   }
 
-  async registerDriver(userId: string, data: any) {
+  async registerDriver(userId: string, data: unknown) {
     const driver = this.driverRepo.create({
       userId,
       ...data,
@@ -96,7 +96,7 @@ export class EnhancedDeliveryService {
 
   async updateLocation(driverId: string, lat: number, lng: number) {
     return this.driverRepo.update(driverId, {
-       currentLocation: { lat, lng } as any,
+       currentLocation: { lat, lng } as unknown,
        lastLocationUpdate: new Date(),
     });
   }
@@ -132,9 +132,9 @@ export class EnhancedDeliveryService {
       await manager.increment(DriverEntity, driverId, 'totalDeliveries', 0);
 
       const assignment = manager.create(DriverAssignmentEntity, {
-        driverId: driverId as any,
-        orderId: orderId as any,
-        status: 'assigned' as any,
+        driverId: driverId as unknown,
+        orderId: orderId as unknown,
+        status: 'assigned' as unknown,
         distance: 5,
         estimatedTimeMinutes: 30,
       });
@@ -218,19 +218,19 @@ export class EnhancedDeliveryService {
     if (!driver) return;
 
     const assignments = await this.driverAssignmentRepo.find({
-      where: { driver: { id: driverId } as any },
+      where: { driver: { id: driverId } as unknown },
       order: { createdAt: 'DESC' },
       take: 5,
     });
 
     const recentNoShows = assignments.filter(a => 
-      a.status === 'failed' && (a as any).failureReason === 'no_show'
+      a.status === 'failed' && (a as unknown).failureReason === 'no_show'
     ).length;
 
     if (recentNoShows >= 2) {
       await this.driverRepo.update(driverId, {
         isFraudSuspicious: true,
-        fraudFlags: { ...driver.fraudFlags, noShowRisk: 0.8 } as any,
+        fraudFlags: { ...driver.fraudFlags, noShowRisk: 0.8 } as unknown,
       });
       this.logger.warn(`Driver ${driverId} flagged for no-shows`);
     }
@@ -272,7 +272,7 @@ export class EnhancedDeliveryService {
       switch (rule.type) {
         case 'bonus_per_order':
           const completedToday = await this.driverAssignmentRepo.count({
-            where: { status: 'delivered' as any },
+            where: { status: 'delivered' as unknown },
           });
           if ((!rule.conditions.minDeliveries || completedToday >= rule.conditions.minDeliveries)) {
             breakdown[rule.id] = rule.value * completedToday;
@@ -290,7 +290,7 @@ export class EnhancedDeliveryService {
     if (!driver?.currentLocation) return false;
 
     const distance = this.geoService.calculateDistance(
-      driver.currentLocation as any,
+      driver.currentLocation as unknown,
       { lat: centerLat, lng: centerLng }
     );
 
@@ -304,7 +304,7 @@ export class EnhancedDeliveryService {
     reason: string
   ): Promise<void> {
     const assignment = await this.driverAssignmentRepo.findOne({
-      where: { order: { id: orderId } as any } as any,
+      where: { order: { id: orderId } as unknown } as unknown,
     });
     if (!assignment) return;
 
@@ -314,7 +314,7 @@ export class EnhancedDeliveryService {
     );
 
     await this.driverAssignmentRepo.update(assignment.id, {
-      status: 'assigned' as any,
+      status: 'assigned' as unknown,
     });
   }
 }

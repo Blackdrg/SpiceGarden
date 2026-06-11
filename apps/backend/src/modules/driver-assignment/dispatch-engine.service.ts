@@ -94,7 +94,7 @@ export class DispatchEngineService {
   private async findOptimalDrivers(
     order: OrderEntity,
     branch: RestaurantBranchEntity,
-    manager: any
+    manager: unknown
   ): Promise<DriverEntity[]> {
     // For now, we'll use a simple proximity-based search
     // In reality, you'd want to get the restaurant location from branch
@@ -169,7 +169,7 @@ export class DispatchEngineService {
     order: OrderEntity,
     branch: RestaurantBranchEntity,
     assignmentType: 'single' | 'batch' | 'stacked',
-    manager: any
+    manager: unknown
   ): Promise<DriverAssignmentEntity> {
     // In a real implementation, you would:
     // 1. Calculate actual distance between restaurant and delivery location

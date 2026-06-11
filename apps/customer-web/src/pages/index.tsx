@@ -99,7 +99,7 @@ const HomePage = () => {
         </div>
         <Button 
           label="🔔" 
-          onClick={() => {}} 
+          onClick={() => null} 
           variant="secondary"
           ariaLabel="Notifications"
         />
@@ -200,7 +200,7 @@ const HomePage = () => {
                   cursor: 'pointer',
                   padding: DESIGN_TOKENS.spacing.sm,
                   borderRadius: DESIGN_TOKENS.radius.md,
-                  transition: `background-color ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}`,
+                  transition: `background-color ${MOTION_EASING.easeOutSoft}ms ${MOTION_EASING.easeOutSoft}`,
                 }}
                 onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
                 role="button"
@@ -251,14 +251,14 @@ const HomePage = () => {
         ].map((tab) => (
           <div
             key={tab.key}
-            onClick={() => router.push(tab.path)}
+            onClick={() => tab.path && router.push(tab.path)}
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               cursor: 'pointer',
-              color: DESIGN_TOKENS.colors.textSecondary,
-              fontSize: '11px',
+              color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999',
+              fontSize: '11px'
             }}
             role="tab"
             aria-label={tab.label}

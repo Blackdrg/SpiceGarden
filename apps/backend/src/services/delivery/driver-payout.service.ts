@@ -20,13 +20,13 @@ export class DriverPayoutService {
     private dataSource: DataSource,
   ) {}
 
-  async calculateWeeklyIncentives(driverId: string, weekStart: Date): Promise<any> {
+  async calculateWeeklyIncentives(driverId: string, weekStart: Date): Promise<unknown> {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 7);
 
     const orders = await this.orderRepo.find({
       where: {
-        driverId: driverId as any,
+        driverId: driverId as unknown,
         status: OrderStatus.DELIVERED,
         createdAt: Between(weekStart, weekEnd),
       },
@@ -74,7 +74,7 @@ export class DriverPayoutService {
 
     const incentive = this.incentiveRepo.create({
       driverId,
-      type: type as any,
+      type: type as unknown,
       amount,
       description,
       referenceId,
@@ -114,9 +114,9 @@ export class DriverPayoutService {
   }
 
   async getPendingIncentives(driverId?: string): Promise<DriverIncentiveEntity[]> {
-    const where: any = { status: IncentiveStatus.APPROVED };
+    const where: unknown = { status: IncentiveStatus.APPROVED };
     if (driverId) {
-      where.driverId = driverId as any;
+      where.driverId = driverId as unknown;
     }
 
     return this.incentiveRepo.find({
@@ -126,13 +126,13 @@ export class DriverPayoutService {
     });
   }
 
-  async getIncentiveSummary(driverId: string, month: number, year: number): Promise<any> {
+  async getIncentiveSummary(driverId: string, month: number, year: number): Promise<unknown> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const incentives = await this.incentiveRepo.find({
       where: {
-        driverId: driverId as any,
+        driverId: driverId as unknown,
         createdAt: Between(startDate, endDate),
       },
     });

@@ -85,7 +85,7 @@ describe('OrderService - Production Ready Features', () => {
         userId: 'user123',
         restaurantId: 'rest456',
         createdAt: new Date(Date.now() - 2000),
-      } as any);
+      } as unknown);
 
       await expect(service.placeOrder(orderData)).rejects.toThrow(ConflictException);
     });
@@ -106,7 +106,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.PENDING,
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.placeOrder(orderData);
       expect(result).toBeDefined();
@@ -122,7 +122,7 @@ describe('OrderService - Production Ready Features', () => {
         userId: 'user123',
         paymentStatus: PaymentStatus.COMPLETED,
         status: OrderStatus.PAYMENT_CONFIRMED,
-      } as any);
+      } as unknown);
 
       await expect(service.confirmPayment(orderId, 'pi_123')).rejects.toThrow(ConflictException);
     });
@@ -137,7 +137,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.PENDING,
         status: OrderStatus.PLACED,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
       
       mockOrderRepo.save.mockResolvedValueOnce({
         id: orderId,
@@ -146,7 +146,7 @@ describe('OrderService - Production Ready Features', () => {
         status: OrderStatus.PAYMENT_CONFIRMED,
         grandTotal: 50.0,
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.handleWebhookDelayed(orderId, paymentId);
       expect(result.paymentStatus).toBe(PaymentStatus.COMPLETED);
@@ -163,7 +163,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.COMPLETED,
         status: OrderStatus.PAYMENT_CONFIRMED,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
 
       const result = await service.handleWebhookDelayed(orderId, paymentId);
       expect(result.paymentStatus).toBe(PaymentStatus.COMPLETED);
@@ -180,13 +180,13 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.COMPLETED,
         status: OrderStatus.DELIVERED,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
       
       mockPaymentService.refundPayment.mockResolvedValueOnce({
         id: 're_123',
         status: 'succeeded',
         amount: 5000,
-      } as any);
+      } as unknown);
       
       mockOrderRepo.save.mockResolvedValueOnce({
         id: orderId,
@@ -195,7 +195,7 @@ describe('OrderService - Production Ready Features', () => {
         status: OrderStatus.DELIVERED,
         grandTotal: 50.0,
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.refundAfterDispatch(orderId, 'customer_request');
       expect(result.paymentStatus).toBe(PaymentStatus.REFUNDED);
@@ -211,7 +211,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.COMPLETED,
         status: OrderStatus.PREPARING,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
 
       await expect(service.refundAfterDispatch(orderId, 'customer_request'))
         .rejects.toThrow(BadRequestException);
@@ -226,7 +226,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.REFUNDED,
         status: OrderStatus.DELIVERED,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
 
       await expect(service.refundAfterDispatch(orderId, 'customer_request'))
         .rejects.toThrow(ConflictException);
@@ -243,7 +243,7 @@ describe('OrderService - Production Ready Features', () => {
         userId: 'user123',
         driverId: driverId,
         status: OrderStatus.DRIVER_ASSIGNED,
-      } as any);
+      } as unknown);
       
       mockOrderRepo.save.mockResolvedValueOnce({
         id: orderId,
@@ -251,7 +251,7 @@ describe('OrderService - Production Ready Features', () => {
         driverId: null,
         status: OrderStatus.CANCELLED,
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.cancelByDriver(orderId, driverId);
       expect(result.status).toBe(OrderStatus.CANCELLED);
@@ -266,7 +266,7 @@ describe('OrderService - Production Ready Features', () => {
         userId: 'user123',
         driverId: 'different-driver',
         status: OrderStatus.DRIVER_ASSIGNED,
-      } as any);
+      } as unknown);
 
       await expect(service.cancelByDriver(orderId, driverId))
         .rejects.toThrow(BadRequestException);
@@ -279,14 +279,14 @@ describe('OrderService - Production Ready Features', () => {
         id: orderId,
         userId: 'user123',
         status: OrderStatus.PREPARING,
-      } as any);
+      } as unknown);
       
       mockOrderRepo.save.mockResolvedValueOnce({
         id: orderId,
         userId: 'user123',
         status: OrderStatus.CANCELLED,
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.cancelByKitchen(orderId);
       expect(result.status).toBe(OrderStatus.CANCELLED);
@@ -299,7 +299,7 @@ describe('OrderService - Production Ready Features', () => {
         id: orderId,
         userId: 'user123',
         status: OrderStatus.DELIVERED,
-      } as any);
+      } as unknown);
 
       await expect(service.cancelByKitchen(orderId))
         .rejects.toThrow(BadRequestException);
@@ -315,7 +315,7 @@ describe('OrderService - Production Ready Features', () => {
         userId: 'user123',
         driverId: 'driver456',
         status: OrderStatus.DRIVER_ASSIGNED,
-      } as any);
+      } as unknown);
 
       await expect(service.preventDoubleDispatch(orderId))
         .rejects.toThrow(ConflictException);
@@ -332,7 +332,7 @@ describe('OrderService - Production Ready Features', () => {
         paymentStatus: PaymentStatus.FAILED,
         status: OrderStatus.PLACED,
         grandTotal: 50.0,
-      } as any);
+      } as unknown);
       
       mockOrderRepo.save.mockResolvedValueOnce({
         id: orderId,
@@ -341,7 +341,7 @@ describe('OrderService - Production Ready Features', () => {
         status: OrderStatus.PLACED,
         grandTotal: 50.0,
         updatedAt: new Date(),
-      } as any);
+      } as unknown);
 
       const result = await service.retryOrder(orderId);
       expect(result.paymentStatus).toBe(PaymentStatus.PENDING);
@@ -358,13 +358,13 @@ describe('OrderService - Production Ready Features', () => {
           userId: 'user123',
           status: OrderStatus.PREPARING,
           updatedAt: thirtyMinutesAgo,
-        } as any,
+        } as unknown,
       ]);
       
-      mockOrderRepo.save.mockImplementation((order: any) => Promise.resolve({
+      mockOrderRepo.save.mockImplementation((order: unknown) => Promise.resolve({
         ...order,
         updatedAt: new Date(),
-      } as any));
+      } as unknown));
 
       const result = await service.resolveStuckPreparingState();
       expect(result).toHaveLength(1);

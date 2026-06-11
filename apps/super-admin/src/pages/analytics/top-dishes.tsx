@@ -4,7 +4,7 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function AnalyticsTopDishes() {
-  const [dishes, setDishes] = useState<any[]>([]);
+  const [dishes, setDishes] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function AnalyticsTopDishes() {
               </tr>
             </thead>
             <tbody>
-              {dishes.map((dish: any, idx: number) => (
+              {dishes.map((dish: unknown, idx: number) => (
                 <tr key={dish.dishId || idx} style={{ borderBottom: '1px solid #1a1a1a' }}>
                   <td style={{ padding: '10px 16px', color: '#f97316', fontWeight: 600 }}>#{idx + 1}</td>
                   <td style={{ padding: '10px 16px' }}>{dish.name || 'Unknown'}</td>

@@ -70,8 +70,8 @@ export class ProcessManager {
     const results: Record<string, boolean | string> = {};
 
     for (const service of this.services.filter(s => s.type === 'node')) {
-      if (this.processes.has(service.name)) {
-        const proc = this.processes.get(service.name)!;
+      const proc = this.processes.get(service.name);
+      if (proc) {
         proc.kill();
         this.processes.delete(service.name);
       }
@@ -136,14 +136,22 @@ export class ProcessManager {
 
       return { success: true };
     } catch (err: unknown) {
-      return { success: false, error: err.message };
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      return { success: false, error: errorMessage };
     }
   }
 
-  async getLogs(service: string): Promise<string> {
-    const logFile = path.join(this.logsPath, `${service.toLowerCase().replace(/\s+/g, '-')}.log`);
+  async getLogs(service?: string, lines = 100): Promise<string> {
+    const serviceName = (service || 'all').toLowerCase().replace(/\s+/g, '-');
+    const logFile = path.join(this.logsPath, `${serviceName}.log`);
     if (fs.existsSync(logFile)) {
-      return fs.readFileSync(logFile, 'utf-8');
+      const content = fs.readFileSync(logFile, 'utf-8');
+      if (lines && lines > 0) {
+        const allLines = content.split(/\r?\n/);
+        const sliced = allLines.slice(-lines);
+        return sliced.join('\n');
+      }
+      return content;
     }
     return '';
   }

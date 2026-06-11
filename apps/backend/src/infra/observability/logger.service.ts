@@ -1,4 +1,5 @@
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
+import { sanitizeForLog } from '../../logging/logging.service';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class StructuredLogger implements LoggerService {
@@ -8,7 +9,7 @@ export class StructuredLogger implements LoggerService {
     this.context = context;
   }
 
-  log(message: any, ...optionalParams: any[]) {
+  log(message: unknown, ...optionalParams: unknown[]) {
     console.log(JSON.stringify({
       level: 'info',
       message,
@@ -18,27 +19,27 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  error(message: any, ...optionalParams: any[]) {
+  error(message: unknown, ...optionalParams: unknown[]) {
     console.error(JSON.stringify({
       level: 'error',
-      message,
+      message: sanitizeForLog(message),
+      error: sanitizeForLog(optionalParams[0]),
       context: this.context,
       timestamp: new Date().toISOString(),
-      ...optionalParams,
     }));
   }
 
-  warn(message: any, ...optionalParams: any[]) {
+  warn(message: unknown, ...optionalParams: unknown[]) {
     console.warn(JSON.stringify({
       level: 'warn',
-      message,
+      message: sanitizeForLog(message),
       context: this.context,
       timestamp: new Date().toISOString(),
       ...optionalParams,
     }));
   }
 
-  debug?(message: any, ...optionalParams: any[]) {
+  debug?(message: unknown, ...optionalParams: unknown[]) {
     console.debug(JSON.stringify({
       level: 'debug',
       message,
@@ -48,7 +49,7 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  verbose?(message: any, ...optionalParams: any[]) {
+  verbose?(message: unknown, ...optionalParams: unknown[]) {
     console.log(JSON.stringify({
       level: 'verbose',
       message,

@@ -4,7 +4,7 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function DriverFleetOverview() {
-  const [drivers, setDrivers] = useState<any[]>([]);
+  const [drivers, setDrivers] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

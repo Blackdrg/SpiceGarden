@@ -4,7 +4,7 @@ import Head from 'next/head';
 const API = 'http://localhost:3001/api';
 
 export default function LoyaltyReferrals() {
-  const [history, setHistory] = useState<any>(null);
+  const [history, setHistory] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function LoyaltyReferrals() {
         <div>
           <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Recent Referrals</h2>
           <div style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, overflow: 'hidden' }}>
-            {history.sentReferrals.slice(0, 10).map((r: any) => (
+            {history.sentReferrals.slice(0, 10).map((r: unknown) => (
               <div key={r.id} style={{ padding: '12px 16px', borderBottom: '1px solid #27272a', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <span style={{ fontWeight: 500 }}>{r.code}</span>

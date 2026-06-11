@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, RelationId } from 'typeorm';
 import { MenuItemEntity } from './menu-item.entity';
 
 @Entity('hsn_sac_codes')
@@ -6,10 +6,10 @@ export class HSNSACEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => MenuItemEntity)
+  @ManyToOne(() => MenuItemEntity, menuItem => menuItem.hsnSac)
   menuItem!: MenuItemEntity;
 
-  @Column()
+  @RelationId((hsnSac: HSNSACEntity) => hsnSac.menuItem)
   menuItemId!: string;
 
   @Column()

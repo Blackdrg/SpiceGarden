@@ -8,16 +8,20 @@ import {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-interface LiveOrder {
+type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed' | 'placed' | 'confirmed' | 'received';
+type ServiceType = 'dine-in' | 'dine_in' | 'takeaway' | 'delivery';
+
+type LiveOrder = {
   id: string;
   amount: number;
   branch: string;
   eta: number;
-  status: string;
+  status: OrderStatus;
+  serviceType?: ServiceType;
   timestamp: number;
 }
 
-interface BranchStatus {
+type BranchStatus = {
   name: string;
   status: 'operational' | 'delayed' | 'critical';
   orderCount: number;
@@ -25,7 +29,7 @@ interface BranchStatus {
   driversAssigned: number;
 }
 
-interface DisputeTicket {
+type DisputeTicket = {
   id: string;
   type: 'refund' | 'support' | 'fraud';
   user: string;
@@ -35,9 +39,9 @@ interface DisputeTicket {
   createdAt: string;
 }
 
-interface HeatmapPoint {
+type HeatmapPoint = {
   x: number; y: number; intensity: number; label: string;
-}
+};
 
 const MOCK_REVENUE = [
   { t: '00:00', orders: 10 },
@@ -130,7 +134,7 @@ export default function AdminDashboard() {
   const [liveOrders, setLiveOrders] = useState<LiveOrder[]>([]);
   const [branches, setBranches] = useState<BranchStatus[]>([]);
   const [tickets, setTickets] = useState<DisputeTicket[]>([]);
-  const [revenueData, setRevenueData] = useState<any[]>([]);
+  const [revenueData, setRevenueData] = useState<unknown[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapPoint[]>([]);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'orders' | 'branches' | 'support'>('overview');
   const [ticketFilter, setTicketFilter] = useState<'all' | DisputeTicket['type']>('all');
@@ -147,7 +151,7 @@ export default function AdminDashboard() {
     });
     fetchOrders().then(orders => {
       if (orders.length > 0) {
-        setLiveOrders(orders.map((o: any) => ({ ...o, timestamp: new Date(o.createdAt).getTime() })));
+        setLiveOrders(orders.map((o: unknown) => ({ ...o, timestamp: new Date(o.createdAt).getTime() })));
       }
     });
   }, []);
@@ -158,13 +162,13 @@ export default function AdminDashboard() {
     const socket: Socket = io(SOCKET_URL, { path: '/socket.io/' });
     socket.on('connect', () => console.log('[Admin] connected'));
     socket.on('disconnect', () => console.log('[Admin] disconnected'));
-    socket.on('statsUpdate', (s: any) => setStats((p) => ({ ...p, ...s })));
+    socket.on('statsUpdate', (s: unknown) => setStats((p) => ({ ...p, ...s })));
     socket.on('newOrderGlobal', (order: LiveOrder) =>
       setLiveOrders((prev) => [{ ...order, timestamp: Date.now() }, ...prev].slice(0, 20)),
     );
     socket.on('kitchenUpdate', setBranches);
     socket.on('deliveryHeatmap', setHeatmapData);
-    socket.on('revenueUpdate', (d: any[]) => setRevenueData(d));
+    socket.on('revenueUpdate', (d: unknown[]) => setRevenueData(d));
     return () => { socket.disconnect(); };
   }, []);
 
@@ -515,7 +519,7 @@ export default function AdminDashboard() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontSize: 12, color: '#888' }}>Reported by: {t.user} {t.amount ? `· ₹${t.amount}` : ''}</span>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <Button label={t.type === 'refund' ? 'Refund' : 'Reply'} onClick={() => {}} style={{ padding: '4px 10px', fontSize: 12 }} />
+                          <Button label={t.type === 'refund' ? 'Refund' : 'Reply'} onClick={() => null} style={{ padding: '4px 10px', fontSize: 12 }} />
                           <Button label="Close" onClick={() => setTickets(prev => prev.filter(x => x.id !== t.id))} variant="secondary" style={{ padding: '4px 10px', fontSize: 12 }} />
                         </div>
                       </div>
@@ -621,7 +625,7 @@ function KPICard({ label, value, upColor, delta }: { label: string; value: strin
   );
 }
 
-function Card({ title, sub, children, style }: { title: string; sub?: string; children: React.ReactNode; style?: any }) {
+function Card({ title, sub, children, style }: { title: string; sub?: string; children: React.ReactNode; style?: unknown }) {
   return (
     <div style={{ background: 'white', borderRadius: 12, padding: 20, border: '1px solid #e0e0e0', boxShadow: '0 2px 6px rgba(0,0,0,0.04)', ...style }}>
       {title && <h3 style={{ margin: '0 0 4px 0', fontSize: 17, fontWeight: 700 }}>{title}</h3>}
@@ -631,7 +635,7 @@ function Card({ title, sub, children, style }: { title: string; sub?: string; ch
   );
 }
 
-function Button({ label, onClick, style, variant = 'primary', ...rest }: any) {
+function Button({ label, onClick, style, variant = 'primary', ...rest }: unknown) {
   return (
     <button
       onClick={onClick}

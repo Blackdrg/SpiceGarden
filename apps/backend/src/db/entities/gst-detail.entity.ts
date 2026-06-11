@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, RelationId } from 'typeorm';
 import { OrderEntity } from './order.entity';
 
 @Entity('gst_details')
@@ -6,10 +6,10 @@ export class GSTDetailEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => OrderEntity)
+  @ManyToOne(() => OrderEntity, order => order.gstDetail)
   order!: OrderEntity;
 
-  @Column()
+  @RelationId((gstDetail: GSTDetailEntity) => gstDetail.order)
   orderId!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })

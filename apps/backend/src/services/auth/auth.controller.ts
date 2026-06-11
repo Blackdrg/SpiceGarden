@@ -14,7 +14,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: any, @Req() req: Request) {
+  async login(@Body() body: unknown, @Req() req: Request) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException();
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() body: any, @Req() req: Request) {
+  async register(@Body() body: unknown, @Req() req: Request) {
     const existing = await this.userRepo.findOne({ where: { email: body.email } });
     if (existing) {
       throw new UnauthorizedException('Email already registered');

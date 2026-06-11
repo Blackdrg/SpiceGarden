@@ -1,0 +1,132 @@
+syntax = "proto3";
+package spicegarden.drivers.v1;
+
+service DriverService {
+  rpc GetDriverProfile(GetDriverProfileRequest) returns (DriverProfileResponse);
+  rpc UpdateLocation(UpdateLocationRequest) returns (LocationUpdateResponse);
+  rpc ToggleAvailability(ToggleAvailabilityRequest) returns (AvailabilityResponse);
+  rpc GetAvailableDrivers(GetAvailableDriversRequest) returns (DriversListResponse);
+  rpc GetDriverEarnings(GetEarningsRequest) returns (EarningsResponse);
+  rpc StartShift(StartShiftRequest) returns (ShiftResponse);
+  rpc EndShift(EndShiftRequest) returns (ShiftResponse);
+  rpc AcceptOrder(AcceptOrderRequest) returns (OrderActionResponse);
+  rpc RejectOrder(RejectOrderRequest) returns (OrderActionResponse);
+  rpc UpdateDeliveryStatus(UpdateStatusRequest) returns (OrderActionResponse);
+  rpc VerifyOTP(VerifyOTPRequest) returns (VerifyOTPResponse);
+}
+
+message GetDriverProfileRequest {
+  string driver_id = 1;
+}
+
+message DriverProfileResponse {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  string phone = 4;
+  string vehicle_number = 5;
+  string vehicle_type = 6;
+  bool is_available = 7;
+  bool is_online = 8;
+  LocationData current_location = 9;
+  double rating = 10;
+  int32 total_deliveries = 11;
+}
+
+message UpdateLocationRequest {
+  string driver_id = 1;
+  LocationData location = 2;
+}
+
+message LocationData {
+  double lat = 1;
+  double lng = 2;
+  double heading = 3;
+  double speed = 4;
+}
+
+message LocationUpdateResponse {
+  string driver_id = 1;
+  string status = 2;
+  string updated_at = 3;
+}
+
+message ToggleAvailabilityRequest {
+  string driver_id = 1;
+  bool is_available = 2;
+}
+
+message AvailabilityResponse {
+  string driver_id = 1;
+  bool is_available = 2;
+}
+
+message GetAvailableDriversRequest {
+  double lat = 1;
+  double lng = 2;
+  double radius = 3;
+}
+
+message DriversListResponse {
+  repeated DriverProfileResponse drivers = 1;
+}
+
+message GetEarningsRequest {
+  string driver_id = 1;
+  string start = 2;
+  string end = 3;
+}
+
+message EarningsResponse {
+  double available_balance = 1;
+  double pending_balance = 2;
+  double lifetime_earnings = 3;
+}
+
+message StartShiftRequest {
+  string driver_id = 1;
+}
+
+message EndShiftRequest {
+  string driver_id = 1;
+  string shift_id = 2;
+}
+
+message ShiftResponse {
+  string shift_id = 1;
+  string driver_id = 2;
+  string status = 3;
+  string started_at = 4;
+}
+
+message AcceptOrderRequest {
+  string order_id = 1;
+  string driver_id = 2;
+}
+
+message RejectOrderRequest {
+  string order_id = 1;
+  string driver_id = 2;
+}
+
+message UpdateStatusRequest {
+  string order_id = 1;
+  string status = 2;
+  int32 actual_time_minutes = 3;
+  string failure_reason = 4;
+}
+
+message OrderActionResponse {
+  string order_id = 1;
+  string status = 2;
+}
+
+message VerifyOTPRequest {
+  string order_id = 1;
+  string otp = 2;
+  string driver_id = 3;
+}
+
+message VerifyOTPResponse {
+  bool valid = 1;
+}

@@ -1,19 +1,17 @@
 import { io, Socket } from 'socket.io-client';
-import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface MessageEnvelope {
   id: string;
   event: string;
-  data: any;
+  data: Record<string, unknown>;
   timestamp: number;
   requiresAck?: boolean;
 }
 
 interface AcknowledgementCallback {
-  resolve: (value: any) => void;
-  reject: (reason?: any) => void;
-  timeout: NodeJS.Timeout;
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
+  timeout: ReturnType<typeof setTimeout>;
 }
 
 class WebSocketService {
@@ -23,7 +21,7 @@ class WebSocketService {
   private reconnectDelay = 1000;
   private messageQueue: MessageEnvelope[] = [];
   private pendingAcks = new Map<string, AcknowledgementCallback>();
-  private subscriptions = new Map<string, (data: any) => void>();
+  private subscriptions = new Map<string, (data: Record<string, unknown>) => void>();
   private isConnected = false;
   private currentOrderId: string | null = null;
 
@@ -44,7 +42,7 @@ class WebSocketService {
   }
 
   private initialize() {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = (globalThis as unknown as { process?: { env?: Record<string, string> } }).process?.env?.BACKEND_URL || 'http://localhost:3001';
     
     this.socket = io(backendUrl, {
       transports: ['websocket'],
@@ -53,8 +51,6 @@ class WebSocketService {
       reconnectionDelayMax: 30000,
       reconnectionAttempts: this.maxReconnectAttempts,
       timeout: 10000,
-      pingInterval: 10000,
-      pingTimeout: 20000,
     });
 
     this.socket.on('connect', () => {
@@ -87,11 +83,11 @@ class WebSocketService {
       this.handleIncomingMessage(data);
     });
 
-    this.socket.io.on('reconnect_attempt', (attempt) => {
-      this.reconnectAttempts = attempt;
+    this.socket.io.on('reconnect_attempt', (_attempt) => {
+      this.reconnectAttempts++;
     });
 
-    this.socket.io.on('reconnect', (attempt) => {
+    this.socket.io.on('reconnect', (_attempt) => {
       this.reconnectAttempts = 0;
       this.flushMessageQueue();
     });
@@ -148,14 +144,17 @@ class WebSocketService {
     this.isConnected = false;
   }
 
-  subscribe(event: string, callback: (data: any) => void) {
-    this.subscriptions.set(event, callback);
-    
-    this.socket?.on(event, callback);
+subscribe<T = unknown>(event: string, callback: (data: T) => void) {
+    const wrappedCallback = (data: Record<string, unknown>) => {
+      callback(data as T);
+    };
+    this.subscriptions.set(event, wrappedCallback as (data: Record<string, unknown>) => void);
+
+    this.socket?.on(event, wrappedCallback);
 
     return () => {
       this.subscriptions.delete(event);
-      this.socket?.off(event, callback);
+      this.socket?.off(event, wrappedCallback);
     };
   }
 
@@ -167,7 +166,7 @@ class WebSocketService {
     }
   }
 
-  sendMessage(data: MessageEnvelope): Promise<any> {
+  sendMessage<T = unknown>(data: MessageEnvelope<T>): Promise<unknown> {
     return new Promise((resolve, reject) => {
       if (!this.isConnected) {
         this.messageQueue.push(data);

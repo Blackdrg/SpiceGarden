@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-// @ts-ignore
 import authReducer from './slices/authSlice';
-// @ts-ignore
+import { type AuthState } from './slices/authSlice';
 import cartReducer from './slices/cartSlice';
+
+export type RootState = {
+  auth: AuthState;
+  cart: ReturnType<typeof cartReducer>;
+};
 
 export const store = configureStore({
   reducer: {
@@ -11,5 +15,4 @@ export const store = configureStore({
   },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

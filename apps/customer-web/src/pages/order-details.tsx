@@ -8,7 +8,7 @@ import { ordersApi } from '@spicegarden/shared/api';
 const OrderDetailsPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -145,7 +145,7 @@ const OrderDetailsPage = () => {
       <Card title="Order Items">
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
           {order.items && order.items.length > 0 ? (
-            order.items.map((item: any) => (
+            order.items.map((item: unknown) => (
               <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
                 <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, alignItems: 'center' }}>
                   {item.image ? (

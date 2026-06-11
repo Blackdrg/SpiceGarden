@@ -13,7 +13,7 @@ const TrackingPage = () => {
   const { location } = useTracking(orderId || 'driver-123');
   const [orderStatus, setOrderStatus] = useState('preparing');
   const [estimatedTime, setEstimatedTime] = useState(15);
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ useEffect(() => {
         <Card title="Order Details">
           <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
             {orderDetails.items && orderDetails.items.length > 0 ? (
-              orderDetails.items.map((item: any) => (
+              orderDetails.items.map((item: unknown) => (
                 <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
                   <span>{item.name} x{item.quantity}</span>
                   <span>&#8377;{item.price * item.quantity}</span>

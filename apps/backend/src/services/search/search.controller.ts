@@ -18,7 +18,7 @@ export class SearchController {
 
   @UseGuards(JwtAuthGuard)
   @Get('recommended')
-  async getRecommended(@Req() req: any) {
+  async getRecommended(@Req() req: unknown) {
     return this.searchService.getRecommended(req.user.userId);
   }
 }

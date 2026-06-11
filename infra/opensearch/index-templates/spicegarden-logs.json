@@ -1,0 +1,77 @@
+{
+  "index_patterns": ["spicegarden-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "index.refresh_interval": "5s"
+    },
+    "mappings": {
+      "dynamic": false,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "message": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          }
+        },
+        "log": {
+          "properties": {
+            "level": {
+              "type": "keyword"
+            }
+          }
+        },
+        "stream": {
+          "type": "keyword"
+        },
+        "container": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            },
+            "id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "service": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "kubernetes": {
+          "properties": {
+            "pod_name": {
+              "type": "keyword"
+            },
+            "namespace_name": {
+              "type": "keyword"
+            },
+            "labels": {
+              "type": "object",
+              "enabled": false
+            }
+          }
+        },
+        "trace": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    },
+    "aliases": {
+      "spicegarden-logs": {}
+    }
+  }
+}

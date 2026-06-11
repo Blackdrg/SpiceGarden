@@ -8,7 +8,7 @@ describe('Order Service - Isolated Unit Tests', () => {
         createTestingModule: jest.fn().mockImplementation(() => ({
           compile: jest.fn().mockResolvedValue({
             get: jest.fn().mockImplementation((token: string) => {
-              const mocks: any = {
+              const mocks: unknown = {
                 'OrderService': {},
                 'REPOSITORY_OrderEntity': {
                   findOne: jest.fn(),
@@ -86,7 +86,7 @@ describe('Order Service - Isolated Unit Tests', () => {
 
   describe('Order Placement Validation', () => {
     it('should reject missing userId', () => {
-      const orderData = { restaurantId: 'rest123', grandTotal: 25.99 } as any;
+      const orderData = { restaurantId: 'rest123', grandTotal: 25.99 } as unknown;
       expect(orderData.userId).toBeUndefined();
     });
 
