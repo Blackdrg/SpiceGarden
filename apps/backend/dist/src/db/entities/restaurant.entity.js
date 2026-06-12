@@ -53,6 +53,18 @@ __decorate([
     __metadata("design:type", restaurant_gst_entity_1.RestaurantGSTEntity)
 ], RestaurantEntity.prototype, "gstDetail", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], RestaurantEntity.prototype, "stripeAccountId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], RestaurantEntity.prototype, "razorpayFundAccountId", void 0);
+__decorate([
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
+    __metadata("design:type", Object)
+], RestaurantEntity.prototype, "location", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], RestaurantEntity.prototype, "createdAt", void 0);

@@ -17,13 +17,12 @@ export class LatencyMetricsInterceptor implements NestInterceptor {
       const durationMs = Date.now() - startTime;
       const statusCode = response.statusCode;
 
-      this.metricsService.httpRequestDuration
-        .labels(method, path, String(statusCode))
-        .observe(durationMs / 1000);
-
-      this.metricsService.httpRequestTotal
-        .labels(method, path, String(statusCode))
-        .inc();
+      this.metricsService.observeHttpRequestDuration(
+        method,
+        path,
+        statusCode,
+        durationMs,
+      );
 
       if (durationMs > 1000) {
         this.metricsService.incrementPaymentFailure(method.toLowerCase(), 'high_latency');

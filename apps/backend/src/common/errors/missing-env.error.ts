@@ -5,7 +5,7 @@ export class MissingEnvError extends Error {
   }
 }
 
-export function requireEnv(keys: string[], configService: unknown): void {
+export function requireEnv(keys: string[], configService: any): void {
   for (const key of keys) {
     const value: string | undefined = configService.get(key);
     if (!value || value.trim() === '') {
@@ -17,7 +17,7 @@ export function requireEnv(keys: string[], configService: unknown): void {
   }
 }
 
-export function requireOneOf(keys: string[], configService: unknown): string {
+export function requireOneOf(keys: string[], configService: any): string {
   for (const key of keys) {
     const value: string | undefined = configService.get(key);
     if (value && value.trim() !== '' && !value.includes('CHANGE_ME')) {

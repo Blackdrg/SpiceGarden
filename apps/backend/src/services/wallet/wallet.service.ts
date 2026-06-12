@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
@@ -18,6 +18,7 @@ export class WalletService {
     @InjectRepository(WalletTransactionEntity)
     private readonly walletTransactionRepo: Repository<WalletTransactionEntity>,
     private readonly configService: ConfigService,
+    private readonly dataSource: DataSource,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -112,6 +113,42 @@ export class WalletService {
     }
 
     return savedTransaction;
+  }
+
+  async debitWalletWithLock(userId: string, amount: number, description: string, referenceId?: string): Promise<WalletTransactionEntity> {
+    if (amount <= 0) {
+      throw new BadRequestException('Amount must be greater than zero');
+    }
+
+    return this.dataSource.manager.transaction(async (manager) => {
+      const wallet = await manager.findOne(WalletEntity, { where: { userId } });
+      if (!wallet) {
+        throw new BadRequestException('Wallet not found');
+      }
+      if (wallet.balance < amount) {
+        throw new BadRequestException('Insufficient wallet balance');
+      }
+      if (wallet.balance - amount < 0) {
+        throw new BadRequestException('Negative balance not allowed');
+      }
+
+      wallet.balance -= amount;
+      await manager.save(WalletEntity, wallet);
+
+      const transaction = manager.create(WalletTransactionEntity, {
+        walletId: wallet.id,
+        amount,
+        type: 'debit',
+        description,
+        referenceId,
+      });
+      return manager.save(WalletTransactionEntity, transaction);
+    });
+  }
+
+  async checkNegativeBalanceRisk(userId: string, amount: number): Promise<boolean> {
+    const wallet = await this.walletRepo.findOne({ where: { userId } });
+    return !!wallet && wallet.balance - amount < 0;
   }
 
   async compensateUser(userId: string, amount: number, reason: string): Promise<WalletTransactionEntity> {

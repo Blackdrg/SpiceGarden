@@ -205,6 +205,41 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
             usageTrend: usages.slice(0, 30),
         };
     }
+    async checkCouponStacking(orderId, userId) {
+        const existingUsage = await this.couponUsageRepo.findOne({ where: { orderId, userId } });
+        return !!existingUsage;
+    }
+    async detectReferralFraud(code, refereeId) {
+        const referral = await this.referralRepo.findOne({ where: { code: code.toUpperCase() } });
+        if (!referral) {
+            return { isFraud: false };
+        }
+        const recentReferrals = await this.referralRepo.find({
+            where: { refereeId },
+            order: { createdAt: 'DESC' },
+            take: 10,
+        });
+        if (recentReferrals.length > 1) {
+            return { isFraud: true, reason: 'Multiple referral usage within 24h' };
+        }
+        const referredUsers = await this.referralRepo
+            .createQueryBuilder('referral')
+            .where('referral.code = :code', { code: code.toUpperCase() })
+            .andWhere('referral.referrerId != :referrerId', { referrerId: referral.referrerId })
+            .getMany();
+        if (referredUsers.length >= 5) {
+            return { isFraud: true, reason: 'Possible referral farming detected' };
+        }
+        return { isFraud: false };
+    }
+    async revocableReferral(referralId, reason) {
+        const referral = await this.referralRepo.findOne({ where: { id: referralId } });
+        if (!referral)
+            return;
+        referral.status = referral_entity_1.ReferralStatus.REVOKED;
+        await this.referralRepo.save(referral);
+        this.logger.warn(`Referral ${referralId} revoked: ${reason}`);
+    }
     async deactivateCoupon(couponId) {
         const coupon = await this.couponRepo.findOne({ where: { id: couponId } });
         if (!coupon)

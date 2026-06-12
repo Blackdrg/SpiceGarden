@@ -5,6 +5,8 @@ import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
+import { RefundType } from '../../db/entities/refund.entity';
 
 @Controller('support')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -16,23 +18,23 @@ export class SupportController {
   ) {}
 
   @Post('disputes')
-  async raiseDispute(@Body() body: { orderId: string; customerId: string; type: string; description: string }) {
-    return this.supportService.raiseDispute(body.orderId, body.customerId, body.type as unknown, body.description);
+  async raiseDispute(@Body() body: { orderId: string; customerId: string; type: DisputeType; description: string }) {
+    return this.supportService.raiseDispute(body.orderId, body.customerId, body.type, body.description);
   }
 
   @Get('disputes')
-  async getDisputes(@Query() query: unknown) {
+  async getDisputes(@Query() query: { status?: DisputeStatus; customerId?: string; restaurantId?: string; driverId?: string }) {
     return this.supportService.getDisputes(query);
   }
 
   @Put('disputes/:id/review')
-  async reviewDispute(@Param('id') id: string, @Body() body: unknown) {
+  async reviewDispute(@Param('id') id: string, @Body() body: { reviewerId: string; status: DisputeStatus; notes?: string }) {
     return this.supportService.reviewDispute(id, body.reviewerId, body.status, body.notes);
   }
 
   @Post('refunds')
-  async requestRefund(@Body() body: { orderId: string; requestedBy: string; type: string; amount: number; reason: string }) {
-    return this.supportService.requestRefund(body.orderId, body.requestedBy, body.type as unknown, body.amount, body.reason);
+  async requestRefund(@Body() body: { orderId: string; requestedBy: string; type: RefundType; amount: number; reason: string }) {
+    return this.supportService.requestRefund(body.orderId, body.requestedBy, body.type, body.amount, body.reason);
   }
 
   @Put('refunds/:id/process')

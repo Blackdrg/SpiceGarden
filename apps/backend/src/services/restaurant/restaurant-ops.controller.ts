@@ -1,13 +1,20 @@
 import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { RestaurantOpsService } from './restaurant-ops.service';
+import { OnboardingStep } from '../../db/entities/restaurant-onboarding.entity';
 import { MenuModerationService } from './menu-moderation.service';
+import { ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { PayoutService } from './payout.service';
 import { BranchManagementService } from './branch-management.service';
 import { CommissionService } from './commission.service';
+import { CommissionType } from '../../db/entities/commission-rule.entity';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+
+interface AuthenticatedRequest {
+  user: { id: string; userId?: string };
+}
 
 @Controller('restaurant/ops')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -22,7 +29,7 @@ export class RestaurantOpsController {
   ) {}
 
   @Post('onboarding')
-  async startOnboarding(@Body() body: unknown) {
+  async startOnboarding(@Body() body: { userId: string; restaurantData: { name: string; slug: string; description?: string; businessDetails?: any } }) {
     return this.opsService.startOnboarding(body.userId, body.restaurantData);
   }
 
@@ -32,17 +39,17 @@ export class RestaurantOpsController {
   }
 
   @Put('onboarding/:id/step')
-  async updateOnboardingStep(@Param('id') id: string, @Body() body: { step: string; data?: unknown }) {
-    return this.opsService.updateStep(id, body.step as unknown, body.data);
+  async updateOnboardingStep(@Param('id') id: string, @Body() body: { step: OnboardingStep; data?: any }) {
+    return this.opsService.updateStep(id, body.step, body.data);
   }
 
   @Post('onboarding/:id/complete')
-  async completeOnboarding(@Param('id') id: string, @Req() req: unknown) {
+  async completeOnboarding(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.opsService.completeOnboarding(id, req.user.id);
   }
 
   @Post('moderation')
-  async submitForModeration(@Body() body: unknown) {
+  async submitForModeration(@Body() body: { menuItemId: string; restaurantId: string; action: ModerationAction; data: Record<string, any>; originalData?: Record<string, any> }) {
     return this.moderationService.submitForModeration(
       body.menuItemId,
       body.restaurantId,
@@ -58,7 +65,7 @@ export class RestaurantOpsController {
   }
 
   @Put('moderation/:id/review')
-  async reviewModeration(@Param('id') id: string, @Body() body: unknown, @Req() req: unknown) {
+  async reviewModeration(@Param('id') id: string, @Body() body: { status: ModerationStatus; notes?: string }, @Req() req: AuthenticatedRequest) {
     return this.moderationService.reviewModeration(id, req.user.id, body.status, body.notes);
   }
 
@@ -82,12 +89,12 @@ export class RestaurantOpsController {
   }
 
   @Post('branch')
-  async createBranch(@Body() body: unknown) {
+  async createBranch(@Body() body: { restaurantId: string; branchData: { branchName: string; address: string; lat: number; lng: number; openingTime?: string; closingTime?: string } }) {
     return this.branchService.createBranch(body.restaurantId, body.branchData);
   }
 
   @Put('branch/:id')
-  async updateBranch(@Param('id') id: string, @Body() body: unknown) {
+  async updateBranch(@Param('id') id: string, @Body() body: Partial<{ branchName: string; address: string; openingTime: string; closingTime: string; lat: number; lng: number; isOnline: boolean }>) {
     return this.branchService.updateBranch(id, body);
   }
 
@@ -102,7 +109,7 @@ export class RestaurantOpsController {
   }
 
   @Post('commission')
-  async createCommissionRule(@Body() body: unknown) {
+  async createCommissionRule(@Body() body: { restaurantId: string; ruleData: { type: CommissionType; value: number; minOrderValue?: number; maxOrderValue?: number; validFrom?: Date; validTo?: Date; applicableCategories?: string[] } }) {
     return this.commissionService.createCommissionRule(body.restaurantId, body.ruleData);
   }
 

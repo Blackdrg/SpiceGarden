@@ -207,7 +207,7 @@ export class ComplianceController {
   @Post('mask/pii')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'super_admin')
-  async maskPiiFields(@Body() dto: { data: Record<string, unknown>; fields: string[] }) {
+  async maskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
     const masked = this.dataPrivacyService.maskPii(dto.data, dto.fields);
     return { maskedData: masked };
   }
@@ -215,7 +215,7 @@ export class ComplianceController {
   @Post('unmask/pii')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'super_admin')
-  async unmaskPiiFields(@Body() dto: { data: Record<string, unknown>; fields: string[] }) {
+  async unmaskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
     const decrypted = this.dataPrivacyService.unmaskPii(dto.data, dto.fields);
     return { decryptedData: decrypted };
   }

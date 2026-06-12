@@ -280,7 +280,7 @@ describe('Failure Recovery Tests', () => {
       const logWithFallback = async (logEntry: any): Promise<void> => {
         const entry = { ...logEntry, storedAt: new Date().toISOString() };
         if (!mongoAvailable) {
-          const orderId = entry.orderId || 'unknown';
+          const orderId = entry.orderId || 'any';
           fallbackLog.set(orderId, [...(fallbackLog.get(orderId) || []), entry]);
         }
       };
@@ -477,7 +477,7 @@ describe('Failure Recovery Tests', () => {
       const getTrackingStatus = async (orderId: string): Promise<any> => {
         if (!wsAvailable) {
           const cached = trackingData.get(orderId);
-          return cached ? { ...cached, source: 'http-fallback' } : { status: 'UNKNOWN', source: 'http-fallback' };
+          return cached ? { ...cached, source: 'http-fallback' } : { status: 'any', source: 'http-fallback' };
         }
         return { status: 'LIVE', source: 'websocket' };
       };

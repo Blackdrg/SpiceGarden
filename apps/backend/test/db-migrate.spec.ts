@@ -5,7 +5,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '../../..');
 const SCRIPT = path.join(ROOT, 'scripts/db.sh');
 
-function runDb(args, opts = {}) {
+function runDb(args, opts: { timeout?: number } = {}) {
   const cmd = `bash "${SCRIPT}" ${args}`;
   try {
     const stdout = execSync(cmd, {
@@ -25,9 +25,10 @@ function runDb(args, opts = {}) {
   }
 }
 
+jest.setTimeout(120000);
+
 describe('Database Migration Stability', () => {
-  before(function () {
-    this.timeout(30000);
+  beforeAll(() => {
     console.log('[setup] Bringing up containers...');
     const r = runDb('up', { timeout: 120000 });
     if (!r.ok) {
@@ -39,8 +40,7 @@ describe('Database Migration Stability', () => {
     runDb('init');
   });
 
-  after(function () {
-    this.timeout(60000);
+  afterAll(() => {
     console.log('[teardown] Resetting DB state...');
     runDb('reset');
     console.log('[teardown] Done');
@@ -50,7 +50,7 @@ describe('Database Migration Stability', () => {
     it('should report status as UP', function () {
       this.timeout(30000);
       const r = runDb('status');
-      expect(r.ok || r.stdout.includes('PostgreSQL: UP')).to.be.true;
+      expect(r.ok || r.stdout.includes('PostgreSQL: UP')).toBe(true);
     });
   });
 
@@ -58,22 +58,22 @@ describe('Database Migration Stability', () => {
     it('should apply InitialSchema20240101000001 and expected tables exist', function () {
       this.timeout(60000);
       const r = runDb('migrate');
-      expect(r.ok, `migrate failed: ${r.stderr || r.stdout}`).to.be.true;
+      expect(r.ok).toBe(true);
       const expected = ['users', 'restaurants', 'orders', 'menu_items', 'drivers', 'wallets', 'coupons'];
       for (const t of expected) {
         const q = `bash "${SCRIPT}" init >/dev/null 2>&1; docker exec postgres psql -U spicegarden -d spicegarden -At -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${t}'"`;
         const out = execSync(q, { cwd: ROOT, encoding: 'utf8' }).trim();
-        expect(parseInt(out, 10)).to.be.greaterThan(0);
+        expect(parseInt(out, 10)).toBeGreaterThan(0);
       }
     });
 
     it('should be idempotent on second run (no changes)', function () {
       this.timeout(60000);
       const r1 = runDb('migrate');
-      expect(r1.ok).to.be.true;
+      expect(r1.ok).toBe(true);
       const r2 = runDb('migrate');
-      expect(r2.ok).to.be.true;
-      expect(r2.stdout).to.include('SKIP');
+      expect(r2.ok).toBe(true);
+      expect(r2.stdout).toContain('SKIP');
     });
   });
 
@@ -81,18 +81,18 @@ describe('Database Migration Stability', () => {
     it('should rollback last migration and drop tables', function () {
       this.timeout(60000);
       const r = runDb('rollback');
-      expect(r.ok, `rollback failed: ${r.stderr || r.stdout}`).to.be.true;
+      expect(r.ok).toBe(true);
       const t = 'users';
       const q = `docker exec postgres psql -U spicegarden -d spicegarden -At -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='${t}'"`;
       const out = execSync(q, { cwd: ROOT, encoding: 'utf8' }).trim();
-      expect(parseInt(out, 10)).to.equal(0);
+      expect(parseInt(out, 10)).toEqual(0);
     });
 
     it('should report nothing to rollback when clean', function () {
       this.timeout(30000);
       const r = runDb('rollback');
-      expect(r.ok).to.be.true;
-      expect(r.stdout).to.include('nothing to rollback');
+      expect(r.ok).toBe(true);
+      expect(r.stdout).toContain('nothing to rollback');
     });
   });
 
@@ -120,16 +120,16 @@ describe('Database Migration Stability', () => {
       );
       fs.unlinkSync(`${prefix}_postgres.sql`);
 
-      expect(fs.existsSync(tar)).to.be.true;
+      expect(fs.existsSync(tar)).toBe(true);
 
       // Now rollback, then restore
       runDb('rollback');
       const r = runDb(`restore "${tar}"`, { timeout: 120000 });
-      expect(r.ok, `restore failed: ${r.stderr || r.stdout}`).to.be.true;
+      expect(r.ok).toBe(true);
 
       const q = `docker exec postgres psql -U spicegarden -d spicegarden -At -c "SELECT COUNT(*) FROM users"`;
       const out = execSync(q, { cwd: ROOT, encoding: 'utf8' }).trim();
-      expect(parseInt(out, 10)).to.be.greaterThanOrEqual(0);
+      expect(parseInt(out, 10)).toBeGreaterThanOrEqual(0);
 
       fs.unlinkSync(tar);
     });

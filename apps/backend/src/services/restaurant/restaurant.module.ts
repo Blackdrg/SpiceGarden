@@ -1,5 +1,6 @@
 ﻿import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { RestaurantService } from './restaurant.service';
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantOpsController } from './restaurant-ops.controller';
@@ -26,20 +27,7 @@ import { KdsGateway } from './kds.gateway';
 
 @Module({
 imports: [
-  TypeOrmModule.forFeature([
-    RestaurantEntity,
-    RestaurantBranchEntity,
-    MenuCategoryEntity,
-    MenuItemEntity,
-    InventoryItemEntity,
-    RestaurantOnboardingEntity,
-    MenuModerationEntity,
-    PayoutReportEntity,
-    CommissionRuleEntity,
-    OrderEntity,
-    GSTDetailEntity,
-    UserEntity,
-  ]),
+  LocalRepositoryModule,
 ],
 providers: [
   RestaurantService,

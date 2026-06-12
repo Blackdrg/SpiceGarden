@@ -33,7 +33,7 @@ jest.mock('@nestjs/typeorm', () => ({
   InjectRepository: () => jest.fn(),
   getRepositoryToken: (entity: unknown) => {
     const name = typeof entity === 'function' ? entity.name : undefined;
-    return `REPOSITORY_${name || entity}`;
+    return `REPOSITORY_${name || String(entity)}`;
   },
 }));
 

@@ -21,13 +21,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -115,7 +125,7 @@ let WebhookService = WebhookService_1 = class WebhookService {
         try {
             const result = await this.handleEvent(gateway, event);
             await this.paymentEventRepo.save({
-                userId: event.data?.object?.metadata?.userId || 'unknown',
+                userId: event.data?.object?.metadata?.userId || 'any',
                 orderId: event.data?.object?.metadata?.orderId || event.id,
                 event: this.mapEventToPaymentEvent(gateway, event.type),
                 payload: { ...event.data?.object, ...result },
@@ -133,7 +143,7 @@ let WebhookService = WebhookService_1 = class WebhookService {
         catch (error) {
             this.logger.error(`Webhook processing failed for event ${event.id}:`, error);
             await this.paymentEventRepo.save({
-                userId: event.data?.object?.metadata?.userId || 'unknown',
+                userId: event.data?.object?.metadata?.userId || 'any',
                 orderId: event.data?.object?.metadata?.orderId || event.id,
                 event: this.mapEventToPaymentEvent(gateway, event.type),
                 payload: { error: error.message, ...event.data?.object },
@@ -285,7 +295,7 @@ let WebhookService = WebhookService_1 = class WebhookService {
             type: 'payment_failure',
             severity: 'high',
             amount: paymentIntent.amount / 100,
-            message: `Payment failed: ${paymentIntent.last_payment_error?.message || 'Unknown error'}`,
+            message: `Payment failed: ${paymentIntent.last_payment_error?.message || 'any error'}`,
         });
         this.logger.warn(`Stripe PaymentIntent ${paymentIntent.id} failed`);
         return { received: true, paymentFailed: true };
@@ -380,7 +390,7 @@ let WebhookService = WebhookService_1 = class WebhookService {
             type: 'payment_failure',
             severity: 'high',
             amount: payment.amount / 100,
-            message: `Payment failed: ${payment.error_description || 'Unknown error'}`,
+            message: `Payment failed: ${payment.error_description || 'any error'}`,
         });
         this.logger.warn(`Razorpay payment failed: ${payment.id}`);
         return { received: true, paymentFailed: true };

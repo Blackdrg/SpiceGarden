@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { AnalyticsService } from './analytics.service';
 import { AnalyticsController } from './analytics.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -11,14 +12,7 @@ import { AddressEntity } from '../../db/entities/address.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      OrderEntity,
-      OrderItemEntity,
-      MenuItemEntity,
-      UserEntity,
-      RestaurantBranchEntity,
-      AddressEntity,
-    ]),
+    LocalRepositoryModule,
   ],
   providers: [AnalyticsService],
   controllers: [AnalyticsController],

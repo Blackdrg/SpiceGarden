@@ -45,7 +45,7 @@ export class RestaurantOnboardingEntity {
      gstin?: string;
      businessType?: string;
      registrationDate?: string;
-     pricing?: unknown;
+     pricing?: any;
    };
 
   @Column('simple-json', { nullable: true })

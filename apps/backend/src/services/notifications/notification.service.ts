@@ -36,7 +36,7 @@ export class NotificationService {
     await this.userDeviceRepo.update({ userId, fcmToken }, { isActive: false });
   }
 
-  async sendPush(userId: string, title: string, body: string, data?: unknown) {
+  async sendPush(userId: string, title: string, body: string, data?: any) {
     const fcmKey = this.configService.get<string>('FCM_SERVER_KEY');
     if (!fcmKey || fcmKey.includes('CHANGE_ME')) {
       this.logger.warn(`FCM not configured - push to ${userId}: ${title}`);
@@ -108,7 +108,7 @@ export class NotificationService {
     }
   }
 
-  async sendEmail(email: string, subject: string, template: string, context: unknown) {
+  async sendEmail(email: string, subject: string, template: string, context: any) {
     const sendgridKey = this.configService.get<string>('SENDGRID_API_KEY');
     if (!sendgridKey || sendgridKey.includes('CHANGE_ME')) {
       this.logger.warn(`SendGrid not configured - email to ${email}: ${subject}`);
@@ -156,7 +156,7 @@ export class NotificationService {
     return this.sendSMS(phone, message);
   }
 
-  async sendAPNs(userId: string, title: string, body: string, data?: unknown) {
+  async sendAPNs(userId: string, title: string, body: string, data?: any) {
     const apnsKey = this.configService.get<string>('APNS_PRIVATE_KEY');
     const apnsKeyId = this.configService.get<string>('APNS_KEY_ID');
     const apnsTeamId = this.configService.get<string>('APNS_TEAM_ID');
@@ -235,7 +235,7 @@ export class NotificationService {
     return token;
   }
 
-  async notifyDeliveryLifecycle(orderId: string, event: 'driver_assigned' | 'picked_up' | 'nearby' | 'delivered', userId: string, driverInfo?: unknown) {
+  async notifyDeliveryLifecycle(orderId: string, event: 'driver_assigned' | 'picked_up' | 'nearby' | 'delivered', userId: string, driverInfo?: any) {
     const messages = {
       driver_assigned: `Driver ${driverInfo?.name || 'assigned'} is on the way!`,
       picked_up: `Your order #${orderId} has been picked up.`,

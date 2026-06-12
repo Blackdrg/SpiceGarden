@@ -50,13 +50,16 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
     }
     detectAIFlags(data) {
         const flags = {};
-        if (data?.basePrice && (data.basePrice < 10 || data.basePrice > 5000)) {
+        const basePrice = typeof data?.basePrice === 'number' ? data.basePrice : Number(data?.basePrice);
+        const description = typeof data?.description === 'string' ? data.description : undefined;
+        const imageUrl = typeof data?.imageUrl === 'string' ? data.imageUrl : undefined;
+        if (basePrice && (basePrice < 10 || basePrice > 5000)) {
             flags.priceAnomaly = true;
         }
-        if (data?.description && data.description.length < 10) {
+        if (description && description.length < 10) {
             flags.descriptionIssue = true;
         }
-        if (!data?.imageUrl || data?.imageUrl?.includes('placeholder')) {
+        if (!imageUrl || imageUrl.includes('placeholder')) {
             flags.imageProblem = true;
         }
         return flags;

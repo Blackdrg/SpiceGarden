@@ -28,32 +28,32 @@ export class EncryptionService {
     }
   }
 
-  encryptPiiFields(obj: unknown, fields: string[]): unknown {
+  encryptPiiFields(obj: any, fields: string[]): any {
     if (typeof obj !== 'object' || obj === null) return obj;
-    const encrypted = { ...(obj as Record<string, unknown>) };
+    const encrypted = { ...(obj as Record<string, any>) };
     for (const field of fields) {
       const value = encrypted[field];
       if (typeof value === 'string') {
         encrypted[field] = this.encrypt(value);
       }
     }
-    return encrypted as unknown;
+    return encrypted as any;
   }
 
-  decryptPiiFields(obj: unknown, fields: string[]): unknown {
+  decryptPiiFields(obj: any, fields: string[]): any {
     if (typeof obj !== 'object' || obj === null) return obj;
-    const decrypted = { ...(obj as Record<string, unknown>) };
+    const decrypted = { ...(obj as Record<string, any>) };
     for (const field of fields) {
       const value = decrypted[field];
       if (typeof value === 'string') {
         try {
           decrypted[field] = this.decrypt(value);
         } catch (error) {
-          const errMsg = error instanceof Error ? error.message : 'unknown';
+          const errMsg = error instanceof Error ? error.message : 'any';
           throw new Error(`Failed to decrypt field ${field}: ${errMsg}`);
         }
       }
     }
-    return decrypted as unknown;
+    return decrypted as any;
   }
 }

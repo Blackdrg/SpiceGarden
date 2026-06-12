@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, ManyToOne } from 'typeorm';
 import { OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { OrderItemEntity } from './order-item.entity';
 import { GSTDetailEntity } from './gst-detail.entity';
+import { RestaurantBranchEntity } from './restaurant-branch.entity';
 
 @Entity('orders')
 export class OrderEntity {
@@ -20,8 +21,14 @@ export class OrderEntity {
   @Column({ nullable: true })
   branchId!: string;
 
+  @ManyToOne(() => RestaurantBranchEntity)
+  branch?: RestaurantBranchEntity;
+
   @Column({ nullable: true })
   driverId!: string;
+
+  @Column({ nullable: true })
+  otpCode!: string;
 
   @Column()
   orderNumber!: string;
@@ -52,6 +59,9 @@ export class OrderEntity {
 
   @Column('decimal', { precision: 10, scale: 2 })
   grandTotal!: number;
+
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  refundedAmount!: number;
 
   @Column({ nullable: true })
   couponId!: string;

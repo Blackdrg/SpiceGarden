@@ -1,11 +1,11 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, Between } from 'typeorm';
+import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
-import { CommissionRuleEntity } from '../../db/entities/commission-rule.entity';
+import { CommissionRuleEntity, CommissionStatus } from '../../db/entities/commission-rule.entity';
 import { GSTDetailEntity } from '../../db/entities/gst-detail.entity';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class PayoutService {
   ): Promise<PayoutReportEntity> {
     const orders = await this.orderRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId,
         status: OrderStatus.DELIVERED,
         createdAt: Between(periodStart, periodEnd),
       },
@@ -44,8 +44,8 @@ export class PayoutService {
 
     const commissionRules = await this.commissionRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
-        status: 'active' as unknown,
+        restaurantId,
+        status: CommissionStatus.ACTIVE,
       },
     });
 
@@ -93,8 +93,8 @@ export class PayoutService {
 
   async getPayoutHistory(restaurantId: string, limit: number = 10): Promise<PayoutReportEntity[]> {
     return this.payoutRepo.find({
-      where: { restaurantId: restaurantId as unknown },
-      order: { createdAt: 'DESC' } as unknown,
+      where: { restaurantId },
+      order: { createdAt: 'DESC' },
       take: limit,
     });
   }
@@ -115,25 +115,25 @@ export class PayoutService {
   }
 
   async getPendingPayouts(restaurantId?: string): Promise<PayoutReportEntity[]> {
-    const where: unknown = { status: PayoutStatus.PENDING };
+    const where: FindOptionsWhere<PayoutReportEntity> = { status: PayoutStatus.PENDING };
     if (restaurantId) {
-      where.restaurantId = restaurantId as unknown;
+      where.restaurantId = restaurantId;
     }
 
     return this.payoutRepo.find({
       where,
       relations: ['restaurant'],
-      order: { createdAt: 'ASC' } as unknown,
+      order: { createdAt: 'ASC' },
     });
   }
 
-  async getPayoutSummary(restaurantId: string, month: number, year: number): Promise<unknown> {
+  async getPayoutSummary(restaurantId: string, month: number, year: number): Promise<any> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const payouts = await this.payoutRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId,
         periodStart: Between(startDate, endDate),
       },
     });

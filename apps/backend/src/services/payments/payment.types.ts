@@ -5,7 +5,7 @@ export interface PaymentIntent {
   status?: string;
   client_secret?: string;
   payment_method?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, any>;
 }
 
 export interface PaymentResult {
@@ -19,12 +19,13 @@ export interface PaymentResult {
 export interface RefundResult {
   id: string;
   amount: number;
+  currency: string;
   status?: string;
   note?: string;
 }
 
 export interface GatewayEvent {
   data: {
-    object: Record<string, unknown>;
+    object: Record<string, any>;
   };
 }

@@ -34,7 +34,7 @@ export class ETAIntelligenceService {
   ): Promise<{
     etaMinutes: number;
     confidence: number; // 0-1
-    factors: Record<string, unknown>;
+    factors: Record<string, any>;
   }> {
     // Get all necessary data
     const [order, driver, branch, recentAssignments] = await Promise.all([
@@ -159,7 +159,7 @@ export class ETAIntelligenceService {
    * Calculate confidence in ETA prediction based on data quality and historical accuracy
    */
   private calculateConfidence(
-    factors: Record<string, unknown>,
+    factors: Record<string, any>,
     recentAssignments: DriverAssignmentEntity[]
   ): number {
     let confidence = 0.8; // Base confidence
@@ -169,7 +169,7 @@ export class ETAIntelligenceService {
       confidence *= 0.8;
     }
     
-    // Reduce confidence if unknown factor has low confidence
+    // Reduce confidence if any factor has low confidence
     if (factors.kitchenDelay && factors.kitchenDelay.confidence < 0.8) {
       confidence *= factors.kitchenDelay.confidence;
     }

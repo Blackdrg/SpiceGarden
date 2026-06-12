@@ -17,7 +17,7 @@ export class PaymentEventEntity {
 event: 'payment_intent_created' | 'payment_succeeded' | 'payment_failed' | 'refund_initiated' | 'refund_completed' | 'chargeback_received' | 'chargeback_closed' | 'refund_failed';
 
   @Column('jsonb')
-  payload: unknown;
+  payload: any;
 
   @Column({ default: false })
   isProcessed: boolean;

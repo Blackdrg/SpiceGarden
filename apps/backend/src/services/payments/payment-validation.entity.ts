@@ -16,7 +16,7 @@ export class PaymentValidationEventEntity {
   amount: number;
 
   @Column('jsonb', { nullable: true })
-  validationData: unknown;
+  validationData: any;
 
   @Column({ default: false })
   passed: boolean;

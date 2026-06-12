@@ -20,7 +20,7 @@ export class AnalyticsService {
     private dataSource: DataSource,
   ) {}
 
-  async getTopDishes(restaurantId?: string, period = 30): Promise<unknown> {
+  async getTopDishes(restaurantId?: string, period = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -48,7 +48,7 @@ export class AnalyticsService {
         const menuItem = await this.menuItemRepo.findOne({ where: { id: r.dishId } });
         return {
           dishId: r.dishId,
-          name: menuItem?.name || 'Unknown',
+          name: menuItem?.name || 'any',
           totalQuantity: parseInt(r.totalQuantity),
           totalRevenue: parseFloat(r.totalRevenue),
           uniqueCustomers: parseInt(r.uniqueCustomers),
@@ -60,7 +60,7 @@ export class AnalyticsService {
     return { period: `Last ${period} days`, dishes };
   }
 
-  async getChurnAnalysis(restaurantId?: string, period = 90): Promise<unknown> {
+  async getChurnAnalysis(restaurantId?: string, period = 90): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -101,7 +101,7 @@ export class AnalyticsService {
     };
   }
 
-  async getRepeatUsers(restaurantId?: string, period = 90): Promise<unknown> {
+  async getRepeatUsers(restaurantId?: string, period = 90): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -154,7 +154,7 @@ export class AnalyticsService {
     };
   }
 
-  async getConversionRate(restaurantId?: string, period = 30): Promise<unknown> {
+  async getConversionRate(restaurantId?: string, period = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -198,7 +198,7 @@ export class AnalyticsService {
     };
   }
 
-  async getDeliveryHeatmap(restaurantId?: string, period = 30): Promise<unknown> {
+  async getDeliveryHeatmap(restaurantId?: string, period = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -257,7 +257,7 @@ export class AnalyticsService {
     };
   }
 
-  async getPeakHours(restaurantId?: string, period = 30): Promise<unknown> {
+  async getPeakHours(restaurantId?: string, period = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
 
@@ -298,7 +298,7 @@ export class AnalyticsService {
     };
   }
 
-  async getRestaurantAnalytics(restaurantId: string): Promise<unknown> {
+  async getRestaurantAnalytics(restaurantId: string): Promise<any> {
     const [topDishes, churn, repeat, conversion, heatmap, peakHours] = await Promise.all([
       this.getTopDishes(restaurantId),
       this.getChurnAnalysis(restaurantId),
@@ -320,7 +320,7 @@ export class AnalyticsService {
     };
   }
 
-  async getPlatformAnalytics(): Promise<unknown> {
+  async getPlatformAnalytics(): Promise<any> {
     const topDishes = await this.getTopDishes(undefined);
     const churn = await this.getChurnAnalysis(undefined);
     const repeat = await this.getRepeatUsers(undefined);

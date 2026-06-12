@@ -17,7 +17,7 @@
 .userName {
   margin: 0;
   font-weight: 600;
-  font-size: 1.125rem; /* approximate headingS */
+  font-size: 1.125rem;
   color: var(--color-text-primary);
 }
 
@@ -36,6 +36,7 @@
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-small);
+  cursor: pointer;
 }
 
 .searchIcon {
@@ -88,9 +89,6 @@
 .promoTitle {
   margin: 0;
   font-size: 22px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .promoText {
@@ -106,9 +104,23 @@
   color: var(--color-danger);
 }
 
-.restaurantList {
-  display: flex;
-  flex-direction: column;
+.retryButton {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.noRestaurants {
+  color: var(--color-text-secondary);
+  padding: var(--spacing-md);
+}
+
+.restaurantItemGrid {
+  display: grid;
   gap: var(--spacing-md);
 }
 
@@ -117,6 +129,13 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease-out;
+}
+
+.restaurantItem:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .restaurantIcon {
@@ -158,19 +177,6 @@
   box-shadow: var(--shadow-small);
 }
 
-.tablist {
-  display: flex;
-  gap: 12px;
-}
-
-.tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  font-size: 11px;
-}
-
 .tabIcon {
   font-size: 22px;
 }
@@ -183,4 +189,5 @@
 .inactiveTab {
   color: var(--color-text-secondary);
   opacity: 0.7;
+  font-size: 11px;
 }

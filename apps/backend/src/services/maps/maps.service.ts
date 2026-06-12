@@ -182,7 +182,7 @@ export class MapsService {
       const data = await response.json();
       const routes = data.routes || [];
       const originalRoute = routes[0];
-      const alternativeRoutes = routes.slice(1).map((route: unknown) => ({
+      const alternativeRoutes = routes.slice(1).map((route: any) => ({
         distance: route.legs?.[0]?.distance?.value || 0,
         duration: route.legs?.[0]?.duration?.value || 0,
         summary: route.summary || '',

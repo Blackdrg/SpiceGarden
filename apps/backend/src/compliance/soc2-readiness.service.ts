@@ -236,7 +236,7 @@ export class Soc2ReadinessService {
     return 'not_compliant';
   }
 
-  async generateSoc2EvidenceReport(): Promise<Record<string, unknown>> {
+  async generateSoc2EvidenceReport(): Promise<Record<string, any>> {
     this.logger.log('Generating SOC2 evidence report');
 
     return {

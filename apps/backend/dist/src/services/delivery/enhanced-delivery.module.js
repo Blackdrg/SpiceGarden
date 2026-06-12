@@ -8,12 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnhancedDeliveryServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const enhanced_delivery_service_1 = require("./enhanced-delivery.service");
-const driver_entity_1 = require("../../db/entities/driver.entity");
-const order_entity_1 = require("../../db/entities/order.entity");
-const batch_entity_1 = require("../../db/entities/batch.entity");
-const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
 const geo_service_1 = require("../../services/geo/geo.service");
 let EnhancedDeliveryServiceModule = class EnhancedDeliveryServiceModule {
 };
@@ -21,7 +17,7 @@ exports.EnhancedDeliveryServiceModule = EnhancedDeliveryServiceModule;
 exports.EnhancedDeliveryServiceModule = EnhancedDeliveryServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([driver_entity_1.DriverEntity, order_entity_1.OrderEntity, batch_entity_1.BatchEntity, driver_assignment_entity_1.DriverAssignmentEntity]),
+            local_repository_module_1.LocalRepositoryModule,
         ],
         providers: [enhanced_delivery_service_1.EnhancedDeliveryService, geo_service_1.GeoService],
         exports: [enhanced_delivery_service_1.EnhancedDeliveryService],

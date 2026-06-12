@@ -91,7 +91,7 @@ describe('OrderService Edge Cases', () => {
         status: OrderStatus.PLACED,
         createdAt: now,
         itemsHash: 'hash123',
-      } as OrderEntity;
+      } as any as OrderEntity;
       mockOrderRepo.findOne.mockResolvedValue(duplicateOrder);
 
       const result = await service.checkDuplicateOrder('user1', 'rest1', 'hash123');
@@ -113,7 +113,7 @@ describe('OrderService Edge Cases', () => {
         status: OrderStatus.PLACED,
         createdAt: oldDate,
         itemsHash: 'hash123',
-      } as OrderEntity;
+      } as any as OrderEntity;
       mockOrderRepo.findOne.mockResolvedValue(duplicateOrder);
 
       const result = await service.checkDuplicateOrder('user1', 'rest1', 'hash123', 5);
@@ -158,7 +158,7 @@ describe('OrderService Edge Cases', () => {
         status: OrderStatus.ON_THE_WAY,
         grandTotal: 100,
         paymentStatus: PaymentStatus.COMPLETED,
-      } as OrderEntity;
+      } as any as OrderEntity;
 
       mockOrderRepo.findOne.mockResolvedValue(order);
       mockPaymentService.refundPayment.mockResolvedValue({ id: 'refund1' });
@@ -179,7 +179,7 @@ describe('OrderService Edge Cases', () => {
         status: OrderStatus.PLACED,
         grandTotal: 100,
         paymentStatus: PaymentStatus.COMPLETED,
-      } as OrderEntity;
+      } as any as OrderEntity;
 
       mockOrderRepo.findOne.mockResolvedValue(order);
 
@@ -193,7 +193,7 @@ describe('OrderService Edge Cases', () => {
         status: OrderStatus.ON_THE_WAY,
         grandTotal: 100,
         paymentStatus: PaymentStatus.REFUNDED,
-      } as OrderEntity;
+      } as any as OrderEntity;
 
       mockOrderRepo.findOne.mockResolvedValue(order);
 
@@ -208,7 +208,7 @@ describe('OrderService Edge Cases', () => {
         grandTotal: 100,
         refundedAmount: 90,
         paymentStatus: PaymentStatus.COMPLETED,
-      } as OrderEntity;
+      } as any as OrderEntity;
 
       mockOrderRepo.findOne.mockResolvedValue(order);
 

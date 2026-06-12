@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import styles from './subscriptions.module.css';
 
 interface Subscription {
   id: number;
@@ -23,57 +24,60 @@ const SubscriptionsPage = () => {
     setSubscriptions((prev) => prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s)));
   };
 
-  return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>My Subscriptions</h2>
+  const getStatusClass = (isActive: boolean) => {
+    return `${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`;
+  };
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
+  const getNavClass = (key: string) => {
+    return `${styles.navItem} ${activeTab === key ? styles.navItemActive : styles.navLabel}`;
+  };
+
+  return (
+    <div className={styles.container}>
+      <h2 className={styles.pageTitle}>My Subscriptions</h2>
+
+      <div className={styles.cardList}>
         {subscriptions.map((sub) => (
           <Card key={sub.id} title={sub.name} isElevated>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.md }}>
-              <div>
-                <span style={{ fontSize: '22px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>&#8377;{sub.price}</span>
-                <span style={{ color: '#999', fontSize: '14px' }}> / month</span>
+            <div className={styles.priceWrapper}>
+              <div className={styles.priceInfo}>
+                <span className={styles.price}>&#8377;{sub.price}</span>
+                <span className={styles.priceLabel}> / month</span>
               </div>
-              <span style={{
-                padding: '4px 12px', borderRadius: 16, fontSize: '12px', fontWeight: 'bold',
-                backgroundColor: sub.active ? '#e8f5e8' : '#f5f5f5',
-                color: sub.active ? DESIGN_TOKENS.colors.success : '#999',
-              }}>{sub.active ? 'ACTIVE' : 'INACTIVE'}</span>
+              <span className={getStatusClass(sub.active)}>{sub.active ? 'ACTIVE' : 'INACTIVE'}</span>
             </div>
-            <ul style={{ margin: '0 0 16px 20px', padding: 0, color: '#555', fontSize: '14px' }}>
-              {sub.benefits.map((b, i) => <li key={i} style={{ marginBottom: 4 }}>{b}</li>)}
+            <ul className={styles.benefits}>
+              {sub.benefits.map((b, i) => <li key={i} className={styles.benefitItem}>{b}</li>)}
             </ul>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: '#999', fontSize: '13px' }}>Next billing: {sub.nextBilling}</span>
+            <div className={styles.cardFooter}>
+              <span className={styles.nextBilling}>Next billing: {sub.nextBilling}</span>
               <Button label={sub.active ? 'Cancel' : 'Activate'} onClick={() => toggleSubscription(sub.id)} variant={sub.active ? 'secondary' : 'primary'} />
             </div>
           </Card>
         ))}
       </div>
 
-      <Card title="Explore More Plans" isElevated style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
-        <p style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>Save on every order. Gold, Premium, Family options available.</p>
+      <Card title="Explore More Plans" isElevated className={styles.exploreCard}>
+        <p className={styles.exploreText}>Save on every order. Gold, Premium, Family options available.</p>
         <Button label="View All Plans" onClick={() => null} />
       </Card>
 
-      {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'subs', label: 'Subs', icon: '⭐' },
+          { key: 'subs', label: 'Subs', icon: '⭐', path: '/subscriptions' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <div
             key={tab.key}
+            className={getNavClass(tab.key)}
             onClick={() => tab.path && router.push(tab.path)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '11px' }}
+            role="button"
+            tabIndex={0}
+            aria-label={tab.label}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.navIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
           </div>
         ))}

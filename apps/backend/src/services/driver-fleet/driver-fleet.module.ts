@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { DriverFleetService } from './driver-fleet.service';
 import { DriverFleetController } from './driver-fleet.controller';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -12,15 +13,7 @@ import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.enti
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      DriverEntity,
-      DriverShiftEntity,
-      DriverScoreEntity,
-      DriverPenaltyEntity,
-      DriverIncentiveEntity,
-      OrderEntity,
-      DriverAssignmentEntity,
-    ]),
+    LocalRepositoryModule,
   ],
   providers: [DriverFleetService],
   controllers: [DriverFleetController],

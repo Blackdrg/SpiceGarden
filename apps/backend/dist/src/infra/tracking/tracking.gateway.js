@@ -155,7 +155,7 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
     getNamespaceStats() {
         const stats = {};
         this.connectedClients.forEach((client) => {
-            const ns = client.namespace || 'unknown';
+            const ns = client.namespace || 'any';
             stats[ns] = (stats[ns] || 0) + 1;
         });
         return stats;

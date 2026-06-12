@@ -21,6 +21,14 @@ export interface FraudRiskResult {
   riskLevel: 'low' | 'medium' | 'high';
 }
 
+interface ChargebackDispute {
+  customer?: string;
+  amount?: number;
+  currency?: string;
+  reason?: string;
+  status?: string;
+}
+
 @Injectable()
 export class PaymentHardeningService {
   private readonly logger = new Logger(PaymentHardeningService.name);
@@ -37,7 +45,7 @@ export class PaymentHardeningService {
     this.stripe = new Stripe(
       this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
       {
-        apiVersion: '2024-04-10' as unknown,
+        apiVersion: '2024-04-10',
       }
     );
   }
@@ -142,7 +150,7 @@ export class PaymentHardeningService {
       where: {
         userId,
         operation: 'create_payment_intent',
-        createdAt: MoreThanOrEqual(oneHourAgo) as unknown
+        createdAt: MoreThanOrEqual(oneHourAgo),
       }
     });
 
@@ -179,8 +187,8 @@ export class PaymentHardeningService {
     idempotencyKey: string,
     operation: string,
     userId: string,
-    requestPayload: unknown
-  ): Promise<{ isDuplicate: boolean; existingResponse?: unknown }> {
+    requestPayload: any
+  ): Promise<{ isDuplicate: boolean; existingResponse?: any }> {
     if (!idempotencyKey) {
       return { isDuplicate: false };
     }
@@ -218,7 +226,7 @@ export class PaymentHardeningService {
   async completeIdempotency(
     idempotencyKey: string,
     operation: string,
-    responsePayload: unknown,
+    responsePayload: any,
     statusCode: number = 200
   ): Promise<void> {
     await this.idempotencyRepo.update(
@@ -257,7 +265,7 @@ export class PaymentHardeningService {
       where: {
         userId,
         operation: 'create_payment_intent',
-        createdAt: MoreThanOrEqual(new Date(Date.now() - 24 * 60 * 60 * 1000)) as unknown
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 24 * 60 * 60 * 1000)),
       }
     });
 
@@ -354,10 +362,10 @@ export class PaymentHardeningService {
     }
   }
 
-  async handleChargeback(paymentIntentId: string, dispute: unknown): Promise<unknown> {
+  async handleChargeback(paymentIntentId: string, dispute: ChargebackDispute): Promise<any> {
     await this.auditService.logPaymentEvent(
       'chargeback_received',
-      dispute.customer || 'unknown',
+      dispute.customer || 'any',
       dispute.amount ? dispute.amount / 100 : 0,
       dispute.currency || 'usd',
       'stripe',
@@ -384,7 +392,7 @@ export class PaymentHardeningService {
     };
   }
 
-  async createPaymentRetry(paymentIntentId: string, retryAttempt: number): Promise<unknown> {
+  async createPaymentRetry(paymentIntentId: string, retryAttempt: number): Promise<any> {
     const existingIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
     if (!existingIntent) {
       throw new BadRequestException('Payment intent not found');
@@ -408,7 +416,7 @@ export class PaymentHardeningService {
 
     await this.auditService.logPaymentEvent(
       'payment_retry_created',
-      existingIntent.metadata?.userId || 'unknown',
+      existingIntent.metadata?.userId || 'any',
       existingIntent.amount / 100,
       existingIntent.currency,
       'stripe',

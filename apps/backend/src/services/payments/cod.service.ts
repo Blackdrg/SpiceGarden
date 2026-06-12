@@ -12,7 +12,7 @@ export class CodService {
     amount: number,
     currency: string = 'usd',
     userId: string = null,
-    metadata: Record<string, unknown> = {},
+    metadata: Record<string, any> = {},
   ): Promise<PaymentIntent> {
     // Generate a deterministic ID for tracing
     const intentId = `cod_${Date.now()}`;
@@ -23,7 +23,7 @@ export class CodService {
       status: 'requires_capture',
       payment_method: 'cod',
       metadata,
-    } as unknown;
+    };
   }
 
   async confirmPayment(
@@ -36,7 +36,7 @@ export class CodService {
       amount: 0,
       currency: 'usd',
       status: 'succeeded',
-    } as unknown;
+    };
   }
 
   async refundPayment(
@@ -51,7 +51,6 @@ export class CodService {
       amount: amount ?? 0,
       currency: 'usd',
       status: 'succeeded',
-      metadata: { reason },
-    } as unknown;
+    };
   }
 }

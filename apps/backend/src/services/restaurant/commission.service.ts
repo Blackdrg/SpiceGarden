@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, FindOptionsWhere } from 'typeorm';
 import { CommissionRuleEntity, CommissionType, CommissionStatus } from '../../db/entities/commission-rule.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 
@@ -43,7 +43,7 @@ export class CommissionService {
   }
 
   async getCommissionRules(restaurantId: string, activeOnly: boolean = true): Promise<CommissionRuleEntity[]> {
-    const where: unknown = { restaurantId: restaurantId as unknown };
+    const where: FindOptionsWhere<CommissionRuleEntity> = { restaurantId };
     if (activeOnly) {
       where.status = CommissionStatus.ACTIVE;
     }
@@ -57,7 +57,7 @@ export class CommissionService {
   async calculateCommission(restaurantId: string, orderAmount: number, categoryId?: string): Promise<number> {
     const rules = await this.commissionRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId,
         status: CommissionStatus.ACTIVE,
       },
     });
@@ -98,10 +98,10 @@ export class CommissionService {
     return this.updateCommissionRule(ruleId, { status: CommissionStatus.CANCELLED });
   }
 
-  async getCommissionHistory(restaurantId: string, limit: number = 20): Promise<unknown[]> {
+  async getCommissionHistory(restaurantId: string, limit: number = 20): Promise<any[]> {
     // This would typically aggregate from orders/payouts
     const rules = await this.commissionRepo.find({
-      where: { restaurantId: restaurantId as unknown },
+      where: { restaurantId },
       order: { createdAt: 'DESC' },
       take: limit,
     });

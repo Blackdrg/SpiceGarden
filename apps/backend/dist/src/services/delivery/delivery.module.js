@@ -8,16 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeliveryServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const delivery_service_1 = require("./delivery.service");
-const driver_entity_1 = require("../../db/entities/driver.entity");
-const wallet_entity_1 = require("../../db/entities/wallet.entity");
-const wallet_transaction_entity_1 = require("../../db/entities/wallet-transaction.entity");
-const order_entity_1 = require("../../db/entities/order.entity");
-const batch_entity_1 = require("../../db/entities/batch.entity");
-const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
-const driver_score_entity_1 = require("../../db/entities/driver-score.entity");
-const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 const geo_service_1 = require("../../services/geo/geo.service");
 let DeliveryServiceModule = class DeliveryServiceModule {
 };
@@ -25,16 +17,7 @@ exports.DeliveryServiceModule = DeliveryServiceModule;
 exports.DeliveryServiceModule = DeliveryServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([
-                driver_entity_1.DriverEntity,
-                wallet_entity_1.WalletEntity,
-                wallet_transaction_entity_1.WalletTransactionEntity,
-                order_entity_1.OrderEntity,
-                batch_entity_1.BatchEntity,
-                driver_assignment_entity_1.DriverAssignmentEntity,
-                driver_score_entity_1.DriverScoreEntity,
-                driver_fraud_entity_1.DriverFraudEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
         ],
         providers: [delivery_service_1.DeliveryService, geo_service_1.GeoService],
         exports: [delivery_service_1.DeliveryService],

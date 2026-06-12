@@ -14,8 +14,8 @@ export class PaymentMethodsService {
     return this.paymentRepo.find({ where: { userId } });
   }
 
-  async addPaymentMethod(userId: string, data: unknown) {
-    const paymentData = data as Record<string, unknown>;
+  async addPaymentMethod(userId: string, data: any) {
+    const paymentData = data as Record<string, any>;
     if (paymentData.isDefault) {
       await this.paymentRepo.update({ userId }, { isDefault: false } as any);
     }

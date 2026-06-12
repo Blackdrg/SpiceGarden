@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { CustomerSupportService } from './customer-support.service';
 import { TicketRoutingService } from './ticket-routing.service';
 import { SupportController } from './support.controller';
@@ -13,14 +14,7 @@ import { PaymentServiceModule } from '../payments/payments.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      DisputeEntity,
-      RefundEntity,
-      SupportTicketEntity,
-      TicketMessageEntity,
-      OrderEntity,
-      UserEntity,
-    ]),
+    LocalRepositoryModule,
     WalletModule,
     PaymentServiceModule,
   ],

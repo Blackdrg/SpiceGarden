@@ -1,12 +1,12 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/spicegarden';
 const TEST_DB = 'spicegarden_test';
 const TEST_TIMEOUT = 15000;
 
 describe('MongoDB Integration', () => {
-  let client: unknown;
-  let db: unknown;
+  let client: MongoClient;
+  let db: Db;
 
   beforeAll(() => {
     process.env.NODE_ENV = 'test';

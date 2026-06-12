@@ -1,6 +1,7 @@
 ﻿
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../../db/local-repository.module';
 import { ChargebackService } from './chargeback.service';
 import { ChargebackController } from './chargeback.controller';
 import { PaymentDisputeEntity } from '../../../db/entities/payment-dispute.entity';
@@ -10,7 +11,7 @@ import { NotificationModule } from '../../notifications/notification.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderEntity, UserEntity]),
+    LocalRepositoryModule,
     NotificationModule,
   ],
   providers: [ChargebackService],

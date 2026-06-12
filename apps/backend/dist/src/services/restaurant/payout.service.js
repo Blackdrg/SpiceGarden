@@ -36,7 +36,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
     async generatePayoutReport(restaurantId, periodStart, periodEnd) {
         const orders = await this.orderRepo.find({
             where: {
-                restaurantId: restaurantId,
+                restaurantId,
                 status: order_interface_1.OrderStatus.DELIVERED,
                 createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
             },
@@ -45,8 +45,8 @@ let PayoutService = PayoutService_1 = class PayoutService {
         const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
         const commissionRules = await this.commissionRepo.find({
             where: {
-                restaurantId: restaurantId,
-                status: 'active',
+                restaurantId,
+                status: commission_rule_entity_1.CommissionStatus.ACTIVE,
             },
         });
         let platformCommission = grossSales * 0.15;
@@ -89,7 +89,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
     }
     async getPayoutHistory(restaurantId, limit = 10) {
         return this.payoutRepo.find({
-            where: { restaurantId: restaurantId },
+            where: { restaurantId },
             order: { createdAt: 'DESC' },
             take: limit,
         });
@@ -122,7 +122,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
         const endDate = new Date(year, month, 0);
         const payouts = await this.payoutRepo.find({
             where: {
-                restaurantId: restaurantId,
+                restaurantId,
                 periodStart: (0, typeorm_2.Between)(startDate, endDate),
             },
         });

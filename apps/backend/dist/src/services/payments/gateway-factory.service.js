@@ -37,7 +37,7 @@ let PaymentGatewayFactory = PaymentGatewayFactory_1 = class PaymentGatewayFactor
             case 'razorpay':
                 return this.razorpayGateway;
             default:
-                this.logger.warn(`Unknown payment gateway: ${gatewayName}, falling back to default`);
+                this.logger.warn(`any payment gateway: ${gatewayName}, falling back to default`);
                 return this.defaultGateway;
         }
     }

@@ -28,7 +28,7 @@ export class PaymentDisputeEntity {
    reason!: string; // Reason provided by customer for dispute
 
    @Column('simple-json', { nullable: true })
-   evidence?: unknown; // Evidence submitted for dispute resolution
+   evidence?: any; // Evidence submitted for dispute resolution
 
    @Column()
    status!: 'warning' | 'needs_response' | 'under_review' | 'won' | 'lost'; // Dispute status

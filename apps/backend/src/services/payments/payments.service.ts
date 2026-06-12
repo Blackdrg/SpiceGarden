@@ -36,7 +36,7 @@ export class PaymentService {
     amount: number,
     currency: string = 'usd',
     userId: string = null,
-    metadata: Record<string, unknown> = {},
+    metadata: Record<string, any> = {},
     request?: Request,
     gatewayName?: string
   ): Promise<PaymentIntent> {
@@ -69,7 +69,7 @@ export class PaymentService {
         userId,
         amount,
         currency,
-        gatewayName ? gatewayName : 'unknown',
+        gatewayName ? gatewayName : 'any',
         null,
         false,
         request,
@@ -185,7 +185,7 @@ export class PaymentService {
         userId,
         0, // We don't have the amount here without fetching again
         'usd', // We don't have the currency here without fetching again
-        gatewayName ? gatewayName : 'unknown',
+        gatewayName ? gatewayName : 'any',
         paymentId,
         false,
         request,
@@ -265,7 +265,7 @@ export class PaymentService {
         userId,
         amount || 0,
         'usd', // We don't have the currency here without fetching again
-        gatewayName ? gatewayName : 'unknown',
+        gatewayName ? gatewayName : 'any',
         paymentId,
         false,
         request,
@@ -293,11 +293,11 @@ export class PaymentService {
       const obj = event.data.object;
       await this.auditService.logPaymentEvent(
         'webhook_received',
-        (obj.metadata as Record<string, unknown> | undefined)?.userId as string || 'unknown',
+        (obj.metadata as Record<string, any> | undefined)?.userId as string || 'any',
         typeof obj.amount === 'number' ? obj.amount / 100 : 0,
         (obj.currency as string | undefined) || 'usd',
         gateway.getGatewayName(),
-        (obj.id as string | undefined) || 'unknown',
+        (obj.id as string | undefined) || 'any',
         true,
         null
       );

@@ -67,7 +67,7 @@ export class SecretsRotationService {
         previousRotated: true,
       };
     } catch (error) {
-      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      const errMsg = error instanceof Error ? error.message : 'any error';
       this.logger.error(`Failed to rotate ${secretName}: ${errMsg}`);
 
       return {
@@ -122,7 +122,7 @@ export class SecretsRotationService {
     }
   }
 
-  async getRotationProof(): Promise<Record<string, unknown>> {
+  async getRotationProof(): Promise<Record<string, any>> {
     const history = Object.fromEntries(this.rotationHistory);
 
     return {

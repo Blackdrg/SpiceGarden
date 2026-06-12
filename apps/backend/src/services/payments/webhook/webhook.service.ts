@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger, BadRequestException, InternalServerErrorException, Inject } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, InternalServerErrorException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, MoreThanOrEqual } from 'typeorm';
@@ -92,7 +92,7 @@ export class WebhookService {
       const result = await this.handleEvent(gateway, event);
 
       await this.paymentEventRepo.save({
-        userId: (event.data?.object as any)?.metadata?.userId || 'unknown',
+        userId: (event.data?.object as any)?.metadata?.userId || 'any',
         orderId: (event.data?.object as any)?.metadata?.orderId || event.id,
         event: this.mapEventToPaymentEvent(gateway, event.type),
         payload: { ...(event.data?.object as any), ...result },
@@ -112,7 +112,7 @@ export class WebhookService {
       this.logger.error(`Webhook processing failed for event ${event.id}:`, error);
       
       await this.paymentEventRepo.save({
-        userId: (event.data?.object as any)?.metadata?.userId || 'unknown',
+        userId: (event.data?.object as any)?.metadata?.userId || 'any',
         orderId: (event.data?.object as any)?.metadata?.orderId || event.id,
         event: this.mapEventToPaymentEvent(gateway, event.type),
         payload: { error: error.message, ...(event.data?.object as any) },
@@ -303,7 +303,7 @@ export class WebhookService {
         type: 'payment_failure',
         severity: 'high',
         amount: paymentIntent.amount / 100,
-        message: `Payment failed: ${paymentIntent.last_payment_error?.message || 'Unknown error'}`,
+        message: `Payment failed: ${paymentIntent.last_payment_error?.message || 'any error'}`,
       }
     );
 
@@ -457,7 +457,7 @@ export class WebhookService {
         type: 'payment_failure',
         severity: 'high',
         amount: payment.amount / 100,
-        message: `Payment failed: ${payment.error_description || 'Unknown error'}`,
+        message: `Payment failed: ${payment.error_description || 'any error'}`,
       }
     );
 

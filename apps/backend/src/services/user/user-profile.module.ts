@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { UserProfileService } from './user-profile.service';
 import { UserProfileController } from './user-profile.controller';
 import { AddressEntity } from '../../db/entities/address.entity';
 import { PaymentMethodEntity } from '../../db/entities/payment-method.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AddressEntity, PaymentMethodEntity])],
+  imports: [LocalRepositoryModule],
   providers: [UserProfileService],
   controllers: [UserProfileController],
   exports: [UserProfileService],

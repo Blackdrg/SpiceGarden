@@ -35,6 +35,10 @@ let AddressService = class AddressService {
         await this.addressRepo.update({ userId }, { isDefault: false });
         return this.addressRepo.update({ userId, id: addressId }, { isDefault: true });
     }
+    async deleteAddress(userId, addressId) {
+        const result = await this.addressRepo.delete({ userId, id: addressId });
+        return { deleted: (result.affected || 0) > 0 };
+    }
 };
 exports.AddressService = AddressService;
 exports.AddressService = AddressService = __decorate([

@@ -8,16 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriverOpsModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const driver_onboarding_service_1 = require("./driver-onboarding.service");
 const driver_payout_service_1 = require("./driver-payout.service");
 const driver_ops_controller_1 = require("./driver-ops.controller");
-const driver_entity_1 = require("../../db/entities/driver.entity");
-const driver_document_entity_1 = require("../../db/entities/driver-document.entity");
-const driver_incentive_entity_1 = require("../../db/entities/driver-incentive.entity");
-const order_entity_1 = require("../../db/entities/order.entity");
-const user_entity_1 = require("../../db/entities/user.entity");
-const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
 const wallet_module_1 = require("../wallet/wallet.module");
 const payments_module_1 = require("../payments/payments.module");
 let DriverOpsModule = class DriverOpsModule {
@@ -26,14 +20,7 @@ exports.DriverOpsModule = DriverOpsModule;
 exports.DriverOpsModule = DriverOpsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([
-                driver_entity_1.DriverEntity,
-                driver_document_entity_1.DriverDocumentEntity,
-                driver_incentive_entity_1.DriverIncentiveEntity,
-                order_entity_1.OrderEntity,
-                user_entity_1.UserEntity,
-                driver_assignment_entity_1.DriverAssignmentEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
             wallet_module_1.WalletModule,
             payments_module_1.PaymentServiceModule,
         ],

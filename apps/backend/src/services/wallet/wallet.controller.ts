@@ -5,6 +5,10 @@ import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 
+interface AuthenticatedRequest {
+  user: { id: string };
+}
+
 @Controller('wallet')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.CUSTOMER)
@@ -12,18 +16,18 @@ export class WalletController {
   constructor(private readonly walletService: WalletService) { }
 
   @Get()
-  async getWallet(@Request() req: unknown) {
+  async getWallet(@Request() req: AuthenticatedRequest) {
     return await this.walletService.getWallet(req.user.id);
   }
 
   @Get('balance')
-  async getBalance(@Request() req: unknown) {
+  async getBalance(@Request() req: AuthenticatedRequest) {
     return await this.walletService.getWalletBalance(req.user.id);
   }
 
   @Get('transactions')
   async getTransactions(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('limit') limit: number = 20,
     @Body('offset') offset: number = 0,
   ) {
@@ -32,7 +36,7 @@ export class WalletController {
 
   @Post('credit')
   async creditWallet(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('amount') amount: number,
     @Body('description') description: string,
     @Body('referenceId') referenceId?: string,
@@ -47,7 +51,7 @@ export class WalletController {
 
   @Post('debit')
   async debitWallet(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('amount') amount: number,
     @Body('description') description: string,
     @Body('referenceId') referenceId?: string,
@@ -62,7 +66,7 @@ export class WalletController {
 
   @Post('compensate')
   async compensateUser(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('amount') amount: number,
     @Body('reason') reason: string,
   ) {
@@ -71,7 +75,7 @@ export class WalletController {
 
   @Post('cod/process')
   async processCODPayment(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
   ) {
@@ -80,7 +84,7 @@ export class WalletController {
 
   @Post('cod/confirm')
   async confirmCODCollection(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
   ) {
@@ -89,7 +93,7 @@ export class WalletController {
 
   @Post('cod/refund')
   async refundCOD(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('orderId') orderId: string,
     @Body('amount') amount: string | number,
     @Body('reason') reason: string,
@@ -99,7 +103,7 @@ export class WalletController {
 
   @Post('prevent-duplicate')
   async preventDuplicatePayment(
-    @Request() req: unknown,
+    @Request() req: AuthenticatedRequest,
     @Body('orderId') orderId: string,
     @Body('amount') amount: number,
   ) {

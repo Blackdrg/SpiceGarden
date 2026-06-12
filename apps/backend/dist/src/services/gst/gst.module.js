@@ -8,31 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GSTModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const gst_service_1 = require("./gst.service");
 const gst_controller_1 = require("./gst.controller");
-const order_entity_1 = require("../../db/entities/order.entity");
-const order_item_entity_1 = require("../../db/entities/order-item.entity");
-const gst_detail_entity_1 = require("../../db/entities/gst-detail.entity");
-const hsn_sac_entity_1 = require("../../db/entities/hsn-sac.entity");
-const restaurant_gst_entity_1 = require("../../db/entities/restaurant-gst.entity");
-const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
-const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let GSTModule = class GSTModule {
 };
 exports.GSTModule = GSTModule;
 exports.GSTModule = GSTModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([
-                order_entity_1.OrderEntity,
-                order_item_entity_1.OrderItemEntity,
-                gst_detail_entity_1.GSTDetailEntity,
-                hsn_sac_entity_1.HSNSACEntity,
-                restaurant_gst_entity_1.RestaurantGSTEntity,
-                menu_item_entity_1.MenuItemEntity,
-                restaurant_entity_1.RestaurantEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
         ],
         providers: [gst_service_1.GSTService],
         controllers: [gst_controller_1.GSTController],

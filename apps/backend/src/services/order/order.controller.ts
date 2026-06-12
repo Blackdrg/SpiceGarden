@@ -11,7 +11,7 @@ export class OrderController {
 
   @Post()
   async placeOrder(
-    @Body() body: unknown,
+    @Body() body: any,
     @Headers('x-idempotency-key') idempotencyKey?: string
   ) {
     return this.orderService.placeOrder(body, idempotencyKey);

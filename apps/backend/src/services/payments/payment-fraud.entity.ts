@@ -31,7 +31,7 @@ export class PaymentFraudFlagEntity {
     cardBin?: string;
     transactionCount?: number;
     timeWindow?: string;
-    [key: string]: unknown;
+    [key: string]: any;
   };
 
   @Column({ default: false })

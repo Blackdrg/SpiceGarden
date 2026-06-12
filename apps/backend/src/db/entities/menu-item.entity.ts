@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { MenuCategoryEntity } from './menu-category.entity';
 import { HSNSACEntity } from './hsn-sac.entity';
+import { MenuAddonEntity } from './menu-addon.entity';
 
 @Entity('menu_items')
 export class MenuItemEntity {
@@ -36,6 +37,9 @@ export class MenuItemEntity {
 
   @ManyToOne(() => HSNSACEntity, { nullable: true })
   hsnSac?: HSNSACEntity;
+
+  @OneToMany(() => MenuAddonEntity, (addon) => addon.menuItem)
+  addons?: MenuAddonEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;

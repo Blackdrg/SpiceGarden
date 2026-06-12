@@ -2,6 +2,10 @@ import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
 import { SearchService } from './search.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 
+interface AuthenticatedRequest {
+  user: { userId: string };
+}
+
 @Controller('search')
 export class SearchController {
   constructor(private searchService: SearchService) {}
@@ -18,7 +22,7 @@ export class SearchController {
 
   @UseGuards(JwtAuthGuard)
   @Get('recommended')
-  async getRecommended(@Req() req: unknown) {
+  async getRecommended(@Req() req: AuthenticatedRequest) {
     return this.searchService.getRecommended(req.user.userId);
   }
 }

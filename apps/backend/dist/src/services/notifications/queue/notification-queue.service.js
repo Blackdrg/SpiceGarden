@@ -104,12 +104,12 @@ let NotificationQueueService = NotificationQueueService_1 = class NotificationQu
                 }
             }
             else {
-                throw new Error(result?.error || 'Unknown error');
+                throw new Error(result?.error || 'any error');
             }
         }
         catch (error) {
             notification.errorInfo = {
-                message: error?.message || 'Unknown error',
+                message: error?.message || 'any error',
                 code: error?.code || 'UNKNOWN_ERROR',
                 providerResponse: error?.response || null
             };

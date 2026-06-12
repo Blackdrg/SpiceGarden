@@ -13,12 +13,7 @@ const stripe_connect_service_1 = require("./stripe-connect.service");
 const razorpay_settlement_service_1 = require("./razorpay-settlement.service");
 const driver_payout_provider_service_1 = require("./driver-payout-provider.service");
 const payment_provider_controller_1 = require("./payment-provider.controller");
-const typeorm_1 = require("@nestjs/typeorm");
-const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
-const payout_report_entity_1 = require("../../db/entities/payout-report.entity");
-const driver_entity_1 = require("../../db/entities/driver.entity");
-const driver_incentive_entity_1 = require("../../db/entities/driver-incentive.entity");
-const order_entity_1 = require("../../db/entities/order.entity");
+const local_repository_module_1 = require("../../db/local-repository.module");
 let PaymentProviderModule = class PaymentProviderModule {
 };
 exports.PaymentProviderModule = PaymentProviderModule;
@@ -26,13 +21,7 @@ exports.PaymentProviderModule = PaymentProviderModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule,
-            typeorm_1.TypeOrmModule.forFeature([
-                restaurant_entity_1.RestaurantEntity,
-                payout_report_entity_1.PayoutReportEntity,
-                driver_entity_1.DriverEntity,
-                driver_incentive_entity_1.DriverIncentiveEntity,
-                order_entity_1.OrderEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
         ],
         providers: [
             stripe_connect_service_1.StripeConnectService,

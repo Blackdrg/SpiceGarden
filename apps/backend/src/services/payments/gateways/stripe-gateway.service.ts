@@ -22,7 +22,7 @@ export class StripeGateway implements PaymentGateway {
     amount: number,
     currency: string = 'usd',
     userId: string = null,
-    metadata: Record<string, unknown> = {}
+    metadata: Record<string, any> = {}
   ): Promise<PaymentIntent> {
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
@@ -46,6 +46,17 @@ export class StripeGateway implements PaymentGateway {
       this.logger.error('Stripe payment intent creation failed:', error);
       throw error;
     }
+  }
+
+  async fetchPaymentDetails(paymentId: string): Promise<PaymentIntent> {
+    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
+    return {
+      id: paymentIntent.id,
+      amount: paymentIntent.amount,
+      currency: paymentIntent.currency,
+      status: paymentIntent.status,
+      client_secret: paymentIntent.client_secret || undefined,
+    };
   }
 
   async confirmPayment(
@@ -100,6 +111,7 @@ export class StripeGateway implements PaymentGateway {
       return {
         id: refund.id,
         amount: refund.amount,
+        currency: paymentIntent.currency || 'usd',
         status: refund.status,
       };
     } catch (error) {
@@ -117,7 +129,7 @@ export class StripeGateway implements PaymentGateway {
       const event = this.stripe.webhooks.constructEvent(payload, signature, secret);
       return {
         data: {
-          object: (event.data?.object as unknown) as Record<string, unknown> || {},
+          object: (event.data?.object as any) as Record<string, any> || {},
         },
       };
     } catch (error) {

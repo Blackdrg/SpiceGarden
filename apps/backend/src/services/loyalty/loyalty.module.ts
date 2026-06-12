@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { LoyaltyService } from './loyalty.service';
 import { LoyaltyController } from './loyalty.controller';
 import { CouponEntity } from '../../db/entities/coupon.entity';
@@ -11,14 +12,7 @@ import { OrderEntity } from '../../db/entities/order.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CouponEntity,
-      CouponUsageEntity,
-      ReferralEntity,
-      SubscriptionEntity,
-      UserEntity,
-      OrderEntity,
-    ]),
+    LocalRepositoryModule,
   ],
   providers: [LoyaltyService],
   controllers: [LoyaltyController],

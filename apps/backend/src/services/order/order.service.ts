@@ -1,8 +1,9 @@
 import { Injectable, BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Repository, LessThan, MoreThanOrEqual } from 'typeorm';
 import { Order, OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
 import { PaymentService } from '../../services/payments/payments.service';
 import { NotificationService } from '../../services/notifications/notification.service';
 import { RetryService } from '../../services/payments/retry.service';
@@ -34,6 +35,8 @@ export class OrderService {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepo: Repository<OrderEntity>,
+    @InjectRepository(DriverAssignmentEntity)
+    private readonly driverAssignmentRepo: Repository<DriverAssignmentEntity>,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
     private readonly retryService: RetryService,
@@ -42,7 +45,7 @@ export class OrderService {
     private readonly loggingService: LoggingService,
   ) {}
 
-  validateOrderItems(items: unknown): void {
+  validateOrderItems(items: any): void {
     if (!Array.isArray(items) || items.length === 0) {
       throw new BadRequestException('Order must contain at least one item');
     }
@@ -50,7 +53,7 @@ export class OrderService {
       if (!item || typeof item !== 'object') {
         throw new BadRequestException('Invalid order item');
       }
-      const anyItem = item as Record<string, unknown>;
+      const anyItem = item as Record<string, any>;
       if (!anyItem.id || typeof anyItem.id !== 'string' || (anyItem.id as string).trim().length === 0) {
         throw new BadRequestException('Invalid order item ID');
       }
@@ -90,7 +93,7 @@ export class OrderService {
     return true;
   }
 
-  async placeOrder(orderData: unknown, idempotencyKey?: string): Promise<Order> {
+  async placeOrder(orderData: any, idempotencyKey?: string): Promise<Order> {
     const data = orderData as OrderDataInput;
     if (!data.userId || !data.restaurantId || !data.grandTotal) {
       throw new BadRequestException('Missing required order data: userId, restaurantId, or grandTotal');
@@ -155,7 +158,7 @@ export class OrderService {
     }
   }
 
-  async confirmPayment(orderId: string, paymentId: string, request?: unknown): Promise<Order> {
+  async confirmPayment(orderId: string, paymentId: string, request?: any): Promise<Order> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
     if (!order) {
       throw new NotFoundException(`Order ${orderId} not found`);
@@ -401,6 +404,103 @@ export class OrderService {
     }
 
     return resolvedOrders;
+  }
+
+  async checkDuplicateOrder(userId: string, restaurantId: string, itemsHash: string, windowMinutes: number = 5): Promise<boolean> {
+    const since = new Date(Date.now() - windowMinutes * 60 * 1000);
+    const duplicate = await this.orderRepo.findOne({
+      where: {
+        userId,
+        restaurantId,
+        status: OrderStatus.PLACED,
+        createdAt: MoreThanOrEqual(since),
+      },
+    });
+
+    return !!duplicate && duplicate.createdAt >= since;
+  }
+
+  async cancelOrderAtomic(orderId: string, actor: string, reason: string): Promise<Order> {
+    return this.orderRepo.manager.transaction(async (manager) => {
+      const order = await manager.findOne(OrderEntity, { where: { id: orderId } });
+      if (!order) {
+        throw new NotFoundException(`Order ${orderId} not found`);
+      }
+
+      if (order.status === OrderStatus.DELIVERED) {
+        throw new BadRequestException('Order already delivered');
+      }
+
+      order.status = OrderStatus.CANCELLED;
+      order.updatedAt = new Date();
+      return manager.save(OrderEntity, order);
+    });
+  }
+
+  async partialRefund(orderId: string, amount: number, reason: string): Promise<Order> {
+    if (amount <= 0) {
+      throw new BadRequestException('Refund amount must be greater than zero');
+    }
+
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    if (!([OrderStatus.ON_THE_WAY, OrderStatus.DELIVERED] as OrderStatus[]).includes(order.status)) {
+      throw new BadRequestException('Refund not allowed for current order status');
+    }
+
+    if (order.paymentStatus === PaymentStatus.REFUNDED) {
+      throw new BadRequestException('Order already refunded');
+    }
+
+    const refundedAmount = Number(order.refundedAmount || 0);
+    const remainingRefundable = Number(order.grandTotal || 0) - refundedAmount;
+    if (amount > remainingRefundable) {
+      throw new BadRequestException('Refund amount exceeds remaining refundable amount');
+    }
+
+    await this.paymentService.refundPayment(orderId, amount, order.userId, reason);
+    order.refundedAmount = refundedAmount + amount;
+    order.paymentStatus = order.refundedAmount >= Number(order.grandTotal) ? PaymentStatus.REFUNDED : PaymentStatus.COMPLETED;
+    order.updatedAt = new Date();
+
+    return this.orderRepo.save(order);
+  }
+
+  async handleKitchenDelay(orderId: string, delayMinutes: number): Promise<void> {
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) return;
+
+    if (delayMinutes > 30) {
+      await this.notificationService.sendPush(
+        order.userId,
+        'Kitchen Delay Alert',
+        `Your order #${order.orderNumber} is delayed by ${delayMinutes} minutes.`,
+        { orderId: order.id },
+      );
+    }
+  }
+
+  async reassignOrder(orderId: string, driverId: string, reason: string): Promise<boolean> {
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) return false;
+
+    const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
+    if (assignment) {
+      assignment.status = 'reassigned';
+      assignment.reassignedFrom = driverId;
+      await this.driverAssignmentRepo.save(assignment);
+    }
+
+    order.driverId = '';
+    order.status = OrderStatus.DRIVER_ASSIGNED;
+    order.updatedAt = new Date();
+    await this.orderRepo.save(order);
+
+    await this.notificationService.sendPush(order.userId, 'Order Reassigned', `Your order #${order.orderNumber} has been reassigned.`, { orderId: order.id });
+    return true;
   }
 
   async getOrderWithLock(orderId: string): Promise<Order> {

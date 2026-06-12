@@ -255,7 +255,7 @@ export class PciDssValidationService {
     };
   }
 
-  async getQuarterlyComplianceScan(): Promise<Record<string, unknown>> {
+  async getQuarterlyComplianceScan(): Promise<Record<string, any>> {
     this.logger.log('Running quarterly PCI DSS compliance scan');
 
     const [paymentValidation, pciReport] = await Promise.all([
@@ -263,7 +263,7 @@ export class PciDssValidationService {
       this.validatePciDssCompliance(),
     ]);
 
-    const scanResults: Record<string, unknown> = {
+    const scanResults: Record<string, any> = {
       timestamp: new Date().toISOString(),
       paymentFlow: paymentValidation,
       pciDss: {

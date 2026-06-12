@@ -8,9 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const wallet_entity_1 = require("../../db/entities/wallet.entity");
-const wallet_transaction_entity_1 = require("../../db/entities/wallet-transaction.entity");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const wallet_service_1 = require("./wallet.service");
 const wallet_controller_1 = require("./wallet.controller");
 const payments_module_1 = require("../../services/payments/payments.module");
@@ -20,7 +18,7 @@ let WalletModule = class WalletModule {
 exports.WalletModule = WalletModule;
 exports.WalletModule = WalletModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([wallet_entity_1.WalletEntity, wallet_transaction_entity_1.WalletTransactionEntity]), payments_module_1.PaymentServiceModule, notification_module_1.NotificationModule],
+        imports: [local_repository_module_1.LocalRepositoryModule, payments_module_1.PaymentServiceModule, notification_module_1.NotificationModule],
         providers: [wallet_service_1.WalletService],
         controllers: [wallet_controller_1.WalletController],
         exports: [wallet_service_1.WalletService],

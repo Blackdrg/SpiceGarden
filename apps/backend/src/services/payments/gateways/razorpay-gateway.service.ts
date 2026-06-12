@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
-function safeParse<T = unknown>(json: string): T | undefined {
+function safeParse<T = any>(json: string): T | undefined {
   try {
     return JSON.parse(json) as T;
   } catch {
@@ -26,8 +26,8 @@ export class RazorpayGateway implements PaymentGateway {
   private async razorpayRequest(
     method: string,
     endpoint: string,
-    data: Record<string, unknown> = {}
-  ): Promise<Record<string, unknown>> {
+    data: Record<string, any> = {}
+  ): Promise<Record<string, any>> {
     try {
       const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
 
@@ -41,12 +41,12 @@ export class RazorpayGateway implements PaymentGateway {
       });
 
       if (!response.ok) {
-        const errorData = (await response.json().catch(() => ({}))) as Record<string, unknown>;
-        const desc = (errorData.error as Record<string, unknown> | undefined)?.description;
+        const errorData = (await response.json().catch(() => ({}))) as Record<string, any>;
+        const desc = (errorData.error as Record<string, any> | undefined)?.description;
         throw new Error((typeof desc === 'string' ? desc : null) || `Razorpay API error: ${response.status}`);
       }
 
-      return (await response.json()) as Record<string, unknown>;
+      return (await response.json()) as Record<string, any>;
     } catch (error) {
       this.logger.error(`Razorpay API request failed: ${endpoint}`, error);
       throw error;
@@ -57,14 +57,14 @@ export class RazorpayGateway implements PaymentGateway {
     amount: number,
     currency: string = 'inr',
     userId: string = null,
-    metadata: unknown = {}
+    metadata: any = {}
   ): Promise<PaymentIntent> {
     try {
       const amountInPaise = Math.round(amount * 100);
 
-      const meta = metadata as Record<string, unknown> | undefined;
+      const meta = metadata as Record<string, any> | undefined;
 
-      const paymentData: Record<string, unknown> = {
+      const paymentData: Record<string, any> = {
         amount: amountInPaise,
         currency: currency.toLowerCase(),
         receipt: `receipt_${Date.now()}_${userId || 'guest'}`,
@@ -88,6 +88,17 @@ export class RazorpayGateway implements PaymentGateway {
       this.logger.error('Razorpay payment intent creation failed:', error);
       throw error;
     }
+  }
+
+  async fetchPaymentDetails(paymentId: string): Promise<PaymentIntent> {
+    const payment = await this.razorpayRequest('GET', `orders/${paymentId}`);
+    return {
+      id: payment.id as string,
+      amount: (payment.amount as number) / 100,
+      currency: payment.currency as string,
+      status: payment.status as string,
+      client_secret: payment.id as string | undefined,
+    };
   }
 
   async confirmPayment(
@@ -122,9 +133,9 @@ export class RazorpayGateway implements PaymentGateway {
     try {
       const order = await this.razorpayRequest('GET', `orders/${paymentId}`);
 
-      const payments = (order.payments as Record<string, unknown> | undefined);
-      const items = (payments?.items as Record<string, unknown>[] | undefined);
-      const firstPayment = items?.[0] as Record<string, unknown> | undefined;
+      const payments = (order.payments as Record<string, any> | undefined);
+      const items = (payments?.items as Record<string, any>[] | undefined);
+      const firstPayment = items?.[0] as Record<string, any> | undefined;
       const paymentIdToRefund = (firstPayment?.id as string | undefined) || paymentId;
       const orderAmount = order.amount as number;
       const refundAmount = amount ?? (orderAmount / 100);
@@ -138,7 +149,7 @@ export class RazorpayGateway implements PaymentGateway {
         throw new BadRequestException('Refund amount must be greater than zero');
       }
 
-      const refundData: Record<string, unknown> = {
+      const refundData: Record<string, any> = {
         amount: Math.round(refundAmount * 100),
         notes: {
           reason,
@@ -151,6 +162,7 @@ export class RazorpayGateway implements PaymentGateway {
       return {
         id: refund.id as string,
         amount: (refund.amount as number) / 100,
+        currency: order.currency || 'inr',
         status: refund.status as string,
       };
     } catch (error) {
@@ -174,10 +186,10 @@ export class RazorpayGateway implements PaymentGateway {
         throw new Error('Invalid webhook signature');
       }
 
-      const parsed = safeParse<Record<string, unknown>>(payload.toString());
+      const parsed = safeParse<Record<string, any>>(payload.toString());
       return {
         data: {
-          object: (parsed?.entity || parsed || {}) as Record<string, unknown>,
+          object: (parsed?.entity || parsed || {}) as Record<string, any>,
         },
       };
     } catch (error) {

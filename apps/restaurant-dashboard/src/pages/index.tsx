@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@spicegarden/ui';
 import { io, Socket } from 'socket.io-client';
+import styles from './index.module.css';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OrderItem = {
@@ -81,21 +82,21 @@ function demoOrder(id: string, overrides: Partial<Order> = {}): Order {
 
 export default function KitchenDashboard() {
    const [orders, setOrders] = useState<Order[]>(() =>
-     [
-       demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
-       demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
-       demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
-       demoOrder('d4', { status: 'new', estPrepMins: 12 }),
-     ]
-   );
-   const [batchMode, setBatchMode] = useState(false);
-   const [inventory, setInventory] = useState<InventoryItem[]>(seedInventory);
-   const [activeTab, setActiveTab] = useState<'kitchen' | 'inventory'>('kitchen');
-   const [audioEnabled, setAudioEnabled] = useState(true);
-   const [activeSounds, setActiveSounds] = useState<string[]>([]);
-   const [lastAction, setLastAction] = useState<string>('');
+      [
+        demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
+        demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
+        demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
+        demoOrder('d4', { status: 'new', estPrepMins: 12 }),
+      ]
+    );
+    const [batchMode, setBatchMode] = useState(false);
+    const [inventory, setInventory] = useState<InventoryItem[]>(seedInventory);
+    const [activeTab, setActiveTab] = useState<'kitchen' | 'inventory'>('kitchen');
+    const [audioEnabled, setAudioEnabled] = useState(true);
+    const [activeSounds, setActiveSounds] = useState<string[]>([]);
+    const [lastAction, setLastAction] = useState<string>('');
 
-  // ── Sound / new-order alert ───────────────────────────────────────────────
+  // ── Sound / new-order alert ────────────────────────────────────────────────
 
   const playNewOrderSound = useCallback(() => {
     if (!audioEnabled) return;
@@ -111,31 +112,31 @@ export default function KitchenDashboard() {
 
    // ── Socket connection ─────────────────────────────────────────────────────
 
-   useEffect(() => {
-     const socket: Socket = io('http://localhost:3001', {
-       path: '/socket.io/',
-       transports: ['websocket', 'polling'],
-     });
+    useEffect(() => {
+      const socket: Socket = io('http://localhost:3001', {
+        path: '/socket.io/',
+        transports: ['websocket', 'polling'],
+      });
 
-     socket.on('connect', () => console.log('[KDS] connected:', socket.id));
-     socket.on('disconnect', () => console.log('[KDS] disconnected'));
-     socket.on('newOrder', (order: Order) => {
-       setOrders((prev) => [{ ...order, createdAt: new Date(order.createdAt || Date.now()) }, ...prev]);
-       setLastAction(`New order #${order.orderNumber} received`);
-       playNewOrderSound();
-     });
-     socket.on('inventoryAlert', (item: InventoryItem) => {
-       setInventory((prev) => {
-         const found = prev.find((i) => i.id === item.id);
-         if (found) found.inStock = Math.max(0, found.inStock - 1);
-         return [...prev];
-       });
-     });
+      socket.on('connect', () => console.log('[KDS] connected:', socket.id));
+      socket.on('disconnect', () => console.log('[KDS] disconnected'));
+      socket.on('newOrder', (order: Order) => {
+        setOrders((prev) => [{ ...order, createdAt: new Date(order.createdAt || Date.now()) }, ...prev]);
+        setLastAction(`New order #${order.orderNumber} received`);
+        playNewOrderSound();
+      });
+      socket.on('inventoryAlert', (item: InventoryItem) => {
+        setInventory((prev) => {
+          const found = prev.find((i) => i.id === item.id);
+          if (found) found.inStock = Math.max(0, found.inStock - 1);
+          return [...prev];
+        });
+      });
 
-     return () => { socket.disconnect(); };
-   }, [playNewOrderSound]);
+      return () => { socket.disconnect(); };
+    }, [playNewOrderSound]);
 
-   // Seed inventory on mount too
+    // Seed inventory on mount too
 
   // ── Status transitions ─────────────────────────────────────────────────────
 
@@ -158,7 +159,7 @@ export default function KitchenDashboard() {
   const markDelayed = (id: string) => transition(id, 'delayed');
   const served = (id: string) => transition(id, 'completed');
 
-  // ── Dedup undo / reorder helper ──────────────────────────────────────────
+  // ── Dedup undo / reorder helper ────────────────────────────────────────────
 
   const undoLast = () => setLastAction('');
 
@@ -182,7 +183,7 @@ export default function KitchenDashboard() {
     ? statuses.reduce((acc, s) => { acc[s] = orders.filter((o) => o.status === s); return acc; }, {} as Record<OrderStatus, Order[]>)
     : null;
 
-  // ── Alert sound player (for pre-played sounds) ─────────────────────────────
+  // ── Alert sound player (for pre-played sounds) ──────────────────────────────
 
   const tryPlay = (base64: string) => {
     const el = new Audio(`data:audio/wav;base64,${base64}`);
@@ -192,48 +193,45 @@ export default function KitchenDashboard() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ backgroundColor: '#1a1a2e', color: 'white', minHeight: '100vh', paddingBottom: 80 }}>
+    <div className={styles.rootContainer}>
 {/* ── Header ────────────────────────────────────────────────────────── */}
-      <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '12px 16px', backgroundColor: '#16162a',
-        borderBottom: '1px solid #333',
-      }}>
-        <h1 style={{ margin: 0, fontSize: '18px' }}>&#x1F525; KITCHEN DISPLAY</h1>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className={styles.headerBar}>
+        <h1 className={styles.headerTitle}>&#x1F525; KITCHEN DISPLAY</h1>
+        <div className={styles.headerControls}>
           <button
             onClick={() => !audioEnabled ? setAudioEnabled(true) : squashSound('toggle')}
             title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
-            style={{ background: audioEnabled ? '#333' : '#f04e31', border: 'none', borderRadius: 6, padding: '4px 10px', color: 'white', cursor: 'pointer', fontSize: '13px' }}
+            className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
           >
             {audioEnabled ? '🔊' : '🔇'}</button>
-          <div style={{ background: '#00ff88', color: '#000', padding: '4px 14px', borderRadius: 20, fontWeight: 'bold', fontSize: '13px' }}>
+          <div className={styles.orderCountBadge}>
             {orders.length} orders
           </div>
           <Button
             label={batchMode ? '□ Batch' : '⊞ Batch'}
             onClick={() => setBatchMode(!batchMode)}
-            style={{ padding: '4px 12px', fontSize: '13px' }}
+            className={styles.batchButton}
           />
           <Button
             label="↩ Undo"
             onClick={undoLast}
-            style={{ padding: '4px 10px', fontSize: '13px' }}
             variant="secondary"
+            className={styles.undoButton}
           />
         </div>
       </div>
 
       {/* ── Status bar strip ───────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', gap: 6, padding: '8px 16px', backgroundColor: '#1e1e38', overflowX: 'auto' }}>
+      <div className={styles.statusRibbon}>
         {statuses.map((s) => (
           <span
             key={s}
             style={{
-              minWidth: 80, textAlign: 'center', padding: '6px 10px', borderRadius: 6,
-              backgroundColor: `${statusColors[s]}22`, border: `1px solid ${statusColors[s]}66`,
-              color: statusColors[s], fontSize: '11px', fontWeight: 'bold',
+              backgroundColor: `${statusColors[s]}22`,
+              border: `1px solid ${statusColors[s]}66`,
+              color: statusColors[s],
             }}
+            className={styles.statusBadge}
           >
             {statusLabels[s]} ({counts[s]})
           </span>
@@ -243,10 +241,7 @@ export default function KitchenDashboard() {
       {/* ── New-order sound overlay (fires immediately) ────────────────────── */}
       {activeSounds.length > 0 && (
         <div
-          style={{
-            position: 'fixed', top: 12, right: 12, zIndex: 9999,
-            display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end',
-          }}
+          className={styles.soundContainer}
         >
           {activeSounds.map((id) => (
             <div
@@ -255,13 +250,7 @@ export default function KitchenDashboard() {
               tabIndex={0}
               onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); squashSound(id); }}
               onKeyDown={(e) => { if (e.key === 'Enter') { tryPlay(''); squashSound(id); } }}
-              style={{
-                background: '#f04e31', color: 'white', padding: '12px 20px',
-                borderRadius: 8, fontWeight: 'bold', fontSize: '15px',
-                animation: 'kdsPulse 0.8s ease-in-out infinite',
-                cursor: 'pointer', border: '2px solid #fff',
-                boxShadow: '0 0 20px rgba(240,78,49,0.7)',
-              }}
+              className={styles.soundButton}
             >
               🚨 NEW ORDER — Tap to dismiss
             </div>
@@ -271,23 +260,18 @@ export default function KitchenDashboard() {
 
       {/* ── Last action toast ───────────────────────────────────────────────── */}
       {lastAction && (
-        <div style={{ position: 'fixed', top: 60, right: 16, zIndex: 999, background: 'rgba(0,0,0,0.7)', color: 'white', padding: '6px 14px', borderRadius: 6, fontSize: '13px' }}>
+        <div className={styles.lastActionToast}>
           {lastAction}
         </div>
       )}
 
       {/* ── Tab bar ────────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', gap: 8, padding: '8px 16px', borderBottom: '1px solid #333' }}>
+      <div className={styles.tabBar}>
         {(['kitchen', 'inventory'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
-            style={{
-              flex: 1, padding: '8px 0', border: 'none', borderRadius: 6,
-              background: activeTab === t ? '#3a3a6a' : 'transparent',
-              color: 'white', fontWeight: activeTab === t ? 'bold' : 'normal',
-              cursor: 'pointer', fontSize: '14px', textTransform: 'capitalize',
-            }}
+            className={`${styles.tabButton} ${activeTab === t ? styles.tabActive : styles.tabInactive}`}
           >
             {t === 'kitchen' ? '🔥 Kitchen' : '📦 Inventory'}
           </button>
@@ -298,11 +282,11 @@ export default function KitchenDashboard() {
       {activeTab === 'kitchen' && (
         <>
           {/* Stats row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8, padding: '12px 16px' }}>
+          <div className={styles.statsGrid}>
             {statuses.map((s) => (
-              <div key={s} style={{ textAlign: 'center', backgroundColor: '#2a2a4a', borderRadius: 8, padding: 10 }}>
-                <div style={{ fontSize: 22, fontWeight: 'bold', color: statusColors[s] }}>{counts[s]}</div>
-                <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase' }}>{statusLabels[s]}</div>
+              <div key={s} className={styles.statsCard}>
+                <div style={{ color: statusColors[s] }} className={styles.statsCount}>{counts[s]}</div>
+                <div className={styles.statsLabel}>{statusLabels[s]}</div>
               </div>
             ))}
           </div>
@@ -315,21 +299,13 @@ export default function KitchenDashboard() {
                 if (!group?.length) return null;
                 const overdue = group.filter((o) => s === 'preparing' && isDelayed(o)).length;
                 return (
-                  <div key={s} style={{ padding: '8px 16px' }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      color: statusColors[s], fontWeight: 'bold', fontSize: '12px',
-                      marginBottom: 8, textTransform: 'uppercase',
-                    }}>
-                      <span style={{
-                        display: 'inline-block', width: 10, height: 10, borderRadius: '50%',
-                        backgroundColor: statusColors[s],
-                      }}
-                      />
+                  <div key={s} className={styles.batchSectionPadding}>
+                    <div style={{ color: statusColors[s] }} className={styles.batchGroupHeader}>
+                      <span style={{ backgroundColor: statusColors[s] }} className={styles.statusIndicator} />
                       {statusLabels[s]} — {group.length} orders
-                      {overdue > 0 && <span style={{ color: '#ff4444', marginLeft: 6 }}>&#9888; {overdue} DELAYED</span>}
+                      {overdue > 0 && <span className={styles.delayedWarning}>&#9888; {overdue} DELAYED</span>}
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+                    <div className={styles.ordersGrid}>
                       {group.map((order) => (
                         <OrderCard
                           key={order.id}
@@ -348,7 +324,7 @@ export default function KitchenDashboard() {
               })}
             </>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12, padding: '12px 16px' }}>
+            <div className={styles.ordersGridPadded}>
               {orders.map((order) => (
                 <OrderCard
                   key={order.id}
@@ -368,33 +344,28 @@ export default function KitchenDashboard() {
 
       {/* ── INVENTORY TAB ──────────────────────────────────────────────────── */}
       {activeTab === 'inventory' && (
-        <div style={{ padding: '16px' }}>
-          <div style={{
-            display: 'flex', justifyContent: 'space-between', marginBottom: 12,
-          }}>
-            <h3 style={{ margin: 0, fontSize: '16px' }}>&#x1F4E6; Stock Levels</h3>
-            <span style={{ color: '#aaa', fontSize: '13px' }}>{inventory.filter((i) => i.inStock <= i.threshold).length} low</span>
+        <div className={styles.inventoryContainer}>
+          <div className={styles.inventoryHeader}>
+            <h3 className={styles.inventoryTitle}>&#x1F4E6; Stock Levels</h3>
+            <span className={styles.lowStockCount}>{inventory.filter((i) => i.inStock <= i.threshold).length} low</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          <div className={styles.inventoryGrid}>
             {inventory.map((item) => {
               const pct = Math.min(100, (item.inStock / item.threshold) * 100);
               const isLow = item.inStock <= item.threshold;
               return (
-                <div key={item.id} style={{
-                  background: '#2a2a4a', borderRadius: 8, padding: '12px 16px',
-                  border: isLow ? '2px solid #ff4444' : '2px solid #333',
-                }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{item.name}</div>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: isLow ? '#ff4444' : '#4caf50' }}>
-                    {item.inStock} <span style={{ fontSize: 14, color: '#aaa' }}>units</span>
+                <div key={item.id} style={{ border: isLow ? '2px solid #ff4444' : '2px solid #333' }} className={styles.inventoryItem}>
+                  <div className={styles.inventoryItemName}>{item.name}</div>
+                  <div style={{ color: isLow ? '#ff4444' : '#4caf50' }} className={styles.inventoryItemCount}>
+                    {item.inStock} <span className={styles.inventoryUnit}>units</span>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#aaa', marginBottom: 8 }}>
+                  <div className={styles.inventoryThreshold}>
                     Threshold: {item.threshold}
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: isLow ? '#ff4444' : '#4caf50', opacity: 0.3 }} />
-                  <div style={{ height: 6, borderRadius: 3, marginTop: -6, width: `${pct}%`, background: isLow ? '#ff4444' : '#4caf50', transition: 'width 0.3s' }} />
+                  <div style={{ background: isLow ? '#ff4444' : '#4caf50', opacity: 0.3 }} className={styles.stockProgressBar} />
+                  <div style={{ width: `${pct}%`, background: isLow ? '#ff4444' : '#4caf50' }} className={styles.stockProgressFill} />
                   {isLow && (
-                    <div style={{ color: '#ff4444', fontSize: '12px', marginTop: 6, fontWeight: 'bold' }}>
+                    <div className={styles.lowStockWarning}>
                       &#9888; LOW STOCK — Restock urgently
                     </div>
                   )}
@@ -404,7 +375,7 @@ export default function KitchenDashboard() {
           </div>
 
           {/* Add / deduct stock buttons */}
-          <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className={styles.inventoryControls}>
             <Button
               label="+ Add Stock"
               onClick={() => setInventory((prev) => prev.map((i) => ({ ...i, inStock: i.inStock + 10 })))}
@@ -419,26 +390,20 @@ export default function KitchenDashboard() {
       )}
 
       {/* ── Bottom nav ─────────────────────────────────────────────────── */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 52, backgroundColor: '#16162a',
-        borderTop: '1px solid #333', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav className={styles.navBar}>
            {[
-             { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
-             { key: 'inventory', label: 'Inventory', emoji: '📦' },
-           ].map((t) => (
-             <div
-               key={t.key}
-                onClick={() => setActiveTab(t.key as 'kitchen' | 'inventory')}
-               style={{
-                 display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer',
-                 color: activeTab === t.key ? '#f04e31' : '#666', fontSize: '10px',
-               }}
-             >
-               <span style={{ fontSize: '20px' }}>{t.emoji}</span>
-               <span>{t.label}</span>
-             </div>
-           ))}
+              { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
+              { key: 'inventory', label: 'Inventory', emoji: '📦' },
+            ].map((t) => (
+                 <div
+                 key={t.key}
+                  onClick={() => setActiveTab(t.key as 'kitchen' | 'inventory')}
+                className={`${styles.navItem} ${activeTab === t.key ? styles.navItemActive : styles.navItemInactive}`}
+               >
+                <span className={styles.navIcon}>{t.emoji}</span>
+                <span>{t.label}</span>
+              </div>
+            ))}
       </nav>
 
       {/* ── Pulse keyframes injected via style tag ── */}
@@ -478,45 +443,39 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
   const progress = Math.min(100, Math.round((mins / order.estPrepMins) * 100));
 
   const serviceColor = SERVICE_COLOR[order.serviceType];
+  const statusColorValue = getStatusColor(order.status);
 
   return (
-    <div style={{
-      backgroundColor: delay ? '#3b1a1a' : '#2a2a4a',
-      borderRadius: 10, border: `2px solid ${delay ? '#ff4444' : statusColor(order.status)}`,
-      padding: 14, display: 'flex', flexDirection: 'column', gap: 10,
-    }}>
+    <div style={{ backgroundColor: delay ? '#3b1a1a' : '#2a2a4a', border: `2px solid ${delay ? '#ff4444' : statusColorValue}` }} className={styles.orderCard}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className={styles.orderCardHeader}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 'bold' }}>#{order.orderNumber}</div>
-          <div style={{ fontSize: 12, color: '#aaa' }}>
+          <div className={styles.orderNumber}>#{order.orderNumber}</div>
+          <div className={styles.orderTime}>
             {order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
-        <span style={{
-          background: `${serviceColor}33`, color: serviceColor, padding: '3px 10px',
-          borderRadius: 12, fontSize: '11px', fontWeight: 'bold', border: `1px solid ${serviceColor}66`,
-        }}>
+        <span style={{ background: `${serviceColor}33`, color: serviceColor, border: `1px solid ${serviceColor}66` }} className={styles.serviceLabel}>
           {SERVICE_LABEL[order.serviceType]}
         </span>
       </div>
 
       {/* Diner / table */}
       {order.table && (
-        <div style={{ fontSize: 13, color: '#ddd' }}>Guest: {order.diner} &middot; {order.table}</div>
+        <div className={styles.dinerInfo}>Guest: {order.diner} &middot; {order.table}</div>
       )}
 
       {/* Items */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '13px', color: '#eee' }}>
+      <div className={styles.itemsList}>
         {order.items.map((item) => (
-          <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-            <span style={{ fontWeight: 'bold', minWidth: 20 }}>{item.qty}x</span>
-            <span style={{ flex: 1, fontWeight: 500 }}>{item.name}</span>
+          <div key={item.id} className={styles.itemRow}>
+            <span className={styles.itemQty}>{item.qty}x</span>
+            <span className={styles.itemName}>{item.name}</span>
             {item.modifiers?.length ? (
-              <span style={{ fontSize: 11, color: '#aaa' }}>&#x2022; {item.modifiers.join(', ')}</span>
+              <span className={styles.itemModifiers}>&#x2022; {item.modifiers.join(', ')}</span>
             ) : null}
             {item.note && (
-              <span style={{ fontSize: 11, color: '#ff9800', fontStyle: 'italic', width: '100%' }}>&#x1F4DD; {item.note}</span>
+              <span className={styles.itemNote}>&#x1F4DD; {item.note}</span>
             )}
           </div>
         ))}
@@ -525,55 +484,60 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
       {/* Timer + delay ──── only when preparing or delayed */}
       {(order.status === 'preparing' || order.status === 'delayed') && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: 4 }}>
-            <span style={{ color: delay ? '#ff4444' : '#aaa' }}>
+          <div className={styles.timerSection}>
+            <span style={{ color: delay ? '#ff4444' : '#aaaaaa' }}>
               &#9200; {mins}m / ~{order.estPrepMins}m &nbsp;
-              {delay && <span style={{ fontWeight: 'bold', color: '#ff4444' }}>&#x26A0; DELAYED</span>}
+              {delay && <span className={styles.delayBadge}>&#x26A0; DELAYED</span>}
               {!delay && <span>{ots > 0 ? `${Math.ceil(ots / 60000)}m left` : 'Nearing done'}</span>}
             </span>
           </div>
-          <div style={{ height: 6, borderRadius: 3, backgroundColor: '#444', overflow: 'hidden' }}>
+          <div className={styles.progressBar}>
             <div
-              style={{
-                height: '100%', width: `${Math.min(progress, 100)}%`,
-                backgroundColor: delay ? '#ff4444' : '#4caf50',
-                transition: 'width 1s linear', borderRadius: 3,
-              }}
+              style={{ width: `${Math.min(progress, 100)}%` }}
+              className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal}`}
             />
           </div>
         </div>
       )}
 
       {/* Action buttons ── transition through the workflow */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+      <div className={styles.actionButtons}>
         {order.status === 'new' && (
-          <Button label="✓ Accept" onClick={onAccept} style={{ flex: 1, minWidth: 80 }} />
+          <div className={styles.fullWidthButton}>
+            <Button label="✓ Accept" onClick={onAccept} />
+          </div>
         )}
         {order.status === 'accepted' && (
-          <Button label="⏱ Start Prep" onClick={onStartPrep} style={{ flex: 1, minWidth: 100 }} />
+          <div className={styles.wideButton}>
+            <Button label="⏱ Start Prep" onClick={onStartPrep} />
+          </div>
         )}
         {order.status === 'preparing' && (
           <>
-            {delay && <Button label="⏰ Still Cooking" onClick={onDelay} style={{ flex: 1, minWidth: 100 }} variant="secondary" />}
-            <Button label="✓ Ready" onClick={onReady} style={{ flex: 1, minWidth: 80 }} />
+            {delay && <div className={styles.wideButton}><Button label="⏰ Still Cooking" onClick={onDelay} variant="secondary" /></div>}
+            <div className={styles.fullWidthButton}><Button label="✓ Ready" onClick={onReady} /></div>
           </>
         )}
         {order.status === 'ready' && (
-          <Button label="✅ Served" onClick={onServed} style={{ flex: 1, minWidth: 80 }} />
+          <div className={styles.fullWidthButton}>
+            <Button label="✅ Served" onClick={onServed} />
+          </div>
         )}
         {(order.status === 'new' || order.status === 'accepted') && (
-          <Button
-            label="✕ Park"
-            onClick={onPark}
-            variant="secondary"
-            style={{ flex: 0 }} />
+          <div className={styles.parkButton}>
+            <Button
+              label="✕ Park"
+              onClick={onPark}
+              variant="secondary"
+            />
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-function statusColor(s: OrderStatus): string {
+function getStatusColor(s: OrderStatus): string {
   const colors: Record<OrderStatus, string> = {
     new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
     ready: '#4caf50', delayed: '#ff4444', completed: '#444', pickedup: '#ff9800', delivered: '#4caf50',

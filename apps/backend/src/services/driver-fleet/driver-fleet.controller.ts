@@ -42,7 +42,7 @@ export class DriverFleetController {
 
   @Post('penalties')
   @ApiOperation({ summary: 'Issue a penalty to driver' })
-  issuePenalty(@Body() body: unknown) {
+  issuePenalty(@Body() body: any) {
     return this.fleetService.issuePenalty(body.driverId, body);
   }
 

@@ -35,7 +35,7 @@ let PaymentsController = class PaymentsController {
             userId: body.userId,
             amount: body.amount,
             ipAddress: req.ip || req.connection.remoteAddress || '0.0.0.0',
-            userAgent: req.get('User-Agent') || 'Unknown',
+            userAgent: req.get('User-Agent') || 'any',
         });
         if (!fraudCheck.allowed) {
             return {

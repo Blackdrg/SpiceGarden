@@ -1,4 +1,4 @@
-﻿
+
 import { Controller, Post, Body, Headers, Req, BadRequestException, RawBodyRequest, HttpCode, HttpStatus, Get, Query } from '@nestjs/common';
 import { Request } from 'express';
 import { PaymentService } from './payments.service';
@@ -35,7 +35,7 @@ export class PaymentsController {
       userId: body.userId,
       amount: body.amount,
       ipAddress: req.ip || req.connection.remoteAddress || '0.0.0.0',
-      userAgent: req.get('User-Agent') || 'Unknown',
+      userAgent: req.get('User-Agent') || 'any',
     });
 
     if (!fraudCheck.allowed) {

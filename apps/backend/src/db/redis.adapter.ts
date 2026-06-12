@@ -1,9 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
-  private client: unknown = null;
+  private client: Redis | null = null;
 
   constructor(private configService: ConfigService) {}
 
@@ -17,8 +18,6 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
     const password = this.configService.get<string>('REDIS_PASSWORD') || undefined;
 
     try {
-      const ioredis = await import('ioredis');
-      const Redis = ioredis.default || ioredis;
       this.client = new Redis({
         host,
         port,

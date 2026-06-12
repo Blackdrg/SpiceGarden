@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, In } from 'typeorm';
+import { Repository, DataSource, In, FindOptionsWhere } from 'typeorm';
 import { MenuModerationEntity, ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -23,8 +23,8 @@ export class MenuModerationService {
     menuItemId: string,
     restaurantId: string,
     action: ModerationAction,
-    data: unknown,
-    originalData?: unknown,
+    data: Record<string, any>,
+    originalData?: Record<string, any>,
   ): Promise<MenuModerationEntity> {
     const menuItem = await this.itemRepo.findOne({ where: { id: menuItemId } });
     if (!menuItem) {
@@ -51,30 +51,33 @@ export class MenuModerationService {
     return saved;
   }
 
-  private detectAIFlags(data: unknown): { priceAnomaly?: boolean; descriptionIssue?: boolean; imageProblem?: boolean; duplicateDetected?: boolean } {
-    const flags: unknown = {};
+  private detectAIFlags(data: Record<string, any> | undefined): { priceAnomaly?: boolean; descriptionIssue?: boolean; imageProblem?: boolean; duplicateDetected?: boolean } {
+    const flags: { priceAnomaly?: boolean; descriptionIssue?: boolean; imageProblem?: boolean; duplicateDetected?: boolean } = {};
+    const basePrice = typeof data?.basePrice === 'number' ? data.basePrice : Number(data?.basePrice);
+    const description = typeof data?.description === 'string' ? data.description : undefined;
+    const imageUrl = typeof data?.imageUrl === 'string' ? data.imageUrl : undefined;
 
-    if (data?.basePrice && (data.basePrice < 10 || data.basePrice > 5000)) {
+    if (basePrice && (basePrice < 10 || basePrice > 5000)) {
       flags.priceAnomaly = true;
     }
 
-    if (data?.description && data.description.length < 10) {
+    if (description && description.length < 10) {
       flags.descriptionIssue = true;
     }
 
-    if (!data?.imageUrl || data?.imageUrl?.includes('placeholder')) {
+    if (!imageUrl || imageUrl.includes('placeholder')) {
       flags.imageProblem = true;
     }
 
     return flags;
   }
 
-  private shouldFlagForReview(flags: unknown): boolean {
-    return Object.values(flags).some((v: unknown) => v === true);
+  private shouldFlagForReview(flags: any): boolean {
+    return Object.values(flags).some((v: any) => v === true);
   }
 
   async getPendingModerations(restaurantId?: string, priorityOnly: boolean = false): Promise<MenuModerationEntity[]> {
-    const where: unknown = { status: ModerationStatus.PENDING };
+    const where: FindOptionsWhere<MenuModerationEntity> = { status: ModerationStatus.PENDING };
     if (restaurantId) {
       where.restaurantId = restaurantId;
     }
@@ -125,8 +128,8 @@ export class MenuModerationService {
     }
   }
 
-  async getModerationStats(restaurantId?: string): Promise<unknown> {
-    const where: unknown = {};
+  async getModerationStats(restaurantId?: string): Promise<any> {
+    const where: FindOptionsWhere<MenuModerationEntity> = {};
     if (restaurantId) {
       where.restaurantId = restaurantId;
     }
@@ -151,7 +154,7 @@ export class MenuModerationService {
     };
   }
 
-  private async getAverageReviewTime(where: unknown): Promise<number> {
+  private async getAverageReviewTime(where: FindOptionsWhere<MenuModerationEntity>): Promise<number> {
     const result = await this.moderationRepo
       .createQueryBuilder('moderation')
       .select('AVG(TIMESTAMPDIFF(HOUR, moderation.createdAt, moderation.reviewedAt))', 'avgHours')

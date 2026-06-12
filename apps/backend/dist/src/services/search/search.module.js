@@ -8,17 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SearchServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const search_service_1 = require("./search.service");
 const search_controller_1 = require("./search.controller");
-const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
-const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let SearchServiceModule = class SearchServiceModule {
 };
 exports.SearchServiceModule = SearchServiceModule;
 exports.SearchServiceModule = SearchServiceModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([menu_item_entity_1.MenuItemEntity, restaurant_entity_1.RestaurantEntity])],
+        imports: [local_repository_module_1.LocalRepositoryModule],
         providers: [search_service_1.SearchService],
         controllers: [search_controller_1.SearchController],
         exports: [search_service_1.SearchService],

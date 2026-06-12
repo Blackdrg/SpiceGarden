@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestaurantServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const restaurant_service_1 = require("./restaurant.service");
 const restaurant_controller_1 = require("./restaurant.controller");
 const restaurant_ops_controller_1 = require("./restaurant-ops.controller");
@@ -19,38 +19,13 @@ const branch_management_service_1 = require("./branch-management.service");
 const commission_service_1 = require("./commission.service");
 const onboarding_service_1 = require("./onboarding.service");
 const onboarding_controller_1 = require("./onboarding.controller");
-const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
-const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
-const menu_category_entity_1 = require("../../db/entities/menu-category.entity");
-const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
-const inventory_item_entity_1 = require("../../db/entities/inventory-item.entity");
-const restaurant_onboarding_entity_1 = require("../../db/entities/restaurant-onboarding.entity");
-const menu_moderation_entity_1 = require("../../db/entities/menu-moderation.entity");
-const payout_report_entity_1 = require("../../db/entities/payout-report.entity");
-const commission_rule_entity_1 = require("../../db/entities/commission-rule.entity");
-const order_entity_1 = require("../../db/entities/order.entity");
-const gst_detail_entity_1 = require("../../db/entities/gst-detail.entity");
-const user_entity_1 = require("../../db/entities/user.entity");
 let RestaurantServiceModule = class RestaurantServiceModule {
 };
 exports.RestaurantServiceModule = RestaurantServiceModule;
 exports.RestaurantServiceModule = RestaurantServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([
-                restaurant_entity_1.RestaurantEntity,
-                restaurant_branch_entity_1.RestaurantBranchEntity,
-                menu_category_entity_1.MenuCategoryEntity,
-                menu_item_entity_1.MenuItemEntity,
-                inventory_item_entity_1.InventoryItemEntity,
-                restaurant_onboarding_entity_1.RestaurantOnboardingEntity,
-                menu_moderation_entity_1.MenuModerationEntity,
-                payout_report_entity_1.PayoutReportEntity,
-                commission_rule_entity_1.CommissionRuleEntity,
-                order_entity_1.OrderEntity,
-                gst_detail_entity_1.GSTDetailEntity,
-                user_entity_1.UserEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
         ],
         providers: [
             restaurant_service_1.RestaurantService,

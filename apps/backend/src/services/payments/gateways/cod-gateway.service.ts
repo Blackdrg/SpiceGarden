@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
-function safeParse<T = unknown>(json: string): T | undefined {
+function safeParse<T = any>(json: string): T | undefined {
   try {
     return JSON.parse(json) as T;
   } catch {
@@ -19,11 +19,11 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     amount: number,
     currency: string = 'inr',
     userId: string = null,
-    metadata: unknown = {}
+    metadata: any = {}
   ): Promise<PaymentIntent> {
     const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    const meta = metadata as Record<string, unknown> | undefined;
+    const meta = metadata as Record<string, any> | undefined;
     return {
       id: codPaymentId,
       amount,
@@ -37,6 +37,18 @@ export class CashOnDeliveryGateway implements PaymentGateway {
         paymentMethod: 'cash_on_delivery',
         instruction: 'Pay cash to driver on delivery',
       },
+    };
+  }
+
+  async fetchPaymentDetails(paymentId: string): Promise<PaymentIntent> {
+    return {
+      id: paymentId,
+      amount: 0,
+      currency: 'INR',
+      status: 'pending',
+      client_secret: paymentId,
+      payment_method: 'cod',
+      metadata: { paymentMethod: 'cash_on_delivery' },
     };
   }
 
@@ -67,6 +79,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     return {
       id: `refund_${Date.now()}`,
       amount: amount || 0,
+      currency: 'INR',
       status: 'processed',
       note: 'COD refund - requires manual driver reconciliation',
     };

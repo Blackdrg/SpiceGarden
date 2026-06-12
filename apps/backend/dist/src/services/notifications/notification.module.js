@@ -8,11 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const notification_service_1 = require("./notification.service");
 const production_notification_service_1 = require("./production-notification.service");
-const user_device_entity_1 = require("../../db/entities/user-device.entity");
-const notification_entity_1 = require("../../db/entities/notification.entity");
 const notification_queue_module_1 = require("./queue/notification-queue.module");
 const device_controller_1 = require("./device.controller");
 let NotificationModule = class NotificationModule {
@@ -22,7 +20,7 @@ exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([user_device_entity_1.UserDeviceEntity, notification_entity_1.NotificationEntity]),
+            local_repository_module_1.LocalRepositoryModule,
             notification_queue_module_1.NotificationQueueModule,
         ],
         providers: [notification_service_1.NotificationService, production_notification_service_1.ProductionNotificationService],

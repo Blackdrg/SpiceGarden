@@ -8,7 +8,7 @@ describe('Order Service - Isolated Unit Tests', () => {
         createTestingModule: jest.fn().mockImplementation(() => ({
           compile: jest.fn().mockResolvedValue({
             get: jest.fn().mockImplementation((token: string) => {
-              const mocks: unknown = {
+              const mocks: Record<string, unknown> = {
                 'OrderService': {},
                 'REPOSITORY_OrderEntity': {
                   findOne: jest.fn(),

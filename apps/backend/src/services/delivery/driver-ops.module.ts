@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { DriverOnboardingService } from './driver-onboarding.service';
 import { DriverPayoutService } from './driver-payout.service';
 import { DriverOpsController } from './driver-ops.controller';
@@ -14,14 +15,7 @@ import { PaymentServiceModule } from '../payments/payments.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      DriverEntity,
-      DriverDocumentEntity,
-      DriverIncentiveEntity,
-      OrderEntity,
-      UserEntity,
-      DriverAssignmentEntity,
-    ]),
+    LocalRepositoryModule,
     WalletModule,
     PaymentServiceModule,
   ],

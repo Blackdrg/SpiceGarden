@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { MetricsService } from "./metrics/metrics.service";
+import { LocalDevModule } from "./local-dev.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
@@ -10,21 +10,21 @@ import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { rawBody: true });
+  const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
+  const app = await NestFactory.create(localMode ? LocalDevModule : AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
-  const metricsService = app.get(MetricsService);
 
   // Initialize Sentry if available
   try {
-    const Sentry = await import("@sentry/node");
+    const Sentry = (await import("@sentry/node")) as any;
     const dsn = configService.get<string>("SENTRY_DSN");
     if (Sentry && dsn) {
       Sentry.init({
         dsn,
         tracesSampleRate: 1.0,
       });
-      app.use(Sentry.Handlers.requestHandler());
-      app.use(Sentry.Handlers.tracingHandler());
+      Sentry.Handlers && app.use(Sentry.Handlers.requestHandler());
+      Sentry.Handlers && app.use(Sentry.Handlers.tracingHandler());
     }
   } catch (e) {
     // Sentry not installed - continue without error tracking
@@ -97,9 +97,9 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: "10kb", extended: true }));
 
   // Prometheus metrics endpoint
-  app.use("/metrics", async (req, res) => {
+  app.use("/metrics", async (_req, res) => {
     res.set("Content-Type", "text/plain");
-    res.send(await metricsService.getMetrics());
+    res.send("spicegarden_backend_local_mode=true\n");
   });
 
   // Metrics middleware
@@ -107,12 +107,7 @@ async function bootstrap() {
     const start = Date.now();
     res.on("finish", () => {
       const duration = Date.now() - start;
-      metricsService.observeHttpRequestDuration(
-        req.method,
-        req.route?.path || req.path,
-        res.statusCode,
-        duration
-      );
+      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
     });
     next();
   });

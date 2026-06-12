@@ -14,7 +14,7 @@ export class AddressService {
     return this.addressRepo.find({ where: { userId } });
   }
 
-  async addAddress(userId: string, data: unknown) {
+  async addAddress(userId: string, data: Partial<AddressEntity> & { isDefault?: boolean }) {
     if (data.isDefault) {
       await this.addressRepo.update({ userId }, { isDefault: false });
     }
@@ -25,5 +25,10 @@ export class AddressService {
   async setDefault(userId: string, addressId: string) {
     await this.addressRepo.update({ userId }, { isDefault: false });
     return this.addressRepo.update({ userId, id: addressId }, { isDefault: true });
+  }
+
+  async deleteAddress(userId: string, addressId: string) {
+    const result = await this.addressRepo.delete({ userId, id: addressId });
+    return { deleted: (result.affected || 0) > 0 };
   }
 }

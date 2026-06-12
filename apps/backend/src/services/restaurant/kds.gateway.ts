@@ -31,7 +31,7 @@ export class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // Notify kitchen of a new order
-  notifyNewOrder(branchId: string, order: unknown) {
+  notifyNewOrder(branchId: string, order: any) {
     this.server.to(`branch:${branchId}`).emit('newOrder', order);
   }
 

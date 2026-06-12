@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ComplianceService } from '../compliance.service';
-import { UserEntity } from '../../db/entities/user.entity';
-import { SessionEntity } from '../../db/entities/session.entity';
-import { AuditLogEntity } from '../../db/entities/audit-log.entity';
-import { OrderEntity } from '../../db/entities/order.entity';
-import { DeletionRequestEntity } from '../../db/entities/deletion-request.entity';
-import { DataExportRequestEntity } from '../../db/entities/data-export-request.entity';
-import { EncryptionService } from '../../security/encryption.service';
+import { ComplianceService } from '../src/compliance/compliance.service';
+import { UserEntity } from '../src/db/entities/user.entity';
+import { SessionEntity } from '../src/db/entities/session.entity';
+import { AuditLogEntity } from '../src/db/entities/audit-log.entity';
+import { OrderEntity } from '../src/db/entities/order.entity';
+import { DeletionRequestEntity } from '../src/db/entities/deletion-request.entity';
+import { DataExportRequestEntity } from '../src/db/entities/data-export-request.entity';
+import { EncryptionService } from '../src/security/encryption.service';
 
 describe('ComplianceService', () => {
   let service: ComplianceService;
@@ -37,7 +37,7 @@ describe('ComplianceService', () => {
     const mockDataSource = {
       getRepository: jest.fn(),
       transaction: jest.fn(),
-    } as unknown as any;
+    } as any as any;
 
     userRepo = {
       findOne: jest.fn(),

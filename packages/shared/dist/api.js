@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.menuApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = exports.api = void 0;
+exports.menuApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
+exports.api = api;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 // Enhanced API function with automatic token refresh
 async function api(endpoint, options = {}) {
@@ -23,7 +24,7 @@ async function api(endpoint, options = {}) {
                 // Retry the original request with the new token
                 return await makeRequest(endpoint, { token: newToken, ...rest });
             }
-            catch (_refreshError) {
+            catch (refreshError) {
                 // If refresh fails, throw the original error
                 throw error;
             }
@@ -32,7 +33,7 @@ async function api(endpoint, options = {}) {
         throw error;
     }
 }
-exports.api = api;
+// Helper function to make the actual request
 async function makeRequest(endpoint, options = {}) {
     const { token, ...rest } = options;
     const headers = new Headers(rest.headers);
@@ -49,6 +50,8 @@ async function makeRequest(endpoint, options = {}) {
         throw new Error(error.message || `HTTP ${response.status}`);
     }
     const data = await response.json();
+    // Check if the response contains a new token (some APIs return refresh token in response)
+    // This is optional and depends on your API implementation
     return { data };
 }
 exports.authApi = {
@@ -74,7 +77,7 @@ exports.restaurantsApi = {
                 headers: lat && lng ? { 'x-location': `${lat},${lng}` } : undefined,
             });
         }
-        catch {
+        catch (error) {
             console.warn('Backend unavailable, returning mock data');
             return [
                 { id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', name: 'Spice Garden - Downtown', description: 'Biryani, Karahi, Naan', rating: 4.5, deliveryTime: 30, isActive: true },

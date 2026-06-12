@@ -9,7 +9,7 @@ export class StructuredLogger implements LoggerService {
     this.context = context;
   }
 
-  log(message: unknown, ...optionalParams: unknown[]) {
+  log(message: any, ...optionalParams: any[]) {
     console.log(JSON.stringify({
       level: 'info',
       message,
@@ -19,7 +19,7 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  error(message: unknown, ...optionalParams: unknown[]) {
+  error(message: any, ...optionalParams: any[]) {
     console.error(JSON.stringify({
       level: 'error',
       message: sanitizeForLog(message),
@@ -29,7 +29,7 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  warn(message: unknown, ...optionalParams: unknown[]) {
+  warn(message: any, ...optionalParams: any[]) {
     console.warn(JSON.stringify({
       level: 'warn',
       message: sanitizeForLog(message),
@@ -39,7 +39,7 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  debug?(message: unknown, ...optionalParams: unknown[]) {
+  debug?(message: any, ...optionalParams: any[]) {
     console.debug(JSON.stringify({
       level: 'debug',
       message,
@@ -49,7 +49,7 @@ export class StructuredLogger implements LoggerService {
     }));
   }
 
-  verbose?(message: unknown, ...optionalParams: unknown[]) {
+  verbose?(message: any, ...optionalParams: any[]) {
     console.log(JSON.stringify({
       level: 'verbose',
       message,

@@ -14,15 +14,15 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: unknown, @Req() req: Request) {
+  async login(@Body() body: any, @Req() req: Request) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException();
     }
     
     const deviceInfo = {
-      name: body.deviceName || 'Unknown Device',
-      type: body.deviceType || 'Unknown Type',
+      name: body.deviceName || 'any Device',
+      type: body.deviceType || 'any Type',
       ip: req.ip || '0.0.0.0',
     };
 
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() body: unknown, @Req() req: Request) {
+  async register(@Body() body: any, @Req() req: Request) {
     const existing = await this.userRepo.findOne({ where: { email: body.email } });
     if (existing) {
       throw new UnauthorizedException('Email already registered');
@@ -46,8 +46,8 @@ export class AuthController {
     await this.userRepo.save(user);
 
     const deviceInfo = {
-      name: body.deviceName || 'Unknown Device',
-      type: body.deviceType || 'Unknown Type',
+      name: body.deviceName || 'any Device',
+      type: body.deviceType || 'any Type',
       ip: req.ip || '0.0.0.0',
     };
 

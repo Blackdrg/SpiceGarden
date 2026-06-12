@@ -1,0 +1,109 @@
+.container {
+  padding: var(--spacing-md);
+  padding-bottom: 80px;
+}
+
+.pageTitle {
+  margin-bottom: var(--spacing-lg);
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.description {
+  color: #666;
+  margin-bottom: var(--spacing-sm);
+}
+
+.discountBadge {
+  background-color: #FFF3E0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.discountText {
+  font-weight: bold;
+  color: #E65100;
+  font-size: 15px;
+}
+
+.codeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.codeBlock {
+  background: #f5f5f5;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.validTill {
+  color: #999;
+  font-size: 13px;
+}
+
+.buttonRow {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.referMargin {
+  margin-top: var(--spacing-lg);
+}
+
+.referDescription {
+  margin-bottom: var(--spacing-md);
+}
+
+.shareCode {
+  flex: 1;
+  background: #f5f5f5;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-weight: bold;
+  text-align: center;
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.tabItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.tabIcon {
+  font-size: 22px;
+}
+
+.tabText {
+  color: #999;
+}
+
+.activeTab {
+  color: var(--color-primary);
+}

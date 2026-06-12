@@ -13,13 +13,13 @@ export class MenuVariantEntity {
   menuItem!: MenuItemEntity;
 
   @Column('simple-json', { nullable: true })
-  payload!: unknown;
+  payload!: any;
 
   @Column('decimal', { precision: 10, scale: 2 })
   price!: number;
 
   @Column('simple-json', { nullable: true })
-  metadata!: unknown;
+  metadata!: any;
 
   @CreateDateColumn()
   createdAt!: Date;

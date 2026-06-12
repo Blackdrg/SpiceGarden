@@ -39,10 +39,10 @@ export class MenuModerationEntity {
   status!: ModerationStatus;
 
   @Column('simple-json', { nullable: true })
-  originalData!: unknown;
+  originalData!: any;
 
   @Column('simple-json', { nullable: true })
-  updatedData!: unknown;
+  updatedData!: any;
 
   @Column({ nullable: true })
   rejectionReason!: string;

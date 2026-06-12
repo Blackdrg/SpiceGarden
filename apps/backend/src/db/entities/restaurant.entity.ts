@@ -31,6 +31,15 @@ export class RestaurantEntity {
    @OneToOne(() => RestaurantGSTEntity, gstDetail => gstDetail.restaurant)
    gstDetail?: RestaurantGSTEntity;
 
+  @Column({ nullable: true })
+  stripeAccountId!: string;
+
+  @Column({ nullable: true })
+  razorpayFundAccountId!: string;
+
+  @Column('simple-json', { nullable: true })
+  location?: { lat: number; lng: number };
+
   @CreateDateColumn()
   createdAt!: Date;
 

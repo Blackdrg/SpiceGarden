@@ -59,7 +59,7 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
         if (!onboarding) {
             throw new common_1.NotFoundException('Onboarding not found');
         }
-        let updateData = { currentStep: step };
+        const updateData = { currentStep: step };
         switch (step) {
             case restaurant_onboarding_entity_1.OnboardingStep.DOCUMENT_UPLOAD:
                 updateData.documentStatus = { ...onboarding.documentStatus, ...(data?.documents || {}) };

@@ -3,6 +3,7 @@ import { Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard } from '@spice
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import styles from './index.module.css';
 
 interface Restaurant {
   id: string;
@@ -19,6 +20,7 @@ const HomePage = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('home');
 
   useEffect(() => {
     const loadRestaurants = async () => {
@@ -52,54 +54,24 @@ const HomePage = () => {
     window.location.reload();
   };
 
-  const containerStyle: React.CSSProperties = {
-    padding: DESIGN_TOKENS.spacing.md,
-    fontFamily: DESIGN_TOKENS.typography.fontFamily,
-    backgroundColor: DESIGN_TOKENS.colors.background,
-    minHeight: '100vh',
-    paddingBottom: 80,
-  };
-
-  const headerStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: DESIGN_TOKENS.spacing.lg,
-  };
-
-  const searchBarStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: DESIGN_TOKENS.colors.surface,
-    padding: `12px ${DESIGN_TOKENS.spacing.md}px`,
-    borderRadius: DESIGN_TOKENS.radius.md,
-    marginBottom: DESIGN_TOKENS.spacing.lg,
-    boxShadow: DESIGN_TOKENS.shadows.small,
+  const getTabClass = (tabKey: string) => {
+    return `${styles.tab} ${activeTab === tabKey ? styles.activeTab : styles.inactiveTab}`;
   };
 
   return (
-    <div style={containerStyle}>
-      <header style={headerStyle} role="banner">
+    <div className={styles.container}>
+      <header className={styles.header} role="banner">
         <div>
-          <h2 style={{ 
-            margin: 0,
-            ...DESIGN_TOKENS.typography.headingS,
-            color: DESIGN_TOKENS.colors.textPrimary 
-          }}>
+          <h2 className={styles.userName}>
             👋 {user?.name?.split(' ')[0] || 'Guest'}
           </h2>
-          <p style={{ 
-            margin: 0, 
-            color: DESIGN_TOKENS.colors.textSecondary,
-            fontSize: '14px',
-            marginTop: 4
-          }}>
+          <p className={styles.deliveryLocation}>
             Deliver to: Home - Sector 17, Chandigarh
           </p>
         </div>
-        <Button 
-          label="🔔" 
-          onClick={() => null} 
+        <Button
+          label="🔔"
+          onClick={() => null}
           variant="secondary"
           ariaLabel="Notifications"
         />
@@ -107,115 +79,84 @@ const HomePage = () => {
 
       <div
         onClick={() => router.push('/search')}
-        style={searchBarStyle}
+        className={styles.searchBar}
         role="button"
         tabIndex={0}
         aria-label="Search restaurants and dishes"
       >
-        <span style={{ color: '#bbb', marginRight: 8, fontSize: 18 }}>🔍</span>
-        <span style={{ color: '#aaa', fontSize: '15px' }}>Search restaurants, dishes…</span>
+        <span className={styles.searchIcon}>🔍</span>
+        <span className={styles.searchText}>Search restaurants, dishes…</span>
       </div>
 
-      <div style={{ 
-        display: 'flex', 
-        gap: DESIGN_TOKENS.spacing.sm, 
-        overflowX: 'auto', 
-        paddingBottom: DESIGN_TOKENS.spacing.sm, 
-        marginBottom: DESIGN_TOKENS.spacing.lg 
-      }}>
+      <div className={styles.categoryContainer}>
         {categories.map((cat) => (
-          <div 
-            key={cat.name} 
-            style={{ 
-              textAlign: 'center', 
-              minWidth: '64px', 
-              padding: DESIGN_TOKENS.spacing.sm, 
-              backgroundColor: DESIGN_TOKENS.colors.surface, 
-              borderRadius: DESIGN_TOKENS.radius.md, 
-              cursor: 'pointer', 
-              boxShadow: DESIGN_TOKENS.shadows.small 
-            }}
+          <div
+            key={cat.name}
+            className={styles.categoryItem}
             role="button"
             tabIndex={0}
             aria-label={`Browse ${cat.name} category`}
           >
-            <div style={{ fontSize: '28px' }}>{cat.icon}</div>
-            <div style={{ fontSize: '12px', color: DESIGN_TOKENS.colors.textSecondary }}>{cat.name}</div>
+            <div className={styles.categoryIcon}>{cat.icon}</div>
+            <div className={styles.categoryName}>{cat.name}</div>
           </div>
         ))}
       </div>
 
-      <div style={{
-        background: `linear-gradient(45deg, ${DESIGN_TOKENS.colors.primary}, #ff7e5f)`,
-        color: 'white',
-        padding: DESIGN_TOKENS.spacing.lg,
-        borderRadius: DESIGN_TOKENS.radius.card,
-        marginBottom: DESIGN_TOKENS.spacing.xl,
-        cursor: 'pointer',
-      }}>
-        <h2 style={{ margin: 0, fontSize: '22px' }}>🎉 50% OFF</h2>
-        <p style={{ margin: '8px 0 16px 0', fontSize: '14px' }}>
+      <div
+        className={styles.promoBanner}
+        onClick={() => router.push('/search')}
+      >
+        <h2 className={styles.promoTitle}>🎉 50% OFF</h2>
+        <p className={styles.promoText}>
           On your first 3 orders. Use code: <strong>WELCOME50</strong>
         </p>
-        <Button 
-          label="Order Now" 
-          onClick={() => router.push('/search')}
-          ariaLabel="Order now with welcome discount"
-        />
+        <div className={styles.promoButton}>
+          <Button
+            label="Order Now"
+            onClick={() => router.push('/search')}
+            ariaLabel="Order now with welcome discount"
+          />
+        </div>
       </div>
 
       <Card title="Recommended Restaurants" variant="elevated">
         {loading ? (
           <SkeletonCard count={3} />
         ) : error ? (
-          <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
-            <p style={{ color: DESIGN_TOKENS.colors.danger }}>{error}</p>
-            <button 
+          <div className={styles.errorContainer}>
+            <p className={styles.errorMessage}>{error}</p>
+            <button
               onClick={handleRetry}
-              style={{
-                marginTop: DESIGN_TOKENS.spacing.sm,
-                padding: `${DESIGN_TOKENS.spacing.xs}px ${DESIGN_TOKENS.spacing.sm}px`,
-                backgroundColor: DESIGN_TOKENS.colors.primary,
-                color: 'white',
-                border: 'none',
-                borderRadius: DESIGN_TOKENS.radius.md,
-                cursor: 'pointer'
-              }}
+              className={styles.retryButton}
             >
               Retry
             </button>
           </div>
         ) : restaurants.length === 0 ? (
-          <p style={{ color: DESIGN_TOKENS.colors.textSecondary, padding: DESIGN_TOKENS.spacing.md }}>
+          <p className={styles.noRestaurants}>
             No restaurants available right now
           </p>
         ) : (
-          <div style={{ display: 'grid', gap: DESIGN_TOKENS.spacing.md }}>
+          <div className={styles.restaurantItemGrid}>
             {restaurants.slice(0, 3).map((restaurant) => (
-              <div 
-                key={restaurant.id} 
-                style={{ 
-                  display: 'flex', 
-                  gap: 12, 
-                  cursor: 'pointer',
-                  padding: DESIGN_TOKENS.spacing.sm,
-                  borderRadius: DESIGN_TOKENS.radius.md,
-                  transition: `background-color ${MOTION_EASING.easeOutSoft}ms ${MOTION_EASING.easeOutSoft}`,
-                }}
+              <div
+                key={restaurant.id}
+                className={styles.restaurantItem}
                 onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
                 role="button"
                 tabIndex={0}
                 aria-label={`View ${restaurant.name} details`}
               >
-                <div style={{ fontSize: '32px' }}>🍽️</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 'bold', color: DESIGN_TOKENS.colors.textPrimary }}>
+                <div className={styles.restaurantIcon}>🍽️</div>
+                <div className={styles.restaurantContent}>
+                  <div className={styles.restaurantName}>
                     {restaurant.name}
                   </div>
-                  <div style={{ fontSize: '12px', color: DESIGN_TOKENS.colors.textSecondary }}>
+                  <div className={styles.restaurantDescription}>
                     {restaurant.description}
                   </div>
-                  <div style={{ display: 'flex', gap: 8, fontSize: '12px', color: DESIGN_TOKENS.colors.textSecondary }}>
+                  <div className={styles.restaurantMeta}>
                     <span>⭐ {restaurant.rating}</span>
                     <span>• {restaurant.deliveryTime} min</span>
                     <span>• {Math.round(Math.random() * 5)} km</span>
@@ -227,46 +168,33 @@ const HomePage = () => {
         )}
       </Card>
 
-      <nav style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 60,
-        backgroundColor: DESIGN_TOKENS.colors.surface,
-        borderTop: `1px solid ${DESIGN_TOKENS.colors.border}`,
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        boxShadow: DESIGN_TOKENS.shadows.small,
-      }}
-      role="navigation"
-      aria-label="Main navigation"
+      <nav
+        className={styles.nav}
+        role="navigation"
+        aria-label="Main navigation"
       >
-        {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'orders', label: 'Orders', icon: '📦', path: '/history' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
-          <div
-            key={tab.key}
-            onClick={() => tab.path && router.push(tab.path)}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              cursor: 'pointer',
-              color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999',
-              fontSize: '11px'
-            }}
-            role="tab"
-            aria-label={tab.label}
-          >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </div>
-        ))}
+        <div className={styles.tablist} role="tablist">
+          {[
+            { key: 'home', label: 'Home', icon: '🏠', path: '/' },
+            { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
+            { key: 'orders', label: 'Orders', icon: '📦', path: '/history' },
+            { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
+          ].map((tab) => (
+            <div
+              key={tab.key}
+              onClick={() => {
+                setActiveTab(tab.key);
+                if (tab.path) router.push(tab.path);
+              }}
+              className={getTabClass(tab.key)}
+              role="tab"
+              aria-label={tab.label}
+            >
+              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </div>
+          ))}
+        </div>
       </nav>
     </div>
   );

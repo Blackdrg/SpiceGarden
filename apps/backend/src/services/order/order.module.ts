@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -11,7 +12,7 @@ import { GSTModule } from '../../services/gst/gst.module';
 import { LoggingModule } from '../../logging/logging.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OrderEntity, OrderItemEntity, AuditLogEntity]), PaymentServiceModule, NotificationModule, GSTModule, LoggingModule],
+  imports: [LocalRepositoryModule, PaymentServiceModule, NotificationModule, GSTModule, LoggingModule],
   providers: [OrderService],
   controllers: [OrderController],
   exports: [OrderService],

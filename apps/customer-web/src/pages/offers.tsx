@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import styles from './offers.module.css';
 
 interface Offer {
   id: number;
@@ -26,24 +27,32 @@ const OffersPage = () => {
     navigator.clipboard.writeText(code).catch(() => null);
   };
 
-  return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Offers &amp; Promos</h2>
+  const getDiscountText = (offer: Offer) => {
+    if (offer.type === 'percentage') return `-${offer.value}%`;
+    if (offer.type === 'fixed') return `-₹${offer.value}`;
+    return 'BOGO';
+  };
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
+  const getTabClass = (key: string) => {
+    return `${styles.tabItem} ${activeTab === key ? styles.activeTab : styles.tabText}`;
+  };
+
+  return (
+    <div className={styles.container}>
+      <h2 className={styles.pageTitle}>Offers &amp; Promos</h2>
+
+      <div className={styles.cardList}>
         {offers.map((offer) => (
           <Card key={offer.id} title={offer.title} isElevated>
-            <p style={{ color: '#666', marginBottom: DESIGN_TOKENS.spacing.sm }}>{offer.description}</p>
-            <div style={{ backgroundColor: '#FFF3E0', borderRadius: 8, padding: '8px 12px', marginBottom: DESIGN_TOKENS.spacing.sm }}>
-              <span style={{ fontWeight: 'bold', color: '#E65100', fontSize: '15px' }}>
-                {offer.type === 'percentage' ? `-${offer.value}%` : offer.type === 'fixed' ? `-₹${offer.value}` : 'BOGO'}
-              </span>
+            <p className={styles.description}>{offer.description}</p>
+            <div className={styles.discountBadge}>
+              <span className={styles.discountText}>{getDiscountText(offer)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.sm }}>
-              <div style={{ background: '#f5f5f5', padding: '6px 12px', borderRadius: 4, fontFamily: 'monospace', fontSize: '15px', fontWeight: 'bold' }}>{offer.code}</div>
-              <span style={{ color: '#999', fontSize: '13px' }}>Valid till {offer.validTill}</span>
+            <div className={styles.codeRow}>
+              <div className={styles.codeBlock}>{offer.code}</div>
+              <span className={styles.validTill}>Valid till {offer.validTill}</span>
             </div>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
+            <div className={styles.buttonRow}>
               <Button label="Copy Code" onClick={() => copyCode(offer.code)} variant="secondary" />
               <Button label="Use Now" onClick={() => router.push('/')} />
             </div>
@@ -51,31 +60,30 @@ const OffersPage = () => {
         ))}
       </div>
 
-      <Card title="Refer &amp; Earn" isElevated style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
-        <p style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>Share your code — earn &#8377;100 for every friend's first order.</p>
-        <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ flex: 1, background: '#f5f5f5', padding: '10px 12px', borderRadius: 8, fontFamily: 'monospace', fontWeight: 'bold', textAlign: 'center' }}>SPICE123</div>
+      <Card title="Refer &amp; Earn" isElevated className={styles.referMargin}>
+        <p className={styles.referDescription}>Share your code — earn &#8377;100 for every friend's first order.</p>
+        <div className={styles.buttonRow}>
+          <div className={styles.shareCode}>SPICE123</div>
           <Button label="Share" onClick={() => null} />
         </div>
       </Card>
 
-      {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'offers', label: 'Offers', icon: '🎁' },
+          { key: 'offers', label: 'Offers', icon: '🎁', path: '/offers' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <div
             key={tab.key}
+            className={getTabClass(tab.key)}
             onClick={() => tab.path && router.push(tab.path)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '11px' }}
+            aria-label={tab.label}
+            role="button"
+            tabIndex={0}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.tabIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
           </div>
         ))}

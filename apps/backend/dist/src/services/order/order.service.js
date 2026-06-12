@@ -21,13 +21,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -41,6 +51,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const order_interface_1 = require("../../shared/domain/order.interface");
 const order_entity_1 = require("../../db/entities/order.entity");
+const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
 const payments_service_1 = require("../../services/payments/payments.service");
 const notification_service_1 = require("../../services/notifications/notification.service");
 const retry_service_1 = require("../../services/payments/retry.service");
@@ -49,8 +60,9 @@ const production_notification_service_1 = require("../../services/notifications/
 const logging_service_1 = require("../../logging/logging.service");
 const crypto = __importStar(require("crypto"));
 let OrderService = class OrderService {
-    constructor(orderRepo, paymentService, notificationService, retryService, idempotency, productionNotification, loggingService) {
+    constructor(orderRepo, driverAssignmentRepo, paymentService, notificationService, retryService, idempotency, productionNotification, loggingService) {
         this.orderRepo = orderRepo;
+        this.driverAssignmentRepo = driverAssignmentRepo;
         this.paymentService = paymentService;
         this.notificationService = notificationService;
         this.retryService = retryService;
@@ -327,6 +339,82 @@ let OrderService = class OrderService {
         }
         return resolvedOrders;
     }
+    async checkDuplicateOrder(userId, restaurantId, itemsHash, windowMinutes = 5) {
+        const since = new Date(Date.now() - windowMinutes * 60 * 1000);
+        const duplicate = await this.orderRepo.findOne({
+            where: {
+                userId,
+                restaurantId,
+                status: order_interface_1.OrderStatus.PLACED,
+                createdAt: (0, typeorm_2.MoreThanOrEqual)(since),
+            },
+        });
+        return !!duplicate && duplicate.createdAt >= since;
+    }
+    async cancelOrderAtomic(orderId, actor, reason) {
+        return this.orderRepo.manager.transaction(async (manager) => {
+            const order = await manager.findOne(order_entity_1.OrderEntity, { where: { id: orderId } });
+            if (!order) {
+                throw new common_1.NotFoundException(`Order ${orderId} not found`);
+            }
+            if (order.status === order_interface_1.OrderStatus.DELIVERED) {
+                throw new common_1.BadRequestException('Order already delivered');
+            }
+            order.status = order_interface_1.OrderStatus.CANCELLED;
+            order.updatedAt = new Date();
+            return manager.save(order_entity_1.OrderEntity, order);
+        });
+    }
+    async partialRefund(orderId, amount, reason) {
+        if (amount <= 0) {
+            throw new common_1.BadRequestException('Refund amount must be greater than zero');
+        }
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        if (![order_interface_1.OrderStatus.ON_THE_WAY, order_interface_1.OrderStatus.DELIVERED].includes(order.status)) {
+            throw new common_1.BadRequestException('Refund not allowed for current order status');
+        }
+        if (order.paymentStatus === order_interface_1.PaymentStatus.REFUNDED) {
+            throw new common_1.BadRequestException('Order already refunded');
+        }
+        const refundedAmount = Number(order.refundedAmount || 0);
+        const remainingRefundable = Number(order.grandTotal || 0) - refundedAmount;
+        if (amount > remainingRefundable) {
+            throw new common_1.BadRequestException('Refund amount exceeds remaining refundable amount');
+        }
+        await this.paymentService.refundPayment(orderId, amount, order.userId, reason);
+        order.refundedAmount = refundedAmount + amount;
+        order.paymentStatus = order.refundedAmount >= Number(order.grandTotal) ? order_interface_1.PaymentStatus.REFUNDED : order_interface_1.PaymentStatus.COMPLETED;
+        order.updatedAt = new Date();
+        return this.orderRepo.save(order);
+    }
+    async handleKitchenDelay(orderId, delayMinutes) {
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order)
+            return;
+        if (delayMinutes > 30) {
+            await this.notificationService.sendPush(order.userId, 'Kitchen Delay Alert', `Your order #${order.orderNumber} is delayed by ${delayMinutes} minutes.`, { orderId: order.id });
+        }
+    }
+    async reassignOrder(orderId, driverId, reason) {
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order)
+            return false;
+        const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
+        if (assignment) {
+            assignment.status = 'reassigned';
+            assignment.reassignedFrom = driverId;
+            await this.driverAssignmentRepo.save(assignment);
+        }
+        order.driverId = '';
+        order.status = order_interface_1.OrderStatus.DRIVER_ASSIGNED;
+        order.updatedAt = new Date();
+        await this.orderRepo.save(order);
+        await this.notificationService.sendPush(order.userId, 'Order Reassigned', `Your order #${order.orderNumber} has been reassigned.`, { orderId: order.id });
+        return true;
+    }
     async getOrderWithLock(orderId) {
         const order = await this.orderRepo.findOne({
             where: { id: orderId },
@@ -342,7 +430,9 @@ exports.OrderService = OrderService;
 exports.OrderService = OrderService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
+    __param(1, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         payments_service_1.PaymentService,
         notification_service_1.NotificationService,
         retry_service_1.RetryService,

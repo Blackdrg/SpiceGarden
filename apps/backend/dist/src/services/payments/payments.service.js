@@ -33,7 +33,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             return paymentIntent;
         }
         catch (error) {
-            await this.auditService.logPaymentEvent('payment_intent_failed', userId, amount, currency, gatewayName ? gatewayName : 'unknown', null, false, request, error.message);
+            await this.auditService.logPaymentEvent('payment_intent_failed', userId, amount, currency, gatewayName ? gatewayName : 'any', null, false, request, error.message);
             this.logger.error('Payment intent creation failed:', error);
             throw error;
         }
@@ -70,7 +70,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             return paymentResult;
         }
         catch (error) {
-            await this.auditService.logPaymentEvent('payment_failed', userId, 0, 'usd', gatewayName ? gatewayName : 'unknown', paymentId, false, request, error.message);
+            await this.auditService.logPaymentEvent('payment_failed', userId, 0, 'usd', gatewayName ? gatewayName : 'any', paymentId, false, request, error.message);
             this.logger.error('Payment confirmation failed:', error);
             throw error;
         }
@@ -98,7 +98,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             return refund;
         }
         catch (error) {
-            await this.auditService.logPaymentEvent('payment_refund_failed', userId, amount || 0, 'usd', gatewayName ? gatewayName : 'unknown', paymentId, false, request, error.message);
+            await this.auditService.logPaymentEvent('payment_refund_failed', userId, amount || 0, 'usd', gatewayName ? gatewayName : 'any', paymentId, false, request, error.message);
             this.logger.error('Payment refund failed:', error);
             throw error;
         }
@@ -108,7 +108,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             const gateway = this.gatewayFactory.getGateway(gatewayName);
             const event = await gateway.constructEvent(payload, signature, secret);
             const obj = event.data.object;
-            await this.auditService.logPaymentEvent('webhook_received', obj.metadata?.userId || 'unknown', typeof obj.amount === 'number' ? obj.amount / 100 : 0, obj.currency || 'usd', gateway.getGatewayName(), obj.id || 'unknown', true, null);
+            await this.auditService.logPaymentEvent('webhook_received', obj.metadata?.userId || 'any', typeof obj.amount === 'number' ? obj.amount / 100 : 0, obj.currency || 'usd', gateway.getGatewayName(), obj.id || 'any', true, null);
             return event;
         }
         catch (error) {

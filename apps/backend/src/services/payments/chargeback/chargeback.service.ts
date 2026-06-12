@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -45,7 +45,7 @@ export class ChargebackService {
       }) : null;
       
       if (!order) {
-        this.logger.warn(`Order not found for payment intent ${paymentIntentId || 'unknown'}`);
+        this.logger.warn(`Order not found for payment intent ${paymentIntentId || 'any'}`);
       }
 
       const existingDispute = await this.disputeRepo.findOne({

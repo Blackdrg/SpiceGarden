@@ -15,20 +15,30 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
-const metrics_service_1 = require("./metrics/metrics.service");
+const local_dev_module_1 = require("./local-dev.module");
 const config_1 = require("@nestjs/config");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
@@ -37,19 +47,19 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express = __importStar(require("express"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
+    const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
+    const app = await core_1.NestFactory.create(localMode ? local_dev_module_1.LocalDevModule : app_module_1.AppModule, { rawBody: true });
     const configService = app.get(config_1.ConfigService);
-    const metricsService = app.get(metrics_service_1.MetricsService);
     try {
-        const Sentry = await Promise.resolve().then(() => __importStar(require("@sentry/node")));
+        const Sentry = (await Promise.resolve().then(() => __importStar(require("@sentry/node"))));
         const dsn = configService.get("SENTRY_DSN");
         if (Sentry && dsn) {
             Sentry.init({
                 dsn,
                 tracesSampleRate: 1.0,
             });
-            app.use(Sentry.Handlers.requestHandler());
-            app.use(Sentry.Handlers.tracingHandler());
+            Sentry.Handlers && app.use(Sentry.Handlers.requestHandler());
+            Sentry.Handlers && app.use(Sentry.Handlers.tracingHandler());
         }
     }
     catch (e) {
@@ -102,15 +112,15 @@ async function bootstrap() {
     app.use("/auth/", authLimiter);
     app.use(express.json({ limit: "10kb" }));
     app.use(express.urlencoded({ limit: "10kb", extended: true }));
-    app.use("/metrics", async (req, res) => {
+    app.use("/metrics", async (_req, res) => {
         res.set("Content-Type", "text/plain");
-        res.send(await metricsService.getMetrics());
+        res.send("spicegarden_backend_local_mode=true\n");
     });
     app.use((req, res, next) => {
         const start = Date.now();
         res.on("finish", () => {
             const duration = Date.now() - start;
-            metricsService.observeHttpRequestDuration(req.method, req.route?.path || req.path, res.statusCode, duration);
+            console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
         });
         next();
     });

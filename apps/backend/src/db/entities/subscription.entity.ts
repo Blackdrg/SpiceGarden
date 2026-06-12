@@ -22,7 +22,7 @@ export class SubscriptionEntity {
   expiryDate!: Date;
 
   @Column({ type: 'jsonb', nullable: true })
-  benefits!: unknown;
+  benefits!: any;
 
   @CreateDateColumn()
   createdAt!: Date;

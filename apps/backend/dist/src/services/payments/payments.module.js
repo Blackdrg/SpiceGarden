@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const payments_service_1 = require("./payments.service");
 const payments_controller_1 = require("./payments.controller");
 const payment_hardening_service_1 = require("./payment-hardening.service");
@@ -18,20 +18,10 @@ const idempotency_service_1 = require("./idempotency.service");
 const gateway_factory_service_1 = require("./gateway-factory.service");
 const stripe_gateway_service_1 = require("./gateways/stripe-gateway.service");
 const razorpay_gateway_service_1 = require("./gateways/razorpay-gateway.service");
-const order_entity_1 = require("../../db/entities/order.entity");
-const wallet_entity_1 = require("../../db/entities/wallet.entity");
-const wallet_transaction_entity_1 = require("../../db/entities/wallet-transaction.entity");
-const audit_log_entity_1 = require("../../db/entities/audit-log.entity");
-const idempotency_entity_1 = require("./idempotency.entity");
-const payment_validation_entity_1 = require("./payment-validation.entity");
-const payment_fraud_entity_1 = require("./payment-fraud.entity");
-const payment_event_entity_1 = require("./payment-event.entity");
-const ledger_entry_entity_1 = require("../../db/entities/ledger-entry.entity");
 const audit_module_1 = require("../../audit/audit.module");
 const ledger_module_1 = require("../../modules/ledger/ledger.module");
 const gst_module_1 = require("../../services/gst/gst.module");
 const chargeback_module_1 = require("./chargeback/chargeback.module");
-const payment_dispute_entity_1 = require("../../db/entities/payment-dispute.entity");
 const chargeback_service_1 = require("./chargeback/chargeback.service");
 let PaymentServiceModule = class PaymentServiceModule {
 };
@@ -39,18 +29,7 @@ exports.PaymentServiceModule = PaymentServiceModule;
 exports.PaymentServiceModule = PaymentServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([
-                order_entity_1.OrderEntity,
-                wallet_entity_1.WalletEntity,
-                wallet_transaction_entity_1.WalletTransactionEntity,
-                audit_log_entity_1.AuditLogEntity,
-                idempotency_entity_1.IdempotencyEntity,
-                payment_validation_entity_1.PaymentValidationEventEntity,
-                payment_fraud_entity_1.PaymentFraudFlagEntity,
-                payment_event_entity_1.PaymentEventEntity,
-                ledger_entry_entity_1.LedgerEntryEntity,
-                payment_dispute_entity_1.PaymentDisputeEntity,
-            ]),
+            local_repository_module_1.LocalRepositoryModule,
             audit_module_1.AuditModule,
             ledger_module_1.LedgerModule,
             gst_module_1.GSTModule,

@@ -55,7 +55,7 @@ let AnalyticsService = class AnalyticsService {
             const menuItem = await this.menuItemRepo.findOne({ where: { id: r.dishId } });
             return {
                 dishId: r.dishId,
-                name: menuItem?.name || 'Unknown',
+                name: menuItem?.name || 'any',
                 totalQuantity: parseInt(r.totalQuantity),
                 totalRevenue: parseFloat(r.totalRevenue),
                 uniqueCustomers: parseInt(r.uniqueCustomers),

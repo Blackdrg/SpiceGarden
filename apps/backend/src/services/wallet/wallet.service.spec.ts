@@ -33,7 +33,7 @@ describe('WalletService', () => {
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
-      const mockConfig: unknown = {
+      const mockConfig: any = {
         'WALLET_DEFAULT_CURRENCY': 'INR',
         'WALLET_NOTIFICATION_THRESHOLD': 100,
         'WALLET_LOW_BALANCE_THRESHOLD': 50,

@@ -41,7 +41,7 @@ let CommissionService = CommissionService_1 = class CommissionService {
         return this.commissionRepo.save(rule);
     }
     async getCommissionRules(restaurantId, activeOnly = true) {
-        const where = { restaurantId: restaurantId };
+        const where = { restaurantId };
         if (activeOnly) {
             where.status = commission_rule_entity_1.CommissionStatus.ACTIVE;
         }
@@ -53,7 +53,7 @@ let CommissionService = CommissionService_1 = class CommissionService {
     async calculateCommission(restaurantId, orderAmount, categoryId) {
         const rules = await this.commissionRepo.find({
             where: {
-                restaurantId: restaurantId,
+                restaurantId,
                 status: commission_rule_entity_1.CommissionStatus.ACTIVE,
             },
         });
@@ -89,7 +89,7 @@ let CommissionService = CommissionService_1 = class CommissionService {
     }
     async getCommissionHistory(restaurantId, limit = 20) {
         const rules = await this.commissionRepo.find({
-            where: { restaurantId: restaurantId },
+            where: { restaurantId },
             order: { createdAt: 'DESC' },
             take: limit,
         });

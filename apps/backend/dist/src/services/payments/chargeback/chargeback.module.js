@@ -8,11 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChargebackModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../../db/local-repository.module");
 const chargeback_service_1 = require("./chargeback.service");
 const chargeback_controller_1 = require("./chargeback.controller");
-const order_entity_1 = require("../../../db/entities/order.entity");
-const user_entity_1 = require("../../../db/entities/user.entity");
 const notification_module_1 = require("../../notifications/notification.module");
 let ChargebackModule = class ChargebackModule {
 };
@@ -20,7 +18,7 @@ exports.ChargebackModule = ChargebackModule;
 exports.ChargebackModule = ChargebackModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([order_entity_1.OrderEntity, user_entity_1.UserEntity]),
+            local_repository_module_1.LocalRepositoryModule,
             notification_module_1.NotificationModule,
         ],
         providers: [chargeback_service_1.ChargebackService],

@@ -1,6 +1,7 @@
 ﻿
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { PaymentService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { PaymentHardeningService } from './payment-hardening.service';
@@ -28,18 +29,7 @@ import { ChargebackService } from './chargeback/chargeback.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      OrderEntity, 
-      WalletEntity, 
-      WalletTransactionEntity, 
-      AuditLogEntity,
-      IdempotencyEntity,
-      PaymentValidationEventEntity,
-      PaymentFraudFlagEntity,
-      PaymentEventEntity,
-      LedgerEntryEntity,
-      PaymentDisputeEntity,
-    ]),
+    LocalRepositoryModule,
     AuditModule,
     LedgerModule,
     GSTModule,

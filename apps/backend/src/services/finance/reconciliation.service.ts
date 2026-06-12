@@ -25,7 +25,7 @@ export class ReconciliationService {
     private dataSource: DataSource,
   ) {}
 
-  async reconcilePayments(startDate: Date, endDate: Date): Promise<unknown> {
+  async reconcilePayments(startDate: Date, endDate: Date): Promise<any> {
     const orders = await this.orderRepo.find({
       where: { createdAt: Between(startDate, endDate) },
     });
@@ -37,7 +37,7 @@ export class ReconciliationService {
     const ordersTotal = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
     const transactionsTotal = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-    const discrepancies: unknown[] = [];
+    const discrepancies: any[] = [];
 
     for (const order of orders) {
       const relatedTxns = transactions.filter(t => 
@@ -70,17 +70,17 @@ export class ReconciliationService {
     };
   }
 
-  async reconcilePayouts(restaurantId: string, startDate: Date, endDate: Date): Promise<unknown> {
+  async reconcilePayouts(restaurantId: string, startDate: Date, endDate: Date): Promise<any> {
     const payouts = await this.payoutRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId: restaurantId as any,
         createdAt: Between(startDate, endDate),
       },
     });
 
     const orders = await this.orderRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId: restaurantId as any,
         createdAt: Between(startDate, endDate),
       },
     });
@@ -100,10 +100,10 @@ export class ReconciliationService {
     };
   }
 
-  async reconcileDriverPayments(driverId: string, startDate: Date, endDate: Date): Promise<unknown> {
+  async reconcileDriverPayments(driverId: string, startDate: Date, endDate: Date): Promise<any> {
     const incentives = await this.incentiveRepo.find({
       where: {
-        driverId: driverId as unknown,
+        driverId: driverId as any,
         createdAt: Between(startDate, endDate),
       },
     });
@@ -124,13 +124,13 @@ export class ReconciliationService {
     };
   }
 
-  async getGSTReconciliation(restaurantId: string, month: number, year: number): Promise<unknown> {
+  async getGSTReconciliation(restaurantId: string, month: number, year: number): Promise<any> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const orders = await this.orderRepo.find({
       where: {
-        restaurantId: restaurantId as unknown,
+        restaurantId: restaurantId as any,
         createdAt: Between(startDate, endDate),
       },
       relations: ['gstDetail'],
@@ -149,7 +149,7 @@ export class ReconciliationService {
     };
   }
 
-  async runFullReconciliation(dateRange: { start: Date; end: Date }): Promise<unknown> {
+  async runFullReconciliation(dateRange: { start: Date; end: Date }): Promise<any> {
     const [paymentRecon, payoutRecon] = await Promise.all([
       this.reconcilePayments(dateRange.start, dateRange.end),
       this.reconcileDriverPayments('', dateRange.start, dateRange.end),
@@ -162,7 +162,7 @@ export class ReconciliationService {
     };
   }
 
-  private calculateOverallStatus(payment: unknown, payout: unknown): string {
+  private calculateOverallStatus(payment: any, payout: any): string {
     const paymentMatch = payment.matchRate >= 95;
     const payoutPending = payout.pendingCount === 0;
 

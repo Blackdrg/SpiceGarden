@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const order_interface_1 = require("../../shared/domain/order.interface");
 const order_item_entity_1 = require("./order-item.entity");
 const gst_detail_entity_1 = require("./gst-detail.entity");
+const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let OrderEntity = class OrderEntity {
 };
 exports.OrderEntity = OrderEntity;
@@ -38,9 +39,17 @@ __decorate([
     __metadata("design:type", String)
 ], OrderEntity.prototype, "branchId", void 0);
 __decorate([
+    (0, typeorm_1.ManyToOne)(() => restaurant_branch_entity_1.RestaurantBranchEntity),
+    __metadata("design:type", restaurant_branch_entity_1.RestaurantBranchEntity)
+], OrderEntity.prototype, "branch", void 0);
+__decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], OrderEntity.prototype, "driverId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], OrderEntity.prototype, "otpCode", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -81,6 +90,10 @@ __decorate([
     (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2 }),
     __metadata("design:type", Number)
 ], OrderEntity.prototype, "grandTotal", void 0);
+__decorate([
+    (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
+], OrderEntity.prototype, "refundedAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -9,12 +10,7 @@ import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      OrderEntity,
-      UserEntity,
-      DriverEntity,
-      AuditLogEntity,
-    ]),
+    LocalRepositoryModule,
   ],
   providers: [AdminService],
   controllers: [AdminController],

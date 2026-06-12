@@ -46,6 +46,16 @@ let StripeGateway = StripeGateway_1 = class StripeGateway {
             throw error;
         }
     }
+    async fetchPaymentDetails(paymentId) {
+        const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
+        return {
+            id: paymentIntent.id,
+            amount: paymentIntent.amount,
+            currency: paymentIntent.currency,
+            status: paymentIntent.status,
+            client_secret: paymentIntent.client_secret || undefined,
+        };
+    }
     async confirmPayment(paymentId, userId) {
         try {
             const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
@@ -85,6 +95,7 @@ let StripeGateway = StripeGateway_1 = class StripeGateway {
             return {
                 id: refund.id,
                 amount: refund.amount,
+                currency: paymentIntent.currency || 'usd',
                 status: refund.status,
             };
         }

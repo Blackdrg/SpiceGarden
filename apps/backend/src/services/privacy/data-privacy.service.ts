@@ -38,7 +38,7 @@ export class DataPrivacyService {
     private dataSource: DataSource,
   ) {}
 
-  async getUserData(userId: string): Promise<unknown> {
+  async getUserData(userId: string): Promise<any> {
     const user = this.dataSource.getRepository(UserEntity).findOne({ where: { id: userId } });
     const orders = this.dataSource.getRepository(OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
     const sessions = this.dataSource.getRepository(OrderEntity).find({ where: { userId } });
@@ -87,8 +87,8 @@ export class DataPrivacyService {
     };
   }
 
-  maskPii<T extends Record<string, unknown>>(obj: T, fields: (keyof T)[]): T {
-    const masked = { ...obj as Record<string, unknown> };
+  maskPii<T extends Record<string, any>>(obj: T, fields: (keyof T)[]): T {
+    const masked = { ...obj as Record<string, any> };
     for (const field of fields) {
       const key = String(field);
       if (key in masked && typeof masked[key] === 'string' && masked[key]) {
@@ -98,8 +98,8 @@ export class DataPrivacyService {
     return masked as T;
   }
 
-  unmaskPii<T extends Record<string, unknown>>(obj: T, fields: (keyof T)[]): T {
-    const decrypted = { ...obj as Record<string, unknown> };
+  unmaskPii<T extends Record<string, any>>(obj: T, fields: (keyof T)[]): T {
+    const decrypted = { ...obj as Record<string, any> };
     for (const field of fields) {
       const key = String(field);
       if (key in decrypted && typeof decrypted[key] === 'string' && decrypted[key]) {

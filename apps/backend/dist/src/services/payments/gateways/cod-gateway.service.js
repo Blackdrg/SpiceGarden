@@ -39,6 +39,17 @@ let CashOnDeliveryGateway = CashOnDeliveryGateway_1 = class CashOnDeliveryGatewa
             },
         };
     }
+    async fetchPaymentDetails(paymentId) {
+        return {
+            id: paymentId,
+            amount: 0,
+            currency: 'INR',
+            status: 'pending',
+            client_secret: paymentId,
+            payment_method: 'cod',
+            metadata: { paymentMethod: 'cash_on_delivery' },
+        };
+    }
     async confirmPayment(paymentId, userId) {
         if (!paymentId?.startsWith('cod_')) {
             throw new Error('Invalid COD payment ID');
@@ -56,6 +67,7 @@ let CashOnDeliveryGateway = CashOnDeliveryGateway_1 = class CashOnDeliveryGatewa
         return {
             id: `refund_${Date.now()}`,
             amount: amount || 0,
+            currency: 'INR',
             status: 'processed',
             note: 'COD refund - requires manual driver reconciliation',
         };

@@ -1,6 +1,7 @@
 ﻿
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../../db/local-repository.module';
 import { PaymentWebhookEntity } from '../../../db/entities/payment-webhook.entity';
 import { PaymentEventEntity } from '../payment-event.entity';
 import { PaymentFraudFlagEntity } from '../payment-fraud.entity';
@@ -16,7 +17,7 @@ import { RazorpayGateway } from '../gateways/razorpay-gateway.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PaymentWebhookEntity, PaymentEventEntity, PaymentFraudFlagEntity, PaymentDisputeEntity]),
+    LocalRepositoryModule,
     NotificationModule,
     forwardRef(() => ChargebackModule),
     LedgerModule,

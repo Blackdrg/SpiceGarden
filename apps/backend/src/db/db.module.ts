@@ -1,7 +1,10 @@
-﻿import { Module, Global } from "@nestjs/common";
+import { Module, Global } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { MongooseModule } from "@nestjs/mongoose";
+import { MongooseModule, getModelToken } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import * as crypto from "crypto";
+import * as path from "path";
+import { LocalRepositoryModule } from "./local-repository.module";
 import { UserEntity } from "./entities/user.entity";
 import { OrderEntity } from "./entities/order.entity";
 import { SessionEntity } from "./entities/session.entity";
@@ -42,8 +45,6 @@ import { IdempotencyEntity } from "../services/payments/idempotency.entity";
 import { PaymentValidationEventEntity } from "../services/payments/payment-validation.entity";
 import { PaymentFraudFlagEntity } from "../services/payments/payment-fraud.entity";
 import { PaymentEventEntity } from "../services/payments/payment-event.entity";
-import { PostgresAdapter } from "./postgres.adapter";
-import { RedisAdapter } from "./redis.adapter";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
 
 const entities = [
@@ -89,24 +90,43 @@ const entities = [
   PaymentEventEntity,
 ];
 
-@Global()
-@Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: "postgres",
-        host: "localhost",
-        port: 5432,
-        username: "spicegarden",
-        password: "nkYD5s1HBlr8VpyB42btP1On32kBMg4PWy/fRH5zgZ8=",
-        database: "spicegarden",
-        entities: entities,
-        synchronize: true,
+const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
+
+function localReviewModelProvider() {
+  const store: any[] = [];
+  return {
+    provide: getModelToken(ReviewDocument.name),
+    useValue: {
+      create: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+      new: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+      findOne: async () => store[0] || null,
+      find: async () => store,
+      aggregate: async () => [],
+    },
+  };
+}
+
+const imports: any[] = localSqlite
+  ? [LocalRepositoryModule]
+  : [
+      TypeOrmModule.forRootAsync({
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          type: "postgres",
+          host: configService.get<string>("DB_HOST") || "localhost",
+          port: configService.get<number>("DB_PORT", 5432),
+          username: configService.get<string>("DB_USER") || "spicegarden",
+          password: configService.get<string>("DB_PASS") || "spicegarden_dev",
+          database: configService.get<string>("DB_NAME") || "spicegarden",
+          entities,
+          synchronize: true,
+        }),
+        inject: [ConfigService],
       }),
-      inject: [ConfigService],
-    }),
-    TypeOrmModule.forFeature(entities),
+    ];
+
+if (!localSqlite) {
+  imports.push(
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -122,10 +142,17 @@ const entities = [
         },
       }),
       inject: [ConfigService],
-    }),
-    MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]),
-  ],
-  providers: [PostgresAdapter, RedisAdapter],
-  exports: [PostgresAdapter, RedisAdapter, TypeOrmModule, MongooseModule],
+    } as any),
+    MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]) as any,
+  );
+} else {
+  imports.push(localReviewModelProvider() as any);
+}
+
+@Global()
+@Module({
+  imports,
+  providers: [...(localSqlite ? [localReviewModelProvider()] : [])],
+  exports: localSqlite ? [LocalRepositoryModule] : [TypeOrmModule, MongooseModule],
 })
 export class DbModule {}

@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, FindOptionsWhere } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 
@@ -30,12 +30,12 @@ export class BranchManagementService {
     }
 
     const branch = this.branchRepo.create({
-      restaurant: { id: restaurantId } as unknown,
+      restaurant: { id: restaurantId } as any,
       branchName: branchData.branchName,
       address: branchData.address,
       openingTime: branchData.openingTime || '09:00',
       closingTime: branchData.closingTime || '21:00',
-      location: { lat: branchData.lat, lng: branchData.lng } as unknown,
+      location: { lat: branchData.lat, lng: branchData.lng } as any,
       isOnline: false,
     });
 
@@ -50,10 +50,10 @@ export class BranchManagementService {
     }
 
     const { lat, lng, ...rest } = updateData;
-    const updatePayload = { ...rest };
+    const updatePayload: Partial<RestaurantBranchEntity> & { location?: { lat: number; lng: number } } = { ...rest };
     
     if (lat !== undefined && lng !== undefined) {
-      (updatePayload as unknown).location = { lat, lng };
+      updatePayload.location = { lat, lng };
     }
 
     await this.branchRepo.update(branchId, updatePayload);
@@ -82,14 +82,14 @@ export class BranchManagementService {
 
   async getBranchesByRestaurant(restaurantId: string): Promise<RestaurantBranchEntity[]> {
     return this.branchRepo.find({
-      where: { restaurant: { id: restaurantId } } as unknown,
+      where: { restaurant: { id: restaurantId } } as any,
       relations: ['restaurant'],
-      order: { branchName: 'ASC' } as unknown,
+      order: { branchName: 'ASC' },
     });
   }
 
   async getAllBranches(filter?: { isOnline?: boolean; restaurantId?: string }): Promise<RestaurantBranchEntity[]> {
-    const where: unknown = {};
+    const where: FindOptionsWhere<RestaurantBranchEntity> = {};
     if (filter?.isOnline !== undefined) {
       where.isOnline = filter.isOnline;
     }
@@ -100,7 +100,7 @@ export class BranchManagementService {
     return this.branchRepo.find({
       where,
       relations: ['restaurant'],
-      order: { branchName: 'ASC' } as unknown,
+      order: { branchName: 'ASC' },
     });
   }
 

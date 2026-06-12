@@ -34,7 +34,7 @@ interface LocationUpdate {
 interface AcknowledgedMessage {
   id: string;
   event: string;
-  data: unknown;
+  data: any;
   timestamp: Date;
   ack?: boolean;
 }
@@ -63,7 +63,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly logger = new Logger(TrackingGateway.name);
   private readonly connectedClients = new Map<string, SocketConnection>();
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
-  private readonly pendingAcks = new Map<string, { resolve: (value: unknown) => void; reject: (reason?: unknown) => void; timeout: NodeJS.Timeout }>();
+  private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
 
   constructor(
@@ -200,7 +200,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     return { status: 'ok', messageId };
   }
 
-  async publish(topic: string, data: unknown, requireAck: boolean = false): Promise<unknown> {
+  async publish(topic: string, data: any, requireAck: boolean = false): Promise<any> {
     const messageId = `pub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {
@@ -211,7 +211,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     return { status: 'sent', messageId };
   }
 
-  async publishToRoom(room: string, data: unknown, requireAck: boolean = false): Promise<unknown> {
+  async publishToRoom(room: string, data: any, requireAck: boolean = false): Promise<any> {
     const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {
@@ -229,7 +229,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   getNamespaceStats(): Record<string, number> {
     const stats: Record<string, number> = {};
     this.connectedClients.forEach((client) => {
-      const ns = client.namespace || 'unknown';
+      const ns = client.namespace || 'any';
       stats[ns] = (stats[ns] || 0) + 1;
     });
     return stats;
@@ -251,7 +251,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     const timeout = 30000;
   }
 
-  private async waitForAcknowledgement(roomOrTopic: string, data: unknown): Promise<unknown> {
+  private async waitForAcknowledgement(roomOrTopic: string, data: any): Promise<any> {
     const messageId = data.messageId;
     
     return new Promise((resolve, reject) => {

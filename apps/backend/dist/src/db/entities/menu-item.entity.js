@@ -13,6 +13,7 @@ exports.MenuItemEntity = void 0;
 const typeorm_1 = require("typeorm");
 const menu_category_entity_1 = require("./menu-category.entity");
 const hsn_sac_entity_1 = require("./hsn-sac.entity");
+const menu_addon_entity_1 = require("./menu-addon.entity");
 let MenuItemEntity = class MenuItemEntity {
 };
 exports.MenuItemEntity = MenuItemEntity;
@@ -60,6 +61,10 @@ __decorate([
     (0, typeorm_1.ManyToOne)(() => hsn_sac_entity_1.HSNSACEntity, { nullable: true }),
     __metadata("design:type", hsn_sac_entity_1.HSNSACEntity)
 ], MenuItemEntity.prototype, "hsnSac", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => menu_addon_entity_1.MenuAddonEntity, (addon) => addon.menuItem),
+    __metadata("design:type", Array)
+], MenuItemEntity.prototype, "addons", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

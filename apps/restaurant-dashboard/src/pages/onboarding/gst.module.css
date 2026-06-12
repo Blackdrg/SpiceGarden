@@ -1,31 +1,26 @@
-/* gst.module.css */
 .container {
   min-height: 100vh;
   background: #0a0a0a;
   color: #fff;
   padding: 24px;
 }
-.inner {
+.maxWidth {
   max-width: 640px;
   margin: 0 auto;
 }
-.title {
+.heading {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
 }
-.description {
+.subtitle {
   color: #a1a1aa;
   margin-bottom: 32px;
-}
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 .formGroup {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 .label {
   display: block;
@@ -42,11 +37,19 @@
   color: #fff;
   font-size: 14px;
 }
-.buttonContainer {
+.actions {
   display: flex;
   gap: 12px;
   margin-top: 32px;
 }
-.button {
+.backButton {
+  padding: 10px 20px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
   flex: 1;
 }

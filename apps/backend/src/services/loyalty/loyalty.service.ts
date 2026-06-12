@@ -5,7 +5,7 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { CouponEntity, CouponStatus } from '../../db/entities/coupon.entity';
 import { CouponUsageEntity, CouponUsageStatus } from '../../db/entities/coupon-usage.entity';
-import { ReferralEntity } from '../../db/entities/referral.entity';
+import { ReferralEntity, ReferralStatus } from '../../db/entities/referral.entity';
 import { SubscriptionEntity } from '../../db/entities/subscription.entity';
 
 @Injectable()
@@ -22,13 +22,13 @@ export class LoyaltyService {
     private dataSource: DataSource,
   ) {}
 
-  async createCoupon(data: unknown): Promise<CouponEntity> {
+  async createCoupon(data: any): Promise<CouponEntity> {
     const coupon = this.couponRepo.create();
     Object.assign(coupon, data);
     return this.couponRepo.save(coupon);
   }
 
-  async applyCoupon(code: string, userId: string, orderAmount: number, orderId?: string): Promise<unknown> {
+  async applyCoupon(code: string, userId: string, orderAmount: number, orderId?: string): Promise<any> {
     const coupon = await this.couponRepo.findOne({ where: { code: code.toUpperCase() } });
     if (!coupon) throw new BadRequestException('Invalid coupon code');
 
@@ -75,7 +75,7 @@ export class LoyaltyService {
     if (coupon.usageCount >= coupon.usageLimit) coupon.status = CouponStatus.DEPLETED;
     await this.couponRepo.save(coupon);
 
-    return { discount, finalAmount: orderAmount - discount, couponId: coupon.id } as unknown;
+    return { discount, finalAmount: orderAmount - discount, couponId: coupon.id } as any;
   }
 
   async generateReferralCode(userId: string): Promise<ReferralEntity> {
@@ -99,7 +99,7 @@ export class LoyaltyService {
     return this.referralRepo.save(referral) as Promise<ReferralEntity>;
   }
 
-  async processReferral(code: string, refereeId: string, firstOrderId: string): Promise<unknown> {
+  async processReferral(code: string, refereeId: string, firstOrderId: string): Promise<any> {
     const referral = await this.referralRepo.findOne({ where: { code: code.toUpperCase() } });
     if (!referral) throw new BadRequestException('Invalid referral code');
     if (referral.referrerId === refereeId) throw new BadRequestException('Cannot refer yourself');
@@ -108,7 +108,7 @@ export class LoyaltyService {
 
     referral.refereeId = refereeId;
     referral.refereeFirstOrderId = firstOrderId;
-    referral.status = 'completed' as unknown;
+    referral.status = 'completed' as any;
     referral.completedAt = new Date();
     referral.rewardGivenAt = new Date();
     await this.referralRepo.save(referral);
@@ -120,7 +120,7 @@ export class LoyaltyService {
     };
   }
 
-  async processCashback(userId: string, orderId: string, orderAmount: number): Promise<unknown> {
+  async processCashback(userId: string, orderId: string, orderAmount: number): Promise<any> {
     const subscription = await this.subscriptionRepo.findOne({
       where: { userId, status: 'active' }
     });
@@ -140,7 +140,7 @@ export class LoyaltyService {
     return { cashbackAmount, applied: cashbackAmount > 0 };
   }
 
-  async getWalletCashback(userId: string): Promise<unknown> {
+  async getWalletCashback(userId: string): Promise<any> {
     const usages = await this.couponUsageRepo.find({
       where: { userId, status: CouponUsageStatus.USED },
       order: { usedAt: 'DESC' },
@@ -152,11 +152,11 @@ export class LoyaltyService {
     return {
       totalCashback,
       transactionCount: usages.length,
-      recentTransactions: (usages as unknown).slice(0, 10),
+      recentTransactions: (usages as any).slice(0, 10),
     };
   }
 
-  async getReferralHistory(userId: string): Promise<unknown> {
+  async getReferralHistory(userId: string): Promise<any> {
     const sent = await this.referralRepo.find({
       where: { referrerId: userId },
       order: { createdAt: 'DESC' },
@@ -170,21 +170,21 @@ export class LoyaltyService {
       totalSent: sent.length,
       totalCompleted: sent.filter(r => r.status === 'completed').length,
       totalEarned: sent
-        .filter((r: unknown) => r.status === 'completed')
-        .reduce((sum: number, r: unknown) => sum + r.referrerReward, 0),
+        .filter((r: any) => r.status === 'completed')
+        .reduce((sum: number, r: any) => sum + r.referrerReward, 0),
       sentReferrals: sent,
       receivedReferrals: received,
     };
   }
 
-  async getAllCoupons(filters?: unknown): Promise<CouponEntity[]> {
+  async getAllCoupons(filters?: any): Promise<CouponEntity[]> {
     const query = this.couponRepo.createQueryBuilder('coupon');
     if (filters?.status) query.andWhere('coupon.status = :status', { status: filters.status });
     if (filters?.scope) query.andWhere('coupon.scope = :scope', { scope: filters.scope });
     return query.orderBy('coupon.createdAt', 'DESC').getMany() as Promise<CouponEntity[]>;
   }
 
-  async getCouponAnalytics(couponId: string): Promise<unknown> {
+  async getCouponAnalytics(couponId: string): Promise<any> {
     const coupon = await this.couponRepo.findOne({ where: { id: couponId } });
     if (!coupon) throw new NotFoundException('Coupon not found');
 
@@ -201,8 +201,51 @@ export class LoyaltyService {
       totalUsages: usages.length,
       totalDiscountGiven: totalDiscount,
       totalOrdersGenerated: totalOrders,
-      usageTrend: (usages as unknown).slice(0, 30),
+      usageTrend: (usages as any).slice(0, 30),
     };
+  }
+
+  async checkCouponStacking(orderId: string, userId: string): Promise<boolean> {
+    const existingUsage = await this.couponUsageRepo.findOne({ where: { orderId, userId } });
+    return !!existingUsage;
+  }
+
+  async detectReferralFraud(code: string, refereeId: string): Promise<{ isFraud: boolean; reason?: string }> {
+    const referral = await this.referralRepo.findOne({ where: { code: code.toUpperCase() } });
+    if (!referral) {
+      return { isFraud: false };
+    }
+
+    const recentReferrals = await this.referralRepo.find({
+      where: { refereeId },
+      order: { createdAt: 'DESC' },
+      take: 10,
+    });
+
+    if (recentReferrals.length > 1) {
+      return { isFraud: true, reason: 'Multiple referral usage within 24h' };
+    }
+
+    const referredUsers = await this.referralRepo
+      .createQueryBuilder('referral')
+      .where('referral.code = :code', { code: code.toUpperCase() })
+      .andWhere('referral.referrerId != :referrerId', { referrerId: referral.referrerId })
+      .getMany();
+
+    if (referredUsers.length >= 5) {
+      return { isFraud: true, reason: 'Possible referral farming detected' };
+    }
+
+    return { isFraud: false };
+  }
+
+  async revocableReferral(referralId: string, reason: string): Promise<void> {
+    const referral = await this.referralRepo.findOne({ where: { id: referralId } });
+    if (!referral) return;
+
+    referral.status = ReferralStatus.REVOKED;
+    await this.referralRepo.save(referral);
+    this.logger.warn(`Referral ${referralId} revoked: ${reason}`);
   }
 
   async deactivateCoupon(couponId: string): Promise<CouponEntity> {

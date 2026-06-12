@@ -34,7 +34,6 @@ let CodService = class CodService {
             amount: amount ?? 0,
             currency: 'usd',
             status: 'succeeded',
-            metadata: { reason },
         };
     }
 };

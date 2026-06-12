@@ -16,10 +16,10 @@ export class IdempotencyEntity {
   userId: string;
 
   @Column('jsonb')
-  requestPayload: unknown;
+  requestPayload: any;
 
   @Column('jsonb', { nullable: true })
-  responsePayload: unknown;
+  responsePayload: any;
 
   @Column({ nullable: true })
   statusCode: number;

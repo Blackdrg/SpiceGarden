@@ -19,6 +19,12 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const idempotency_entity_1 = require("./idempotency.entity");
+const retryableErrors = [
+    'api_connection_error',
+    'api_timeout',
+    'rate_limit_error',
+    'temporary_failure',
+];
 let RetryService = RetryService_1 = class RetryService {
     constructor(configService, idempotencyRepo) {
         this.configService = configService;

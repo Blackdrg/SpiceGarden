@@ -158,7 +158,7 @@ export class DriverAssignmentController {
       orderId: string;
       branchId: string;
       fraudType: 'gps_spoofing' | 'fake_delivery' | 'late_delivery_abuse' | 'route_deviation' | 'other';
-      evidence: unknown;
+      evidence: any;
       severity: 'low' | 'medium' | 'high';
     }
   ) {

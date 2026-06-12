@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { GSTService } from './gst.service';
 import { GSTController } from './gst.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -12,15 +13,7 @@ import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      OrderEntity,
-      OrderItemEntity,
-      GSTDetailEntity,
-      HSNSACEntity,
-      RestaurantGSTEntity,
-      MenuItemEntity,
-      RestaurantEntity,
-    ]),
+    LocalRepositoryModule,
   ],
   providers: [GSTService],
   controllers: [GSTController],

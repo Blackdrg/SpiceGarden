@@ -49,7 +49,7 @@ let ChargebackService = ChargebackService_1 = class ChargebackService {
                 where: { paymentIntentId: paymentIntentId }
             }) : null;
             if (!order) {
-                this.logger.warn(`Order not found for payment intent ${paymentIntentId || 'unknown'}`);
+                this.logger.warn(`Order not found for payment intent ${paymentIntentId || 'any'}`);
             }
             const existingDispute = await this.disputeRepo.findOne({
                 where: { disputeId: dispute.id }

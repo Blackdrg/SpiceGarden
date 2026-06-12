@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual } from 'typeorm';
+import { Repository, MoreThanOrEqual, FindOptionsWhere } from 'typeorm';
 import { PaymentFraudFlagEntity } from './payment-fraud.entity';
 import { AuditService } from '../../audit/audit.service';
 
@@ -70,8 +70,8 @@ export class FraudHardeningService {
     const hourlyTransactions = await this.fraudFlagRepo.count({
       where: {
         userId,
-        createdAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as unknown
-      }
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)),
+      },
     });
 
     const dailyLimit = this.configService.get<number>('PAYMENT_DAILY_LIMIT_PER_USER', 50000);
@@ -148,7 +148,7 @@ export class FraudHardeningService {
     orderId?: string;
     ipAddress?: string;
     userAgent?: string;
-    cardInfo?: unknown;
+    cardInfo?: { bin?: string; last4?: string; brand?: string; funding?: string };
     riskScore: number;
     reasons: string[];
   }): Promise<PaymentFraudFlagEntity> {
@@ -211,8 +211,8 @@ export class FraudHardeningService {
       where: {
         userId,
         isBlocked: true,
-        blockedAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)) as unknown
-      }
+        blockedAt: MoreThanOrEqual(new Date(Date.now() - 60 * 60 * 1000)),
+      },
     });
 
     return !!recentBlock;
@@ -221,12 +221,12 @@ export class FraudHardeningService {
   async getFraudHistory(userId: string, limit: number = 50): Promise<PaymentFraudFlagEntity[]> {
     return this.fraudFlagRepo.find({
       where: { userId },
-      order: { createdAt: 'DESC' as unknown },
+      order: { createdAt: 'DESC' },
       take: limit,
     });
   }
 
-  async getFraudStats(): Promise<unknown> {
+  async getFraudStats(): Promise<any> {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -240,10 +240,10 @@ export class FraudHardeningService {
         .getRawOne()
         .then(r => Number(r?.count || 0)),
       this.fraudFlagRepo.count({
-        where: { createdAt: MoreThanOrEqual(twentyFourHoursAgo) as unknown }
+        where: { createdAt: MoreThanOrEqual(twentyFourHoursAgo) }
       }),
       this.fraudFlagRepo.count({
-        where: { createdAt: MoreThanOrEqual(sevenDaysAgo) as unknown }
+        where: { createdAt: MoreThanOrEqual(sevenDaysAgo) }
       }),
     ]);
 

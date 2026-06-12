@@ -20,8 +20,8 @@ export class IdempotencyService {
     key: string,
     operation: string,
     userId: string | null,
-    requestPayload: unknown
-  ): Promise<{ isDuplicate: boolean; response?: unknown }> {
+    requestPayload: any
+  ): Promise<{ isDuplicate: boolean; response?: any }> {
     if (!key) {
       return { isDuplicate: false };
     }
@@ -50,7 +50,7 @@ export class IdempotencyService {
   async complete(
     key: string,
     operation: string,
-    responsePayload: unknown,
+    responsePayload: any,
     statusCode: number = 200
   ): Promise<void> {
     await this.idempotencyRepo.update(
@@ -70,7 +70,7 @@ export class IdempotencyService {
       where: {
         userId,
         operation,
-        createdAt: MoreThanOrEqual(since) as unknown
+        createdAt: MoreThanOrEqual(since),
       }
     });
   }

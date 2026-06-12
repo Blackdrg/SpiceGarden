@@ -1,6 +1,7 @@
 ﻿
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LocalRepositoryModule } from '../../db/local-repository.module';
 import { RefundService } from './refund.service';
 import { RefundController } from './refund.controller';
 import { RefundEntity } from '../../db/entities/refund.entity';
@@ -13,7 +14,7 @@ import { LedgerModule } from '../../modules/ledger/ledger.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([RefundEntity, RefundApprovalEntity, OrderEntity, UserEntity]),
+        LocalRepositoryModule,
         PaymentServiceModule,
         NotificationModule,
         LedgerModule

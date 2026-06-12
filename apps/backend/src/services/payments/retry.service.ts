@@ -19,6 +19,13 @@ export interface RetryResult<T> {
   attempts: number;
 }
 
+const retryableErrors = [
+  'api_connection_error',
+  'api_timeout',
+  'rate_limit_error',
+  'temporary_failure',
+];
+
 @Injectable()
 export class RetryService {
   private readonly logger = new Logger(RetryService.name);
@@ -118,7 +125,7 @@ export class RetryService {
     return result.affected || 0;
   }
 
-  async getRetryStats(): Promise<unknown> {
+  async getRetryStats(): Promise<any> {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 

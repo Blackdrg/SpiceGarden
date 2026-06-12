@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], RestaurantBranchEntity.prototype, "isOnline", void 0);
 __decorate([
-    ManyToOne(() => restaurant_entity_1.RestaurantEntity, (restaurant) => restaurant.branches),
+    (0, typeorm_1.ManyToOne)(() => restaurant_entity_1.RestaurantEntity, (restaurant) => restaurant.branches),
     __metadata("design:type", restaurant_entity_1.RestaurantEntity)
 ], RestaurantBranchEntity.prototype, "restaurant", void 0);
 __decorate([

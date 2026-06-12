@@ -42,7 +42,7 @@ export class DriverPayoutProviderService {
     this.keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET') || 'test_placeholder';
   }
 
-  private async rzpRequest(method: string, endpoint: string, data?: Record<string, unknown>): Promise<any> {
+  private async rzpRequest(method: string, endpoint: string, data?: Record<string, any>): Promise<any> {
     const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
 
     const response = await fetch(`${this.baseUrl}/${endpoint}`, {

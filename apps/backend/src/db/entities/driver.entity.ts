@@ -36,7 +36,7 @@ export class DriverEntity {
   rating!: number;
 
   @Column({ type: 'point', nullable: true, transformer: {
-    from: (v: unknown) => v as unknown,
+    from: (v: any) => v as any,
     to: (v: { lat: number; lng: number }) => `(${v.lng} ${v.lat})`,
   }})
   currentLocation!: { lat: number; lng: number };

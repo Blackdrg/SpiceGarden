@@ -50,7 +50,7 @@ export class DriverOnboardingService {
     return savedDriver;
   }
 
-  private async createInitialDocuments(driverId: string, data: unknown): Promise<void> {
+  private async createInitialDocuments(driverId: string, data: any): Promise<void> {
     if (data.licenseNumber) {
       await this.documentRepo.save({
         driverId,
@@ -94,8 +94,8 @@ export class DriverOnboardingService {
 
   async getDocuments(driverId: string): Promise<DriverDocumentEntity[]> {
     return this.documentRepo.find({
-      where: { driver: { id: driverId } } as unknown,
-      order: { createdAt: 'DESC' } as unknown,
+      where: { driver: { id: driverId } } as any,
+      order: { createdAt: 'DESC' } as any,
     });
   }
 
@@ -120,7 +120,7 @@ export class DriverOnboardingService {
     const driver = await this.driverRepo.findOne({ where: { id: document.driverId } });
     if (driver && status === DocumentStatus.VERIFIED) {
       const allDocs = await this.documentRepo.find({
-        where: { driverId: document.driverId as unknown },
+        where: { driverId: document.driverId as any },
       });
 
       const requiredDocs = [
@@ -140,14 +140,14 @@ export class DriverOnboardingService {
     return this.documentRepo.findOne({ where: { id: documentId } });
   }
 
-  async getOnboardingStatus(driverId: string): Promise<unknown> {
+  async getOnboardingStatus(driverId: string): Promise<any> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) {
       throw new NotFoundException('Driver not found');
     }
 
     const documents = await this.documentRepo.find({
-      where: { driverId: driverId as unknown },
+      where: { driverId: driverId as any },
     });
 
     const requiredDocs = [

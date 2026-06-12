@@ -1,4 +1,4 @@
-﻿
+
 import { Injectable, Logger, NotFoundException, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual, LessThanOrEqual, IsNull } from 'typeorm';
@@ -148,11 +148,11 @@ for (const notification of notifications) {
           });
         }
       } else {
-        throw new Error(result?.error || 'Unknown error');
+        throw new Error(result?.error || 'any error');
       }
     } catch (error: any) {
       notification.errorInfo = {
-        message: error?.message || 'Unknown error',
+        message: error?.message || 'any error',
         code: error?.code || 'UNKNOWN_ERROR',
         providerResponse: error?.response || null
       };

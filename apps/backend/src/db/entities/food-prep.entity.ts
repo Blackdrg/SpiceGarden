@@ -44,7 +44,7 @@ export class FoodPrepEntity {
   issues: string[]; // Any issues encountered during prep
 
   @Column('simple-json', { nullable: true })
-  delayReasons: string[]; // Reasons for unknown delays
+  delayReasons: string[]; // Reasons for any delays
 
   @ManyToOne(() => RestaurantBranchEntity)
   branch: RestaurantBranchEntity;

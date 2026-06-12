@@ -7,7 +7,7 @@ export interface WebhookRetryJob {
   webhookId: string;
   gateway: string;
   eventType: string;
-  payload: Record<string, unknown>;
+  payload: Record<string, any>;
   attempt: number;
   maxAttempts: number;
 }
@@ -25,7 +25,7 @@ export class WebhookRetryService {
     webhookId: string,
     gateway: string,
     eventType: string,
-    payload: Record<string, unknown>,
+    payload: Record<string, any>,
     maxAttempts: number = 5,
   ): Promise<WebhookRetryQueueEntity> {
     const job = this.retryRepo.create({
@@ -101,7 +101,7 @@ export class WebhookRetryService {
     return Math.min(delay + jitter, 1800000);
   }
 
-  async getStats(): Promise<unknown> {
+  async getStats(): Promise<any> {
     const [pending, processing, succeeded, failed, discarded] = await Promise.all([
       this.retryRepo.count({ where: { status: 'pending' } }),
       this.retryRepo.count({ where: { status: 'processing' } }),

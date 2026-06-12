@@ -13,10 +13,10 @@ const SENSITIVE_KEYS = [
   'cvc',
 ];
 
-export function sanitizeForLog(obj: unknown): unknown {
+export function sanitizeForLog(obj: any): any {
   if (obj === null || typeof obj !== 'object') return obj;
   if (Array.isArray(obj)) return obj.map(item => sanitizeForLog(item));
-  const sanitized: Record<string, unknown> = {};
+  const sanitized: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
     const lowerKey = key.toLowerCase();
     if (SENSITIVE_KEYS.some(sk => lowerKey.includes(sk))) {
@@ -30,7 +30,7 @@ export function sanitizeForLog(obj: unknown): unknown {
   return sanitized;
 }
 
-export function sanitizeErrorMessage(error: unknown): { message: string; stack?: string } {
+export function sanitizeErrorMessage(error: any): { message: string; stack?: string } {
   if (error instanceof Error) {
     return {
       message: error.message,
@@ -80,7 +80,7 @@ export class LoggingService implements LoggerService {
     console.log(`[${timestamp}] [VERBOSE] [${logContext}] ${message}`);
   }
 
-  secureError(message: string, error: unknown, context?: string): void {
+  secureError(message: string, error: any, context?: string): void {
     const timestamp = new Date().toISOString();
     const logContext = context || this.context;
     const sanitizedError = sanitizeErrorMessage(error);

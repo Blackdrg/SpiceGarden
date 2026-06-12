@@ -69,7 +69,7 @@ export class DriverAssignmentService {
     driverId: string,
     status?: string
   ): Promise<DriverAssignmentEntity[]> {
-    const where: unknown = { driver: { id: driverId } };
+    const where: any = { driver: { id: driverId } };
     if (status) {
       where.status = status;
     }
@@ -302,7 +302,7 @@ export class DriverAssignmentService {
     orderId: string,
     branchId: string,
     fraudType: 'gps_spoofing' | 'fake_delivery' | 'late_delivery_abuse' | 'route_deviation' | 'other',
-    evidence: unknown,
+    evidence: any,
     severity: 'low' | 'medium' | 'high'
   ): Promise<DriverFraudEntity> {
     const [driver, order, branch] = await Promise.all([
@@ -404,7 +404,7 @@ export class DriverAssignmentService {
     metricName?: string,
     limit: number = 100
   ): Promise<DeliverySLAEntity[]> {
-    const where: unknown = {};
+    const where: any = {};
     if (driverId) {
       where.driver = { id: driverId };
     }

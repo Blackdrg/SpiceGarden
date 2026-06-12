@@ -39,10 +39,10 @@ export class OrderItemEntity {
   instructions!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  variants!: unknown;
+  variants!: any;
 
   @Column({ type: 'jsonb', nullable: true })
-  addons!: unknown;
+  addons!: any;
 
   // Tax breakdown for this item
   @Column('decimal', { precision: 10, scale: 2, default: 0 })

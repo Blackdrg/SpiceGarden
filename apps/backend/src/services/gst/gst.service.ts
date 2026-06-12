@@ -168,7 +168,7 @@ export class GSTService {
   /**
    * Generate GST invoice data for an order
    */
-  async generateGSTInvoice(orderId: string): Promise<unknown> {
+  async generateGSTInvoice(orderId: string): Promise<any> {
     try {
       this.logger.log(`Generating GST invoice for order ${orderId}`);
 
@@ -331,7 +331,7 @@ export class GSTService {
   /**
    * Get all unique GST rates used in an order
    */
-  async getGSTRateSummary(orderId: string): Promise<unknown> {
+  async getGSTRateSummary(orderId: string): Promise<any> {
     try {
       const orderItems = await this.orderItemRepo.find({
         where: { orderId: orderId },

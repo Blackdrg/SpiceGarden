@@ -195,6 +195,81 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         await this.assignOrderToDriver(orderId, bestDriver.id);
         return true;
     }
+    detectFakeGPS(driverId, location, speed) {
+        if (location.lat === null || location.lng === null || location.lat === undefined || location.lng === undefined) {
+            return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
+        }
+        const lat = Number(location.lat);
+        const lng = Number(location.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
+        }
+        if (speed !== undefined && speed > 200) {
+            return { isFake: true, reason: 'Unrealistic speed', driverId };
+        }
+        const timestamp = typeof location.timestamp === 'string' ? Number(location.timestamp) : location.timestamp;
+        if (timestamp && Date.now() - timestamp > 60 * 60 * 1000 && speed && speed > 30) {
+            return { isFake: true, reason: 'GPS staleness', driverId };
+        }
+        return { isFake: false, reason: 'GPS coordinates accepted', driverId };
+    }
+    async verifyDriverLocation(driverId, reportedLocation) {
+        const driver = await this.driverRepo.findOne({ where: { id: driverId } });
+        if (!driver?.currentLocation) {
+            return { verified: false, reason: 'Driver location unavailable' };
+        }
+        const distance = this.geoService.calculateDistance(driver.currentLocation, reportedLocation);
+        return { verified: distance <= 1, reason: distance <= 1 ? 'Location verified' : 'Location outside expected range' };
+    }
+    async detectRouteManipulation(assignmentId) {
+        const assignment = await this.driverAssignmentRepo.findOne({ where: { id: assignmentId } });
+        if (!assignment?.routeData?.waypoints || assignment.routeData.waypoints.length < 2) {
+            return { suspicious: false };
+        }
+        const waypoints = assignment.routeData.waypoints;
+        let previous = waypoints[0];
+        let totalSegmentDistance = 0;
+        for (let i = 1; i < waypoints.length; i++) {
+            const current = waypoints[i];
+            totalSegmentDistance += this.geoService.calculateDistance(previous, current);
+            previous = current;
+        }
+        const directDistance = this.geoService.calculateDistance(waypoints[0], waypoints[waypoints.length - 1]);
+        const suspicious = totalSegmentDistance > directDistance * 2.5;
+        return { suspicious, reason: suspicious ? 'Route deviation exceeds threshold' : undefined };
+    }
+    async handleDriverNoShowAutomatic(driverId, orderId, assignmentId) {
+        await this.dataSource.manager.transaction(async (manager) => {
+            const driver = await manager.findOne(driver_entity_1.DriverEntity, { where: { id: driverId } });
+            if (driver) {
+                await manager.update(driver_entity_1.DriverEntity, driverId, {
+                    failureCount: (driver.failureCount || 0) + 1,
+                    isFraudSuspicious: (driver.failureCount || 0) + 1 >= 3,
+                    fraudFlags: { ...(driver.fraudFlags || {}), noShowRisk: 0.8 },
+                });
+            }
+            await manager.update(order_entity_1.OrderEntity, orderId, { status: order_interface_1.OrderStatus.CANCELLED });
+            await manager.update(driver_assignment_entity_1.DriverAssignmentEntity, assignmentId, { status: 'failed' });
+        });
+    }
+    async autoReassignOnNoShow(orderId, previousDriverId) {
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order)
+            return false;
+        const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
+        if (!assignment)
+            return false;
+        const availableDrivers = await this.findAvailableDrivers(order.restaurantId ? 0 : 0, 0, 5);
+        const nextDriver = availableDrivers.find(d => d.id !== previousDriverId && !d.isFraudSuspicious);
+        if (!nextDriver)
+            return false;
+        await this.assignOrderToDriver(orderId, nextDriver.id);
+        await this.driverAssignmentRepo.update(assignment.id, {
+            status: 'reassigned',
+            reassignedFrom: previousDriverId,
+        });
+        return true;
+    }
     async calculateDeliveryIncentives(driverId, date = new Date()) {
         const driver = await this.driverRepo.findOne({ where: { id: driverId } });
         if (!driver)
