@@ -96,6 +96,11 @@
   font-size: 14px;
 }
 
+.promoButton {
+  margin-top: 8px;
+  text-align: center;
+}
+
 .errorContainer {
   padding: var(--spacing-md);
 }
@@ -175,6 +180,12 @@
   justify-content: space-around;
   align-items: center;
   box-shadow: var(--shadow-small);
+}
+
+.tablist {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 }
 
 .tabIcon {

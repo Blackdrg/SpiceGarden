@@ -4,9 +4,11 @@ import { CartItem } from '../services/order.service';
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
-  Tracking: { orderId: string };
+  Tracking: { orderId?: string };
   OrderDetails: { orderId: string };
   Checkout: { cartItems: CartItem[] };
+  Address: undefined;
+  Home: undefined;
 };
 
 export type TabParamList = {

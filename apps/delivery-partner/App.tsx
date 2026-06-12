@@ -5,6 +5,24 @@ import Geolocation from '@react-native-community/geolocation';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import BackgroundTimer from 'react-native-background-timer';
 
+type GeoError = {
+  code: number;
+  message: string;
+};
+
+type GeoPosition = {
+  coords: {
+    latitude: number;
+    longitude: number;
+    altitude: number | null;
+    accuracy: number;
+    altitudeAccuracy: number | null;
+    heading: number | null;
+    speed: number | null;
+  };
+  timestamp: number;
+};
+
 const { width: SCREEN_W } = Dimensions.get('window');
 
 type DeliveryStatus = 'idle' | 'assigned' | 'navigating_to_pickup' | 'at_pickup' | 'navigating_to_drop' | 'completed' | 'failed' | 'delayed';
@@ -105,18 +123,18 @@ export default function DriverApp() {
       useNativeDriver: true,
     }).start();
 
-    Geolocation.requestAuthorization();
-     Geolocation.getCurrentPosition(
-       () => {
-         setLocationPermission('granted');
-       },
-       (error: Geolocation.GeoError) => {
-         setLocationPermission('denied');
-         addLog(`Location error: ${error.message}`);
-       },
-       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-     );
-  }, [fadeAnim, addLog]);
+Geolocation.requestAuthorization();
+      Geolocation.getCurrentPosition(
+        () => {
+          setLocationPermission('granted');
+        },
+        (error: GeoError) => {
+          setLocationPermission('denied');
+          addLog(`Location error: ${error.message}`);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+    }, [fadeAnim, addLog]);
 
   useEffect(() => {
     if (!isOnline || locationPermission !== 'granted') {
@@ -128,7 +146,7 @@ export default function DriverApp() {
     }
 
     locationWatchId.current = Geolocation.watchPosition(
-        (position: Geolocation.GeoPosition) => {
+        (position: GeoPosition) => {
           const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -138,12 +156,12 @@ export default function DriverApp() {
             location 
           });
         },
-        (error: Geolocation.GeoError) => addLog(`Location watch error: ${error.message}`),
-        { 
-          enableHighAccuracy: true, 
-          distanceFilter: 10, 
-          interval: 5000 
-        }
+        (error: GeoError) => addLog(`Location watch error: ${error.message}`),
+{ 
+           enableHighAccuracy: true, 
+           distanceFilter: 10,
+           timeout: 5000
+         }
       );
 
     return () => {
@@ -637,7 +655,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
       <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }} numberOfLines={1} ellipsizeMode="tail">{value}</Text>
+      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
     </View>
   );
 }
@@ -722,26 +740,24 @@ const styles = StyleSheet.create({
   progressDotText: { fontSize: 11, color: 'white', fontWeight: 'bold' },
   progressLine: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 4 },
   progressLineActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-  progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
-  etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
+   etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
-  contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
-  contextCard: {
-    flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
-  },
-  contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
-  contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
-  contextAddr: { fontSize: 12, color: '#aaa' },
-  contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
-  navInlineBtn: { position: 'absolute', right: 8, top: 8 },
-  navInlineText: { fontSize: 16 },
+contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
+    contextCard: {
+      flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
+    },
+    contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
+    contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
+    contextAddr: { fontSize: 12, color: '#aaa' },
+    contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
+    navInlineBtn: { position: 'absolute', right: 8, top: 8 },
+    navInlineText: { fontSize: 16 },
 
-  btn: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
-  btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-  btnAccept: { backgroundColor: DESIGN_TOKENS.colors.success },
-  btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger },
-  navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
-  navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+    btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
+    btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+    navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
+    navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 
   arriveBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
   completeBtn: { backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
@@ -809,7 +825,7 @@ const styles = StyleSheet.create({
   },
 
   actionRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  btn: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
+  btnPrimary: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnAccept: { backgroundColor: DESIGN_TOKENS.colors.primary, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },

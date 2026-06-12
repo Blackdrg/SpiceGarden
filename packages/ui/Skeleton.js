@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkeletonList = exports.SkeletonCard = exports.Skeleton = void 0;
-const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const shimmerStyle = `
   @keyframes sg-shimmer {
@@ -32,14 +35,15 @@ const Skeleton = ({ width, height = 16, borderRadius, variant = 'rectangular', s
         }
         return { width: width || '100%', height };
     };
-    return ((0, jsx_runtime_1.jsx)("div", { style: {
+    return (react_1.default.createElement("div", { style: {
             ...getDefaultSize(),
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.elevated,
             borderRadius: getDefaultRadius(),
             overflow: 'hidden',
             position: 'relative',
             ...style,
-        }, children: (0, jsx_runtime_1.jsx)("div", { style: {
+        } },
+        react_1.default.createElement("div", { style: {
                 position: 'absolute',
                 top: 0,
                 left: 0,
@@ -48,20 +52,30 @@ const Skeleton = ({ width, height = 16, borderRadius, variant = 'rectangular', s
                 backgroundImage: `linear-gradient(90deg, ${tokens_1.DESIGN_TOKENS.colors.elevated} 0px, ${tokens_1.DESIGN_TOKENS.colors.surface} 40px, ${tokens_1.DESIGN_TOKENS.colors.elevated} 80px)`,
                 backgroundSize: '200% 100%',
                 animation: `sg-shimmer ${tokens_1.DESIGN_TOKENS.motion.standard * 2}ms infinite linear`,
-            } }) }));
+            } })));
 };
 exports.Skeleton = Skeleton;
-const SkeletonCard = ({ count = 1 }) => ((0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.md }, children: Array.from({ length: count }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: {
-            border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
-            borderRadius: `${tokens_1.DESIGN_TOKENS.radius.card}px`,
-            padding: `${tokens_1.DESIGN_TOKENS.spacing.lg}px`,
-            backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-        }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' }, children: [(0, jsx_runtime_1.jsx)(exports.Skeleton, { variant: "circular", width: 48 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 16, width: "70%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.xs } }), (0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 14, width: "40%" })] })] }), (0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 12, style: { marginTop: tokens_1.DESIGN_TOKENS.spacing.md } }), (0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 12, width: "80%" }), (0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 12, width: "60%" })] }, i))) }));
+const SkeletonCard = ({ count = 1 }) => (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.md } }, Array.from({ length: count }).map((_, i) => (react_1.default.createElement("div", { key: i, style: {
+        border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
+        borderRadius: `${tokens_1.DESIGN_TOKENS.radius.card}px`,
+        padding: `${tokens_1.DESIGN_TOKENS.spacing.lg}px`,
+        backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
+    } },
+    react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' } },
+        react_1.default.createElement(exports.Skeleton, { variant: "circular", width: 48 }),
+        react_1.default.createElement("div", { style: { flex: 1 } },
+            react_1.default.createElement(exports.Skeleton, { height: 16, width: "70%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.xs } }),
+            react_1.default.createElement(exports.Skeleton, { height: 14, width: "40%" }))),
+    react_1.default.createElement(exports.Skeleton, { height: 12, style: { marginTop: tokens_1.DESIGN_TOKENS.spacing.md } }),
+    react_1.default.createElement(exports.Skeleton, { height: 12, width: "80%" }),
+    react_1.default.createElement(exports.Skeleton, { height: 12, width: "60%" }))))));
 exports.SkeletonCard = SkeletonCard;
-const SkeletonList = ({ count = 3 }) => ((0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.sm }, children: Array.from({ length: count }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: {
-            display: 'flex',
-            gap: tokens_1.DESIGN_TOKENS.spacing.sm,
-            alignItems: 'center',
-            padding: tokens_1.DESIGN_TOKENS.spacing.sm,
-        }, children: [(0, jsx_runtime_1.jsx)(exports.Skeleton, { variant: "circular", width: 32 }), (0, jsx_runtime_1.jsx)(exports.Skeleton, { height: 14, width: "60%" })] }, i))) }));
+const SkeletonList = ({ count = 3 }) => (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.sm } }, Array.from({ length: count }).map((_, i) => (react_1.default.createElement("div", { key: i, style: {
+        display: 'flex',
+        gap: tokens_1.DESIGN_TOKENS.spacing.sm,
+        alignItems: 'center',
+        padding: tokens_1.DESIGN_TOKENS.spacing.sm,
+    } },
+    react_1.default.createElement(exports.Skeleton, { variant: "circular", width: 32 }),
+    react_1.default.createElement(exports.Skeleton, { height: 14, width: "60%" }))))));
 exports.SkeletonList = SkeletonList;

@@ -6,11 +6,34 @@ import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
 
+interface ApiOrder {
+  id?: string;
+  date?: string;
+  time?: string;
+  restaurant?: string;
+  items?: number;
+  amount?: number;
+  status?: string;
+  rating?: number;
+  createdAt?: string;
+}
+
+interface Order {
+  id: string;
+  date: string;
+  time: string;
+  restaurant: string;
+  items: number;
+  amount: number;
+  status?: string;
+  rating?: number;
+}
+
 const HistoryPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState<unknown[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [filter, setFilter] = useState<'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,18 +55,18 @@ const HistoryPage = () => {
       }
 
       setLoading(true);
-setError(null);
-       try {
-         const response = await ordersApi.list(user.token);
-         const data = response.data;
-         // Transform API response to match our interface
-         const transformedOrders = data.map((order: unknown) => ({
-          id: order.id,
-          date: new Date(order.createdAt).toISOString().split('T')[0],
-          time: new Date(order.createdAt).toISOString().split('T')[1].substring(0, 5),
-          restaurant: order.restaurant?.name || 'Unknown Restaurant',
-          items: order.items?.reduce((sum: number, item: unknown) => sum + item.quantity, 0) || 0,
-          amount: order.grandTotal || 0,
+      setError(null);
+      try {
+        const response = await ordersApi.list(user.token);
+        const data = response.data;
+        // Transform API response to match our interface
+        const transformedOrders: Order[] = (data as ApiOrder[]).map((order) => ({
+          id: order.id || '',
+          date: order.date || new Date(order.createdAt || '').toISOString().split('T')[0],
+          time: order.time || new Date(order.createdAt || '').toISOString().split('T')[1].substring(0, 5),
+          restaurant: order.restaurant || 'Unknown Restaurant',
+          items: order.items || 0,
+          amount: order.amount || 0,
           status: order.status,
           rating: order.rating || 0,
         }));
@@ -73,13 +96,13 @@ setError(null);
   const handleReorder = async (orderId: string) => {
     try {
       const response = await ordersApi.get(orderId, user?.token || '');
-      const order = response.data;
+      const order = response.data as { id?: string; items?: { menuItemId?: string; id?: string; name?: string; price?: number; quantity?: number }[]; restaurantId?: string };
       // Add items to cart
-      const cartItems = order.items?.map((item: unknown) => ({
-        id: item.menuItemId || item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
+      const cartItems: CartItem[] = order.items?.map((item) => ({
+        id: item.menuItemId || item.id || '',
+        name: item.name || '',
+        price: item.price || 0,
+        quantity: item.quantity || 1,
       })) || [];
       
       if (cartItems.length > 0) {
@@ -127,7 +150,7 @@ setError(null);
           <Button
             key={f.key}
             label={f.label}
-            onClick={() => setFilter(f.key as unknown)}
+            onClick={() => setFilter(f.key as 'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup')}
             variant={filter === f.key ? 'primary' : 'secondary'}
           />
         ))}
@@ -160,31 +183,31 @@ setError(null);
                    <h4 style={{ margin: 0 }}>{order.restaurant}</h4>
                    <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: '13px' }}>{order.items} items &middot; &#8377;{order.amount}</p>
                  </div>
-                 <span style={{
-                   padding: '2px 10px', borderRadius: 12, fontSize: '12px', fontWeight: 'bold',
-                   backgroundColor: 
-                     order.status === 'delivered' ? '#e8f5e8' :
-                     order.status === 'cancelled' ? '#f8e8e8' :
-                     order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup' ? '#fff3e0' :
-                     '#f5f5f5',
-                   color: 
-                     order.status === 'delivered' ? DESIGN_TOKENS.colors.success :
-                     order.status === 'cancelled' ? '#999' :
-                     order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup' ? DESIGN_TOKENS.colors.warning :
-                     '#666',
-                 }}>{order.status.toUpperCase()}</span>
+<span style={{
+                    padding: '2px 10px', borderRadius: 12, fontSize: '12px', fontWeight: 'bold',
+                    backgroundColor: 
+                      order.status === 'delivered' ? '#e8f5e8' :
+                      order.status === 'cancelled' ? '#f8e8e8' :
+                      order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup' ? '#fff3e0' :
+                      '#f5f5f5',
+                    color: 
+                      order.status === 'delivered' ? DESIGN_TOKENS.colors.success :
+                      order.status === 'cancelled' ? '#999' :
+                      order.status && (order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup') ? DESIGN_TOKENS.colors.warning :
+                      '#666',
+                  }}>{order.status?.toUpperCase() || 'UNKNOWN'}</span>
                </div>
-               <p style={{ margin: 0, color: '#999', fontSize: 13 }}>{order.date} &middot; {order.time}</p>
-               <div style={{ marginTop: DESIGN_TOKENS.spacing.sm }}>
-                 {order.rating > 0 && (
-                   <div style={{ display: 'flex', gap: 2 }}>
-                     {[1, 2, 3, 4, 5].map((star) => (
-                       <span key={star} style={{ color: star <= order.rating ? '#ffc107' : '#ddd' }}>&starf;</span>
-                     ))}
-                   </div>
-                 )}
-                 <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
-               </div>
+<p style={{ margin: 0, color: '#999', fontSize: 13 }}>{order.date} &middot; {order.time}</p>
+                <div style={{ marginTop: DESIGN_TOKENS.spacing.sm }}>
+                  {(order.rating || 0) > 0 && (
+                    <div style={{ display: 'flex', gap: 2 }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} style={{ color: star <= (order.rating || 0) ? '#ffc107' : '#ddd' }}>&starf;</span>
+                      ))}
+                    </div>
+                  )}
+                  <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
+                </div>
              </Card>
            ))}
          </div>

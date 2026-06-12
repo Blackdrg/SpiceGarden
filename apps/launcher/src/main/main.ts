@@ -65,6 +65,7 @@ class SpiceGardenLauncher {
     this.envManager = new EnvironmentManager(this.storeManager);
     this.processManager = new ProcessManager(this.storeManager, this.dockerManager);
     this.autoUpdater = new AutoUpdater();
+    this.appPath = this.getAppPath();
   }
 
   async initialize(): Promise<void> {

@@ -57,6 +57,22 @@
   font-size: 13px;
 }
 
+.batchButton {
+  padding: 4px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.undoButton {
+  padding: 4px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 /* Status ribbon */
 .statusRibbon {
   display: flex;

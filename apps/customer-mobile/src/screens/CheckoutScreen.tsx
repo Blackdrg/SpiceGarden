@@ -15,7 +15,7 @@ interface CartItem {
   price: number;
 }
 
-type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Checkout'>;
+type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tracking' | 'Home' | 'Address' | 'Checkout'>;
 
 type PaymentMethod = 'card' | 'upi' | 'cash';
 

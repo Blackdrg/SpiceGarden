@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Button = void 0;
-const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
-const Button = ({ label, children, onClick, variant = 'primary', size = 'md', isLoading = false, disabled = false, style, ariaLabel, }) => {
+const Button = ({ label, children, onClick, variant = 'primary', size = 'md', isLoading = false, disabled = false, style, ariaLabel, className, }) => {
     const getBgColor = () => {
         switch (variant) {
             case 'primary': return tokens_1.DESIGN_TOKENS.colors.primary;
@@ -38,7 +41,7 @@ const Button = ({ label, children, onClick, variant = 'primary', size = 'md', is
         }
     };
     const isDisabled = disabled || isLoading;
-    return ((0, jsx_runtime_1.jsx)("button", { onClick: onClick, disabled: isDisabled, "aria-label": ariaLabel || label, "aria-disabled": isDisabled, style: {
+    return (react_1.default.createElement("button", { onClick: onClick, disabled: isDisabled, "aria-label": ariaLabel || label, "aria-disabled": isDisabled, className: className, style: {
             backgroundColor: getBgColor(),
             color: getTextColor(),
             border: getBorder(),
@@ -52,6 +55,6 @@ const Button = ({ label, children, onClick, variant = 'primary', size = 'md', is
             padding: getSizeStyles().padding,
             boxShadow: variant === 'primary' ? tokens_1.DESIGN_TOKENS.shadows.small : 'none',
             ...style,
-        }, children: isLoading ? 'Loading...' : label }));
+        } }, isLoading ? 'Loading...' : label));
 };
 exports.Button = Button;

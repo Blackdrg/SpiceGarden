@@ -5,10 +5,42 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 
+interface OrderItem {
+  id?: string | number;
+  name?: string;
+  quantity?: number;
+  price?: number;
+  image?: string;
+}
+
+interface Order {
+  id?: string;
+  restaurant?: {
+    name?: string;
+    image?: string;
+  };
+  items?: OrderItem[];
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  subtotal?: number;
+  deliveryFee?: number;
+  tax?: number;
+  tip?: number;
+  grandTotal?: number;
+  deliveryAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+  };
+  paymentMethod?: string;
+}
+
 const OrderDetailsPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
-  const [order, setOrder] = useState<unknown>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,12 +86,12 @@ const OrderDetailsPage = () => {
         return;
       }
 
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await ordersApi.get(orderId, user.token);
-        setOrder(data);
-      } catch (err) {
+setLoading(true);
+       setError(null);
+       try {
+         const data = await ordersApi.get(orderId, user.token);
+         setOrder(data.data as Order);
+       } catch (err) {
         console.error('Failed to load order details:', err);
         setError('Failed to load order details. Please try again later.');
       } finally {
@@ -142,34 +174,34 @@ const OrderDetailsPage = () => {
         </Card>
       )}
 
-      <Card title="Order Items">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          {order.items && order.items.length > 0 ? (
-            order.items.map((item: unknown) => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
-                <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, alignItems: 'center' }}>
-                  {item.image ? (
-                    <img 
-                      src={item.image} 
-                      alt={item.name} 
-                      style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🍔</div>
-                  )}
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                    <div style={{ fontSize: '14px', color: '#666' }}>Quantity: {item.quantity}</div>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right', fontWeight: 'bold' }}>&#8377;{item.price * item.quantity}</div>
-              </div>
-            ))
-          ) : (
-            <p style={{ textAlign: 'center', color: '#666', padding: DESIGN_TOKENS.spacing.lg }}>No items in this order</p>
-          )}
-        </div>
-      </Card>
+<Card title="Order Items">
+         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+           {order.items && order.items.length > 0 ? (
+             order.items.map((item, idx: number) => (
+               <div key={item.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
+                 <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, alignItems: 'center' }}>
+                   {item.image ? (
+                     <img 
+                       src={item.image} 
+                       alt={item.name} 
+                       style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
+                     />
+                   ) : (
+                     <div style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🍔</div>
+                   )}
+                   <div>
+                     <div style={{ fontWeight: 'bold' }}>{item.name}</div>
+                     <div style={{ fontSize: '14px', color: '#666' }}>Quantity: {item.quantity}</div>
+                   </div>
+                 </div>
+                 <div style={{ textAlign: 'right', fontWeight: 'bold' }}>&#8377;{(item.price || 0) * (item.quantity || 1)}</div>
+               </div>
+             ))
+           ) : (
+             <p style={{ textAlign: 'center', color: '#666', padding: DESIGN_TOKENS.spacing.lg }}>No items in this order</p>
+           )}
+         </div>
+       </Card>
 
       <Card title="Order Summary">
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.xs }}>
@@ -196,28 +228,28 @@ const OrderDetailsPage = () => {
         </div>
       </Card>
 
-      <Card title="Order Information">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Status</span>
-            <span style={{ 
-              backgroundColor: statusColors[order.status] + '20', 
-              color: statusColors[order.status], 
-              padding: '2px 8px', 
-              borderRadius: DESIGN_TOKENS.radius.sm,
-              fontWeight: 'bold'
-            }}>{statusLabels[order.status] || order.status}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Order Date</span>
-            <span>{new Date(order.createdAt).toLocaleString()}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Last Updated</span>
-            <span>{new Date(order.updatedAt).toLocaleString()}</span>
-          </div>
-        </div>
-      </Card>
+<Card title="Order Information">
+         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+             <span>Status</span>
+             <span style={{ 
+               backgroundColor: statusColors[order.status || ''] + '20', 
+               color: statusColors[order.status || ''], 
+               padding: '2px 8px', 
+               borderRadius: DESIGN_TOKENS.radius.sm,
+               fontWeight: 'bold'
+             }}>{statusLabels[order.status || ''] || order.status || 'Unknown'}</span>
+           </div>
+           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+             <span>Order Date</span>
+             <span>{new Date(order.createdAt || '').toLocaleString()}</span>
+           </div>
+           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+             <span>Last Updated</span>
+             <span>{new Date(order.updatedAt || '').toLocaleString()}</span>
+           </div>
+         </div>
+       </Card>
 
       <Card title="Delivery Address">
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>

@@ -60,13 +60,13 @@ const OffersPage = () => {
         ))}
       </div>
 
-      <Card title="Refer &amp; Earn" isElevated className={styles.referMargin}>
-        <p className={styles.referDescription}>Share your code — earn &#8377;100 for every friend's first order.</p>
-        <div className={styles.buttonRow}>
-          <div className={styles.shareCode}>SPICE123</div>
-          <Button label="Share" onClick={() => null} />
-        </div>
-      </Card>
+<Card title="Refer &amp; Earn" isElevated style={{ marginBottom: 8 }}>
+         <p className={styles.referDescription}>Share your code — earn &#8377;100 for every friend's first order.</p>
+         <div className={styles.buttonRow}>
+           <div className={styles.shareCode}>SPICE123</div>
+           <Button label="Share" onClick={() => null} />
+         </div>
+       </Card>
 
       <nav className={styles.bottomNav} aria-label="Main navigation">
         {[

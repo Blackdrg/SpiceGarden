@@ -11,27 +11,25 @@ declare module '@react-navigation/native' {
 
 declare module '@react-navigation/native-stack' {
   import React from 'react';
+  export type NativeStackRouteProp<ParamList extends object, RouteName extends keyof ParamList> = {
+    key: string;
+    name: RouteName;
+    params: ParamList[RouteName];
+  };
+  export type NativeStackNavigationProp<ParamList extends object, RouteName extends keyof ParamList = keyof ParamList> = {
+    navigate: (screen: RouteName, params?: ParamList[RouteName]) => void;
+    replace: (screen: RouteName, params?: ParamList[RouteName]) => void;
+    goBack: () => void;
+    dispatch: () => void;
+  };
+  export type NativeStackScreenProps<ParamList extends object, RouteName extends keyof ParamList> = {
+    navigation: NativeStackNavigationProp<ParamList, RouteName>;
+    route: NativeStackRouteProp<ParamList, RouteName>;
+  };
   export const createStackNavigator: () => {
     Navigator: React.FC<{ screenOptions?: any; children?: React.ReactNode }>;
     Screen: React.FC<{ name: string; component: React.FC; options?: any }>;
   };
-  export interface NativeStackScreenProps<ParamList extends {}, RouteName extends keyof ParamList = keyof ParamList> {
-    navigation: {
-      navigate: (name: string, params?: any) => void;
-      replace: (name: string) => void;
-      goBack: () => void;
-      dispatch: () => void;
-    };
-    route: {
-      params: ParamList[RouteName];
-    };
-  }
-  export interface NativeStackNavigationProp<ParamList extends {}> {
-    navigate: (name: string, params?: any) => void;
-    replace: (name: string) => void;
-    goBack: () => void;
-    dispatch: () => void;
-  }
 }
 
 declare module '@react-navigation/bottom-tabs' {

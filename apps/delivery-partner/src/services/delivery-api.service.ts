@@ -2,13 +2,10 @@ import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getApiBaseUrl = (): string => {
-  const apiUrl = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = globalThis.process?.env?.API_BASE_URL || globalThis.process?.env?.NEXT_PUBLIC_API_URL;
   if (!apiUrl) {
-    if (process.env.NODE_ENV === 'production') {
+    if (globalThis.process?.env?.NODE_ENV === 'production') {
       return 'https://api.spicegarden.com';
-    }
-    if (process.env.NODE_ENV === 'staging') {
-      return 'https://staging-api.spicegarden.com';
     }
     return 'http://localhost:3001';
   }

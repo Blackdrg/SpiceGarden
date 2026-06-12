@@ -27,42 +27,42 @@ export const useNetworkStatus = () => {
   return { isOnline, lastOnline };
 };
 
-interface QueuedRequest<T> {
+interface QueuedRequest {
   id: string;
   endpoint: string;
   options: unknown;
-  resolve: (_value: T | PromiseLike<T>) => void;
+  resolve: (_value?: unknown) => void;
   reject: (_reason?: unknown) => void;
 }
 
 export const useOfflineQueue = () => {
   const { isOnline } = useNetworkStatus();
-  const [queue, setQueue] = useState<QueuedRequest<unknown>[]>([]);
+  const [queue, setQueue] = useState<QueuedRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-   // Add a request to the queue
-   const enqueueRequest = useCallback(<T>(
-     endpoint: string,
-     options: unknown = {}
-   ): Promise<T> => {
-     return new Promise<T>((resolve, reject) => {
-       const id = Math.random().toString(36).substr(2, 9);
-       const queuedRequest: QueuedRequest<T> = {
-         id,
-         endpoint,
-         options,
-         resolve,
-         reject
-       };
-       
-       setQueue(prev => [...prev, queuedRequest]);
-       
-       // Try to process the queue immediately if we're online
-       if (isOnline && !isProcessing) {
-         processQueue();
-       }
-     });
-   }, [isOnline, isProcessing]);
+// Add a request to the queue
+    const enqueueRequest = useCallback(<T>(
+      endpoint: string,
+      options: unknown = {}
+    ): Promise<T> => {
+      return new Promise<T>((resolve, reject) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        const queuedRequest: QueuedRequest = {
+          id,
+          endpoint,
+          options,
+          resolve: resolve as (_value?: unknown) => void,
+          reject
+        };
+        
+        setQueue(prev => [...prev, queuedRequest]);
+        
+        // Try to process the queue immediately if we're online
+        if (isOnline && !isProcessing) {
+          processQueue();
+        }
+      });
+    }, [isOnline, isProcessing]);
 
   // Process the queue
   const processQueue = useCallback(async () => {

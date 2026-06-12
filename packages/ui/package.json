@@ -3,7 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.js",
+  "module": "index.js",
   "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.js"
+    }
+  },
     "scripts": {
       "build": "tsc",
       "lint": "echo \"lint placeholder\"",

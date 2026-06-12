@@ -5,6 +5,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi } from '@spicegarden/shared/api';
 
+interface OrderResponse {
+  id: string;
+}
+
 const CheckoutPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -83,7 +87,7 @@ const CheckoutPage = () => {
 // Try to place order via API
       try {
         const response = await ordersApi.create(orderData, user?.token || localStorage.getItem('sg_token') || '');
-        router.push(`/tracking?order=${response.data.id}`);
+        router.push(`/tracking?order=${(response.data as OrderResponse).id}`);
       } catch (apiError: unknown) {
         // Check if it's a payment-related error
         const errorMessage = apiError instanceof Error ? apiError.message : '';
@@ -99,10 +103,10 @@ const CheckoutPage = () => {
             try {
               const refreshResponse = await authApi.refreshToken(refreshToken);
               // Update token in localStorage and state
-              localStorage.setItem('sg_token', refreshResponse.data.access_token);
+              localStorage.setItem('sg_token', (refreshResponse.data as { access_token: string }).access_token);
 // Retry the order with new token
-               const retryResponse = await ordersApi.create(orderData, refreshResponse.data.access_token);
-               router.push(`/tracking?order=${retryResponse.data.id}`);
+              const retryResponse = await ordersApi.create(orderData, (refreshResponse.data as { access_token: string }).access_token);
+              router.push(`/tracking?order=${(retryResponse.data as OrderResponse).id}`);
               return;
             } catch (refreshError) {
               // If refresh fails, show auth error

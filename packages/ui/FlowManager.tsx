@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { DESIGN_TOKENS, Button } from './index'
+import { DESIGN_TOKENS } from './tokens'
+import { Button } from './Button'
 import { useFlow } from './useFlow'
 import { CheckCircle, AlertCircle } from 'lucide-react'
 

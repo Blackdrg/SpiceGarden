@@ -3,9 +3,27 @@ import Head from 'next/head';
 
 const API = 'http://localhost:3001/api';
 
+interface ChurnData {
+  totalCustomers?: number;
+  activeCustomers?: number;
+  churnRate?: number;
+}
+
+interface TopCustomer {
+  userId: string;
+  orderCount: number;
+  totalSpent?: number;
+}
+
+interface RepeatData {
+  repeatCustomers?: number;
+  avgFrequency?: number;
+  topRepeatCustomers?: TopCustomer[];
+}
+
 export default function AnalyticsCustomers() {
-  const [churn, setChurn] = useState<unknown>(null);
-  const [repeat, setRepeat] = useState<unknown>(null);
+  const [churn, setChurn] = useState<ChurnData | null>(null);
+  const [repeat, setRepeat] = useState<RepeatData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,17 +61,17 @@ export default function AnalyticsCustomers() {
             <p style={{ color: '#a1a1aa', fontSize: 14, marginBottom: 16 }}>
               {repeat?.repeatCustomers || 0} repeat customers · Avg frequency: {repeat?.avgFrequency || 0} orders
             </p>
-            {repeat?.topRepeatCustomers?.length > 0 && (
-              <div>
-                <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#71717a' }}>Top Customers</h3>
-                {repeat.topRepeatCustomers.slice(0, 5).map((c: unknown) => (
-                  <div key={c.userId} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #27272a', fontSize: 13 }}>
-                    <span>{c.userId.slice(0, 10)}</span>
-                    <span style={{ color: '#a1a1aa' }}>{c.orderCount} orders · ₹{c.totalSpent?.toFixed(0)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+{repeat?.topRepeatCustomers?.length > 0 && (
+               <div>
+                 <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#71717a' }}>Top Customers</h3>
+                 {repeat.topRepeatCustomers!.slice(0, 5).map((c) => (
+                   <div key={c.userId} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #27272a', fontSize: 13 }}>
+                     <span>{c.userId.slice(0, 10)}</span>
+                     <span style={{ color: '#a1a1aa' }}>{c.orderCount} orders · ₹{c.totalSpent?.toFixed(0)}</span>
+                   </div>
+                 ))}
+               </div>
+             )}
           </div>
         </>
       )}

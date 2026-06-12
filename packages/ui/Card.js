@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Card = void 0;
-const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const Card = ({ children, title, variant = 'default', style, isElevated }) => {
     const getVariantStyles = () => {
@@ -27,7 +30,7 @@ const Card = ({ children, title, variant = 'default', style, isElevated }) => {
                 };
         }
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { style: {
+    return (react_1.default.createElement("div", { style: {
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             borderRadius: `${tokens_1.DESIGN_TOKENS.radius.card}px`,
             padding: `${tokens_1.DESIGN_TOKENS.spacing.lg}px`,
@@ -37,11 +40,13 @@ const Card = ({ children, title, variant = 'default', style, isElevated }) => {
             fontFamily: tokens_1.DESIGN_TOKENS.typography.fontFamily,
             ...getVariantStyles(),
             ...style,
-        }, children: [title && ((0, jsx_runtime_1.jsx)("h3", { style: {
-                    marginTop: 0,
-                    marginBottom: tokens_1.DESIGN_TOKENS.spacing.md,
-                    ...tokens_1.DESIGN_TOKENS.typography.headingS,
-                    color: tokens_1.DESIGN_TOKENS.colors.textPrimary
-                }, children: title })), (0, jsx_runtime_1.jsx)("div", { style: { ...tokens_1.DESIGN_TOKENS.typography.body }, children: children })] }));
+        } },
+        title && (react_1.default.createElement("h3", { style: {
+                marginTop: 0,
+                marginBottom: tokens_1.DESIGN_TOKENS.spacing.md,
+                ...tokens_1.DESIGN_TOKENS.typography.headingS,
+                color: tokens_1.DESIGN_TOKENS.colors.textPrimary
+            } }, title)),
+        react_1.default.createElement("div", { style: { ...tokens_1.DESIGN_TOKENS.typography.body } }, children)));
 };
 exports.Card = Card;

@@ -3,8 +3,16 @@ import Head from 'next/head';
 
 const API = 'http://localhost:3001/api';
 
+interface Dish {
+  dishId?: string;
+  name?: string;
+  totalQuantity?: number;
+  totalRevenue?: number;
+  uniqueCustomers?: number;
+}
+
 export default function AnalyticsTopDishes() {
-  const [dishes, setDishes] = useState<unknown[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +42,7 @@ export default function AnalyticsTopDishes() {
               </tr>
             </thead>
             <tbody>
-              {dishes.map((dish: unknown, idx: number) => (
+              {dishes.map((dish, idx: number) => (
                 <tr key={dish.dishId || idx} style={{ borderBottom: '1px solid #1a1a1a' }}>
                   <td style={{ padding: '10px 16px', color: '#f97316', fontWeight: 600 }}>#{idx + 1}</td>
                   <td style={{ padding: '10px 16px' }}>{dish.name || 'Unknown'}</td>

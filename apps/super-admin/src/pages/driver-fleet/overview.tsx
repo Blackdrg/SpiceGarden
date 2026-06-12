@@ -3,8 +3,19 @@ import Head from 'next/head';
 
 const API = 'http://localhost:3001/api';
 
+interface Driver {
+  id: string;
+  status?: string;
+  kycStatus?: string;
+  rating?: number;
+  vehicleType?: string;
+  vehicleNumber?: string;
+  user?: { email?: string };
+  totalDeliveries?: number;
+}
+
 export default function DriverFleetOverview() {
-  const [drivers, setDrivers] = useState<unknown[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -11,6 +11,7 @@ interface ButtonProps {
   disabled?: boolean;
   style?: React.CSSProperties;
   ariaLabel?: string;
+  className?: string;
 }
 
 export const Button = ({ 
@@ -23,6 +24,7 @@ export const Button = ({
   disabled = false,
   style,
   ariaLabel,
+  className,
 }: ButtonProps) => {
   const getBgColor = () => {
     switch (variant) {
@@ -69,6 +71,7 @@ export const Button = ({
       disabled={isDisabled}
       aria-label={ariaLabel || label}
       aria-disabled={isDisabled}
+      className={className}
       style={{
         backgroundColor: getBgColor(),
         color: getTextColor(),

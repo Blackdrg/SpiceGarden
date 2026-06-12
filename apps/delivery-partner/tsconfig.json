@@ -12,10 +12,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
-    "types": [
-      "react-native",
-      "jest"
-    ]
+"types": [
+       "react-native",
+       "jest",
+       "node"
+     ]
   },
   "include": [
     "**/*.ts",

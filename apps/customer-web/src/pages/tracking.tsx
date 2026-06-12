@@ -6,6 +6,20 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 
+interface TrackingItem {
+  id?: string | number;
+  name?: string;
+  quantity?: number;
+  price?: number;
+}
+
+interface TrackingOrder {
+  id?: string;
+  status?: string;
+  items?: TrackingItem[];
+  total?: number;
+}
+
 const TrackingPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -13,7 +27,7 @@ const TrackingPage = () => {
   const { location } = useTracking(orderId || 'driver-123');
   const [orderStatus, setOrderStatus] = useState('preparing');
   const [estimatedTime, setEstimatedTime] = useState(15);
-  const [orderDetails, setOrderDetails] = useState<unknown>(null);
+  const [orderDetails, setOrderDetails] = useState<TrackingOrder | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,42 +50,42 @@ useEffect(() => {
          try {
            setLoading(true);
            const response = await ordersApi.get(orderId, user?.token || localStorage.getItem('sg_token') || '');
-           const order = response.data;
+           const order = response.data as TrackingOrder;
            setOrderDetails(order);
            setOrderStatus(order.status || 'preparing');
           // Update estimated time based on order status
-          switch (order.status) {
-            case 'preparing':
-              setEstimatedTime(10 + Math.floor(Math.random() * 10));
-              break;
-            case 'ready':
-              setEstimatedTime(5 + Math.floor(Math.random() * 5));
-              break;
-            case 'pickedup':
-              setEstimatedTime(8 + Math.floor(Math.random() * 12));
-              break;
-            case 'delivered':
-              setEstimatedTime(0);
-              break;
-            default:
-              setEstimatedTime(15);
-          }
-        } catch (error) {
-          console.error('Failed to load order details:', error);
-          // Use mock data for demo
-          setOrderDetails({
-            id: orderId,
-            status: 'preparing',
-            items: [],
-            total: 0
-          });
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadOrderDetails();
-    }
-  }, [orderId, user?.token]);
+           switch (order.status) {
+             case 'preparing':
+               setEstimatedTime(10 + Math.floor(Math.random() * 10));
+               break;
+             case 'ready':
+               setEstimatedTime(5 + Math.floor(Math.random() * 5));
+               break;
+             case 'pickedup':
+               setEstimatedTime(8 + Math.floor(Math.random() * 12));
+               break;
+             case 'delivered':
+               setEstimatedTime(0);
+               break;
+             default:
+               setEstimatedTime(15);
+           }
+         } catch (error) {
+           console.error('Failed to load order details:', error);
+           // Use mock data for demo
+           setOrderDetails({
+             id: orderId,
+             status: 'preparing',
+             items: [],
+             total: 0
+           });
+         } finally {
+           setLoading(false);
+         }
+       };
+       loadOrderDetails();
+     }
+   }, [orderId, user?.token]);
 
   const statusSteps = [
     { id: 'placed', label: 'Order Placed', done: true },
@@ -131,26 +145,26 @@ useEffect(() => {
         </Card>
       )}
 
-      {orderDetails && (
-        <Card title="Order Details">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-            {orderDetails.items && orderDetails.items.length > 0 ? (
-              orderDetails.items.map((item: unknown) => (
-                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
-                  <span>{item.name} x{item.quantity}</span>
-                  <span>&#8377;{item.price * item.quantity}</span>
-                </div>
-              ))
-            ) : (
-              <p>No item details available</p>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginTop: DESIGN_TOKENS.spacing.sm }}>
-              <span>Total:</span>
-              <span>&#8377;{orderDetails.total || 0}</span>
-            </div>
-          </div>
-        </Card>
-      )}
+{orderDetails && (
+         <Card title="Order Details">
+           <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+             {orderDetails.items && orderDetails.items.length > 0 ? (
+               orderDetails.items.map((item, idx: number) => (
+                 <div key={item.id || idx} style={{ display: 'flex', justifyContent: 'space-between', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
+                   <span>{item.name} x{item.quantity}</span>
+                   <span>&#8377;{(item.price || 0) * (item.quantity || 1)}</span>
+                 </div>
+               ))
+             ) : (
+               <p>No item details available</p>
+             )}
+             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginTop: DESIGN_TOKENS.spacing.sm }}>
+               <span>Total:</span>
+               <span>&#8377;{orderDetails.total || 0}</span>
+             </div>
+           </div>
+         </Card>
+       )}
 
       {orderStatus !== 'delivered' && (
         <div style={{ marginTop: DESIGN_TOKENS.spacing.lg, textAlign: 'center' }}>

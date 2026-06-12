@@ -1,3 +1,4 @@
+import React from 'react';
 import { MapPin } from 'lucide-react';
 import { IconProps } from '../types';
 import { DESIGN_TOKENS } from '../../tokens';

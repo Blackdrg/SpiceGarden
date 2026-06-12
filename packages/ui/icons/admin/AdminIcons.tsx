@@ -1,3 +1,4 @@
+import React from 'react';
 import { BarChart3, Users, ShieldAlert } from 'lucide-react';
 import { IconProps } from '../types';
 import { DESIGN_TOKENS } from '../../tokens';

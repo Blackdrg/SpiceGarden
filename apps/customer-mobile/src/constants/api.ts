@@ -4,9 +4,6 @@ export const getApiBaseUrl = (): string => {
     if (globalThis.process?.env?.NODE_ENV === 'production') {
       return 'https://api.spicegarden.com';
     }
-    if (globalThis.process?.env?.NODE_ENV === 'staging') {
-      return 'https://staging-api.spicegarden.com';
-    }
     return 'http://localhost:3001';
   }
   return apiUrl;

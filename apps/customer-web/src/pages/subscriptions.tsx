@@ -57,10 +57,10 @@ const SubscriptionsPage = () => {
         ))}
       </div>
 
-      <Card title="Explore More Plans" isElevated className={styles.exploreCard}>
-        <p className={styles.exploreText}>Save on every order. Gold, Premium, Family options available.</p>
-        <Button label="View All Plans" onClick={() => null} />
-      </Card>
+<Card title="Explore More Plans" isElevated style={{ marginBottom: 8 }}>
+         <p className={styles.exploreText}>Save on every order. Gold, Premium, Family options available.</p>
+         <Button label="View All Plans" onClick={() => null} />
+       </Card>
 
       <nav className={styles.bottomNav} aria-label="Main navigation">
         {[

@@ -3,8 +3,22 @@ import Head from 'next/head';
 
 const API = 'http://localhost:3001/api';
 
+interface ConversionFunnel {
+  funnel?: { ordersPlaced?: number };
+  avgOrderValue?: number;
+}
+
+interface ChurnAnalysis {
+  activeCustomers?: number;
+}
+
+interface AnalyticsData {
+  conversionFunnel?: ConversionFunnel;
+  churnAnalysis?: ChurnAnalysis;
+}
+
 export default function AnalyticsOverview() {
-  const [data, setData] = useState<unknown>(null);
+  const [data, setData] = useState<AnalyticsData | null>(null);
   const [period, setPeriod] = useState('30');
   const [loading, setLoading] = useState(true);
 

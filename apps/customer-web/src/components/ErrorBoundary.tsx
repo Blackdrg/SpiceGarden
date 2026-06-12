@@ -27,12 +27,11 @@ class SentryErrorBoundary extends React.Component<React.PropsWithChildren<{}>, E
           <p>We've been notified and are working on a fix.</p>
           <button
             onClick={() => {
-              Sentry.lastEventId && Sentry.showReportDialog({ eventId: Sentry.lastEventId })
               this.setState({ hasError: false })
               window.location.reload()
             }}
           >
-            Report feedback & retry
+            Retry
           </button>
         </div>
       )

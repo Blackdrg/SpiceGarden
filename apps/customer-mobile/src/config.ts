@@ -4,9 +4,6 @@ export const getApiUrl = () => {
     if (globalThis.process?.env?.NODE_ENV === 'production') {
       return 'https://api.spicegarden.com';
     }
-    if (globalThis.process?.env?.NODE_ENV === 'staging') {
-      return 'https://staging-api.spicegarden.com';
-    }
     return 'http://localhost:3001';
   }
   return apiUrl;
@@ -17,9 +14,6 @@ export const getSocketUrl = () => {
   if (!socketUrl) {
     if (globalThis.process?.env?.NODE_ENV === 'production') {
       return 'https://api.spicegarden.com';
-    }
-    if (globalThis.process?.env?.NODE_ENV === 'staging') {
-      return 'https://staging-api.spicegarden.com';
     }
     return 'http://localhost:3001';
   }

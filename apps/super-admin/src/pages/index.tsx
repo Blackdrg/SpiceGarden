@@ -18,7 +18,8 @@ type LiveOrder = {
   eta: number;
   status: OrderStatus;
   serviceType?: ServiceType;
-  timestamp: number;
+  timestamp?: number;
+  createdAt?: string;
 }
 
 type BranchStatus = {
@@ -53,8 +54,19 @@ const MOCK_REVENUE = [
   { t: '23:59', orders: 18 },
 ];
 
+type Stats = {
+  revenue: number;
+  orders: number;
+  driversOnline: number;
+  complaints: number;
+  refunds: number;
+  fraudAlerts: number;
+  activeBranches: number;
+  pendingWithdrawals: number;
+};
+
 // Fetch real stats from API
-async function fetchStats() {
+async function fetchStats(): Promise<{ stats?: Stats; revenueData?: Record<string, unknown>[]; branches?: BranchStatus[]; tickets?: DisputeTicket[] } | null> {
   try {
     const res = await fetch(`${API_BASE}/admin/stats`);
     if (res.ok) return await res.json();
@@ -65,7 +77,7 @@ async function fetchStats() {
 }
 
 // Fetch real orders from API
-async function fetchOrders() {
+async function fetchOrders(): Promise<(LiveOrder & { createdAt?: string })[]> {
   try {
     const res = await fetch(`${API_BASE}/orders`);
     if (res.ok) return await res.json();
@@ -121,7 +133,7 @@ function DeliveryHeatmap({ data }: { data: HeatmapPoint[] }) {
 const SOCKET_URL = 'http://localhost:3001';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     revenue: 45200,
     orders: 124,
     driversOnline: 18,
@@ -134,7 +146,7 @@ export default function AdminDashboard() {
   const [liveOrders, setLiveOrders] = useState<LiveOrder[]>([]);
   const [branches, setBranches] = useState<BranchStatus[]>([]);
   const [tickets, setTickets] = useState<DisputeTicket[]>([]);
-  const [revenueData, setRevenueData] = useState<unknown[]>([]);
+  const [revenueData, setRevenueData] = useState<Record<string, unknown>[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapPoint[]>([]);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'orders' | 'branches' | 'support'>('overview');
   const [ticketFilter, setTicketFilter] = useState<'all' | DisputeTicket['type']>('all');
@@ -149,9 +161,9 @@ export default function AdminDashboard() {
         setTickets(data.tickets || []);
       }
     });
-    fetchOrders().then(orders => {
+fetchOrders().then(orders => {
       if (orders.length > 0) {
-        setLiveOrders(orders.map((o: unknown) => ({ ...o, timestamp: new Date(o.createdAt).getTime() })));
+        setLiveOrders(orders.map((o: LiveOrder & { createdAt?: string }) => ({ ...o, timestamp: new Date(o.createdAt || Date.now()).getTime() })));
       }
     });
   }, []);
@@ -162,13 +174,13 @@ export default function AdminDashboard() {
     const socket: Socket = io(SOCKET_URL, { path: '/socket.io/' });
     socket.on('connect', () => console.log('[Admin] connected'));
     socket.on('disconnect', () => console.log('[Admin] disconnected'));
-    socket.on('statsUpdate', (s: unknown) => setStats((p) => ({ ...p, ...s })));
+    socket.on('statsUpdate', (s: Partial<Stats>) => setStats((p) => ({ ...p, ...s })));
     socket.on('newOrderGlobal', (order: LiveOrder) =>
       setLiveOrders((prev) => [{ ...order, timestamp: Date.now() }, ...prev].slice(0, 20)),
     );
     socket.on('kitchenUpdate', setBranches);
     socket.on('deliveryHeatmap', setHeatmapData);
-    socket.on('revenueUpdate', (d: unknown[]) => setRevenueData(d));
+    socket.on('revenueUpdate', (d: unknown[]) => setRevenueData(d as Record<string, unknown>[]));
     return () => { socket.disconnect(); };
   }, []);
 
@@ -625,7 +637,7 @@ function KPICard({ label, value, upColor, delta }: { label: string; value: strin
   );
 }
 
-function Card({ title, sub, children, style }: { title: string; sub?: string; children: React.ReactNode; style?: unknown }) {
+function Card({ title, sub, children, style }: { title: string; sub?: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
     <div style={{ background: 'white', borderRadius: 12, padding: 20, border: '1px solid #e0e0e0', boxShadow: '0 2px 6px rgba(0,0,0,0.04)', ...style }}>
       {title && <h3 style={{ margin: '0 0 4px 0', fontSize: 17, fontWeight: 700 }}>{title}</h3>}
@@ -635,7 +647,7 @@ function Card({ title, sub, children, style }: { title: string; sub?: string; ch
   );
 }
 
-function Button({ label, onClick, style, variant = 'primary', ...rest }: unknown) {
+function Button({ label, onClick, style, variant = 'primary', ...rest }: { label: string; onClick: () => void; style?: React.CSSProperties; variant?: 'primary' | 'secondary' | 'danger' }) {
   return (
     <button
       onClick={onClick}

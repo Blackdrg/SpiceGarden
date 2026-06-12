@@ -1,27 +1,68 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimelineTrackingSkeleton = exports.TrackingSkeleton = exports.CheckoutSkeleton = exports.MenuListSkeleton = exports.ProductListSkeleton = void 0;
-const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const Skeleton_1 = require("./Skeleton");
-const ProductListSkeleton = ({ count = 3 }) => ((0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg }, children: Array.from({ length: count }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: {
+const ProductListSkeleton = ({ count = 3 }) => (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg } }, Array.from({ length: count }).map((_, i) => (react_1.default.createElement("div", { key: i, style: {
+        display: 'flex',
+        gap: tokens_1.DESIGN_TOKENS.spacing.md,
+        backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
+        borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
+        padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+        border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
+    } },
+    react_1.default.createElement(Skeleton_1.Skeleton, { variant: "rectangular", width: 80, height: 80, borderRadius: 12 }),
+    react_1.default.createElement("div", { style: { flex: 1 } },
+        react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: "70%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }),
+        react_1.default.createElement(Skeleton_1.Skeleton, { height: 14, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } }),
+        react_1.default.createElement(Skeleton_1.Skeleton, { height: 12, width: "60%" })),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 20, width: 60 }))))));
+exports.ProductListSkeleton = ProductListSkeleton;
+const MenuListSkeleton = ({ count = 4 }) => (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg } },
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 24, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } }),
+    Array.from({ length: count }).map((_, i) => (react_1.default.createElement("div", { key: i, style: {
             display: 'flex',
             gap: tokens_1.DESIGN_TOKENS.spacing.md,
-            backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
-            border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
-        }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { variant: "rectangular", width: 80, height: 80, borderRadius: 12 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: "70%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 14, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 12, width: "60%" })] }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 20, width: 60 })] }, i))) }));
-exports.ProductListSkeleton = ProductListSkeleton;
-const MenuListSkeleton = ({ count = 4 }) => ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 24, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } }), Array.from({ length: count }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: {
-                display: 'flex',
-                gap: tokens_1.DESIGN_TOKENS.spacing.md,
-                alignItems: 'flex-start',
-            }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { variant: "rectangular", width: 60, height: 60, borderRadius: 12 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: "80%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 14, width: "60%" })] })] }, i)))] }));
+            alignItems: 'flex-start',
+        } },
+        react_1.default.createElement(Skeleton_1.Skeleton, { variant: "rectangular", width: 60, height: 60, borderRadius: 12 }),
+        react_1.default.createElement("div", { style: { flex: 1 } },
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: "80%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }),
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 14, width: "60%" })))))));
 exports.MenuListSkeleton = MenuListSkeleton;
-const CheckoutSkeleton = ({ itemCount = 2 }) => ((0, jsx_runtime_1.jsxs)("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 24, width: "60%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }), (0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.md, marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg }, children: Array.from({ length: itemCount }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { variant: "rectangular", width: 60, height: 60, borderRadius: 12 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 14, width: "60%", style: { marginBottom: 4 } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 12, width: "40%" })] }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: 50 })] }, i))) }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 1, width: "100%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: "100%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: "80%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 16, width: "60%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 48, width: "100%", borderRadius: 12 })] }));
+const CheckoutSkeleton = ({ itemCount = 2 }) => (react_1.default.createElement("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 24, width: "60%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }),
+    react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.md, marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }, Array.from({ length: itemCount }).map((_, i) => (react_1.default.createElement("div", { key: i, style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' } },
+        react_1.default.createElement(Skeleton_1.Skeleton, { variant: "rectangular", width: 60, height: 60, borderRadius: 12 }),
+        react_1.default.createElement("div", { style: { flex: 1 } },
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 14, width: "60%", style: { marginBottom: 4 } }),
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 12, width: "40%" })),
+        react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: 50 }))))),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 1, width: "100%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: "100%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: "80%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.sm } }),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 16, width: "60%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl } }),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 48, width: "100%", borderRadius: 12 })));
 exports.CheckoutSkeleton = CheckoutSkeleton;
-const TrackingSkeleton = ({ stages = 4 }) => ((0, jsx_runtime_1.jsxs)("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 24, width: "50%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }), (0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg, marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl }, children: Array.from({ length: stages }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { variant: "circular", width: 32, height: 32 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 14, width: "50%", style: { marginBottom: 4 } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 12, width: "70%" })] })] }, i))) }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 120, width: "100%", borderRadius: 12, style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 48, width: "100%", borderRadius: 12 })] }));
+const TrackingSkeleton = ({ stages = 4 }) => (react_1.default.createElement("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 24, width: "50%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }),
+    react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.lg, marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl } }, Array.from({ length: stages }).map((_, i) => (react_1.default.createElement("div", { key: i, style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, alignItems: 'center' } },
+        react_1.default.createElement(Skeleton_1.Skeleton, { variant: "circular", width: 32, height: 32 }),
+        react_1.default.createElement("div", { style: { flex: 1 } },
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 14, width: "50%", style: { marginBottom: 4 } }),
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 12, width: "70%" })))))),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 120, width: "100%", borderRadius: 12, style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }),
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 48, width: "100%", borderRadius: 12 })));
 exports.TrackingSkeleton = TrackingSkeleton;
-const TimelineTrackingSkeleton = ({ stages = 4 }) => ((0, jsx_runtime_1.jsxs)("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 24, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }), (0, jsx_runtime_1.jsx)("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.xl }, children: Array.from({ length: stages }).map((_, i) => ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { variant: "circular", width: 40, height: 40 }), (0, jsx_runtime_1.jsxs)("div", { style: { flex: 1 }, children: [(0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 14, width: "60%", style: { marginBottom: 6 } }), (0, jsx_runtime_1.jsx)(Skeleton_1.Skeleton, { height: 12, width: "40%" })] })] }, i))) })] }));
+const TimelineTrackingSkeleton = ({ stages = 4 }) => (react_1.default.createElement("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
+    react_1.default.createElement(Skeleton_1.Skeleton, { height: 24, width: "40%", style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }),
+    react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: tokens_1.DESIGN_TOKENS.spacing.xl } }, Array.from({ length: stages }).map((_, i) => (react_1.default.createElement("div", { key: i, style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md } },
+        react_1.default.createElement(Skeleton_1.Skeleton, { variant: "circular", width: 40, height: 40 }),
+        react_1.default.createElement("div", { style: { flex: 1 } },
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 14, width: "60%", style: { marginBottom: 6 } }),
+            react_1.default.createElement(Skeleton_1.Skeleton, { height: 12, width: "40%" }))))))));
 exports.TimelineTrackingSkeleton = TimelineTrackingSkeleton;
