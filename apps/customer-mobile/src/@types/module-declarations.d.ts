@@ -98,41 +98,6 @@ declare module '@react-native-async-storage/async-storage' {
   export default AsyncStorage;
 }
 
-declare module 'react-native' {
-  import * as React from 'react';
-  export const View: React.FC<unknown>;
-  export const Text: React.FC<unknown>;
-  export const FlatList: React.FC<unknown>;
-  export const TouchableOpacity: React.FC<unknown>;
-  export const StyleSheet: {
-    create: (styles: Record<string, unknown>) => Record<string, unknown>;
-  };
-  export const ActivityIndicator: React.FC<unknown>;
-  export const TextInput: React.FC<unknown>;
-  export const Image: React.FC<unknown>;
-  export const ScrollView: React.FC<unknown>;
-  export const Easing: {
-    out: (easingFn: (value: number) => number) => (value: number) => number;
-    quad: (value: number) => number;
-  };
-  interface AnimatedTimingResult {
-    start: (callback?: (finished?: boolean) => void) => void;
-  }
-  interface AnimatedConfig {
-    toValue: number;
-    duration: number;
-    easing?: (value: number) => number;
-    useNativeDriver: boolean;
-  }
-  interface AnimatedStatic {
-    Value: unknown;
-    timing(value: unknown, config: AnimatedConfig): AnimatedTimingResult;
-    parallel(anims: AnimatedTimingResult[]): AnimatedTimingResult;
-    sequence: (anims: AnimatedTimingResult[]) => AnimatedTimingResult;
-    View: React.FC<unknown>;
-  }
-  export const Animated: AnimatedStatic;
-}
 
 declare module '@spicegarden/ui' {
   export const DESIGN_TOKENS: {

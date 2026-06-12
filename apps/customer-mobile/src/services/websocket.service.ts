@@ -166,7 +166,7 @@ subscribe<T = unknown>(event: string, callback: (data: T) => void) {
     }
   }
 
-  sendMessage<T = unknown>(data: MessageEnvelope<T>): Promise<unknown> {
+  sendMessage(data: MessageEnvelope): Promise<unknown> {
     return new Promise((resolve, reject) => {
       if (!this.isConnected) {
         this.messageQueue.push(data);

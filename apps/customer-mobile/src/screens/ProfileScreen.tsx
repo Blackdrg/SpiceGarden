@@ -46,7 +46,7 @@ const ProfileScreen = () => {
       try {
         const userJson = await AsyncStorage.getItem('sg_user');
         if (userJson) {
-          const user = safeParse(userJson) as unknown;
+          const user = safeParse(userJson) as { name?: string; email?: string; phone?: string };
           setUserData({
             fullName: user.name || '',
             email: user.email || '',

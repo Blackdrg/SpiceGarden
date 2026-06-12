@@ -43,7 +43,7 @@ const CartScreen = () => {
         if (userJson) {
           const parsedUser = safeParse(userJson);
           if (parsedUser) {
-            setUser(parsedUser);
+            setUser(parsedUser as User);
           } else {
             await AsyncStorage.removeItem(STORAGE_KEYS.USER);
           }

@@ -252,6 +252,13 @@ const styles = StyleSheet.create({
     marginTop: DESIGN_TOKENS.spacing.md,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: DESIGN_TOKENS.colors.textPrimary,
+    marginBottom: DESIGN_TOKENS.spacing.sm,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
   quantitySection: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
     padding: DESIGN_TOKENS.spacing.md,

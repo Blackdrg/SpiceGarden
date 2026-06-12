@@ -45,7 +45,7 @@ const onboardingSlides: OnboardingSlide[] = [
   },
 ];
 
-const OnboardingScreen = ({ navigation }: { navigation: NavigationProp<ParamListBase> }) => {
+const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: string) => void } }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   

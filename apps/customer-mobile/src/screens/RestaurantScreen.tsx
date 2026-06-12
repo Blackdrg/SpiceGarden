@@ -32,7 +32,7 @@ const RestaurantScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [addingItem, setAddingItem] = useState<string | null>(null);
   
-  const fadeAnim = useRef(Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnims = useRef(new Map<string, Animated.Value>()).current;
 
   useEffect(() => {
