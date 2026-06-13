@@ -5,7 +5,11 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       parser: '@typescript-eslint/parser',
-      parserOptions: { project: true, tsconfigRootDir: __dirname },
+      parserOptions: { 
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true }
+      },
       plugins: ['@typescript-eslint'],
       extends: ['plugin:@typescript-eslint/recommended'],
       rules: {

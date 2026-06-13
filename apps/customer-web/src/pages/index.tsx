@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard } from '@spicegarden/ui';
+import {
+  Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard,
+  BurgerIcon, PizzaIcon, DrinkIcon, DessertIcon, HealthyIcon,
+  HomeIcon, SearchIcon, CartIcon, ProfileIcon, LocationIcon,
+  RatingIcon, NotificationIcon,
+} from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -12,6 +17,18 @@ interface Restaurant {
   rating: number;
   deliveryTime: number;
   isActive: boolean;
+}
+
+interface Category {
+  name: string;
+  Icon: React.FC<{ size?: number; color?: string }>;
+}
+
+interface NavTab {
+  key: string;
+  label: string;
+  Icon: React.FC<{ size?: number; color?: string }>;
+  path: string;
 }
 
 const HomePage = () => {
@@ -40,12 +57,19 @@ const HomePage = () => {
     loadRestaurants();
   }, []);
 
-  const categories = useMemo(() => [
-    { name: 'Burgers', icon: '🍔' },
-    { name: 'Pizza', icon: '🍕' },
-    { name: 'Drinks', icon: '🥤' },
-    { name: 'Dessert', icon: '🍰' },
-    { name: 'Healthy', icon: '🥗' },
+  const categories = useMemo<Category[]>(() => [
+    { name: 'Burgers', Icon: BurgerIcon },
+    { name: 'Pizza', Icon: PizzaIcon },
+    { name: 'Drinks', Icon: DrinkIcon },
+    { name: 'Dessert', Icon: DessertIcon },
+    { name: 'Healthy', Icon: HealthyIcon },
+  ], []);
+
+  const navTabs = useMemo<NavTab[]>(() => [
+    { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+    { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+    { key: 'orders', label: 'Orders', Icon: CartIcon, path: '/history' },
+    { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
   ], []);
 
   const handleRetry = () => {
@@ -58,23 +82,38 @@ const HomePage = () => {
     return `${styles.tab} ${activeTab === tabKey ? styles.activeTab : styles.inactiveTab}`;
   };
 
+  const renderCategoryIcon = (Icon: Category['Icon'], name: string) => {
+    const colors: Record<string, string> = {
+      Burgers: '#FF5A1F',
+      Pizza: '#EF4444',
+      Drinks: '#3B82F6',
+      Dessert: '#EC4899',
+      Healthy: '#10B981',
+    };
+    return <Icon size={28} color={colors[name]} />;
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header} role="banner">
         <div>
           <h2 className={styles.userName}>
-            👋 {user?.name?.split(' ')[0] || 'Guest'}
+            <LocationIcon size={20} color={DESIGN_TOKENS.colors.primary} />
+            {' '}{user?.name?.split(' ')[0] || 'Guest'}
           </h2>
           <p className={styles.deliveryLocation}>
             Deliver to: Home - Sector 17, Chandigarh
           </p>
         </div>
-        <Button
-          label="🔔"
-          onClick={() => null}
-          variant="secondary"
-          ariaLabel="Notifications"
-        />
+        <div className={styles.headerActions}>
+          <button
+            onClick={() => null}
+            className={styles.iconButton}
+            aria-label="Notifications"
+          >
+            <NotificationIcon size={20} />
+          </button>
+        </div>
       </header>
 
       <div
@@ -84,7 +123,7 @@ const HomePage = () => {
         tabIndex={0}
         aria-label="Search restaurants and dishes"
       >
-        <span className={styles.searchIcon}>🔍</span>
+        <span className={styles.searchIcon}><SearchIcon size={20} /></span>
         <span className={styles.searchText}>Search restaurants, dishes…</span>
       </div>
 
@@ -97,7 +136,9 @@ const HomePage = () => {
             tabIndex={0}
             aria-label={`Browse ${cat.name} category`}
           >
-            <div className={styles.categoryIcon}>{cat.icon}</div>
+            <div className={styles.categoryIcon}>
+              {renderCategoryIcon(cat.Icon, cat.name)}
+            </div>
             <div className={styles.categoryName}>{cat.name}</div>
           </div>
         ))}
@@ -107,7 +148,7 @@ const HomePage = () => {
         className={styles.promoBanner}
         onClick={() => router.push('/search')}
       >
-        <h2 className={styles.promoTitle}>🎉 50% OFF</h2>
+        <h2 className={styles.promoTitle}>50% OFF</h2>
         <p className={styles.promoText}>
           On your first 3 orders. Use code: <strong>WELCOME50</strong>
         </p>
@@ -148,7 +189,6 @@ const HomePage = () => {
                 tabIndex={0}
                 aria-label={`View ${restaurant.name} details`}
               >
-                <div className={styles.restaurantIcon}>🍽️</div>
                 <div className={styles.restaurantContent}>
                   <div className={styles.restaurantName}>
                     {restaurant.name}
@@ -157,9 +197,12 @@ const HomePage = () => {
                     {restaurant.description}
                   </div>
                   <div className={styles.restaurantMeta}>
-                    <span>⭐ {restaurant.rating}</span>
-                    <span>• {restaurant.deliveryTime} min</span>
-                    <span>• {Math.round(Math.random() * 5)} km</span>
+                    <span>
+                      <RatingIcon size={14} fill={DESIGN_TOKENS.colors.warning} />
+                      {' '}{restaurant.rating}
+                    </span>
+                    <span>{restaurant.deliveryTime} min</span>
+                    <span>{(Math.round(Math.random() * 5) / 10 + 0.5).toFixed(1)} km</span>
                   </div>
                 </div>
               </div>
@@ -174,12 +217,7 @@ const HomePage = () => {
         aria-label="Main navigation"
       >
         <div className={styles.tablist} role="tablist">
-          {[
-            { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-            { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-            { key: 'orders', label: 'Orders', icon: '📦', path: '/history' },
-            { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-          ].map((tab) => (
+          {navTabs.map((tab) => (
             <div
               key={tab.key}
               onClick={() => {
@@ -190,7 +228,7 @@ const HomePage = () => {
               role="tab"
               aria-label={tab.label}
             >
-              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span className={styles.tabIcon}><tab.Icon size={22} /></span>
               <span>{tab.label}</span>
             </div>
           ))}
