@@ -111,7 +111,7 @@ export class PayoutService {
       payoutDate: new Date(),
     });
 
-    return this.payoutRepo.findOne({ where: { id: payoutId } });
+    return (await this.payoutRepo.findOne({ where: { id: payoutId } }))!;
   }
 
   async getPendingPayouts(restaurantId?: string): Promise<PayoutReportEntity[]> {

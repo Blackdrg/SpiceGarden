@@ -1,3 +1,4 @@
+"use strict";
 jest.mock('@nestjs/core', () => {
     const actual = jest.requireActual('@nestjs/core');
     return Object.assign(function () { }, actual, {

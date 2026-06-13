@@ -102,7 +102,7 @@ export class FraudHardeningService {
     const reasons: string[] = [];
     let riskScore = 0;
 
-    const ipCheck = await this.checkIpReputation(context.ipAddress);
+    const ipCheck = await this.checkIpReputation(context.ipAddress ?? '');
     if (ipCheck) {
       riskScore += 15;
       reasons.push('Suspicious IP address detected');

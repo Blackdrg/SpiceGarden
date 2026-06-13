@@ -3,28 +3,28 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 
 @Entity('audit_logs')
 export class AuditLogEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  action: string;
+  action!: string;
 
   @Index()
   @Column({ nullable: true })
-  performedBy: string; // userId or 'system'
+  performedBy!: string; // userId or 'system'
 
   @Column({ nullable: true })
-  entityType: string;
+  entityType!: string;
 
   @Column({ nullable: true })
-  entityId: string;
+  entityId!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: any;
+  metadata!: any;
 
   @Column({ nullable: true })
-  ipAddress: string;
+  ipAddress!: string;
 
   @CreateDateColumn()
-  timestamp: Date;
+  timestamp!: Date;
 }

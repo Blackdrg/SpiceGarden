@@ -213,9 +213,9 @@ export class DispatchEngineService {
       }
 
       // Get branch from first order (assuming all orders are from same restaurant)
-      const branch = await manager.findOne(RestaurantBranchEntity, {
+      const branch = (await manager.findOne(RestaurantBranchEntity, {
         where: { restaurant: { id: orders[0].restaurantId } }
-      });
+      }))!;
 
       const assignments = [];
 

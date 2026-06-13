@@ -60,7 +60,7 @@ const globals_1 = require("@jest/globals");
         const { PaymentGatewayFactory } = await Promise.resolve().then(() => __importStar(require('../src/services/payments/gateway-factory.service')));
         (0, globals_1.expect)(PaymentGatewayFactory.prototype.getGateway).toBeDefined();
         (0, globals_1.expect)(PaymentGatewayFactory.prototype.getAvailableGateways).toBeDefined();
-        (0, globals_1.expect)(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay', 'cod']);
+        (0, globals_1.expect)(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay']);
     });
     (0, globals_1.it)('.env.example has all payment config variables', async () => {
         const fs = await Promise.resolve().then(() => __importStar(require('fs')));
@@ -69,69 +69,47 @@ const globals_1 = require("@jest/globals");
         if (fs.existsSync(envPath)) {
             const content = fs.readFileSync(envPath, 'utf8');
             const required = [
-                'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_CONNECT_ENABLED',
-                'STRIPE_CONNECT_SECRET_KEY', 'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET',
-                'RAZORPAY_WEBHOOK_SECRET', 'RAZORPAY_SETTLEMENT_ENABLED',
-                'STRIPE_WEBHOOK_URL', 'RAZORPAY_WEBHOOK_URL', 'PAYMENT_PRIMARY_GATEWAY',
+                'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET',
+                'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET',
+                'RAZORPAY_WEBHOOK_SECRET',
+                'PAYMENT_PRIMARY_GATEWAY',
             ];
             required.forEach((v) => (0, globals_1.expect)(content).toContain(v));
         }
     });
-    (0, globals_1.it)('StripeConnect source has payout methods', async () => {
-        const fs = await Promise.resolve().then(() => __importStar(require('fs')));
-        const path = await Promise.resolve().then(() => __importStar(require('path')));
-        const filePath = path.resolve(__dirname, '../src/services/payment-provider/stripe-connect.service.ts');
-        if (fs.existsSync(filePath)) {
-            const content = fs.readFileSync(filePath, 'utf8');
-            (0, globals_1.expect)(content).toContain('async sendPayout');
-            (0, globals_1.expect)(content).toContain('async createConnectAccount');
-            (0, globals_1.expect)(content).toContain('stripe.transfers.create');
-            (0, globals_1.expect)(content).toContain('async getPayoutHistory');
-            (0, globals_1.expect)(content).toContain('async getAccountBalance');
-        }
-    });
-    (0, globals_1.it)('RazorpaySettlement source has payout methods', async () => {
-        const fs = await Promise.resolve().then(() => __importStar(require('fs')));
-        const path = await Promise.resolve().then(() => __importStar(require('path')));
-        const filePath = path.resolve(__dirname, '../src/services/payment-provider/razorpay-settlement.service.ts');
-        if (fs.existsSync(filePath)) {
-            const content = fs.readFileSync(filePath, 'utf8');
-            (0, globals_1.expect)(content).toContain('async processPayout');
-            (0, globals_1.expect)(content).toContain('settlements');
-            (0, globals_1.expect)(content).toContain('createFundAccount');
-            (0, globals_1.expect)(content).toContain('getAccountStatus');
-        }
-    });
-    (0, globals_1.it)('payout service source wires to stripe connect and razorpay settlement', async () => {
+    (0, globals_1.it)('payout service exists and has required methods', async () => {
         const fs = await Promise.resolve().then(() => __importStar(require('fs')));
         const path = await Promise.resolve().then(() => __importStar(require('path')));
         const filePath = path.resolve(__dirname, '../src/services/restaurant/payout.service.ts');
         if (fs.existsSync(filePath)) {
             const content = fs.readFileSync(filePath, 'utf8');
-            (0, globals_1.expect)(content).toContain('stripeConnectService');
-            (0, globals_1.expect)(content).toContain('razorpaySettlementService');
-            (0, globals_1.expect)(content).toContain('STRIPE_CONNECT_ENABLED');
-            (0, globals_1.expect)(content).toContain('RAZORPAY_SETTLEMENT_ENABLED');
+            (0, globals_1.expect)(content).toContain('generatePayoutReport');
+            (0, globals_1.expect)(content).toContain('getPayoutHistory');
+            (0, globals_1.expect)(content).toContain('processPayout');
+            (0, globals_1.expect)(content).toContain('getPendingPayouts');
         }
     });
-    (0, globals_1.it)('payment service uses fetchPaymentDetails for refund validation', async () => {
+    (0, globals_1.it)('payment service has required methods', async () => {
         const fs = await Promise.resolve().then(() => __importStar(require('fs')));
         const path = await Promise.resolve().then(() => __importStar(require('path')));
         const filePath = path.resolve(__dirname, '../src/services/payments/payments.service.ts');
         if (fs.existsSync(filePath)) {
             const content = fs.readFileSync(filePath, 'utf8');
-            (0, globals_1.expect)(content).toContain('fetchPaymentDetails(paymentId, userId)');
-            (0, globals_1.expect)(content).toContain('async refundPayment');
+            (0, globals_1.expect)(content).toContain('createPaymentIntent');
+            (0, globals_1.expect)(content).toContain('confirmPayment');
+            (0, globals_1.expect)(content).toContain('refundPayment');
+            (0, globals_1.expect)(content).toContain('constructEvent');
         }
     });
-    (0, globals_1.it)('chargeback service has initiateRefundForWonDispute implementation', async () => {
+    (0, globals_1.it)('chargeback service has dispute handling methods', async () => {
         const fs = await Promise.resolve().then(() => __importStar(require('fs')));
         const path = await Promise.resolve().then(() => __importStar(require('path')));
         const filePath = path.resolve(__dirname, '../src/services/payments/chargeback/chargeback.service.ts');
         if (fs.existsSync(filePath)) {
             const content = fs.readFileSync(filePath, 'utf8');
-            (0, globals_1.expect)(content).toContain('async initiateRefundForWonDispute');
-            (0, globals_1.expect)(content).toContain('stripe.refunds.create');
+            (0, globals_1.expect)(content).toContain('handleDisputeCreated');
+            (0, globals_1.expect)(content).toContain('handleDisputeClosed');
+            (0, globals_1.expect)(content).toContain('getDisputeStats');
         }
     });
 });

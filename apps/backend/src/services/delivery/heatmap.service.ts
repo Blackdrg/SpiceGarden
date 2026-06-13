@@ -149,7 +149,7 @@ export class HeatmapService {
     updates: Partial<SurgeZoneEntity>
   ): Promise<SurgeZoneEntity> {
     await this.surgeZoneRepo.update(zoneId, updates);
-    return this.surgeZoneRepo.findOne({ where: { id: zoneId } });
+    return (await this.surgeZoneRepo.findOne({ where: { id: zoneId } }))!;
   }
 
   async getAllSurgeZones(): Promise<SurgeZoneEntity[]> {

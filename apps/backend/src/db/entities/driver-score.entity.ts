@@ -5,44 +5,44 @@ import { RestaurantBranchEntity } from './restaurant-branch.entity';
 @Entity('driver_scores')
 export class DriverScoreEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => DriverEntity)
-  driver: DriverEntity;
+  driver!: DriverEntity;
 
   @ManyToOne(() => RestaurantBranchEntity)
-  branch: RestaurantBranchEntity;
+  branch!: RestaurantBranchEntity;
 
   @Column('decimal', { precision: 3, scale: 2 })
-  overallScore: number; // Overall driver score (0-5)
+  overallScore!: number; // Overall driver score (0-5)
 
   @Column('decimal', { precision: 3, scale: 2 })
-  onTimeDeliveryRate: number; // Percentage of on-time deliveries
+  onTimeDeliveryRate!: number; // Percentage of on-time deliveries
 
   @Column('decimal', { precision: 3, scale: 2 })
-  acceptanceRate: number; // Percentage of accepted assignments
+  acceptanceRate!: number; // Percentage of accepted assignments
 
   @Column('decimal', { precision: 3, scale: 2 })
-  cancellationRate: number; // Percentage of cancelled assignments
+  cancellationRate!: number; // Percentage of cancelled assignments
 
   @Column('decimal', { precision: 3, scale: 2 })
-  customerRating: number; // Average customer rating (0-5)
+  customerRating!: number; // Average customer rating (0-5)
 
   @Column()
-  totalDeliveries: number; // Total number of deliveries
+  totalDeliveries!: number; // Total number of deliveries
 
   @Column()
-  totalDistance: number; // Total distance delivered (km)
+  totalDistance!: number; // Total distance delivered (km)
 
   @Column('decimal', { precision: 5, scale: 2 })
-  averageSpeed: number; // Average speed (km/h)
+  averageSpeed!: number; // Average speed (km/h)
 
   @Column({ nullable: true })
-  lastCalculatedAt: Date; // When score was last calculated
+  lastCalculatedAt!: Date; // When score was last calculated
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

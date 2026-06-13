@@ -1,3 +1,4 @@
+"use strict";
 jest.mock('typeorm', () => ({
     Entity: () => jest.fn(),
     PrimaryGeneratedColumn: () => jest.fn(),

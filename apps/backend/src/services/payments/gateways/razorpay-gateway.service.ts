@@ -56,7 +56,7 @@ export class RazorpayGateway implements PaymentGateway {
   async createPaymentIntent(
     amount: number,
     currency: string = 'inr',
-    userId: string = null,
+    userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
     try {

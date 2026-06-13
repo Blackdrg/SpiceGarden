@@ -80,7 +80,7 @@ export class CustomerSupportService {
     notes?: string,
     creditAmount?: number,
   ): Promise<DisputeEntity> {
-    const dispute = await this.disputeRepo.findOne({ where: { id: disputeId } });
+    const dispute = (await this.disputeRepo.findOne({ where: { id: disputeId } }))!;
     if (!dispute) {
       throw new NotFoundException('Dispute not found');
     }
@@ -97,7 +97,7 @@ export class CustomerSupportService {
       await this.initiateRefund(disputeId, reviewerId, creditAmount || 0, status);
     }
 
-    return this.disputeRepo.findOne({ where: { id: disputeId } });
+    return (await this.disputeRepo.findOne({ where: { id: disputeId } }))!;
   }
 
   private async initiateRefund(
@@ -106,7 +106,7 @@ export class CustomerSupportService {
     amount: number,
     disputeStatus: DisputeStatus,
   ): Promise<void> {
-    const dispute = await this.disputeRepo.findOne({ where: { id: disputeId } });
+    const dispute = (await this.disputeRepo.findOne({ where: { id: disputeId } }))!;
 
     const refund = this.refundRepo.create({
       orderId: dispute.orderId,
@@ -172,7 +172,7 @@ export class CustomerSupportService {
       `Refund for order #${order.orderNumber}: ${refund.reason}`,
     );
 
-    return this.refundRepo.findOne({ where: { id: refundId } });
+    return (await this.refundRepo.findOne({ where: { id: refundId } }))!;
   }
 
   async getRefunds(filter?: {

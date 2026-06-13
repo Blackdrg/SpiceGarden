@@ -279,7 +279,7 @@ export class KitchenService {
   }
 
   async getRecipeById(id: string): Promise<RecipeEntity> {
-    return this.recipeRepo.findOne({ where: { id }, relations: ['branch'] });
+    return (await this.recipeRepo.findOne({ where: { id }, relations: ['branch'] }))!;
   }
 
   async createBatch(data: Partial<BatchEntity>): Promise<BatchEntity> {
@@ -496,7 +496,7 @@ export class KitchenService {
   async recordAvgPrepTime(branchId: string, prepTimeMinutes: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'avg_prep_time',
       value: prepTimeMinutes,
       unit: 'minutes',
@@ -510,7 +510,7 @@ export class KitchenService {
   async recordLatePrepPercentage(branchId: string, latePercentage: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'late_prep_percentage',
       value: latePercentage,
       unit: 'percentage',
@@ -524,7 +524,7 @@ export class KitchenService {
   async recordFoodRejectionRate(branchId: string, rejectionRate: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'food_rejection_rate',
       value: rejectionRate,
       unit: 'percentage',
@@ -610,7 +610,7 @@ export class KitchenService {
   async recordKitchenThroughput(branchId: string, ordersPerHour: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'kitchen_throughput',
       value: ordersPerHour,
       unit: 'orders_per_hour',
@@ -888,7 +888,7 @@ export class KitchenService {
     return {
       branchId,
       forecastDays: daysAhead,
-      predictions: consumption.consumptionData.map(item => ({
+      predictions: consumption.consumptionData.map((item: { itemId: string; itemName: string; consumed: number; unit: string; cost: number }) => ({
         itemId: item.itemId,
         itemName: item.itemName,
         predictedConsumption: item.consumed * (daysAhead / consumption.periodDays) * 1.2,

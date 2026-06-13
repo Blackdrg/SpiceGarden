@@ -113,7 +113,7 @@ export class MenuModerationService {
       await this.itemRepo.update(moderation.menuItemId, { status: 'rejected' });
     }
 
-    return this.moderationRepo.findOne({ where: { id: moderationId } });
+    return (await this.moderationRepo.findOne({ where: { id: moderationId } }))!;
   }
 
   async bulkApprove(moderationIds: string[], moderatorId: string): Promise<void> {

@@ -18,7 +18,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
   async createPaymentIntent(
     amount: number,
     currency: string = 'inr',
-    userId: string = null,
+    userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
     const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

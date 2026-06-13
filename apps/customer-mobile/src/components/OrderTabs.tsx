@@ -4,9 +4,11 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STRINGS } from '../constants/strings';
 import { ORDER_STATUS, ORDER_STATUS_LABELS } from '../constants/order.constants';
 
+type OrderStatusType = 'preparing' | 'ready' | 'pickedUp' | 'delivered' | 'cancelled';
+
 interface OrderTabsProps {
-  filter: string;
-  onFilterChange: (filter: string) => void;
+  filter: OrderStatusType | 'all';
+  onFilterChange?: (filter: string | OrderStatusType | 'all') => void;
 }
 
 export const OrderTabs = ({ filter, onFilterChange }: OrderTabsProps) => {
@@ -19,7 +21,7 @@ export const OrderTabs = ({ filter, onFilterChange }: OrderTabsProps) => {
           return (
             <TouchableOpacity
               key={statusValue}
-              onPress={() => onFilterChange(statusValue)}
+              onPress={() => onFilterChange?.(statusValue as string)}
               style={[styles.tabButton, filter === statusValue && styles.activeTab]}
               accessibilityLabel={STRINGS.accessibility.filterTab(ORDER_STATUS_LABELS[statusValue])}
               accessibilityRole="tab"

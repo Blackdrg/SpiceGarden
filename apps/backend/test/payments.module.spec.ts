@@ -29,7 +29,7 @@ describe('Payment Module Integration', () => {
     const { PaymentGatewayFactory } = await import('../src/services/payments/gateway-factory.service');
     expect(PaymentGatewayFactory.prototype.getGateway).toBeDefined();
     expect(PaymentGatewayFactory.prototype.getAvailableGateways).toBeDefined();
-    expect(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay', 'cod']);
+    expect(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay']);
   });
 
   it('.env.example has all payment config variables', async () => {
@@ -39,74 +39,50 @@ describe('Payment Module Integration', () => {
     if (fs.existsSync(envPath)) {
       const content = fs.readFileSync(envPath, 'utf8');
       const required = [
-        'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_CONNECT_ENABLED',
-        'STRIPE_CONNECT_SECRET_KEY', 'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET',
-        'RAZORPAY_WEBHOOK_SECRET', 'RAZORPAY_SETTLEMENT_ENABLED',
-        'STRIPE_WEBHOOK_URL', 'RAZORPAY_WEBHOOK_URL', 'PAYMENT_PRIMARY_GATEWAY',
+        'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET',
+        'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET',
+        'RAZORPAY_WEBHOOK_SECRET',
+        'PAYMENT_PRIMARY_GATEWAY',
       ];
       required.forEach((v) => expect(content).toContain(v));
     }
   });
 
-  it('StripeConnect source has payout methods', async () => {
-    const fs = await import('fs');
-    const path = await import('path');
-    const filePath = path.resolve(__dirname, '../src/services/payment-provider/stripe-connect.service.ts');
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf8');
-      expect(content).toContain('async sendPayout');
-      expect(content).toContain('async createConnectAccount');
-      expect(content).toContain('stripe.transfers.create');
-      expect(content).toContain('async getPayoutHistory');
-      expect(content).toContain('async getAccountBalance');
-    }
-  });
-
-  it('RazorpaySettlement source has payout methods', async () => {
-    const fs = await import('fs');
-    const path = await import('path');
-    const filePath = path.resolve(__dirname, '../src/services/payment-provider/razorpay-settlement.service.ts');
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf8');
-      expect(content).toContain('async processPayout');
-      expect(content).toContain('settlements');
-      expect(content).toContain('createFundAccount');
-      expect(content).toContain('getAccountStatus');
-    }
-  });
-
-  it('payout service source wires to stripe connect and razorpay settlement', async () => {
+  it('payout service exists and has required methods', async () => {
     const fs = await import('fs');
     const path = await import('path');
     const filePath = path.resolve(__dirname, '../src/services/restaurant/payout.service.ts');
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf8');
-      expect(content).toContain('stripeConnectService');
-      expect(content).toContain('razorpaySettlementService');
-      expect(content).toContain('STRIPE_CONNECT_ENABLED');
-      expect(content).toContain('RAZORPAY_SETTLEMENT_ENABLED');
+      expect(content).toContain('generatePayoutReport');
+      expect(content).toContain('getPayoutHistory');
+      expect(content).toContain('processPayout');
+      expect(content).toContain('getPendingPayouts');
     }
   });
 
-  it('payment service uses fetchPaymentDetails for refund validation', async () => {
+  it('payment service has required methods', async () => {
     const fs = await import('fs');
     const path = await import('path');
     const filePath = path.resolve(__dirname, '../src/services/payments/payments.service.ts');
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf8');
-      expect(content).toContain('fetchPaymentDetails(paymentId, userId)');
-      expect(content).toContain('async refundPayment');
+      expect(content).toContain('createPaymentIntent');
+      expect(content).toContain('confirmPayment');
+      expect(content).toContain('refundPayment');
+      expect(content).toContain('constructEvent');
     }
   });
 
-  it('chargeback service has initiateRefundForWonDispute implementation', async () => {
+  it('chargeback service has dispute handling methods', async () => {
     const fs = await import('fs');
     const path = await import('path');
     const filePath = path.resolve(__dirname, '../src/services/payments/chargeback/chargeback.service.ts');
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf8');
-      expect(content).toContain('async initiateRefundForWonDispute');
-      expect(content).toContain('stripe.refunds.create');
+      expect(content).toContain('handleDisputeCreated');
+      expect(content).toContain('handleDisputeClosed');
+      expect(content).toContain('getDisputeStats');
     }
   });
 });

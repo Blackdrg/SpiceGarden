@@ -4,36 +4,36 @@ import { UserEntity } from './user.entity';
 @Entity('user_sessions')
 export class SessionEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column()
-  deviceName: string;
+  deviceName!: string;
 
   @Column()
-  deviceType: string;
+  deviceType!: string;
 
   @Column()
-  ipAddress: string;
+  ipAddress!: string;
 
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshToken!: string;
 
   @Column()
-  expiresAt: Date;
+  expiresAt!: Date;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  lastActiveAt: Date;
+  lastActiveAt!: Date;
 }

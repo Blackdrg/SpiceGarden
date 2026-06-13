@@ -201,6 +201,7 @@ export const orderService = {
   async getCart(): Promise<CartItem[]> {
     try {
       const cartJson = await AsyncStorage.getItem(STORAGE_KEYS.CART);
+      if (!cartJson) return [];
       const parsed = safeParse(cartJson) as CartItem[] | undefined;
       return parsed ?? [];
     } catch {

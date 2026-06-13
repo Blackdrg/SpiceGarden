@@ -38,7 +38,7 @@ describe('Payment Service Integration', () => {
      });
 
     it('should process refund for completed orders', () => {
-      const order = { status: 'DELIVERED', paymentStatus: 'COMPLETED', refundStatus: null };
+      const order: Record<string, string | null> = { status: 'DELIVERED', paymentStatus: 'COMPLETED', refundStatus: null };
       const refundAmount = 410;
 
       if (order.status === 'DELIVERED' && order.paymentStatus === 'COMPLETED') {

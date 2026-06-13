@@ -5,36 +5,36 @@ import { UserEntity } from './user.entity';
 @Unique(['userId', 'fingerprint'])
 export class DeviceFingerprintEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column()
-  fingerprint: string;
+  fingerprint!: string;
 
   @Column({ nullable: true })
-  deviceName: string;
+  deviceName!: string;
 
   @Column({ nullable: true })
-  deviceType: string;
+  deviceType!: string;
 
   @Column({ nullable: true })
-  userAgent: string;
+  userAgent!: string;
 
   @Column({ nullable: true })
-  ipAddress: string;
+  ipAddress!: string;
 
   @Column({ default: true })
-  isTrusted: boolean;
+  isTrusted!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

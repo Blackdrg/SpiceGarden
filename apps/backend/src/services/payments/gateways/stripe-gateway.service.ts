@@ -21,7 +21,7 @@ export class StripeGateway implements PaymentGateway {
   async createPaymentIntent(
     amount: number,
     currency: string = 'usd',
-    userId: string = null,
+    userId: string | null = null,
     metadata: Record<string, any> = {}
   ): Promise<PaymentIntent> {
     try {
@@ -112,7 +112,7 @@ export class StripeGateway implements PaymentGateway {
         id: refund.id,
         amount: refund.amount,
         currency: paymentIntent.currency || 'usd',
-        status: refund.status,
+        status: refund.status || undefined,
       };
     } catch (error) {
       this.logger.error('Stripe payment refund failed:', error);

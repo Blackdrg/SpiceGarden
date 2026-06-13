@@ -136,7 +136,7 @@ export class ReconciliationService {
       relations: ['gstDetail'],
     });
 
-    const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail);
+    const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail!);
 
     return {
       restaurantId,

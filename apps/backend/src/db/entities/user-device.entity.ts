@@ -4,39 +4,39 @@ import { UserEntity } from './user.entity';
 @Entity('user_devices')
 export class UserDeviceEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column({ nullable: true })
-  fcmToken: string;
+  fcmToken!: string;
 
   @Column({ nullable: true })
-  apnsToken: string;
+  apnsToken!: string;
 
   @Column({ nullable: true })
-  deviceName: string;
+  deviceName!: string;
 
   @Column({ nullable: true })
-  deviceType: string;
+  deviceType!: string;
 
   @Column({ nullable: true })
-  userAgent: string;
+  userAgent!: string;
 
   @Column({ nullable: true })
-  ipAddress: string;
+  ipAddress!: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

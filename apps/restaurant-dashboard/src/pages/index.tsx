@@ -171,11 +171,6 @@ export default function KitchenDashboard() {
   const statusLabels = {
     new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
   } as const satisfies Record<OrderStatus, string>;
-  const statusColors = {
-    new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
-    ready: '#4caf50', delayed: '#ff4444', completed: '#999', pickedup: '#ff9800', delivered: '#4caf50',
-    cancelled: '#888',
-  } as const satisfies Record<OrderStatus, string>;
 
   const counts = Object.fromEntries(statuses.map((s) => [s, orders.filter((o) => o.status === s).length])) as Record<OrderStatus, number>;
 
@@ -224,15 +219,10 @@ export default function KitchenDashboard() {
       {/* ── Status bar strip ───────────────────────────────────────────────── */}
       <div className={styles.statusRibbon}>
         {statuses.map((s) => (
-          <span
-            key={s}
-            style={{
-              backgroundColor: `${statusColors[s]}22`,
-              border: `1px solid ${statusColors[s]}66`,
-              color: statusColors[s],
-            }}
-            className={styles.statusBadge}
-          >
+<span
+             key={s}
+             className={`${styles.statusBadge} ${styles[`statusBadge${statusClassSuffix(s)}`]}`}
+           >
             {statusLabels[s]} ({counts[s]})
           </span>
         ))}
@@ -285,7 +275,7 @@ export default function KitchenDashboard() {
           <div className={styles.statsGrid}>
             {statuses.map((s) => (
               <div key={s} className={styles.statsCard}>
-                <div style={{ color: statusColors[s] }} className={styles.statsCount}>{counts[s]}</div>
+                <div className={`${styles.statsCount} ${styles[`statsCount${s.charAt(0).toUpperCase() + s.slice(1)}`]}`}>{counts[s]}</div>
                 <div className={styles.statsLabel}>{statusLabels[s]}</div>
               </div>
             ))}
@@ -300,9 +290,11 @@ export default function KitchenDashboard() {
                 const overdue = group.filter((o) => s === 'preparing' && isDelayed(o)).length;
                 return (
                   <div key={s} className={styles.batchSectionPadding}>
-                    <div style={{ color: statusColors[s] }} className={styles.batchGroupHeader}>
-                      <span style={{ backgroundColor: statusColors[s] }} className={styles.statusIndicator} />
-                      {statusLabels[s]} — {group.length} orders
+                    <div className={`${styles.batchGroupHeader} ${styles[`batchGroupHeader${statusClassSuffix(s)}`]}`}>
+                      <span className={styles.statusIndicator} />
+                      <span>
+                        {statusLabels[s]} — {group.length} orders
+                      </span>
                       {overdue > 0 && <span className={styles.delayedWarning}>&#9888; {overdue} DELAYED</span>}
                     </div>
                     <div className={styles.ordersGrid}>
@@ -353,17 +345,18 @@ export default function KitchenDashboard() {
             {inventory.map((item) => {
               const pct = Math.min(100, (item.inStock / item.threshold) * 100);
               const isLow = item.inStock <= item.threshold;
+              const stockWidthClassName = stockWidthClass(pct);
               return (
-                <div key={item.id} style={{ border: isLow ? '2px solid #ff4444' : '2px solid #333' }} className={styles.inventoryItem}>
-                  <div className={styles.inventoryItemName}>{item.name}</div>
-                  <div style={{ color: isLow ? '#ff4444' : '#4caf50' }} className={styles.inventoryItemCount}>
-                    {item.inStock} <span className={styles.inventoryUnit}>units</span>
-                  </div>
-                  <div className={styles.inventoryThreshold}>
-                    Threshold: {item.threshold}
-                  </div>
-                  <div style={{ background: isLow ? '#ff4444' : '#4caf50', opacity: 0.3 }} className={styles.stockProgressBar} />
-                  <div style={{ width: `${pct}%`, background: isLow ? '#ff4444' : '#4caf50' }} className={styles.stockProgressFill} />
+<div key={item.id} className={`${styles.inventoryItem} ${isLow ? styles.inventoryItemLow : styles.inventoryItemNormal}`}>
+              <div className={styles.inventoryItemName}>{item.name}</div>
+              <div className={`${styles.inventoryItemCount} ${isLow ? styles.inventoryItemCountLow : styles.inventoryItemCountNormal}`}>
+                {item.inStock} <span className={styles.inventoryUnit}>units</span>
+              </div>
+              <div className={styles.inventoryThreshold}>
+                Threshold: {item.threshold}
+              </div>
+              <div className={styles.stockProgressBar} />
+              <div className={`${styles.stockProgressFill} ${stockWidthClassName}`} />
                   {isLow && (
                     <div className={styles.lowStockWarning}>
                       &#9888; LOW STOCK — Restock urgently
@@ -432,9 +425,25 @@ interface OrderCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const SERVICE_LABEL: Record<ServiceType, string> = {
   dine_in: 'DINE IN', 'dine-in': 'DINE IN', takeaway: 'TAKEAWAY', delivery: 'DELIVERY',
 };
-const SERVICE_COLOR: Record<ServiceType, string> = {
-  dine_in: '#9c27b0', 'dine-in': '#9c27b0', takeaway: '#ff9800', delivery: '#2196f3',
-};
+
+function statusClassSuffix(status: OrderStatus): string {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function serviceClassSuffix(serviceType: ServiceType): string {
+  if (serviceType === 'dine-in' || serviceType === 'dine_in') return 'DineIn';
+  return serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
+}
+
+function progressWidthClass(value: number): string {
+  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
+  return styles[`progressFill${bucket}`];
+}
+
+function stockWidthClass(value: number): string {
+  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
+  return styles[`stockProgressFill${bucket}`];
+}
 
 function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, onPark }: OrderCardProps) {
   const mins = orderElapsed(order);
@@ -442,11 +451,12 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
   const delay = !!(order.status === 'preparing' && mins > order.estPrepMins);
   const progress = Math.min(100, Math.round((mins / order.estPrepMins) * 100));
 
-  const serviceColor = SERVICE_COLOR[order.serviceType];
-  const statusColorValue = getStatusColor(order.status);
+  const orderCardClassName = `${styles.orderCard} ${delay ? styles.orderCardDelayed : styles[`orderCard${statusClassSuffix(order.status)}`]}`;
+  const serviceLabelClassName = `${styles.serviceLabel} ${styles[`serviceLabel${serviceClassSuffix(order.serviceType)}`]}`;
+  const progressWidthClassName = progressWidthClass(progress);
 
   return (
-    <div style={{ backgroundColor: delay ? '#3b1a1a' : '#2a2a4a', border: `2px solid ${delay ? '#ff4444' : statusColorValue}` }} className={styles.orderCard}>
+    <div className={orderCardClassName}>
       {/* Header */}
       <div className={styles.orderCardHeader}>
         <div>
@@ -455,7 +465,7 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
             {order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
-        <span style={{ background: `${serviceColor}33`, color: serviceColor, border: `1px solid ${serviceColor}66` }} className={styles.serviceLabel}>
+        <span className={serviceLabelClassName}>
           {SERVICE_LABEL[order.serviceType]}
         </span>
       </div>
@@ -485,18 +495,15 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
       {(order.status === 'preparing' || order.status === 'delayed') && (
         <div>
           <div className={styles.timerSection}>
-            <span style={{ color: delay ? '#ff4444' : '#aaaaaa' }}>
+            <span className={delay ? styles.timerDelay : styles.timerNormal}>
               &#9200; {mins}m / ~{order.estPrepMins}m &nbsp;
               {delay && <span className={styles.delayBadge}>&#x26A0; DELAYED</span>}
               {!delay && <span>{ots > 0 ? `${Math.ceil(ots / 60000)}m left` : 'Nearing done'}</span>}
             </span>
           </div>
-          <div className={styles.progressBar}>
-            <div
-              style={{ width: `${Math.min(progress, 100)}%` }}
-              className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal}`}
-            />
-          </div>
+            <div className={styles.progressBar}>
+              <div className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal} ${progressWidthClassName}`} />
+            </div>
         </div>
       )}
 
@@ -535,13 +542,4 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
       </div>
     </div>
   );
-}
-
-function getStatusColor(s: OrderStatus): string {
-  const colors: Record<OrderStatus, string> = {
-    new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
-    ready: '#4caf50', delayed: '#ff4444', completed: '#444', pickedup: '#ff9800', delivered: '#4caf50',
-    cancelled: '#888',
-  };
-  return colors[s];
 }

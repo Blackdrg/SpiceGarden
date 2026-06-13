@@ -58,7 +58,7 @@ export class BranchManagementService {
 
     await this.branchRepo.update(branchId, updatePayload);
     const updated = await this.branchRepo.findOne({ where: { id: branchId } });
-    return updated;
+    return (await this.branchRepo.findOne({ where: { id: branchId } }))!;
   }
 
   async toggleBranchStatus(branchId: string, isOnline: boolean): Promise<RestaurantBranchEntity> {
@@ -70,14 +70,14 @@ export class BranchManagementService {
     await this.branchRepo.update(branchId, { isOnline });
     this.logger.log(`Branch ${branchId} status updated to ${isOnline ? 'online' : 'offline'}`);
 
-    return this.branchRepo.findOne({ where: { id: branchId } });
+    return (await this.branchRepo.findOne({ where: { id: branchId } }))!;
   }
 
   async getBranchDetails(branchId: string): Promise<RestaurantBranchEntity> {
-    return this.branchRepo.findOne({
+    return (await this.branchRepo.findOne({
       where: { id: branchId },
       relations: ['restaurant'],
-    });
+    }))!;
   }
 
   async getBranchesByRestaurant(restaurantId: string): Promise<RestaurantBranchEntity[]> {

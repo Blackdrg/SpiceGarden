@@ -17,33 +17,33 @@ export enum OtpStatus {
 @Entity('otp_verifications')
 export class OtpEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column({ type: 'enum', enum: OtpType })
-  type: OtpType;
+  type!: OtpType;
 
   @Column({ length: 6 })
-  code: string;
+  code!: string;
 
   @Column({ type: 'enum', enum: OtpStatus, default: OtpStatus.PENDING })
-  status: OtpStatus;
+  status!: OtpStatus;
 
   @Column()
-  expiresAt: Date;
+  expiresAt!: Date;
 
   @Column({ nullable: true })
-  verifiedAt: Date;
+  verifiedAt!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

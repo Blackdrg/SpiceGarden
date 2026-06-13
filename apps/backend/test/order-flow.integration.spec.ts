@@ -123,10 +123,10 @@ describe('Order Service Integration', () => {
     it('should assign driver after payment confirmation', () => {
       const availableDrivers = ['driver-1', 'driver-2', 'driver-3'];
       const assignedDriver = availableDrivers[0];
-      const order = { status: 'PREPARING', driverId: null };
+      const order: Record<string, any> = { status: 'PREPARING', driverId: null };
 
-      order.driverId = assignedDriver;
-      order.status = 'DRIVER_ASSIGNED';
+      (order as any).driverId = assignedDriver;
+      (order as any).status = 'DRIVER_ASSIGNED';
 
       expect(order.driverId).toBe(assignedDriver);
       expect(order.status).toBe('DRIVER_ASSIGNED');

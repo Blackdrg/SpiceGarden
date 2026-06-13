@@ -91,7 +91,7 @@ export class CommissionService {
     }
 
     await this.commissionRepo.update(ruleId, updateData);
-    return this.commissionRepo.findOne({ where: { id: ruleId } });
+    return (await this.commissionRepo.findOne({ where: { id: ruleId } }))!;
   }
 
   async deactivateRule(ruleId: string): Promise<CommissionRuleEntity> {

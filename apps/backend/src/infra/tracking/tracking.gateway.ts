@@ -58,7 +58,7 @@ interface SocketConnection {
 })
 export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(TrackingGateway.name);
   private readonly connectedClients = new Map<string, SocketConnection>();

@@ -39,7 +39,7 @@ export class TaxReportingService {
 
     const gstDetails = orders
       .filter(o => o.gstDetail)
-      .map(o => o.gstDetail);
+      .map(o => o.gstDetail!);
 
     const summary = {
       period: { month, year },

@@ -45,7 +45,7 @@ export class VaultService implements OnModuleInit {
         this.logger.warn('Vault not healthy - falling back to local secrets');
       }
     } catch (error) {
-      this.logger.warn(`Vault initialization failed: ${error.message}`);
+      this.logger.warn(`Vault initialization failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -61,7 +61,7 @@ export class VaultService implements OnModuleInit {
         this.cache.set(key, { value: secretValue, timestamp: Date.now() });
         return secretValue as T;
       } catch (error) {
-        this.logger.warn(`Failed to fetch secret ${key} from Vault: ${error.message}`);
+        this.logger.warn(`Failed to fetch secret ${key} from Vault: ${error instanceof Error ? error.message : String(error)}`);
         if (fallback !== undefined) {
           return fallback;
         }
@@ -112,7 +112,7 @@ export class VaultService implements OnModuleInit {
         return true;
       }
     } catch (error) {
-      this.logger.error(`Failed to rotate secret ${key}: ${error.message}`);
+      this.logger.error(`Failed to rotate secret ${key}: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return false;

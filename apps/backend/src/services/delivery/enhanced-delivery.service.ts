@@ -316,7 +316,7 @@ export class EnhancedDeliveryService {
         await manager.update(DriverEntity, driverId, {
           failureCount: (driver.failureCount || 0) + 1,
           isFraudSuspicious: (driver.failureCount || 0) + 1 >= 3,
-          fraudFlags: { ...(driver.fraudFlags || {} as any), noShowRisk: 0.8 },
+          fraudFlags: { ...(driver.fraudFlags || {} as any), noShowRisk: 0.8 } as any,
         });
       }
 

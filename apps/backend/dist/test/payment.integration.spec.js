@@ -1,3 +1,4 @@
+"use strict";
 describe('Payment Service Integration', () => {
     const paymentStatuses = ['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED', 'DELAYED'];
     describe('Payment Processing', () => {

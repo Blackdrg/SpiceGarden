@@ -61,10 +61,10 @@ export default function AnalyticsCustomers() {
             <p style={{ color: '#a1a1aa', fontSize: 14, marginBottom: 16 }}>
               {repeat?.repeatCustomers || 0} repeat customers · Avg frequency: {repeat?.avgFrequency || 0} orders
             </p>
-{repeat?.topRepeatCustomers?.length > 0 && (
+{(repeat?.topRepeatCustomers?.length ?? 0) > 0 && (
                <div>
                  <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#71717a' }}>Top Customers</h3>
-                 {repeat.topRepeatCustomers!.slice(0, 5).map((c) => (
+                 {(repeat!.topRepeatCustomers ?? []).slice(0, 5).map((c) => (
                    <div key={c.userId} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #27272a', fontSize: 13 }}>
                      <span>{c.userId.slice(0, 10)}</span>
                      <span style={{ color: '#a1a1aa' }}>{c.orderCount} orders · ₹{c.totalSpent?.toFixed(0)}</span>

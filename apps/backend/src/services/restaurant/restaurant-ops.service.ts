@@ -79,7 +79,7 @@ export class RestaurantOpsService {
     }
 
     await this.onboardingRepo.update(onboardingId, updateData);
-    return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+    return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }))!;
   }
 
   async completeOnboarding(onboardingId: string, userId: string): Promise<RestaurantOnboardingEntity> {
@@ -95,7 +95,7 @@ export class RestaurantOpsService {
 
     await this.restaurantRepo.update(onboarding.restaurantId, { status: 'active' });
 
-    return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+    return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }))!;
   }
 
   async getOnboardingProgress(onboardingId: string): Promise<any> {

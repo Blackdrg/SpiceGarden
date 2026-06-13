@@ -60,7 +60,11 @@ export class TicketRoutingService {
       });
     }
 
-    return this.ticketRepo.findOne({ where: { id: ticketId } });
+    const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
+    if (!result) {
+      throw new Error('Ticket not found');
+    }
+    return result;
   }
 
   private async findAvailableAgent(roles: string[], priority: TicketPriority): Promise<UserEntity | null> {
@@ -89,7 +93,11 @@ export class TicketRoutingService {
       priority: this.getEscalatedPriority(ticket.priority, newLevel),
     } as any);
 
-    return this.ticketRepo.findOne({ where: { id: ticketId } });
+    const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
+    if (!result) {
+      throw new Error('Ticket not found');
+    }
+    return result;
   }
 
   private getEscalationTarget(level: number): string {

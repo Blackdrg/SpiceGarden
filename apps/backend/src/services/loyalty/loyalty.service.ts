@@ -82,7 +82,7 @@ export class LoyaltyService {
     const existing = await this.referralRepo.findOne({ where: { referrerId: userId } });
     if (existing) return existing;
 
-    const user = await this.userRepo.findOne({ where: { id: userId } });
+    const user = (await this.userRepo.findOne({ where: { id: userId } }))!;
     const code = `SG${(user.email as string).substring(0, 3).toUpperCase()}${Date.now().toString(36).toUpperCase().slice(-4)}`;
 
     const referral = this.referralRepo.create();

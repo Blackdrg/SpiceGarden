@@ -50,14 +50,14 @@ export class AuditService {
           } : {})
         },
         ipAddress: request ? (request.ip || request.connection.remoteAddress) : null
-      });
+      } as any);
 
       const savedLog = await this.auditLogRepo.save(auditLog);
       
       // Log to console as well for immediate visibility
       this.logger.log(`Audit Log: ${action} by ${performedBy || 'system'} on ${entityType} ${entityId || ''}`);
       
-      return savedLog;
+      return savedLog as unknown as AuditLogEntity;
     } catch (error) {
       this.logger.error('Failed to create audit log', error);
       // Don't throw - audit logging failures shouldn't break the application

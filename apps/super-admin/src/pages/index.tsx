@@ -377,7 +377,7 @@ fetchOrders().then(orders => {
                             }}>{o.status.toUpperCase()}</span>
                           </td>
                           <td style={{ padding: '10px 12px', color: '#999', fontSize: 12 }}>
-                            {Math.floor((Date.now() - o.timestamp) / 60000)}m
+                             {Math.floor((Date.now() - (o.timestamp ?? 0)) / 60000)}m
                           </td>
                         </tr>
                       ))}

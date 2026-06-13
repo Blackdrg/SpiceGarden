@@ -4,36 +4,36 @@ import { UserEntity } from './user.entity';
 @Entity('notification_preferences')
 export class NotificationPreferenceEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column({ default: true })
-  pushOrders: boolean;
+  pushOrders!: boolean;
 
   @Column({ default: true })
-  pushPromotions: boolean;
+  pushPromotions!: boolean;
 
   @Column({ default: true })
-  pushDeliveryUpdates: boolean;
+  pushDeliveryUpdates!: boolean;
 
   @Column({ default: true })
-  emailOrders: boolean;
+  emailOrders!: boolean;
 
   @Column({ default: false })
-  emailPromotions: boolean;
+  emailPromotions!: boolean;
 
   @Column({ default: true })
-  smsDeliveryUpdates: boolean;
+  smsDeliveryUpdates!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -1,3 +1,4 @@
+"use strict";
 describe('E2E: Complete Order Flow (signup → order → pay → track → deliver → review)', () => {
     describe('User Registration & Authentication', () => {
         it('should register a new user and return tokens', () => {

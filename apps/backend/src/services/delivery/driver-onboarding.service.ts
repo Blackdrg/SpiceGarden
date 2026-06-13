@@ -43,7 +43,7 @@ export class DriverOnboardingService {
       driver = await this.driverRepo.findOne({ where: { userId } });
     }
 
-    const savedDriver = await this.driverRepo.save(driver);
+    const savedDriver = await this.driverRepo.save(driver!);
 
     await this.createInitialDocuments(savedDriver.id, data);
 
@@ -137,7 +137,7 @@ export class DriverOnboardingService {
       }
     }
 
-    return this.documentRepo.findOne({ where: { id: documentId } });
+    return (await this.documentRepo.findOne({ where: { id: documentId } }))!;
   }
 
   async getOnboardingStatus(driverId: string): Promise<any> {

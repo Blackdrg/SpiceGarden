@@ -1,3 +1,4 @@
+"use strict";
 describe('Order Service - Isolated Unit Tests', () => {
     beforeAll(() => {
         jest.mock('@nestjs/testing', () => ({

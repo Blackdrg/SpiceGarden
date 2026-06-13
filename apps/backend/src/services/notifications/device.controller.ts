@@ -13,11 +13,11 @@ export class DeviceController {
     const { userId, fcmToken, apnsToken, deviceInfo } = body;
     
     if (fcmToken) {
-      await this.notificationService.registerDevice(userId, fcmToken, deviceInfo);
+      await this.notificationService.registerDevice(userId, fcmToken, deviceInfo ?? {});
     }
     
     if (apnsToken) {
-      await this.notificationService.registerDevice(userId, apnsToken, { ...deviceInfo, type: 'ios' });
+      await this.notificationService.registerDevice(userId, apnsToken, { ...(deviceInfo || {}), type: 'ios' });
     }
     
     return { success: true, message: 'Device registered successfully' };

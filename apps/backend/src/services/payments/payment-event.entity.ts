@@ -3,25 +3,25 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 
 @Entity('payment_events')
 export class PaymentEventEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @Index()
   @Column()
-  orderId: string;
+  orderId!: string;
 
 @Column()
-event: 'payment_intent_created' | 'payment_succeeded' | 'payment_failed' | 'refund_initiated' | 'refund_completed' | 'chargeback_received' | 'chargeback_closed' | 'refund_failed';
+event!: 'payment_intent_created' | 'payment_succeeded' | 'payment_failed' | 'refund_initiated' | 'refund_completed' | 'chargeback_received' | 'chargeback_closed' | 'refund_failed';
 
   @Column('jsonb')
-  payload: any;
+  payload!: any;
 
   @Column({ default: false })
-  isProcessed: boolean;
+  isProcessed!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

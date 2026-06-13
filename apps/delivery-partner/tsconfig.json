@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "ESNext",
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-native",
-    "strict": false,
+    "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -12,19 +13,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
-"types": [
-       "react-native",
-       "jest",
-       "node"
-     ]
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["react-native", "jest", "node"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "extends": "expo/tsconfig.base"
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -103,7 +103,7 @@ export class ComplianceService {
       throw new Error('User not found');
     }
 
-    const orders = []; // In production, fetch from order repository
+    const orders: any[] = []; // In production, fetch from order repository
     const sessions = await this.sessionRepo.find({
       where: { userId },
     });

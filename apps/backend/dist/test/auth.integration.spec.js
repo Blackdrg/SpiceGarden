@@ -1,3 +1,4 @@
+"use strict";
 describe('Auth Service Integration', () => {
     const authEndpoints = ['/auth/signup', '/auth/login', '/auth/refresh', '/auth/logout'];
     describe('Authentication Flow', () => {

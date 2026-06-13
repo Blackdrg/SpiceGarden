@@ -4,32 +4,32 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, Unique
 @Index(['key', 'operation'], { unique: true })
 export class IdempotencyEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  key: string;
+  key!: string;
 
   @Column()
-  operation: string;
+  operation!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column('jsonb')
-  requestPayload: any;
+  requestPayload!: any;
 
   @Column('jsonb', { nullable: true })
-  responsePayload: any;
+  responsePayload!: any;
 
   @Column({ nullable: true })
-  statusCode: number;
+  statusCode!: number;
 
   @Column({ default: false })
-  isCompleted: boolean;
+  isCompleted!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ nullable: true })
-  completedAt: Date;
+  completedAt!: Date;
 }

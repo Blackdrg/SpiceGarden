@@ -11,7 +11,7 @@ export class CodService {
   async createPaymentIntent(
     amount: number,
     currency: string = 'usd',
-    userId: string = null,
+    userId: string | null = null,
     metadata: Record<string, any> = {},
   ): Promise<PaymentIntent> {
     // Generate a deterministic ID for tracing

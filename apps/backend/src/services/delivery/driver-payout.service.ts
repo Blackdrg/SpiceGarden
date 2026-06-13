@@ -95,7 +95,7 @@ export class DriverPayoutService {
       approvedAt: new Date(),
     });
 
-    return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+    return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }))!;
   }
 
   async markPaid(incentiveId: string, payoutReference: string): Promise<DriverIncentiveEntity> {
@@ -110,7 +110,7 @@ export class DriverPayoutService {
       paidAt: new Date(),
     });
 
-    return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+    return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }))!;
   }
 
   async getPendingIncentives(driverId?: string): Promise<DriverIncentiveEntity[]> {

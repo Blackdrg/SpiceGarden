@@ -26,7 +26,7 @@ export class DriverController {
   ) {}
 
   @Get('me')
-  async getProfile(@Request() req) {
+  async getProfile(@Request() req: { user: { id: string } }) {
     const driver = await this.driverRepo.findOne({
       where: { userId: req.user.id },
       relations: ['user'],

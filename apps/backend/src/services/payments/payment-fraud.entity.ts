@@ -3,29 +3,29 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyTo
 @Entity('payment_fraud_flags')
 export class PaymentFraudFlagEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column({ nullable: true })
-  paymentIntentId: string;
+  paymentIntentId!: string;
 
   @Column({ nullable: true })
-  orderId: string;
+  orderId!: string;
 
   @Column()
-  flagType: 'velocity_abuse' | 'card_testing' | 'high_risk_card' | 'suspicious_pattern' | 'refund_abuse' | 'chargeback_risk' | 'other';
+  flagType!: 'velocity_abuse' | 'card_testing' | 'high_risk_card' | 'suspicious_pattern' | 'refund_abuse' | 'chargeback_risk' | 'other';
 
   @Column('decimal', { precision: 12, scale: 2, nullable: true })
-  amount: number;
+  amount!: number;
 
   @Column()
-  riskScore: number;
+  riskScore!: number;
 
   @Column('simple-json', { nullable: true })
-  evidence: {
+  evidence!: {
     ipAddress?: string;
     userAgent?: string;
     cardBin?: string;
@@ -35,11 +35,11 @@ export class PaymentFraudFlagEntity {
   };
 
   @Column({ default: false })
-  isBlocked: boolean;
+  isBlocked!: boolean;
 
   @Column({ nullable: true })
-  blockedAt: Date;
+  blockedAt!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

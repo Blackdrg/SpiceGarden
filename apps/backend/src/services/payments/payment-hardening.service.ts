@@ -102,7 +102,7 @@ export class PaymentHardeningService {
       amount,
       passed: errors.length === 0,
       failureReason: errors.join(', ') || null,
-    });
+    } as any);
 
     return { valid: errors.length === 0, errors };
   }
@@ -135,7 +135,7 @@ export class PaymentHardeningService {
       validationData: { dailyTotal, dailyLimit },
       passed: errors.length === 0,
       failureReason: errors.join(', ') || null,
-    });
+    } as any);
 
     return { valid: errors.length === 0, errors };
   }
@@ -178,7 +178,7 @@ export class PaymentHardeningService {
       validationData: { hourlyCount, maxPerHour },
       passed: errors.length === 0,
       failureReason: errors.join(', ') || null,
-    });
+    } as any);
 
     return { valid: errors.length === 0, errors };
   }

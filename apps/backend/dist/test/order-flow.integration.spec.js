@@ -1,3 +1,4 @@
+"use strict";
 describe('Order Service Integration', () => {
     const orderStatuses = ['PLACED', 'RESTAURANT_ACCEPTED', 'PREPARING', 'READY_FOR_PICKUP', 'DRIVER_ASSIGNED', 'PICKED_UP', 'ON_THE_WAY', 'DELIVERED'];
     const paymentStatuses = ['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'];

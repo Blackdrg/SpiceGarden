@@ -16,7 +16,7 @@ import { Injectable } from '@nestjs/common';
 })
 export class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   handleConnection(client: Socket) {
     const branchId = client.handshake.query.branchId;

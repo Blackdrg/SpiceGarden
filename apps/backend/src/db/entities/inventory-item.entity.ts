@@ -5,53 +5,53 @@ import { SupplierEntity } from './supplier.entity';
 @Entity('inventory_items')
 export class InventoryItemEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  currentStock: number;
+  currentStock!: number;
 
   @Column()
-  unit: string; // e.g., 'kg', 'pcs', 'liters'
+  unit!: string; // e.g., 'kg', 'pcs', 'liters'
 
   @Column('decimal', { precision: 10, scale: 2 })
-  lowStockThreshold: number;
+  lowStockThreshold!: number;
 
   @Column({ nullable: true })
-  expiryDate: Date; // Expiry date for perishable items
+  expiryDate!: Date; // Expiry date for perishable items
 
   @Column({ nullable: true })
-  reorderPoint: number; // When to reorder
+  reorderPoint!: number; // When to reorder
 
   @Column({ nullable: true })
-  reorderQuantity: number; // How much to reorder
+  reorderQuantity!: number; // How much to reorder
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  unitCost: number; // Cost per unit
+  unitCost!: number; // Cost per unit
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  totalCost: number; // Total cost of current stock
+  totalCost!: number; // Total cost of current stock
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
-  wastage: number; // Total wastage (in units)
+  wastage!: number; // Total wastage (in units)
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
-  wastageCost: number; // Cost of wastage
+  wastageCost!: number; // Cost of wastage
 
   @ManyToOne(() => RestaurantBranchEntity)
-  branch: RestaurantBranchEntity;
+  branch!: RestaurantBranchEntity;
 
   @ManyToOne(() => SupplierEntity, { nullable: true })
-  supplier: SupplierEntity;
+  supplier!: SupplierEntity;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

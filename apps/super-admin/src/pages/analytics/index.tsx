@@ -58,7 +58,7 @@ export default function AnalyticsOverview() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}>
             {[
               { label: 'Total Orders', value: data?.conversionFunnel?.funnel?.ordersPlaced || '—' },
-              { label: 'Revenue', value: `₹${(data?.conversionFunnel?.avgOrderValue * (data?.conversionFunnel?.funnel?.ordersPlaced || 0) || 0).toFixed(0)}` },
+              { label: 'Revenue', value: `₹${((data?.conversionFunnel?.avgOrderValue ?? 0) * (data?.conversionFunnel?.funnel?.ordersPlaced || 0) || 0).toFixed(0)}` },
               { label: 'Avg Order Value', value: `₹${data?.conversionFunnel?.avgOrderValue?.toFixed(0) || '—'}` },
               { label: 'Active Customers', value: data?.churnAnalysis?.activeCustomers || '—' },
             ].map((card) => (

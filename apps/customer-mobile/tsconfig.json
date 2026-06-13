@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-native",
-    "strict": false,
+    "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,9 +13,7 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "types": [
       "react",
@@ -31,6 +29,5 @@
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

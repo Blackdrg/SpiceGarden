@@ -75,9 +75,9 @@ describe('MongoDB Integration', () => {
 
     const found = await coll.findOne({ _id: insertedId });
     expect(found).toBeDefined();
-    expect(found.suite).toBe('mongo-integration');
-    expect(found.number).toBe(42);
-    expect(found.nested.path).toBe('ok');
+    expect(found!.suite).toBe('mongo-integration');
+    expect(found!.number).toBe(42);
+    expect(found!.nested.path).toBe('ok');
   }, TEST_TIMEOUT);
 
   it('should update and delete documents', async () => {
@@ -85,7 +85,7 @@ describe('MongoDB Integration', () => {
     const { insertedId } = await coll.insertOne({ key: 'upd-del', v: 1 });
     await coll.updateOne({ _id: insertedId }, { $set: { v: 99 } });
     const updated = await coll.findOne({ _id: insertedId });
-    expect(updated.v).toBe(99);
+    expect(updated!.v).toBe(99);
     await coll.deleteOne({ _id: insertedId });
     const gone = await coll.findOne({ _id: insertedId });
     expect(gone).toBeNull();

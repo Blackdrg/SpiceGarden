@@ -192,7 +192,7 @@ export class BusinessEngineService {
           }
         }
       } catch (error) {
-        this.logger.error(`Failed to assign driver to order ${orderId}: ${error.message}`);
+        this.logger.error(`Failed to assign driver to order ${orderId}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }, 1000)); // Simulate 1 second for restaurant acceptance
   }

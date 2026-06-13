@@ -131,8 +131,8 @@ if (!localSqlite) {
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
-        connectionFactory: (connection) => {
-          connection.on('error', (err) => {
+        connectionFactory: (connection: any) => {
+          connection.on('error', (err: unknown) => {
             console.error('MongoDB connection error:', err);
           });
           connection.on('connected', () => {

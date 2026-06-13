@@ -1,3 +1,4 @@
+"use strict";
 describe('Kitchen Service - Isolated Unit Tests', () => {
     beforeAll(() => {
         jest.mock('@nestjs/testing', () => ({

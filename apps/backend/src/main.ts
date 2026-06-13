@@ -33,12 +33,13 @@ async function bootstrap() {
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   const sanitizeMiddleware = mongoSanitize();
-  const safeMongoSanitize = (req, res, next) => {
+  const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       sanitizeMiddleware(req, res, next);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       // If we get a "Cannot set property" error, fall back to sanitizing individually
-      if (error.message.includes('Cannot set property') && error.message.includes('which has only a getter')) {
+      if (errorMessage.includes('Cannot set property') && errorMessage.includes('which has only a getter')) {
         // Sanitize each property individually to avoid setting getters
         if (req.body) {
           req.body = mongoSanitize.sanitize(req.body);
@@ -97,13 +98,13 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: "10kb", extended: true }));
 
   // Prometheus metrics endpoint
-  app.use("/metrics", async (_req, res) => {
+  app.use("/metrics", async (_req: express.Request, res: express.Response) => {
     res.set("Content-Type", "text/plain");
     res.send("spicegarden_backend_local_mode=true\n");
   });
 
   // Metrics middleware
-  app.use((req, res, next) => {
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     const start = Date.now();
     res.on("finish", () => {
       const duration = Date.now() - start;

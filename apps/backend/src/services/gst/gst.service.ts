@@ -191,7 +191,7 @@ export class GSTService {
         // Calculate GST if not already done
         await this.calculateGSTForOrder(orderId);
         // Reload order with GST detail
-        await this.orderRepo.findOne({
+        const reloadedOrder = await this.orderRepo.findOne({
           where: { id: orderId },
           relations: [
             'items',
@@ -200,6 +200,9 @@ export class GSTService {
             'gstDetail',
           ],
         });
+        if (reloadedOrder?.gstDetail) {
+          order.gstDetail = reloadedOrder.gstDetail;
+        }
       }
 
       // Get restaurant GST details
@@ -212,7 +215,7 @@ export class GSTService {
         throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);
       }
 
-      const gstDetail = order.gstDetail;
+      const gstDetail = order.gstDetail!;
       const restaurantGST = restaurant.gstDetail;
 
       // Generate invoice number (in real implementation, this would be more sophisticated)
@@ -351,7 +354,7 @@ export class GSTService {
           });
         }
 
-        const rateData = rateMap.get(rateKey);
+        const rateData = rateMap.get(rateKey)!;
         rateData.count += 1;
         rateMap.set(rateKey, rateData);
       });
