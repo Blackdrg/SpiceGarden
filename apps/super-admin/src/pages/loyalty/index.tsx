@@ -16,7 +16,7 @@ export default function LoyaltyIndex() {
           </a>
         ))}
       </div>
-      <a href="/" style={{ color: '#f97316', textDecoration: 'none' }}>← Back to Dashboard</a>
+      <Link href="/" style={{ color: '#f97316', textDecoration: 'none' }}>← Back to Dashboard</Link>
     </div>
   );
 }

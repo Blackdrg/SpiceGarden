@@ -59,6 +59,7 @@ export default function DriverFleetPenalties() {
             style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
           />
           <button
+            type="button"
             onClick={issuePenalty}
             style={{ padding: '10px 20px', background: '#f04e31', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
           >
@@ -68,7 +69,7 @@ export default function DriverFleetPenalties() {
         </div>
       </div>
 
-      <a href="/driver-fleet" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Fleet</a>
+      <Link href="/driver-fleet" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Fleet</Link>
     </div>
   );
 }

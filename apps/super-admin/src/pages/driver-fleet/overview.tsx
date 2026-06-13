@@ -77,6 +77,7 @@ export default function DriverFleetOverview() {
                   <td style={{ padding: '10px 12px', color: '#a1a1aa' }}>{d.totalDeliveries || 0}</td>
                   <td style={{ padding: '10px 12px' }}>
                     <button
+                      type="button"
                       onClick={() => window.location.href = `/driver-fleet/earnings?driverId=${d.id}`}
                       style={{ background: 'transparent', border: '1px solid #f97316', color: '#f97316', padding: '4px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}
                     >

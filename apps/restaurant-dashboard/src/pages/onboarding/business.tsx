@@ -46,8 +46,9 @@ export default function OnboardingBusiness() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Legal Business Name</label>
+            <label htmlFor="biz-legal-name" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Legal Business Name</label>
             <input
+              id="biz-legal-name"
               aria-label="Legal Business Name"
               value={form.legalName}
               onChange={(e) => setForm({ ...form, legalName: e.target.value })}
@@ -56,8 +57,9 @@ export default function OnboardingBusiness() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Trade Name</label>
+            <label htmlFor="biz-trade-name" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Trade Name</label>
             <input
+              id="biz-trade-name"
               aria-label="Trade Name"
               value={form.tradeName}
               onChange={(e) => setForm({ ...form, tradeName: e.target.value })}
@@ -66,8 +68,9 @@ export default function OnboardingBusiness() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>GSTIN</label>
+            <label htmlFor="biz-gstin" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>GSTIN</label>
             <input
+              id="biz-gstin"
               aria-label="GSTIN"
               value={form.gstin}
               onChange={(e) => setForm({ ...form, gstin: e.target.value })}
@@ -76,8 +79,9 @@ export default function OnboardingBusiness() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Business Type</label>
+            <label htmlFor="biz-business-type" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Business Type</label>
             <select
+              id="biz-business-type"
               aria-label="Business Type"
               value={form.businessType}
               onChange={(e) => setForm({ ...form, businessType: e.target.value })}
@@ -90,8 +94,9 @@ export default function OnboardingBusiness() {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Registration Date</label>
+            <label htmlFor="biz-reg-date" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Registration Date</label>
             <input
+              id="biz-reg-date"
               aria-label="Registration Date"
               type="date"
               value={form.registrationDate}
@@ -103,6 +108,7 @@ export default function OnboardingBusiness() {
 
         <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
           <button
+            type="button"
             onClick={() => window.location.href = '/onboarding'}
             style={{ ...buttonStyle.secondary, flex: 1 }}
           >

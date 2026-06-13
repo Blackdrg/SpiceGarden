@@ -87,14 +87,14 @@ const NotificationsScreen = () => {
     }
   }, []);
 
-  const togglePref = (key: keyof NotificationPrefs) => {
+  const togglePref = useCallback((key: keyof NotificationPrefs) => {
     const newPrefs = { ...prefs, [key]: !prefs[key] };
     setPrefs(newPrefs);
     savePrefs(newPrefs);
     Haptics.selectionAsync();
   };
 
-  const renderToggleRow = (label: string, value: boolean, key: keyof NotificationPrefs) => (
+  const renderToggleRow = useCallback((label: string, value: boolean, key: keyof NotificationPrefs) => (
     <View style={styles.toggleRow}>
       <Text style={styles.toggleLabel}>{label}</Text>
       <Switch

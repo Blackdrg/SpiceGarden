@@ -133,7 +133,7 @@ const AddressesPage = () => {
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg }}>
         <h2 style={{ margin: 0 }}>Saved Addresses</h2>
-        <button onClick={() => setShowAddForm(true)} aria-label="Add new address">
+        <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add new address">
           <Plus size={24} />
         </button>
       </div>
@@ -157,11 +157,11 @@ const AddressesPage = () => {
               </div>
               <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.xs }}>
                 {!addr.isDefault && (
-                  <button onClick={() => handleSetDefault(addr.id)} aria-label="Set as default">
+                  <button type="button" onClick={() => handleSetDefault(addr.id)} aria-label="Set as default">
                     <Star size={16} />
                   </button>
                 )}
-                <button onClick={() => handleDelete(addr.id)} aria-label="Delete address" style={{ color: DESIGN_TOKENS.colors.danger }}>
+                <button type="button" onClick={() => handleDelete(addr.id)} aria-label="Delete address" style={{ color: DESIGN_TOKENS.colors.danger }}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -174,30 +174,46 @@ const AddressesPage = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <Card title="Add New Address">
             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm, padding: DESIGN_TOKENS.spacing.md, minWidth: '400px' }}>
-              <input
-                placeholder="Label (e.g., Home, Work)"
-                value={newAddress.label}
-                onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="Address Line"
-                value={newAddress.addressLine}
-                onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="City"
-                value={newAddress.city}
-                onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="State"
-                value={newAddress.state}
-                onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
+              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                <label htmlFor="addr-label" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Label (e.g., Home, Work)</label>
+                <input
+                  id="addr-label"
+                  placeholder="Label (e.g., Home, Work)"
+                  value={newAddress.label}
+                  onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
+                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                />
+              </div>
+              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                <label htmlFor="addr-address" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Address Line</label>
+                <input
+                  id="addr-address"
+                  placeholder="Address Line"
+                  value={newAddress.addressLine}
+                  onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
+                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                />
+              </div>
+              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                <label htmlFor="addr-city" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>City</label>
+                <input
+                  id="addr-city"
+                  placeholder="City"
+                  value={newAddress.city}
+                  onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                />
+              </div>
+              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                <label htmlFor="addr-state" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>State</label>
+                <input
+                  id="addr-state"
+                  placeholder="State"
+                  value={newAddress.state}
+                  onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                />
+              </div>
               <input
                 placeholder="Postal Code"
                 value={newAddress.postalCode}

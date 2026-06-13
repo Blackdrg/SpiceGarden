@@ -26,6 +26,7 @@ class SentryErrorBoundary extends React.Component<React.PropsWithChildren<{}>, E
           <h1>Something went wrong</h1>
           <p>We've been notified and are working on a fix.</p>
           <button
+            type="button"
             onClick={() => {
               this.setState({ hasError: false })
               window.location.reload()

@@ -44,7 +44,7 @@ const AuthCallbackPage = () => {
       {error ? (
         <div style={{ textAlign: 'center' }}>
           <p style={{ color: DESIGN_TOKENS.colors.danger }}>Authentication error: {error}</p>
-          <button onClick={() => router.push('/auth')} style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
+          <button type="button" onClick={() => router.push('/auth')} style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
             Back to Login
           </button>
         </div>

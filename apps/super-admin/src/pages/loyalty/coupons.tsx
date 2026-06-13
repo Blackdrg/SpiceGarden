@@ -83,6 +83,7 @@ export default function LoyaltyCoupons() {
             style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
           />
           <button
+            type="button"
             onClick={createCoupon}
             disabled={creating}
             style={{ padding: '10px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
@@ -111,7 +112,7 @@ export default function LoyaltyCoupons() {
           )}
         </div>
       )}
-      <a href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</a>
+      <Link href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</Link>
     </div>
   );
 }

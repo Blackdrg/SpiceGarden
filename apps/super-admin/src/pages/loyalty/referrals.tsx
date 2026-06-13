@@ -66,7 +66,7 @@ export default function LoyaltyReferrals() {
           </div>
         </div>
       )}
-      <a href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</a>
+      <Link href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</Link>
     </div>
   );
 }

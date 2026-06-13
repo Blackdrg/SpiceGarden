@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
 
@@ -75,7 +76,7 @@ export default function AnalyticsCustomers() {
           </div>
         </>
       )}
-      <a href="/analytics" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Analytics</a>
+      <Link href="/analytics" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Analytics</Link>
     </div>
   );
 }

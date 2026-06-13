@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
 
@@ -70,22 +71,22 @@ export default function AnalyticsOverview() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <a href="/analytics/top-dishes" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
+            <Link href="/analytics/top-dishes" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Top Dishes</h3>
               <p style={{ fontSize: 13, color: '#71717a' }}>Best selling items</p>
             </a>
-            <a href="/analytics/customers" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
+            <Link href="/analytics/customers" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Customers</h3>
               <p style={{ fontSize: 13, color: '#71717a' }}>Churn & repeat analysis</p>
             </a>
-            <a href="/analytics/conversion" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
+            <Link href="/analytics/conversion" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Conversion</h3>
               <p style={{ fontSize: 13, color: '#71717a' }}>Funnel analysis</p>
             </a>
           </div>
         </>
       )}
-      <a href="/" style={{ color: '#f97316', textDecoration: 'none', marginTop: 24, display: 'inline-block' }}>← Back to Dashboard</a>
+      <Link href="/" style={{ color: '#f97316', textDecoration: 'none', marginTop: 24, display: 'inline-block' }}>← Back to Dashboard</Link>
     </div>
   );
 }

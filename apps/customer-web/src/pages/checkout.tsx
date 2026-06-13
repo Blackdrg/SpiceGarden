@@ -207,16 +207,17 @@ const CheckoutPage = () => {
 
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
             <h3>Promo Code</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-              <input
-                type="text"
-                placeholder="Enter promo code"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                style={{ flex: 1, padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <Button label="Apply" onClick={applyPromo} variant="secondary" />
-            </div>
+              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
+                <input
+                  type="text"
+                  placeholder="Enter promo code"
+                  aria-label="Promo code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  style={{ flex: 1, padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                />
+                <Button label="Apply" onClick={applyPromo} variant="secondary" />
+              </div>
             {promoError && (
               <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{promoError}</p>
             )}

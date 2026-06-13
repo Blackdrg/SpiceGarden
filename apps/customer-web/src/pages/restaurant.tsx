@@ -98,10 +98,11 @@ const RestaurantPage = () => {
           { key: 'menu', label: 'Menu', icon: '📋', path: '/menu' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
+          <button
             key={tab.key}
             onClick={() => router.push(tab.path)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '11px' }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(tab.path); } }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>

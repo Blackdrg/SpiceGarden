@@ -216,10 +216,11 @@ const MenuPage = () => {
           { key: 'menu', label: 'Menu', icon: '📋' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
+          <button
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '11px' }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>

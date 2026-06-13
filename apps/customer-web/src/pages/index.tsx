@@ -107,6 +107,7 @@ const HomePage = () => {
         </div>
         <div className={styles.headerActions}>
           <button
+            type="button"
             onClick={() => null}
             className={styles.iconButton}
             aria-label="Notifications"
@@ -116,13 +117,12 @@ const HomePage = () => {
         </div>
       </header>
 
-      <div
-        onClick={() => router.push('/search')}
-        className={styles.searchBar}
-        role="button"
-        tabIndex={0}
-        aria-label="Search restaurants and dishes"
-      >
+        <button
+          onClick={() => router.push('/search')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
+          className={styles.searchBar}
+          aria-label="Search restaurants and dishes"
+        >
         <span className={styles.searchIcon}><SearchIcon size={20} /></span>
         <span className={styles.searchText}>Search restaurants, dishes…</span>
       </div>
@@ -144,10 +144,12 @@ const HomePage = () => {
         ))}
       </div>
 
-      <div
-        className={styles.promoBanner}
-        onClick={() => router.push('/search')}
-      >
+        <button
+          type="button"
+          onClick={() => router.push('/search')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
+          className={styles.promoBanner}
+        >
         <h2 className={styles.promoTitle}>50% OFF</h2>
         <p className={styles.promoText}>
           On your first 3 orders. Use code: <strong>WELCOME50</strong>
@@ -168,6 +170,7 @@ const HomePage = () => {
           <div className={styles.errorContainer}>
             <p className={styles.errorMessage}>{error}</p>
             <button
+              type="button"
               onClick={handleRetry}
               className={styles.retryButton}
             >
@@ -181,12 +184,11 @@ const HomePage = () => {
         ) : (
           <div className={styles.restaurantItemGrid}>
             {restaurants.slice(0, 3).map((restaurant) => (
-              <div
+              <button
                 key={restaurant.id}
                 className={styles.restaurantItem}
                 onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
-                role="button"
-                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/restaurant?id=${restaurant.id}`); } }}
                 aria-label={`View ${restaurant.name} details`}
               >
                 <div className={styles.restaurantContent}>
@@ -218,7 +220,8 @@ const HomePage = () => {
       >
         <div className={styles.tablist} role="tablist">
           {navTabs.map((tab) => (
-            <div
+            <button
+              type="button"
               key={tab.key}
               onClick={() => {
                 setActiveTab(tab.key);

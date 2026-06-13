@@ -122,6 +122,7 @@ export default function OnboardingMenu() {
 
         <div style={{ display: 'flex', gap: 12 }}>
           <button
+            type="button"
             onClick={() => window.location.href = '/onboarding/gst'}
             style={{ ...buttonStyle.secondary, flex: 1 }}
           >

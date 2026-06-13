@@ -69,14 +69,13 @@ const SubscriptionsPage = () => {
           { key: 'subs', label: 'Subs', icon: '⭐', path: '/subscriptions' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
-            key={tab.key}
-            className={getNavClass(tab.key)}
-            onClick={() => tab.path && router.push(tab.path)}
-            role="button"
-            tabIndex={0}
-            aria-label={tab.label}
-          >
+            <button
+              key={tab.key}
+              className={getNavClass(tab.key)}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              aria-label={tab.label}
+            >
             <span className={styles.navIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
           </div>

@@ -39,7 +39,7 @@ const ProfileScreen = () => {
     phone: '',
   });
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     const loadProfile = async () => {

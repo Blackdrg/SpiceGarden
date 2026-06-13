@@ -74,6 +74,7 @@ const SearchPage = () => {
         <input
           type="text"
           placeholder="Search restaurants, dishes..."
+          aria-label="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{ width: '100%', padding: DESIGN_TOKENS.spacing.md, borderRadius: DESIGN_TOKENS.radius.md, fontSize: '16px', border: '1px solid #ddd' }}
@@ -156,10 +157,11 @@ const SearchPage = () => {
           { key: 'orders', label: 'Orders', icon: '📦', path: '/history' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
+          <button
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'search' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '11px' }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'search' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>

@@ -75,13 +75,12 @@ const OffersPage = () => {
           { key: 'offers', label: 'Offers', icon: '🎁', path: '/offers' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
+          <button
             key={tab.key}
             className={getTabClass(tab.key)}
             onClick={() => tab.path && router.push(tab.path)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
             aria-label={tab.label}
-            role="button"
-            tabIndex={0}
           >
             <span className={styles.tabIcon}>{tab.icon}</span>
             <span>{tab.label}</span>

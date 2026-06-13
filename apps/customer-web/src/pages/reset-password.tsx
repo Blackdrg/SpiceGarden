@@ -124,6 +124,7 @@ const ResetPasswordPage = () => {
               <input
                 type="email"
                 placeholder="Email Address"
+                aria-label="Email address"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className={styles.input}
@@ -147,6 +148,7 @@ const ResetPasswordPage = () => {
               <input
                 type="text"
                 placeholder="Reset Code"
+                aria-label="Reset code"
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                 className={styles.input}
@@ -166,6 +168,7 @@ const ResetPasswordPage = () => {
               <input
                 type="password"
                 placeholder="New Password"
+                aria-label="New password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className={styles.input}
@@ -176,6 +179,7 @@ const ResetPasswordPage = () => {
               <input
                 type="password"
                 placeholder="Confirm Password"
+                aria-label="Confirm password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 className={styles.input}

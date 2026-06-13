@@ -104,19 +104,19 @@ const NotificationsPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Order Updates</span>
-            <button onClick={() => togglePref('pushOrders')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushOrders')} disabled={saving} aria-label="Order updates">
               {prefs.pushOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Promotions & Offers</span>
-            <button onClick={() => togglePref('pushPromotions')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushPromotions')} disabled={saving} aria-label="Promotions and offers">
               {prefs.pushPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Delivery Updates</span>
-            <button onClick={() => togglePref('pushDeliveryUpdates')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushDeliveryUpdates')} disabled={saving} aria-label="Delivery updates">
               {prefs.pushDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
@@ -127,13 +127,13 @@ const NotificationsPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Order Confirmations</span>
-            <button onClick={() => togglePref('emailOrders')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('emailOrders')} disabled={saving} aria-label="Order confirmations">
               {prefs.emailOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Promotional Emails</span>
-            <button onClick={() => togglePref('emailPromotions')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('emailPromotions')} disabled={saving} aria-label="Promotional emails">
               {prefs.emailPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
@@ -143,7 +143,7 @@ const NotificationsPage = () => {
       <Card title="SMS Notifications">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>Delivery Updates</span>
-          <button onClick={() => togglePref('smsDeliveryUpdates')} disabled={saving}>
+          <button type="button" onClick={() => togglePref('smsDeliveryUpdates')} disabled={saving} aria-label="SMS delivery updates">
             {prefs.smsDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
           </button>
         </div>

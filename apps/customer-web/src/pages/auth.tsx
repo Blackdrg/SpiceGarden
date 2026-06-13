@@ -79,7 +79,9 @@ const AuthPage = () => {
         {!isLogin && (
           <>
             <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
+              <label htmlFor="auth-name" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Full Name</label>
               <input
+                id="auth-name"
                 type="text"
                 placeholder="Full Name"
                 value={formData.name}
@@ -88,7 +90,9 @@ const AuthPage = () => {
               />
             </div>
             <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
+              <label htmlFor="auth-phone" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Phone Number</label>
               <input
+                id="auth-phone"
                 type="tel"
                 placeholder="Phone Number"
                 value={formData.phone}
@@ -100,7 +104,9 @@ const AuthPage = () => {
         )}
 
         <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
+          <label htmlFor="auth-email" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Email</label>
           <input
+            id="auth-email"
             type="email"
             placeholder="Email"
             value={formData.email}
@@ -110,8 +116,9 @@ const AuthPage = () => {
         </div>
 
         <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>
+          <label htmlFor="auth-password" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Password</label>
           <input
-            type="password"
+            id="auth-password"
             placeholder="Password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -138,6 +145,7 @@ const AuthPage = () => {
                 <div style={{ fontSize: '14px', color: '#666', marginBottom: DESIGN_TOKENS.spacing.sm }}>Or continue with</div>
                 <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, justifyContent: 'center' }}>
                     <button
+                        type="button"
                         onClick={() => {/* TODO: Implement Google login */}}
                         style={{
                             background: 'white',
@@ -153,6 +161,7 @@ const AuthPage = () => {
                         🔵 Google
                     </button>
                     <button
+                        type="button"
                         onClick={() => {/* TODO: Implement Facebook login */}}
                         style={{
                             background: '#1877f2',

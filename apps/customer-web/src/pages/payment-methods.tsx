@@ -133,7 +133,7 @@ const PaymentMethodsPage = () => {
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg }}>
         <h2 style={{ margin: 0 }}>Payment Methods</h2>
-        <button onClick={() => setShowAddForm(true)} aria-label="Add payment method">
+        <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add payment method">
           <Plus size={24} />
         </button>
       </div>
@@ -158,11 +158,11 @@ const PaymentMethodsPage = () => {
               </div>
               <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.xs }}>
                 {!method.isDefault && (
-                  <button onClick={() => handleSetDefault(method.id)} aria-label="Set as default">
+                  <button type="button" onClick={() => handleSetDefault(method.id)} aria-label="Set as default">
                     <Star size={16} />
                   </button>
                 )}
-                <button onClick={() => handleDelete(method.id)} aria-label="Delete" style={{ color: DESIGN_TOKENS.colors.danger }}>
+                <button type="button" onClick={() => handleDelete(method.id)} aria-label="Delete" style={{ color: DESIGN_TOKENS.colors.danger }}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -184,35 +184,51 @@ const PaymentMethodsPage = () => {
                 <option value="upi">UPI</option>
               </select>
               {newMethod.type === 'card' && (
-                <>
-                  <input
-                    placeholder="Card Brand (Visa, Mastercard)"
-                    value={newMethod.cardBrand}
-                    onChange={(e) => setNewMethod({ ...newMethod, cardBrand: e.target.value })}
-                    style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-                  />
-                  <input
-                    placeholder="Last 4 digits"
-                    value={newMethod.cardLast4}
-                    onChange={(e) => setNewMethod({ ...newMethod, cardLast4: e.target.value })}
-                    maxLength={4}
-                    style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-                  />
-                  <input
-                    placeholder="Expiry (MM/YY)"
-                    value={newMethod.cardExpiry}
-                    onChange={(e) => setNewMethod({ ...newMethod, cardExpiry: e.target.value })}
-                    style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-                  />
-                </>
+                <div>
+                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                    <label htmlFor="pm-card-brand" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Card Brand (Visa, Mastercard)</label>
+                    <input 
+                      id="pm-card-brand"
+                      placeholder="Card Brand (Visa, Mastercard)" 
+                      value={newMethod.cardBrand} 
+                      onChange={(e) => setNewMethod({ ...newMethod, cardBrand: e.target.value })} 
+                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
+                    />
+                  </div>
+                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                    <label htmlFor="pm-card-last4" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Last 4 digits</label>
+                    <input 
+                      id="pm-card-last4"
+                      placeholder="Last 4 digits" 
+                      value={newMethod.cardLast4} 
+                      onChange={(e) => setNewMethod({ ...newMethod, cardLast4: e.target.value })} 
+                      maxLength={4} 
+                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
+                    />
+                  </div>
+                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                    <label htmlFor="pm-card-expiry" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Expiry (MM/YY)</label>
+                    <input 
+                      id="pm-card-expiry"
+                      placeholder="Expiry (MM/YY)" 
+                      value={newMethod.cardExpiry} 
+                      onChange={(e) => setNewMethod({ ...newMethod, cardExpiry: e.target.value })} 
+                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
+                    />
+                  </div>
+                </div>
               )}
               {newMethod.type === 'upi' && (
-                <input
-                  placeholder="UPI ID (example@upi)"
-                  value={newMethod.upiId}
-                  onChange={(e) => setNewMethod({ ...newMethod, upiId: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-                />
+                <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
+                  <label htmlFor="pm-upi-id" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>UPI ID (example@upi)</label>
+                  <input 
+                    id="pm-upi-id"
+                    placeholder="UPI ID (example@upi)" 
+                    value={newMethod.upiId} 
+                    onChange={(e) => setNewMethod({ ...newMethod, upiId: e.target.value })} 
+                    style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
+                  />
+                </div>
               )}
               <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.md }}>
                 <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
