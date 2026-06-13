@@ -11,14 +11,14 @@
       "default": "./index.js"
     }
   },
-    "scripts": {
-      "build": "tsc",
-      "lint": "echo \"lint placeholder\"",
-      "test:unit": "echo \"no unit tests\"",
-      "test:integration": "echo \"no integration tests\"",
-      "test:e2e": "echo \"no e2e tests\"",
-      "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
-    },
+  "scripts": {
+    "build": "tsc",
+    "lint": "echo \"lint placeholder\"",
+    "test:unit": "echo \"no unit tests\"",
+    "test:integration": "echo \"no integration tests\"",
+    "test:e2e": "echo \"no e2e tests\"",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+  },
   "dependencies": {
     "lucide-react": "^1.17.0"
   }

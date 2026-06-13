@@ -1,4 +1,5 @@
 "use strict";
+"use client";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -35,7 +36,8 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FlowManager = void 0;
 const react_1 = __importStar(require("react"));
-const index_1 = require("./index");
+const tokens_1 = require("./tokens");
+const Button_1 = require("./Button");
 const useFlow_1 = require("./useFlow");
 const lucide_react_1 = require("lucide-react");
 const FlowManager = ({ flowId, steps, onComplete, onError }) => {
@@ -50,32 +52,32 @@ const FlowManager = ({ flowId, steps, onComplete, onError }) => {
         onError,
     });
     if (state === 'success') {
-        return (react_1.default.createElement("div", { style: { textAlign: 'center', padding: index_1.DESIGN_TOKENS.spacing.xl } },
+        return (react_1.default.createElement("div", { style: { textAlign: 'center', padding: tokens_1.DESIGN_TOKENS.spacing.xl } },
             react_1.default.createElement("h2", { style: { display: 'inline-flex', alignItems: 'center', gap: 8 } },
-                react_1.default.createElement(lucide_react_1.CheckCircle, { size: 24, color: index_1.DESIGN_TOKENS.colors.success }),
+                react_1.default.createElement(lucide_react_1.CheckCircle, { size: 24, color: tokens_1.DESIGN_TOKENS.colors.success }),
                 " Flow Complete!"),
             react_1.default.createElement("p", null, "You have successfully completed all steps.")));
     }
     if (state === 'error') {
-        return (react_1.default.createElement("div", { style: { padding: index_1.DESIGN_TOKENS.spacing.lg } },
-            react_1.default.createElement("h2", { style: { color: index_1.DESIGN_TOKENS.colors.danger, display: 'inline-flex', alignItems: 'center', gap: 8 } },
+        return (react_1.default.createElement("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
+            react_1.default.createElement("h2", { style: { color: tokens_1.DESIGN_TOKENS.colors.danger, display: 'inline-flex', alignItems: 'center', gap: 8 } },
                 react_1.default.createElement(lucide_react_1.AlertCircle, { size: 24 }),
                 " Error"),
             react_1.default.createElement("p", null, error),
-            react_1.default.createElement(index_1.Button, { label: "Retry", onClick: () => window.location.reload() })));
+            react_1.default.createElement(Button_1.Button, { label: "Retry", onClick: () => window.location.reload() })));
     }
-    return (react_1.default.createElement("div", { style: { maxWidth: 600, margin: '0 auto', padding: index_1.DESIGN_TOKENS.spacing.lg } },
-        react_1.default.createElement("div", { style: { display: 'flex', marginBottom: index_1.DESIGN_TOKENS.spacing.xl, gap: index_1.DESIGN_TOKENS.spacing.sm } }, steps.map((step, idx) => (react_1.default.createElement("div", { key: step.id, style: {
+    return (react_1.default.createElement("div", { style: { maxWidth: 600, margin: '0 auto', padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
+        react_1.default.createElement("div", { style: { display: 'flex', marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl, gap: tokens_1.DESIGN_TOKENS.spacing.sm } }, steps.map((step, idx) => (react_1.default.createElement("div", { key: step.id, style: {
                 flex: 1,
                 height: 4,
-                background: idx <= currentStepIndex ? index_1.DESIGN_TOKENS.colors.primary : index_1.DESIGN_TOKENS.colors.border,
-                borderRadius: index_1.DESIGN_TOKENS.radius.sm,
+                background: idx <= currentStepIndex ? tokens_1.DESIGN_TOKENS.colors.primary : tokens_1.DESIGN_TOKENS.colors.border,
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.sm,
             } })))),
-        react_1.default.createElement("div", { style: { marginBottom: index_1.DESIGN_TOKENS.spacing.xl } },
+        react_1.default.createElement("div", { style: { marginBottom: tokens_1.DESIGN_TOKENS.spacing.xl } },
             react_1.default.createElement("h2", null, steps[currentStepIndex]?.label)),
-        react_1.default.createElement("div", { style: { display: 'flex', gap: index_1.DESIGN_TOKENS.spacing.md, justifyContent: 'space-between' } },
-            react_1.default.createElement(index_1.Button, { label: "Previous", variant: "secondary", onClick: back, disabled: currentStepIndex === 0 }),
-            react_1.default.createElement(index_1.Button, { label: currentStepIndex === steps.length - 1 ? 'Complete' : 'Next', onClick: () => {
+        react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.md, justifyContent: 'space-between' } },
+            react_1.default.createElement(Button_1.Button, { label: "Previous", variant: "secondary", onClick: back, disabled: currentStepIndex === 0 }),
+            react_1.default.createElement(Button_1.Button, { label: currentStepIndex === steps.length - 1 ? 'Complete' : 'Next', onClick: () => {
                     next();
                     setCurrentStepIndex(prev => Math.min(prev + 1, steps.length - 1));
                 } }))));
