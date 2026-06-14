@@ -3,9 +3,9 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { Plus, CreditCard, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
-import { getCachedToken } from '../../utils/cachedLocalStorage';
+import { getCachedToken } from '../utils/cachedLocalStorage';
 import styles from './payment-methods.module.css';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 interface PaymentMethod {
   id: string;
@@ -111,7 +111,7 @@ const PaymentMethodsPage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading payment methods...</p>
       </div>
     );
@@ -126,16 +126,16 @@ const PaymentMethodsPage = () => {
         </div>
       )}
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        <h2 style={{ margin: 0 }}>Payment Methods</h2>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Payment Methods</h2>
         <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add payment method">
           <Plus size={24} />
         </button>
       </div>
 
       {methods.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.xl }}>
-          <p style={{ color: '#666' }}>No payment methods saved yet. Add one to get started!</p>
+        <div className={styles.emptyState}>
+          <p className={styles.emptyText}>No payment methods saved yet. Add one to get started!</p>
         </div>
       ) : (
         methods.map(method => (
@@ -157,7 +157,7 @@ const PaymentMethodsPage = () => {
                     <Star size={16} />
                   </button>
                 )}
-                <button type="button" onClick={() => handleDelete(method.id)} aria-label="Delete" style={{ color: DESIGN_TOKENS.colors.danger }}>
+                <button type="button" onClick={() => handleDelete(method.id)} aria-label="Delete" className={styles.deleteButton}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -167,65 +167,65 @@ const PaymentMethodsPage = () => {
       )}
 
       {showAddForm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+        <div className={styles.modalOverlay}>
           <Card title="Add Payment Method">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm, padding: DESIGN_TOKENS.spacing.md, minWidth: '400px' }}>
+            <div className={styles.form}>
               <select
+                className={styles.select}
                 value={newMethod.type}
                 onChange={(e) => setNewMethod({ ...newMethod, type: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
               >
                 <option value="card">Credit/Debit Card</option>
                 <option value="upi">UPI</option>
               </select>
               {newMethod.type === 'card' && (
                 <div>
-                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                    <label htmlFor="pm-card-brand" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Card Brand (Visa, Mastercard)</label>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="pm-card-brand" className={styles.label}>Card Brand (Visa, Mastercard)</label>
                     <input 
                       id="pm-card-brand"
+                      className={styles.input}
                       placeholder="Card Brand (Visa, Mastercard)" 
                       value={newMethod.cardBrand} 
                       onChange={(e) => setNewMethod({ ...newMethod, cardBrand: e.target.value })} 
-                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
                     />
                   </div>
-                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                    <label htmlFor="pm-card-last4" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Last 4 digits</label>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="pm-card-last4" className={styles.label}>Last 4 digits</label>
                     <input 
                       id="pm-card-last4"
+                      className={styles.input}
                       placeholder="Last 4 digits" 
                       value={newMethod.cardLast4} 
                       onChange={(e) => setNewMethod({ ...newMethod, cardLast4: e.target.value })} 
                       maxLength={4} 
-                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
                     />
                   </div>
-                  <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                    <label htmlFor="pm-card-expiry" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Expiry (MM/YY)</label>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="pm-card-expiry" className={styles.label}>Expiry (MM/YY)</label>
                     <input 
                       id="pm-card-expiry"
+                      className={styles.input}
                       placeholder="Expiry (MM/YY)" 
                       value={newMethod.cardExpiry} 
                       onChange={(e) => setNewMethod({ ...newMethod, cardExpiry: e.target.value })} 
-                      style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
                     />
                   </div>
                 </div>
               )}
               {newMethod.type === 'upi' && (
-                <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                  <label htmlFor="pm-upi-id" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>UPI ID (example@upi)</label>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="pm-upi-id" className={styles.label}>UPI ID (example@upi)</label>
                   <input 
                     id="pm-upi-id"
+                    className={styles.input}
                     placeholder="UPI ID (example@upi)" 
                     value={newMethod.upiId} 
                     onChange={(e) => setNewMethod({ ...newMethod, upiId: e.target.value })} 
-                    style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }} 
                   />
                 </div>
               )}
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.md }}>
+              <div className={styles.formActions}>
                 <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
                 <Button label="Save" onClick={handleAddMethod} />
               </div>

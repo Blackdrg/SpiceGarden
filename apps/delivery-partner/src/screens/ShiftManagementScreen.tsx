@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
   const [isOnline, setIsOnline] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [currentShift, setCurrentShift] = useState<{
     start: Date | null;
     end: Date | null;
@@ -16,6 +15,8 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
     earnings: 0,
     orders: 0,
   });
+
+  const mounted = true;
 
   const handleToggleShift = () => {
     if (!isOnline) {
@@ -34,7 +35,6 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
     setIsOnline(!isOnline);
   };
 
-  useEffect(() => { setMounted(true); }, []);
 
   return (
     <View style={styles.container}>

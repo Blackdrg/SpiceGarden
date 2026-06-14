@@ -46,7 +46,7 @@ async function deleteAddress(token: string, id: string): Promise<void> {
 export function useAddresses(token: string | null) {
   const queryClient = useQueryClient();
 
-  const addressesQuery = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['addresses'],
     queryFn: () => fetchAddresses(token!),
     enabled: !!token,
@@ -64,12 +64,12 @@ export function useAddresses(token: string | null) {
   });
 
   return {
-    addresses: addressesQuery.data ?? [],
-    isLoading: addressesQuery.isLoading,
+    addresses: data ?? [],
+    isLoading,
     isAdding: addMutation.isPending,
     isDeleting: (id: string) => deleteMutation.isPending && deleteMutation.variables === id,
     addAddress: addMutation.mutate,
     deleteAddress: deleteMutation.mutate,
-    error: addressesQuery.error ?? addMutation.error ?? deleteMutation.error,
+    error: error ?? addMutation.error ?? deleteMutation.error,
   };
 }

@@ -46,15 +46,19 @@ const TrackingPage = () => {
 
   useEffect(() => {
     const orderId = orderIdRef.current;
-    if (!orderId || !user?.token) return;
+    const token = user?.token;
+    if (!orderId || !token) return;
 
     let cancelled = false;
     let timerId: ReturnType<typeof setTimeout> | null = null;
 
     const load = async () => {
+      const currentOrderId = orderIdRef.current;
+      if (!currentOrderId) return;
+
       setLoading(true);
       try {
-        const response = await ordersApi.get(orderId, user.token);
+        const response = await ordersApi.get(currentOrderId!, token);
         if (cancelled) return;
         const order = response.data as TrackingOrder;
         setOrderDetails(order);
@@ -161,7 +165,7 @@ const TrackingPage = () => {
         </Card>
       )}
 
-      {orderStatus !== 'delivered' && (
+      {displayOrderStatus !== 'delivered' && (
         <div className={styles.contactRestaurantDiv}>
           <Button label="Contact Restaurant" onClick={() => {/* TODO: Implement restaurant contact */}} variant="secondary" />
         </div>

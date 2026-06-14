@@ -43,6 +43,14 @@ const native_1 = require("@react-navigation/native");
 const async_storage_1 = __importDefault(require("@react-native-async-storage/async-storage"));
 const ui_1 = require("@spicegarden/ui");
 const Haptics = __importStar(require("expo-haptics"));
+const MENU_ITEMS = [
+    { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
+    { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
+    { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
+    { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
+    { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
+];
 const ProfileScreen = () => {
     const navigation = (0, native_1.useNavigation)();
     const [userData, setUserData] = (0, react_1.useState)({
@@ -151,14 +159,7 @@ const ProfileScreen = () => {
         </react_native_1.Animated.View>
       </react_native_1.View>);
     }
-    const menuItems = [
-        { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
-        { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-        { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
-        { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
-        { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
-        { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
-    ];
+    const menuItems = MENU_ITEMS;
     return (<react_native_1.Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <react_native_1.View style={styles.container}>
         <react_native_1.View style={styles.header}>

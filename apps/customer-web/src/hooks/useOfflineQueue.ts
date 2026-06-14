@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface QueuedRequest {
   id: string;
@@ -13,7 +13,67 @@ export const useOfflineQueue = () => {
   const { isOnline } = useOfflineQueue.__useNetworkStatus();
   const [queue, setQueue] = useState<QueuedRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const isProcessingRef = useRef(false);
+
+  const simulateApiCall = useCallback(async (
+    endpoint: string,
+    options: unknown = {}
+  ): Promise<unknown> => {
+    const optionsReceived = typeof options === 'object' && options !== null;
+
+    if (endpoint.includes('/restaurants')) {
+      return [
+        { id: 'rest1', name: 'Demo Restaurant', rating: 4.5 },
+        { id: 'rest2', name: 'Another Restaurant', rating: 4.0 }
+      ];
+    }
+
+    if (endpoint.includes('/orders')) {
+      return [
+        { id: 'order1', amount: 250, status: 'delivered' },
+        { id: 'order2', amount: 120, status: 'preparing' }
+      ];
+    }
+
+    const baseDelay = optionsReceived ? 600 : 400;
+
+    if (Math.random() < 0.1) {
+      throw new Error('Network error');
+    }
+
+    await new Promise(resolve => setTimeout(resolve, baseDelay));
+
+    return { message: 'Success' };
+  }, []);
+
+  const processQueue = useCallback(async () => {
+    if (isProcessing || !isOnline || queue.length === 0) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const requestsToProcess = [...queue];
+      setQueue([]);
+
+      await Promise.all(
+        requestsToProcess.map(async (request) => {
+          try {
+            const result = await simulateApiCall(request.endpoint, request.options);
+            request.resolve(result);
+          } catch (error) {
+            request.reject(error);
+          }
+        })
+      );
+
+      if (isOnline && queue.length > 0) {
+        await processQueue();
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [isOnline, isProcessing, queue, simulateApiCall]);
 
   const enqueueRequest = useCallback(<T>(
     endpoint: string,
@@ -31,72 +91,11 @@ export const useOfflineQueue = () => {
 
       setQueue(prev => [...prev, queuedRequest]);
 
-      if (isOnline && !isProcessingRef.current) {
+      if (isOnline && !isProcessing) {
         processQueue();
       }
     });
-  }, [isOnline]);
-
-  const simulateApiCall = useCallback(async (
-    endpoint: string,
-    options: unknown = {}
-  ): Promise<unknown> => {
-    const optionsReceived = typeof options === 'object' && options !== null;
-    const baseDelay = optionsReceived ? 600 : 400;
-    await new Promise(resolve => setTimeout(resolve, baseDelay));
-
-    if (Math.random() < 0.1) {
-      throw new Error('Network error');
-    }
-
-    if (endpoint.includes('/restaurants')) {
-      return [
-        { id: 'rest1', name: 'Demo Restaurant', rating: 4.5 },
-        { id: 'rest2', name: 'Another Restaurant', rating: 4.0 }
-      ];
-    }
-
-    if (endpoint.includes('/orders')) {
-      return [
-        { id: 'order1', amount: 250, status: 'delivered' },
-        { id: 'order2', amount: 120, status: 'preparing' }
-      ];
-    }
-
-    return { message: 'Success' };
-  }, []);
-
-  const processQueue = useCallback(async () => {
-    if (isProcessingRef.current || !isOnline || queue.length === 0) {
-      return;
-    }
-
-    isProcessingRef.current = true;
-    setIsProcessing(true);
-
-    try {
-      const requestsToProcess = [...queue];
-      setQueue([]);
-
-      const results = await Promise.all(
-        requestsToProcess.map(async (request) => {
-          try {
-            const result = await simulateApiCall(request.endpoint, request.options);
-            request.resolve(result);
-          } catch (error) {
-            request.reject(error);
-          }
-        })
-      );
-
-      if (isOnline && queue.length > 0) {
-        processQueue();
-      }
-    } finally {
-      isProcessingRef.current = false;
-      setIsProcessing(false);
-    }
-  }, [isOnline, queue.length, simulateApiCall]);
+  }, [isOnline, isProcessing, processQueue]);
 
   const retryFailedRequests = useCallback(() => {
     processQueue();

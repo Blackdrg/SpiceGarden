@@ -6,21 +6,21 @@ interface ServiceStatusCardProps {
   port?: number;
 }
 
+const statusColors = {
+  running: '#10b981',
+  stopped: '#6b7280',
+  starting: '#f59e0b',
+  error: '#ef4444'
+};
+
+const statusLabels = {
+  running: 'Running',
+  stopped: 'Stopped',
+  starting: 'Starting',
+  error: 'Error'
+};
+
 export const ServiceStatusCard: React.FC<ServiceStatusCardProps> = ({ name, status, port }) => {
-  const statusColors = {
-    running: '#10b981',
-    stopped: '#6b7280',
-    starting: '#f59e0b',
-    error: '#ef4444'
-  };
-
-  const statusLabels = {
-    running: 'Running',
-    stopped: 'Stopped',
-    starting: 'Starting',
-    error: 'Error'
-  };
-
   return (
     <div className="service-card">
       <div className="service-header">

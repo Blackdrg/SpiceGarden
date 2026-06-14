@@ -31,6 +31,19 @@ interface NavTab {
   path: string;
 }
 
+const categoryColors: Record<string, string> = {
+  Burgers: '#FF5A1F',
+  Pizza: '#EF4444',
+  Drinks: '#3B82F6',
+  Dessert: '#EC4899',
+  Healthy: '#10B981',
+};
+
+const distanceFromId = (id: string) => {
+  const hash = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return (0.5 + (hash % 50) / 10).toFixed(1);
+};
+
 const HomePage = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -82,20 +95,9 @@ const HomePage = () => {
     return `${styles.tab} ${activeTab === tabKey ? styles.activeTab : styles.inactiveTab}`;
   };
 
-  const renderCategoryIcon = (Icon: Category['Icon'], name: string) => {
-    const colors: Record<string, string> = {
-      Burgers: '#FF5A1F',
-      Pizza: '#EF4444',
-      Drinks: '#3B82F6',
-      Dessert: '#EC4899',
-      Healthy: '#10B981',
-    };
-    return <Icon size={28} color={colors[name]} />;
-  };
-
   return (
     <div className={styles.container}>
-      <header className={styles.header} role="banner">
+      <header className={styles.header}>
         <div>
           <h2 className={styles.userName}>
             <LocationIcon size={20} color={DESIGN_TOKENS.colors.primary} />
@@ -126,20 +128,21 @@ const HomePage = () => {
         >
         <span className={styles.searchIcon}><SearchIcon size={20} /></span>
         <span className={styles.searchText}>Search restaurants, dishes…</span>
-      </div>
+      </button>
 
       <div className={styles.categoryContainer}>
         {categories.map((cat) => (
           <button
             key={cat.name}
+            type="button"
             className={styles.categoryItem}
             aria-label={`Browse ${cat.name} category`}
           >
             <div className={styles.categoryIcon}>
-              {renderCategoryIcon(cat.Icon, cat.name)}
+              <cat.Icon size={28} color={categoryColors[cat.name]} />
             </div>
             <div className={styles.categoryName}>{cat.name}</div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -160,7 +163,7 @@ const HomePage = () => {
             ariaLabel="Order now with welcome discount"
           />
         </div>
-      </div>
+      </button>
 
       <Card title="Recommended Restaurants" variant="elevated">
         {loading ? (
@@ -204,10 +207,10 @@ const HomePage = () => {
                       {' '}{restaurant.rating}
                     </span>
                     <span>{restaurant.deliveryTime} min</span>
-                    <span>{(Math.round(Math.random() * 5) / 10 + 0.5).toFixed(1)} km</span>
+                    <span>{distanceFromId(restaurant.id)} km</span>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -215,10 +218,9 @@ const HomePage = () => {
 
       <nav
         className={styles.nav}
-        role="navigation"
         aria-label="Main navigation"
       >
-        <div className={styles.tablist} role="tablist">
+        <div className={styles.tablist}>
           {navTabs.map((tab) => (
             <button
               type="button"
@@ -228,12 +230,11 @@ const HomePage = () => {
                 if (tab.path) router.push(tab.path);
               }}
               className={getTabClass(tab.key)}
-              role="tab"
               aria-label={tab.label}
             >
               <span className={styles.tabIcon}><tab.Icon size={22} /></span>
               <span>{tab.label}</span>
-            </div>
+            </button>
           ))}
         </div>
       </nav>

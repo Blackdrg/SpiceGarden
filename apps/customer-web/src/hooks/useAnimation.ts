@@ -11,13 +11,9 @@ export const useEnterAnimation = (show: boolean, type = 'fade', duration = 300) 
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    if (show) {
-      // Trigger animation after a slight delay to ensure element is mounted
-      const timer = setTimeout(() => setAnimate(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setAnimate(false);
-    }
+    if (!show) return;
+    const timer = setTimeout(() => setAnimate(true), 50);
+    return () => clearTimeout(timer);
   }, [show]);
 
   const baseStyle = {

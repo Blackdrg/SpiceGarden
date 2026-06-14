@@ -6,6 +6,27 @@ import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
 
+const bottomNavStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: 'white',
+  borderTop: '1px solid #eee',
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+};
+
+const navButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  cursor: 'pointer',
+  fontSize: '12px',
+};
+
 interface ApiOrder {
   id?: string;
   date?: string;
@@ -39,11 +60,12 @@ const HistoryPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
     const loadOrderHistory = async () => {
       if (!user?.token) {
         setLoading(false);
-        // Show mock data for demo when not authenticated
-        setTimeout(() => {
+        timerId = setTimeout(() => {
           setOrders([
             { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
             { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
@@ -59,7 +81,6 @@ const HistoryPage = () => {
       try {
         const response = await ordersApi.list(user.token);
         const data = response.data;
-        // Transform API response to match our interface
         const transformedOrders: Order[] = (data as ApiOrder[]).map((order) => ({
           id: order.id || '',
           date: order.date || new Date(order.createdAt || '').toISOString().split('T')[0],
@@ -74,8 +95,7 @@ const HistoryPage = () => {
       } catch (err) {
         console.error('Failed to load order history:', err);
         setError('Failed to load order history. Please try again later.');
-        // Fallback to mock data
-        setTimeout(() => {
+        timerId = setTimeout(() => {
           setOrders([
             { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
             { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
@@ -89,6 +109,10 @@ const HistoryPage = () => {
     };
 
     loadOrderHistory();
+
+    return () => {
+      if (timerId) clearTimeout(timerId);
+    };
   }, [user?.token]);
 
   const filteredOrders = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
@@ -214,10 +238,7 @@ const HistoryPage = () => {
        )}
 
       {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav style={bottomNavStyle}>
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
@@ -225,14 +246,15 @@ const HistoryPage = () => {
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <button
+            type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'orders' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
+            style={{ ...navButtonStyle, color: tab.key === 'orders' ? DESIGN_TOKENS.colors.primary : '#999' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

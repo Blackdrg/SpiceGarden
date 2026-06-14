@@ -3,6 +3,39 @@ import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useOfflineQueue } from '../hooks/useOfflineQueue';
 
+const offlineBannerStyle: React.CSSProperties = {
+  backgroundColor: '#fff3e0',
+  color: '#f57c00',
+  padding: '4px 16px',
+  borderRadius: 8,
+  marginBottom: 16,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  fontSize: '14px',
+};
+
+const bottomNavStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: 'white',
+  borderTop: '1px solid #eee',
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+};
+
+const navButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  cursor: 'pointer',
+  fontSize: '12px',
+};
+
 interface Restaurant {
   id: string;
   name: string;
@@ -11,6 +44,8 @@ interface Restaurant {
   deliveryTime: number;
   address: string;
 }
+
+const filters = ['all', 'popular', 'offers', 'nearby', 'rated 4+'];
 
 const SearchPage = () => {
    const router = useRouter();
@@ -47,24 +82,12 @@ const SearchPage = () => {
      return () => clearTimeout(debounceTimer);
    }, [query, enqueueRequest]);
 
-  const filters = ['all', 'popular', 'offers', 'nearby', 'rated 4+'];
-
   return (
       <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
         <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Search</h2>
 
         {!isOnline && (
-          <div style={{
-            backgroundColor: '#fff3e0',
-            color: '#f57c00',
-            padding: `${DESIGN_TOKENS.spacing.xs}px ${DESIGN_TOKENS.spacing.md}px`,
-            borderRadius: DESIGN_TOKENS.radius.md,
-            marginBottom: DESIGN_TOKENS.spacing.md,
-            display: 'flex',
-            alignItems: 'center',
-            gap: DESIGN_TOKENS.spacing.xs,
-            fontSize: '14px'
-          }}>
+          <div style={offlineBannerStyle}>
             <span>📵</span>
             <span>You're offline. Requests will be queued and sent when back online.</span>
           </div>
@@ -147,10 +170,7 @@ const SearchPage = () => {
       )}
 
       {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav style={bottomNavStyle}>
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍' },
@@ -158,14 +178,15 @@ const SearchPage = () => {
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <button
+            type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'search' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
+            style={{ ...navButtonStyle, color: tab.key === 'search' ? DESIGN_TOKENS.colors.primary : '#999' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

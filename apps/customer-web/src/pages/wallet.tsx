@@ -2,6 +2,31 @@ import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 
+const bottomNavStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: 'white',
+  borderTop: '1px solid #eee',
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+};
+
+const navButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  cursor: 'pointer',
+  fontSize: '12px',
+};
+
+const handleWithdraw = () => {
+  alert('Withdrawal feature coming soon');
+};
+
 const WalletPage = () => {
   const router = useRouter();
   const [balance, setBalance] = useState(500);
@@ -16,10 +41,6 @@ const WalletPage = () => {
 
   const addMoney = () => {
     setBalance((prev) => prev + 100);
-  };
-
-  const handleWithdraw = () => {
-    alert('Withdrawal feature coming soon');
   };
 
   return (
@@ -67,10 +88,7 @@ const WalletPage = () => {
       </Card>
 
       {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav style={bottomNavStyle}>
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
@@ -78,14 +96,15 @@ const WalletPage = () => {
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <button
+            type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
+            style={{ ...navButtonStyle, color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

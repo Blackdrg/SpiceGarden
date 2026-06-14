@@ -38,17 +38,17 @@ const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
 const ui_1 = require("@spicegarden/ui");
 const order_constants_1 = require("../constants/order.constants");
+const getStatusColor = (status) => {
+    switch (status) {
+        case 'delivered': return ui_1.DESIGN_TOKENS.colors.success;
+        case 'cancelled': return ui_1.DESIGN_TOKENS.colors.danger;
+        default: return ui_1.DESIGN_TOKENS.colors.warning;
+    }
+};
+const totalItems = (order) => order.items.reduce((sum, item) => sum + item.quantity, 0);
+const formattedTotal = (order) => `₹${order.total.toFixed(2)}`;
+const statusLabel = (order) => order_constants_1.ORDER_STATUS_LABELS[order.status] || order.status;
 exports.OrderCard = (0, react_1.memo)(function OrderCard({ order, onReorder, onTrack }) {
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'delivered': return ui_1.DESIGN_TOKENS.colors.success;
-            case 'cancelled': return ui_1.DESIGN_TOKENS.colors.danger;
-            default: return ui_1.DESIGN_TOKENS.colors.warning;
-        }
-    };
-    const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
-    const formattedTotal = `₹${order.total.toFixed(2)}`;
-    const statusLabel = order_constants_1.ORDER_STATUS_LABELS[order.status] || order.status;
     return (<react_native_1.View style={exports.styles.orderCard}>
       <react_native_1.View style={exports.styles.orderInfo}>
         <react_native_1.View style={exports.styles.orderHeader}>
@@ -94,7 +94,7 @@ exports.styles = react_native_1.StyleSheet.create({
         marginVertical: ui_1.DESIGN_TOKENS.spacing.xs,
         borderRadius: ui_1.DESIGN_TOKENS.radius.card,
         overflow: 'hidden',
-        elevation: 2,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
     },
     orderInfo: {
         padding: ui_1.DESIGN_TOKENS.spacing.md,

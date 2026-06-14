@@ -45,7 +45,7 @@ const useOfflineQueue = () => {
                 processQueue();
             }
         });
-    }, [isOnline, isProcessing]);
+    }, [isOnline, isProcessing, queue, processQueue]);
     // Process the queue
     const processQueue = (0, react_1.useCallback)(async () => {
         if (isProcessing || !isOnline || queue.length === 0) {
@@ -56,7 +56,7 @@ const useOfflineQueue = () => {
             // Process all queued requests
             const requestsToProcess = [...queue];
             setQueue([]);
-            for (const request of requestsToProcess) {
+            await Promise.all(requestsToProcess.map(async (request) => {
                 try {
                     // In a real implementation, we would make the actual API call here
                     // For now, we'll simulate it with a resolved promise
@@ -69,7 +69,7 @@ const useOfflineQueue = () => {
                     // For simplicity, we'll reject it
                     request.reject(error);
                 }
-            }
+            }));
         }
         finally {
             setIsProcessing(false);
@@ -82,20 +82,12 @@ const useOfflineQueue = () => {
                 processQueue();
             }
         }
-    }, [isOnline, queue.length]);
+    }, [isOnline, queue, simulateApiCall]);
     // Simulate API call - replace with actual API calls in real implementation
     const simulateApiCall = (0, react_1.useCallback)(async (endpoint, options = {}) => {
         // In a real implementation, options would contain method, headers, body, etc.
         // For simulation, we'll just acknowledge we received it
         const optionsReceived = typeof options === 'object' && options !== null;
-        // Simulate network delay - slightly longer if options were provided (more complex request)
-        const baseDelay = optionsReceived ? 600 : 400;
-        await new Promise(resolve => setTimeout(resolve, baseDelay));
-        // Simulate occasional network errors for demonstration
-        if (Math.random() < 0.1) {
-            throw new Error('Network error');
-        }
-        // Return mock data based on endpoint
         if (endpoint.includes('/restaurants')) {
             return [
                 { id: 'rest1', name: 'Demo Restaurant', rating: 4.5 },
@@ -108,6 +100,11 @@ const useOfflineQueue = () => {
                 { id: 'order2', amount: 120, status: 'preparing' }
             ];
         }
+        const baseDelay = optionsReceived ? 600 : 400;
+        if (Math.random() < 0.1) {
+            throw new Error('Network error');
+        }
+        await new Promise(resolve => setTimeout(resolve, baseDelay));
         return { message: 'Success' };
     }, []);
     // Retry failed requests

@@ -107,11 +107,7 @@ export const styles = StyleSheet.create({
     marginVertical: DESIGN_TOKENS.spacing.xs,
     borderRadius: DESIGN_TOKENS.radius.card,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   },
   orderInfo: {
     padding: DESIGN_TOKENS.spacing.md,

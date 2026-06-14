@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: DESIGN_TOKENS.radius.card,
     borderTopRightRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.lg,
-    elevation: 10,
+    boxShadow: '0 -4px 16px rgba(0,0,0,0.16)',
   },
   sheetHeader: {
     alignItems: 'center',

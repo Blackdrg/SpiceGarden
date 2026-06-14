@@ -92,7 +92,7 @@ const NotificationsScreen = () => {
     setPrefs(newPrefs);
     savePrefs(newPrefs);
     Haptics.selectionAsync();
-  };
+  }, [prefs, savePrefs]);
 
   const renderToggleRow = useCallback((label: string, value: boolean, key: keyof NotificationPrefs) => (
     <View style={styles.toggleRow}>
@@ -105,7 +105,7 @@ const NotificationsScreen = () => {
         disabled={loading || saving}
       />
     </View>
-  );
+  ), [loading, saving, togglePref]);
 
   if (loading) {
     return (

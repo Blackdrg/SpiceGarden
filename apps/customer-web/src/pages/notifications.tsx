@@ -5,6 +5,7 @@ import { Bell, BellOff, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
 import { getCachedToken } from '../utils/cachedLocalStorage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './notifications.module.css';
 
 interface NotificationPreferences {
   pushOrders: boolean;
@@ -77,38 +78,38 @@ const NotificationsPage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading preferences...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
+    <div className={styles.pageContainer}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, backgroundColor: '#ffebee', color: '#c62828', padding: DESIGN_TOKENS.spacing.md, borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md }}>
+        <div className={styles.errorBanner}>
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
       )}
 
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Notification Preferences</h2>
+      <h2 className={styles.pageTitle}>Notification Preferences</h2>
 
       <Card title="Push Notifications">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.cardContent}>
+          <div className={styles.preferenceRow}>
             <span>Order Updates</span>
             <button type="button" onClick={() => togglePref('pushOrders')} disabled={saving} aria-label="Order updates">
               {prefs.pushOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Promotions & Offers</span>
             <button type="button" onClick={() => togglePref('pushPromotions')} disabled={saving} aria-label="Promotions and offers">
               {prefs.pushPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Delivery Updates</span>
             <button type="button" onClick={() => togglePref('pushDeliveryUpdates')} disabled={saving} aria-label="Delivery updates">
               {prefs.pushDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
@@ -118,14 +119,14 @@ const NotificationsPage = () => {
       </Card>
 
       <Card title="Email Notifications">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.cardContent}>
+          <div className={styles.preferenceRow}>
             <span>Order Confirmations</span>
             <button type="button" onClick={() => togglePref('emailOrders')} disabled={saving} aria-label="Order confirmations">
               {prefs.emailOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Promotional Emails</span>
             <button type="button" onClick={() => togglePref('emailPromotions')} disabled={saving} aria-label="Promotional emails">
               {prefs.emailPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
@@ -135,7 +136,7 @@ const NotificationsPage = () => {
       </Card>
 
       <Card title="SMS Notifications">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.preferenceRow}>
           <span>Delivery Updates</span>
           <button type="button" onClick={() => togglePref('smsDeliveryUpdates')} disabled={saving} aria-label="SMS delivery updates">
             {prefs.smsDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
@@ -143,7 +144,7 @@ const NotificationsPage = () => {
         </div>
       </Card>
 
-      <div style={{ marginTop: DESIGN_TOKENS.spacing.xl }}>
+      <div className={styles.saveActions}>
         <Button label={saving ? 'Saving...' : 'Save Preferences'} onClick={handleSave} disabled={saving} />
       </div>
     </div>

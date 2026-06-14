@@ -4,7 +4,7 @@ import Head from 'next/head';
 
 export default function OnboardingMenu() {
   const [categories, setCategories] = useState<string[]>(['Main Course', 'Beverages']);
-  const [items, setItems] = useState<{ name: string; price: string; category: string }[]>([]);
+  const [items, setItems] = useState<{ id: string; name: string; price: string; category: string }[]>([]);
   const [newCat, setNewCat] = useState('');
   const [newItem, setNewItem] = useState({ name: '', price: '', category: categories[0] });
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ export default function OnboardingMenu() {
 
   const addItem = () => {
     if (newItem.name && newItem.price) {
-      setItems([...items, { ...newItem, price: newItem.price }]);
+      setItems([...items, { ...newItem, id: `${newItem.name}-${Date.now()}`, price: newItem.price }]);
       setNewItem({ ...newItem, name: '', price: '' });
     }
   };

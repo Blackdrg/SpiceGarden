@@ -2,16 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
+const performanceData = {
+  rating: 4.8,
+  onTimeRate: 95,
+  acceptanceRate: 90,
+  cancellationRate: 5,
+  totalDeliveries: 1247,
+  thisWeek: 42,
+  rank: 'Gold',
+};
+
 export const PerformanceScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
-  const performanceData = {
-    rating: 4.8,
-    onTimeRate: 95,
-    acceptanceRate: 90,
-    cancellationRate: 5,
-    totalDeliveries: 1247,
-    thisWeek: 42,
-    rank: 'Gold',
-  };
 
   return (
     <View style={styles.container}>

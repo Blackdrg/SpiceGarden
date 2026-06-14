@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, Card } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { logout } from '../redux/slices/authSlice';
 import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './profile.module.css';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -107,50 +108,39 @@ const ProfilePage = () => {
 
   if (loading && !profileData) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading profile...</p>
       </div>
     );
   }
 
    return (
-     <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
+     <div className={styles.pageContainer}>
        {error && (
-         <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
+         <div className={styles.errorBanner}>
            {error}
          </div>
        )}
-       <div style={{ textAlign: 'center', marginBottom: DESIGN_TOKENS.spacing.xl }}>
-        <div style={{ 
-          width: '100px', 
-          height: '100px', 
-          borderRadius: '50%', 
-          backgroundColor: DESIGN_TOKENS.colors.primary, 
-          margin: '0 auto', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          fontSize: '48px', 
-          color: 'white' 
-        }}>
+       <div className={styles.profileHeader}>
+        <div className={styles.avatar}>
           {profileData?.profileImage ? (
             <Image
               src={profileData.profileImage}
               alt="Profile"
               width={80}
               height={80}
-              style={{ borderRadius: '50%', objectFit: 'cover' }}
+              className={styles.avatarImage}
             />
           ) : (
             '👤'
           )}
         </div>
-        <h2 style={{ margin: '12px 0 4px 0' }}>{isEditing ? editFormData.fullName : profileData?.fullName || 'User'}</h2>
-        <p style={{ color: '#666', margin: 0 }}>{isEditing ? editFormData.email : profileData?.email || ''}</p>
-        <p style={{ color: '#999', margin: '4px 0 0 0', fontSize: '14px' }}>{isEditing ? editFormData.phone : profileData?.phone || ''}</p>
+        <h2 className={styles.profileName}>{isEditing ? editFormData.fullName : profileData?.fullName || 'User'}</h2>
+        <p className={styles.profileEmail}>{isEditing ? editFormData.email : profileData?.email || ''}</p>
+        <p className={styles.profilePhone}>{isEditing ? editFormData.phone : profileData?.phone || ''}</p>
         
         {!isEditing && (
-          <div style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
+          <div className={styles.editButtonWrapper}>
             <Button 
               label="Edit Profile" 
               onClick={() => setIsEditing(true)} 
@@ -163,47 +153,47 @@ const ProfilePage = () => {
        {isEditing && (
         <>
           <Card title="Edit Profile">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
-              <div>
-                <label htmlFor="fullName" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+            <div className={styles.form}>
+              <div className={styles.field}>
+                <label htmlFor="fullName" className={styles.label}>
                   Full Name
                 </label>
                 <input
                   id="fullName"
+                  className={styles.input}
                   type="text"
                   value={editFormData.fullName}
                   onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
               
-              <div>
-                <label htmlFor="email" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+              <div className={styles.field}>
+                <label htmlFor="email" className={styles.label}>
                   Email
                 </label>
                 <input
                   id="email"
+                  className={styles.input}
                   type="email"
                   value={editFormData.email}
                   onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
               
-              <div>
-                <label htmlFor="phone" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+              <div className={styles.field}>
+                <label htmlFor="phone" className={styles.label}>
                   Phone Number
                 </label>
                 <input
                   id="phone"
+                  className={styles.input}
                   type="tel"
                   value={editFormData.phone}
                   onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
               
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.lg }}>
+              <div className={styles.formActions}>
                 <Button label="Cancel" onClick={() => setIsEditing(false)} variant="secondary" />
                 <Button label="Save Changes" onClick={handleSaveProfile} />
               </div>
@@ -215,24 +205,24 @@ const ProfilePage = () => {
       {!isEditing && (
         <>
           <Card title="Account Information">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className={styles.infoList}>
+              <div className={styles.infoRow}>
                 <span>Email Verified</span>
                 <span>{profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className={styles.infoRow}>
                 <span>Phone Verified</span>
                 <span>{profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className={styles.infoRow}>
                 <span>Member Since</span>
-                <span>{new Date(profileData?.createdAt || Date.now()).toLocaleDateString()}</span>
+                <span>{profileData?.createdAt ? new Date(profileData.createdAt).toLocaleDateString() : 'Not available'}</span>
               </div>
             </div>
           </Card>
 
            <Card title="Security">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+             <div className={styles.infoList}>
                <Button 
                  label="Change Password" 
                  onClick={() => {/* TODO: Implement password change */}} 
@@ -247,32 +237,32 @@ const ProfilePage = () => {
            </Card>
 
            <Card title="Address Management">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+             <div className={styles.infoList}>
                <Button 
                  label="Manage Addresses" 
                  onClick={() => {/* TODO: Implement address management */}} 
                  variant="secondary"
                />
-               <p style={{ color: '#666', fontSize: '14px' }}>
+               <p className={styles.helperText}>
                  Saved addresses will appear here
                </p>
              </div>
            </Card>
 
            <Card title="Payment Methods">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+             <div className={styles.infoList}>
                <Button 
                  label="Manage Payment Methods" 
                  onClick={() => {/* TODO: Implement payment method management */}} 
                  variant="secondary"
                />
-               <p style={{ color: '#666', fontSize: '14px' }}>
+               <p className={styles.helperText}>
                  Saved payment methods will appear here
                </p>
              </div>
            </Card>
 
-          <div style={{ marginTop: DESIGN_TOKENS.spacing.xl, textAlign: 'center' }}>
+          <div className={styles.logoutWrapper}>
             <Button label="Sign Out" onClick={handleLogout} variant="secondary" style={{ width: '100%' }} />
           </div>
         </>

@@ -42,7 +42,8 @@ const NetworkStatusContext = (0, react_1.createContext)({
 });
 const NetworkStatusProvider = ({ children }) => {
     const { isOnline, lastOnline } = (0, useOfflineQueue_1.useNetworkStatus)();
-    return (<NetworkStatusContext.Provider value={{ isOnline, lastOnline }}>
+    const value = react_1.useMemo(() => ({ isOnline, lastOnline }), [isOnline, lastOnline]);
+    return (<NetworkStatusContext.Provider value={value}>
       {children}
     </NetworkStatusContext.Provider>);
 };

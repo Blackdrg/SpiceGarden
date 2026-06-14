@@ -112,7 +112,6 @@ export default function DriverApp() {
   const [activeDelivery, setActiveDelivery] = useState<Order | null>(null);
   const [earnings, setEarnings] = useState<DailyEarnings>({ today: 1450, pending: 350, bonus: 200, ordersToday: 8 });
   const [shift, setShift] = useState<ShiftInfo | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [deliveryOtp, setDeliveryOtp] = useState('');
   const [otpError, setOtpError] = useState('');
   const [log, setLog] = useState<string[]>([]);
@@ -123,6 +122,7 @@ export default function DriverApp() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const locationWatchId = useRef<number | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   const addLog = useCallback((msg: string) => setLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 9)]), []);
 
@@ -162,7 +162,7 @@ Geolocation.requestAuthorization();
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          socket?.emit('driverLocationUpdate', { 
+          socketRef.current?.emit('driverLocationUpdate', { 
             driverId: 'current',
             location 
           });
@@ -180,14 +180,14 @@ Geolocation.requestAuthorization();
         Geolocation.clearWatch(locationWatchId.current);
       }
     };
-   }, [isOnline, locationPermission, socket, addLog]);
+   }, [isOnline, locationPermission, addLog]);
 
   useEffect(() => {
     const s: Socket = io('http://localhost:3001', {
       path: '/socket.io/',
       transports: ['websocket', 'polling'],
     });
-    setSocket(s);
+    socketRef.current = s;
 
     s.on('connect', () => addLog('Connected to backend'));
     s.on('disconnect', () => addLog('Disconnected'));
@@ -223,11 +223,11 @@ Geolocation.requestAuthorization();
   }, [isOnline]);
 
   useEffect(() => {
-    if (!isOnline) { socket?.emit('driverOffline'); return; }
-    socket?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
+    if (!isOnline) { socketRef.current?.emit('driverOffline'); return; }
+    socketRef.current?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
     addLog('Went online — awaiting orders');
-    return () => { socket?.emit('driverOffline'); };
-  }, [isOnline, socket, addLog]);
+    return () => { socketRef.current?.emit('driverOffline'); };
+  }, [isOnline, addLog]);
 
   const acceptOrder = useCallback(() => {
     if (!incomingOrder) return;
@@ -243,8 +243,8 @@ Geolocation.requestAuthorization();
     if (!incomingOrder) return;
     setIncomingOrder(null);
     addLog(`Rejected #${incomingOrder.orderNumber}`);
-    socket?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
-  }, [incomingOrder, socket, addLog]);
+    socketRef.current?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
+  }, [incomingOrder, addLog]);
 
   const navigateTo = useCallback((destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
@@ -300,10 +300,10 @@ Geolocation.requestAuthorization();
 
   const reportIssue = useCallback((label: string) => {
     addLog(`Issue reported: ${label}`);
-    socket?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
+    socketRef.current?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
     Alert.alert('Issue Reported', `${label} — Support has been notified.`);
     setExpandedIssue(false);
-  }, [socket, activeDelivery, addLog]);
+  }, [activeDelivery, addLog]);
 
   return (
     <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
@@ -587,7 +587,7 @@ Geolocation.requestAuthorization();
             <View style={styles.logCard}>
               <Text style={styles.logTitle}>📋 Recent Activity</Text>
               {log.map((entry, i) => (
-                <Text key={i} /* react-doctor: no-array-index-as-key */ style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+                <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
                   {entry}
                 </Text>
               ))}

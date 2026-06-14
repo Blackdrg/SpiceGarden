@@ -252,11 +252,7 @@ const styles = StyleSheet.create({
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.md,
     marginBottom: DESIGN_TOKENS.spacing.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   },
   addressHeader: {
     flexDirection: 'row',

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/slices/authSlice';
 import { API_URL } from '@spicegarden/shared/constants';
+import styles from './auth.module.css';
 
 const AuthPage = () => {
   const router = useRouter();

@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   emptySubtext: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginBottom: 20, fontFamily: DESIGN_TOKENS.typography.fontFamily, textAlign: 'center' },
   primaryButton: { backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 12, paddingHorizontal: 24, borderRadius: DESIGN_TOKENS.radius.button },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600', fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2, padding: DESIGN_TOKENS.spacing.sm },
+  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', padding: DESIGN_TOKENS.spacing.sm },
   cartItemImage: { width: 80, height: 80 },
   cartItemInfo: { flex: 1, marginLeft: DESIGN_TOKENS.spacing.sm, justifyContent: 'space-between' },
   cartItemName: { fontSize: 16, fontWeight: '600', marginBottom: 4, color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },

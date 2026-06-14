@@ -4,25 +4,57 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 
+const categories = [
+  { id: 'burgers', name: 'Burgers', count: 12 },
+  { id: 'sides', name: 'Sides', count: 8 },
+  { id: 'drinks', name: 'Drinks', count: 6 },
+];
+
+const menuItems = [
+  { id: 1, name: 'Whopper', desc: 'Flame-grilled beef patty', price: 149, emoji: '🍔', category: 'burgers' },
+  { id: 2, name: 'Chicken Fries', desc: 'Crispy chicken fries', price: 99, emoji: '🍟', category: 'sides' },
+  { id: 3, name: 'Coke', desc: '330ml Can', price: 49, emoji: '🥤', category: 'drinks' },
+  { id: 4, name: 'Double Cheese', desc: 'Two patties, twice the cheese', price: 199, emoji: '🍔', category: 'burgers' },
+  { id: 5, name: 'Veg Burger', desc: 'Crispy veggie patty', price: 129, emoji: '🍔', category: 'burgers' },
+  { id: 6, name: 'Large Coke', desc: '1.25L Bottle', price: 79, emoji: '🥤', category: 'drinks' },
+];
+
+const menuItemStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: DESIGN_TOKENS.spacing.sm,
+  backgroundColor: 'white',
+  borderRadius: DESIGN_TOKENS.radius.md,
+  cursor: 'pointer',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+};
+
+const bottomNavStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: 'white',
+  borderTop: '1px solid #eee',
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+};
+
+const navButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  cursor: 'pointer',
+  fontSize: '12px',
+};
+
 const RestaurantPage = () => {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('burgers');
   const dispatch = useDispatch();
-
-  const categories = [
-    { id: 'burgers', name: 'Burgers', count: 12 },
-    { id: 'sides', name: 'Sides', count: 8 },
-    { id: 'drinks', name: 'Drinks', count: 6 },
-  ];
-
-  const menuItems = [
-    { id: 1, name: 'Whopper', desc: 'Flame-grilled beef patty', price: 149, emoji: '🍔', category: 'burgers' },
-    { id: 2, name: 'Chicken Fries', desc: 'Crispy chicken fries', price: 99, emoji: '🍟', category: 'sides' },
-    { id: 3, name: 'Coke', desc: '330ml Can', price: 49, emoji: '🥤', category: 'drinks' },
-    { id: 4, name: 'Double Cheese', desc: 'Two patties, twice the cheese', price: 199, emoji: '🍔', category: 'burgers' },
-    { id: 5, name: 'Veg Burger', desc: 'Crispy veggie patty', price: 129, emoji: '🍔', category: 'burgers' },
-    { id: 6, name: 'Large Coke', desc: '1.25L Bottle', price: 79, emoji: '🥤', category: 'drinks' },
-  ];
 
   const filtered = activeCategory === 'all' ? menuItems : menuItems.filter((item) => item.category === activeCategory);
 
@@ -51,12 +83,7 @@ const RestaurantPage = () => {
         {filtered.map((item) => (
           <div
             key={item.id}
-            style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: DESIGN_TOKENS.spacing.sm, backgroundColor: 'white',
-              borderRadius: DESIGN_TOKENS.radius.md, cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-            }}
+            style={menuItemStyle}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, flex: 1 }}>
               <span style={{ fontSize: '28px' }}>{item.emoji}</span>
@@ -88,10 +115,7 @@ const RestaurantPage = () => {
       </div>
 
       {/* Bottom nav */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'white',
-        borderTop: '1px solid #eee', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      }}>
+      <nav style={bottomNavStyle}>
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
@@ -99,14 +123,15 @@ const RestaurantPage = () => {
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
           <button
+            type="button"
             key={tab.key}
             onClick={() => router.push(tab.path)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(tab.path); } }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999', fontSize: '12px' }}
+            style={{ ...navButtonStyle, color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999' }}
           >
             <span style={{ fontSize: '22px' }}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

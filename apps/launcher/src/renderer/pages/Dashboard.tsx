@@ -54,20 +54,20 @@ export const Dashboard: React.FC = () => {
       <section className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="action-buttons">
-          <button onClick={() => window.electronAPI.startAll()}>Start All</button>
-          <button onClick={() => window.electronAPI.stopAll()}>Stop All</button>
-          <button onClick={() => window.electronAPI.restartServices()}>Restart</button>
-          <button onClick={() => window.electronAPI.openUrl('http://localhost:3001')}>
+          <button type="button" onClick={() => window.electronAPI.startAll()}>Start All</button>
+          <button type="button" onClick={() => window.electronAPI.stopAll()}>Stop All</button>
+          <button type="button" onClick={() => window.electronAPI.restartServices()}>Restart</button>
+          <button type="button" onClick={() => window.electronAPI.openUrl('http://localhost:3001')}>
             Open Customer App
           </button>
-          <button onClick={() => window.electronAPI.openUrl('http://localhost:3002')}>
+          <button type="button" onClick={() => window.electronAPI.openUrl('http://localhost:3002')}>
             Open Restaurant Dashboard
           </button>
-          <button onClick={() => window.electronAPI.openUrl('http://localhost:3003')}>
+          <button type="button" onClick={() => window.electronAPI.openUrl('http://localhost:3003')}>
             Open Admin Dashboard
           </button>
-          <button onClick={() => window.electronAPI.resetDatabase()}>Reset Database</button>
-          <button onClick={() => window.electronAPI.openUrl('file://' + process.cwd() + '/launcher-logs')}>
+          <button type="button" onClick={() => window.electronAPI.resetDatabase()}>Reset Database</button>
+          <button type="button" onClick={() => window.electronAPI.openUrl('file://' + process.cwd() + '/launcher-logs')}>
             Open Logs
           </button>
         </div>

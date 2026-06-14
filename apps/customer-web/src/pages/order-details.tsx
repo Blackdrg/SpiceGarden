@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './order-details.module.css';
 
 const STATUS_LABELS: Record<string, string> = {
   placed: 'Order Placed',
@@ -122,11 +123,11 @@ const OrderDetailsPage = () => {
 
     loadOrderDetails();
     return () => { if (timerId) clearTimeout(timerId); };
-  }, [router.query.id, user?.token]);
+  }, [router, router.query.id, user?.token]);
 
   if (loading && !order) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading order details...</p>
       </div>
     );
@@ -134,8 +135,8 @@ const OrderDetailsPage = () => {
 
   if (error) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
-        <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
+      <div className={styles.errorState}>
+        <div className={styles.errorBanner}>
           {error}
         </div>
         <Button label="Back to Orders" onClick={() => router.push('/history')} variant="secondary" />
@@ -145,7 +146,7 @@ const OrderDetailsPage = () => {
 
   if (!order) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, textAlign: 'center' }}>
+      <div className={styles.notFoundState}>
         <p>Order not found</p>
         <Button label="Back to Orders" onClick={() => router.push('/history')} variant="secondary" />
       </div>
@@ -153,28 +154,28 @@ const OrderDetailsPage = () => {
   }
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
-      <Button label="← Back" onClick={() => router.push('/history')} variant="secondary" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
+    <div className={styles.pageContainer}>
+      <Button label="← Back" onClick={() => router.push('/history')} variant="secondary" className={styles.backButton} />
 
-       <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Order #{order.id}</h2>
+       <h2 className={styles.pageTitle}>Order #{order.id}</h2>
 
       {order.restaurant && (
         <Card title="Restaurant">
-          <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, alignItems: 'center' }}>
+          <div className={styles.restaurantContent}>
             {order.restaurant.image ? (
               <Image
                 src={order.restaurant.image}
-                alt={order.restaurant.name}
+                alt={order.restaurant.name || 'Restaurant'}
                 width={60}
                 height={60}
-                style={{ borderRadius: DESIGN_TOKENS.radius.md, objectFit: 'cover' }}
+                className={styles.restaurantImage}
               />
             ) : (
-              <div style={{ width: '60px', height: '60px', borderRadius: DESIGN_TOKENS.radius.md, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🍽️</div>
+              <div className={styles.restaurantPlaceholder}>🍽️</div>
             )}
             <div>
-              <h3 style={{ margin: '0 0 4px 0' }}>{order.restaurant.name}</h3>
-              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>Restaurant Partner</p>
+              <h3 className={styles.restaurantTitle}>{order.restaurant.name}</h3>
+              <p className={styles.restaurantSubtitle}>Restaurant Partner</p>
             </div>
           </div>
         </Card>
@@ -189,7 +190,7 @@ const OrderDetailsPage = () => {
                    {item.image ? (
                       <Image
                         src={item.image}
-                        alt={item.name}
+                        alt={item.name || 'Order item'}
                         width={40}
                         height={40}
                         style={{ borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
@@ -240,13 +241,7 @@ const OrderDetailsPage = () => {
          <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
              <span>Status</span>
-             <span style={{ 
-               backgroundColor: statusColors[order.status || ''] + '20', 
-               color: statusColors[order.status || ''], 
-               padding: '2px 8px', 
-               borderRadius: DESIGN_TOKENS.radius.sm,
-               fontWeight: 'bold'
-             }}>{statusLabels[order.status || ''] || order.status || 'Unknown'}</span>
+              <span className={styles.statusBadge} style={{ backgroundColor: `${STATUS_COLORS[order.status || 'delivered']}20`, color: STATUS_COLORS[order.status || 'delivered'] }}>{STATUS_LABELS[order.status || ''] || order.status || 'Unknown'}</span>
            </div>
            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
              <span>Order Date</span>

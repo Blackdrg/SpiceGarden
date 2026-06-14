@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+﻿import React, { useState, useRef, useCallback } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +16,24 @@ interface OnboardingData {
   vehicleRegistration: string;
 }
 
+const slides = [
+  {
+    title: 'Personal Information',
+    subtitle: 'Tell us about yourself',
+    fields: ['fullName', 'phone', 'email'] as const,
+  },
+  {
+    title: 'Vehicle Details',
+    subtitle: 'Register your delivery vehicle',
+    fields: ['vehicleType', 'licenseNumber', 'vehicleRegistration'] as const,
+  },
+  {
+    title: 'Verification',
+    subtitle: 'Upload documents for verification',
+    type: 'documents',
+  },
+];
+
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -32,23 +50,6 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
 
-  const slides = [
-    {
-      title: 'Personal Information',
-      subtitle: 'Tell us about yourself',
-      fields: ['fullName', 'phone', 'email'] as const,
-    },
-    {
-      title: 'Vehicle Details',
-      subtitle: 'Register your delivery vehicle',
-      fields: ['vehicleType', 'licenseNumber', 'vehicleRegistration'] as const,
-    },
-    {
-      title: 'Verification',
-      subtitle: 'Upload documents for verification',
-      type: 'documents',
-    },
-  ];
 
   const validateField = useCallback((field: string, value: string) => {
     switch (field) {
@@ -222,7 +223,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       <View style={styles.progressContainer}>
         {slides.map((slide, index) => (
           <View
-            key={index} /* react-doctor: no-array-index-as-key */
+            key={slide.title}
             style={[
               styles.progressDot,
               index === step && styles.progressDotActive,
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.lg,
     alignItems: 'center',
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   },
   documentIcon: {
     fontSize: 40,

@@ -35,6 +35,15 @@ type Order = {
 type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed';
 type ServiceType = 'delivery' | 'dine-in' | 'dine_in' | 'takeaway';
 
+const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
+const statusLabels = {
+  new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
+} as const satisfies Record<OrderStatus, string>;
+const tryPlay = (base64: string) => {
+  const el = new Audio(`data:audio/wav;base64,${base64}`);
+  el.play().catch(() => null);
+};
+
 // ── Pre-seeded demo data ────────────────────────────────────────────────────
 
 const DEMO_ITEMS: OrderItem[] = [
@@ -167,11 +176,6 @@ export default function KitchenDashboard() {
 
   // ── Derived data ──────────────────────────────────────────────────────────
 
-  const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
-  const statusLabels = {
-    new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
-  } as const satisfies Record<OrderStatus, string>;
-
   const counts = Object.fromEntries(statuses.map((s) => [s, orders.filter((o) => o.status === s).length])) as Record<OrderStatus, number>;
 
   const groupedOrders = batchMode
@@ -179,11 +183,6 @@ export default function KitchenDashboard() {
     : null;
 
   // ── Alert sound player (for pre-played sounds) ──────────────────────────────
-
-  const tryPlay = (base64: string) => {
-    const el = new Audio(`data:audio/wav;base64,${base64}`);
-    el.play().catch(() => null);
-  };
 
   // ── Render ────────────────────────────────────────────────────────────────
 

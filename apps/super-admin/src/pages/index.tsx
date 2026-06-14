@@ -22,6 +22,65 @@ const TICKET_TYPE_ICONS: Record<string, string> = {
   refund: '💸', support: '🎧', fraud: '🛡️',
 };
 
+const kpiCardStyle: React.CSSProperties = {
+  background: 'white',
+  borderRadius: 12,
+  padding: 18,
+  border: '1px solid #e0e0e0',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+};
+
+const kpiLabelStyle: React.CSSProperties = {
+  fontSize: 12,
+  color: '#888',
+  fontWeight: 500,
+  textTransform: 'uppercase',
+  marginBottom: 8,
+};
+
+const kpiValueStyle: React.CSSProperties = {
+  fontSize: 28,
+  fontWeight: 800,
+  color: '#1a1a2e',
+};
+
+const cardStyle: React.CSSProperties = {
+  background: 'white',
+  borderRadius: 12,
+  padding: 20,
+  border: '1px solid #e0e0e0',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  margin: '0 0 4px 0',
+  fontSize: 17,
+  fontWeight: 700,
+};
+
+const cardSubStyle: React.CSSProperties = {
+  margin: '0 0 16px 0',
+  fontSize: 13,
+  color: '#888',
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: '8px 16px',
+  borderRadius: 8,
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: 13,
+  fontWeight: 600,
+  color: 'white',
+};
+
+const buttonBackgrounds: Record<string, string> = {
+  primary: '#f04e31',
+  secondary: '#f0f0f0',
+  danger: '#ff4444',
+  info: '#2196f3',
+};
+
 type LiveOrder = {
   id: string;
   amount: number;
@@ -620,12 +679,9 @@ fetchOrders().then(orders => {
 
 function KPICard({ label, value, upColor, delta }: { label: string; value: string; upColor?: string; delta?: string }) {
   return (
-    <div style={{
-      background: 'white', borderRadius: 12, padding: 18, border: '1px solid #e0e0e0',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-    }}>
-      <div style={{ fontSize: 12, color: '#888', fontWeight: 500, textTransform: 'uppercase', marginBottom: 8 }}>{label}</div>
-      <div style={{ fontSize: 28, fontWeight: 800, color: '#1a1a2e' }}>{value}</div>
+    <div style={kpiCardStyle}>
+      <div style={kpiLabelStyle}>{label}</div>
+      <div style={kpiValueStyle}>{value}</div>
       {delta && <div style={{ fontSize: 12, color: upColor || '#888', marginTop: 4, fontWeight: 500 }}>↑ {delta}</div>}
     </div>
   );
@@ -633,9 +689,9 @@ function KPICard({ label, value, upColor, delta }: { label: string; value: strin
 
 function Card({ title, sub, children, style }: { title: string; sub?: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ background: 'white', borderRadius: 12, padding: 20, border: '1px solid #e0e0e0', boxShadow: '0 2px 6px rgba(0,0,0,0.04)', ...style }}>
-      {title && <h3 style={{ margin: '0 0 4px 0', fontSize: 17, fontWeight: 700 }}>{title}</h3>}
-      {sub && <p style={{ margin: '0 0 16px 0', fontSize: 13, color: '#888' }}>{sub}</p>}
+    <div style={{ ...cardStyle, ...style }}>
+      {title && <h3 style={cardTitleStyle}>{title}</h3>}
+      {sub && <p style={cardSubStyle}>{sub}</p>}
       {children}
     </div>
   );
@@ -647,14 +703,8 @@ function Button({ label, onClick, style, variant = 'primary', ...rest }: { label
       type="button"
       onClick={onClick}
       style={{
-        padding: '8px 16px',
-        borderRadius: 8,
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: 13,
-        fontWeight: 600,
-        color: 'white',
-        background: variant === 'primary' ? '#f04e31' : variant === 'secondary' ? '#f0f0f0' : variant === 'danger' ? '#ff4444' : '#2196f3',
+        ...buttonStyle,
+        background: buttonBackgrounds[variant] || buttonBackgrounds.info,
         ...style,
       }}
       {...rest}

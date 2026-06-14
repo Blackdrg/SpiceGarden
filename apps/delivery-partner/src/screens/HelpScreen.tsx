@@ -2,14 +2,15 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
-export const HelpScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
-  const handleCallSupport = () => {
-    Linking.openURL('tel:+18001234567');
-  };
+const handleCallSupport = () => {
+  Linking.openURL('tel:+18001234567');
+};
 
-  const handleEmergency = () => {
-    Linking.openURL('tel:112');
-  };
+const handleEmergency = () => {
+  Linking.openURL('tel:112');
+};
+
+export const HelpScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
 
   return (
     <View style={styles.container}>

@@ -499,3 +499,143 @@ Order flow: customer places order through `/api/orders`; backend pushes to KDS v
 Reference: `BUSINESS_ENGINE.md:5`, `BUSINESS_ENGINE.md:19`, `apps/backend/src/services/restaurant/business-engine.service.ts:15`, `apps/backend/src/services/restaurant/business-engine.service.ts:141`.
 
 ---
+
+## Verified Documentation Update
+
+Verified as of: 2026-06-14 20:59 IST
+
+This section was appended after repository verification. Existing README lines were preserved; no existing README line was deleted or overwritten.
+
+### Verification scope
+
+The repository was audited across root manifests, backend modules, frontend apps, React Native apps, shared packages, Docker/Compose, Kubernetes, GitHub Actions, environment templates, security scripts, test scripts, dependency audit output, React Doctor output, and command logs.
+
+### Current repository state
+
+| Metric | Verified value |
+| :--- | :---: |
+| Tracked files | 2410 |
+| Deleted tracked files | 0 |
+| Untracked files/folders | 5 |
+| Modified files | 51 |
+| Actual repo files excluding generated/cache dirs | 1228 |
+| React components | 110 |
+| Services | 84 |
+| Modules | 56 |
+| Entities | 68 |
+| Controllers | 41 |
+| Routes/pages | 50 |
+| Screens | 27 |
+| Hooks | 17 |
+| Tests | 80 |
+| Infra scripts/files | 67 |
+| Kubernetes manifests | 8 |
+| Docker Compose files | 4 |
+
+### Build status
+
+Root build is currently failing.
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Failed with exit code 1 |
+| `apps/customer-mobile build` | Failed during `tsc --noEmit` |
+
+Known build blockers:
+
+- `apps/customer-mobile/src/screens/CartScreen.tsx`: `FastImage` is not exported from `react-native`.
+- `apps/customer-mobile/src/screens/CartScreen.tsx`: `Image` JSX usage is invalid.
+- `apps/customer-mobile/src/screens/SearchScreen.tsx`: duplicate `DESIGN_TOKENS` identifier.
+
+### Test status
+
+Root test scripts exit 0, but several workspaces rely on placeholder scripts or `--passWithNoTests`.
+
+| Command | Result |
+| :--- | :--- |
+| `npm run test:unit` | Exit 0; backend 3 suites / 30 tests passed; customer-web no tests found; others echo placeholders |
+| `npm run test:integration` | Exit 0; backend 8 suites / 34 tests passed; customer-web no tests found; others echo placeholders |
+| `npm run test:e2e` | Exit 0; backend 2 suites / 35 tests passed; customer-web no tests found; others echo placeholders |
+
+Direct Jest checks found additional failures:
+
+| Workspace | Result |
+| :--- | :--- |
+| `apps/customer-mobile` | Failed; missing Detox config and e2e assertion failure |
+| `apps/customer-web` | Failed without `--passWithNoTests` |
+| `apps/restaurant-dashboard` | Failed; TypeScript e2e file could not parse |
+| `apps/super-admin` | Passed; 2 suites / 20 tests |
+| `apps/delivery-partner` | Failed; React Native Jest preset migration |
+| `packages/ui` | Failed; ES module syntax could not parse |
+
+### Dependency and security status
+
+- `npm audit --json` found vulnerabilities including moderate `@expo/cli`, `@expo/config`, and `@expo/config-plugins`.
+- `npm ls --workspaces --depth=0` reported extraneous `@emnapi/runtime@1.10.0`, extraneous `crc@`, and invalid `eslint-config-next@16.2.6` in restaurant-dashboard and super-admin.
+- CI currently runs `npm audit --audit-level=moderate || true`, so audit failures do not fail the workflow.
+- `.npmrc` disables audit and fund output with `audit=false` and `fund=false`.
+
+### React Doctor status
+
+React Doctor `v0.5.5` scanned 243 files in 48.2s and returned a critical 48/100 score with 217 issues.
+
+Critical issue:
+
+- `apps/customer-mobile/src/screens/CartScreen.tsx:156`: undefined JSX component `Image`, which can crash at runtime.
+
+Other notable findings:
+
+- Missing effect dependencies involving `socketRef.current`.
+- Date/random values in JSX.
+- Inline render functions.
+- Client-side redirects in effects.
+- React Native `Dimensions.get` instead of `useWindowDimensions`.
+- Heavy `recharts` eager load.
+- Data fetching inside effects.
+- Derived values copied into state.
+- Multiple setState calls in one effect.
+- Unused files.
+- TypeScript syntax in `jest.setup.js`.
+
+### Backend readiness notes
+
+- Backend route decorators were extracted into a temp inventory: `C:\Users\mehta\AppData\Local\Temp\kilo\endpoints.tsv` with 263 route decorators detected.
+- Guards are present on many operational controllers, but `RolesGuard` is still placeholder RBAC.
+- `QueueService` is an in-memory simulation and is not durable queue infrastructure.
+- `TrackingGateway` and `KdsGateway` use `cors: { origin: '*' }`.
+- Auth has a non-production fallback secret path when `JWT_SECRET` is absent or placeholder.
+- Payment, delivery, dispatch, KDS, audit, metrics, logging, compliance, encryption, and Vault integration files exist.
+
+### Frontend and shared package notes
+
+- Customer web, restaurant dashboard, super-admin, customer mobile, and delivery partner route/screen inventories were verified.
+- `packages/shared/constants.ts` hardcodes localhost API/socket URLs:
+  - `API_URL = 'http://localhost:3001'`
+  - `SOCKET_URL = 'http://localhost:3001'`
+- `packages/shared/api.ts` defaults to `http://localhost:3001/api`.
+- `packages/ui/index.ts` exports Button, Card, Input, Skeleton, LoadingStates, LottieSuccessAnimation, Toast, Modal, SkeletonTemplates, OTPInput, SearchInput, Stepper, analytics, tokens, icons, useFlow, FlowManager, and ErrorBoundary.
+
+### Infra and deployment notes
+
+- `validate-env-consistency.js` exited with code 1 and reported:
+  - `[PRODUCTION] STRIPE_SECRET_KEY_FILE not configured`
+  - `[STAGING] STRIPE_SECRET_KEY_FILE should reference staging secrets`
+- `deployment-check.js` is a Bash script despite the `.js` extension and fails under Node.js with `Unexpected identifier 'pipefail'`.
+- `deployment-check.sh` was not present in the repository.
+- `Dockerfile` builds only the backend and does not build frontend/mobile apps.
+- Docker production stage copies root `node_modules` into the final image.
+- Docker user is named `nextjs`, despite the backend-only image.
+- `infra/k8s/production-hardened.yaml` includes stronger hardening than `infra/k8s/backend-deployment.yaml`, including non-root user, read-only root filesystem, dropped capabilities, secrets/configmap, rolling update, probes, resources, anti-affinity, tolerations, PDB, HPA, and NetworkPolicy.
+
+### Documentation outputs
+
+This verification created or updated:
+
+- `README_AUDIT_REPORT.md`
+- `PROJECT_STATUS_REPORT.md`
+- `PRODUCTION_GAP_CHECKLIST.md`
+- Appended verified section in `README.md`
+
+### Production readiness verdict
+
+Not production-ready. The repository has substantial implementation and hardened infrastructure assets, but verified blockers remain: failing root build, React runtime crash risk, weak CI audit gate, dependency vulnerabilities, placeholder tests, placeholder RBAC, in-memory queue, wildcard socket CORS, localhost defaults, env validation failures, and incomplete deployment validation.

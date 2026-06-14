@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, TextInput, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -164,14 +164,7 @@ const ProfileScreen = () => {
     );
   }
 
-  const menuItems = [
-    { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
-    { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-    { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
-    { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
-    { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
-    { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
-  ];
+  const menuItems = MENU_ITEMS;
 
   return (
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>

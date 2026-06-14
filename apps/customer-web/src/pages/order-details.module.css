@@ -1,0 +1,161 @@
+.pageContainer {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.loadingState {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorState {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.notFoundState {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
+.errorBanner {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.backButton {
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  margin-bottom: 24px;
+}
+
+.restaurantContent {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.restaurantImage {
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.restaurantPlaceholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.restaurantTitle {
+  margin: 0 0 4px 0;
+}
+
+.restaurantSubtitle {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.itemImageWrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.itemName {
+  font-weight: bold;
+}
+
+.itemMeta {
+  font-size: 14px;
+  color: #666;
+}
+
+.itemPrice {
+  text-align: right;
+  font-weight: bold;
+}
+
+.emptyItems {
+  text-align: center;
+  color: #666;
+  padding: 32px;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryTotal {
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statusBadge {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.addressLabel {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.addressText {
+  color: #666;
+}
+
+.actionWrapper {
+  margin-top: 24px;
+  text-align: center;
+}

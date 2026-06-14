@@ -5,6 +5,7 @@ import { Plus, MapPin, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
 import { getCachedToken } from '../utils/cachedLocalStorage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './addresses.module.css';
 
 interface Address {
   id: string;
@@ -110,31 +111,31 @@ const AddressesPage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading addresses...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
+    <div className={styles.pageContainer}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, backgroundColor: '#ffebee', color: '#c62828', padding: DESIGN_TOKENS.spacing.md, borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md }}>
+        <div className={styles.errorBanner}>
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
       )}
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        <h2 style={{ margin: 0 }}>Saved Addresses</h2>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Saved Addresses</h2>
         <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add new address">
           <Plus size={24} />
         </button>
       </div>
 
       {addresses.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.xl }}>
-          <p style={{ color: '#666' }}>No addresses saved yet. Add one to get started!</p>
+        <div className={styles.emptyState}>
+          <p className={styles.emptyText}>No addresses saved yet. Add one to get started!</p>
         </div>
       ) : (
         addresses.map(addr => (
@@ -155,7 +156,7 @@ const AddressesPage = () => {
                     <Star size={16} />
                   </button>
                 )}
-                <button type="button" onClick={() => handleDelete(addr.id)} aria-label="Delete address" style={{ color: DESIGN_TOKENS.colors.danger }}>
+                <button type="button" onClick={() => handleDelete(addr.id)} aria-label="Delete address" className={styles.deleteButton}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -165,58 +166,60 @@ const AddressesPage = () => {
       )}
 
       {showAddForm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+        <div className={styles.modalOverlay}>
           <Card title="Add New Address">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm, padding: DESIGN_TOKENS.spacing.md, minWidth: '400px' }}>
-              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                <label htmlFor="addr-label" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Label (e.g., Home, Work)</label>
+            <div className={styles.form}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-label" className={styles.label}>Label (e.g., Home, Work)</label>
                 <input
                   id="addr-label"
+                  className={styles.input}
                   placeholder="Label (e.g., Home, Work)"
                   value={newAddress.label}
                   onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
-              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                <label htmlFor="addr-address" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Address Line</label>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-address" className={styles.label}>Address Line</label>
                 <input
                   id="addr-address"
+                  className={styles.input}
                   placeholder="Address Line"
                   value={newAddress.addressLine}
                   onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
-              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                <label htmlFor="addr-city" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>City</label>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-city" className={styles.label}>City</label>
                 <input
                   id="addr-city"
+                  className={styles.input}
                   placeholder="City"
                   value={newAddress.city}
                   onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
-              <div style={{ marginBottom: DESIGN_TOKENS.spacing.sm }}>
-                <label htmlFor="addr-state" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>State</label>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-state" className={styles.label}>State</label>
                 <input
                   id="addr-state"
+                  className={styles.input}
                   placeholder="State"
                   value={newAddress.state}
                   onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
-              <label htmlFor="addr-postal" style={{ fontSize: 13, fontWeight: 500 }}>Postal Code</label>
-              <input
-                id="addr-postal"
-                placeholder="Postal Code"
-                value={newAddress.postalCode}
-                onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.md }}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-postal" className={styles.label}>Postal Code</label>
+                <input
+                  id="addr-postal"
+                  className={styles.input}
+                  placeholder="Postal Code"
+                  value={newAddress.postalCode}
+                  onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
+                />
+              </div>
+              <div className={styles.formActions}>
                 <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
                 <Button label="Save" onClick={handleAddAddress} />
               </div>
