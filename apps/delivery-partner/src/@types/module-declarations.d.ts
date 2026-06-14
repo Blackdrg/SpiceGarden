@@ -70,12 +70,6 @@ interface NativeAppState {
   AppStateStatus: AppStateStatus;
 }
 
-declare module 'react-native' {
-  export { AppState, AppStateStatus };
-  const AppState: typeof AppState;
-  type AppStateStatus = AppStateStatus;
-}
-
 declare module '@react-native-async-storage/async-storage' {
   const AsyncStorage: {
     getItem: (key: string) => Promise<string | null>;

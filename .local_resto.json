@@ -1,192 +1,3 @@
-﻿node.exe : npm WARN exec The following package was not found and will be installed: react-doctor@0.5.4
-At line:1 char:1
-+ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (npm WARN exec T...ct-doctor@0.5.4:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\runtime\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\runtime\LICENSE.DELETE.f0dff5a7a124ac6b27921c2c9d149681'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\core\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\core\LICENSE.DELETE.ceea197ec5a0c7602e06275627c7f017'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\glob-parent\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\glob-parent\LICENSE.DELETE.b1b7e409a72438cc8279c1e9e2c3a527'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\LICENSE.DELETE.e940903b0f4fea22beed8704818dc5d8'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxlint\binding-win32-x64-msvc\package.json' -> 'D:\npm-cache\_npx\c60
-5c2d11941254e\node_modules\@oxlint\binding-win32-x64-msvc\package.json.DELETE.9800c26e5b7eef261829cdfa0234ff15'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\tslib\tslib.es6.html' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\tslib\tslib.es6.html.DELETE.271813ddb03716d1e3694c0beabdb36e'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\to-regex-range\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\to-regex-range\package.json.DELETE.b6ba64f496460595cd0e0ee05f98f4e0'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\estraverse\.jshintrc' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\estraverse\.jshintrc.DELETE.787826ac18a6ebc95dd851fa8a432b5a'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\LICENSE.DELETE.1ae738a8e924fb8a3bc65b6a2954f418'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-resolver\browser.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-resolver\browser.js.DELETE.d8ee3dbd274a7c935b7a1383b57f817d'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\LICENSE.DELETE.cf0b1438eee9c40da197a8a4301ba9eb'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\LICENSE.DELETE.21a56ceeb01f7628c97cf3a2d2840cc0'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\merge2\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\merge2\LICENSE.DELETE.550d91ba2ae7eb6d8ef164ead6b15eb3'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\index.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\dist\commonjs\index.js' -> 'D:\npm-cache\_npx\c605c2d1
-1941254e\node_modules\brace-expansion\dist\commonjs\index.js.DELETE.355c0bf0fe8eaefaced4dedfcb920049'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\bin\tsserver'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@types\esrecurse\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@types\esrecurse\LICENSE.DELETE.33afefa0763ff38f3273553b47e3b5b4'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\package.json' -> 'D:\npm-cache\_npx\c605c2d11941254
-e\node_modules\@oxc-project\types\package.json.DELETE.6e20860034f0c33e0eb9637cbb177660'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\LICENSE.DELETE.734b88c914691809a49054f4ef4b163e'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\bindings.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-extglob\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\error.js' -> 'D:\npm-cache\_npx\c605c2d1
-1941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\error.js.DELETE.d8b9bd97761f52f919f732508586e3ec'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@typescript-eslint\types\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\cli.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\cli.js.DELETE.3b3231021d13fa90095095c84a13f044'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\picomatch\index.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\picomatch\index.js.DELETE.314096d81453cffd91f943e51c0fe538'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\glob-parent\CHANGELOG.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\glob-parent\CHANGELOG.md.DELETE.35a063d959ce55b279051ebaed9190ba'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\bench.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\bench.js.DELETE.4dfab1d3440f6732ded69a489327cb7e'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-extglob\README.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-extglob\README.md.DELETE.93212896f5380da73571673c5a24ade4'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\dist\wasi-threads.cjs.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\dist\eslint-visitor-keys.d.cts' -> 'D:\npm-cache\_
-npx\c605c2d11941254e\node_modules\eslint-visitor-keys\dist\eslint-visitor-keys.d.cts.DELETE.f9d9a8237686d1242c40768984b
-25576'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\globals.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\globals.js.DELETE.ade6242e02a70d34d4bc0200d0dce7c3'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\to-regex-range\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, unlink 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\bindings.js.DELETE.2655e21104361325b6fa1d402b294ce7'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\types.d.ts' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\types.d.ts.DELETE.891e4789c7c2a6d04b3408e7afeea4fa'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-extglob\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\estraverse\gulpfile.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\estraverse\gulpfile.js.DELETE.535849a228fc8252f3bbad3d67ccec0e'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\package.json.DELETE.a1021eadc58a035fd9e10eaec0e91515'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\glob-parent\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\README.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-glob\README.md.DELETE.66641d07a73a8c12dd633b0f8de75371'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\picomatch\lib\picomatch.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\README.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\README.md.DELETE.db069f3868a33e1919af9df82f6755bb'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\common.js' -> 'D:\npm-cache\_npx\c60
-5c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\common.js.DELETE.516416a73aa248c31217b93847237c16'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, unlink 'D:\npm-cache\_npx\c605c2d11941254e\node_modules
-\eslint-visitor-keys\lib\visitor-keys.js.DELETE.be46c083b780583d0e88aeee146cd0cd'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\out\adapters\fs.js' -> 'D:\npm-cache\_npx\c605c2d1194
-1254e\node_modules\@nodelib\fs.stat\out\adapters\fs.js.DELETE.fed6303d41c12048d6f0668a9d6811bd'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-resolver\README.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\package.json'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\estraverse\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, unlink 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\lint.js.DELETE.97dc3faa166650ee8610417950bd8746'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\queue.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\queue.js.DELETE.4c855313df9231b6785acd171a137d57'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\dist\commonjs\index.d.ts.map'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\dist\visitor-keys.d.ts'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\dist\esm\index.js.map'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\minimatch\dist\commonjs\index.js' -> 'D:\npm-cache\_npx\c605c2d1194125
-4e\node_modules\minimatch\dist\commonjs\index.js.DELETE.0cc6142d43878c60dbb1e9e3178a0675'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\dist\wasi-threads.mjs'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\package.json.DELETE.2b84afc609635ac0bb38c01787f3dd8e'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\common.d.ts'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\README.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\utils\index.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\sync.d.ts' -> 'D:\npm-cache\_npx\c60
-5c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\sync.d.ts.DELETE.b21ef0242995dee03f838197aa459ea7'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint-plugin-react-doctor\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\generated\lazy\type_ids.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\generated\visit\type_ids.js' -> 'D:\npm-cache\_npx\c
-605c2d11941254e\node_modules\oxc-parser\src-js\generated\visit\type_ids.js.DELETE.33c115a2ed1ccaa6566c64e6ed8ac24d'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\raw-transfer\visitor.js' -> 'D:\npm-cache\_npx\c605c
-2d11941254e\node_modules\oxc-parser\src-js\raw-transfer\visitor.js.DELETE.300c96c18d27159d55aaf49a26a2efb2'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, unlink 'D:\npm-cache\_npx\c605c2d11941254e\node_modules
-\react-doctor\dist\skills\react-doctor\SKILL.md.DELETE.9b90d9f0852cd490e5206e8d8422ea06'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\dist\index.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, unlink 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\lib\typescript.js.DELETE.83ca379160910b62db7b3c309c219db5'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\package.json.DELETE.79eb477f76e4523fef5d9238870b1b9b'
 {
   "schemaVersion": 1,
   "mode": "full",
@@ -227,8 +38,8 @@ npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename
           "plugin": "react-doctor",
           "rule": "no-vulnerable-react-server-components",
           "severity": "error",
-          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
           "line": 0,
           "column": 0,
           "category": "Security"
@@ -900,8 +711,8 @@ npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename
       "plugin": "react-doctor",
       "rule": "no-vulnerable-react-server-components",
       "severity": "error",
-      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
       "line": 0,
       "column": 0,
       "category": "Security"

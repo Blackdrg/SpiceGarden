@@ -3,6 +3,8 @@ let cachedAt = 0;
 const CACHE_TTL_MS = 5_000;
 
 export function getCachedToken(): string | null {
+  if (typeof window === 'undefined') return null;
+
   const now = Date.now();
   if (cachedToken && now - cachedAt < CACHE_TTL_MS) return cachedToken;
   cachedToken = localStorage.getItem('sg_token:v1');
@@ -13,5 +15,7 @@ export function getCachedToken(): string | null {
 export function clearCachedToken(): void {
   cachedToken = null;
   cachedAt = 0;
-  localStorage.removeItem('sg_token:v1');
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('sg_token:v1');
+  }
 }

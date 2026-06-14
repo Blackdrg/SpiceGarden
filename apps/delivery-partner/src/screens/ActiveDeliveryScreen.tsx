@@ -86,11 +86,9 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
         { text: 'Cancel', style: 'cancel' },
         { 
           text: 'Submit', 
-          onPress: async (detailsStr: string) => {
-            if (detailsStr) {
-              await deliveryApi.reportIssue(currentOrder.orderId, 'issue', detailsStr);
-              Alert.alert('Issue Reported', 'Support will contact you shortly');
-            }
+          onPress: async () => {
+            await deliveryApi.reportIssue(currentOrder.orderId, 'issue', 'No details provided');
+            Alert.alert('Issue Reported', 'Support will contact you shortly');
           }
         },
       ]

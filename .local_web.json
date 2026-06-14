@@ -1,126 +1,3 @@
-﻿node.exe : npm WARN exec The following package was not found and will be installed: react-doctor@0.5.4
-At line:1 char:1
-+ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (npm WARN exec T...ct-doctor@0.5.4:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\bin\oxlint'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\dist\chunk-N93fKeF6.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\bin\tsc'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\LICENSE.DELETE.02405318dbc13ac0a4e7b705e4bb11a8'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\index.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@napi-rs\wasm-runtime\fs-proxy.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\queue-microtask\index.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\error.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@types\esrecurse\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\LICENSE.DELETE.6c2f4997760e1e69a1b0dcf2f3954b18'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@types\esrecurse\README.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@types\esrecurse\README.md.DELETE.bdee395912c612ec6c918ec574a53865'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\run-parallel\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\dist\esm\index.js' -> 'D:\npm-cache\_npx\c605c2d119412
-54e\node_modules\brace-expansion\dist\esm\index.js.DELETE.43624c07605e928c4febb3912427e16b'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\minimatch\dist\commonjs\ast.js' -> 'D:\npm-cache\_npx\c605c2d11941254e
-\node_modules\minimatch\dist\commonjs\ast.js.DELETE.597060a9c9d790827a3e2188fa8a0069'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\esrecurse\README.md'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\merge2\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\merge2\package.json.DELETE.e94b6495eac6488590ff77dd11688795'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\index.d.cts' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\index.d.cts.DELETE.aca48404b2473e095fd60161e9fcbd86'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\minimatch\dist\esm\ast.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\fs.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\index.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\index.js.DELETE.b2d19e9476abed9660b5796347d52a46'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\dist\wasi-threads.esm-bundler.js' -> 'D:\npm-cach
-e\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\dist\wasi-threads.esm-bundler.js.DELETE.98aa2e7d44f7b8ae133ae
-9d5324b733e'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\index.js' -> 'D:\npm-cache\_npx\c605c2d119412
-54e\node_modules\@tybys\wasm-util\lib\cjs\index.js.DELETE.1f1e6c3a5166e0ca7c12004c8ab03ec9'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-resolver\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fill-range\README.md' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fill-range\README.md.DELETE.641ba48dc903136614a5e325582d1d5a'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\braces\index.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\readers\async.js' -> 'D:\npm-cache\_npx\c605c2d11
-941254e\node_modules\@nodelib\fs.walk\out\readers\async.js.DELETE.5931896bb00eacf1c39d73df4075619b'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\braces\lib\parse.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\runtime\dist\emnapi.iife.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fast-glob\out\providers\filters\entry.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\tslib\README.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\queue.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\core\dist\emnapi-core.esm-bundler.js' -> 'D:\npm-cache\_npx\c6
-05c2d11941254e\node_modules\@emnapi\core\dist\emnapi-core.esm-bundler.js.DELETE.b69286d668689e87ce3c7c2e5437f806'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\scope-manager.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\balanced-match\dist\commonjs\index.d.ts' -> 'D:\npm-cache\_npx\c605c2d
-11941254e\node_modules\balanced-match\dist\commonjs\index.d.ts.DELETE.a368c0f71b9f86628bfcf464987670fd'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\README.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@typescript-eslint\types\dist\index.d.ts'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\reusify\.github\workflows\ci.yml'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@typescript-eslint\types\dist\lib.d.ts' -> 'D:\npm-cache\_npx\c605c2d1
-1941254e\node_modules\@typescript-eslint\types\dist\lib.d.ts.DELETE.29cf4d1cc7221a968691bb44bd834d8f'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\async.d.ts' -> 'D:\npm-cache\_npx\c6
-05c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\async.d.ts.DELETE.879d04dc83f4956a04ac3ef87bc9e253'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\adapters\fs.d.ts' -> 'D:\npm-cache\_npx\c605c2
-d11941254e\node_modules\@nodelib\fs.scandir\out\adapters\fs.d.ts.DELETE.a23f9a8a942f5ae23c3228ee852766c4'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\index.d.ts' -> 'D:\npm-cache\_npx\c605c2d11941
-254e\node_modules\@nodelib\fs.scandir\out\index.d.ts.DELETE.49f3e57a12cfd538d859acdea8058c9e'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\types\index.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\readers\reader.d.ts' -> 'D:\npm-cache\_npx\c605c2
-d11941254e\node_modules\@nodelib\fs.walk\out\readers\reader.d.ts.DELETE.9707763af2aa959a60d9dbd6823c6734'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\settings.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\generated\lazy\walk.js' -> 'D:\npm-cache\_npx\c605c2
-d11941254e\node_modules\oxc-parser\src-js\generated\lazy\walk.js.DELETE.3e87a84b0cf172e2a0928ab53994a49b'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\LICENSE.DELETE.79973cc3e90118408a5ef9eefa5b3e81'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\lib\zh-cn\diagnosticMessages.generated.json'
 {
   "schemaVersion": 1,
   "mode": "full",
@@ -161,8 +38,8 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
           "plugin": "react-doctor",
           "rule": "no-vulnerable-react-server-components",
           "severity": "error",
-          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
           "line": 0,
           "column": 0,
           "category": "Security"
@@ -1713,7 +1590,7 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
           "rule": "async-await-in-loop",
           "severity": "warning",
           "title": "await inside a loop",
-          "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+          "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
           "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
           "line": 64,
           "column": 36,
@@ -2133,7 +2010,7 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
           "rule": "async-await-in-loop",
           "severity": "warning",
           "title": "await inside a loop",
-          "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+          "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
           "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
           "line": 85,
           "column": 26,
@@ -3804,8 +3681,8 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
       "plugin": "react-doctor",
       "rule": "no-vulnerable-react-server-components",
       "severity": "error",
-      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
       "line": 0,
       "column": 0,
       "category": "Security"
@@ -5356,7 +5233,7 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
       "rule": "async-await-in-loop",
       "severity": "warning",
       "title": "await inside a loop",
-      "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+      "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
       "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
       "line": 64,
       "column": 36,
@@ -5776,7 +5653,7 @@ npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open
       "rule": "async-await-in-loop",
       "severity": "warning",
       "title": "await inside a loop",
-      "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+      "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
       "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
       "line": 85,
       "column": 26,

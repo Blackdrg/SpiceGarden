@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import '@testing-library/jest-dom';
 
-(globalThis as unknown as Record<string, unknown>).fetch = () =>
+globalThis.fetch = () =>
   Promise.resolve({
     ok: true,
     json: () => Promise.resolve({}),
-  } as Response);
+  });

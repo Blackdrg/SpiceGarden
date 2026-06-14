@@ -1,7 +1,3 @@
-declare module 'react-native' {
-  export * from 'react-native';
-}
-
 declare module 'react-native-maps' {
   const MapView: any;
   const Marker: any;

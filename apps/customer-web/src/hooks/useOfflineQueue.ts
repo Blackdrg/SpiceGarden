@@ -115,6 +115,10 @@ useOfflineQueue.__useNetworkStatus = () => {
   const [lastOnline, setLastOnline] = useState<Date | null>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const handleOnline = () => {
       setIsOnline(true);
       setLastOnline(new Date());

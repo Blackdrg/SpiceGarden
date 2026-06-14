@@ -1,147 +1,3 @@
-﻿node.exe : npm WARN exec The following package was not found and will be installed: react-doctor@0.5.4
-At line:1 char:1
-+ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (npm WARN exec T...ct-doctor@0.5.4:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\brace-expansion\LICENSE.DELETE.80455db649844652a53662c0b471a25d'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\minimatch\dist\commonjs\assert-valid-pattern.js' -> 'D:\npm-cache\_npx
-\c605c2d11941254e\node_modules\minimatch\dist\commonjs\assert-valid-pattern.js.DELETE.e528e49bf3016774202aba9215a9dc4b'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\asyncify.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\queue-microtask\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\queue-microtask\LICENSE.DELETE.8a9ff0c83959f5a8b97849f197cad884'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\reusify\LICENSE' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\reusify\LICENSE.DELETE.f5789bd2345c47fa402745b0948c4db8'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\esrecurse\esrecurse.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\LICENSE'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\is-number\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@napi-rs\wasm-runtime\fs-proxy.js' -> 'D:\npm-cache\_npx\c605c2d119412
-54e\node_modules\@napi-rs\wasm-runtime\fs-proxy.js.DELETE.110b99dfd9f0e824904dad66ddffa4d8'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\dist\eslint-visitor-keys.cjs' -> 'D:\npm-cache\_np
-x\c605c2d11941254e\node_modules\eslint-visitor-keys\dist\eslint-visitor-keys.cjs.DELETE.f6b03d41dfd821ee19b75d16697cf6c
-b'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\fd.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\balanced-match\dist\esm\index.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@napi-rs\wasm-runtime\dist\fs.js' -> 'D:\npm-cache\_npx\c605c2d1194125
-4e\node_modules\@napi-rs\wasm-runtime\dist\fs.js.DELETE.073b0e4d589eeaeabbd383a11a2d66ee'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\micromatch\index.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\types.d.ts' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@oxc-project\types\types.d.ts.DELETE.477925b5e91c7f494857458725065b1b'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\balanced-match\dist\commonjs\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-visitor-keys\lib\index.js' -> 'D:\npm-cache\_npx\c605c2d1194125
-4e\node_modules\eslint-visitor-keys\lib\index.js.DELETE.d609cddaab730609b2c3d2ba5eeba1c9'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@typescript-eslint\types\dist\generated\ast-spec.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\wasi-threads\dist\wasi-threads.esm-bundler.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\index.d.cts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\assert.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\assert.js.DELETE.e608c04301375242d0e58dd187d8f49e'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\braces\lib\expand.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\braces\lib\expand.js.DELETE.1401e65cab0eceb84ffee8b725429a98'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\out\providers\async.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\tslib\tslib.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\tslib\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\out\index.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\out\index.js.DELETE.1735f798b3f30eb6ab7d63d648d1e196'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\runtime\dist\emnapi.js'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\deslop-js\package.json'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\package.json' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\package.json.DELETE.25ba17cb6e831ebf67abe9b2f3c788e7'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.stat\out\providers\async.d.ts' -> 'D:\npm-cache\_npx\c605c
-2d11941254e\node_modules\@nodelib\fs.stat\out\providers\async.d.ts.DELETE.a64c950f3f5426489b398db5cfc55353'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\providers\stream.js' -> 'D:\npm-cache\_npx\c605c2
-d11941254e\node_modules\@nodelib\fs.walk\out\providers\stream.js.DELETE.27234ef599912a9ef182f365abfd32d3'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\variable.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\eslint-scope\lib\variable.js.DELETE.86790c44ac767e9ffe5e051db563cde6'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\sync.js' -> 'D:\npm-cache\_npx\c605c
-2d11941254e\node_modules\@nodelib\fs.scandir\out\providers\sync.js.DELETE.092841f998d5584c74fd4efe331509e1'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\raw-transfer\eager.js' -> 'D:\npm-cache\_npx\c605c2d
-11941254e\node_modules\oxc-parser\src-js\raw-transfer\eager.js.DELETE.78c67072c31425638e0240ffeb41698e'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\index.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\index.js.DELETE.a639d9b1158171be349fb28b2a54053f'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\util.js' -> 'D:\npm-cache\_npx\c605c2d11
-941254e\node_modules\@tybys\wasm-util\lib\cjs\wasi\util.js.DELETE.d445702b8f73d62f5b72b0d4cb1710dd'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\fastq\example.mjs'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@nodelib\fs.walk\out\readers\sync.js'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\deslop-js\dist\parse-worker.mjs' -> 'D:\npm-cache\_npx\c605c2d11941254
-e\node_modules\deslop-js\dist\parse-worker.mjs.DELETE.5b2e6167649c9d630daf602781eab888'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\@emnapi\runtime\dist\emnapi.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\plugins.js' -> 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxlint\dist\plugins.js.DELETE.709e6cbac669f564c6d60549c437508a'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\oxc-parser\src-js\generated\lazy\type_ids.js' -> 'D:\npm-cache\_npx\c6
-05c2d11941254e\node_modules\oxc-parser\src-js\generated\lazy\type_ids.js.DELETE.df1e712a64d70fb2e011730a47fe2e9f'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\minimatch\dist\esm\unescape.js.map' -> 'D:\npm-cache\_npx\c605c2d11941
-254e\node_modules\minimatch\dist\esm\unescape.js.map.DELETE.5c3229887cce31ef9fb29751419d1e52'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\README.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\dist\skills\react-doctor\SKILL.md'
-npm WARN tar TAR_ENTRY_ERROR UNKNOWN: unknown error, open 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\react-doctor\dist\cli.d.ts'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\lib\tsserverlibrary.js' -> 'D:\npm-cache\_npx\c605c2d119412
-54e\node_modules\typescript\lib\tsserverlibrary.js.DELETE.7b107c67c95ac49dc0ad6a88a3827875'
-npm WARN tar TAR_ENTRY_ERROR ENOENT: no such file or directory, rename 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\typescript\lib\cs\diagnosticMessages.generated.json' -> 'D:\npm-cache\
-_npx\c605c2d11941254e\node_modules\typescript\lib\cs\diagnosticMessages.generated.json.DELETE.3b8817d2363846a264090649a
-a24a505'
-npm WARN cleanup Failed to remove some directories [
-npm WARN cleanup   [
-npm WARN cleanup     'D:\\npm-cache\\_npx\\c605c2d11941254e\\node_modules\\.effect-IrVf3Zmy',
-npm WARN cleanup     [Error: EPERM: operation not permitted, rmdir 
-'D:\npm-cache\_npx\c605c2d11941254e\node_modules\.effect-IrVf3Zmy\src\unstable\workflow'] {
-npm WARN cleanup       errno: -4048,
-npm WARN cleanup       code: 'EPERM',
-npm WARN cleanup       syscall: 'rmdir',
-npm WARN cleanup       path: 
-'D:\\npm-cache\\_npx\\c605c2d11941254e\\node_modules\\.effect-IrVf3Zmy\\src\\unstable\\workflow'
-npm WARN cleanup     }
-npm WARN cleanup   ]
-npm WARN cleanup ]
 {
   "schemaVersion": 1,
   "mode": "full",
@@ -182,8 +38,8 @@ npm WARN cleanup ]
           "plugin": "react-doctor",
           "rule": "no-vulnerable-react-server-components",
           "severity": "error",
-          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
           "line": 0,
           "column": 0,
           "category": "Security"
@@ -1026,8 +882,8 @@ npm WARN cleanup ]
       "plugin": "react-doctor",
       "rule": "no-vulnerable-react-server-components",
       "severity": "error",
-      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
-      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
       "line": 0,
       "column": 0,
       "category": "Security"

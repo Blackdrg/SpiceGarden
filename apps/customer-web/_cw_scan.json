@@ -1,4 +1,4 @@
-﻿{
+{
   "schemaVersion": 1,
   "mode": "full",
   "version": "0.5.5",
@@ -389,7 +389,7 @@
           "rule": "async-await-in-loop",
           "severity": "warning",
           "title": "await inside a loop",
-          "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+          "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
           "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
           "line": 64,
           "column": 36,
@@ -1133,7 +1133,7 @@
       "rule": "async-await-in-loop",
       "severity": "warning",
       "title": "await inside a loop",
-      "message": "This makes the for…of loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
+      "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`",
       "help": "Collect the items, then use `await Promise.all(items.map(...))` so independent work runs at the same time",
       "line": 64,
       "column": 36,

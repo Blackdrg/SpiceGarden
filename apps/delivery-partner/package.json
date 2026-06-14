@@ -30,7 +30,7 @@
     "eslint-plugin-react": "^7.34.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-native": "^4.1.0",
-    "typescript": "5.1.6"
+    "typescript": "^5.9.3"
   },
   "private": true
 }

@@ -7,8 +7,6 @@ import { STORAGE_KEYS } from '../constants/storage.keys';
 import { safeParse } from '../utils/safe-parse';
 import SkeletonRect from '../components/SkeletonLoader';
 
-import { DESIGN_TOKENS } from '@spicegarden/ui';
-
 function renderSkeleton() {
   return (
     <View style={styles.resultCard}>
