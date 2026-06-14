@@ -193,8 +193,9 @@ export default function KitchenDashboard() {
       <div className={styles.headerBar}>
         <h1 className={styles.headerTitle}>&#x1F525; KITCHEN DISPLAY</h1>
         <div className={styles.headerControls}>
-          <button
-            onClick={() => !audioEnabled ? setAudioEnabled(true) : squashSound('toggle')}
+<button
+          type="button"
+          onClick={() => !audioEnabled ? setAudioEnabled(true) : squashSound('toggle')}
             title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
             className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
           >
@@ -259,6 +260,7 @@ export default function KitchenDashboard() {
       <div className={styles.tabBar}>
         {(['kitchen', 'inventory'] as const).map((t) => (
           <button
+            type="button"
             key={t}
             onClick={() => setActiveTab(t)}
             className={`${styles.tabButton} ${activeTab === t ? styles.tabActive : styles.tabInactive}`}
@@ -388,14 +390,15 @@ export default function KitchenDashboard() {
               { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
               { key: 'inventory', label: 'Inventory', emoji: '📦' },
             ].map((t) => (
-                 <div
-                 key={t.key}
+<button
+                  key={t.key}
+                  type="button"
                   onClick={() => setActiveTab(t.key as 'kitchen' | 'inventory')}
-                className={`${styles.navItem} ${activeTab === t.key ? styles.navItemActive : styles.navItemInactive}`}
-               >
-                <span className={styles.navIcon}>{t.emoji}</span>
-                <span>{t.label}</span>
-              </div>
+                 className={`${styles.navItem} ${activeTab === t.key ? styles.navItemActive : styles.navItemInactive}`}
+                >
+                 <span className={styles.navIcon}>{t.emoji}</span>
+                 <span>{t.label}</span>
+               </button>
             ))}
       </nav>
 

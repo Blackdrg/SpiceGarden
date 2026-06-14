@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, Alert, ScrollView, Switch } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, Alert, ScrollView, Switch } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -130,29 +130,29 @@ export const ProfileScreen = () => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>More</Text>
-          <TouchableOpacity style={styles.menuItem}>
+          <Pressable style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <Text style={styles.menuIcon}>📄</Text>
               <Text style={styles.menuItemText}>Documents</Text>
             </View>
             <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
+          </Pressable>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <Pressable style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <Text style={styles.menuIcon}>🏦</Text>
               <Text style={styles.menuItemText}>Bank Account</Text>
             </View>
             <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
-        <TouchableOpacity 
+        <Pressable 
           style={styles.logoutButton}
           onPress={handleLogout}
         >
           <Text style={styles.logoutButtonText}>Sign Out</Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </Animated.View>
   );

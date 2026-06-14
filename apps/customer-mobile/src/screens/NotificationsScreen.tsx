@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, Switch, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, Switch, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -119,9 +119,9 @@ const NotificationsScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerText}>Notifications</Text>
         </View>
 

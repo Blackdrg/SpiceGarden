@@ -86,7 +86,7 @@ const CheckoutPage = () => {
 
 // Try to place order via API
       try {
-        const response = await ordersApi.create(orderData, user?.token || localStorage.getItem('sg_token') || '');
+        const response = await ordersApi.create(orderData, user?.token || localStorage.getItem('sg_token:v1') || '');
         router.push(`/tracking?order=${(response.data as OrderResponse).id}`);
       } catch (apiError: unknown) {
         // Check if it's a payment-related error
@@ -98,12 +98,12 @@ const CheckoutPage = () => {
           // Don't proceed to tracking on payment failure
         } else if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
           // Auth error - try to refresh token
-          const refreshToken = localStorage.getItem('sg_token');
+          const refreshToken = localStorage.getItem('sg_token:v1');
           if (refreshToken) {
             try {
               const refreshResponse = await authApi.refreshToken(refreshToken);
               // Update token in localStorage and state
-              localStorage.setItem('sg_token', (refreshResponse.data as { access_token: string }).access_token);
+              localStorage.setItem('sg_token:v1', (refreshResponse.data as { access_token: string }).access_token);
 // Retry the order with new token
               const retryResponse = await ordersApi.create(orderData, (refreshResponse.data as { access_token: string }).access_token);
               router.push(`/tracking?order=${(retryResponse.data as OrderResponse).id}`);

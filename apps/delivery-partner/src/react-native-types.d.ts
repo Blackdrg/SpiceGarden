@@ -1,14 +1,5 @@
 declare module 'react-native' {
-  export * from 'react-native/Libraries/Animated/Animated';
-  export * from 'react-native/Libraries/Animated/Easing';
-  export * from 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicator';
-  export * from 'react-native/Libraries/Components/FlatList/FlatList';
-  export * from 'react-native/Libraries/Components/Linking/Linking';
-  export * from 'react-native/Libraries/Components/Switch/Switch';
-  export * from 'react-native/Libraries/Components/TextInput/TextInput';
-  export * from 'react-native/Libraries/Components/Touchable/TouchableOpacity';
-  export * from 'react-native/Libraries/StyleSheet/StyleSheet';
-  export * from 'react-native/Libraries/Utilities/Platform';
+  export * from 'react-native';
 }
 
 declare module 'react-native-maps' {

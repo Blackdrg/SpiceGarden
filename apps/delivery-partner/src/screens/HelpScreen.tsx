@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export const HelpScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
@@ -14,39 +14,39 @@ export const HelpScreen = ({ navigation }: { navigation: { goBack: () => void } 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={navigation.goBack}>
+        <Pressable onPress={navigation.goBack}>
           <Text style={styles.backButton}>← Back</Text>
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.headerTitle}>Help & Support</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contact Support</Text>
-        <TouchableOpacity style={styles.menuItem} onPress={handleCallSupport}>
+        <Pressable style={styles.menuItem} onPress={handleCallSupport}>
           <Text style={styles.menuText}>📞 Call Support (24/7)</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+        </Pressable>
+        <Pressable style={styles.menuItem}>
           <Text style={styles.menuText}>💬 Chat with Support</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Safety</Text>
-        <TouchableOpacity style={[styles.menuItem, styles.emergencyButton]} onPress={handleEmergency}>
+        <Pressable style={[styles.menuItem, styles.emergencyButton]} onPress={handleEmergency}>
           <Text style={[styles.menuText, styles.emergencyText]}>🚨 Emergency Assistance</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>FAQs</Text>
-        <TouchableOpacity style={styles.faqItem}>
+        <Pressable style={styles.faqItem}>
           <Text style={styles.faqQuestion}>How do I update my bank details?</Text>
           <Text style={styles.faqAnswer}>Go to Profile → Bank Account to update your payout details.</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.faqItem}>
+        </Pressable>
+        <Pressable style={styles.faqItem}>
           <Text style={styles.faqQuestion}>What happens if I reject orders?</Text>
           <Text style={styles.faqAnswer}>Repeated rejections may affect your driver score and earnings.</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

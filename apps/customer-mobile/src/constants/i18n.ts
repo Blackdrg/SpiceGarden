@@ -34,15 +34,34 @@ export function useLocale() {
   return useContext(LocaleContext);
 }
 
+const INTL_OPTIONS = {
+  currency: 'INR',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+} as const;
+
+const formatterMap = new Map<string, Intl.NumberFormat | Intl.DateTimeFormat>();
+
+function getFormatter(locale: string, type: 'number' | 'date' | 'time'): Intl.NumberFormat | Intl.DateTimeFormat {
+  const key = `${type}:${locale}`;
+  let formatter = formatterMap.get(key);
+  if (!formatter) {
+    if (type === 'number') {
+      formatter = new Intl.NumberFormat(locale, INTL_OPTIONS);
+    } else if (type === 'date') {
+      formatter = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+    } else {
+      formatter = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' });
+    }
+    formatterMap.set(key, formatter);
+  }
+  return formatter;
+}
+
 export function formatLocalizedCurrency(amount: number, locale: SupportedLocale): string {
   const symbol = '₹';
   try {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return (getFormatter(locale, 'number') as Intl.NumberFormat).format(amount);
   } catch {
     return symbol + Math.round(amount);
   }
@@ -51,11 +70,7 @@ export function formatLocalizedCurrency(amount: number, locale: SupportedLocale)
 export function formatLocalizedDate(date: string | Date, locale: SupportedLocale): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   try {
-    return new Intl.DateTimeFormat(locale, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    }).format(dateObj);
+    return (getFormatter(locale, 'date') as Intl.DateTimeFormat).format(dateObj);
   } catch {
     return dateObj.toLocaleDateString();
   }
@@ -69,10 +84,7 @@ export function formatLocalizedTime(time: string, locale: SupportedLocale): stri
     try {
       const date = new Date();
       date.setHours(hours, minutes);
-      return new Intl.DateTimeFormat(locale, {
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(date);
+      return (getFormatter(locale, 'time') as Intl.DateTimeFormat).format(date);
     } catch {
       return time;
     }

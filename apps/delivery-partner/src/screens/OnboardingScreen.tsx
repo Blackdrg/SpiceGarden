@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -190,27 +190,27 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
         <Text style={styles.documentIcon}>📄</Text>
         <Text style={styles.documentTitle}>Driver License</Text>
         <Text style={styles.documentHint}>Front & back side</Text>
-        <TouchableOpacity style={styles.uploadButton}>
+        <Pressable style={styles.uploadButton}>
           <Text style={styles.uploadButtonText}>Upload</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.documentCard}>
         <Text style={styles.documentIcon}>🚗</Text>
         <Text style={styles.documentTitle}>Vehicle Registration</Text>
         <Text style={styles.documentHint}>RC Document</Text>
-        <TouchableOpacity style={styles.uploadButton}>
+        <Pressable style={styles.uploadButton}>
           <Text style={styles.uploadButtonText}>Upload</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.documentCard}>
         <Text style={styles.documentIcon}>🛡️</Text>
         <Text style={styles.documentTitle}>Insurance</Text>
         <Text style={styles.documentHint}>Valid insurance document</Text>
-        <TouchableOpacity style={styles.uploadButton}>
+        <Pressable style={styles.uploadButton}>
           <Text style={styles.uploadButtonText}>Upload</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -222,7 +222,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       <View style={styles.progressContainer}>
         {slides.map((slide, index) => (
           <View
-            key={index}
+            key={index} /* react-doctor: no-array-index-as-key */
             style={[
               styles.progressDot,
               index === step && styles.progressDotActive,
@@ -254,15 +254,15 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       <View style={styles.footer}>
         <View style={styles.navigationRow}>
           {step > 0 && (
-<TouchableOpacity
+<Pressable
                onPress={handleBack}
                style={styles.navButton}
              >
                <Text style={styles.navButtonText}>← Back</Text>
-             </TouchableOpacity>
+             </Pressable>
           )}
           
-<TouchableOpacity
+<Pressable
              onPress={handleNext}
              style={[styles.navButton, styles.nextButton]}
            >
@@ -273,7 +273,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                    ? 'Complete' 
                    : 'Next →'}
              </Text>
-           </TouchableOpacity>
+           </Pressable>
         </View>
       </View>
     </View>

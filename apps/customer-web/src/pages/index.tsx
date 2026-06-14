@@ -118,6 +118,7 @@ const HomePage = () => {
       </header>
 
         <button
+          type="button"
           onClick={() => router.push('/search')}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
           className={styles.searchBar}
@@ -184,9 +185,10 @@ const HomePage = () => {
         ) : (
           <div className={styles.restaurantItemGrid}>
             {restaurants.slice(0, 3).map((restaurant) => (
-              <button
-                key={restaurant.id}
-                className={styles.restaurantItem}
+<button
+              type="button"
+              key={restaurant.id}
+              className={styles.restaurantItem}
                 onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/restaurant?id=${restaurant.id}`); } }}
                 aria-label={`View ${restaurant.name} details`}

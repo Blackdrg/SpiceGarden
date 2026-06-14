@@ -16,23 +16,23 @@ const authSlice = (0, toolkit_1.createSlice)({
             state.user = action.payload.user;
             state.token = action.payload.token;
             state.isAuthenticated = true;
-            localStorage.setItem('sg_token', action.payload.token);
-            localStorage.setItem('sg_user', JSON.stringify(action.payload.user));
+            localStorage.setItem('sg_token:v1', action.payload.token);
+            localStorage.setItem('sg_user:v1', JSON.stringify(action.payload.user));
         },
         logout: (state) => {
             state.user = null;
             state.token = null;
             state.isAuthenticated = false;
-            localStorage.removeItem('sg_token');
-            localStorage.removeItem('sg_user');
+            localStorage.removeItem('sg_token:v1');
+            localStorage.removeItem('sg_user:v1');
         },
         refreshToken: (state, action) => {
             state.token = action.payload.token;
-            localStorage.setItem('sg_token', action.payload.token);
+            localStorage.setItem('sg_token:v1', action.payload.token);
         },
         updateUser: (state, action) => {
             state.user = action.payload.user;
-            localStorage.setItem('sg_user', JSON.stringify(action.payload.user));
+            localStorage.setItem('sg_user:v1', JSON.stringify(action.payload.user));
         },
     },
 });

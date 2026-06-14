@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
@@ -36,9 +36,9 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={navigation.goBack}>
+        <Pressable onPress={navigation.goBack}>
           <Text style={styles.backButton}>← Back</Text>
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.headerTitle}>Shift Management</Text>
       </View>
 
@@ -72,14 +72,14 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
         </View>
       </View>
 
-      <TouchableOpacity 
+      <Pressable 
         style={[styles.shiftButton, isOnline && styles.shiftButtonActive]}
         onPress={handleToggleShift}
       >
         <Text style={styles.shiftButtonText}>
           {isOnline ? 'END SHIFT' : 'START SHIFT'}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <View style={styles.infoSection}>
         <Text style={styles.infoTitle}>Peak Hours Bonus</Text>

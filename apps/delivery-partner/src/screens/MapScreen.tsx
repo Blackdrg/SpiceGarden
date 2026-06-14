@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { MapView, Marker, Polyline } from 'react-native-maps';
 
@@ -135,9 +135,9 @@ export const MapScreen = ({ route }: {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.gpsButton}>
+        <Pressable style={styles.gpsButton}>
           <Text style={styles.gpsButtonText}>📍 Recenter Map</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

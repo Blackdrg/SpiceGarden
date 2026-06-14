@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, ScrollView } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 interface EarningRecord {
@@ -82,16 +82,16 @@ export const EarningsScreen = () => {
           <Text style={styles.balanceAmount}>₹{totalBalance}</Text>
         </View>
 
-        <TouchableOpacity 
+        <Pressable 
           style={styles.payoutButton}
         >
           <Text style={styles.payoutButtonText}>Request Payout</Text>
           <Text style={styles.payoutIcon}>→</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={styles.periodSelector}>
           {(['today', 'week', 'month'] as const).map((period) => (
-            <TouchableOpacity
+            <Pressable
               key={period}
               onPress={() => setSelectedPeriod(period)}
               style={[
@@ -105,7 +105,7 @@ export const EarningsScreen = () => {
               ]}>
                 {period.charAt(0).toUpperCase() + period.slice(1)}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -99,7 +99,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             />
           </View>
 
-          <TouchableOpacity
+          <Pressable
             onPress={handleLogin}
             style={[styles.loginButton, loading && styles.loginButtonLoading]}
             disabled={loading}
@@ -109,7 +109,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             ) : (
               <Text style={styles.loginButtonText}>Sign In</Text>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </Animated.View>

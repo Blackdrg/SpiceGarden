@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, Animated, Easing, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, Image, Animated, Easing, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -158,19 +158,19 @@ const CartScreen = () => {
           <Text style={styles.cartItemName}>{item.name}</Text>
           <Text style={styles.cartItemDescription} numberOfLines={2}>{item.description}</Text>
           <View style={styles.cartItemQuantity}>
-            <TouchableOpacity onPress={() => updateQuantity(item.id, validQty - 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.decreaseQuantity(item.name)} accessibilityRole="button">
+            <Pressable onPress={() => updateQuantity(item.id, validQty - 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.decreaseQuantity(item.name)} accessibilityRole="button">
               <Text style={styles.quantityButtonText}>-</Text>
-            </TouchableOpacity>
+            </Pressable>
             <Text style={styles.quantityText} accessibilityLabel={`Quantity: ${validQty}`}>{validQty}</Text>
-            <TouchableOpacity onPress={() => updateQuantity(item.id, validQty + 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.increaseQuantity(item.name)} accessibilityRole="button">
+            <Pressable onPress={() => updateQuantity(item.id, validQty + 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.increaseQuantity(item.name)} accessibilityRole="button">
               <Text style={styles.quantityButtonText}>+</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <Text style={styles.cartItemPrice}>{formatCurrency(validPrice * validQty, 'INR')}</Text>
         </View>
-        <TouchableOpacity onPress={() => removeFromCart(item.id)} style={styles.removeButton} accessibilityLabel={STRINGS.accessibility.removeFromCart(item.name)} accessibilityRole="button">
+        <Pressable onPress={() => removeFromCart(item.id)} style={styles.removeButton} accessibilityLabel={STRINGS.accessibility.removeFromCart(item.name)} accessibilityRole="button">
           <Text style={styles.removeButtonText}>✕</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }, [updateQuantity, removeFromCart]);
@@ -195,9 +195,9 @@ const CartScreen = () => {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel={STRINGS.cart.browseRestaurants} accessibilityRole="button">
+        <Pressable onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel={STRINGS.cart.browseRestaurants} accessibilityRole="button">
           <Text style={styles.buttonText}>{STRINGS.cart.browseRestaurants}</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -206,9 +206,9 @@ const CartScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel={STRINGS.accessibility.backButton} accessibilityRole="button">
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel={STRINGS.accessibility.backButton} accessibilityRole="button">
             <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerText}>{STRINGS.cart.title}</Text>
           <View style={{ width: 40 }} />
         </View>
@@ -220,9 +220,9 @@ const CartScreen = () => {
             </View>
             <Text style={styles.emptyText}>{STRINGS.cart.empty}</Text>
             <Text style={styles.emptySubtext}>{STRINGS.cart.emptySubtext}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel={STRINGS.cart.browseRestaurants} accessibilityRole="button">
+            <Pressable onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel={STRINGS.cart.browseRestaurants} accessibilityRole="button">
               <Text style={styles.buttonText}>{STRINGS.cart.browseRestaurants}</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         ) : (
           <>
@@ -253,9 +253,9 @@ const CartScreen = () => {
               contentContainerStyle={{ flexGrow: 1 }}
             />
             <View style={styles.cartFooter}>
-              <TouchableOpacity onPress={handleCheckout} style={styles.checkoutButton} accessibilityLabel={STRINGS.accessibility.checkout} accessibilityRole="button">
+              <Pressable onPress={handleCheckout} style={styles.checkoutButton} accessibilityLabel={STRINGS.accessibility.checkout} accessibilityRole="button">
                 <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </>
         )}
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   emptySubtext: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginBottom: 20, fontFamily: DESIGN_TOKENS.typography.fontFamily, textAlign: 'center' },
   primaryButton: { backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 12, paddingHorizontal: 24, borderRadius: DESIGN_TOKENS.radius.button },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600', fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', elevation: 2, padding: DESIGN_TOKENS.spacing.sm },
+  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2, padding: DESIGN_TOKENS.spacing.sm },
   cartItemImage: { width: 80, height: 80 },
   cartItemInfo: { flex: 1, marginLeft: DESIGN_TOKENS.spacing.sm, justifyContent: 'space-between' },
   cartItemName: { fontSize: 16, fontWeight: '600', marginBottom: 4, color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },

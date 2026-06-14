@@ -5,12 +5,18 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   GBP: '£',
 };
 
+const defaultNumberFormatter = new Intl.NumberFormat(undefined, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
 export function formatCurrency(amount: number, currency = 'INR'): string {
   const symbol = CURRENCY_SYMBOLS[currency] || currency;
   return `${symbol}${amount.toFixed(2)}`;
 }
 
 export function formatNumber(value: number, locale?: string): string {
+  if (!locale) return defaultNumberFormatter.format(value);
   return new Intl.NumberFormat(locale).format(value);
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
 // import { DESIGN_TOKENS } from '@spicegarden/ui';
 // import { STRINGS } from '../constants/strings';
 // import { formatCurrency } from '../utils/currency';

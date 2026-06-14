@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STRINGS } from '../constants/strings';
 
@@ -13,14 +13,14 @@ export const EmptyState = ({ onNavigateHome }: EmptyStateProps) => {
       <Text style={styles.emptyIcon}>📋</Text>
       <Text style={styles.emptyText}>{STRINGS.orderHistory.empty}</Text>
       <Text style={styles.emptySubtext}>{STRINGS.cart.emptySubtext}</Text>
-      <TouchableOpacity 
+      <Pressable
         onPress={onNavigateHome}
         style={styles.primaryButton}
         accessibilityLabel={STRINGS.cart.browseRestaurants}
         accessibilityRole="button"
       >
         <Text style={styles.primaryButtonText}>{STRINGS.cart.browseRestaurants}</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

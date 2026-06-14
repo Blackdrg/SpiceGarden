@@ -11,6 +11,16 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed' | 'placed' | 'confirmed' | 'received';
 type ServiceType = 'dine-in' | 'dine_in' | 'takeaway' | 'delivery';
 
+const SEVERITY_COLORS: Record<string, string> = {
+  low: '#2196f3', medium: '#ff9800', high: '#ff4444', critical: '#9c27b0',
+};
+const BRANCH_STATUS_COLORS: Record<string, string> = {
+  operational: '#4caf50', delayed: '#ff4444', critical: '#9c27b0',
+};
+const TICKET_TYPE_ICONS: Record<string, string> = {
+  refund: '💸', support: '🎧', fraud: '🛡️',
+};
+
 type LiveOrder = {
   id: string;
   amount: number;
@@ -193,18 +203,6 @@ fetchOrders().then(orders => {
   const openTickets = tickets.filter((t) => t.severity === 'high' || t.severity === 'critical');
   const pendingRefunds = tickets.filter((t) => t.type === 'refund');
 
-  // ── Format helpers ──────────────────────────────────────────────────────────
-
-  const sevColor: Record<string, string> = {
-    low: '#2196f3', medium: '#ff9800', high: '#ff4444', critical: '#9c27b0',
-  };
-  const branchStatusColor: Record<string, string> = {
-    operational: '#4caf50', delayed: '#ff4444', critical: '#9c27b0',
-  };
-  const typeIcon: Record<string, string> = {
-    refund: '💸', support: '🎧', fraud: '🛡️',
-  };
-
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
@@ -216,7 +214,7 @@ fetchOrders().then(orders => {
       }}>
         <div style={{ padding: '0 20px 20px', borderBottom: '1px solid #2a3a4a' }}>
           <div style={{ fontSize: 17, fontWeight: 'bold', color: '#f04e31' }}>🌶️ SpiceGarden</div>
-          <div style={{ fontSize: 11, color: '#7a8a9a', marginTop: 3 }}>Super Admin</div>
+          <div style={{ fontSize: 12, color: '#7a8a9a', marginTop: 3 }}>Super Admin</div>
         </div>
 
         {[
@@ -323,7 +321,7 @@ fetchOrders().then(orders => {
             <Card title="🚨 System Alerts">
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 {branches.filter(b => b.status !== 'operational').map(b => (
-                  <div key={b.name} style={{ flex: 1, padding: '12px 16px', background: '#fff5f5', borderLeft: `4px solid ${branchStatusColor[b.status]}`, borderRadius: 6, minWidth: 220 }}>
+                  <div key={b.name} style={{ flex: 1, padding: '12px 16px', background: '#fff5f5', borderLeft: `4px solid ${BRANCH_STATUS_COLORS[b.status]}`, borderRadius: 6, minWidth: 220 }}>
                     <strong>{b.name} Kitchen</strong> — {b.status === 'delayed' ? `Avg prep ${b.avgPrepMins}m (target 18m)` : 'CRITICAL — all drivers exhausted'}
                   </div>
                 ))}
@@ -356,7 +354,7 @@ fetchOrders().then(orders => {
                     <thead>
                       <tr style={{ borderBottom: '2px solid #eee' }}>
                         {['Order #', 'Branch', 'Amount', 'ETA', 'Status', 'Age'].map(h => (
-                          <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: '#888', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                          <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: '#888', fontWeight: 600, fontSize: 12, textTransform: 'uppercase' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -369,7 +367,7 @@ fetchOrders().then(orders => {
                           <td style={{ padding: '10px 12px', color: '#888' }}>{o.eta}m</td>
                           <td style={{ padding: '10px 12px' }}>
                             <span style={{
-                              padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 'bold',
+                              padding: '2px 10px', borderRadius: 12, fontSize: 12, fontWeight: 'bold',
                               background: o.status === 'delivered' ? '#e8f5e8' :
                                 o.status === 'ready' ? '#e8f5e8' :
                                   o.status === 'preparing' ? '#fff3e0' : '#f5f5f5',
@@ -403,8 +401,8 @@ fetchOrders().then(orders => {
                       { status: 'Cancelled', count: 0 },
                     ]}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="status" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
+                      <XAxis dataKey="status" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip />
                       <Bar dataKey="count" fill="#f04e31" radius={[6, 6, 0, 0]} />
                     </BarChart>
@@ -417,8 +415,8 @@ fetchOrders().then(orders => {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={MOCK_REVENUE}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="t" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
+                      <XAxis dataKey="t" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip formatter={(v: number) => [`₹${v.toLocaleString()}`, 'AOV']} />
                       <Area type="monotone" dataKey="orders" stroke="#9c27b0" fill="#e1bee7" dot={false} />
                     </AreaChart>
@@ -439,9 +437,9 @@ fetchOrders().then(orders => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                   <span style={{
                     padding: '4px 12px', borderRadius: 16, fontSize: 12, fontWeight: 'bold',
-                    background: `${branchStatusColor[branch.status]}22`,
-                    color: branchStatusColor[branch.status],
-                    border: `1px solid ${branchStatusColor[branch.status]}66`,
+                    background: `${BRANCH_STATUS_COLORS[branch.status]}22`,
+                    color: BRANCH_STATUS_COLORS[branch.status],
+                    border: `1px solid ${BRANCH_STATUS_COLORS[branch.status]}66`,
                   }}>
                     {branch.status.toUpperCase()}
                   </span>
@@ -507,7 +505,7 @@ fetchOrders().then(orders => {
                   {(['all', 'refund', 'support', 'fraud'] as const).map((f) => (
                     <Button
                       key={f}
-                      label={f === 'all' ? 'All' : typeIcon[f] + ' ' + f.charAt(0).toUpperCase() + f.slice(1)}
+                      label={f === 'all' ? 'All' : TICKET_TYPE_ICONS[f] + ' ' + f.charAt(0).toUpperCase() + f.slice(1)}
                       onClick={() => setTicketFilter(f)}
                       variant={ticketFilter === f ? 'primary' : 'secondary'}
                       style={{ padding: '4px 12px', fontSize: 12 }}
@@ -519,13 +517,13 @@ fetchOrders().then(orders => {
                     <div key={t.id} style={{ padding: '12px 0', borderBottom: '1px solid #f0f0f0' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <span style={{ fontSize: 16 }}>{typeIcon[t.type]}</span>
+                          <span style={{ fontSize: 16 }}>{TICKET_TYPE_ICONS[t.type]}</span>
                           <span style={{ fontWeight: 600, fontSize: 13 }}>{t.id}</span>
-                          <span style={{ padding: '2px 8px', borderRadius: 8, fontSize: 11, fontWeight: 'bold', background: `${sevColor[t.severity]}22`, color: sevColor[t.severity] }}>
+                          <span style={{ padding: '2px 8px', borderRadius: 8, fontSize: 12, fontWeight: 'bold', background: `${SEVERITY_COLORS[t.severity]}22`, color: SEVERITY_COLORS[t.severity] }}>
                             {t.severity.toUpperCase()}
                           </span>
                         </div>
-                        <span style={{ fontSize: 11, color: '#aaa' }}>{t.createdAt}</span>
+                        <span style={{ fontSize: 12, color: '#aaa' }}>{t.createdAt}</span>
                       </div>
                       <p style={{ margin: '2px 0 4px', color: '#555', fontSize: 13 }}>{t.description}</p>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -650,6 +648,7 @@ function Card({ title, sub, children, style }: { title: string; sub?: string; ch
 function Button({ label, onClick, style, variant = 'primary', ...rest }: { label: string; onClick: () => void; style?: React.CSSProperties; variant?: 'primary' | 'secondary' | 'danger' }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       style={{
         padding: '8px 16px',

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
@@ -87,12 +87,14 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   }, [currentIndex, fadeAnim, slideAnim]);
 
   const handleNext = async () => {
-    if (currentIndex < onboardingSlides.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      animateTransition(currentIndex + 1);
-    } else {
-      await completeOnboarding();
-    }
+    setCurrentIndex((prev) => {
+      if (prev < onboardingSlides.length - 1) {
+        animateTransition(prev + 1);
+        return prev + 1;
+      }
+      completeOnboarding();
+      return prev;
+    });
   };
 
   const handleSkip = async () => {
@@ -110,10 +112,13 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   };
 
   const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      animateTransition(currentIndex - 1);
-    }
+    setCurrentIndex((prev) => {
+      if (prev > 0) {
+        animateTransition(prev - 1);
+        return prev - 1;
+      }
+      return prev;
+    });
   };
 
   const currentSlide = onboardingSlides[currentIndex];
@@ -168,28 +173,28 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
       </Animated.View>
 
       <View style={styles.footer}>
-        <TouchableOpacity
+        <Pressable
           onPress={handleSkip}
           style={styles.skipButton}
           accessibilityLabel="Skip onboarding"
           accessibilityRole="button"
         >
           <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={styles.navigationRow}>
           {currentIndex > 0 && (
-            <TouchableOpacity
+            <Pressable
               onPress={handlePrevious}
               style={styles.navButton}
               accessibilityLabel="Previous slide"
               accessibilityRole="button"
             >
               <Text style={styles.navButtonText}>← Back</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           
-          <TouchableOpacity
+          <Pressable
             onPress={handleNext}
             style={[styles.navButton, styles.nextButton]}
             disabled={isLoading}
@@ -204,7 +209,7 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
                   ? 'Get Started' 
                   : 'Next →'}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <View style={styles.trustIndicators}>

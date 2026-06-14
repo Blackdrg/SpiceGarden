@@ -214,7 +214,9 @@ const AddressesPage = () => {
                   style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
                 />
               </div>
+              <label htmlFor="addr-postal" style={{ fontSize: 13, fontWeight: 500 }}>Postal Code</label>
               <input
+                id="addr-postal"
                 placeholder="Postal Code"
                 value={newAddress.postalCode}
                 onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}

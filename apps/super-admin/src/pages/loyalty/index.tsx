@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function LoyaltyIndex() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>

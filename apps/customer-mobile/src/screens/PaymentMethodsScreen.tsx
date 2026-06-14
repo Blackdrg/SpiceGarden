@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -17,6 +17,32 @@ interface PaymentMethod {
   upiId?: string;
   walletProvider?: string;
   isDefault: boolean;
+}
+
+function renderPaymentMethodIcon(type: string) {
+  switch (type) {
+    case 'card':
+      return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
+    case 'upi':
+      return <Ionicons name="cash" size={24} color={DESIGN_TOKENS.colors.primary} />;
+    case 'wallet':
+      return <Ionicons name="wallet" size={24} color={DESIGN_TOKENS.colors.primary} />;
+    default:
+      return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
+  }
+}
+
+function renderPaymentMethodDetails(method: PaymentMethod) {
+  switch (method.type) {
+    case 'card':
+      return `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || 'XXXX'}`;
+    case 'upi':
+      return `${method.upiId || 'UPI ID'}`;
+    case 'wallet':
+      return `${method.walletProvider || 'Wallet'}`;
+    default:
+      return method.type;
+  }
 }
 
 const PaymentMethodsScreen = () => {
@@ -113,32 +139,6 @@ const PaymentMethodsScreen = () => {
     }
   }, [fetchPaymentMethods]);
 
-  const renderPaymentMethodIcon = (type: string) => {
-    switch (type) {
-      case 'card':
-        return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
-      case 'upi':
-        return <Ionicons name="cash" size={24} color={DESIGN_TOKENS.colors.primary} />;
-      case 'wallet':
-        return <Ionicons name="wallet" size={24} color={DESIGN_TOKENS.colors.primary} />;
-      default:
-        return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
-    }
-  };
-
-  const renderPaymentMethodDetails = (method: PaymentMethod) => {
-    switch (method.type) {
-      case 'card':
-        return `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || 'XXXX'}`;
-      case 'upi':
-        return `${method.upiId || 'UPI ID'}`;
-      case 'wallet':
-        return `${method.walletProvider || 'Wallet'}`;
-      default:
-        return method.type;
-    }
-  };
-
   const handleAddPaymentMethod = () => {
     Haptics.selectionAsync();
     navigation.navigate('AddPaymentMethod' as never);
@@ -156,9 +156,9 @@ const PaymentMethodsScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={DESIGN_TOKENS.colors.textPrimary} />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerText}>Payment Methods</Text>
         </View>
 
@@ -189,28 +189,28 @@ const PaymentMethodsScreen = () => {
                 
                 <View style={styles.paymentMethodActions}>
                   {!method.isDefault && (
-                    <TouchableOpacity 
+                    <Pressable 
                       onPress={() => handleSetDefault(method.id)}
                       style={styles.actionButton}
                       disabled={actionLoading !== null}
                     >
                       <Text style={styles.actionButtonText}>Set Default</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   )}
-                  <TouchableOpacity 
+                  <Pressable 
                     onPress={() => handleDeletePaymentMethod(method.id)}
                     style={styles.deleteButton}
                     disabled={actionLoading !== null}
                   >
                     <Ionicons name="trash" size={20} color={DESIGN_TOKENS.colors.danger} />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
             ))
           )}
         </View>
 
-        <TouchableOpacity 
+        <Pressable 
           onPress={handleAddPaymentMethod}
           style={styles.addButton}
           accessibilityLabel="Add payment method"
@@ -218,7 +218,7 @@ const PaymentMethodsScreen = () => {
         >
           <Ionicons name="add-circle" size={24} color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.addButtonText}>Add Payment Method</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </Animated.View>
   );

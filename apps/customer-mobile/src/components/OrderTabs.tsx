@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STRINGS } from '../constants/strings';
 import { ORDER_STATUS, ORDER_STATUS_LABELS } from '../constants/order.constants';
@@ -19,7 +19,7 @@ export const OrderTabs = ({ filter, onFilterChange }: OrderTabsProps) => {
           const statusKey = key as keyof typeof ORDER_STATUS;
           const statusValue = ORDER_STATUS[statusKey];
           return (
-            <TouchableOpacity
+            <Pressable
               key={statusValue}
               onPress={() => onFilterChange?.(statusValue as string)}
               style={[styles.tabButton, filter === statusValue && styles.activeTab]}
@@ -30,7 +30,7 @@ export const OrderTabs = ({ filter, onFilterChange }: OrderTabsProps) => {
               <Text style={[styles.tabText, filter === statusValue && styles.activeTabText]}>
                 {ORDER_STATUS_LABELS[statusValue]}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>

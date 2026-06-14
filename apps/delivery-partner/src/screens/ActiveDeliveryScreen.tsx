@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, Alert, TextInput } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, Alert, TextInput } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { deliveryApi, DeliveryOrder } from '../services/delivery-api.service';
 
@@ -120,28 +120,28 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
                 placeholder="Enter 4-digit OTP"
                 placeholderTextColor={DESIGN_TOKENS.colors.textSecondary}
               />
-              <TouchableOpacity 
+              <Pressable 
                 style={styles.otpButton}
                 onPress={handleVerifyOTP}
                 disabled={otpLoading}
               >
                 <Text style={styles.otpButtonText}>Verify & Confirm Pickup</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.navigationButton}
               onPress={() => {}}
             >
               <Text style={styles.navigationButtonText}>📍 Open Maps</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.rejectButton}
               onPress={handleReportIssue}
             >
               <Text style={styles.rejectButtonText}>Report Issue</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         );
 
@@ -155,33 +155,33 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
               <Text style={styles.addressText}>{currentOrder.customer.address}</Text>
             </View>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.navigationButton}
               onPress={() => {}}
             >
               <Text style={styles.navigationButtonText}>📍 Open Maps</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.callButton}
               onPress={() => {}}
             >
               <Text style={styles.callButtonText}>📞 Call Customer</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.confirmButton}
               onPress={() => handleStageChange('onTheWay')}
             >
               <Text style={styles.confirmButtonText}>Start Delivery</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.rejectButton}
               onPress={handleReportIssue}
             >
               <Text style={styles.rejectButtonText}>Report Issue</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         );
 
@@ -200,26 +200,26 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
               <Text style={styles.etaTime}>{currentOrder.estimatedTimeMinutes} min</Text>
             </View>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.navigationButton}
               onPress={() => {}}
             >
               <Text style={styles.navigationButtonText}>📍 Open Maps</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.confirmButton}
               onPress={() => handleStageChange('delivered')}
             >
               <Text style={styles.confirmButtonText}>Mark Delivered</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity 
+            <Pressable 
               style={styles.rejectButton}
               onPress={handleReportIssue}
             >
               <Text style={styles.rejectButtonText}>Report Issue</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         );
 
@@ -230,12 +230,12 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
             <Text style={styles.successTitle}>Delivery Complete!</Text>
             <Text style={styles.successAmount}>₹{currentOrder.amount} earned</Text>
             
-            <TouchableOpacity 
+            <Pressable 
               style={styles.doneButton}
               onPress={() => navigation.goBack()}
             >
               <Text style={styles.doneButtonText}>Done</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         );
 
@@ -248,9 +248,9 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Pressable onPress={() => navigation.goBack()}>
             <Text style={styles.backButton}>← Back</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerTitle}>Order #{currentOrder.orderId.slice(-4)}</Text>
         </View>
 

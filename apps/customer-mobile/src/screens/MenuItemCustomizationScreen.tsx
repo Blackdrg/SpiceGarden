@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView, TextInput, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, ScrollView, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/core';
 import * as Haptics from 'expo-haptics';
@@ -105,9 +105,9 @@ const MenuItemCustomizationScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={DESIGN_TOKENS.colors.textPrimary} />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerText}>Customize Item</Text>
         </View>
 
@@ -121,21 +121,21 @@ const MenuItemCustomizationScreen = () => {
           <View style={styles.quantitySection}>
             <Text style={styles.sectionTitle}>Quantity</Text>
             <View style={styles.quantitySelector}>
-              <TouchableOpacity 
+              <Pressable 
                 onPress={() => setQuantity(Math.max(1, quantity - 1))}
                 style={styles.quantityButton}
                 accessibilityLabel="Decrease quantity"
               >
                 <Ionicons name="remove" size={24} color={DESIGN_TOKENS.colors.primary} />
-              </TouchableOpacity>
+              </Pressable>
               <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity 
-                onPress={() => setQuantity(quantity + 1)}
+              <Pressable 
+                onPress={() => setQuantity((prev) => prev + 1)}
                 style={styles.quantityButton}
                 accessibilityLabel="Increase quantity"
               >
                 <Ionicons name="add" size={24} color={DESIGN_TOKENS.colors.primary} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -143,7 +143,7 @@ const MenuItemCustomizationScreen = () => {
             <View style={styles.addonsSection}>
               <Text style={styles.sectionTitle}>Add-ons</Text>
               {item.addons.map((addon) => (
-                <TouchableOpacity
+                <Pressable
                   key={addon.id}
                   onPress={() => toggleAddon(addon.id)}
                   style={[styles.addonItem, selectedAddons.includes(addon.id) && styles.addonItemSelected]}
@@ -158,7 +158,7 @@ const MenuItemCustomizationScreen = () => {
                       <Ionicons name="checkmark" size={16} color="white" />
                     )}
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}
@@ -177,13 +177,13 @@ const MenuItemCustomizationScreen = () => {
           </View>
         </ScrollView>
 
-        <TouchableOpacity 
+        <Pressable 
           onPress={handleAddToCart}
           style={styles.addToCartButton}
           accessibilityLabel="Add to cart"
         >
           <Text style={styles.addToCartButtonText}>Add to Cart - ₹{calculateTotalPrice()}</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </Animated.View>
   );

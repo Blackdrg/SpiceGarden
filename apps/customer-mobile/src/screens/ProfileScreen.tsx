@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Animated, Easing } from 'react-native';
+import { View, Text, Pressable, StyleSheet, TextInput, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -18,6 +18,15 @@ type ProfileScreen =
   | 'Support'
   | 'Privacy'
   | 'Logout';
+
+const MENU_ITEMS = [
+  { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
+  { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
+  { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
+  { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
+  { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
+  { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
+] as const;
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -174,14 +183,14 @@ const ProfileScreen = () => {
             </Text>
           </View>
           {!isEditing && (
-            <TouchableOpacity 
+            <Pressable 
               onPress={() => setIsEditing(true)} 
               style={styles.editButton}
               accessibilityLabel="Edit profile"
               accessibilityRole="button"
             >
               <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
 
@@ -225,22 +234,22 @@ const ProfileScreen = () => {
                   accessibilityLabel="Phone number"
                 />
               </View>
-              <TouchableOpacity 
+              <Pressable 
                 onPress={handleSaveProfile}
                 style={styles.saveButton}
                 accessibilityLabel="Save profile changes"
                 accessibilityRole="button"
               >
                 <Text style={styles.saveButtonText}>Save Changes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
+              </Pressable>
+              <Pressable 
                 onPress={() => setIsEditing(false)}
                 style={styles.cancelButton}
                 accessibilityLabel="Cancel editing"
                 accessibilityRole="button"
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           ) : (
             <>
@@ -273,7 +282,7 @@ const ProfileScreen = () => {
               <View style={styles.menuSection}>
                 <Text style={styles.sectionTitle}>Account</Text>
                 {menuItems.map((item) => (
-                  <TouchableOpacity 
+                  <Pressable 
                     key={item.id} 
                     style={styles.menuItem}
                     onPress={() => navigation.navigate(item.screen as ProfileScreen)}
@@ -283,18 +292,18 @@ const ProfileScreen = () => {
                     <Text style={styles.menuItemIcon}>{item.icon}</Text>
                     <Text style={styles.menuItemText}>{item.label}</Text>
                     <Text style={styles.menuItemArrow}>›</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
 
-              <TouchableOpacity 
+              <Pressable 
                 onPress={handleLogout}
                 style={styles.logoutButton}
                 accessibilityLabel="Sign out of your account"
                 accessibilityRole="button"
               >
                 <Text style={styles.logoutButtonText}>Sign Out</Text>
-              </TouchableOpacity>
+              </Pressable>
             </>
           )}
         </View>

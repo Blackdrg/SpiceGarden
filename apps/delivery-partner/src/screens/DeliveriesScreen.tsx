@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ActivityIndicator, Alert, FlatList } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, Alert, FlatList } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 interface DeliveryOrder {
@@ -152,13 +152,13 @@ export const DeliveriesScreen = () => {
       <View style={styles.orderFooter}>
         <Text style={styles.orderAmount}>₹{item.amount}</Text>
         <View style={styles.orderActions}>
-          <TouchableOpacity 
+          <Pressable 
             onPress={() => rejectOrder(item.id)}
             style={styles.rejectButton}
           >
             <Text style={styles.rejectButtonText}>Reject</Text>
-          </TouchableOpacity>
-<TouchableOpacity 
+          </Pressable>
+<Pressable 
              onPress={() => acceptOrder(item.id)}
              style={[styles.acceptButton, acceptingOrderId === item.id && styles.acceptingButton]}
            >
@@ -167,7 +167,7 @@ export const DeliveriesScreen = () => {
              ) : (
                <Text style={styles.acceptButtonText}>Accept</Text>
              )}
-           </TouchableOpacity>
+           </Pressable>
         </View>
       </View>
     </View>

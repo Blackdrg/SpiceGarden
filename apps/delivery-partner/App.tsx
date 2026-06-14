@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Alert, Dimensions, Animated, Easing, AppState, AppStateStatus } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, Dimensions, Animated, Easing, AppState, AppStateStatus } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import Geolocation from '@react-native-community/geolocation';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -341,7 +341,7 @@ Geolocation.requestAuthorization();
 
       <View style={styles.tabRow}>
         {(['home', 'earnings'] as const).map((t) => (
-          <TouchableOpacity
+          <Pressable
             key={t}
             onPress={() => setActiveScreen(t)}
             style={[styles.tab, activeScreen === t && styles.tabActive]}
@@ -351,7 +351,7 @@ Geolocation.requestAuthorization();
             <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
               {t === 'home' ? '🏠 Active' : '💰 Earnings'}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 
@@ -378,22 +378,22 @@ Geolocation.requestAuthorization();
               )}
 
               <View style={styles.actionRow}>
-                <TouchableOpacity 
+                <Pressable 
                   style={[styles.btn, styles.btnReject]} 
                   onPress={rejectOrder}
                   accessibilityLabel="Reject order"
                   accessibilityRole="button"
                 >
                   <Text style={styles.btnText}>Reject</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
+                </Pressable>
+                <Pressable 
                   style={[styles.btn, styles.btnAccept]} 
                   onPress={acceptOrder}
                   accessibilityLabel="Accept order"
                   accessibilityRole="button"
                 >
                   <Text style={styles.btnText}>✅ Accept</Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           ) : null}
@@ -429,51 +429,51 @@ Geolocation.requestAuthorization();
                   <Text style={styles.contextLabel}>🏪 PICKUP</Text>
                   <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
                   <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navInlineBtn}
                     onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                     accessibilityLabel="Navigate to pickup"
                   >
                     <Text style={styles.navInlineText}>📍</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
                 <View style={styles.contextCard}>
                   <Text style={styles.contextLabel}>📍 DROP</Text>
                   <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
                   <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
                   <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navInlineBtn}
                     onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
                     accessibilityLabel="Navigate to customer"
                   >
                     <Text style={styles.navInlineText}>📍</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
               {activeDelivery.status === 'assigned' && (
-                <TouchableOpacity
+                <Pressable
                   style={styles.navBtn}
                   onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                   accessibilityLabel="Navigate to pickup location"
                   accessibilityRole="button"
                 >
                   <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
 
               {activeDelivery.status === 'navigating_to_pickup' && (
                 <>
-                  <TouchableOpacity style={styles.arriveBtn} onPress={confirmPickup}>
+                  <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
                     <Text style={styles.navBtnText}>🏪 I&#39;m at Restaurant</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                  </Pressable>
+                  <Pressable
                     style={styles.navBtn}
                     onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                   >
                     <Text style={styles.navBtnText}>📍 Open Navigation</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </>
               )}
 
@@ -489,18 +489,18 @@ Geolocation.requestAuthorization();
                       </View>
                     ))}
                   </View>
-                  <TouchableOpacity style={[styles.btn, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
+                  <Pressable style={[styles.btn, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
                   <View style={styles.actionRow}>
-                    <TouchableOpacity style={[styles.btn, styles.btnReject]} onPress={() => setOtpError('')}>
+                    <Pressable style={[styles.btn, styles.btnReject]} onPress={() => setOtpError('')}>
                       <Text style={styles.btnText}>Clear</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.btnAccept]} onPress={verifyOtpAndPickup}>
+                    </Pressable>
+                    <Pressable style={[styles.btn, styles.btnAccept]} onPress={verifyOtpAndPickup}>
                       <Text style={styles.btnText}>✅ Confirm OTP</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
                 </View>
               )}
@@ -508,24 +508,24 @@ Geolocation.requestAuthorization();
               {activeDelivery.status === 'navigating_to_drop' && (
                 <View style={{ gap: 10 }}>
                   <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navBtn}
                     onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
                   >
                     <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
                   <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
                   <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
-                  <TouchableOpacity style={styles.completeBtn} onPress={completeDelivery}>
+                  <Pressable style={styles.completeBtn} onPress={completeDelivery}>
                     <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity 
+                  </Pressable>
+                  <Pressable 
                     style={styles.failBtn} 
                     onPress={() => handleFailedDelivery('customer_unavailable')}
                   >
                     <Text style={styles.failBtnText}>❗ Mark Failed</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               )}
             </View>
@@ -541,7 +541,7 @@ Geolocation.requestAuthorization();
                 <Text style={styles.locationWarning}>Location permission required for delivery</Text>
               )}
               {isOnline && (
-                <TouchableOpacity
+                <Pressable
                   style={styles.btnAccept}
                   onPress={() => {
                     const demo = demoIncoming();
@@ -550,14 +550,14 @@ Geolocation.requestAuthorization();
                   }}
                 >
                   <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
           )}
 
           {activeDelivery && (
             <View style={styles.issueSection}>
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setExpandedIssue(!expandedIssue)}
                 style={styles.issueToggle}
                 accessibilityLabel="Report an issue"
@@ -565,18 +565,18 @@ Geolocation.requestAuthorization();
               >
                 <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
                 <Text style={styles.issueChevron}>{expandedIssue ? '▲' : '▼'}</Text>
-              </TouchableOpacity>
+              </Pressable>
               {expandedIssue && (
                 <View style={styles.issueGrid}>
                   {issueTypes.map((issue) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={issue.label}
                       style={styles.issueBtn}
                       onPress={() => reportIssue(issue.label)}
                     >
                       <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
                       <Text style={styles.issueLabel}>{issue.label}</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               )}
@@ -587,7 +587,7 @@ Geolocation.requestAuthorization();
             <View style={styles.logCard}>
               <Text style={styles.logTitle}>📋 Recent Activity</Text>
               {log.map((entry, i) => (
-                <Text key={i} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+                <Text key={i} /* react-doctor: no-array-index-as-key */ style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
                   {entry}
                 </Text>
               ))}
@@ -629,9 +629,9 @@ Geolocation.requestAuthorization();
               <View style={styles.shiftInfo}>
                 <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
                 <Text style={styles.shiftInfoText}>Ends: {shift.endTime}</Text>
-                <TouchableOpacity style={styles.shiftEndBtn}>
+                <Pressable style={styles.shiftEndBtn}>
                   <Text style={styles.shiftEndText}>End Shift Early</Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           )}

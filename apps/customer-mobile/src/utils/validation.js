@@ -58,13 +58,11 @@ function isValidOrderItem(item) {
         anyItem.price >= 0);
 }
 function sanitizeOrderItems(items) {
-    return items
-        .map(item => ({
-        ...item,
-        quantity: Math.max(1, item.quantity),
-        price: Math.max(0, item.price),
-    }))
-        .filter(item => item.quantity > 0 && item.price >= 0);
+    return items.reduce((acc, item) => {
+        const cleaned = { ...item, quantity: Math.max(1, item.quantity), price: Math.max(0, item.price) };
+        if (cleaned.quantity > 0 && cleaned.price >= 0) acc.push(cleaned);
+        return acc;
+    }, []);
 }
 function isValidOrderId(orderId) {
     return typeof orderId === 'string' && orderId.length > 0 && /^[a-zA-Z0-9-]+$/.test(orderId);

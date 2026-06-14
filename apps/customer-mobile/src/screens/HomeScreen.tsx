@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, Easing } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';

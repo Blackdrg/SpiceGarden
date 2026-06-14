@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -198,7 +198,7 @@ const AuthScreen = () => {
             </View>
           )}
 
-          <TouchableOpacity
+          <Pressable
             onPress={handleSubmit}
             style={[styles.button, loading ? styles.buttonLoading : null]}
             disabled={loading}
@@ -209,7 +209,7 @@ const AuthScreen = () => {
             <Text style={styles.buttonText}>
               {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <View style={styles.divider}>
@@ -218,7 +218,7 @@ const AuthScreen = () => {
           <View style={styles.dividerLine} />
         </View>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => {
             setIsLogin(!isLogin);
             setError('');
@@ -230,7 +230,7 @@ const AuthScreen = () => {
           <Text style={styles.toggleButtonText}>
             {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </Animated.View>
   );
