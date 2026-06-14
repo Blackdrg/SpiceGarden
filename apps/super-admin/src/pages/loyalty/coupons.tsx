@@ -38,6 +38,8 @@ export default function LoyaltyCoupons() {
     alert('Coupon created');
   };
 
+  const activeCoupons = coupons.filter((c) => c.status === 'active');
+
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
       <Head><title>Coupon Management - SpiceGarden</title></Head>
@@ -99,7 +101,7 @@ export default function LoyaltyCoupons() {
         <p style={{ color: '#71717a' }}>Loading...</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {coupons.filter((c) => c.status === 'active').map((c) => (
+          {activeCoupons.map((c) => (
             <div key={c.id} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 6, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontWeight: 600, color: '#f97316' }}>{c.code}</span>

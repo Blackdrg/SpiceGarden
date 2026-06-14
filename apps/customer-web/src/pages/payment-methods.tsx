@@ -3,6 +3,9 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { Plus, CreditCard, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
+import { getCachedToken } from '../../utils/cachedLocalStorage';
+import styles from './payment-methods.module.css';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
 interface PaymentMethod {
   id: string;
@@ -31,9 +34,8 @@ const PaymentMethodsPage = () => {
   useEffect(() => {
     const loadMethods = async () => {
       try {
-        const token = localStorage.getItem('sg_token:v1');
+        const token = getCachedToken();
         if (!token || token === 'demo-token') {
-          router.push('/auth');
           return;
         }
         
@@ -41,13 +43,6 @@ const PaymentMethodsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push('/auth');
-            return;
-          }
-          throw new Error('Failed to load payment methods');
-        }
         setMethods(await res.json());
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load payment methods');
@@ -59,7 +54,7 @@ const PaymentMethodsPage = () => {
   }, [router]);
 
   const handleAddMethod = async () => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token || token === 'demo-token') return;
     
     try {
@@ -81,7 +76,7 @@ const PaymentMethodsPage = () => {
   };
 
   const handleSetDefault = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -98,7 +93,7 @@ const PaymentMethodsPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -123,9 +118,9 @@ const PaymentMethodsPage = () => {
   }
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
+    <div className={styles.pageContainer}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, backgroundColor: '#ffebee', color: '#c62828', padding: DESIGN_TOKENS.spacing.md, borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md }}>
+        <div className={styles.errorBanner}>
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
@@ -242,4 +237,6 @@ const PaymentMethodsPage = () => {
   );
 };
 
-export default PaymentMethodsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><PaymentMethodsPage {...props} /></ProtectedRoute>;
+}

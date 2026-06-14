@@ -1,0 +1,42 @@
+.banner {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 40px;
+  background-color: #ffebee;
+  color: #c62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.statusText {
+  margin: 0;
+  font-size: 14px;
+}
+
+.lastSeenText {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.retryButton {
+  margin-left: 16px;
+}

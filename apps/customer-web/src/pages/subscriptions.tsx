@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import styles from './subscriptions.module.css';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Subscription {
   id: number;
@@ -85,4 +86,6 @@ const SubscriptionsPage = () => {
   );
 };
 
-export default SubscriptionsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><SubscriptionsPage {...props} /></ProtectedRoute>;
+}

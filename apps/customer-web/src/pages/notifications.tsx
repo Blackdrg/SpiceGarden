@@ -3,6 +3,8 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { Bell, BellOff, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
+import { getCachedToken } from '../utils/cachedLocalStorage';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 interface NotificationPreferences {
   pushOrders: boolean;
@@ -30,9 +32,8 @@ const NotificationsPage = () => {
   useEffect(() => {
     const loadPrefs = async () => {
       try {
-        const token = localStorage.getItem('sg_token:v1');
+        const token = getCachedToken();
         if (!token || token === 'demo-token') {
-          router.push('/auth');
           return;
         }
         
@@ -40,13 +41,6 @@ const NotificationsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push('/auth');
-            return;
-          }
-          throw new Error('Failed to load preferences');
-        }
         setPrefs(await res.json());
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load preferences');
@@ -58,7 +52,7 @@ const NotificationsPage = () => {
   }, [router]);
 
   const handleSave = async () => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token || token === 'demo-token') return;
     
     setSaving(true);
@@ -156,4 +150,6 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><NotificationsPage {...props} /></ProtectedRoute>;
+}

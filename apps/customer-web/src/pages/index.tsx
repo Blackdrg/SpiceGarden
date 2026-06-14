@@ -130,11 +130,9 @@ const HomePage = () => {
 
       <div className={styles.categoryContainer}>
         {categories.map((cat) => (
-          <div
+          <button
             key={cat.name}
             className={styles.categoryItem}
-            role="button"
-            tabIndex={0}
             aria-label={`Browse ${cat.name} category`}
           >
             <div className={styles.categoryIcon}>

@@ -1,0 +1,33 @@
+.socialLabel {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.socialButtonsRow {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.socialButtonBase {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.googleButton {
+  background: white;
+  color: black;
+}
+
+.facebookButton {
+  background: #1877f2;
+  color: white;
+  border: none;
+}

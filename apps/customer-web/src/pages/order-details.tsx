@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
+import ProtectedRoute from '../components/ProtectedRoute';
+
+const STATUS_LABELS: Record<string, string> = {
+  placed: 'Order Placed',
+  preparing: 'Preparing',
+  ready: 'Ready for Pickup',
+  pickedup: 'Picked Up',
+  delivered: 'Delivered',
+  cancelled: 'Cancelled',
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  placed: '#2196f3',
+  preparing: '#ff9800',
+  ready: '#ff9800',
+  pickedup: '#ff9800',
+  delivered: '#4caf50',
+  cancelled: '#f44336',
+};
 
 interface OrderItem {
   id?: string | number;
@@ -45,6 +65,8 @@ const OrderDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
     const loadOrderDetails = async () => {
       const orderId = router.query.id as string | undefined;
       if (!orderId) {
@@ -53,8 +75,7 @@ const OrderDetailsPage = () => {
       }
 
       if (!user?.token || user?.token === 'demo-token') {
-        // Mock data for demo
-        setTimeout(() => {
+        timerId = setTimeout(() => {
           setOrder({
             id: orderId,
             restaurant: {
@@ -86,12 +107,12 @@ const OrderDetailsPage = () => {
         return;
       }
 
-setLoading(true);
-       setError(null);
-       try {
-         const data = await ordersApi.get(orderId, user.token);
-         setOrder(data.data as Order);
-       } catch (err) {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await ordersApi.get(orderId, user.token);
+        setOrder(data.data as Order);
+      } catch (err) {
         console.error('Failed to load order details:', err);
         setError('Failed to load order details. Please try again later.');
       } finally {
@@ -100,6 +121,7 @@ setLoading(true);
     };
 
     loadOrderDetails();
+    return () => { if (timerId) clearTimeout(timerId); };
   }, [router.query.id, user?.token]);
 
   if (loading && !order) {
@@ -130,24 +152,6 @@ setLoading(true);
     );
   }
 
-  const statusLabels: Record<string, string> = {
-    placed: 'Order Placed',
-    preparing: 'Preparing',
-    ready: 'Ready for Pickup',
-    pickedup: 'Picked Up',
-    delivered: 'Delivered',
-    cancelled: 'Cancelled',
-  };
-
-  const statusColors: Record<string, string> = {
-    placed: '#2196f3',
-    preparing: '#ff9800',
-    ready: '#ff9800',
-    pickedup: '#ff9800',
-    delivered: '#4caf50',
-    cancelled: '#f44336',
-  };
-
   return (
     <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
       <Button label="← Back" onClick={() => router.push('/history')} variant="secondary" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
@@ -158,10 +162,12 @@ setLoading(true);
         <Card title="Restaurant">
           <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, alignItems: 'center' }}>
             {order.restaurant.image ? (
-              <img 
-                src={order.restaurant.image} 
-                alt={order.restaurant.name} 
-                style={{ width: '60px', height: '60px', borderRadius: DESIGN_TOKENS.radius.md, objectFit: 'cover' }}
+              <Image
+                src={order.restaurant.image}
+                alt={order.restaurant.name}
+                width={60}
+                height={60}
+                style={{ borderRadius: DESIGN_TOKENS.radius.md, objectFit: 'cover' }}
               />
             ) : (
               <div style={{ width: '60px', height: '60px', borderRadius: DESIGN_TOKENS.radius.md, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🍽️</div>
@@ -181,11 +187,13 @@ setLoading(true);
                <div key={item.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
                  <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, alignItems: 'center' }}>
                    {item.image ? (
-                     <img 
-                       src={item.image} 
-                       alt={item.name} 
-                       style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
-                     />
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={40}
+                        height={40}
+                        style={{ borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
+                      />
                    ) : (
                      <div style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🍔</div>
                    )}
@@ -289,4 +297,6 @@ setLoading(true);
   );
 };
 
-export default OrderDetailsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><OrderDetailsPage {...props} /></ProtectedRoute>;
+}

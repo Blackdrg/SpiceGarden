@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import styles from './Sidebar.module.css';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { io, Socket } from 'socket.io-client';
 import {
@@ -202,19 +203,18 @@ fetchOrders().then(orders => {
 
   const openTickets = tickets.filter((t) => t.severity === 'high' || t.severity === 'critical');
   const pendingRefunds = tickets.filter((t) => t.type === 'refund');
+  const nonOperationalBranches = branches.filter((b) => b.status !== 'operational');
+  const fraudTickets = tickets.filter((t) => t.type === 'fraud');
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* ── Sidebar ────────────────────────────────────────────────────────── */}
-      <aside style={{
-        position: 'fixed', top: 0, left: 0, bottom: 0, width: 220, background: '#1e2a3a',
-        color: 'white', padding: '20px 0', display: 'flex', flexDirection: 'column', gap: 4, zIndex: 100,
-      }}>
-        <div style={{ padding: '0 20px 20px', borderBottom: '1px solid #2a3a4a' }}>
-          <div style={{ fontSize: 17, fontWeight: 'bold', color: '#f04e31' }}>🌶️ SpiceGarden</div>
-          <div style={{ fontSize: 12, color: '#7a8a9a', marginTop: 3 }}>Super Admin</div>
+      <aside className={styles.sidebar}>
+        <div className={styles.logoSection}>
+          <div className={styles.logoText}>🌶️ SpiceGarden</div>
+          <div className={styles.adminText}>Super Admin</div>
         </div>
 
         {[
@@ -225,21 +225,17 @@ fetchOrders().then(orders => {
         ].map((t) => (
           <button
             key={t.key}
+            type="button"
             onClick={() => setSelectedTab(t.key as typeof selectedTab)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px', border: 'none',
-              background: selectedTab === t.key ? '#f04e31' : 'transparent', color: 'white',
-              fontSize: 14, cursor: 'pointer', textAlign: 'left', borderLeft: selectedTab === t.key ? '3px solid #fff' : '3px solid transparent',
-            }}
+            className={`${styles.navButton} ${selectedTab === t.key ? styles.navButtonActive : styles.navButtonInactive}`}
           >
-            <span style={{ fontSize: 16 }}>{t.emoji}</span> {t.label}
+            <span className={styles.navEmoji}>{t.emoji}</span> {t.label}
           </button>
         ))}
 
-        <div style={{ flex: 1 }} />
-        <div style={{ padding: '0 20px', borderTop: '1px solid #2a3a4a', paddingTop: 16 }}>
-          <div style={{ fontSize: 13, color: '#7a8a9a' }}>Logged in as</div>
-          <div style={{ fontSize: 13, fontWeight: 'bold', color: '#fff', marginTop: 2 }}>Super Admin</div>
+        <div className={styles.footer}>
+          <div className={styles.footerLabel}>Logged in as</div>
+          <div className={styles.footerName}>Super Admin</div>
         </div>
       </aside>
 
@@ -320,7 +316,7 @@ fetchOrders().then(orders => {
             {/* System alerts */}
             <Card title="🚨 System Alerts">
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                {branches.filter(b => b.status !== 'operational').map(b => (
+                {nonOperationalBranches.map(b => (
                   <div key={b.name} style={{ flex: 1, padding: '12px 16px', background: '#fff5f5', borderLeft: `4px solid ${BRANCH_STATUS_COLORS[b.status]}`, borderRadius: 6, minWidth: 220 }}>
                     <strong>{b.name} Kitchen</strong> — {b.status === 'delayed' ? `Avg prep ${b.avgPrepMins}m (target 18m)` : 'CRITICAL — all drivers exhausted'}
                   </div>
@@ -559,7 +555,7 @@ fetchOrders().then(orders => {
 
                 {/* Fraud detection */}
                 <Card title="🛡️ Fraud Detection" sub="Recent blocks">
-                  {tickets.filter(t => t.type === 'fraud').map(t => (
+                  {fraudTickets.map(t => (
                     <div key={t.id} style={{ padding: '12px', background: '#fff5f5', borderRadius: 8, marginBottom: 8, borderLeft: `4px solid #f04e31` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <strong style={{ color: '#f04e31' }}>🚫 {t.id}</strong>

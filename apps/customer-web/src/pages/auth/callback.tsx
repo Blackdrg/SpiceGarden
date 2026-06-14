@@ -27,7 +27,7 @@ const AuthCallbackPage = () => {
             role: payload.role,
           };
           dispatch(setCredentials({ user: userData, token }));
-          router.push('/');
+          router.replace('/');
         } catch (err) {
           setError('Invalid token received');
         }

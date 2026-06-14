@@ -1,0 +1,175 @@
+﻿{
+  "schemaVersion": 1,
+  "mode": "full",
+  "version": "0.5.5",
+  "ok": true,
+  "directory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+  "diff": null,
+  "projects": [
+    {
+      "directory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+      "project": {
+        "rootDirectory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+        "projectName": "@spicegarden/restaurant-dashboard",
+        "reactVersion": "^19.2.7",
+        "reactMajorVersion": 19,
+        "tailwindVersion": null,
+        "zodVersion": null,
+        "zodMajorVersion": null,
+        "framework": "nextjs",
+        "hasTypeScript": true,
+        "hasReactCompiler": false,
+        "hasTanStackQuery": false,
+        "preactVersion": null,
+        "preactMajorVersion": null,
+        "hasReactNativeWorkspace": false,
+        "nextjsVersion": "15.5.6",
+        "nextjsMajorVersion": 15,
+        "expoVersion": null,
+        "shopifyFlashListVersion": null,
+        "shopifyFlashListMajorVersion": null,
+        "hasReanimated": false,
+        "isPreES2023Target": false,
+        "sourceFileCount": 25
+      },
+      "diagnostics": [
+        {
+          "filePath": "package.json",
+          "plugin": "react-doctor",
+          "rule": "no-vulnerable-react-server-components",
+          "severity": "error",
+          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+          "line": 0,
+          "column": 0,
+          "category": "Security"
+        },
+        {
+          "filePath": "src/pages/onboarding/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "no-inline-exhaustive-style",
+          "severity": "warning",
+          "title": "Large inline style object rebuilds every render",
+          "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component.",
+          "help": "Move the styles to a CSS class, CSS module, Tailwind utilities, or a styled component. Big inline objects are hard to read and rebuild on every update.",
+          "line": 28,
+          "column": 29,
+          "offset": 1440,
+          "length": 384,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/onboarding/menu.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-useReducer",
+          "severity": "warning",
+          "title": "Many related useState calls",
+          "message": "5 useState calls in \"OnboardingMenu\" can each trigger a separate render.",
+          "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+          "line": 5,
+          "column": 42,
+          "offset": 152,
+          "length": 5756,
+          "category": "Bugs"
+        },
+        {
+          "filePath": "package.json",
+          "plugin": "deslop",
+          "rule": "unused-dev-dependency",
+          "severity": "warning",
+          "message": "Unused devDependency: `tinyglobby`",
+          "help": "An unused devDependency adds install time and supply-chain surface without being used; remove it from package.json if it is genuinely unused.",
+          "line": 0,
+          "column": 0,
+          "category": "Maintainability"
+        }
+      ],
+      "score": {
+        "score": 49,
+        "label": "Critical",
+        "rules": {
+          "react-doctor/no-vulnerable-react-server-components": {
+            "priority": null,
+            "tier": "P3"
+          },
+          "react-doctor/no-inline-exhaustive-style": {
+            "priority": 32,
+            "tier": "P3"
+          },
+          "react-doctor/prefer-useReducer": {
+            "priority": 22,
+            "tier": "P3"
+          },
+          "deslop/unused-dev-dependency": {
+            "priority": 30,
+            "tier": "P3"
+          }
+        }
+      },
+      "skippedChecks": [],
+      "elapsedMilliseconds": 18266.298899999998
+    }
+  ],
+  "diagnostics": [
+    {
+      "filePath": "package.json",
+      "plugin": "react-doctor",
+      "rule": "no-vulnerable-react-server-components",
+      "severity": "error",
+      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0) — an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js — not `react` — ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+      "line": 0,
+      "column": 0,
+      "category": "Security"
+    },
+    {
+      "filePath": "src/pages/onboarding/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "no-inline-exhaustive-style",
+      "severity": "warning",
+      "title": "Large inline style object rebuilds every render",
+      "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component.",
+      "help": "Move the styles to a CSS class, CSS module, Tailwind utilities, or a styled component. Big inline objects are hard to read and rebuild on every update.",
+      "line": 28,
+      "column": 29,
+      "offset": 1440,
+      "length": 384,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/onboarding/menu.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-useReducer",
+      "severity": "warning",
+      "title": "Many related useState calls",
+      "message": "5 useState calls in \"OnboardingMenu\" can each trigger a separate render.",
+      "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+      "line": 5,
+      "column": 42,
+      "offset": 152,
+      "length": 5756,
+      "category": "Bugs"
+    },
+    {
+      "filePath": "package.json",
+      "plugin": "deslop",
+      "rule": "unused-dev-dependency",
+      "severity": "warning",
+      "message": "Unused devDependency: `tinyglobby`",
+      "help": "An unused devDependency adds install time and supply-chain surface without being used; remove it from package.json if it is genuinely unused.",
+      "line": 0,
+      "column": 0,
+      "category": "Maintainability"
+    }
+  ],
+  "summary": {
+    "errorCount": 1,
+    "warningCount": 3,
+    "affectedFileCount": 3,
+    "totalDiagnosticCount": 4,
+    "score": 49,
+    "scoreLabel": "Critical"
+  },
+  "elapsedMilliseconds": 18609.747499999998,
+  "error": null
+}

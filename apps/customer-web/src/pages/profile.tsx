@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { logout } from '../redux/slices/authSlice';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -132,10 +134,12 @@ const ProfilePage = () => {
           color: 'white' 
         }}>
           {profileData?.profileImage ? (
-            <img 
-              src={profileData.profileImage} 
-              alt="Profile" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+            <Image
+              src={profileData.profileImage}
+              alt="Profile"
+              width={80}
+              height={80}
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
             '👤'
@@ -277,4 +281,6 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><ProfilePage {...props} /></ProtectedRoute>;
+}

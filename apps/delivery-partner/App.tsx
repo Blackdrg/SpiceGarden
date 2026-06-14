@@ -82,6 +82,17 @@ function timeAgo(d?: Date) {
   return `${Math.floor(mins / 60)}h ago`;
 }
 
+const STATUS_LABEL: Record<string, string> = {
+  idle: '✋ IDLE',
+  assigned: '📋 ASSIGNED',
+  navigating_to_pickup: '🛵 → PICKUP',
+  at_pickup: '🏪 AT PICKUP',
+  navigating_to_drop: '🛵 → CUSTOMER',
+  completed: '🏁 DONE',
+  failed: '❗ FAILED',
+  delayed: '⏰ DELAYED',
+};
+
 function demoIncoming(): Order {
   return {
     id: `ord-${Date.now()}`,
@@ -294,17 +305,6 @@ Geolocation.requestAuthorization();
     setExpandedIssue(false);
   }, [socket, activeDelivery, addLog]);
 
-  const statusLabel: Record<string, string> = {
-    idle: '✋ IDLE',
-    assigned: '📋 ASSIGNED',
-    navigating_to_pickup: '🛵 → PICKUP',
-    at_pickup: '🏪 AT PICKUP',
-    navigating_to_drop: '🛵 → CUSTOMER',
-    completed: '🏁 DONE',
-    failed: '❗ FAILED',
-    delayed: '⏰ DELAYED',
-  };
-
   return (
     <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
       <View style={styles.header}>
@@ -313,7 +313,7 @@ Geolocation.requestAuthorization();
           <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
           <Text style={styles.vehicleTag}>{VEHICLE}</Text>
           {activeDelivery && (
-            <Text style={styles.statusLabel}>{statusLabel[activeDelivery.status]}</Text>
+            <Text style={styles.STATUS_LABEL}>{STATUS_LABEL[activeDelivery.status]}</Text>
           )}
           {shift && (
             <Text style={styles.shiftTag}>📅 {shift.type} shift • Ends: {shift.endTime}</Text>
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
   subtitle: { color: '#888', fontSize: 13, marginTop: 2 },
   vehicleTag: { color: '#555', fontSize: 11, marginTop: 1 },
   shiftTag: { color: DESIGN_TOKENS.colors.warning, fontSize: 11, marginTop: 4 },
-  statusLabel: { color: '#fff', fontSize: 14, marginTop: 4 },
+  STATUS_LABEL: { color: '#fff', fontSize: 14, marginTop: 4 },
   onlineToggle: { flexDirection: 'row', alignItems: 'center' },
   onlineText: { color: DESIGN_TOKENS.colors.success, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
   offlineText: { color: DESIGN_TOKENS.colors.danger, marginRight: 8, fontWeight: 'bold', fontSize: 14 },

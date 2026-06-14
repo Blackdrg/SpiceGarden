@@ -3,6 +3,8 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { Plus, MapPin, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
+import { getCachedToken } from '../utils/cachedLocalStorage';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 interface Address {
   id: string;
@@ -31,23 +33,15 @@ const AddressesPage = () => {
   useEffect(() => {
     const loadAddresses = async () => {
       try {
-        const token = localStorage.getItem('sg_token:v1');
+        const token = getCachedToken();
         if (!token || token === 'demo-token') {
-          router.push('/auth');
           return;
         }
-        
+
         const res = await fetch(`${API_URL}/addresses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push('/auth');
-            return;
-          }
-          throw new Error('Failed to load addresses');
-        }
+
         setAddresses(await res.json());
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load addresses');
@@ -59,7 +53,7 @@ const AddressesPage = () => {
   }, [router]);
 
   const handleAddAddress = async () => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token || token === 'demo-token') return;
     
     try {
@@ -81,7 +75,7 @@ const AddressesPage = () => {
   };
 
   const handleSetDefault = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -98,7 +92,7 @@ const AddressesPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -234,4 +228,6 @@ const AddressesPage = () => {
   );
 };
 
-export default AddressesPage;
+export default function AddressesPageProtected(props: any) {
+  return <ProtectedRoute><AddressesPage {...props} /></ProtectedRoute>;
+}

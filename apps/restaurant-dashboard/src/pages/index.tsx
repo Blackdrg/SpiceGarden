@@ -235,16 +235,14 @@ export default function KitchenDashboard() {
           className={styles.soundContainer}
         >
           {activeSounds.map((id) => (
-            <div
+            <button
               key={id}
-              role="button"
-              tabIndex={0}
+              type="button"
               onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); squashSound(id); }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { tryPlay(''); squashSound(id); } }}
               className={styles.soundButton}
             >
               🚨 NEW ORDER — Tap to dismiss
-            </div>
+            </button>
           ))}
         </div>
       )}

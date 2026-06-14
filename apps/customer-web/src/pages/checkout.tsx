@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi } from '@spicegarden/shared/api';
+import { getCachedToken, clearCachedToken } from '../utils/cachedLocalStorage';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 interface OrderResponse {
   id: string;
@@ -86,7 +88,7 @@ const CheckoutPage = () => {
 
 // Try to place order via API
       try {
-        const response = await ordersApi.create(orderData, user?.token || localStorage.getItem('sg_token:v1') || '');
+        const response = await ordersApi.create(orderData, user?.token || getCachedToken() || '');
         router.push(`/tracking?order=${(response.data as OrderResponse).id}`);
       } catch (apiError: unknown) {
         // Check if it's a payment-related error
@@ -98,7 +100,7 @@ const CheckoutPage = () => {
           // Don't proceed to tracking on payment failure
         } else if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
           // Auth error - try to refresh token
-          const refreshToken = localStorage.getItem('sg_token:v1');
+          const refreshToken = getCachedToken();
           if (refreshToken) {
             try {
               const refreshResponse = await authApi.refreshToken(refreshToken);
@@ -263,4 +265,6 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><CheckoutPage {...props} /></ProtectedRoute>;
+}

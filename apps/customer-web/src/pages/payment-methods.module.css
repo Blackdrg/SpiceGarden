@@ -1,0 +1,21 @@
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  margin: 0;
+}

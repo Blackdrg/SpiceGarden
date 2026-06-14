@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet, Image, Animated, Easing, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, FastImage, Animated, Easing, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';

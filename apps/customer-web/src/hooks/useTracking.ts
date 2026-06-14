@@ -15,9 +15,10 @@ export const useTracking = (driverId: string | null) => {
       transports: ['websocket', 'polling'],
     });
 
-    setError(null);
-
-    const onConnect = () => { setConnected(true); setError(null); };
+    const onConnect = () => {
+      setConnected(true);
+      setError(null);
+    };
     const onDisconnect = () => setConnected(false);
     const onConnectError = () => {
       setConnected(false);
@@ -28,7 +29,6 @@ export const useTracking = (driverId: string | null) => {
     newSocket.on('disconnect', onDisconnect);
     newSocket.on('connect_error', onConnectError);
 
-    // Listen on the tracking namespace
     newSocket.on(`tracking:${driverId}`, (data: { lat: number; lng: number }) => {
       setLocation(data);
     });

@@ -142,38 +142,19 @@ const AuthPage = () => {
                 </button>
             )}
             <div style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
-                <div style={{ fontSize: '14px', color: '#666', marginBottom: DESIGN_TOKENS.spacing.sm }}>Or continue with</div>
-                <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, justifyContent: 'center' }}>
+                <div className={styles.socialLabel}>Or continue with</div>
+                <div className={styles.socialButtonsRow}>
                     <button
                         type="button"
                         onClick={() => {/* TODO: Implement Google login */}}
-                        style={{
-                            background: 'white',
-                            border: '1px solid #ddd',
-                            borderRadius: 4,
-                            padding: '8px 16px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            cursor: 'pointer'
-                        }}
+                        className={styles.googleButton}
                     >
                         🔵 Google
                     </button>
                     <button
                         type="button"
                         onClick={() => {/* TODO: Implement Facebook login */}}
-                        style={{
-                            background: '#1877f2',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: 4,
-                            padding: '8px 16px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            cursor: 'pointer'
-                        }}
+                        className={styles.facebookButton}
                     >
                         𝔽 Facebook
                     </button>

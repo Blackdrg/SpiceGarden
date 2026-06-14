@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Button, Card } from '@spicegarden/ui';
 import { useTracking } from '../hooks/useTracking';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
+import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './tracking.module.css';
 
 interface TrackingItem {
@@ -24,79 +25,81 @@ interface TrackingOrder {
 const TrackingPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const { location } = useTracking(orderId || 'driver-123');
-  const [orderStatus, setOrderStatus] = useState('preparing');
-  const [estimatedTime, setEstimatedTime] = useState(15);
+  const { location } = useTracking('driver-123');
   const [orderDetails, setOrderDetails] = useState<TrackingOrder | null>(null);
   const [loading, setLoading] = useState(true);
+  const orderIdRef = useRef<string | null>(null);
+  const orderStatusRef = useRef('preparing');
+  const estimatedTimeRef = useRef(15);
+  const [displayOrderStatus, setDisplayOrderStatus] = useState('preparing');
+  const [displayEstimatedTime, setDisplayEstimatedTime] = useState(15);
 
   useEffect(() => {
-    // Get order ID from query params or local storage
     const queryOrderId = router.query.order as string | undefined;
     if (queryOrderId) {
-      setOrderId(queryOrderId);
+      orderIdRef.current = queryOrderId;
     } else {
-      // Try to get from localStorage as fallback
       const storedOrderId = localStorage.getItem('lastOrderId');
-      if (storedOrderId) {
-        setOrderId(storedOrderId);
-      }
+      if (storedOrderId) orderIdRef.current = storedOrderId;
     }
   }, [router.query]);
 
-useEffect(() => {
-     if (orderId) {
-       const loadOrderDetails = async () => {
-         try {
-           setLoading(true);
-           const response = await ordersApi.get(orderId, user?.token || localStorage.getItem('sg_token') || '');
-           const order = response.data as TrackingOrder;
-           setOrderDetails(order);
-           setOrderStatus(order.status || 'preparing');
-          // Update estimated time based on order status
-           switch (order.status) {
-             case 'preparing':
-               setEstimatedTime(10 + Math.floor(Math.random() * 10));
-               break;
-             case 'ready':
-               setEstimatedTime(5 + Math.floor(Math.random() * 5));
-               break;
-             case 'pickedup':
-               setEstimatedTime(8 + Math.floor(Math.random() * 12));
-               break;
-             case 'delivered':
-               setEstimatedTime(0);
-               break;
-             default:
-               setEstimatedTime(15);
-           }
-         } catch (error) {
-           console.error('Failed to load order details:', error);
-           // Use mock data for demo
-           setOrderDetails({
-             id: orderId,
-             status: 'preparing',
-             items: [],
-             total: 0
-           });
-         } finally {
-           setLoading(false);
-         }
-       };
-       loadOrderDetails();
-     }
-   }, [orderId, user?.token]);
+  useEffect(() => {
+    const orderId = orderIdRef.current;
+    if (!orderId || !user?.token) return;
+
+    let cancelled = false;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
+    const load = async () => {
+      setLoading(true);
+      try {
+        const response = await ordersApi.get(orderId, user.token);
+        if (cancelled) return;
+        const order = response.data as TrackingOrder;
+        setOrderDetails(order);
+        orderStatusRef.current = order.status || 'preparing';
+        setDisplayOrderStatus(order.status || 'preparing');
+        switch (order.status) {
+          case 'preparing': estimatedTimeRef.current = 10 + Math.floor(Math.random() * 10); break;
+          case 'ready': estimatedTimeRef.current = 5 + Math.floor(Math.random() * 5); break;
+          case 'pickedup': estimatedTimeRef.current = 8 + Math.floor(Math.random() * 12); break;
+          case 'delivered': estimatedTimeRef.current = 0; break;
+          default: estimatedTimeRef.current = 15;
+        }
+        setDisplayEstimatedTime(estimatedTimeRef.current);
+      } catch {
+        if (!cancelled) {
+          setOrderDetails({ id: orderId, status: 'preparing', items: [], total: 0 });
+          orderStatusRef.current = 'preparing';
+          setDisplayOrderStatus('preparing');
+          estimatedTimeRef.current = 15;
+          setDisplayEstimatedTime(15);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+      if (timerId) clearTimeout(timerId);
+    };
+  }, [user?.token]);
+
+  const handleCallDriver = useCallback(() => {}, []);
+  const handleContactSupport = useCallback(() => {}, []);
 
   const statusSteps = [
     { id: 'placed', label: 'Order Placed', done: true },
-    { id: 'preparing', label: 'Preparing', done: orderStatus === 'preparing' || orderStatus === 'ready' || orderStatus === 'pickedup' || orderStatus === 'delivered' },
-    { id: 'ready', label: 'Ready for Pickup', done: orderStatus === 'ready' || orderStatus === 'pickedup' || orderStatus === 'delivered' },
-    { id: 'pickedup', label: 'Picked Up', done: orderStatus === 'pickedup' || orderStatus === 'delivered' },
-    { id: 'delivered', label: 'Delivered', done: orderStatus === 'delivered' },
+    { id: 'preparing', label: 'Preparing', done: ['preparing', 'ready', 'pickedup', 'delivered'].includes(displayOrderStatus) },
+    { id: 'ready', label: 'Ready for Pickup', done: ['ready', 'pickedup', 'delivered'].includes(displayOrderStatus) },
+    { id: 'pickedup', label: 'Picked Up', done: ['pickedup', 'delivered'].includes(displayOrderStatus) },
+    { id: 'delivered', label: 'Delivered', done: displayOrderStatus === 'delivered' },
   ];
 
-if (loading && !orderDetails) {
+  if (loading && !orderDetails) {
     return (
       <div className={styles.loadingContainer}>
         <p>Loading order details...</p>
@@ -124,7 +127,7 @@ if (loading && !orderDetails) {
           <div className={styles.driverInfo}>
             <div className={styles.vehicleIcon}>🛵</div>
             <p className={styles.driverName}>Driver: Raj Kumar</p>
-            <p className={styles.eta}>ETA: {estimatedTime} mins</p>
+            <p className={styles.eta}>ETA: {displayEstimatedTime} mins</p>
           </div>
           <div className={styles.locationInfo}>
             <span>Current Location</span>
@@ -167,4 +170,6 @@ if (loading && !orderDetails) {
   );
 };
 
-export default TrackingPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><TrackingPage {...props} /></ProtectedRoute>;
+}

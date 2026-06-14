@@ -86,7 +86,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
         return;
       }
 
-      setStep(step + 1);
+      setStep(prev => prev + 1);
       animateTransition();
     } else {
       await completeOnboarding();
@@ -95,7 +95,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
   const handleBack = () => {
     if (step > 0) {
-      setStep(step - 1);
+      setStep(prev => prev - 1);
       animateTransition();
     }
   };

@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { useNetworkStatus } from '../hooks/useOfflineQueue';
 
 const NetworkStatusContext = createContext({
@@ -9,8 +9,10 @@ const NetworkStatusContext = createContext({
 export const NetworkStatusProvider = ({ children }: { children: React.ReactNode }) => {
   const { isOnline, lastOnline } = useNetworkStatus();
 
+  const value = useMemo(() => ({ isOnline, lastOnline }), [isOnline, lastOnline]);
+
   return (
-    <NetworkStatusContext.Provider value={{ isOnline, lastOnline }}>
+    <NetworkStatusContext.Provider value={value}>
       {children}
     </NetworkStatusContext.Provider>
   );
