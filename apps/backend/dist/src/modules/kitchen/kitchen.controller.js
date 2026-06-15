@@ -296,4 +296,3 @@ exports.KitchenController = KitchenController = __decorate([
     (0, common_1.Controller)('kitchen'),
     __metadata("design:paramtypes", [kitchen_service_1.KitchenService])
 ], KitchenController);
-//# sourceMappingURL=kitchen.controller.js.map

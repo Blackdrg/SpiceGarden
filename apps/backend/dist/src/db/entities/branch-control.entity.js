@@ -77,4 +77,3 @@ __decorate([
 exports.BranchControlEntity = BranchControlEntity = __decorate([
     (0, typeorm_1.Entity)('branch_controls')
 ], BranchControlEntity);
-//# sourceMappingURL=branch-control.entity.js.map

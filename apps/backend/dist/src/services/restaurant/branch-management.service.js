@@ -113,4 +113,3 @@ exports.BranchManagementService = BranchManagementService = BranchManagementServ
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], BranchManagementService);
-//# sourceMappingURL=branch-management.service.js.map

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, Alert, FlatList } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator, Alert, FlatList } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 interface DeliveryOrder {
@@ -25,7 +26,7 @@ export const DeliveriesScreen = () => {
   const [loading, setLoading] = useState(true);
   const [acceptingOrderId, setAcceptingOrderId] = useState<string | null>(null);
   
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   const loadOrders = useCallback(async () => {
     setLoading(true);

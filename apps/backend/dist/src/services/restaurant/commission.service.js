@@ -113,4 +113,3 @@ exports.CommissionService = CommissionService = CommissionService_1 = __decorate
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], CommissionService);
-//# sourceMappingURL=commission.service.js.map

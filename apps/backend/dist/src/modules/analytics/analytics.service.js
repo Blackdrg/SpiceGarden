@@ -334,4 +334,3 @@ exports.AnalyticsService = AnalyticsService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], AnalyticsService);
-//# sourceMappingURL=analytics.service.js.map

@@ -141,4 +141,3 @@ exports.LoyaltyController = LoyaltyController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [loyalty_service_1.LoyaltyService])
 ], LoyaltyController);
-//# sourceMappingURL=loyalty.controller.js.map

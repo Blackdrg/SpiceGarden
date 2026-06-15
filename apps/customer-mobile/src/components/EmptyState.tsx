@@ -25,7 +25,7 @@ export const EmptyState = ({ onNavigateHome }: EmptyStateProps) => {
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   emptyState: {
     flex: 1,
     justifyContent: 'center',
@@ -64,5 +64,3 @@ export const styles = StyleSheet.create({
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });
-
-export default EmptyState;

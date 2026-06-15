@@ -26,4 +26,3 @@ exports.OrderServiceModule = OrderServiceModule = __decorate([
         exports: [order_service_1.OrderService],
     })
 ], OrderServiceModule);
-//# sourceMappingURL=order.module.js.map

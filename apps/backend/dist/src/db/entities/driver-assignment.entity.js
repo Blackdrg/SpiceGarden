@@ -100,4 +100,3 @@ __decorate([
 exports.DriverAssignmentEntity = DriverAssignmentEntity = __decorate([
     (0, typeorm_1.Entity)('driver_assignments')
 ], DriverAssignmentEntity);
-//# sourceMappingURL=driver-assignment.entity.js.map

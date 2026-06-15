@@ -124,4 +124,3 @@ exports.AnalyticsController = AnalyticsController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [analytics_service_1.AnalyticsService])
 ], AnalyticsController);
-//# sourceMappingURL=analytics.controller.js.map

@@ -18,4 +18,3 @@ var UserStatus;
     UserStatus["INACTIVE"] = "inactive";
     UserStatus["SUSPENDED"] = "suspended";
 })(UserStatus || (exports.UserStatus = UserStatus = {}));
-//# sourceMappingURL=user.interface.js.map

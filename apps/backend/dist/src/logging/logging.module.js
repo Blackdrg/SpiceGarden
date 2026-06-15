@@ -23,4 +23,3 @@ exports.LoggingModule = LoggingModule = __decorate([
         exports: [logging_service_1.LoggingService],
     })
 ], LoggingModule);
-//# sourceMappingURL=logging.module.js.map

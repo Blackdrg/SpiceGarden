@@ -1,6 +1,7 @@
 /* eslint-disable */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator, Animated, Easing } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
@@ -15,8 +16,8 @@ const HomeScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [user, setUser] = useState<{ name?: string } | null>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     loadRestaurants();

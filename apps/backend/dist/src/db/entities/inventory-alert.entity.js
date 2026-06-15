@@ -79,4 +79,3 @@ __decorate([
 exports.InventoryAlertEntity = InventoryAlertEntity = __decorate([
     (0, typeorm_1.Entity)('inventory_alerts')
 ], InventoryAlertEntity);
-//# sourceMappingURL=inventory-alert.entity.js.map

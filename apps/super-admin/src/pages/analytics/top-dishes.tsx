@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -13,15 +13,16 @@ interface Dish {
 }
 
 export default function AnalyticsTopDishes() {
-  const [dishes, setDishes] = useState<Dish[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${API}/analytics/top-dishes?period=30`)
-      .then((r) => r.json())
-      .then((d) => { setDishes(d.dishes || d || []); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: dishes = [], isLoading: loading } = useQuery({
+    queryKey: ['top-dishes'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/top-dishes?period=30`);
+      if (!response.ok) throw new Error('Failed to load top dishes');
+      const data = await response.json() as { dishes?: Dish[] } | Dish[];
+      return Array.isArray(data) ? data : data.dishes || [];
+    },
+    initialData: [],
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>

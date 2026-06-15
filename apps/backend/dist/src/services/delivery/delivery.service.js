@@ -154,4 +154,3 @@ exports.DeliveryService = DeliveryService = __decorate([
         geo_service_1.GeoService,
         typeorm_2.DataSource])
 ], DeliveryService);
-//# sourceMappingURL=delivery.service.js.map

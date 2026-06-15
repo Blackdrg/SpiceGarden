@@ -73,4 +73,3 @@ __decorate([
 exports.KitchenSLAEntity = KitchenSLAEntity = __decorate([
     (0, typeorm_1.Entity)('kitchen_sla')
 ], KitchenSLAEntity);
-//# sourceMappingURL=kitchen-sla.entity.js.map

@@ -98,4 +98,3 @@ __decorate([
 exports.RestaurantGSTEntity = RestaurantGSTEntity = __decorate([
     (0, typeorm_1.Entity)('restaurant_gst')
 ], RestaurantGSTEntity);
-//# sourceMappingURL=restaurant-gst.entity.js.map

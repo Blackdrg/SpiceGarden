@@ -340,4 +340,3 @@ exports.ComplianceController = ComplianceController = __decorate([
         secrets_rotation_service_1.SecretsRotationService,
         data_privacy_service_1.DataPrivacyService])
 ], ComplianceController);
-//# sourceMappingURL=compliance.controller.js.map

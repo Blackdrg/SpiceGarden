@@ -53,4 +53,3 @@ exports.ReviewService = ReviewService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)(review_schema_1.ReviewDocument.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], ReviewService);
-//# sourceMappingURL=review.service.js.map

@@ -148,4 +148,3 @@ exports.NotificationQueueController = NotificationQueueController = __decorate([
     (0, common_1.Controller)('notification-queue'),
     __metadata("design:paramtypes", [notification_queue_service_1.NotificationQueueService])
 ], NotificationQueueController);
-//# sourceMappingURL=notification-queue.controller.js.map

@@ -99,4 +99,3 @@ exports.LoggingService = LoggingService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [String])
 ], LoggingService);
-//# sourceMappingURL=logging.service.js.map

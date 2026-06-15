@@ -27,4 +27,3 @@ exports.DriverAssignmentModule = DriverAssignmentModule = __decorate([
         ],
     })
 ], DriverAssignmentModule);
-//# sourceMappingURL=driver-assignment.module.js.map

@@ -302,4 +302,3 @@ exports.DriverAssignmentService = DriverAssignmentService = __decorate([
         dispatch_engine_service_1.DispatchEngineService,
         eta_intelligence_service_1.ETAIntelligenceService])
 ], DriverAssignmentService);
-//# sourceMappingURL=driver-assignment.service.js.map

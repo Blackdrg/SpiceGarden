@@ -93,4 +93,3 @@ __decorate([
 exports.DriverDocumentEntity = DriverDocumentEntity = __decorate([
     (0, typeorm_1.Entity)('driver_documents')
 ], DriverDocumentEntity);
-//# sourceMappingURL=driver-document.entity.js.map

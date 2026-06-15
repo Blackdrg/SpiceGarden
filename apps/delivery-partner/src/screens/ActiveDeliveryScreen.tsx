@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing, Alert, TextInput } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, Alert, TextInput } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { deliveryApi, DeliveryOrder } from '../services/delivery-api.service';
 
@@ -15,8 +16,8 @@ export const ActiveDeliveryScreen = ({ route, navigation }: {
   const [otp, setOtp] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

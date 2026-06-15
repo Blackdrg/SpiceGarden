@@ -17,4 +17,3 @@ exports.LegalModule = LegalModule = __decorate([
         controllers: [legal_controller_1.LegalController],
     })
 ], LegalModule);
-//# sourceMappingURL=legal.module.js.map

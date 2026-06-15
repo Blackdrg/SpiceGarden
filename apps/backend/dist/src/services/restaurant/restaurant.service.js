@@ -92,4 +92,3 @@ exports.RestaurantService = RestaurantService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], RestaurantService);
-//# sourceMappingURL=restaurant.service.js.map

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -23,17 +23,25 @@ interface RepeatData {
 }
 
 export default function AnalyticsCustomers() {
-  const [churn, setChurn] = useState<ChurnData | null>(null);
-  const [repeat, setRepeat] = useState<RepeatData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([
-      fetch(`${API}/analytics/churn?period=90`).then((r) => r.json()),
-      fetch(`${API}/analytics/repeat-users?period=90`).then((r) => r.json()),
-    ]).then(([c, r]) => { setChurn(c); setRepeat(r); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: churn = {}, isLoading: churnLoading } = useQuery<ChurnData>({
+    queryKey: ['analytics-churn'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/churn?period=90`);
+      if (!response.ok) throw new Error('Failed to load churn analytics');
+      return response.json() as Promise<ChurnData>;
+    },
+    initialData: {},
+  });
+  const { data: repeat = {}, isLoading: repeatLoading } = useQuery<RepeatData>({
+    queryKey: ['analytics-repeat-users'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/repeat-users?period=90`);
+      if (!response.ok) throw new Error('Failed to load repeat customer analytics');
+      return response.json() as Promise<RepeatData>;
+    },
+    initialData: {},
+  });
+  const loading = churnLoading || repeatLoading;
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>

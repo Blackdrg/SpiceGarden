@@ -149,4 +149,3 @@ exports.PaymentProviderController = PaymentProviderController = __decorate([
     __metadata("design:paramtypes", [stripe_connect_service_1.StripeConnectService,
         razorpay_settlement_service_1.RazorpaySettlementService])
 ], PaymentProviderController);
-//# sourceMappingURL=payment-provider.controller.js.map

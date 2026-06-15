@@ -84,4 +84,3 @@ __decorate([
 exports.DriverShiftEntity = DriverShiftEntity = __decorate([
     (0, typeorm_1.Entity)('driver_shifts')
 ], DriverShiftEntity);
-//# sourceMappingURL=driver-shift.entity.js.map

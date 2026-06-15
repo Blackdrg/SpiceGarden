@@ -93,4 +93,3 @@ __decorate([
 exports.GSTDetailEntity = GSTDetailEntity = __decorate([
     (0, typeorm_1.Entity)('gst_details')
 ], GSTDetailEntity);
-//# sourceMappingURL=gst-detail.entity.js.map

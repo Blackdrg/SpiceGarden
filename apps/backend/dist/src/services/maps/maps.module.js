@@ -22,4 +22,3 @@ exports.MapsModule = MapsModule = __decorate([
         exports: [maps_service_1.MapsService],
     })
 ], MapsModule);
-//# sourceMappingURL=maps.module.js.map

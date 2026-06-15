@@ -47,4 +47,3 @@ exports.MongoAdapter = MongoAdapter = __decorate([
     __param(0, (0, mongoose_1.InjectConnection)()),
     __metadata("design:paramtypes", [mongoose_2.Connection])
 ], MongoAdapter);
-//# sourceMappingURL=mongo.adapter.js.map

@@ -33,4 +33,3 @@ exports.OrderGrpcController = OrderGrpcController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderGrpcController);
-//# sourceMappingURL=order.controller.js.map

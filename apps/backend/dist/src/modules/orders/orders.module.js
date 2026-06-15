@@ -17,4 +17,3 @@ exports.OrdersModule = OrdersModule = __decorate([
         providers: []
     })
 ], OrdersModule);
-//# sourceMappingURL=orders.module.js.map

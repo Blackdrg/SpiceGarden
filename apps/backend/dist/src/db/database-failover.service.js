@@ -132,4 +132,3 @@ exports.DatabaseFailoverService = DatabaseFailoverService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [typeorm_1.DataSource])
 ], DatabaseFailoverService);
-//# sourceMappingURL=database-failover.service.js.map

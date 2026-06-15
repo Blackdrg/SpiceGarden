@@ -112,4 +112,3 @@ __decorate([
 exports.ReferralEntity = ReferralEntity = __decorate([
     (0, typeorm_1.Entity)('referrals')
 ], ReferralEntity);
-//# sourceMappingURL=referral.entity.js.map

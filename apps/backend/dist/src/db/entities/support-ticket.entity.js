@@ -213,4 +213,3 @@ __decorate([
 exports.TicketMessageEntity = TicketMessageEntity = __decorate([
     (0, typeorm_1.Entity)('ticket_messages')
 ], TicketMessageEntity);
-//# sourceMappingURL=support-ticket.entity.js.map

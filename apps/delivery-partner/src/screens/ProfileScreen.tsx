@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing, Alert, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, Alert, ScrollView, Switch } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -27,7 +28,7 @@ export const ProfileScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

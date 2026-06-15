@@ -59,7 +59,8 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         const userUsage = await this.couponUsageRepo.count({
             where: { couponId: coupon.id, userId, status: coupon_usage_entity_1.CouponUsageStatus.USED }
         });
-        if (userUsage >= coupon.usagePerUser)
+        const usagePerUser = coupon.usagePerUser ?? 1;
+        if (userUsage >= usagePerUser)
             throw new common_1.BadRequestException('You have already used this coupon');
         if (coupon.minOrderAmount && orderAmount < coupon.minOrderAmount) {
             throw new common_1.BadRequestException(`Minimum order amount of ₹${coupon.minOrderAmount} required`);
@@ -226,7 +227,11 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
             order: { createdAt: 'DESC' },
             take: 10,
         });
-        if (recentReferrals.length > 1) {
+        const recentCount = recentReferrals.filter(r => {
+            const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : 0;
+            return createdAt >= Date.now() - 24 * 60 * 60 * 1000;
+        }).length;
+        if (recentCount > 1) {
             return { isFraud: true, reason: 'Multiple referral usage within 24h' };
         }
         const referredUsers = await this.referralRepo
@@ -272,4 +277,3 @@ exports.LoyaltyService = LoyaltyService = LoyaltyService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], LoyaltyService);
-//# sourceMappingURL=loyalty.service.js.map

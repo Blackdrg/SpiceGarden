@@ -78,4 +78,3 @@ exports.GSTController = GSTController = __decorate([
     (0, common_1.Controller)('gst'),
     __metadata("design:paramtypes", [gst_service_1.GSTService])
 ], GSTController);
-//# sourceMappingURL=gst.controller.js.map

@@ -58,4 +58,3 @@ __decorate([
 exports.PaymentValidationEventEntity = PaymentValidationEventEntity = __decorate([
     (0, typeorm_1.Entity)('payment_validation_events')
 ], PaymentValidationEventEntity);
-//# sourceMappingURL=payment-validation.entity.js.map

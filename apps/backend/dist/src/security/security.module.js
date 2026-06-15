@@ -28,4 +28,3 @@ exports.SecurityModule = SecurityModule = __decorate([
         exports: [encryption_service_1.EncryptionService, throttler_1.ThrottlerModule],
     })
 ], SecurityModule);
-//# sourceMappingURL=security.module.js.map

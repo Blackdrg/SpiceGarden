@@ -22,4 +22,3 @@ var PaymentStatus;
     PaymentStatus["FAILED"] = "failed";
     PaymentStatus["REFUNDED"] = "refunded";
 })(PaymentStatus || (exports.PaymentStatus = PaymentStatus = {}));
-//# sourceMappingURL=order.interface.js.map

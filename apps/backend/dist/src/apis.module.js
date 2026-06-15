@@ -19,4 +19,3 @@ exports.ApisModule = ApisModule = __decorate([
         providers: [apis_service_1.ApisService],
     })
 ], ApisModule);
-//# sourceMappingURL=apis.module.js.map

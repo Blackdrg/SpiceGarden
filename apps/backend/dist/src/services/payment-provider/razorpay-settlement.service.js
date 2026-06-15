@@ -238,4 +238,3 @@ exports.RazorpaySettlementService = RazorpaySettlementService = RazorpaySettleme
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], RazorpaySettlementService);
-//# sourceMappingURL=razorpay-settlement.service.js.map

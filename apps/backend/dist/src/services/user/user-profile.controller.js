@@ -123,4 +123,3 @@ exports.UserProfileController = UserProfileController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])
 ], UserProfileController);
-//# sourceMappingURL=user-profile.controller.js.map

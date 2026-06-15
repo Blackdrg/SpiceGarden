@@ -23,4 +23,3 @@ exports.GrpcModule = GrpcModule = __decorate([
         exports: [],
     })
 ], GrpcModule);
-//# sourceMappingURL=grpc.module.js.map

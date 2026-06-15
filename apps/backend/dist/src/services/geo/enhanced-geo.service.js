@@ -315,4 +315,3 @@ exports.EnhancedGeoService = EnhancedGeoService = EnhancedGeoService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], EnhancedGeoService);
-//# sourceMappingURL=enhanced-geo.service.js.map

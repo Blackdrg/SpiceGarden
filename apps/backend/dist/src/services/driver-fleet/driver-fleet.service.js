@@ -245,4 +245,3 @@ exports.DriverFleetService = DriverFleetService = DriverFleetService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], DriverFleetService);
-//# sourceMappingURL=driver-fleet.service.js.map

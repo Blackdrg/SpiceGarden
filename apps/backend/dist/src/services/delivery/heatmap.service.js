@@ -158,4 +158,3 @@ exports.HeatmapService = HeatmapService = HeatmapService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], HeatmapService);
-//# sourceMappingURL=heatmap.service.js.map

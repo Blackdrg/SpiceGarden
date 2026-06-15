@@ -82,4 +82,3 @@ __decorate([
 exports.OtpEntity = OtpEntity = __decorate([
     (0, typeorm_1.Entity)('otp_verifications')
 ], OtpEntity);
-//# sourceMappingURL=otp.entity.js.map

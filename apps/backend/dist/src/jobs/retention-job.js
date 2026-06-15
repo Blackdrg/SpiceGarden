@@ -68,4 +68,3 @@ exports.RetentionJob = RetentionJob = RetentionJob_1 = __decorate([
         data_privacy_service_1.DataPrivacyService,
         typeorm_1.DataSource])
 ], RetentionJob);
-//# sourceMappingURL=retention-job.js.map

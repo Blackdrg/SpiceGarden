@@ -26,4 +26,3 @@ exports.NotificationQueueModule = NotificationQueueModule = __decorate([
         exports: [notification_queue_service_1.NotificationQueueService]
     })
 ], NotificationQueueModule);
-//# sourceMappingURL=notification-queue.module.js.map

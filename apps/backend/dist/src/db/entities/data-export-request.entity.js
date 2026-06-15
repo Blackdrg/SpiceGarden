@@ -73,4 +73,3 @@ __decorate([
 exports.DataExportRequestEntity = DataExportRequestEntity = __decorate([
     (0, typeorm_1.Entity)('data_exports')
 ], DataExportRequestEntity);
-//# sourceMappingURL=data-export-request.entity.js.map

@@ -66,4 +66,3 @@ exports.ReviewController = ReviewController = __decorate([
     (0, common_1.Controller)('reviews'),
     __metadata("design:paramtypes", [review_service_1.ReviewService])
 ], ReviewController);
-//# sourceMappingURL=review.controller.js.map

@@ -12,19 +12,59 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolesGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
+const user_interface_1 = require("../shared/domain/user.interface");
+const rolePermissions = {
+    [user_interface_1.UserRole.CUSTOMER]: ['orders:read_own', 'orders:create', 'wallet:read_own', 'wallet:transact_own'],
+    [user_interface_1.UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own'],
+    [user_interface_1.UserRole.KITCHEN_STAFF]: ['kitchen:manage_own', 'orders:read_assigned'],
+    [user_interface_1.UserRole.DELIVERY_PARTNER]: ['deliveries:manage_assigned', 'orders:read_assigned'],
+    [user_interface_1.UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read'],
+    [user_interface_1.UserRole.SUPER_ADMIN]: ['*'],
+    [user_interface_1.UserRole.SUPPORT_STAFF]: ['support:manage', 'orders:read'],
+    [user_interface_1.UserRole.FINANCE_STAFF]: ['finance:read', 'payments:read', 'refunds:read'],
+};
 let RolesGuard = class RolesGuard {
     reflector;
     constructor(reflector) {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const roles = this.reflector.get('roles', context.getHandler());
-        if (!roles) {
+        const requiredRoles = this.reflector.get('roles', context.getHandler());
+        if (!requiredRoles || requiredRoles.length === 0) {
             return true;
         }
         const request = context.switchToHttp().getRequest();
         const user = request.user;
-        return roles.includes(user?.role);
+        if (!user) {
+            throw new common_1.ForbiddenException('Authentication is required');
+        }
+        if (user.status && user.status !== user_interface_1.UserStatus.ACTIVE) {
+            throw new common_1.ForbiddenException('User account is not active');
+        }
+        if (!user.role) {
+            throw new common_1.ForbiddenException('User role is required');
+        }
+        const role = this.normalizeRole(user.role);
+        if (!role) {
+            throw new common_1.ForbiddenException('Invalid user role');
+        }
+        const hasRequiredRole = requiredRoles.map(this.normalizeRole).includes(role);
+        if (!hasRequiredRole) {
+            throw new common_1.ForbiddenException('Insufficient role permissions');
+        }
+        return true;
+    }
+    hasPermission(role, permission) {
+        const normalizedRole = this.normalizeRole(role);
+        if (!normalizedRole) {
+            return false;
+        }
+        const permissions = rolePermissions[normalizedRole] || [];
+        return permissions.includes('*') || permissions.includes(permission);
+    }
+    normalizeRole(role) {
+        const normalized = String(role).toLowerCase();
+        return Object.values(user_interface_1.UserRole).find((value) => value === normalized);
     }
 };
 exports.RolesGuard = RolesGuard;
@@ -32,4 +72,3 @@ exports.RolesGuard = RolesGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [core_1.Reflector])
 ], RolesGuard);
-//# sourceMappingURL=roles.guard.js.map

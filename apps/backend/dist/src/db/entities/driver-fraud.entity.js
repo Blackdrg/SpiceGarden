@@ -85,4 +85,3 @@ __decorate([
 exports.DriverFraudEntity = DriverFraudEntity = __decorate([
     (0, typeorm_1.Entity)('driver_fraud')
 ], DriverFraudEntity);
-//# sourceMappingURL=driver-fraud.entity.js.map

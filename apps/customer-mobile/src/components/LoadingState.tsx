@@ -20,7 +20,7 @@ export const LoadingState = ({ showText = true }: LoadingStateProps) => {
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -34,5 +34,3 @@ export const styles = StyleSheet.create({
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });
-
-export default LoadingState;

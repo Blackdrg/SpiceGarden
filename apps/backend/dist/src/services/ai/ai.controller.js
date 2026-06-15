@@ -59,4 +59,3 @@ exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [ai_service_1.AiService])
 ], AiController);
-//# sourceMappingURL=ai.controller.js.map

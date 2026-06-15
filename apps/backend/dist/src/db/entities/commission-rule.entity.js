@@ -99,4 +99,3 @@ __decorate([
 exports.CommissionRuleEntity = CommissionRuleEntity = __decorate([
     (0, typeorm_1.Entity)('commission_rules')
 ], CommissionRuleEntity);
-//# sourceMappingURL=commission-rule.entity.js.map

@@ -103,4 +103,3 @@ exports.UserProfileService = UserProfileService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
 ], UserProfileService);
-//# sourceMappingURL=user-profile.service.js.map

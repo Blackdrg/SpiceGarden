@@ -8,35 +8,49 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var OrderProcessor_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderProcessor = void 0;
 const common_1 = require("@nestjs/common");
-const order_interface_1 = require("../../shared/domain/order.interface");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const order_entity_1 = require("../../db/entities/order.entity");
 const notification_service_1 = require("../../services/notifications/notification.service");
-let OrderProcessor = class OrderProcessor {
+let OrderProcessor = OrderProcessor_1 = class OrderProcessor {
+    orderRepo;
     notificationService;
-    constructor(notificationService) {
+    logger = new common_1.Logger(OrderProcessor_1.name);
+    constructor(orderRepo, notificationService) {
+        this.orderRepo = orderRepo;
         this.notificationService = notificationService;
     }
-    async processOrderLifecycle(job) {
-        const { orderId, status, userId } = job;
-        console.log(`Processing order ${orderId} lifecycle transition to ${status}`);
+    async processOrderLifecycle(data, job) {
+        const { orderId, status, userId } = data;
+        if (!orderId || !status) {
+            throw new Error('Order lifecycle job requires orderId and status');
+        }
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        if (order.status !== status) {
+            order.status = status;
+            order.updatedAt = new Date();
+            await this.orderRepo.save(order);
+        }
         if (userId) {
             await this.notificationService.notifyOrderUpdate(userId, orderId, status);
         }
-        switch (status) {
-            case order_interface_1.OrderStatus.PLACED:
-                console.log(`Order ${orderId} has been placed. Waiting for payment...`);
-                break;
-            case order_interface_1.OrderStatus.PAYMENT_CONFIRMED:
-                console.log(`Payment confirmed for order ${orderId}. Notifying restaurant...`);
-                break;
-        }
+        this.logger.log(`Processed order lifecycle job ${job?.id ?? orderId}: ${status}`);
     }
 };
 exports.OrderProcessor = OrderProcessor;
-exports.OrderProcessor = OrderProcessor = __decorate([
+exports.OrderProcessor = OrderProcessor = OrderProcessor_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [notification_service_1.NotificationService])
+    __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        notification_service_1.NotificationService])
 ], OrderProcessor);
-//# sourceMappingURL=order.processor.js.map

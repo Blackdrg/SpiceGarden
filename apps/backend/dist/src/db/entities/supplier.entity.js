@@ -68,4 +68,3 @@ __decorate([
 exports.SupplierEntity = SupplierEntity = __decorate([
     (0, typeorm_1.Entity)('suppliers')
 ], SupplierEntity);
-//# sourceMappingURL=supplier.entity.js.map

@@ -75,4 +75,3 @@ exports.PaymentMethodsController = PaymentMethodsController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [payment_methods_service_1.PaymentMethodsService])
 ], PaymentMethodsController);
-//# sourceMappingURL=payment-methods.controller.js.map

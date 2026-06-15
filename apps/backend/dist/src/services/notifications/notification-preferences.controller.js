@@ -51,4 +51,3 @@ exports.NotificationPreferencesController = NotificationPreferencesController = 
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [notification_preferences_service_1.NotificationPreferencesService])
 ], NotificationPreferencesController);
-//# sourceMappingURL=notification-preferences.controller.js.map

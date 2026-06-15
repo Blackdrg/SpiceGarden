@@ -138,4 +138,3 @@ __decorate([
 exports.DisputeEntity = DisputeEntity = __decorate([
     (0, typeorm_1.Entity)('disputes')
 ], DisputeEntity);
-//# sourceMappingURL=dispute.entity.js.map

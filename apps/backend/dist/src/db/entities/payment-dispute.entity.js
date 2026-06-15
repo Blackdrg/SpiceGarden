@@ -103,4 +103,3 @@ __decorate([
 exports.PaymentDisputeEntity = PaymentDisputeEntity = __decorate([
     (0, typeorm_1.Entity)('payment_disputes')
 ], PaymentDisputeEntity);
-//# sourceMappingURL=payment-dispute.entity.js.map

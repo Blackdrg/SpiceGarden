@@ -21,4 +21,3 @@ exports.TrackingModule = TrackingModule = __decorate([
         exports: [tracking_gateway_1.TrackingGateway],
     })
 ], TrackingModule);
-//# sourceMappingURL=tracking.module.js.map

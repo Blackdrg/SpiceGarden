@@ -53,4 +53,3 @@ __decorate([
 exports.MenuAddonEntity = MenuAddonEntity = __decorate([
     (0, typeorm_1.Entity)('menu_addons')
 ], MenuAddonEntity);
-//# sourceMappingURL=menu-addon.entity.js.map

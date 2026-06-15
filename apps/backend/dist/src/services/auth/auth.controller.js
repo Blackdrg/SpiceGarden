@@ -81,4 +81,3 @@ exports.AuthController = AuthController = __decorate([
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         typeorm_2.Repository])
 ], AuthController);
-//# sourceMappingURL=auth.controller.js.map

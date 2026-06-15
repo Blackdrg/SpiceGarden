@@ -54,4 +54,3 @@ __decorate([
 exports.MenuCategoryEntity = MenuCategoryEntity = __decorate([
     (0, typeorm_1.Entity)('menu_categories')
 ], MenuCategoryEntity);
-//# sourceMappingURL=menu-category.entity.js.map

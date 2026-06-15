@@ -47,4 +47,3 @@ exports.ApisController = ApisController = __decorate([
     (0, common_1.Controller)('apis'),
     __metadata("design:paramtypes", [apis_service_1.ApisService])
 ], ApisController);
-//# sourceMappingURL=apis.controller.js.map

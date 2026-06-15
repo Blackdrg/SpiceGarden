@@ -79,4 +79,3 @@ __decorate([
 exports.DeliverySLAEntity = DeliverySLAEntity = __decorate([
     (0, typeorm_1.Entity)('delivery_sla')
 ], DeliverySLAEntity);
-//# sourceMappingURL=delivery-sla.entity.js.map

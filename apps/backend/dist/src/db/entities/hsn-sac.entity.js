@@ -68,4 +68,3 @@ __decorate([
 exports.HSNSACEntity = HSNSACEntity = __decorate([
     (0, typeorm_1.Entity)('hsn_sac_codes')
 ], HSNSACEntity);
-//# sourceMappingURL=hsn-sac.entity.js.map

@@ -117,4 +117,3 @@ __decorate([
 exports.DriverPenaltyEntity = DriverPenaltyEntity = __decorate([
     (0, typeorm_1.Entity)('driver_penalties')
 ], DriverPenaltyEntity);
-//# sourceMappingURL=driver-penalty.entity.js.map

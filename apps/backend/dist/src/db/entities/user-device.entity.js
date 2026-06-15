@@ -79,4 +79,3 @@ __decorate([
 exports.UserDeviceEntity = UserDeviceEntity = __decorate([
     (0, typeorm_1.Entity)('user_devices')
 ], UserDeviceEntity);
-//# sourceMappingURL=user-device.entity.js.map

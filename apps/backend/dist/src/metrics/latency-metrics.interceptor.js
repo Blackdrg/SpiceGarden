@@ -39,4 +39,3 @@ exports.LatencyMetricsInterceptor = LatencyMetricsInterceptor = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [metrics_service_1.MetricsService])
 ], LatencyMetricsInterceptor);
-//# sourceMappingURL=latency-metrics.interceptor.js.map

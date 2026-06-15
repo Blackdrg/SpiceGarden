@@ -146,4 +146,3 @@ exports.MenuModerationService = MenuModerationService = MenuModerationService_1 
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], MenuModerationService);
-//# sourceMappingURL=menu-moderation.service.js.map

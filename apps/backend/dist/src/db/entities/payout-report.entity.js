@@ -116,4 +116,3 @@ __decorate([
 exports.PayoutReportEntity = PayoutReportEntity = __decorate([
     (0, typeorm_1.Entity)('payout_reports')
 ], PayoutReportEntity);
-//# sourceMappingURL=payout-report.entity.js.map

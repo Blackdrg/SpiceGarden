@@ -68,4 +68,3 @@ __decorate([
 exports.DeletionRequestEntity = DeletionRequestEntity = __decorate([
     (0, typeorm_1.Entity)('deletion_requests')
 ], DeletionRequestEntity);
-//# sourceMappingURL=deletion-request.entity.js.map

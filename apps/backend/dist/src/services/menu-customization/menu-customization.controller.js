@@ -67,4 +67,3 @@ exports.MenuCustomizationController = MenuCustomizationController = __decorate([
     (0, common_1.Controller)('menus'),
     __metadata("design:paramtypes", [menu_customization_service_1.MenuCustomizationService])
 ], MenuCustomizationController);
-//# sourceMappingURL=menu-customization.controller.js.map

@@ -76,4 +76,3 @@ __decorate([
 exports.NotificationAnalyticsEntity = NotificationAnalyticsEntity = __decorate([
     (0, typeorm_1.Entity)('notification_analytics')
 ], NotificationAnalyticsEntity);
-//# sourceMappingURL=notification-analytics.entity.js.map

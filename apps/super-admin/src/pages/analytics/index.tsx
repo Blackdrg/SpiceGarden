@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -52,15 +52,16 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsOverview() {
-  const [state, setState] = useState({ data: null as AnalyticsData | null, period: '30', loading: true });
-  const { data, period, loading } = state;
-
-  useEffect(() => {
-    fetch(`${API}/analytics/platform?period=${period}`)
-      .then((r) => r.json())
-      .then((d) => { setState((prev) => ({ ...prev, data: d, loading: false })); })
-      .catch(() => setState((prev) => ({ ...prev, loading: false })));
-  }, [period]);
+  const [period, setPeriod] = useState('30');
+  const { data, isLoading: loading } = useQuery<AnalyticsData>({
+    queryKey: ['analytics-platform', period],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/platform?period=${period}`);
+      if (!response.ok) throw new Error('Failed to load analytics');
+      return response.json() as Promise<AnalyticsData>;
+    },
+    placeholderData: undefined,
+  });
 
   return (
     <div style={pageStyle}>
@@ -72,7 +73,7 @@ export default function AnalyticsOverview() {
             <button
               type="button"
               key={p}
-              onClick={() => setState((prev) => ({ ...prev, period: p }))}
+              onClick={() => setPeriod(p)}
               style={periodButtonStyle(period === p)}
             >
               {p}

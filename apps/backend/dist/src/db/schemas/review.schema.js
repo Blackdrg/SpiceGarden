@@ -49,4 +49,3 @@ exports.ReviewDocument = ReviewDocument = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], ReviewDocument);
 exports.ReviewSchema = mongoose_1.SchemaFactory.createForClass(ReviewDocument);
-//# sourceMappingURL=review.schema.js.map

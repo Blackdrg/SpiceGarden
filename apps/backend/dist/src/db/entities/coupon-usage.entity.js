@@ -64,4 +64,3 @@ __decorate([
 exports.CouponUsageEntity = CouponUsageEntity = __decorate([
     (0, typeorm_1.Entity)('coupon_usages')
 ], CouponUsageEntity);
-//# sourceMappingURL=coupon-usage.entity.js.map

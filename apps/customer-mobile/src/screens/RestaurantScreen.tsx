@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { Animated, Easing } from 'react-native';
 // import { DESIGN_TOKENS } from '@spicegarden/ui';
 // import { STRINGS } from '../constants/strings';
 // import { formatCurrency } from '../utils/currency';
@@ -32,8 +33,8 @@ const RestaurantScreen = () => {
    const [error, setError] = useState<string | null>(null);
    const [addingItem, setAddingItem] = useState<string | null>(null);
    
-   const fadeAnim = useRef(new Animated.Value(0)).current;
-   const scaleAnims = useRef(new Map<string, Animated.Value>()).current;
+   const fadeAnim = useMemo(() => new Animated.Value(0), []);
+   const scaleAnims = useMemo(() => new Map<string, Animated.Value>(), []);
 
    useEffect(() => {
      const loadData = async () => {

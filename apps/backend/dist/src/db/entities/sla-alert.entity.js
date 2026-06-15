@@ -84,4 +84,3 @@ __decorate([
 exports.SLAAlertEntity = SLAAlertEntity = __decorate([
     (0, typeorm_1.Entity)('sla_alerts')
 ], SLAAlertEntity);
-//# sourceMappingURL=sla-alert.entity.js.map

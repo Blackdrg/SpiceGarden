@@ -324,4 +324,3 @@ exports.OrderDriverController = OrderDriverController = __decorate([
         tracking_gateway_1.TrackingGateway,
         notification_service_1.NotificationService])
 ], OrderDriverController);
-//# sourceMappingURL=driver.controller.js.map

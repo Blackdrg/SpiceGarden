@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, TextInput } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export const HomeScreen = () => {
@@ -10,8 +11,8 @@ export const HomeScreen = () => {
     hours: 4.5,
   });
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const switchAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const switchAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

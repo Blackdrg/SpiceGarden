@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, Dimensions, Animated, Easing, AppState, AppStateStatus } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, Dimensions, AppState, AppStateStatus } from 'react-native';
+import Animated, { Easing } from 'react-native-reanimated';
 import { io, Socket } from 'socket.io-client';
 import Geolocation from '@react-native-community/geolocation';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -119,8 +120,8 @@ export default function DriverApp() {
    const [activeScreen, setActiveScreen] = useState<'home' | 'earnings'>('home');
    const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'pending'>('pending');
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const slideAnim = useMemo(() => new Animated.Value(20), []);
   const locationWatchId = useRef<number | null>(null);
   const socketRef = useRef<Socket | null>(null);
 

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 3004",
     "lint": "eslint src",
-    "test:unit": "echo \"no unit tests\"",
+    "test:unit": "jest --testPathPatterns=__tests__ --runInBand",
     "test:integration": "echo \"no integration tests\"",
     "test:e2e": "echo \"no e2e tests\"",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
@@ -15,6 +15,7 @@
   "dependencies": {
     "@sentry/nextjs": "^10.57.0",
     "@spicegarden/ui": "*",
+    "@tanstack/react-query": "^5.101.0",
     "next": "^15.5.18",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -23,6 +24,8 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "15.5.18",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -32,6 +35,8 @@
     "eslint-config-next": "15.5.18",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "typescript": "^5.0.0"
   }
 }

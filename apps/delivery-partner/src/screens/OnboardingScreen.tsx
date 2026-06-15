@@ -1,5 +1,5 @@
-﻿import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing, Alert } from 'react-native';
+﻿import React, { useState, useCallback, useMemo } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -47,8 +47,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(1), []);
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
 
 
   const validateField = useCallback((field: string, value: string) => {

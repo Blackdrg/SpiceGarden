@@ -56,4 +56,3 @@ exports.SearchService = SearchService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
 ], SearchService);
-//# sourceMappingURL=search.service.js.map

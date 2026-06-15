@@ -138,4 +138,3 @@ exports.GeoService = GeoService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], GeoService);
-//# sourceMappingURL=geo.service.js.map

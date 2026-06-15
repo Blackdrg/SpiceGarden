@@ -62,7 +62,7 @@ export class NotificationService {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { message?: string; sid?: string };
       this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
       return { success: true, result };
     } catch (error) {
@@ -95,7 +95,7 @@ export class NotificationService {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { message?: string; sid?: string };
       if (!response.ok) {
         throw new Error(result.message || 'Twilio API error');
       }

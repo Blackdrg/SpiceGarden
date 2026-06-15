@@ -75,4 +75,3 @@ exports.DeviceFingerprintEntity = DeviceFingerprintEntity = __decorate([
     (0, typeorm_1.Entity)('device_fingerprints'),
     (0, typeorm_1.Unique)(['userId', 'fingerprint'])
 ], DeviceFingerprintEntity);
-//# sourceMappingURL=device-fingerprint.entity.js.map

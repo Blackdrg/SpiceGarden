@@ -146,4 +146,3 @@ __decorate([
 exports.OrderEntity = OrderEntity = __decorate([
     (0, typeorm_1.Entity)('orders')
 ], OrderEntity);
-//# sourceMappingURL=order.entity.js.map

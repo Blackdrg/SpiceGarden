@@ -37,4 +37,3 @@ exports.AppGrpcModule = AppGrpcModule = __decorate([
         providers: [],
     })
 ], AppGrpcModule);
-//# sourceMappingURL=grpc-app.module.js.map

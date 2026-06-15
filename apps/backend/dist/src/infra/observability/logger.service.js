@@ -64,4 +64,3 @@ exports.StructuredLogger = StructuredLogger;
 exports.StructuredLogger = StructuredLogger = __decorate([
     (0, common_1.Injectable)({ scope: common_1.Scope.TRANSIENT })
 ], StructuredLogger);
-//# sourceMappingURL=logger.service.js.map

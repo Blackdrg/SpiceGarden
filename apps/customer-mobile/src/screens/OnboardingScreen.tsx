@@ -1,5 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing } from 'react-native';
+import React, { useState, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
@@ -49,9 +50,9 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(1), []);
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
+  const scaleAnim = useMemo(() => new Animated.Value(1), []);
 
   const animateTransition = useCallback((toIndex: number) => {
     Animated.sequence([

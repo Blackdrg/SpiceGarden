@@ -132,4 +132,3 @@ __decorate([
 exports.DriverEntity = DriverEntity = __decorate([
     (0, typeorm_1.Entity)('drivers')
 ], DriverEntity);
-//# sourceMappingURL=driver.entity.js.map

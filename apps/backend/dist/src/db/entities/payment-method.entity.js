@@ -84,4 +84,3 @@ __decorate([
 exports.PaymentMethodEntity = PaymentMethodEntity = __decorate([
     (0, typeorm_1.Entity)('user_payment_methods')
 ], PaymentMethodEntity);
-//# sourceMappingURL=payment-method.entity.js.map

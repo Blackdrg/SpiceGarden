@@ -104,4 +104,3 @@ __decorate([
 exports.BatchEntity = BatchEntity = __decorate([
     (0, typeorm_1.Entity)('batches')
 ], BatchEntity);
-//# sourceMappingURL=batch.entity.js.map

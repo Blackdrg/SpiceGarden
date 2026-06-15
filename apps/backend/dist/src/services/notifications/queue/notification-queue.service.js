@@ -199,4 +199,3 @@ exports.NotificationQueueService = NotificationQueueService = NotificationQueueS
         notification_service_1.NotificationService,
         queue_service_1.QueueService])
 ], NotificationQueueService);
-//# sourceMappingURL=notification-queue.service.js.map

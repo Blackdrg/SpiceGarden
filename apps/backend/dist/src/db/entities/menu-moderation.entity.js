@@ -117,4 +117,3 @@ __decorate([
 exports.MenuModerationEntity = MenuModerationEntity = __decorate([
     (0, typeorm_1.Entity)('menu_moderation')
 ], MenuModerationEntity);
-//# sourceMappingURL=menu-moderation.entity.js.map

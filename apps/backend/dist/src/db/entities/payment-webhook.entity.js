@@ -47,4 +47,3 @@ __decorate([
 exports.PaymentWebhookEntity = PaymentWebhookEntity = __decorate([
     (0, typeorm_1.Entity)('payment_webhooks')
 ], PaymentWebhookEntity);
-//# sourceMappingURL=payment-webhook.entity.js.map

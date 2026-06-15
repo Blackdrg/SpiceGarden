@@ -79,4 +79,3 @@ __decorate([
 exports.MenuItemAvailabilityEntity = MenuItemAvailabilityEntity = __decorate([
     (0, typeorm_1.Entity)('menu_item_availability')
 ], MenuItemAvailabilityEntity);
-//# sourceMappingURL=menu-item-availability.entity.js.map

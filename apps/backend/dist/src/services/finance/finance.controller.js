@@ -85,4 +85,3 @@ exports.FinanceController = FinanceController = __decorate([
     __metadata("design:paramtypes", [tax_reporting_service_1.TaxReportingService,
         reconciliation_service_1.ReconciliationService])
 ], FinanceController);
-//# sourceMappingURL=finance.controller.js.map

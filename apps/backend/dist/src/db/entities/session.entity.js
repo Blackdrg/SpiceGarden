@@ -74,4 +74,3 @@ __decorate([
 exports.SessionEntity = SessionEntity = __decorate([
     (0, typeorm_1.Entity)('user_sessions')
 ], SessionEntity);
-//# sourceMappingURL=session.entity.js.map

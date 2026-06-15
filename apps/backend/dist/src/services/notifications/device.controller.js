@@ -62,4 +62,3 @@ exports.DeviceController = DeviceController = __decorate([
     (0, common_1.Controller)('devices'),
     __metadata("design:paramtypes", [notification_service_1.NotificationService])
 ], DeviceController);
-//# sourceMappingURL=device.controller.js.map

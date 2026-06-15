@@ -58,4 +58,3 @@ exports.PaymentGatewayFactory = PaymentGatewayFactory = PaymentGatewayFactory_1 
         stripe_gateway_service_1.StripeGateway,
         razorpay_gateway_service_1.RazorpayGateway])
 ], PaymentGatewayFactory);
-//# sourceMappingURL=gateway-factory.service.js.map

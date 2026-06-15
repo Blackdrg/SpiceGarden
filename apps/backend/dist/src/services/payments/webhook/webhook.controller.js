@@ -57,4 +57,3 @@ exports.PaymentWebhookController = PaymentWebhookController = __decorate([
     __metadata("design:paramtypes", [webhook_service_1.WebhookService,
         config_1.ConfigService])
 ], PaymentWebhookController);
-//# sourceMappingURL=webhook.controller.js.map

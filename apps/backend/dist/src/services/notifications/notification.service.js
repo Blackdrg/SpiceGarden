@@ -103,7 +103,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     data: data || {},
                 }),
             });
-            const result = await response.json();
+            const result = (await response.json());
             this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
             return { success: true, result };
         }
@@ -133,7 +133,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     Body: message,
                 }),
             });
-            const result = await response.json();
+            const result = (await response.json());
             if (!response.ok) {
                 throw new Error(result.message || 'Twilio API error');
             }
@@ -293,4 +293,3 @@ exports.NotificationService = NotificationService = NotificationService_1 = __de
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_2.Repository])
 ], NotificationService);
-//# sourceMappingURL=notification.service.js.map

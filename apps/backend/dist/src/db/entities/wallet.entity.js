@@ -53,4 +53,3 @@ __decorate([
 exports.WalletEntity = WalletEntity = __decorate([
     (0, typeorm_1.Entity)('wallets')
 ], WalletEntity);
-//# sourceMappingURL=wallet.entity.js.map

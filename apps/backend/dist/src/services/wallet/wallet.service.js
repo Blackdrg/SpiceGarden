@@ -252,4 +252,3 @@ exports.WalletService = WalletService = WalletService_1 = __decorate([
         payments_service_1.PaymentService,
         notification_service_1.NotificationService])
 ], WalletService);
-//# sourceMappingURL=wallet.service.js.map

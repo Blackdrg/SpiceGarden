@@ -38,7 +38,7 @@ export const OrderTabs = ({ filter, onFilterChange }: OrderTabsProps) => {
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   tabsContainer: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
   },
@@ -67,4 +67,3 @@ export const styles = StyleSheet.create({
   },
 });
 
-export default OrderTabs;

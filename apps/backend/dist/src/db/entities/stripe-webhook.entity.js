@@ -42,4 +42,3 @@ __decorate([
 exports.StripeWebhookEntity = StripeWebhookEntity = __decorate([
     (0, typeorm_1.Entity)('stripe_webhooks')
 ], StripeWebhookEntity);
-//# sourceMappingURL=stripe-webhook.entity.js.map

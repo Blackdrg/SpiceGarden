@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,8 +16,8 @@ const AuthScreen = () => {
   const [passwordError, setPasswordError] = useState('');
 
    const navigation = useNavigation();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const shakeAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

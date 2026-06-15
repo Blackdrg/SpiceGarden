@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, Alert, Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,8 +12,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
    const [password, setPassword] = useState('');
    const [loading, setLoading] = useState(false);
    
-   const fadeAnim = useRef(new Animated.Value(0)).current;
-   const shakeAnim = useRef(new Animated.Value(0)).current;
+   const fadeAnim = useMemo(() => new Animated.Value(0), []);
+   const shakeAnim = useMemo(() => new Animated.Value(0), []);
 
    const API_URL = 'http://localhost:3001';
 

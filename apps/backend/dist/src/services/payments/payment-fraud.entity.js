@@ -73,4 +73,3 @@ __decorate([
 exports.PaymentFraudFlagEntity = PaymentFraudFlagEntity = __decorate([
     (0, typeorm_1.Entity)('payment_fraud_flags')
 ], PaymentFraudFlagEntity);
-//# sourceMappingURL=payment-fraud.entity.js.map

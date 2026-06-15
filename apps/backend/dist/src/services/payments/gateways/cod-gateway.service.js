@@ -81,4 +81,3 @@ exports.CashOnDeliveryGateway = CashOnDeliveryGateway;
 exports.CashOnDeliveryGateway = CashOnDeliveryGateway = CashOnDeliveryGateway_1 = __decorate([
     (0, common_1.Injectable)()
 ], CashOnDeliveryGateway);
-//# sourceMappingURL=cod-gateway.service.js.map

@@ -62,4 +62,3 @@ __decorate([
 exports.LedgerEntryEntity = LedgerEntryEntity = __decorate([
     (0, typeorm_1.Entity)('ledger_entries')
 ], LedgerEntryEntity);
-//# sourceMappingURL=ledger-entry.entity.js.map

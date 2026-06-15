@@ -9,7 +9,7 @@ export const ORDER_STATUS = {
 
 export type OrderStatusType = typeof ORDER_STATUS[keyof typeof ORDER_STATUS];
 
-export const ORDER_STATUSES = [
+const ORDER_STATUSES = [
   ORDER_STATUS.ALL,
   ORDER_STATUS.PREPARING,
   ORDER_STATUS.READY,

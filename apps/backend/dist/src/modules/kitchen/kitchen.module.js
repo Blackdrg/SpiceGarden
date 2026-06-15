@@ -21,4 +21,3 @@ exports.KitchenModule = KitchenModule = __decorate([
         providers: [kitchen_service_1.KitchenService],
     })
 ], KitchenModule);
-//# sourceMappingURL=kitchen.module.js.map

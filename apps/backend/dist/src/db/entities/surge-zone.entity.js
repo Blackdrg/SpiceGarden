@@ -62,4 +62,3 @@ __decorate([
 exports.SurgeZoneEntity = SurgeZoneEntity = __decorate([
     (0, typeorm_1.Entity)('surge_zones')
 ], SurgeZoneEntity);
-//# sourceMappingURL=surge-zone.entity.js.map

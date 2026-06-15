@@ -32,4 +32,3 @@ exports.MetricsController = MetricsController = __decorate([
     (0, common_1.Controller)('metrics'),
     __metadata("design:paramtypes", [metrics_service_1.MetricsService])
 ], MetricsController);
-//# sourceMappingURL=metrics.controller.js.map

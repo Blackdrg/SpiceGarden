@@ -100,7 +100,7 @@ export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: 
     prev.order.total === next.order.total;
 });
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   orderCard: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
     marginHorizontal: DESIGN_TOKENS.spacing.md,
@@ -200,5 +200,3 @@ export const styles = StyleSheet.create({
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });
-
-export default OrderCard;

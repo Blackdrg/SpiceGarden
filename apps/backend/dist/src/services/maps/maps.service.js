@@ -39,7 +39,7 @@ let MapsService = MapsService_1 = class MapsService {
         }
         try {
             const response = await fetch(`${this.baseUrl}/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&departure_time=now&key=${this.googleMapsApiKey}`);
-            const data = await response.json();
+            const data = (await response.json());
             const row = data.rows?.[0];
             const element = row?.elements?.[0];
             if (!element) {
@@ -133,7 +133,7 @@ let MapsService = MapsService_1 = class MapsService {
                 ? `&waypoints=${waypoints.map(w => w.lat + ',' + w.lng).join('|')}`
                 : '';
             const response = await fetch(`${this.baseUrl}/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&alternatives=true&key=${this.googleMapsApiKey}${waypointParam}`);
-            const data = await response.json();
+            const data = (await response.json());
             const routes = data.routes || [];
             const originalRoute = routes[0];
             const alternativeRoutes = routes.slice(1).map((route) => ({
@@ -195,4 +195,3 @@ exports.MapsService = MapsService = MapsService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], MapsService);
-//# sourceMappingURL=maps.service.js.map

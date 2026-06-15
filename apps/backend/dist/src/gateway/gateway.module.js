@@ -14,4 +14,3 @@ exports.GatewayModule = GatewayModule;
 exports.GatewayModule = GatewayModule = __decorate([
     (0, common_1.Module)({})
 ], GatewayModule);
-//# sourceMappingURL=gateway.module.js.map

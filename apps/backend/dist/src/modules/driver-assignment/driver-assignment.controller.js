@@ -201,4 +201,3 @@ exports.DriverAssignmentController = DriverAssignmentController = __decorate([
     (0, common_1.Controller)('driver-assignment'),
     __metadata("design:paramtypes", [driver_assignment_service_1.DriverAssignmentService])
 ], DriverAssignmentController);
-//# sourceMappingURL=driver-assignment.controller.js.map

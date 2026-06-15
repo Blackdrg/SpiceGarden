@@ -105,4 +105,3 @@ exports.MapsController = MapsController = __decorate([
     (0, common_1.Controller)('maps'),
     __metadata("design:paramtypes", [maps_service_1.MapsService])
 ], MapsController);
-//# sourceMappingURL=maps.controller.js.map

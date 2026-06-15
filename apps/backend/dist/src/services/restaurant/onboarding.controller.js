@@ -187,4 +187,3 @@ exports.RestaurantOnboardingController = RestaurantOnboardingController = __deco
     (0, common_1.Controller)('restaurant-onboarding'),
     __metadata("design:paramtypes", [onboarding_service_1.RestaurantOnboardingService])
 ], RestaurantOnboardingController);
-//# sourceMappingURL=onboarding.controller.js.map

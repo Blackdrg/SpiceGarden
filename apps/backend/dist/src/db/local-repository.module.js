@@ -172,4 +172,3 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
         exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
     })
 ], LocalRepositoryModule);
-//# sourceMappingURL=local-repository.module.js.map

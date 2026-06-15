@@ -117,4 +117,3 @@ exports.ChargebackController = ChargebackController = __decorate([
     (0, common_1.Controller)('chargebacks'),
     __metadata("design:paramtypes", [chargeback_service_1.ChargebackService])
 ], ChargebackController);
-//# sourceMappingURL=chargeback.controller.js.map

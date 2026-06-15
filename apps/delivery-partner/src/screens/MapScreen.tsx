@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, Dimensions, Animated, Easing } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { MapView, Marker, Polyline } from 'react-native-maps';
 
@@ -25,7 +25,7 @@ export const MapScreen = ({ route }: {
   const [heading, setHeading] = useState(0);
   const [eta, setEta] = useState(15);
   
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const pulseAnim = useMemo(() => new Animated.Value(1), []);
 
   useEffect(() => {
     Animated.loop(

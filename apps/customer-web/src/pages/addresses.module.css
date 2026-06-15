@@ -89,3 +89,8 @@
 .deleteButton {
   color: #f44336;
 }
+
+.errorBannerActions {
+  display: flex;
+  gap: 8px;
+}

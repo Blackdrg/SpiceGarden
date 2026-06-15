@@ -89,4 +89,3 @@ __decorate([
 exports.DriverScoreEntity = DriverScoreEntity = __decorate([
     (0, typeorm_1.Entity)('driver_scores')
 ], DriverScoreEntity);
-//# sourceMappingURL=driver-score.entity.js.map

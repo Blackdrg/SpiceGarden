@@ -174,4 +174,3 @@ exports.AuditService = AuditService = AuditService_1 = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLogEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], AuditService);
-//# sourceMappingURL=audit.service.js.map

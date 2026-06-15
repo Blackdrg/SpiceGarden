@@ -791,4 +791,3 @@ exports.KitchenService = KitchenService = KitchenService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], KitchenService);
-//# sourceMappingURL=kitchen.service.js.map

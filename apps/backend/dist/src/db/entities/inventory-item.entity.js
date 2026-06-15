@@ -104,4 +104,3 @@ __decorate([
 exports.InventoryItemEntity = InventoryItemEntity = __decorate([
     (0, typeorm_1.Entity)('inventory_items')
 ], InventoryItemEntity);
-//# sourceMappingURL=inventory-item.entity.js.map

@@ -96,4 +96,3 @@ exports.MenuCustomizationService = MenuCustomizationService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], MenuCustomizationService);
-//# sourceMappingURL=menu-customization.service.js.map

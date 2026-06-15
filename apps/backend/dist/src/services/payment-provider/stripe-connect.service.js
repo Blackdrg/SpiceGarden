@@ -272,4 +272,3 @@ exports.StripeConnectService = StripeConnectService = StripeConnectService_1 = _
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], StripeConnectService);
-//# sourceMappingURL=stripe-connect.service.js.map

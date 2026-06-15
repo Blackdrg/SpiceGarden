@@ -54,4 +54,3 @@ __decorate([
 exports.PaymentEventEntity = PaymentEventEntity = __decorate([
     (0, typeorm_1.Entity)('payment_events')
 ], PaymentEventEntity);
-//# sourceMappingURL=payment-event.entity.js.map

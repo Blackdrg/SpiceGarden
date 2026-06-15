@@ -152,4 +152,3 @@ exports.WalletController = WalletController = __decorate([
     (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
     __metadata("design:paramtypes", [wallet_service_1.WalletService])
 ], WalletController);
-//# sourceMappingURL=wallet.controller.js.map

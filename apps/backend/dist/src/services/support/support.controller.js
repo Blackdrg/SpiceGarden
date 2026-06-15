@@ -118,4 +118,3 @@ exports.SupportController = SupportController = __decorate([
     __metadata("design:paramtypes", [customer_support_service_1.CustomerSupportService,
         ticket_routing_service_1.TicketRoutingService])
 ], SupportController);
-//# sourceMappingURL=support.controller.js.map

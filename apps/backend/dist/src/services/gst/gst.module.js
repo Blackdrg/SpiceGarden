@@ -24,4 +24,3 @@ exports.GSTModule = GSTModule = __decorate([
         exports: [gst_service_1.GSTService],
     })
 ], GSTModule);
-//# sourceMappingURL=gst.module.js.map

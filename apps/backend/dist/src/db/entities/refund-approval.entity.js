@@ -118,4 +118,3 @@ __decorate([
 exports.RefundApprovalEntity = RefundApprovalEntity = __decorate([
     (0, typeorm_1.Entity)('refund_approvals')
 ], RefundApprovalEntity);
-//# sourceMappingURL=refund-approval.entity.js.map

@@ -226,4 +226,3 @@ exports.RestaurantOpsController = RestaurantOpsController = __decorate([
         branch_management_service_1.BranchManagementService,
         commission_service_1.CommissionService])
 ], RestaurantOpsController);
-//# sourceMappingURL=restaurant-ops.controller.js.map

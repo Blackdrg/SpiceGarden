@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { useRouter } from 'next/router';
 import { Plus, MapPin, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
 import { getCachedToken } from '../utils/cachedLocalStorage';
@@ -18,10 +18,9 @@ interface Address {
 }
 
 const AddressesPage = () => {
-  const router = useRouter();
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const token = getCachedToken();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: '',
@@ -30,28 +29,21 @@ const AddressesPage = () => {
     state: '',
     postalCode: '',
   });
-
-  useEffect(() => {
-    const loadAddresses = async () => {
-      try {
-        const token = getCachedToken();
-        if (!token || token === 'demo-token') {
-          return;
-        }
-
-        const res = await fetch(`${API_URL}/addresses`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setAddresses(await res.json());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load addresses');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadAddresses();
-  }, [router]);
+  const { data = [], isLoading, error } = useQuery({
+    queryKey: ['addresses', token],
+    enabled: Boolean(token && token !== 'demo-token'),
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/addresses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Failed to load addresses');
+      return res.json() as Promise<Address[]>;
+    },
+  });
+  const addresses = data;
+  const loading = isLoading;
+  const queryErrorText = error instanceof Error ? error.message : (error ? 'Failed to load addresses' : null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const handleAddAddress = async () => {
     const token = getCachedToken();
@@ -67,11 +59,12 @@ const AddressesPage = () => {
       if (!res.ok) throw new Error('Failed to add address');
       
       const added = await res.json();
-      setAddresses([...addresses, added]);
+      queryClient.setQueryData<Address[]>(['addresses', token], prev => [...(prev || []), added]);
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
       setShowAddForm(false);
       setNewAddress({ label: '', addressLine: '', city: '', state: '', postalCode: '' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add address');
+      setActionError(err instanceof Error ? err.message : 'Failed to add address');
     }
   };
 
@@ -86,9 +79,10 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to set default');
-      setAddresses(addresses.map(a => ({ ...a, isDefault: a.id === id })));
+      queryClient.setQueryData<Address[]>(['addresses', token], prev => (prev || []).map(a => ({ ...a, isDefault: a.id === id })));
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set default');
+      setActionError(err instanceof Error ? err.message : 'Failed to set default');
     }
   };
 
@@ -103,9 +97,10 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to delete');
-      setAddresses(addresses.filter(a => a.id !== id));
+      queryClient.setQueryData<Address[]>(['addresses', token], prev => (prev || []).filter(a => a.id !== id));
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
+      setActionError(err instanceof Error ? err.message : 'Failed to delete');
     }
   };
 
@@ -119,10 +114,16 @@ const AddressesPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {error && (
+      {queryErrorText && (
         <div className={styles.errorBanner}>
           <AlertCircle size={16} />
-          <span>{error}</span>
+          <span>{queryErrorText}</span>
+        </div>
+      )}
+      {actionError && (
+        <div className={`${styles.errorBanner} ${styles.errorBannerActions}`}>
+          <AlertCircle size={16} />
+          <span>{actionError}</span>
         </div>
       )}
       
