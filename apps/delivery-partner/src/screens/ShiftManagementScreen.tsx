@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: () => void } }) => {
   const [isOnline, setIsOnline] = useState(false);
+  const [now, setNow] = useState<number>(0);
   const [currentShift, setCurrentShift] = useState<{
     start: Date | null;
     end: Date | null;
@@ -16,7 +17,11 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
     orders: 0,
   });
 
-  const mounted = true;
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    setNow(Date.now());
+    return () => clearInterval(interval);
+  }, []);
 
   const handleToggleShift = () => {
     if (!isOnline) {
@@ -68,8 +73,8 @@ export const ShiftManagementScreen = ({ navigation }: { navigation: { goBack: ()
         <View style={styles.statRow}>
           <Text style={styles.statLabel}>Online Hours</Text>
           <Text style={styles.statValue}>
-            {currentShift.start && mounted
-              ? ((Date.now() - currentShift.start.getTime()) / (1000 * 60 * 60)).toFixed(1) + 'h'
+            {currentShift.start && now
+              ? ((now - currentShift.start.getTime()) / (1000 * 60 * 60)).toFixed(1) + 'h'
               : '0h'}
           </Text>
         </View>

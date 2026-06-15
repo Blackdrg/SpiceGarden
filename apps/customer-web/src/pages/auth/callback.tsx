@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../redux/slices/authSlice';
@@ -8,10 +8,14 @@ const AuthCallbackPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [error, setError] = useState('');
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
       const { token, error: authError } = router.query;
+
+      if (hasProcessed.current) return;
+      hasProcessed.current = true;
 
       if (authError) {
         setError(typeof authError === 'string' ? authError : 'Authentication failed');

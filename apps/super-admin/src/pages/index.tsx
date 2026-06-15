@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './Sidebar.module.css';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { io, Socket } from 'socket.io-client';
@@ -203,7 +203,7 @@ function DeliveryHeatmap({ data }: { data: HeatmapPoint[] }) {
 const SOCKET_URL = 'http://localhost:3001';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({
+   const [stats, setStats] = useState<Stats>({
     revenue: 45200,
     orders: 124,
     driversOnline: 18,
@@ -213,13 +213,20 @@ export default function AdminDashboard() {
     activeBranches: 3,
     pendingWithdrawals: 8,
   });
-  const [liveOrders, setLiveOrders] = useState<LiveOrder[]>([]);
-  const [branches, setBranches] = useState<BranchStatus[]>([]);
-  const [tickets, setTickets] = useState<DisputeTicket[]>([]);
-  const [revenueData, setRevenueData] = useState<Record<string, unknown>[]>([]);
-  const [heatmapData, setHeatmapData] = useState<HeatmapPoint[]>([]);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'orders' | 'branches' | 'support'>('overview');
-  const [ticketFilter, setTicketFilter] = useState<'all' | DisputeTicket['type']>('all');
+   const [liveOrders, setLiveOrders] = useState<LiveOrder[]>([]);
+   const [branches, setBranches] = useState<BranchStatus[]>([]);
+   const [tickets, setTickets] = useState<DisputeTicket[]>([]);
+   const [revenueData, setRevenueData] = useState<Record<string, unknown>[]>([]);
+   const [heatmapData, setHeatmapData] = useState<HeatmapPoint[]>([]);
+   const [selectedTab, setSelectedTab] = useState<'overview' | 'orders' | 'branches' | 'support'>('overview');
+   const [ticketFilter, setTicketFilter] = useState<'all' | DisputeTicket['type']>('all');
+   const [clientNow, setClientNow] = useState<number>(0);
+
+   useEffect(() => {
+    setClientNow(Date.now());
+    const interval = setInterval(() => setClientNow(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ── Fetch initial data ───────────────────────────────────────────────────
   useEffect(() => {
@@ -429,9 +436,9 @@ fetchOrders().then(orders => {
                               color: o.status === 'received' ? '#f04e31' : '#555',
                             }}>{o.status.toUpperCase()}</span>
                           </td>
-                          <td style={{ padding: '10px 12px', color: '#999', fontSize: 12 }}>
-                             {Math.floor((Date.now() - (o.timestamp ?? 0)) / 60000)}m
-                          </td>
+<td style={{ padding: '10px 12px', color: '#999', fontSize: 12 }}>
+                              {clientNow && o.timestamp ? `${Math.floor((clientNow - o.timestamp) / 60000)}m` : ''}
+                           </td>
                         </tr>
                       ))}
                     </tbody>

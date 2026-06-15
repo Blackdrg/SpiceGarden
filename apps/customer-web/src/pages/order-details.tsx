@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -64,14 +64,16 @@ const OrderDetailsPage = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isRedirecting = useRef(false);
 
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout> | null = null;
 
     const loadOrderDetails = async () => {
       const orderId = router.query.id as string | undefined;
-      if (!orderId) {
-        router.push('/history');
+      if (!orderId && !isRedirecting.current) {
+        isRedirecting.current = true;
+        router.replace('/history');
         return;
       }
 
@@ -109,17 +111,19 @@ const OrderDetailsPage = () => {
       }
 
       setLoading(true);
-      setError(null);
-      try {
-        const data = await ordersApi.get(orderId, user.token);
-        setOrder(data.data as Order);
-      } catch (err) {
-        console.error('Failed to load order details:', err);
-        setError('Failed to load order details. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+       setError(null);
+       try {
+         if (orderId && user?.token) {
+           const data = await ordersApi.get(orderId, user.token);
+           setOrder(data.data as Order);
+         }
+       } catch (err) {
+         console.error('Failed to load order details:', err);
+         setError('Failed to load order details. Please try again later.');
+       } finally {
+         setLoading(false);
+       }
+     };
 
     loadOrderDetails();
     return () => { if (timerId) clearTimeout(timerId); };
