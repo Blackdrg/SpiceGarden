@@ -22,7 +22,7 @@ type ProfileScreen =
 const MENU_ITEMS = [
   { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
   { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-  { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
+  { id: 'addresses', label: 'Addresses', icon: 'Location', screen: 'Addresses' },
   { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
   { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
   { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
@@ -248,7 +248,7 @@ const ProfileScreen = () => {
             <>
               <View style={styles.profileHeader}>
                 <View style={styles.profileImageContainer}>
-                  <Text style={styles.profileImage}>👤</Text>
+                  <Text style={styles.profileImage}>P</Text>
                 </View>
                 <View style={styles.profileInfo}>
                   <Text style={styles.profileName}>{userData.fullName || 'User Name'}</Text>

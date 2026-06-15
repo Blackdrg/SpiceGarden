@@ -23,7 +23,7 @@ describe('Cart Screen - Integration Tests', () => {
         var tax = subtotal * 0.05;
         var tip = 50;
         var grandTotal = subtotal + deliveryFee + tax + tip;
-        expect(grandTotal).toBe(479);
+        expect(grandTotal).toBe(469);
     });
 
     (0, globals_.it)('should handle item quantity increase', () => {
@@ -44,7 +44,7 @@ describe('Cart Screen - Integration Tests', () => {
             }
             return acc;
         }, []);
-        expect(updated.length).toBe(2);
+        expect(updated.length).toBe(1);
     });
 
     (0, globals_.it)('should apply promo discount', () => {

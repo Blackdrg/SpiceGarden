@@ -142,12 +142,12 @@ const SearchScreen = () => {
           accessibilityRole="button"
         >
           <View style={styles.resultIcon}>
-            <Text style={{ fontSize: 24 }}>🍽️</Text>
+            <Text style={{ fontSize: 24 }}>Menu</Text>
           </View>
           <View style={styles.resultInfo}>
             <Text style={styles.resultName}>{item.name}</Text>
             <Text style={styles.resultMeta}>
-              ⭐ {item.rating} • ⏱ {item.deliveryTime} • 📍 {item.distance}
+              Rating {item.rating} • ETA {item.deliveryTime} • Distance {item.distance}
             </Text>
             {item.description && (
               <Text style={styles.resultDescription} numberOfLines={1}>
@@ -196,7 +196,7 @@ const SearchScreen = () => {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>Back</Text>
         </Pressable>
         <Text style={styles.headerText}>Search</Text>
         <Pressable 
@@ -205,13 +205,13 @@ const SearchScreen = () => {
           accessibilityLabel="Toggle filters"
           accessibilityRole="button"
         >
-          <Text style={styles.filterButtonText}>⚙️</Text>
+          <Text style={styles.filterButtonText}>Filters</Text>
         </Pressable>
       </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Text style={styles.searchIcon}>Search</Text>
           <TextInput
             placeholder="Search restaurants, dishes..."
             value={query}
@@ -248,7 +248,7 @@ const SearchScreen = () => {
               style={styles.filterOption}
               accessibilityLabel="Set minimum rating filter"
             >
-              <Text style={styles.filterOptionText}>4+ ⭐</Text>
+              <Text style={styles.filterOptionText}>4+ Rating</Text>
             </Pressable>
           </View>
           <View style={styles.filterRow}>

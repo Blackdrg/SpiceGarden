@@ -55,6 +55,7 @@ jest.mock('@nestjs/common', () => ({
   Query: () => jest.fn(),
   Headers: () => jest.fn(),
   Req: () => jest.fn(),
+  REQUEST: Symbol('REQUEST'),
   BadRequestException: class BadRequestException extends Error { constructor(message?: string) { super(message); this.name = 'BadRequestException'; } },
   NotFoundException: class NotFoundException extends Error { constructor(message?: string) { super(message); this.name = 'NotFoundException'; } },
   ConflictException: class ConflictException extends Error { constructor(message?: string) { super(message); this.name = 'ConflictException'; } },
@@ -62,6 +63,14 @@ jest.mock('@nestjs/common', () => ({
   InternalServerErrorException: class InternalServerErrorException extends Error { constructor(message?: string) { super(message); this.name = 'InternalServerErrorException'; } },
   Global: () => jest.fn(),
   Module: () => jest.fn(),
+  Logger: class Logger {
+    constructor(private readonly context?: string) {}
+    log(message: unknown) { return { context: this.context, message }; }
+    error(message: unknown) { return { context: this.context, message }; }
+    warn(message: unknown) { return { context: this.context, message }; }
+    debug(message: unknown) { return { context: this.context, message }; }
+    verbose(message: unknown) { return { context: this.context, message }; }
+  },
 }));
 
 // Mock @nestjs/config

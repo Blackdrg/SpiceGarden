@@ -7,14 +7,17 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { isAllowedOrigin } from '../../security/cors-origin';
 
 @Injectable()
 @WebSocketGateway({
   namespace: 'kds',
-  cors: { origin: '*' },
+  cors: { origin: isAllowedOrigin, credentials: true },
 })
 export class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(KdsGateway.name);
+
   @WebSocketServer()
   server!: Server;
 
@@ -22,12 +25,12 @@ export class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const branchId = client.handshake.query.branchId;
     if (branchId) {
       client.join(`branch:${branchId}`);
-      console.log(`Kitchen staff joined branch: ${branchId}`);
+      this.logger.log(`Kitchen staff joined branch: ${branchId}`);
     }
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Kitchen staff disconnected: ${client.id}`);
+    this.logger.log(`Kitchen staff disconnected: ${client.id}`);
   }
 
   // Notify kitchen of a new order
@@ -37,7 +40,7 @@ export class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('updatePrepStatus')
   handleStatusUpdate(@MessageBody() data: { orderId: string; status: string; branchId: string }) {
-    console.log(`Order ${data.orderId} status updated to ${data.status} by kitchen`);
+    this.logger.log(`Order ${data.orderId} status updated to ${data.status} by kitchen`);
     // Broadcast update to other kitchen staff and customer app
     this.server.to(`branch:${data.branchId}`).emit('orderStatusUpdated', data);
   }

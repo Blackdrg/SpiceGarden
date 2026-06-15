@@ -139,12 +139,12 @@ const SearchScreen = () => {
         if (item.type === 'restaurant') {
             return (<react_native_1.TouchableOpacity style={styles.resultCard} onPress={() => navigation.navigate('Restaurant', { restaurantId: item.id })}>
           <react_native_1.View style={styles.resultIcon}>
-            <react_native_1.Text style={{ fontSize: 24 }}>🍽️</react_native_1.Text>
+            <react_native_1.Text style={{ fontSize: 24 }}>Menu</react_native_1.Text>
           </react_native_1.View>
           <react_native_1.View style={styles.resultInfo}>
             <react_native_1.Text style={styles.resultName}>{item.name}</react_native_1.Text>
             <react_native_1.Text style={styles.resultMeta}>
-              ⭐ {item.rating} • ⏱ {item.deliveryTime} • 📍 {item.distance}
+              Rating {item.rating} • ETA {item.deliveryTime} • Distance {item.distance}
             </react_native_1.Text>
             {item.description && (<react_native_1.Text style={styles.resultDescription} numberOfLines={1}>
                 {item.description}
@@ -173,17 +173,17 @@ const SearchScreen = () => {
     return (<react_native_1.View style={styles.container}>
       <react_native_1.View style={styles.header}>
         <react_native_1.TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <react_native_1.Text style={styles.backButtonText}>←</react_native_1.Text>
+          <react_native_1.Text style={styles.backButtonText}>Back</react_native_1.Text>
         </react_native_1.TouchableOpacity>
         <react_native_1.Text style={styles.headerText}>Search</react_native_1.Text>
         <react_native_1.TouchableOpacity onPress={() => setShowFilters(!showFilters)} style={styles.filterButton}>
-          <react_native_1.Text style={styles.filterButtonText}>⚙️</react_native_1.Text>
+          <react_native_1.Text style={styles.filterButtonText}>Filters</react_native_1.Text>
         </react_native_1.TouchableOpacity>
       </react_native_1.View>
 
       <react_native_1.View style={styles.searchContainer}>
         <react_native_1.View style={styles.searchBar}>
-          <react_native_1.Text style={styles.searchIcon}>🔍</react_native_1.Text>
+          <react_native_1.Text style={styles.searchIcon}>Search</react_native_1.Text>
           <react_native_1.TextInput placeholder="Search restaurants, dishes..." value={query} onChangeText={(text) => {
             setQuery(text);
             if (text.length > 2) {
@@ -205,7 +205,7 @@ const SearchScreen = () => {
           <react_native_1.View style={styles.filterRow}>
             <react_native_1.Text style={styles.filterLabel}>Min Rating</react_native_1.Text>
             <react_native_1.TouchableOpacity style={styles.filterOption}>
-              <react_native_1.Text style={styles.filterOptionText}>4+ ⭐</react_native_1.Text>
+              <react_native_1.Text style={styles.filterOptionText}>4+ Rating</react_native_1.Text>
             </react_native_1.TouchableOpacity>
           </react_native_1.View>
           <react_native_1.View style={styles.filterRow}>

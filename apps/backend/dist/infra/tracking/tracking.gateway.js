@@ -21,6 +21,7 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const notification_entity_1 = require("../../db/entities/notification.entity");
+const cors_origin_1 = require("../../security/cors-origin");
 var SocketNamespace;
 (function (SocketNamespace) {
     SocketNamespace["TRACKING"] = "/tracking";
@@ -270,7 +271,8 @@ exports.TrackingGateway = TrackingGateway = TrackingGateway_1 = __decorate([
     (0, common_1.Injectable)(),
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: '*',
+            origin: cors_origin_1.isAllowedOrigin,
+            credentials: true,
         },
         namespace: '/',
         pingInterval: 10000,

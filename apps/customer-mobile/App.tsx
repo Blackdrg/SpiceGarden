@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, createBottomTabNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList, TabParamList } from './src/navigation/types';
 import { LocaleProvider } from './src/constants/i18n';
 import AuthScreen from './src/screens/AuthScreen';
@@ -29,29 +30,29 @@ function AppNavigator() {
 
 function MainTabNavigator() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen} options={{
         tabBarLabel: 'Home',
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ color, fontSize: size }}>🏠</Text>
+          <Text style={{ color, fontSize: size }}>H</Text>
         )
       }} />
       <Tab.Screen name="Search" component={HomeScreen} options={{
         tabBarLabel: 'Search',
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ color, fontSize: size }}>🔍</Text>
+          <Text style={{ color, fontSize: size }}>S</Text>
         )
       }} />
       <Tab.Screen name="Cart" component={CartScreen} options={{
         tabBarLabel: 'Cart',
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ color, fontSize: size }}>🛒</Text>
+          <Text style={{ color, fontSize: size }}>C</Text>
         )
       }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{
         tabBarLabel: 'Profile',
         tabBarIcon: ({ color, size }) => (
-          <Text style={{ color, fontSize: size }}>👤</Text>
+          <Text style={{ color, fontSize: size }}>P</Text>
         )
       }} />
     </Tab.Navigator>

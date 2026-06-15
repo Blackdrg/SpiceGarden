@@ -143,7 +143,7 @@ const CartScreen = () => {
           <react_native_1.Text style={styles.cartItemPrice}>{formatCurrency(validPrice * validQty)}</react_native_1.Text>
         </react_native_1.View>
         <react_native_1.TouchableOpacity onPress={() => removeFromCart(item.id)} style={styles.removeButton}>
-          <react_native_1.Text style={styles.removeButtonText}>✕</react_native_1.Text>
+          <react_native_1.Text style={styles.removeButtonText}>X</react_native_1.Text>
         </react_native_1.TouchableOpacity>
       </react_native_1.View>);
     }, [updateQuantity, removeFromCart]);
@@ -159,7 +159,7 @@ const CartScreen = () => {
     }
     if (error) {
         return (<react_native_1.View style={styles.errorContainer}>
-        <react_native_1.Text style={styles.errorIcon}>⚠️</react_native_1.Text>
+        <react_native_1.Text style={styles.errorIcon}>Alert</react_native_1.Text>
         <react_native_1.Text style={styles.errorText}>{error}</react_native_1.Text>
         <react_native_1.TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton}>
           <react_native_1.Text style={styles.buttonText}>Browse Restaurants</react_native_1.Text>
@@ -170,7 +170,7 @@ const CartScreen = () => {
       <react_native_1.View style={styles.container}>
         <react_native_1.View style={styles.header}>
           <react_native_1.TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <react_native_1.Text style={styles.backButtonText}>←</react_native_1.Text>
+            <react_native_1.Text style={styles.backButtonText}>Back</react_native_1.Text>
           </react_native_1.TouchableOpacity>
           <react_native_1.Text style={styles.headerText}>Your Cart</react_native_1.Text>
           <react_native_1.View style={{ width: 40 }}/>
@@ -178,7 +178,7 @@ const CartScreen = () => {
 
         {cartItems.length === 0 ? (<react_native_1.View style={styles.emptyCart}>
             <react_native_1.View style={styles.emptyIconContainer}>
-              <react_native_1.Text style={styles.emptyIcon}>🛒</react_native_1.Text>
+              <react_native_1.Text style={styles.emptyIcon}>Cart</react_native_1.Text>
             </react_native_1.View>
             <react_native_1.Text style={styles.emptyText}>Your cart is empty</react_native_1.Text>
             <react_native_1.Text style={styles.emptySubtext}>Add some delicious food to get started</react_native_1.Text>

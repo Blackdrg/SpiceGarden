@@ -107,3 +107,6 @@ const HomeScreen = () => {
 
   // Rest of the component remains the same...
 };
+
+export default HomeScreen;
+

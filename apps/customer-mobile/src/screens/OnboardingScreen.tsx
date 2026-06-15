@@ -19,21 +19,21 @@ const onboardingSlides: OnboardingSlide[] = [
     id: 'welcome',
     title: 'Welcome to SpiceGarden',
     subtitle: 'Your favourite food from top restaurants, delivered hot & fresh',
-    icon: '🍽️',
+    icon: 'Menu',
     backgroundColor: '#1a1e2e',
   },
   {
     id: 'tracking',
     title: 'Live Order Tracking',
     subtitle: 'Track your order in real-time with GPS. Know exactly when your food arrives',
-    icon: '📍',
+    icon: 'Location',
     backgroundColor: '#16213e',
   },
   {
     id: 'safety',
     title: 'Safe & Reliable',
     subtitle: 'Verified restaurants, contactless delivery, and secure payments',
-    icon: '🛡️',
+    icon: 'Secure',
     backgroundColor: '#0f3460',
   },
   {
@@ -190,7 +190,7 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
               accessibilityLabel="Previous slide"
               accessibilityRole="button"
             >
-              <Text style={styles.navButtonText}>← Back</Text>
+              <Text style={styles.navButtonText}>Back Back</Text>
             </Pressable>
           )}
           

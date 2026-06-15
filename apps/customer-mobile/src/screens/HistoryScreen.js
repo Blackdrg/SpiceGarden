@@ -97,7 +97,7 @@ const HistoryScreen = () => {
     return (<react_native_1.View style={styles.container}>
       <react_native_1.View style={styles.header}>
         <react_native_1.TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel={strings_1.STRINGS.accessibility.backButton} accessibilityRole="button">
-          <react_native_1.Text style={styles.backButtonText}>←</react_native_1.Text>
+          <react_native_1.Text style={styles.backButtonText}>Back</react_native_1.Text>
         </react_native_1.TouchableOpacity>
         <react_native_1.Text style={styles.headerText}>{strings_1.STRINGS.orderHistory.title}</react_native_1.Text>
       </react_native_1.View>

@@ -14,13 +14,24 @@ const passport_jwt_1 = require("passport-jwt");
 const passport_1 = require("@nestjs/passport");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+function requireJwtSecret(configService) {
+    const secret = configService.get('JWT_SECRET');
+    if (!secret) {
+        throw new Error('JWT_SECRET must be configured');
+    }
+    if (secret.includes('CHANGE_ME') || secret.includes('secret_here') || secret.includes('placeholder')) {
+        throw new Error('JWT_SECRET contains a placeholder value');
+    }
+    return secret;
+}
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     configService;
     constructor(configService) {
+        const secret = requireJwtSecret(configService);
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get('JWT_SECRET') || 'secretKey',
+            secretOrKey: secret,
         });
         this.configService = configService;
     }

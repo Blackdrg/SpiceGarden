@@ -46,7 +46,7 @@ const Haptics = __importStar(require("expo-haptics"));
 const MENU_ITEMS = [
     { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
     { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-    { id: 'addresses', label: 'Addresses', icon: '📍', screen: 'Addresses' },
+    { id: 'addresses', label: 'Addresses', icon: 'Location', screen: 'Addresses' },
     { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
     { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
     { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
@@ -201,7 +201,7 @@ const ProfileScreen = () => {
             </react_native_1.View>) : (<>
               <react_native_1.View style={styles.profileHeader}>
                 <react_native_1.View style={styles.profileImageContainer}>
-                  <react_native_1.Text style={styles.profileImage}>👤</react_native_1.Text>
+                  <react_native_1.Text style={styles.profileImage}>P</react_native_1.Text>
                 </react_native_1.View>
                 <react_native_1.View style={styles.profileInfo}>
                   <react_native_1.Text style={styles.profileName}>{userData.fullName || 'User Name'}</react_native_1.Text>

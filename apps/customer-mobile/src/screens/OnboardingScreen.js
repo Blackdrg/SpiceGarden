@@ -45,21 +45,21 @@ const onboardingSlides = [
         id: 'welcome',
         title: 'Welcome to SpiceGarden',
         subtitle: 'Your favourite food from top restaurants, delivered hot & fresh',
-        icon: '🍽️',
+        icon: 'Menu',
         backgroundColor: '#1a1e2e',
     },
     {
         id: 'tracking',
         title: 'Live Order Tracking',
         subtitle: 'Track your order in real-time with GPS. Know exactly when your food arrives',
-        icon: '📍',
+        icon: 'Location',
         backgroundColor: '#16213e',
     },
     {
         id: 'safety',
         title: 'Safe & Reliable',
         subtitle: 'Verified restaurants, contactless delivery, and secure payments',
-        icon: '🛡️',
+        icon: 'Secure',
         backgroundColor: '#0f3460',
     },
     {
@@ -171,7 +171,7 @@ const OnboardingScreen = ({ navigation }) => {
 
         <react_native_1.View style={styles.navigationRow}>
           {currentIndex > 0 && (<react_native_1.TouchableOpacity onPress={handlePrevious} style={styles.navButton} accessibilityLabel="Previous slide" accessibilityRole="button">
-              <react_native_1.Text style={styles.navButtonText}>← Back</react_native_1.Text>
+              <react_native_1.Text style={styles.navButtonText}>Back Back</react_native_1.Text>
             </react_native_1.TouchableOpacity>)}
           
           <react_native_1.TouchableOpacity onPress={handleNext} style={[styles.navButton, styles.nextButton]} disabled={isLoading} accessibilityLabel={currentIndex === onboardingSlides.length - 1 ? "Get started" : "Next slide"} accessibilityRole="button" accessibilityState={{ disabled: isLoading }}>

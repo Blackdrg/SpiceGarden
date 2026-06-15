@@ -120,7 +120,7 @@ const NotificationsScreen = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backButtonText}>←</Text>
+            <Text style={styles.backButtonText}>Back</Text>
           </Pressable>
           <Text style={styles.headerText}>Notifications</Text>
         </View>

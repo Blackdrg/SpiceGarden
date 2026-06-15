@@ -7,8 +7,8 @@ const react_1 = __importDefault(require("react"));
 const react_native_1 = require("@testing-library/react-native");
 const App_1 = __importDefault(require("../App"));
 describe('App', () => {
-    it('renders welcome message', () => {
+    it('renders the auth screen', () => {
         const { getByText } = (0, react_native_1.render)(<App_1.default />);
-        expect(getByText(/welcome to spicegarden customer app/i)).toBeInTheDocument();
+        expect(getByText(/SpiceGarden/i)).toBeTruthy();
     });
 });

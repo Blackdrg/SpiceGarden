@@ -16,6 +16,16 @@ const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
 const security_module_1 = require("../../security/security.module");
+function requireJwtSecret(configService) {
+    const secret = configService.get('JWT_SECRET');
+    if (!secret) {
+        throw new Error('JWT_SECRET must be configured');
+    }
+    if (secret.includes('CHANGE_ME') || secret.includes('secret_here') || secret.includes('placeholder')) {
+        throw new Error('JWT_SECRET contains a placeholder value');
+    }
+    return secret;
+}
 let AuthServiceModule = class AuthServiceModule {
 };
 exports.AuthServiceModule = AuthServiceModule;
@@ -28,24 +38,11 @@ exports.AuthServiceModule = AuthServiceModule = __decorate([
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: async (configService) => {
-                    const secret = configService.get('JWT_SECRET');
-                    if (!secret) {
-                        if (configService.get('NODE_ENV') === 'production') {
-                            throw new Error('JWT_SECRET not configured');
-                        }
-                        console.warn('JWT_SECRET not configured. Using fallback for development.');
-                        return { secret: 'dev-secret-change-in-production-please', signOptions: { expiresIn: '60m' } };
-                    }
-                    if (secret.includes('CHANGE_ME') || secret.includes('secret_here')) {
-                        if (configService.get('NODE_ENV') === 'production') {
-                            throw new Error('JWT_SECRET not properly configured');
-                        }
-                        console.warn('JWT_SECRET has placeholder value. Using fallback for development.');
-                        return { secret: 'dev-secret-change-in-production-please', signOptions: { expiresIn: '60m' } };
-                    }
+                    const secret = requireJwtSecret(configService);
+                    const expiresIn = (configService.get('JWT_EXPIRES_IN') || '60m');
                     return {
                         secret,
-                        signOptions: { expiresIn: '60m' },
+                        signOptions: { expiresIn },
                     };
                 },
                 inject: [config_1.ConfigService],

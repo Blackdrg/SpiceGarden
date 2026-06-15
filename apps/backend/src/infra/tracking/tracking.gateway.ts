@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from '../../db/entities/notification.entity';
 import { NotificationStatus } from '../../db/entities/notification-status.enum';
+import { isAllowedOrigin } from '../../security/cors-origin';
 
 export enum SocketNamespace {
   TRACKING = '/tracking',
@@ -50,7 +51,8 @@ interface SocketConnection {
 @Injectable()
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: isAllowedOrigin,
+    credentials: true,
   },
   namespace: '/',
   pingInterval: 10000,

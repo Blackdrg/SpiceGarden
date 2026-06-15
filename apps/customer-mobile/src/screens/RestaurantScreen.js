@@ -101,14 +101,14 @@ const RestaurantScreen = () => {
     return (<react_native_1.View style={styles.container}>
       <react_native_1.View style={styles.header}>
         <react_native_1.TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel="Go back" accessibilityRole="button">
-          <react_native_1.Text style={styles.backButtonText}>←</react_native_1.Text>
+          <react_native_1.Text style={styles.backButtonText}>Back</react_native_1.Text>
         </react_native_1.TouchableOpacity>
         <react_native_1.Text style={styles.headerText}>{restaurant?.name || 'Restaurant'}</react_native_1.Text>
       </react_native_1.View>
 
       <react_native_1.Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <react_native_1.View style={styles.restaurantInfo}>
-          <react_native_1.Text style={styles.restaurantRating}>⭐ {restaurant?.rating || 0}</react_native_1.Text>
+          <react_native_1.Text style={styles.restaurantRating}>Rating {restaurant?.rating || 0}</react_native_1.Text>
           <react_native_1.Text style={styles.restaurantDeliveryTime}>{restaurant?.deliveryTime || ''}</react_native_1.Text>
           <react_native_1.Text style={styles.restaurantAddress}>{restaurant?.address || ''}</react_native_1.Text>
         </react_native_1.View>

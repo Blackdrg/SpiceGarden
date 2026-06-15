@@ -169,7 +169,7 @@ const CartScreen = () => {
           <Text style={styles.cartItemPrice}>{formatCurrency(validPrice * validQty, 'INR')}</Text>
         </View>
         <Pressable onPress={() => removeFromCart(item.id)} style={styles.removeButton} accessibilityLabel={STRINGS.accessibility.removeFromCart(item.name)} accessibilityRole="button">
-          <Text style={styles.removeButtonText}>✕</Text>
+          <Text style={styles.removeButtonText}>X</Text>
         </Pressable>
       </View>
     );
@@ -193,7 +193,7 @@ const CartScreen = () => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorIcon}>⚠️</Text>
+        <Text style={styles.errorIcon}>Alert</Text>
         <Text style={styles.errorText}>{error}</Text>
         <Pressable onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel={STRINGS.cart.browseRestaurants} accessibilityRole="button">
           <Text style={styles.buttonText}>{STRINGS.cart.browseRestaurants}</Text>
@@ -207,7 +207,7 @@ const CartScreen = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel={STRINGS.accessibility.backButton} accessibilityRole="button">
-            <Text style={styles.backButtonText}>←</Text>
+            <Text style={styles.backButtonText}>Back</Text>
           </Pressable>
           <Text style={styles.headerText}>{STRINGS.cart.title}</Text>
           <View style={{ width: 40 }} />
@@ -216,7 +216,7 @@ const CartScreen = () => {
         {cartItems.length === 0 ? (
           <View style={styles.emptyCart}>
             <View style={styles.emptyIconContainer}>
-              <Text style={styles.emptyIcon}>🛒</Text>
+              <Text style={styles.emptyIcon}>Cart</Text>
             </View>
             <Text style={styles.emptyText}>{STRINGS.cart.empty}</Text>
             <Text style={styles.emptySubtext}>{STRINGS.cart.emptySubtext}</Text>

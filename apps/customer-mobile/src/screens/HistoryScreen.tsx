@@ -119,7 +119,7 @@ const HistoryScreen = () => {
           accessibilityLabel={STRINGS.accessibility.backButton}
           accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>Back</Text>
         </Pressable>
         <Text style={styles.headerText}>{STRINGS.orderHistory.title}</Text>
       </View>

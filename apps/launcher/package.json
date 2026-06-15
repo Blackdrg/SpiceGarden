@@ -15,10 +15,8 @@
     "dist:installer": "npm run build && npx electron-builder --win --ia32 --publish=never",
     "dist:portable": "npm run build && npx electron-builder --win --portable --publish=never",
     "lint": "eslint .",
-    "test:unit": "echo \"no unit tests\"",
-    "test:integration": "echo \"no integration tests\"",
-    "test:e2e": "echo \"no e2e tests\"",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+    "test:unit": "jest --config jest.config.js --runInBand",
+    "test:all": "npm run test:unit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
@@ -29,6 +27,7 @@
     "systeminformation": "^5.29.0"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -38,6 +37,7 @@
     "electron-builder": "^26.8.1",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.0",
+    "ts-jest": "^26.5.6",
     "ts-loader": "^9.0.0",
     "typescript": "^5.0.0",
     "wait-on": "^7.2.0",

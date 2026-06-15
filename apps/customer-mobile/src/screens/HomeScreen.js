@@ -142,7 +142,7 @@ const HomeScreen = () => {
         <react_native_1.Text style={styles.restaurantName}>{item.name}</react_native_1.Text>
         <react_native_1.Text style={styles.restaurantDescription} numberOfLines={1}>{item.description}</react_native_1.Text>
         <react_native_1.View style={styles.restaurantMeta}>
-          <react_native_1.Text style={styles.metaText}>⭐ {item.rating}</react_native_1.Text>
+          <react_native_1.Text style={styles.metaText}>Rating {item.rating}</react_native_1.Text>
           <react_native_1.Text style={styles.metaText}>• {item.deliveryTime}</react_native_1.Text>
           <react_native_1.Text style={styles.metaText}>• {item.distance}</react_native_1.Text>
         </react_native_1.View>
@@ -152,7 +152,7 @@ const HomeScreen = () => {
     return (<react_native_1.View style={styles.container}>
       <react_native_1.View style={styles.header}>
         <react_native_1.Text style={styles.greeting}>
-          👋 {user?.name?.split(' ')[0] || 'Guest'}
+          Hi {user?.name?.split(' ')[0] || 'Guest'}
         </react_native_1.Text>
         <react_native_1.Text style={styles.deliveryLocation}>Deliver to: Home - Sector 17, Chandigarh</react_native_1.Text>
       </react_native_1.View>
@@ -253,3 +253,6 @@ const styles = react_native_1.StyleSheet.create({
         fontFamily: ui_1.DESIGN_TOKENS.typography.fontFamily,
     },
 });
+
+export default HomeScreen;
+

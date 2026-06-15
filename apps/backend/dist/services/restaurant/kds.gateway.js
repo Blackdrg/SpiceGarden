@@ -11,28 +11,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var KdsGateway_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KdsGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
-let KdsGateway = class KdsGateway {
+const cors_origin_1 = require("../../security/cors-origin");
+let KdsGateway = KdsGateway_1 = class KdsGateway {
+    logger = new common_1.Logger(KdsGateway_1.name);
     server;
     handleConnection(client) {
         const branchId = client.handshake.query.branchId;
         if (branchId) {
             client.join(`branch:${branchId}`);
-            console.log(`Kitchen staff joined branch: ${branchId}`);
+            this.logger.log(`Kitchen staff joined branch: ${branchId}`);
         }
     }
     handleDisconnect(client) {
-        console.log(`Kitchen staff disconnected: ${client.id}`);
+        this.logger.log(`Kitchen staff disconnected: ${client.id}`);
     }
     notifyNewOrder(branchId, order) {
         this.server.to(`branch:${branchId}`).emit('newOrder', order);
     }
     handleStatusUpdate(data) {
-        console.log(`Order ${data.orderId} status updated to ${data.status} by kitchen`);
+        this.logger.log(`Order ${data.orderId} status updated to ${data.status} by kitchen`);
         this.server.to(`branch:${data.branchId}`).emit('orderStatusUpdated', data);
     }
 };
@@ -48,11 +51,11 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], KdsGateway.prototype, "handleStatusUpdate", null);
-exports.KdsGateway = KdsGateway = __decorate([
+exports.KdsGateway = KdsGateway = KdsGateway_1 = __decorate([
     (0, common_1.Injectable)(),
     (0, websockets_1.WebSocketGateway)({
         namespace: 'kds',
-        cors: { origin: '*' },
+        cors: { origin: cors_origin_1.isAllowedOrigin, credentials: true },
     })
 ], KdsGateway);
 //# sourceMappingURL=kds.gateway.js.map

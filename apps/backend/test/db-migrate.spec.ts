@@ -4,7 +4,23 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../../..');
-const SCRIPT = path.join(ROOT, 'scripts/db.sh');
+const SCRIPT = path.join(ROOT, 'scripts/db.sh').replace(/\\/g, '/');
+
+function commandAvailable(command: string): boolean {
+  try {
+    execSync(`${command} --version`, { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const dockerAvailable = commandAvailable('docker');
+const dbScriptAvailable = fs.existsSync(SCRIPT);
+
+if (!dockerAvailable || !dbScriptAvailable) {
+  console.log(`[skip] db-migrate requires docker and scripts/db.sh; docker=${dockerAvailable}, dbScript=${dbScriptAvailable}`);
+}
 
 function runDb(args: string, opts: { timeout?: number } = {}): { ok: boolean; stdout?: string; stderr?: string; code?: number } {
   const cmd = `bash "${SCRIPT}" ${args}`;
@@ -27,6 +43,11 @@ function runDb(args: string, opts: { timeout?: number } = {}): { ok: boolean; st
 }
 
 describe('Database Migration Stability', () => {
+  if (!dockerAvailable || !dbScriptAvailable) {
+    it.skip('requires docker and scripts/db.sh', () => undefined);
+    return;
+  }
+
   beforeAll(() => {
     console.log('[setup] Bringing up containers...');
     const r = runDb('up', { timeout: 120000 });

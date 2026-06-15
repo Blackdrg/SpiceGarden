@@ -8,6 +8,7 @@ const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
 const native_1 = require("@react-navigation/native");
 const native_stack_1 = require("@react-navigation/native-stack");
+const bottom_tabs_1 = require("@react-navigation/bottom-tabs");
 const i18n_1 = require("./src/constants/i18n");
 const AuthScreen_1 = __importDefault(require("./src/screens/AuthScreen"));
 const HomeScreen_1 = __importDefault(require("./src/screens/HomeScreen"));
@@ -15,8 +16,8 @@ const CartScreen_1 = __importDefault(require("./src/screens/CartScreen"));
 const ProfileScreen_1 = __importDefault(require("./src/screens/ProfileScreen"));
 const TrackingScreen_1 = __importDefault(require("./src/screens/TrackingScreen"));
 const HistoryScreen_1 = __importDefault(require("./src/screens/HistoryScreen"));
-const Stack = (0, native_stack_1.createStackNavigator)();
-const Tab = (0, native_stack_1.createBottomTabNavigator)();
+const Stack = (0, native_stack_1.createNativeStackNavigator)();
+const Tab = (0, bottom_tabs_1.createBottomTabNavigator)();
 function AppNavigator() {
     return (<native_1.NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -28,22 +29,22 @@ function AppNavigator() {
     </native_1.NavigationContainer>);
 }
 function MainTabNavigator() {
-    return (<Tab.Navigator>
+    return (<Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen_1.default} options={{
             tabBarLabel: 'Home',
-            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>🏠</react_native_1.Text>)
+            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>H</react_native_1.Text>)
         }}/>
       <Tab.Screen name="Search" component={HomeScreen_1.default} options={{
             tabBarLabel: 'Search',
-            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>🔍</react_native_1.Text>)
+            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>S</react_native_1.Text>)
         }}/>
       <Tab.Screen name="Cart" component={CartScreen_1.default} options={{
             tabBarLabel: 'Cart',
-            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>🛒</react_native_1.Text>)
+            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>C</react_native_1.Text>)
         }}/>
       <Tab.Screen name="Profile" component={ProfileScreen_1.default} options={{
             tabBarLabel: 'Profile',
-            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>👤</react_native_1.Text>)
+            tabBarIcon: ({ color, size }) => (<react_native_1.Text style={{ color, fontSize: size }}>P</react_native_1.Text>)
         }}/>
     </Tab.Navigator>);
 }
