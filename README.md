@@ -7,6 +7,37 @@ This README restores the detailed repository guide from `git show 57e5bd0:README
 
 ---
 
+## Production Readiness Log
+
+### Phase 0 — Stabilize Workspace
+
+**Completed fixes**
+- Repaired the npm workspace dependency graph after invalid hoisting and stale lockfile metadata.
+- Removed invalid `eslint-config-next@16.2.6` workspace installs for Next.js 15 workspaces and aligned them to `eslint-config-next@15.5.18`.
+- Removed extraneous root-level packages left from prior installs.
+- Upgraded the local npm CLI to `11.17.0` and set the npm registry to `https://registry.npmjs.org/`.
+
+**Verified commands**
+| Command | Result |
+| :--- | :--- |
+| `npm ls --workspaces --depth=0` | Passed with no invalid or extraneous workspace installs after `npm ci` |
+| `npm install` | Passed |
+| `npm ci` | Passed with npm `11.17.0` |
+| `npm run build` | Passed for all workspaces |
+| `npm run lint` | Passed for all workspaces |
+| `npm outdated` | Reported expected update candidates; no dependency graph corruption |
+| `npm audit` | Reported 46 vulnerabilities, to be resolved in the security phase |
+| `npm doctor` | npm version and registry passed; Node.js remains `v25.5.0` while npm recommends `v25.9.0` |
+
+**Architecture/dependency updates**
+- `package-lock.json` now resolves Next.js workspace ESLint configs consistently with the installed Next.js `15.5.19` runtime.
+- Workspace installs are deterministic after clean install.
+
+**Blockers**
+- Environment-level Node.js version: current `v25.5.0`; npm doctor recommends `v25.9.0`. Repository commands still pass under the current runtime.
+
+---
+
 ## Repository Overview
 
 SpiceGarden is organized as a full-stack food-delivery business engine: customers browse restaurants and place orders, restaurants manage kitchen queues and inventory, delivery partners accept and complete deliveries, and super-admin users monitor operations, driver fleets, loyalty, disputes, and platform metrics.
