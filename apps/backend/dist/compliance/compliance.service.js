@@ -20,19 +20,22 @@ const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../db/entities/user.entity");
 const session_entity_1 = require("../db/entities/session.entity");
 const audit_log_entity_1 = require("../db/entities/audit-log.entity");
+const order_entity_1 = require("../db/entities/order.entity");
 const deletion_request_entity_1 = require("../db/entities/deletion-request.entity");
 const data_export_request_entity_1 = require("../db/entities/data-export-request.entity");
 let ComplianceService = ComplianceService_1 = class ComplianceService {
     userRepo;
     sessionRepo;
     auditLogRepo;
+    orderRepo;
     deletionRequestRepo;
     dataExportRequestRepo;
     logger = new common_1.Logger(ComplianceService_1.name);
-    constructor(userRepo, sessionRepo, auditLogRepo, deletionRequestRepo, dataExportRequestRepo) {
+    constructor(userRepo, sessionRepo, auditLogRepo, orderRepo, deletionRequestRepo, dataExportRequestRepo) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
         this.auditLogRepo = auditLogRepo;
+        this.orderRepo = orderRepo;
         this.deletionRequestRepo = deletionRequestRepo;
         this.dataExportRequestRepo = dataExportRequestRepo;
     }
@@ -82,7 +85,9 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
         if (!user) {
             throw new Error('User not found');
         }
-        const orders = [];
+        const orders = await this.orderRepo.find({
+            where: { userId },
+        });
         const sessions = await this.sessionRepo.find({
             where: { userId },
         });
@@ -116,11 +121,12 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
         const now = new Date();
         const sessionCutoff = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         const auditCutoff = new Date(now.getTime() - 3 * 365 * 24 * 60 * 60 * 1000);
-        const [totalUsers, totalSessions, expiredSessions, oldAuditLogs] = await Promise.all([
+        const [totalUsers, totalSessions, expiredSessions, oldAuditLogs, pendingDeletionRequests] = await Promise.all([
             this.userRepo.count(),
             this.sessionRepo.count(),
             this.sessionRepo.count({ where: { expiresAt: (0, typeorm_2.LessThan)(sessionCutoff) } }),
             this.auditLogRepo.count({ where: { timestamp: (0, typeorm_2.LessThan)(auditCutoff) } }),
+            this.deletionRequestRepo.count({ where: { status: 'pending' } }),
         ]);
         return {
             retentionPolicies: {
@@ -134,6 +140,7 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
                 totalSessions,
                 expiredSessions,
                 oldAuditLogs,
+                pendingDeletionRequests,
             },
         };
     }
@@ -142,12 +149,7 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
             where: { userId, status: 'pending' },
         });
         if (existingRequest) {
-            return {
-                requestId: existingRequest.id,
-                regulation: existingRequest.regulation,
-                status: existingRequest.status,
-                message: 'Deletion request already pending',
-            };
+            throw new common_1.ConflictException('User already has a pending deletion request');
         }
         const scheduledDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
         const request = this.deletionRequestRepo.create({
@@ -239,6 +241,7 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
         return {
             encryptedFields,
             fieldsStatus,
+            isEncrypted: encryptedFields.length === piiFields.length,
             verified: encryptedFields.length === piiFields.length,
         };
     }
@@ -249,9 +252,11 @@ exports.ComplianceService = ComplianceService = ComplianceService_1 = __decorate
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(session_entity_1.SessionEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLogEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(deletion_request_entity_1.DeletionRequestEntity)),
-    __param(4, (0, typeorm_1.InjectRepository)(data_export_request_entity_1.DataExportRequestEntity)),
+    __param(3, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
+    __param(4, (0, typeorm_1.InjectRepository)(deletion_request_entity_1.DeletionRequestEntity)),
+    __param(5, (0, typeorm_1.InjectRepository)(data_export_request_entity_1.DataExportRequestEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

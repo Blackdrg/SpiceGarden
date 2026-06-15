@@ -31,11 +31,13 @@ describe('LoyaltyService Edge Cases', () => {
     findOne: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
-    createQueryBuilder: jest.fn(() => ({
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn(),
-    })),
+    createQueryBuilder: jest.fn(),
+  };
+
+  const mockReferralQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
   };
 
   const mockSubscriptionRepo = {
@@ -57,6 +59,9 @@ describe('LoyaltyService Edge Cases', () => {
   };
 
   beforeEach(async () => {
+    mockReferralRepo.createQueryBuilder.mockReturnValue(mockReferralQueryBuilder);
+    mockReferralQueryBuilder.getMany.mockResolvedValue([]);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LoyaltyService,
@@ -99,6 +104,11 @@ describe('LoyaltyService Edge Cases', () => {
         { id: 'r3', refereeId: 'user1', createdAt: new Date() },
       ];
       
+      mockReferralRepo.findOne.mockResolvedValue({
+        id: 'r1',
+        code: 'SGTEST',
+        referrerId: 'other-user',
+      } as ReferralEntity);
       mockReferralRepo.find.mockResolvedValue(referrals);
 
       const result = await service.detectReferralFraud('SGTEST', 'user1');
@@ -112,8 +122,9 @@ describe('LoyaltyService Edge Cases', () => {
         code: 'SGTEST',
         referrerId: 'other-user',
       } as ReferralEntity);
+      mockReferralRepo.find.mockResolvedValue([]);
 
-      mockReferralRepo.createQueryBuilder().getMany.mockResolvedValue([
+      mockReferralQueryBuilder.getMany.mockResolvedValue([
         { id: 'otherRef1' }, { id: 'otherRef2' }, { id: 'otherRef3' },
         { id: 'otherRef4' }, { id: 'otherRef5' }, { id: 'otherRef6' },
       ] as ReferralEntity[]);
@@ -133,6 +144,7 @@ describe('LoyaltyService Edge Cases', () => {
       mockReferralRepo.find.mockResolvedValue([
         { id: 'r1', createdAt: new Date(Date.now() - 100000) },
       ]);
+      mockReferralQueryBuilder.getMany.mockResolvedValue([]);
 
       const result = await service.detectReferralFraud('SGTEST', 'user1');
       expect(result.isFraud).toBe(false);

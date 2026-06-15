@@ -103,7 +103,7 @@ describe('WalletService Edge Cases', () => {
         });
       });
 
-      await expect(service.debitWalletWithLock('user1', 60, 'Test')).rejects.toThrow('Negative balance not allowed');
+      await expect(service.debitWalletWithLock('user1', 60, 'Test')).rejects.toThrow('Insufficient wallet balance');
     });
 
     it('should debit successfully with valid balance', async () => {

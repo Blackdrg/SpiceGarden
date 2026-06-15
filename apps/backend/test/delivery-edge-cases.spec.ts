@@ -17,12 +17,20 @@ describe('EnhancedDeliveryService Edge Cases', () => {
     create: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
-    createQueryBuilder: jest.fn(() => ({
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn(),
-    })),
+    createQueryBuilder: jest.fn(),
   };
+
+  const mockDriverQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    addOrderBy: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
+  beforeEach(() => {
+    mockDriverRepo.createQueryBuilder.mockReturnValue(mockDriverQueryBuilder);
+  });
 
   const mockOrderRepo = {
     findOne: jest.fn(),
@@ -74,6 +82,9 @@ describe('EnhancedDeliveryService Edge Cases', () => {
     service = module.get<EnhancedDeliveryService>(EnhancedDeliveryService);
 
     jest.clearAllMocks();
+    mockDriverQueryBuilder.getMany.mockResolvedValue(undefined);
+    mockGeoService.calculateDistance.mockReturnValue(5);
+    mockGeoService.predictETA.mockReturnValue({ eta: 20, distance: 5, duration: 15 });
   });
 
   describe('detectFakeGPS', () => {
@@ -155,6 +166,10 @@ describe('EnhancedDeliveryService Edge Cases', () => {
       } as DriverAssignmentEntity;
 
       mockDriverAssignmentRepo.findOne.mockResolvedValue(assignment);
+      mockGeoService.calculateDistance
+        .mockImplementationOnce(() => 10)
+        .mockImplementationOnce(() => 10)
+        .mockReturnValue(5);
 
       const result = await service.detectRouteManipulation('a1');
       expect(result.suspicious).toBe(true);
@@ -176,7 +191,10 @@ describe('EnhancedDeliveryService Edge Cases', () => {
       } as DriverAssignmentEntity;
 
       mockDriverAssignmentRepo.findOne.mockResolvedValue(assignment);
-      mockGeoService.calculateDistance.mockReturnValue(2.5);
+      mockGeoService.calculateDistance
+        .mockImplementationOnce(() => 2)
+        .mockImplementationOnce(() => 2)
+        .mockReturnValue(5);
 
       const result = await service.detectRouteManipulation('a1');
       expect(result.suspicious).toBe(false);
@@ -215,7 +233,7 @@ describe('EnhancedDeliveryService Edge Cases', () => {
       const order = { id: 'ord1', status: OrderStatus.CANCELLED } as OrderEntity;
 
       mockOrderRepo.findOne.mockResolvedValue(order);
-      mockDriverRepo.createQueryBuilder().getMany.mockResolvedValue([
+      mockDriverQueryBuilder.getMany.mockResolvedValue([
         { id: 'driver2', rating: 4.5, isFraudSuspicious: false } as DriverEntity,
       ]);
 

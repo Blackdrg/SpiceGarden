@@ -1,7 +1,10 @@
 // Jest setup file for mocking modules - must be loaded before test files
+import 'reflect-metadata';
 
 // Mock @nestjs/core logger first
 jest.mock('@nestjs/core', () => {
+  const actualCommon = jest.requireActual('@nestjs/common');
+  actualCommon.REQUEST = actualCommon.REQUEST || Symbol('REQUEST');
   const actual = jest.requireActual('@nestjs/core');
   return Object.assign(function () {}, actual, {
     Logger: class MockLogger {
@@ -15,63 +18,68 @@ jest.mock('@nestjs/core', () => {
 });
 
 // Mock @nestjs/typeorm
-jest.mock('@nestjs/typeorm', () => ({
-  InjectRepository: () => jest.fn(),
-  getRepositoryToken: (entity: unknown) => {
-    const name = typeof entity === 'function' ? entity.name : undefined;
-    return `REPOSITORY_${name || String(entity)}`;
-  },
-}));
+jest.mock('@nestjs/typeorm', () => {
+  const actual = jest.requireActual('@nestjs/typeorm');
+  return {
+    ...actual,
+    InjectRepository: actual.InjectRepository,
+    getRepositoryToken: actual.getRepositoryToken,
+  };
+});
 
 // Mock typeorm
-jest.mock('typeorm', () => ({
-  Entity: () => jest.fn(),
-  PrimaryGeneratedColumn: () => jest.fn(),
-  PrimaryColumn: () => jest.fn(),
-  Column: () => jest.fn(),
-  CreateDateColumn: () => jest.fn(),
-  UpdateDateColumn: () => jest.fn(),
-  OneToMany: () => jest.fn(),
-  ManyToOne: () => jest.fn(),
-  ManyToMany: () => jest.fn(),
-  JoinColumn: () => jest.fn(),
-  RelationId: () => jest.fn(),
-  Index: () => jest.fn(),
-  Unique: () => jest.fn(),
-  DataSource: class MockDataSource {},
-}));
+jest.mock('typeorm', () => {
+  const actual = jest.requireActual('typeorm');
+  return {
+    ...actual,
+    DataSource: class MockDataSource {},
+    Repository: class MockRepository {},
+  };
+});
 
 // Mock @nestjs/common
-jest.mock('@nestjs/common', () => ({
-  Injectable: () => jest.fn(),
-  Controller: () => jest.fn(),
-  Get: () => jest.fn(),
-  Post: () => jest.fn(),
-  Patch: () => jest.fn(),
-  Delete: () => jest.fn(),
-  Put: () => jest.fn(),
-  Body: () => jest.fn(),
-  Param: () => jest.fn(),
-  Query: () => jest.fn(),
-  Headers: () => jest.fn(),
-  Req: () => jest.fn(),
-  REQUEST: Symbol('REQUEST'),
-  BadRequestException: class BadRequestException extends Error { constructor(message?: string) { super(message); this.name = 'BadRequestException'; } },
-  NotFoundException: class NotFoundException extends Error { constructor(message?: string) { super(message); this.name = 'NotFoundException'; } },
-  ConflictException: class ConflictException extends Error { constructor(message?: string) { super(message); this.name = 'ConflictException'; } },
-  UnauthorizedException: class UnauthorizedException extends Error { constructor(message?: string) { super(message); this.name = 'UnauthorizedException'; } },
-  InternalServerErrorException: class InternalServerErrorException extends Error { constructor(message?: string) { super(message); this.name = 'InternalServerErrorException'; } },
-  Global: () => jest.fn(),
-  Module: () => jest.fn(),
-  Logger: class Logger {
-    constructor(private readonly context?: string) {}
-    log(message: unknown) { return { context: this.context, message }; }
-    error(message: unknown) { return { context: this.context, message }; }
-    warn(message: unknown) { return { context: this.context, message }; }
-    debug(message: unknown) { return { context: this.context, message }; }
-    verbose(message: unknown) { return { context: this.context, message }; }
-  },
-}));
+jest.mock('@nestjs/common', () => {
+  const actual = jest.requireActual('@nestjs/common');
+  return {
+    ...actual,
+    Injectable: () => jest.fn(),
+    Controller: () => jest.fn(),
+    Get: () => jest.fn(),
+    Post: () => jest.fn(),
+    Patch: () => jest.fn(),
+    Delete: () => jest.fn(),
+    Put: () => jest.fn(),
+    Body: () => jest.fn(),
+    Param: () => jest.fn(),
+    Query: () => jest.fn(),
+    Headers: () => jest.fn(),
+    Req: () => jest.fn(),
+    REQUEST: actual.REQUEST || Symbol('REQUEST'),
+    Scope: actual.Scope || {
+      DEFAULT: 0,
+      TRANSIENT: 1,
+      REQUEST: 2,
+    },
+    Logger: class Logger {
+      constructor(private readonly context?: string) {}
+      static overrideLogger() {}
+      log(message: unknown) { return { context: this.context, message }; }
+      error(message: unknown) { return { context: this.context, message }; }
+      warn(message: unknown) { return { context: this.context, message }; }
+      debug(message: unknown) { return { context: this.context, message }; }
+      verbose(message: unknown) { return { context: this.context, message }; }
+    },
+    ConsoleLogger: class ConsoleLogger {
+      constructor(private readonly context?: string) {}
+      static overrideLogger() {}
+      log(message: unknown) { return { context: this.context, message }; }
+      error(message: unknown) { return { context: this.context, message }; }
+      warn(message: unknown) { return { context: this.context, message }; }
+      debug(message: unknown) { return { context: this.context, message }; }
+      verbose(message: unknown) { return { context: this.context, message }; }
+    },
+  };
+});
 
 // Mock @nestjs/config
 jest.mock('@nestjs/config', () => ({

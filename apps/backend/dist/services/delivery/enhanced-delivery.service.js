@@ -210,11 +210,11 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
             return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
         }
-        if (speed !== undefined && speed > 200) {
+        if (speed !== undefined && speed >= 200) {
             return { isFake: true, reason: 'Unrealistic speed', driverId };
         }
         const timestamp = typeof location.timestamp === 'string' ? Number(location.timestamp) : location.timestamp;
-        if (timestamp && Date.now() - timestamp > 60 * 60 * 1000 && speed && speed > 30) {
+        if (timestamp && Date.now() - timestamp >= 60 * 1000 && speed && speed > 30) {
             return { isFake: true, reason: 'GPS staleness', driverId };
         }
         return { isFake: false, reason: 'GPS coordinates accepted', driverId };
@@ -260,7 +260,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
     }
     async autoReassignOnNoShow(orderId, previousDriverId) {
         const order = await this.orderRepo.findOne({ where: { id: orderId } });
-        if (!order)
+        if (!order || order.status !== order_interface_1.OrderStatus.CANCELLED)
             return false;
         const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
         if (!assignment)

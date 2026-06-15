@@ -66,6 +66,7 @@ describe('ComplianceService', () => {
     deletionRepo = {
       findOne: jest.fn(),
       find: jest.fn(),
+      create: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -97,6 +98,12 @@ describe('ComplianceService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        { provide: getRepositoryToken(UserEntity), useValue: userRepo },
+        { provide: getRepositoryToken(SessionEntity), useValue: sessionRepo },
+        { provide: getRepositoryToken(AuditLogEntity), useValue: auditRepo },
+        { provide: getRepositoryToken(OrderEntity), useValue: orderRepo },
+        { provide: getRepositoryToken(DeletionRequestEntity), useValue: deletionRepo },
+        { provide: getRepositoryToken(DataExportRequestEntity), useValue: exportRepo },
         { provide: 'DataSource', useValue: mockDataSource },
         { provide: EncryptionService, useValue: encryptionService },
         ComplianceService,
@@ -219,6 +226,7 @@ describe('ComplianceService', () => {
         id: 'user-1',
         email: 'U2FsdGVkX1+encrypted',
         phone: 'U2FsdGVkX1+encrypted',
+        fullName: 'U2FsdGVkX1+encrypted',
       } as any);
 
       const result = await service.verifyPiiEncryption('user-1');

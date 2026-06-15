@@ -22,6 +22,9 @@ describe('OrderService Edge Cases', () => {
     find: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
+    manager: {
+      transaction: jest.fn(),
+    },
   };
 
   const mockDriverAssignmentRepo = {
@@ -125,7 +128,7 @@ describe('OrderService Edge Cases', () => {
     it('should cancel order in transaction with locking', async () => {
       const order = { id: 'ord1', userId: 'user1', status: OrderStatus.DRIVER_ASSIGNED, orderNumber: 'ORD-123' } as OrderEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockOrderRepo.manager.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(order),
           save: jest.fn().mockResolvedValue({ ...order, status: OrderStatus.CANCELLED }),
@@ -133,13 +136,13 @@ describe('OrderService Edge Cases', () => {
       });
 
       const result = await service.cancelOrderAtomic('ord1', 'customer', 'Changed mind');
-      expect(mockDataSource.manager.transaction).toHaveBeenCalled();
+      expect(mockOrderRepo.manager.transaction).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when order already delivered', async () => {
       const order = { id: 'ord1', userId: 'user1', status: OrderStatus.DELIVERED } as OrderEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockOrderRepo.manager.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(order),
           save: jest.fn().mockResolvedValue(order),

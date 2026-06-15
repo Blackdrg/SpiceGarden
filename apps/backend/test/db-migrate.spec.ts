@@ -4,7 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../../..');
-const SCRIPT = path.join(ROOT, 'scripts/db.sh').replace(/\\/g, '/');
+const SCRIPT = process.platform === 'win32'
+  ? `/${path.join(ROOT, 'scripts/db.sh').replace(/\\/g, '/').replace(/^([A-Za-z]):/, '$1').toLowerCase()}`
+  : path.join(ROOT, 'scripts/db.sh');
 
 function commandAvailable(command: string): boolean {
   try {
@@ -16,10 +18,11 @@ function commandAvailable(command: string): boolean {
 }
 
 const dockerAvailable = commandAvailable('docker');
+const bashAvailable = commandAvailable('bash');
 const dbScriptAvailable = fs.existsSync(SCRIPT);
 
-if (!dockerAvailable || !dbScriptAvailable) {
-  console.log(`[skip] db-migrate requires docker and scripts/db.sh; docker=${dockerAvailable}, dbScript=${dbScriptAvailable}`);
+if (!dockerAvailable || !bashAvailable || !dbScriptAvailable) {
+  console.log(`[skip] db-migrate requires docker, bash, and scripts/db.sh; docker=${dockerAvailable}, bash=${bashAvailable}, dbScript=${dbScriptAvailable}`);
 }
 
 function runDb(args: string, opts: { timeout?: number } = {}): { ok: boolean; stdout?: string; stderr?: string; code?: number } {
@@ -43,8 +46,8 @@ function runDb(args: string, opts: { timeout?: number } = {}): { ok: boolean; st
 }
 
 describe('Database Migration Stability', () => {
-  if (!dockerAvailable || !dbScriptAvailable) {
-    it.skip('requires docker and scripts/db.sh', () => undefined);
+  if (!dockerAvailable || !bashAvailable || !dbScriptAvailable) {
+    it.skip('requires docker, bash, and scripts/db.sh', () => undefined);
     return;
   }
 

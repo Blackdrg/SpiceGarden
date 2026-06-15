@@ -266,12 +266,12 @@ export class EnhancedDeliveryService {
       return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
     }
 
-    if (speed !== undefined && speed > 200) {
+    if (speed !== undefined && speed >= 200) {
       return { isFake: true, reason: 'Unrealistic speed', driverId };
     }
 
     const timestamp = typeof location.timestamp === 'string' ? Number(location.timestamp) : location.timestamp;
-    if (timestamp && Date.now() - timestamp > 60 * 60 * 1000 && speed && speed > 30) {
+    if (timestamp && Date.now() - timestamp >= 60 * 1000 && speed && speed > 30) {
       return { isFake: true, reason: 'GPS staleness', driverId };
     }
 
@@ -327,7 +327,7 @@ export class EnhancedDeliveryService {
 
   async autoReassignOnNoShow(orderId: string, previousDriverId?: string): Promise<boolean> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
-    if (!order) return false;
+    if (!order || order.status !== OrderStatus.CANCELLED) return false;
 
     const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
     if (!assignment) return false;

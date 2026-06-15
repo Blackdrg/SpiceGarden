@@ -39,7 +39,8 @@ export class LoyaltyService {
     const userUsage = await this.couponUsageRepo.count({
       where: { couponId: coupon.id, userId, status: CouponUsageStatus.USED }
     });
-    if (userUsage >= coupon.usagePerUser) throw new BadRequestException('You have already used this coupon');
+    const usagePerUser = coupon.usagePerUser ?? 1;
+    if (userUsage >= usagePerUser) throw new BadRequestException('You have already used this coupon');
 
     if (coupon.minOrderAmount && orderAmount < coupon.minOrderAmount) {
       throw new BadRequestException(`Minimum order amount of ₹${coupon.minOrderAmount} required`);
@@ -221,8 +222,12 @@ export class LoyaltyService {
       order: { createdAt: 'DESC' },
       take: 10,
     });
+    const recentCount = recentReferrals.filter(r => {
+      const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : 0;
+      return createdAt >= Date.now() - 24 * 60 * 60 * 1000;
+    }).length;
 
-    if (recentReferrals.length > 1) {
+    if (recentCount > 1) {
       return { isFraud: true, reason: 'Multiple referral usage within 24h' };
     }
 

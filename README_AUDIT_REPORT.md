@@ -173,3 +173,45 @@ Key corrected facts:
 ## Conclusion
 
 The documentation task is complete. The repository has substantial production-oriented infrastructure and backend coverage, but production readiness is blocked by verified build failures, React runtime issues, dependency vulnerabilities, placeholder tests, incomplete security gating, localhost defaults, placeholder RBAC/queue behavior, and environment validation failures.
+
+---
+
+## Latest Verification Addendum
+
+Verified as of: 2026-06-15 11:30 IST
+
+This addendum records the continued production-readiness pass after dependency hardening and test fixes.
+
+### Verified command results
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Passed across all workspaces |
+| `npm run lint` | Passed across all workspaces |
+| `npm run test:all` | Passed across all workspaces |
+| `npm audit` | Passed with 0 vulnerabilities |
+| `npm run test --workspace @spicegarden/backend -- --runInBand` | Passed; 23 suites passed, 1 suite skipped, 188 tests passed, 1 skipped |
+| `npm exec --workspace @spicegarden/backend -- k6 version` | Failed; k6 executable is unavailable |
+| `npm ls react-doctor eslint-plugin-react-doctor` | Empty; React Doctor is unavailable in this workspace |
+
+### Dependency and security updates
+
+- Root `package.json` now overrides `postcss` to `^8.5.10` and `uuid` to `11.1.1`.
+- `apps/launcher/package.json` now uses `webpack-dev-server` `^5.2.5`.
+- `package-lock.json` records `next@15.5.19` using `postcss@8.5.10` under `node_modules/next/node_modules/postcss`.
+- `npm audit` now reports 0 vulnerabilities.
+- `npm ls postcss webpack-dev-server uuid` shows non-vulnerable versions for the audited dependency paths.
+
+### Remaining blockers
+
+| Area | Status |
+| :--- | :--- |
+| Database migration verification | `test/db-migrate.spec.ts` remains skipped because Docker is unavailable on this machine |
+| Load testing | k6 is not installed, so 10k/20k/breaking-point load metrics are not verified |
+| Chaos testing | Kubernetes chaos validation is not verified locally |
+| React Doctor | Not runnable because `react-doctor` / `eslint-plugin-react-doctor` are not installed |
+| Runtime readiness | Core local verification now passes, but existing architecture caveats remain documented above |
+
+### Updated conclusion
+
+The repository now passes the core local verification gate: build, lint, full workspace tests, backend Jest suite, and npm audit. Full production readiness remains unverified because Docker-backed migration tests, k6 load tests, chaos tests, and React Doctor scoring are unavailable in the current environment.

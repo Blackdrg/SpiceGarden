@@ -1019,3 +1019,44 @@ A project-only sample excluding `node_modules`, `dist`, `build`, `.next`, `ios`,
 | Automation | `scripts/clean-any.js` is useful for type tightening but should be reviewed before bulk replacement. |
 | Code quality | The sampled project still contains many `any` markers and console calls, indicating maintainability and logging cleanup work remains. |
 
+---
+
+## Latest Production Verification Update
+
+Verified as of: 2026-06-15 11:30 IST
+
+This update records the continued production-readiness verification pass after dependency hardening and test fixes. It supersedes stale build, lint, test, and audit status entries above for the commands listed here.
+
+### Verification commands
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Passed across all workspaces |
+| `npm run lint` | Passed across all workspaces |
+| `npm run test:all` | Passed across all workspaces |
+| `npm audit` | Passed with 0 vulnerabilities |
+| `npm run test --workspace @spicegarden/backend -- --runInBand` | Passed; 23 suites passed, 1 suite skipped, 188 tests passed, 1 skipped |
+| `npm exec --workspace @spicegarden/backend -- k6 version` | Failed; k6 executable is unavailable |
+| `npm ls react-doctor eslint-plugin-react-doctor` | Empty; React Doctor is unavailable in this workspace |
+
+### Dependency hardening changes
+
+- Root `package.json` now overrides `postcss` to `^8.5.10` and `uuid` to `11.1.1`.
+- `apps/launcher/package.json` now uses `webpack-dev-server` `^5.2.5`.
+- `package-lock.json` records `next@15.5.19` using `postcss@8.5.10` under `node_modules/next/node_modules/postcss`.
+- `npm ls postcss webpack-dev-server uuid` now resolves PostCSS, Webpack Dev Server, and UUID to non-vulnerable versions for the audited paths.
+
+### Remaining production-readiness blockers
+
+| Area | Status |
+| :--- | :--- |
+| Database migration verification | `test/db-migrate.spec.ts` remains skipped because this machine does not provide the required Docker runtime for the PostgreSQL migration test |
+| Load testing | k6 is not installed, so 10k/20k/breaking-point load metrics are not verified |
+| Chaos testing | Kubernetes chaos validation is not verified in this local environment |
+| React Doctor | Not runnable because `react-doctor` / `eslint-plugin-react-doctor` are not installed |
+| Runtime readiness | Build/lint/test/audit pass, but the repository still has existing architectural caveats documented above, including localhost defaults, placeholder RBAC, in-memory queue behavior, and environment validation gaps |
+
+### Current verdict
+
+The repository now passes the core local verification gate: build, lint, full workspace tests, backend Jest suite, and npm audit. It is not fully production-verified because Docker-backed migration tests, k6 load tests, chaos tests, and React Doctor scoring remain unavailable in the current environment.
+
