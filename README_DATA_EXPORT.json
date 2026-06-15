@@ -1,0 +1,383 @@
+{
+  "generatedAt": "2026-06-15T21:15:26+05:30",
+  "source": "README verification pass",
+  "overallVerdict": "not_production_ready",
+  "inventory": {
+    "trackedFiles": 2680,
+    "trackedDirectories": 361,
+    "projectFilesExcludingGenerated": 1268,
+    "projectDirectoriesExcludingGenerated": 250,
+    "apps": [
+      "backend",
+      "customer-mobile",
+      "customer-web",
+      "delivery-partner",
+      "driver-app",
+      "launcher",
+      "restaurant-dashboard",
+      "super-admin"
+    ],
+    "packages": [
+      "api-types",
+      "grpc-transport",
+      "proto",
+      "shared",
+      "ui",
+      "ux"
+    ],
+    "backend": {
+      "entities": 65,
+      "controllers": 123,
+      "servicesGatewaysAdaptersProcessorsProvidersFactories": 254,
+      "modules": 55,
+      "routeDecorators": {
+        "total": 263,
+        "GET": 128,
+        "POST": 99,
+        "PUT": 29,
+        "DELETE": 5,
+        "PATCH": 2
+      }
+    },
+    "frontend": {
+      "pages": 50,
+      "mobileScreens": 26,
+      "hooks": 15
+    },
+    "tests": {
+      "testFiles": 187
+    },
+    "infrastructure": {
+      "workflows": 3,
+      "dockerComposeFiles": 5,
+      "kubernetesManifests": 9,
+      "scripts": 57
+    }
+  },
+  "loc": {
+    "totalFilesScanned": 1268,
+    "totalDirectoriesScanned": 250,
+    "byBucket": {
+      "backend": {
+        "files": 379,
+        "loc": 38675
+      },
+      "customer-mobile": {
+        "files": 131,
+        "loc": 49725
+      },
+      "customer-web": {
+        "files": 90,
+        "loc": 30004
+      },
+      "delivery-partner": {
+        "files": 87,
+        "loc": 15154
+      },
+      "restaurant-dashboard": {
+        "files": 37,
+        "loc": 4447
+      },
+      "super-admin": {
+        "files": 43,
+        "loc": 6322
+      },
+      "infra": {
+        "files": 67,
+        "loc": 8344
+      },
+      "shared": {
+        "files": 10,
+        "loc": 304
+      },
+      "ui": {
+        "files": 157,
+        "loc": 7226
+      }
+    }
+  },
+  "qualityMarkers": {
+    "sampledProjectFiles": 1037,
+    "todoOrFixme": 172,
+    "typescriptAny": 6872,
+    "consoleMarkers": 494
+  },
+  "verification": {
+    "build": {
+      "npmRunBuild": "passed",
+      "npxTscNoEmit": "passed",
+      "npmRunLint": "passed"
+    },
+    "tests": {
+      "npmRunTestUnit": {
+        "status": "failed",
+        "reason": "apps/customer-mobile/__tests__/e2e-flow.test.js failed"
+      },
+      "npmRunTestIntegration": {
+        "status": "passed",
+        "suites": 9,
+        "tests": 35
+      },
+      "npmRunTestE2e": {
+        "status": "failed",
+        "reason": "apps/customer-mobile/__tests__/e2e-flow.test.js failed"
+      },
+      "npmRunTestAll": {
+        "status": "failed",
+        "reason": "apps/customer-mobile failed during test:unit execution"
+      },
+      "backendCoverage": {
+        "status": "failed",
+        "suitesPassed": 23,
+        "suitesSkipped": 1,
+        "testsPassed": 188,
+        "testsSkipped": 1,
+        "thresholds": {
+          "statements": 47.16,
+          "branches": 14.63,
+          "functions": 17.33,
+          "lines": 45.81
+        }
+      }
+    },
+    "reactDoctor": {
+      "status": "failed_quality_gate",
+      "version": "0.5.6",
+      "filesScanned": 136,
+      "durationSeconds": 38,
+      "score": 61,
+      "label": "Needs work",
+      "issues": {
+        "total": 60,
+        "bugs": 32,
+        "performance": 2,
+        "maintainability": 26
+      },
+      "byApp": {
+        "@spicegarden/customer-web": {
+          "score": 64,
+          "label": "OK",
+          "warnings": 16
+        },
+        "@spicegarden/delivery-partner": {
+          "score": 61,
+          "label": "OK",
+          "warnings": 35
+        },
+        "@spicegarden/restaurant-dashboard": {
+          "score": 75,
+          "label": "Great",
+          "warnings": 4
+        },
+        "@spicegarden/super-admin": {
+          "score": 74,
+          "label": "OK",
+          "warnings": 5
+        }
+      }
+    },
+    "dependencies": {
+      "npmAuditAuditLevelModerate": {
+        "status": "passed",
+        "vulnerabilities": 0
+      },
+      "outdatedPackages": 60,
+      "extraneousPackages": [
+        "@babel/plugin-transform-arrow-functions",
+        "@emnapi/runtime",
+        "expo-image",
+        "lottie-web",
+        "react-native-is-edge-to-edge",
+        "react-native-reanimated",
+        "sf-symbols-typescript"
+      ],
+      "invalidInstalls": [
+        "jest@29.7.0",
+        "@testing-library/jest-dom@5.17.0",
+        "@testing-library/react@14.3.1",
+        "jest-environment-jsdom@29.7.0",
+        "eslint-config-next@16.2.6 in apps/restaurant-dashboard",
+        "eslint-config-next@16.2.6 in apps/super-admin"
+      ]
+    },
+    "security": {
+      "rateLimiting": {
+        "status": "failed",
+        "script": "node infra/scripts/security-tests.js",
+        "finding": "Rate limited responses: 0/100",
+        "totalVulnerabilities": 100
+      },
+      "penetration": {
+        "status": "failed",
+        "script": "node infra/scripts/penetration-tests.js",
+        "reason": "localhost:3001 unreachable; AggregateError ECONNREFUSED"
+      },
+      "envValidation": {
+        "status": "failed",
+        "issues": [
+          "[PRODUCTION] STRIPE_SECRET_KEY_FILE not configured",
+          "[STAGING] STRIPE_SECRET_KEY_FILE should reference staging secrets"
+        ]
+      },
+      "deploymentCheck": {
+        "status": "failed",
+        "script": "node infra/scripts/deployment-check.js",
+        "reason": "Bash script executed by Node; SyntaxError: Unexpected identifier 'pipefail'"
+      }
+    },
+    "load": {
+      "npmRunTestLoadWorkspaceBackend": {
+        "status": "failed",
+        "location": "apps/backend/test/load/10k-users.js:6:27",
+        "reason": "metric 'http_req_duration' already exists but with a value type time, instead of default"
+      }
+    }
+  },
+  "routes": {
+    "customerWebPages": [
+      "_app",
+      "addresses",
+      "auth",
+      "cart",
+      "checkout",
+      "history",
+      "index",
+      "menu",
+      "notifications",
+      "offers",
+      "order-details",
+      "payment-methods",
+      "profile",
+      "reset-password",
+      "restaurant",
+      "search",
+      "subscriptions",
+      "tracking",
+      "wallet"
+    ],
+    "customerWebApiRoutes": [
+      "api/categories",
+      "api/restaurants"
+    ],
+    "restaurantDashboardApiRoutes": [
+      "api/inventory",
+      "api/orders"
+    ],
+    "superAdminApiRoutes": [
+      "api/admin/stats",
+      "api/orders"
+    ],
+    "customerMobileScreens": [
+      "AddressesScreen",
+      "AuthScreen",
+      "CartScreen",
+      "CheckoutScreen",
+      "HistoryScreen",
+      "HomeScreen",
+      "MenuScreen",
+      "NotificationsScreen",
+      "OffersScreen",
+      "OrderDetailsScreen",
+      "ProfileScreen",
+      "RestaurantDetailScreen",
+      "SearchScreen",
+      "TrackingScreen",
+      "WalletScreen"
+    ],
+    "deliveryPartnerScreens": [
+      "AcceptOrderScreen",
+      "ActiveOrdersScreen",
+      "AuthScreen",
+      "EarningsScreen",
+      "LoginScreen",
+      "OrderDetailScreen",
+      "ProfileScreen",
+      "ShiftManagementScreen"
+    ]
+  },
+  "sourceEvidence": {
+    "auth": [
+      "apps/backend/src/services/auth/auth.module.ts",
+      "apps/backend/src/services/auth/strategies/jwt.strategy.ts",
+      "apps/backend/src/services/auth/auth.service.ts",
+      "apps/backend/src/db/entities/session.entity.ts"
+    ],
+    "security": [
+      "apps/backend/src/security/roles.guard.ts",
+      "apps/backend/src/security/cors-origin.ts",
+      "apps/backend/src/security/encryption.service.ts",
+      "apps/backend/src/logging/logging.service.ts"
+    ],
+    "payments": [
+      "apps/backend/src/services/payments/payments.service.ts",
+      "apps/backend/src/services/payments/idempotency.service.ts",
+      "apps/backend/src/services/payments/gateways/stripe-gateway.service.ts",
+      "apps/backend/src/services/payments/gateways/razorpay-gateway.service.ts",
+      "apps/backend/src/services/payments/chargeback/chargeback.service.ts",
+      "apps/backend/src/services/payments/payment-hardening.service.ts"
+    ],
+    "delivery": [
+      "apps/backend/src/modules/driver-assignment/dispatch-engine.service.ts",
+      "apps/backend/src/modules/driver-assignment/eta-intelligence.service.ts",
+      "apps/backend/src/services/delivery/delivery.service.ts",
+      "apps/backend/src/infra/tracking/tracking.gateway.ts",
+      "apps/backend/src/services/restaurant/kds.gateway.ts"
+    ],
+    "infrastructure": [
+      "Dockerfile",
+      "compose.dev.yaml",
+      "infra/k8s/production-hardened.yaml",
+      "infra/k8s/backend-deployment.yaml",
+      "infra/k8s/secrets.yaml",
+      ".github/workflows/ci-cd.yml"
+    ],
+    "shared": [
+      "packages/shared/api.ts",
+      "packages/shared/constants.ts",
+      "packages/ui/index.ts",
+      "packages/ui/tokens.ts",
+      "packages/proto/src/index.ts"
+    ]
+  },
+  "productionReadiness": {
+    "overall": "not_ready",
+    "areas": {
+      "build": "ready",
+      "typecheck": "ready",
+      "lint": "ready",
+      "dependencyVulnerabilities": "ready",
+      "testSuite": "not_ready",
+      "coverage": "not_ready",
+      "loadTesting": "not_ready",
+      "securityTests": "not_ready",
+      "environmentValidation": "not_ready",
+      "deploymentScript": "not_ready",
+      "kubernetesHardening": "partially_ready",
+      "observability": "partially_ready"
+    }
+  },
+  "prioritizedGaps": {
+    "P0": [
+      "Fix apps/customer-mobile/__tests__/e2e-flow.test.js",
+      "Fix backend coverage thresholds",
+      "Fix k6 load script metric conflict",
+      "Fix rate limiting security finding"
+    ],
+    "P1": [
+      "Fix Stripe secret file environment validation",
+      "Fix deployment-check script execution mismatch",
+      "Resolve React Doctor bugs and maintainability issues",
+      "Remove extraneous and invalid installs"
+    ],
+    "P2": [
+      "Audit placeholder values in auth/payment/security modules",
+      "Audit route-level RBAC guard usage",
+      "Complete refresh-token session creation",
+      "Reduce any, TODO/FIXME, and console markers"
+    ],
+    "P3": [
+      "Remove or properly gate chaos tests",
+      "Add missing package tests and improve integration/e2e coverage"
+    ]
+  }
+}

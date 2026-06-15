@@ -1014,14 +1014,14 @@ A project-only sample excluding `node_modules`, `dist`, `build`, `.next`, `ios`,
 | Encryption | Startup fails if `ENCRYPTION_SECRET` is missing or placeholder, which is safer than silent fallback. |
 | Tax/GST | GST reporting exists, but tax payable/receivable logic is simplified and should be reviewed with finance requirements. |
 | Next builds | ESLint is ignored during Next builds, so lint failures can be hidden unless CI runs `npm run lint` separately. |
-| Customer web | React Doctor JSON reports a critical score of 49 and flags a vulnerable React Server Components runtime through Next.js `15.5.6`. |
+| Customer web | [OUTDATED — VERIFIED UPDATE BELOW] React Doctor JSON reports a critical score of 49 and flags a vulnerable React Server Components runtime through Next.js `15.5.6`. |
 | UX docs | Phase 1 UX architecture and Phase 2 flow completion are documented, but optional future-phase items remain open. |
 | Automation | `scripts/clean-any.js` is useful for type tightening but should be reviewed before bulk replacement. |
 | Code quality | The sampled project still contains many `any` markers and console calls, indicating maintainability and logging cleanup work remains. |
 
 ---
 
-## Latest Production Verification Update
+## [OUTDATED — VERIFIED UPDATE BELOW] Latest Production Verification Update
 
 Verified as of: 2026-06-15 11:30 IST
 
@@ -1051,12 +1051,554 @@ This update records the continued production-readiness verification pass after d
 | Area | Status |
 | :--- | :--- |
 | Database migration verification | `test/db-migrate.spec.ts` remains skipped because this machine does not provide the required Docker runtime for the PostgreSQL migration test |
-| Load testing | k6 is not installed, so 10k/20k/breaking-point load metrics are not verified |
+| Load testing | [OUTDATED — VERIFIED UPDATE BELOW] k6 is not installed, so 10k/20k/breaking-point load metrics are not verified |
 | Chaos testing | Kubernetes chaos validation is not verified in this local environment |
-| React Doctor | Not runnable because `react-doctor` / `eslint-plugin-react-doctor` are not installed |
-| Runtime readiness | Build/lint/test/audit pass, but the repository still has existing architectural caveats documented above, including localhost defaults, placeholder RBAC, in-memory queue behavior, and environment validation gaps |
+| React Doctor | [OUTDATED — VERIFIED UPDATE BELOW] Not runnable because `react-doctor` / `eslint-plugin-react-doctor` are not installed |
+| Runtime readiness | [OUTDATED — VERIFIED UPDATE BELOW] Build/lint/test/audit pass, but the repository still has existing architectural caveats documented above, including localhost defaults, placeholder RBAC, in-memory queue behavior, and environment validation gaps |
 
 ### Current verdict
 
-The repository now passes the core local verification gate: build, lint, full workspace tests, backend Jest suite, and npm audit. It is not fully production-verified because Docker-backed migration tests, k6 load tests, chaos tests, and React Doctor scoring remain unavailable in the current environment.
+[OUTDATED — VERIFIED UPDATE BELOW] The repository now passes the core local verification gate: build, lint, full workspace tests, backend Jest suite, and npm audit. It is not fully production-verified because Docker-backed migration tests, k6 load tests, chaos tests, and React Doctor scoring remain unavailable in the current environment.
+
+---
+
+## Current Verified Engineering Update — 2026-06-15 21:15 IST
+
+This section is appended without deleting or overwriting prior README content. It is the repository-backed source of truth for the current SpiceGarden state.
+
+### Verification commands
+
+| Command | Result |
+| :--- | :--- |
+| `git ls-files` | `2680` tracked files |
+| `git status --short` | Clean working tree |
+| `npm run build` | Passed |
+| `npx tsc --noEmit` | Passed |
+| `npm run lint` | Passed |
+| `npm audit --audit-level=moderate` | Passed; `0` vulnerabilities |
+| `npm run test:unit` | Failed; `apps/customer-mobile/__tests__/e2e-flow.test.js` failed |
+| `npm run test:integration` | Passed; `9` suites, `35` tests |
+| `npm run test:e2e` | Failed; `apps/customer-mobile/__tests__/e2e-flow.test.js` failed |
+| `npm run test:all` | Failed; failed through `apps/customer-mobile` unit test execution |
+| `npm run test:cov --workspace @spicegarden/backend -- --runInBand` | Failed coverage thresholds; `188` tests passed, `1` skipped |
+| `npm run test:load --workspace @spicegarden/backend` | Failed; k6 metric conflict at `apps/backend/test/load/10k-users.js:6:27` |
+| `node infra/scripts/security-tests.js` | Failed; rate limiting reported vulnerable |
+| `node infra/scripts/penetration-tests.js` | Failed; backend `localhost:3001` unreachable |
+| `node infra/scripts/validate-env-consistency.js` | Failed; `2` environment issues |
+| `node infra/scripts/deployment-check.js` | Failed; Bash script executed by Node, `SyntaxError: Unexpected identifier 'pipefail'` |
+| `npx react-doctor@latest --verbose` | Failed exit code; score `61/100`, `60` issues |
+
+### Current verdict
+
+SpiceGarden has a passing build, typecheck, lint, and npm audit gate, but it is not production-ready on the latest verified run. The release gate is blocked by failing unit/e2e/root test workflows, backend coverage threshold failures, a failing k6 load script, rate-limiting security findings, env validation issues, deployment-check script failure, and React Doctor quality findings.
+
+### Outdated claims corrected
+
+| Area | Outdated claim | Verified update |
+| :--- | :--- | :--- |
+| Full test gate | `npm run test:all` passed | `npm run test:all` failed because `apps/customer-mobile` failed during unit test execution |
+| Runtime readiness | Runtime readiness was described as build/lint/test/audit passing | Build/lint/typecheck/audit pass, but runtime security, load, env, deployment, and test gates fail |
+| React Doctor | React Doctor was unavailable in this workspace | `npx react-doctor@latest --verbose` ran and reported `61/100` with `60` issues |
+| Load testing | k6 was reported unavailable | k6 ran through npx but the load script failed due a metric conflict |
+| Queue behavior | Runtime caveats included in-memory queue behavior | `apps/backend/src/infra/queue/queue.service.ts` uses BullMQ with Redis |
+| Customer web React Doctor score | Prior README text cited score `49` | Current React Doctor reports `@spicegarden/customer-web` at `64/100` |
+
+### Repository Overview
+
+SpiceGarden is a TypeScript monorepo for a multi-sided food delivery platform. It includes backend services, customer web, customer mobile, restaurant dashboard, delivery partner app, driver app, launcher, super-admin, shared API/types packages, UI/design tokens, gRPC transport, and proto definitions.
+
+| Metric | Count |
+| :--- | :---: |
+| Tracked files | `2680` |
+| Tracked directories | `361` |
+| Project files excluding generated/cache/build artifacts | `1268` |
+| Actual project directories excluding generated/cache/build artifacts | `250` |
+| Apps | `8` |
+| Packages | `6` |
+| Backend entities | `65` |
+| Backend controllers | `123` |
+| Backend services/gateways/adapters/processors/providers/factories | `254` |
+| Backend modules | `55` |
+| Backend route decorators | `263` |
+| Frontend pages | `50` |
+| Mobile screens | `26` |
+| Hooks | `15` |
+| Test files | `187` |
+| GitHub workflows | `3` |
+| Docker/Compose files | `5` |
+| Kubernetes manifests | `9` |
+| Scripts | `57` |
+
+### Current Verified Status
+
+| Area | Status |
+| :--- | :--- |
+| Build | Passing |
+| Typecheck | Passing |
+| Lint | Passing |
+| npm audit | Passing; `0` vulnerabilities |
+| Unit tests | Failing due `apps/customer-mobile/__tests__/e2e-flow.test.js` |
+| Integration tests | Passing; `9` suites, `35` tests |
+| E2E tests | Failing due `apps/customer-mobile/__tests__/e2e-flow.test.js` |
+| Root `test:all` | Failing |
+| Backend coverage | Failing thresholds |
+| Load testing | Failing script |
+| Security tests | Failing rate-limiting validation |
+| Penetration test script | Failed because backend was not reachable |
+| Environment validation | Failing |
+| Deployment check script | Failing due script invocation mismatch |
+| React Doctor | Failing quality score |
+
+### Architecture Overview
+
+The backend is a NestJS service with TypeORM, PostgreSQL, Redis, BullMQ, Socket.IO, Mongoose/MongoDB for reviews, and modular feature services. Frontend apps consume shared API helpers and local package aliases. The platform is organized around food ordering, payment, delivery assignment, restaurant operations, notifications, tracking, and administrative workflows.
+
+| Layer | Evidence |
+| :--- | :--- |
+| API gateway | `apps/backend/src/main.ts` |
+| Auth module | `apps/backend/src/services/auth/auth.module.ts` |
+| JWT strategy | `apps/backend/src/services/auth/strategies/jwt.strategy.ts` |
+| RBAC guard | `apps/backend/src/security/roles.guard.ts` |
+| Session persistence | `apps/backend/src/db/entities/session.entity.ts` |
+| Payments | `apps/backend/src/services/payments/` |
+| Queue | `apps/backend/src/infra/queue/queue.service.ts` |
+| Tracking sockets | `apps/backend/src/infra/tracking/tracking.gateway.ts` |
+| KDS sockets | `apps/backend/src/services/restaurant/kds.gateway.ts` |
+| Shared API client | `packages/shared/api.ts` |
+| Proto constants | `packages/proto/src/index.ts` |
+
+### App-by-App Breakdown
+
+| App | Purpose | Verified state |
+| :--- | :--- | :--- |
+| `apps/backend` | NestJS backend, APIs, payments, delivery, notifications, sockets | Build/type/lint pass; backend unit suite passes; coverage thresholds fail |
+| `apps/customer-web` | Customer web ordering, search, checkout, tracking, wallet, subscriptions | Build/type/lint pass; one unit test; no integration/e2e tests |
+| `apps/customer-mobile` | React Native customer app | Build/type/lint pass; unit and e2e flow test currently failing |
+| `apps/delivery-partner` | Delivery partner React Native app | Build/type/lint pass; no integration/e2e scripts |
+| `apps/restaurant-dashboard` | Restaurant order/menu/inventory dashboard | Build/type/lint pass; one unit test; no integration/e2e tests |
+| `apps/driver-app` | Driver mobile app | Build/type/lint pass; no dedicated test scripts found |
+| `apps/launcher` | Launcher app | Build/type/lint pass; no dedicated test scripts found |
+| `apps/super-admin` | Admin operations dashboard | Build/type/lint pass; two unit tests; no integration/e2e tests |
+
+### Package Breakdown
+
+| Package | Purpose | Verified state |
+| :--- | :--- | :--- |
+| `packages/api-types` | Shared API types | Build/type/lint pass; no test script |
+| `packages/grpc-transport` | gRPC transport helpers | Build/type/lint pass; no test script |
+| `packages/proto` | Shared proto constants, `GRPC_PORT = 50051` | Build/type/lint pass; no test script |
+| `packages/shared` | Shared API client and constants | Build/type/lint pass; no test script |
+| `packages/ui` | Design tokens and UI exports | Build/type/lint pass; no test script |
+| `packages/ux` | UX flow documentation package | Build/type/lint pass; no test script |
+
+### API Inventory
+
+| Metric | Count |
+| :--- | :---: |
+| Backend route decorators | `263` |
+| GET routes | `128` |
+| POST routes | `99` |
+| PUT routes | `29` |
+| DELETE routes | `5` |
+| PATCH routes | `2` |
+
+### Route Inventory
+
+| Area | Inventory |
+| :--- | :--- |
+| Customer web pages | `_app`, `addresses`, `auth`, `cart`, `checkout`, `history`, `index`, `menu`, `notifications`, `offers`, `order-details`, `payment-methods`, `profile`, `reset-password`, `restaurant`, `search`, `subscriptions`, `tracking`, `wallet` |
+| Customer web API routes | `api/categories`, `api/restaurants` |
+| Restaurant dashboard API routes | `api/inventory`, `api/orders` |
+| Super-admin API routes | `api/admin/stats`, `api/orders` |
+| Customer mobile screens | `AddressesScreen`, `AuthScreen`, `CartScreen`, `CheckoutScreen`, `HistoryScreen`, `HomeScreen`, `MenuScreen`, `NotificationsScreen`, `OffersScreen`, `OrderDetailsScreen`, `ProfileScreen`, `RestaurantDetailScreen`, `SearchScreen`, `TrackingScreen`, `WalletScreen` |
+| Delivery partner screens | `AcceptOrderScreen`, `ActiveOrdersScreen`, `AuthScreen`, `EarningsScreen`, `LoginScreen`, `OrderDetailScreen`, `ProfileScreen`, `ShiftManagementScreen` |
+
+### Database Architecture
+
+SpiceGarden uses PostgreSQL through TypeORM for core transactional entities, Redis for caching/session/queue infrastructure, and MongoDB/Mongoose for reviews.
+
+| Component | Evidence |
+| :--- | :--- |
+| PostgreSQL/TypeORM entities | `apps/backend/src/db/entities/` |
+| Entity count | `65` |
+| Redis | Used by session/config and BullMQ queue service |
+| MongoDB | `ReviewDocument` in `apps/backend/src/db/mongo/review.schema.ts` |
+| Review model | `apps/backend/src/db/mongo/review.model.ts` |
+
+### Authentication & Security
+
+Auth uses JWT, session persistence, password hashing, RBAC guard infrastructure, CORS origin allowlist, encryption, logging sanitization, and environment validation.
+
+| Area | Evidence | Status |
+| :--- | :--- | :--- |
+| JWT validation | `apps/backend/src/services/auth/auth.module.ts`, `apps/backend/src/services/auth/strategies/jwt.strategy.ts` | Placeholder checks exist |
+| RBAC | `apps/backend/src/security/roles.guard.ts` | Guard exists; usage must be audited per route |
+| Sessions | `apps/backend/src/db/entities/session.entity.ts` | Entity supports `refreshToken`; `AuthService` currently creates sessions without setting refresh token |
+| CORS | `apps/backend/src/security/cors-origin.ts` | Allowlist helper exists |
+| Encryption | `apps/backend/src/security/encryption.service.ts` | Startup fails on missing/placeholder `ENCRYPTION_SECRET` |
+| Logging sanitization | `apps/backend/src/logging/logging.service.ts` | Sanitization helper exists |
+| Runtime security | `infra/scripts/security-tests.js` | Rate limiting validation failed |
+
+### Payments System
+
+Payments are implemented around Stripe/Razorpay gateways, idempotency keys, webhooks, chargeback handling, and payment hardening.
+
+| Area | Evidence | Status |
+| :--- | :--- | :--- |
+| Payment orchestration | `apps/backend/src/services/payments/payments.service.ts` | Payment flow exists |
+| Idempotency | `apps/backend/src/services/payments/idempotency.service.ts` | Idempotency service exists |
+| Stripe | `apps/backend/src/services/payments/gateways/stripe-gateway.service.ts` | Placeholder/default values found; must be validated against production config |
+| Razorpay | `apps/backend/src/services/payments/gateways/razorpay-gateway.service.ts` | Placeholder/default values found; must be validated against production config |
+| Chargeback | `apps/backend/src/services/payments/chargeback/chargeback.service.ts` | Placeholder/default values found |
+| Hardening | `apps/backend/src/services/payments/payment-hardening.service.ts` | Placeholder/default values found |
+
+### Delivery & Tracking System
+
+Delivery functionality includes driver assignment, ETA intelligence, delivery service orchestration, and Socket.IO tracking.
+
+| Area | Evidence |
+| :--- | :--- |
+| Driver assignment | `apps/backend/src/modules/driver-assignment/dispatch-engine.service.ts` |
+| ETA intelligence | `apps/backend/src/modules/driver-assignment/eta-intelligence.service.ts` |
+| Delivery orchestration | `apps/backend/src/services/delivery/delivery.service.ts` |
+| Customer tracking sockets | `apps/backend/src/infra/tracking/tracking.gateway.ts` |
+| Restaurant KDS sockets | `apps/backend/src/services/restaurant/kds.gateway.ts` |
+
+### Notifications System
+
+Notifications are implemented as a backend service with SMS, email, push, and APNs provider structure.
+
+| Area | Evidence |
+| :--- | :--- |
+| Notification service | `apps/backend/src/services/notifications/notification.service.ts` |
+
+### Shared Design System
+
+The shared UI package exports UI components and design tokens.
+
+| Area | Evidence |
+| :--- | :--- |
+| UI exports | `packages/ui/index.ts` |
+| Design tokens | `packages/ui/tokens.ts` |
+| Shared API client | `packages/shared/api.ts` |
+| Shared constants | `packages/shared/constants.ts` |
+
+### Infrastructure & DevOps
+
+The repository includes Docker, Compose, Kubernetes manifests, GitHub Actions workflows, and infrastructure scripts.
+
+| Area | Evidence |
+| :--- | :--- |
+| Dockerfile | `Dockerfile` |
+| Compose | `compose.dev.yaml` |
+| Kubernetes | `infra/k8s/` |
+| GitHub Actions | `.github/workflows/ci-cd.yml` |
+| Infra scripts | `infra/scripts/` |
+
+### Docker Setup
+
+The backend Dockerfile uses a multi-stage build, copies dependencies, installs production dependencies, copies application code, exposes `3001`, and includes a healthcheck. It runs as non-root but copies the full root `node_modules` directory into the image.
+
+| File | Observation |
+| :--- | :--- |
+| `Dockerfile` | Non-root user and healthcheck exist |
+| `Dockerfile` | Copies full root `node_modules` into image |
+| `compose.dev.yaml` | Local development credentials are hardcoded and must not be treated as production secrets |
+
+### Kubernetes Setup
+
+Kubernetes manifests include production-hardened deployment, backend deployment, secrets template, network policy, HPA, PDB, and security contexts.
+
+| Manifest | Evidence |
+| :--- | :--- |
+| `infra/k8s/production-hardened.yaml` | Hardened security context, probes, resources, NetworkPolicy, HPA, PDB |
+| `infra/k8s/backend-deployment.yaml` | Backend deployment/service |
+| `infra/k8s/secrets.yaml` | Kubernetes Secret stringData template |
+
+### CI/CD Pipeline
+
+| Area | Evidence | Status |
+| :--- | :--- | :--- |
+| Workflow | `.github/workflows/ci-cd.yml` | CI/CD workflow exists |
+| Audit gate | `.github/workflows/ci-cd.yml` | Current workflow allows audit failures with `npm audit --audit-level=moderate || true` |
+| Build/lint/test | Workflow plus root scripts | Build/lint/typecheck pass locally; tests do not fully pass |
+
+### Environment Variables
+
+Environment validation found two current issues:
+
+| Environment | Issue |
+| :--- | :--- |
+| Production | `STRIPE_SECRET_KEY_FILE` not configured |
+| Staging | `STRIPE_SECRET_KEY_FILE` should reference staging secrets |
+
+`compose.dev.yaml` contains local development passwords/secrets and should only be used for local development.
+
+### Build Verification
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Passed |
+| `npx tsc --noEmit` | Passed |
+| `npm run lint` | Passed |
+
+### Test Verification
+
+| Command | Result |
+| :--- | :--- |
+| `npm run test:unit` | Failed; `apps/customer-mobile/__tests__/e2e-flow.test.js` failed |
+| `npm run test:integration` | Passed; `9` suites, `35` tests |
+| `npm run test:e2e` | Failed; `apps/customer-mobile/__tests__/e2e-flow.test.js` failed |
+| `npm run test:all` | Failed; failed through `apps/customer-mobile` unit test execution |
+| Backend coverage | Failed thresholds; `47.16%` statements, `14.63%` branches, `17.33%` functions, `45.81%` lines |
+
+No integration or e2e tests were executed for workspaces whose scripts echo “No integration tests” or “No e2e tests”.
+
+### React Doctor Report
+
+| Metric | Value |
+| :--- | :---: |
+| Tool | `npx react-doctor@latest --verbose` |
+| Version | `0.5.6` |
+| Files scanned | `136` |
+| Duration | `38.0s` |
+| Score | `61/100` |
+| Label | `Needs work` |
+| Issues | `60` |
+| Bugs | `32` |
+| Performance | `2` |
+| Maintainability | `26` |
+
+| App | Score | Label | Warnings |
+| :--- | :---: | :--- | :---: |
+| `@spicegarden/customer-web` | `64/100` | OK | `16` |
+| `@spicegarden/delivery-partner` | `61/100` | OK | `35` |
+| `@spicegarden/restaurant-dashboard` | `75/100` | Great | `4` |
+| `@spicegarden/super-admin` | `74/100` | OK | `5` |
+
+### Dependency Audit
+
+| Metric | Result |
+| :--- | :---: |
+| `npm audit --audit-level=moderate` | `0` vulnerabilities |
+| `npm outdated` | `60` outdated packages |
+| Extraneous packages | Present |
+| Invalid installs | Present |
+
+Notable dependency health issues include extraneous packages such as `@babel/plugin-transform-arrow-functions`, `@emnapi/runtime`, `expo-image`, `lottie-web`, `react-native-is-edge-to-edge`, `react-native-reanimated`, and `sf-symbols-typescript`; invalid installs include `jest@29.7.0`, `@testing-library/jest-dom@5.17.0`, `@testing-library/react@14.3.1`, `jest-environment-jsdom@29.7.0`, and `eslint-config-next@16.2.6` in Next workspaces.
+
+### Security Audit
+
+| Area | Status |
+| :--- | :--- |
+| npm vulnerabilities | Passing; `0` |
+| Rate limiting | Failing; `security-tests.js` reported `Rate limited responses: 0/100` |
+| Penetration script | Failed because backend was unreachable on `localhost:3001` |
+| Secrets validation | Failing; Stripe secret file issues |
+| Auth placeholders | Present in JWT and payment gateway paths |
+| RBAC | Guard exists; route-level enforcement should be audited |
+| CORS | Allowlist helper exists |
+| Logging | Sanitization helper exists |
+| Encryption | Startup validation exists |
+
+### Production Readiness Assessment
+
+| Area | Verdict |
+| :--- | :--- |
+| Build | Ready |
+| Typecheck | Ready |
+| Lint | Ready |
+| Dependency vulnerabilities | Ready |
+| Test suite | Not ready |
+| Coverage | Not ready |
+| Load testing | Not ready |
+| Security tests | Not ready |
+| Environment validation | Not ready |
+| Deployment script | Not ready |
+| Kubernetes hardening | Partially ready; manifests include hardening but runtime deployment was not validated |
+| Observability | Partially ready; Prometheus/Grafana/OpenSearch resources exist, but operational validation is incomplete |
+| Overall | Not production-ready until P0/P1 blockers are fixed and re-run |
+
+### Known Technical Debt
+
+| Priority | Item | Evidence |
+| :--- | :--- | :--- |
+| P0 | Fix failing `apps/customer-mobile/__tests__/e2e-flow.test.js` | `npm run test:unit`, `npm run test:e2e`, `npm run test:all` |
+| P0 | Fix backend coverage thresholds | `npm run test:cov --workspace @spicegarden/backend -- --runInBand` |
+| P0 | Fix k6 load script metric conflict | `apps/backend/test/load/10k-users.js:6:27` |
+| P0 | Fix rate limiting security finding | `infra/scripts/security-tests.js` |
+| P1 | Fix env validation for Stripe secret files | `infra/scripts/validate-env-consistency.js` |
+| P1 | Fix deployment-check script execution mismatch | `node infra/scripts/deployment-check.js` |
+| P1 | Resolve React Doctor bugs and maintainability issues | `npx react-doctor@latest --verbose` |
+| P1 | Remove extraneous and invalid installs | `npm ls --workspaces --depth=0` |
+| P2 | Audit placeholder values in auth/payment/security modules | Source scan |
+| P2 | Audit route-level RBAC guard usage | `apps/backend/src/security/roles.guard.ts` |
+| P2 | Complete refresh-token session creation | `apps/backend/src/db/entities/session.entity.ts`, `apps/backend/src/services/auth/auth.service.ts` |
+| P2 | Reduce `any`, TODO/FIXME, and console markers | Sample scan |
+| P3 | Remove or properly gate chaos tests | `npm run test:chaos` |
+
+### Known Bugs
+
+| Priority | Bug | Reproduction |
+| :--- | :--- | :--- |
+| P0 | Customer mobile e2e-flow test fails | `npm run test:unit` |
+| P0 | Customer mobile e2e-flow test fails | `npm run test:e2e` |
+| P0 | Root test aggregation fails | `npm run test:all` |
+| P0 | Backend coverage thresholds fail | `npm run test:cov --workspace @spicegarden/backend -- --runInBand` |
+| P0 | Load script fails with k6 metric conflict | `npm run test:load --workspace @spicegarden/backend` |
+| P1 | Rate limiting validation fails | `node infra/scripts/security-tests.js` |
+| P1 | Penetration test cannot reach backend | `node infra/scripts/penetration-tests.js` |
+| P1 | Env validation fails for Stripe secret files | `node infra/scripts/validate-env-consistency.js` |
+| P1 | Deployment check script fails under Node | `node infra/scripts/deployment-check.js` |
+
+### Deployment Checklist
+
+Before production deployment, complete and record these checks:
+
+1. Fix `apps/customer-mobile/__tests__/e2e-flow.test.js`.
+2. Re-run `npm run test:unit`, `npm run test:e2e`, and `npm run test:all`.
+3. Fix backend coverage thresholds and re-run `npm run test:cov --workspace @spicegarden/backend -- --runInBand`.
+4. Fix `apps/backend/test/load/10k-users.js` and re-run `npm run test:load --workspace @spicegarden/backend`.
+5. Fix rate limiting and re-run `node infra/scripts/security-tests.js`.
+6. Start backend and re-run `node infra/scripts/penetration-tests.js`.
+7. Fix `STRIPE_SECRET_KEY_FILE` for production and staging and re-run `node infra/scripts/validate-env-consistency.js`.
+8. Execute `deployment-check.sh` as Bash, not Node, or replace the script with a Node-compatible implementation.
+9. Re-run `npm run build`, `npx tsc --noEmit`, `npm run lint`, and `npm audit --audit-level=moderate`.
+10. Review Kubernetes manifests against the target cluster, ingress, TLS, secrets, and network policy requirements.
+
+### Scaling Readiness
+
+| Area | Status |
+| :--- | :--- |
+| HPA | Present in hardened Kubernetes manifest |
+| PDB | Present in hardened Kubernetes manifest |
+| Resource requests/limits | Present in hardened Kubernetes manifest |
+| Load test | Not ready; k6 script fails |
+| Queue | Redis/BullMQ implementation exists |
+| gRPC port constant | `50051` in `packages/proto/src/index.ts` |
+| Backend port | `3001` |
+| Verdict | Infrastructure scaffolding exists, but scaling is not verified until load tests pass |
+
+### Observability & Monitoring
+
+| Component | Evidence |
+| :--- | :--- |
+| Prometheus | `infra/k8s/prometheus.yaml`, `infra/k8s/prometheus-config.yaml` |
+| Grafana | `infra/k8s/grafana.yaml`, `infra/k8s/grafana-config.yaml` |
+| Alertmanager | `infra/k8s/alertmanager.yaml` |
+| OpenSearch | `infra/k8s/opensearch.yaml` |
+| OpenSearch Dashboards | `infra/k8s/opensearch-dashboards.yaml` |
+| Logging | `apps/backend/src/logging/logging.service.ts` |
+
+### Performance Risks
+
+| Risk | Evidence |
+| :--- | :--- |
+| React Doctor issues | `60` total issues, including `32` bugs |
+| Large components | React Doctor flagged `LargeComponent` warnings |
+| Unnecessary re-renders | React Doctor flagged `UnnecessaryMemo` warnings |
+| Missing effect dependencies | React Doctor flagged `MissingUseMemoDependency` and `MissingUseCallbackDependency` |
+| JS-thread animations | React Native animation warnings in mobile apps |
+| Console noise | Sample scan found `494` console markers |
+| Loose typing | Sample scan found `6872` TypeScript `any` markers |
+
+### Cost Estimation for Production
+
+No dollar cost estimate is included because no cloud provider, region, storage size, traffic target, SLA, or managed service pricing was provided. The repository does provide production resource targets in Kubernetes manifests, which should be used as the basis for cost modeling after load testing passes.
+
+### Technical Roadmap
+
+| Priority | Roadmap item |
+| :--- | :--- |
+| P0 | Fix failing mobile e2e-flow test and root test gate |
+| P0 | Fix backend coverage thresholds |
+| P0 | Fix k6 load test script and validate 10k/20k/breaking-point scenarios |
+| P0 | Fix rate limiting and re-run security tests |
+| P1 | Fix env validation and deployment check script |
+| P1 | Resolve React Doctor bugs and maintainability issues |
+| P1 | Clean dependency tree and invalid installs |
+| P2 | Audit placeholders, RBAC usage, refresh-token session creation, and payment gateway configuration |
+| P2 | Reduce `any`, TODO/FIXME, and console markers |
+| P3 | Add missing package tests and improve integration/e2e coverage |
+
+### Contributor Guide
+
+Use these commands for the current verified workflow:
+
+```bash
+npm run build
+npx tsc --noEmit
+npm run lint
+npm audit --audit-level=moderate
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+npm run test:all
+npm run test:cov --workspace @spicegarden/backend -- --runInBand
+npm run test:load --workspace @spicegarden/backend
+node infra/scripts/security-tests.js
+node infra/scripts/validate-env-consistency.js
+```
+
+### Troubleshooting Guide
+
+| Symptom | Likely cause | Fix |
+| :--- | :--- | :--- |
+| `npm run test:all` fails | `apps/customer-mobile/__tests__/e2e-flow.test.js` fails | Fix mobile e2e-flow test and re-run root test suite |
+| Backend coverage fails | Coverage below configured thresholds | Add tests or adjust thresholds deliberately after review |
+| k6 load test fails | Metric conflict at `apps/backend/test/load/10k-users.js:6:27` | Fix k6 metric definitions and re-run |
+| Security test fails | Rate limiting did not trigger | Fix rate limiter configuration and re-run |
+| Penetration test fails | Backend unreachable on `localhost:3001` | Start backend and re-run |
+| Env validation fails | Stripe secret file mismatch | Configure correct secret file references |
+| Deployment check fails | Bash script executed by Node | Run as Bash or rewrite for Node |
+| React Doctor fails | Quality score below threshold | Fix reported React issues and re-run |
+
+### Verified Metrics Snapshot
+
+| Metric | Value |
+| :--- | :---: |
+| Tracked files | `2680` |
+| Tracked directories | `361` |
+| Project files scanned for LOC | `1268` |
+| Project directories scanned for LOC | `250` |
+| Backend LOC | `38675` |
+| Customer mobile LOC | `49725` |
+| Customer web LOC | `30004` |
+| Delivery partner LOC | `15154` |
+| Restaurant dashboard LOC | `4447` |
+| Super-admin LOC | `6322` |
+| Infra LOC | `8344` |
+| Shared LOC | `304` |
+| UI LOC | `7226` |
+| Backend route decorators | `263` |
+| Frontend pages | `50` |
+| Mobile screens | `26` |
+| Hooks | `15` |
+| Test files | `187` |
+| TODO/FIXME markers | `172` |
+| TypeScript `any` markers | `6872` |
+| Console markers | `494` |
+| npm vulnerabilities | `0` |
+| Outdated packages | `60` |
+| React Doctor score | `61/100` |
+| React Doctor issues | `60` |
+
+### Appendix — Raw Diagnostic Data
+
+The raw verification data used for this README update is captured in `README_DATA_EXPORT.json`. The most important command-level findings are:
+
+- `npm run build` passed.
+- `npx tsc --noEmit` passed.
+- `npm run lint` passed.
+- `npm audit --audit-level=moderate` found `0` vulnerabilities.
+- `npm run test:unit` failed through `apps/customer-mobile/__tests__/e2e-flow.test.js`.
+- `npm run test:integration` passed with `9` suites and `35` tests.
+- `npm run test:e2e` failed through `apps/customer-mobile/__tests__/e2e-flow.test.js`.
+- `npm run test:all` failed through `apps/customer-mobile`.
+- Backend coverage failed thresholds with `188` tests passed and `1` skipped.
+- React Doctor scored `61/100` with `60` issues.
+- Load test failed at `apps/backend/test/load/10k-users.js:6:27`.
+- Security test reported `Rate limited responses: 0/100`.
+- Env validation reported two Stripe secret file issues.
+- Deployment check failed because the Bash script was executed as Node.
 
