@@ -2,6 +2,6 @@ import { NotificationPreferencesService } from './notification-preferences.servi
 export declare class NotificationPreferencesController {
     private readonly prefsService;
     constructor(prefsService: NotificationPreferencesService);
-    getPreferences(req: any): Promise<import("../../db/entities/notification-preference.entity").NotificationPreferenceEntity>;
-    updatePreferences(req: any, updates: any): Promise<import("../../db/entities/notification-preference.entity").NotificationPreferenceEntity>;
+    getPreferences(req: any): unknown;
+    updatePreferences(req: any, updates: any): unknown;
 }

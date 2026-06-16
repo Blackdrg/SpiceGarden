@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripeWebhookEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -33,11 +34,11 @@ __decorate([
 ], StripeWebhookEntity.prototype, "eventType", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], StripeWebhookEntity.prototype, "processedAt", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], StripeWebhookEntity.prototype, "createdAt", void 0);
 exports.StripeWebhookEntity = StripeWebhookEntity = __decorate([
     (0, typeorm_1.Entity)('stripe_webhooks')

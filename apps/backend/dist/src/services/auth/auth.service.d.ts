@@ -15,14 +15,11 @@ export declare class AuthService {
         name: string;
         type: string;
         ip: string;
-    }): Promise<SessionEntity>;
+    }): unknown;
     validateUser(email: string, pass: string): Promise<any>;
     login(user: any, deviceInfo: {
         name: string;
         type: string;
         ip: string;
-    }): Promise<{
-        access_token: string;
-        refresh_token: any;
-    }>;
+    }): unknown;
 }

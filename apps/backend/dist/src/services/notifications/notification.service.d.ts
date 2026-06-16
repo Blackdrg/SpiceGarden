@@ -11,108 +11,16 @@ export declare class NotificationService {
         type?: string;
         userAgent?: string;
         ip?: string;
-    }): Promise<UserDeviceEntity>;
-    unregisterDevice(userId: string, fcmToken: string): Promise<void>;
-    sendPush(userId: string, title: string, body: string, data?: any): Promise<{
-        success: boolean;
-        reason: string;
-        result?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        result: {
-            message?: string;
-            sid?: string;
-        };
-        reason?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: string;
-        reason?: undefined;
-        result?: undefined;
-    }>;
-    sendSMS(phone: string, message: string): Promise<{
-        success: boolean;
-        reason: string;
-        sid?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        sid: string | undefined;
-        reason?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: string;
-        reason?: undefined;
-        sid?: undefined;
-    }>;
-    sendEmail(email: string, subject: string, template: string, context: any): Promise<{
-        success: boolean;
-        reason: string;
-        error?: undefined;
-    } | {
-        success: boolean;
-        reason?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: string;
-        reason?: undefined;
-    }>;
-    notifyOrderUpdate(userId: string, orderId: string, status: string, phone?: string): Promise<void>;
-    sendOTP(phone: string, otp: string): Promise<{
-        success: boolean;
-        reason: string;
-        sid?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        sid: string | undefined;
-        reason?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: string;
-        reason?: undefined;
-        sid?: undefined;
-    }>;
-    sendAPNs(userId: string, title: string, body: string, data?: any): Promise<{
-        success: boolean;
-        reason: string;
-        sent?: undefined;
-        results?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        sent: number;
-        results: ({
-            token: string;
-            success: boolean;
-            error: string;
-        } | {
-            token: string;
-            success: boolean;
-            error?: undefined;
-        })[];
-        reason?: undefined;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: string;
-        reason?: undefined;
-        sent?: undefined;
-        results?: undefined;
-    }>;
+    }): unknown;
+    unregisterDevice(userId: string, fcmToken: string): any;
+    sendPush(userId: string, title: string, body: string, data?: any): unknown;
+    sendSMS(phone: string, message: string): unknown;
+    sendEmail(email: string, subject: string, template: string, context: any): unknown;
+    notifyOrderUpdate(userId: string, orderId: string, status: string, phone?: string): any;
+    sendOTP(phone: string, otp: string): unknown;
+    sendAPNs(userId: string, title: string, body: string, data?: any): unknown;
     private generateJWT;
-    notifyDeliveryLifecycle(orderId: string, event: 'driver_assigned' | 'picked_up' | 'nearby' | 'delivered', userId: string, driverInfo?: any): Promise<void>;
-    notifyRestaurant(orderId: string, alertType: 'new_order' | 'order_cancelled' | 'order_delayed', restaurantId: string): Promise<{
-        success: boolean;
-        alertType: "new_order" | "order_cancelled" | "order_delayed";
-    }>;
-    notifyDriver(driverId: string, orderId: string, event: 'assigned' | 'reassigned'): Promise<{
-        success: boolean;
-        event: "assigned" | "reassigned";
-    }>;
+    notifyDeliveryLifecycle(orderId: string, event: 'driver_assigned' | 'picked_up' | 'nearby' | 'delivered', userId: string, driverInfo?: any): any;
+    notifyRestaurant(orderId: string, alertType: 'new_order' | 'order_cancelled' | 'order_delayed', restaurantId: string): unknown;
+    notifyDriver(driverId: string, orderId: string, event: 'assigned' | 'reassigned'): unknown;
 }

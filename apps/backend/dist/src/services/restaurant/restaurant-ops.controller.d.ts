@@ -27,34 +27,34 @@ export declare class RestaurantOpsController {
             description?: string;
             businessDetails?: any;
         };
-    }): Promise<import("../../db/entities/restaurant-onboarding.entity").RestaurantOnboardingEntity>;
-    getOnboardingProgress(id: string): Promise<any>;
+    }): unknown;
+    getOnboardingProgress(id: string): unknown;
     updateOnboardingStep(id: string, body: {
         step: OnboardingStep;
         data?: any;
-    }): Promise<import("../../db/entities/restaurant-onboarding.entity").RestaurantOnboardingEntity>;
-    completeOnboarding(id: string, req: AuthenticatedRequest): Promise<import("../../db/entities/restaurant-onboarding.entity").RestaurantOnboardingEntity>;
+    }): unknown;
+    completeOnboarding(id: string, req: AuthenticatedRequest): unknown;
     submitForModeration(body: {
         menuItemId: string;
         restaurantId: string;
         action: ModerationAction;
         data: Record<string, any>;
         originalData?: Record<string, any>;
-    }): Promise<import("../../db/entities/menu-moderation.entity").MenuModerationEntity>;
-    getPendingModerations(restaurantId?: string): Promise<import("../../db/entities/menu-moderation.entity").MenuModerationEntity[]>;
+    }): unknown;
+    getPendingModerations(restaurantId?: string): unknown;
     reviewModeration(id: string, body: {
         status: ModerationStatus;
         notes?: string;
-    }, req: AuthenticatedRequest): Promise<import("../../db/entities/menu-moderation.entity").MenuModerationEntity>;
-    getPayoutHistory(restaurantId: string): Promise<import("../../db/entities/payout-report.entity").PayoutReportEntity[]>;
+    }, req: AuthenticatedRequest): unknown;
+    getPayoutHistory(restaurantId: string): unknown;
     generatePayout(body: {
         restaurantId: string;
         periodStart: string;
         periodEnd: string;
-    }): Promise<import("../../db/entities/payout-report.entity").PayoutReportEntity>;
+    }): unknown;
     processPayout(id: string, body: {
         reference: string;
-    }): Promise<import("../../db/entities/payout-report.entity").PayoutReportEntity>;
+    }): unknown;
     createBranch(body: {
         restaurantId: string;
         branchData: {
@@ -65,7 +65,7 @@ export declare class RestaurantOpsController {
             openingTime?: string;
             closingTime?: string;
         };
-    }): Promise<import("../../db/entities/restaurant-branch.entity").RestaurantBranchEntity>;
+    }): unknown;
     updateBranch(id: string, body: Partial<{
         branchName: string;
         address: string;
@@ -74,11 +74,11 @@ export declare class RestaurantOpsController {
         lat: number;
         lng: number;
         isOnline: boolean;
-    }>): Promise<import("../../db/entities/restaurant-branch.entity").RestaurantBranchEntity>;
+    }>): unknown;
     toggleBranchStatus(id: string, body: {
         isOnline: boolean;
-    }): Promise<import("../../db/entities/restaurant-branch.entity").RestaurantBranchEntity>;
-    getBranch(id: string): Promise<import("../../db/entities/restaurant-branch.entity").RestaurantBranchEntity>;
+    }): unknown;
+    getBranch(id: string): unknown;
     createCommissionRule(body: {
         restaurantId: string;
         ruleData: {
@@ -90,13 +90,11 @@ export declare class RestaurantOpsController {
             validTo?: Date;
             applicableCategories?: string[];
         };
-    }): Promise<import("../../db/entities/commission-rule.entity").CommissionRuleEntity>;
-    getCommissionRules(restaurantId: string): Promise<import("../../db/entities/commission-rule.entity").CommissionRuleEntity[]>;
+    }): unknown;
+    getCommissionRules(restaurantId: string): unknown;
     calculateCommission(body: {
         restaurantId: string;
         orderAmount: number;
-    }): Promise<{
-        commissionAmount: number;
-    }>;
+    }): unknown;
 }
 export {};

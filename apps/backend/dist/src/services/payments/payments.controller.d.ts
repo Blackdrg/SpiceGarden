@@ -13,24 +13,12 @@ export declare class PaymentsController {
     private idempotency;
     private configService;
     constructor(paymentService: PaymentService, paymentHardening: PaymentHardeningService, retryService: RetryService, fraudHardening: FraudHardeningService, idempotency: IdempotencyService, configService: ConfigService);
-    createPaymentIntent(body: any, req: Request, idempotencyKey?: string, gateway?: string): Promise<{
-        error: string;
-        reasons: string[];
-        riskScore: number;
-        clientSecret?: undefined;
-        gateway?: undefined;
-    } | {
-        clientSecret: any;
-        gateway: string;
-        error?: undefined;
-        reasons?: undefined;
-        riskScore?: undefined;
-    }>;
-    refund(body: any, idempotencyKey?: string, gateway?: string): Promise<any>;
-    getAvailableGateways(): string[];
+    createPaymentIntent(body: any, req: Request, idempotencyKey?: string, gateway?: string): unknown;
+    refund(body: any, idempotencyKey?: string, gateway?: string): unknown;
+    getAvailableGateways(): {};
     getGatewayConfig(): {
-        primaryGateway: string;
-        availableGateways: string[];
+        primaryGateway: any;
+        availableGateways: {};
         stripeEnabled: boolean;
         razorpayEnabled: boolean;
     };

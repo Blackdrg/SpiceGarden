@@ -2,11 +2,11 @@ import { RestaurantService } from './restaurant.service';
 export declare class RestaurantController {
     private restaurantService;
     constructor(restaurantService: RestaurantService);
-    getAll(): Promise<import("../../db/entities/restaurant.entity").RestaurantEntity[]>;
-    search(query: string): Promise<import("../../db/entities/restaurant.entity").RestaurantEntity[]>;
-    getNearby(lat: string, lng: string, radius?: string): Promise<import("../../db/entities/restaurant-branch.entity").RestaurantBranchEntity[]>;
-    getDetails(slug: string): Promise<import("../../db/entities/restaurant.entity").RestaurantEntity | null>;
+    getAll(): unknown;
+    search(query: string): unknown;
+    getNearby(lat: string, lng: string, radius?: string): unknown;
+    getDetails(slug: string): unknown;
     updateStatus(id: string, body: {
         isOnline: boolean;
-    }): Promise<import("typeorm").UpdateResult>;
+    }): unknown;
 }

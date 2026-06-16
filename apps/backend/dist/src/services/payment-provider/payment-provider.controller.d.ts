@@ -4,16 +4,10 @@ export declare class PaymentProviderController {
     private readonly stripeConnectService;
     private readonly razorpaySettlementService;
     constructor(stripeConnectService: StripeConnectService, razorpaySettlementService: RazorpaySettlementService);
-    createStripeConnectAccount(req: any, dto: any): Promise<import("./stripe-connect.service").StripeConnectAccountResult>;
-    getStripeConnectStatus(req: any): Promise<import("./stripe-connect.service").StripeConnectAccountResult>;
-    createRazorpayFundAccount(req: any, dto: any): Promise<import("./razorpay-settlement.service").RazorpayFundAccountResult>;
-    getRazorpaySettlementStatus(req: any): Promise<{
-        status: string;
-        fundAccountId?: string;
-    }>;
-    getPayoutHistory(req: any, limit?: string): Promise<any[]>;
-    getAccountBalance(req: any): Promise<{
-        available: number;
-        pending: number;
-    }>;
+    createStripeConnectAccount(req: any, dto: any): unknown;
+    getStripeConnectStatus(req: any): unknown;
+    createRazorpayFundAccount(req: any, dto: any): unknown;
+    getRazorpaySettlementStatus(req: any): unknown;
+    getPayoutHistory(req: any, limit?: string): unknown;
+    getAccountBalance(req: any): unknown;
 }

@@ -15,30 +15,19 @@ export declare class DriverController {
         user: {
             id: string;
         };
-    }): Promise<DriverEntity | null>;
-    getDriver(id: string): Promise<DriverEntity | null>;
-    getEarnings(id: string): Promise<{
-        availableBalance: number;
-        pendingBalance: number;
-        lifetimeEarnings: number;
-        weeklyEarnings: number;
-        todayEarnings: number;
-    }>;
+    }): unknown;
+    getDriver(id: string): unknown;
+    getEarnings(id: string): unknown;
     updateLocation(id: string, body: {
         lat: number;
         lng: number;
         heading?: number;
         speed?: number;
-    }): Promise<{
-        status: string;
-    }>;
+    }): unknown;
     toggleAvailability(id: string, body: {
         isAvailable: boolean;
-    }): Promise<{
-        driverId: string;
-        isAvailable: boolean;
-    }>;
-    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<DriverEntity[]>;
+    }): unknown;
+    getAvailableDrivers(lat: number, lng: number, radius?: number): unknown;
 }
 export declare class OrderDriverController {
     private orderRepo;
@@ -50,34 +39,21 @@ export declare class OrderDriverController {
     constructor(orderRepo: Repository<OrderEntity>, driverRepo: Repository<DriverEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, dataSource: DataSource, trackingGateway: TrackingGateway, notificationService: NotificationService);
     acceptOrder(id: string, body: {
         driverId: string;
-    }): Promise<{
-        orderId: string;
-        status: string;
-    }>;
+    }): unknown;
     rejectOrder(id: string, body: {
         driverId: string;
-    }): Promise<{
-        orderId: string;
-        status: string;
-    }>;
+    }): unknown;
     updateStatus(id: string, body: {
         status: 'pickedUp' | 'onTheWay' | 'delivered' | 'failed';
         actualTimeMinutes?: number;
         failureReason?: string;
-    }): Promise<{
-        orderId: string;
-        status: "delivered" | "failed" | "pickedUp" | "onTheWay";
-    }>;
+    }): unknown;
     verifyOTP(id: string, body: {
         otp: string;
         driverId: string;
-    }): Promise<{
-        valid: boolean;
-    }>;
+    }): unknown;
     reportIssue(id: string, body: {
         issue: string;
         details: string;
-    }): Promise<{
-        status: string;
-    }>;
+    }): unknown;
 }

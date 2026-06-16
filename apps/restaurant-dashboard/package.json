@@ -8,9 +8,10 @@
     "start": "next start -p 3003",
     "lint": "eslint src",
     "test:unit": "jest --testPathPatterns=__tests__ --runInBand",
-    "test:integration": "echo \"no integration tests\"",
-    "test:e2e": "echo \"no e2e tests\"",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+    "test:integration": "jest --config jest.config.js --testPathPattern=\"integration\" --runInBand",
+    "test:e2e": "jest --config jest.config.js --testPathPattern=\"e2e\" --runInBand",
+    "test:smoke": "jest --config jest.config.js --testPathPattern=\"kitchen-dashboard\" --runInBand",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:smoke"
   },
   "dependencies": {
     "@spicegarden/ui": "*",
@@ -22,18 +23,19 @@
   "devDependencies": {
     "@babel/preset-react": "^7.29.7",
     "@next/eslint-plugin-next": "15.5.18",
+    "@rushstack/eslint-patch": "^1.10.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
     "babel-jest": "^30.4.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.5.18",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "typescript": "^5.0.0"

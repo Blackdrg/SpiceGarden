@@ -4,23 +4,23 @@ export declare class FinanceController {
     private taxService;
     private reconciliationService;
     constructor(taxService: TaxReportingService, reconciliationService: ReconciliationService);
-    getGSTReport(restaurantId: string, month: string, year: string): Promise<any>;
+    getGSTReport(restaurantId: string, month: string, year: string): unknown;
     reconcilePayments(body: {
         startDate: string;
         endDate: string;
-    }): Promise<any>;
+    }): unknown;
     reconcilePayouts(body: {
         restaurantId: string;
         startDate: string;
         endDate: string;
-    }): Promise<any>;
+    }): unknown;
     reconcileDriverPayments(body: {
         driverId: string;
         startDate: string;
         endDate: string;
-    }): Promise<any>;
+    }): unknown;
     runFullReconciliation(body: {
         startDate: string;
         endDate: string;
-    }): Promise<any>;
+    }): unknown;
 }

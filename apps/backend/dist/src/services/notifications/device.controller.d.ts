@@ -12,16 +12,10 @@ export declare class DeviceController {
             userAgent?: string;
             ip?: string;
         };
-    }): Promise<{
-        success: boolean;
-        message: string;
-    }>;
+    }): unknown;
     unregisterDevice(body: {
         userId: string;
         fcmToken?: string;
         apnsToken?: string;
-    }): Promise<{
-        success: boolean;
-        message: string;
-    }>;
+    }): unknown;
 }

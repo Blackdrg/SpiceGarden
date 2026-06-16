@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RefundApprovalEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -77,7 +78,7 @@ __decorate([
 ], RefundApprovalEntity.prototype, "approverId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], RefundApprovalEntity.prototype, "approvedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
@@ -89,7 +90,7 @@ __decorate([
 ], RefundApprovalEntity.prototype, "approvalNotes", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], RefundApprovalEntity.prototype, "processedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
@@ -105,15 +106,15 @@ __decorate([
 ], RefundApprovalEntity.prototype, "managerApproverId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], RefundApprovalEntity.prototype, "managerApprovedAt", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
 ], RefundApprovalEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
 ], RefundApprovalEntity.prototype, "updatedAt", void 0);
 exports.RefundApprovalEntity = RefundApprovalEntity = __decorate([
     (0, typeorm_1.Entity)('refund_approvals')

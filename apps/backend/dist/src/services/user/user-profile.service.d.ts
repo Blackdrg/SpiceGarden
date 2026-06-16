@@ -5,7 +5,7 @@ export declare class UserProfileService {
     private readonly addressRepo;
     private readonly paymentMethodRepo;
     constructor(addressRepo: Repository<AddressEntity>, paymentMethodRepo: Repository<PaymentMethodEntity>);
-    getAddresses(userId: string): Promise<AddressEntity[]>;
+    getAddresses(userId: string): unknown;
     createAddress(userId: string, data: {
         label: string;
         addressLine: string;
@@ -17,7 +17,7 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault?: boolean;
-    }): Promise<AddressEntity>;
+    }): unknown;
     updateAddress(userId: string, id: string, data: Partial<{
         label: string;
         addressLine: string;
@@ -29,11 +29,9 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault: boolean;
-    }>): Promise<AddressEntity>;
-    deleteAddress(userId: string, id: string): Promise<{
-        success: boolean;
-    }>;
-    getPaymentMethods(userId: string): Promise<PaymentMethodEntity[]>;
+    }>): unknown;
+    deleteAddress(userId: string, id: string): unknown;
+    getPaymentMethods(userId: string): unknown;
     createPaymentMethod(userId: string, data: {
         type: 'card' | 'upi' | 'wallet';
         cardLast4?: string;
@@ -43,10 +41,8 @@ export declare class UserProfileService {
         walletProvider?: string;
         externalPaymentMethodId?: string;
         isDefault?: boolean;
-    }): Promise<PaymentMethodEntity>;
-    deletePaymentMethod(userId: string, id: string): Promise<{
-        success: boolean;
-    }>;
-    setDefaultPaymentMethod(userId: string, id: string): Promise<PaymentMethodEntity>;
-    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): Promise<PaymentMethodEntity>;
+    }): unknown;
+    deletePaymentMethod(userId: string, id: string): unknown;
+    setDefaultPaymentMethod(userId: string, id: string): unknown;
+    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): unknown;
 }

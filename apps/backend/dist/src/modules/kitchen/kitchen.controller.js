@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KitchenController = void 0;
 const common_1 = require("@nestjs/common");
@@ -101,7 +102,7 @@ __decorate([
     (0, common_1.Post)('inventory'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_a = typeof Partial !== "undefined" && Partial) === "function" ? _a : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "createInventoryItem", null);
 __decorate([
@@ -139,7 +140,7 @@ __decorate([
     (0, common_1.Post)('recipes'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_b = typeof Partial !== "undefined" && Partial) === "function" ? _b : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "createRecipe", null);
 __decorate([
@@ -153,7 +154,7 @@ __decorate([
     (0, common_1.Post)('batches'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_c = typeof Partial !== "undefined" && Partial) === "function" ? _c : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "createBatch", null);
 __decorate([
@@ -168,7 +169,7 @@ __decorate([
     (0, common_1.Post)('food-prep'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_d = typeof Partial !== "undefined" && Partial) === "function" ? _d : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "logFoodPrep", null);
 __decorate([
@@ -176,14 +177,14 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, typeof (_e = typeof Partial !== "undefined" && Partial) === "function" ? _e : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "updateFoodPrepQuality", null);
 __decorate([
     (0, common_1.Post)('sla'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_f = typeof Partial !== "undefined" && Partial) === "function" ? _f : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "recordKitchenSLA", null);
 __decorate([
@@ -266,7 +267,7 @@ __decorate([
     (0, common_1.Post)('suppliers'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_g = typeof Partial !== "undefined" && Partial) === "function" ? _g : Object]),
     __metadata("design:returntype", Promise)
 ], KitchenController.prototype, "createSupplier", null);
 __decorate([

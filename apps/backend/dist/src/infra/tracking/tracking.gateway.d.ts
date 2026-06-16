@@ -38,7 +38,7 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     handleDisconnect(client: Socket): void;
     handlePing(client: Socket): {
         status: string;
-        serverTime: number;
+        serverTime: any;
     };
     handleJoin(data: {
         room: string;
@@ -51,33 +51,19 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     }, client: Socket): {
         status: string;
     };
-    handleMessage(data: AcknowledgedMessage, client: Socket): Promise<unknown>;
-    handleLocationUpdate(data: LocationUpdate, client: Socket): Promise<{
-        error: string;
-        status?: undefined;
-        messageId?: undefined;
-    } | {
-        status: string;
-        messageId: string;
-        error?: undefined;
-    }>;
+    handleMessage(data: AcknowledgedMessage, client: Socket): unknown;
+    handleLocationUpdate(data: LocationUpdate, client: Socket): unknown;
     handleKDSUpdate(data: {
         orderId: string;
         status: string;
         branchId: string;
         timestamp?: Date;
-    }): Promise<{
-        status: string;
-        messageId: string;
-    }>;
+    }): unknown;
     handleDriverEvent(data: {
         driverId: string;
         orderId?: string;
         event: string;
-    }): Promise<{
-        status: string;
-        messageId: string;
-    }>;
+    }): unknown;
     publish(topic: string, data: any, requireAck?: boolean): Promise<any>;
     publishToRoom(room: string, data: any, requireAck?: boolean): Promise<any>;
     getActiveConnections(): number;
@@ -87,6 +73,6 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     private waitForAcknowledgement;
     private cleanupPendingAcks;
     getQueuedMessages(driverId: string): Promise<AcknowledgedMessage[]>;
-    requeueUndeliveredMessages(driverId: string, messageIds: string[]): Promise<void>;
+    requeueUndeliveredMessages(driverId: string, messageIds: string[]): any;
 }
 export {};

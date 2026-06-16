@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentFraudFlagEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -64,11 +65,11 @@ __decorate([
 ], PaymentFraudFlagEntity.prototype, "isBlocked", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], PaymentFraudFlagEntity.prototype, "blockedAt", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], PaymentFraudFlagEntity.prototype, "createdAt", void 0);
 exports.PaymentFraudFlagEntity = PaymentFraudFlagEntity = __decorate([
     (0, typeorm_1.Entity)('payment_fraud_flags')

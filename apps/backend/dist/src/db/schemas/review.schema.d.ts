@@ -7,12 +7,4 @@ export declare class ReviewDocument extends Document {
     comment: string;
     images: string[];
 }
-export declare const ReviewSchema: import("mongoose").Schema<ReviewDocument, import("mongoose").Model<ReviewDocument, any, any, any, Document<unknown, any, ReviewDocument, any, {}> & ReviewDocument & Required<{
-    _id: import("mongoose").Types.ObjectId;
-}> & {
-    __v: number;
-}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, ReviewDocument, Document<unknown, {}, import("mongoose").FlatRecord<ReviewDocument>, {}, import("mongoose").DefaultSchemaOptions> & import("mongoose").FlatRecord<ReviewDocument> & Required<{
-    _id: import("mongoose").Types.ObjectId;
-}> & {
-    __v: number;
-}>;
+export declare const ReviewSchema: any;

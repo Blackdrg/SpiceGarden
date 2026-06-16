@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var RetentionJob_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RetentionJob = void 0;
 const common_1 = require("@nestjs/common");
@@ -65,6 +66,5 @@ __decorate([
 exports.RetentionJob = RetentionJob = RetentionJob_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [compliance_service_1.ComplianceService,
-        data_privacy_service_1.DataPrivacyService,
-        typeorm_1.DataSource])
+        data_privacy_service_1.DataPrivacyService, typeof (_a = typeof typeorm_1.DataSource !== "undefined" && typeorm_1.DataSource) === "function" ? _a : Object])
 ], RetentionJob);

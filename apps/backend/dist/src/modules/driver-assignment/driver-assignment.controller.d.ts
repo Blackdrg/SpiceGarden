@@ -1,18 +1,14 @@
 import { DriverAssignmentService } from './driver-assignment.service';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
-import { DriverEntity } from '../../db/entities/driver.entity';
-import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
-import { DeliverySLAEntity } from '../../db/entities/delivery-sla.entity';
-import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 export declare class DriverAssignmentController {
     private readonly driverAssignmentService;
     constructor(driverAssignmentService: DriverAssignmentService);
-    assignDriverToOrder(orderId: string): Promise<DriverAssignmentEntity>;
-    assignBatchDelivery(orderIds: string[], driverId: string): Promise<DriverAssignmentEntity[]>;
-    reassignOrder(assignmentId: string, newDriverId: string, reason?: string): Promise<DriverAssignmentEntity>;
-    getDriverAssignments(driverId: string, status?: string): Promise<DriverAssignmentEntity[]>;
-    getOrderAssignments(orderId: string): Promise<DriverAssignmentEntity[]>;
-    updateAssignmentStatus(assignmentId: string, status: DriverAssignmentEntity['status'], actualTimeMinutes?: number): Promise<DriverAssignmentEntity>;
+    assignDriverToOrder(orderId: string): unknown;
+    assignBatchDelivery(orderIds: string[], driverId: string): unknown;
+    reassignOrder(assignmentId: string, newDriverId: string, reason?: string): unknown;
+    getDriverAssignments(driverId: string, status?: string): unknown;
+    getOrderAssignments(orderId: string): unknown;
+    updateAssignmentStatus(assignmentId: string, status: DriverAssignmentEntity['status'], actualTimeMinutes?: number): unknown;
     updateAssignmentRoute(assignmentId: string, routeData: {
         start: {
             lat: number;
@@ -27,30 +23,10 @@ export declare class DriverAssignmentController {
             lng: number;
             timestamp: Date;
         }>;
-    }): Promise<DriverAssignmentEntity>;
-    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<DriverEntity[]>;
-    updateDriverScore(driverId: string): Promise<DriverScoreEntity>;
-    calculateETA(orderId: string, driverId: string): Promise<{
-        etaMinutes: number;
-        confidence: number;
-        factors: {
-            distance: number;
-            trafficConditions: {
-                multiplier: number;
-                level: string;
-            };
-            kitchenDelay: {
-                delayMinutes: number;
-                confidence: number;
-            };
-            driverExperience: number;
-            timeOfDay: number;
-            weatherImpact: {
-                multiplier: number;
-                condition: string;
-            };
-        };
-    }>;
+    }): unknown;
+    getAvailableDrivers(lat: number, lng: number, radius?: number): unknown;
+    updateDriverScore(driverId: string): unknown;
+    calculateETA(orderId: string, driverId: string): unknown;
     recordDeliverySLA(data: {
         driverId: string;
         branchId: string;
@@ -60,8 +36,8 @@ export declare class DriverAssignmentController {
         targetValue?: number;
         targetUnit?: string;
         measurementPeriod?: string;
-    }): Promise<DeliverySLAEntity>;
-    getDeliverySLAMetrics(driverId?: string, branchId?: string, metricName?: string, limit?: number): Promise<DeliverySLAEntity[]>;
+    }): unknown;
+    getDeliverySLAMetrics(driverId?: string, branchId?: string, metricName?: string, limit?: number): unknown;
     recordFraudIncident(data: {
         driverId: string;
         orderId: string;
@@ -69,7 +45,7 @@ export declare class DriverAssignmentController {
         fraudType: 'gps_spoofing' | 'fake_delivery' | 'late_delivery_abuse' | 'route_deviation' | 'other';
         evidence: any;
         severity: 'low' | 'medium' | 'high';
-    }): Promise<DriverFraudEntity>;
-    getDriverFraudHistory(driverId: string): Promise<DriverFraudEntity[]>;
-    getAllFraudIncidents(driverId?: string, limit?: number): Promise<never[]>;
+    }): unknown;
+    getDriverFraudHistory(driverId: string): unknown;
+    getAllFraudIncidents(driverId?: string, limit?: number): unknown;
 }

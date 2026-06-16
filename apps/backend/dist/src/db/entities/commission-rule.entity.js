@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommissionRuleEntity = exports.CommissionStatus = exports.CommissionType = void 0;
 const typeorm_1 = require("typeorm");
@@ -70,11 +71,11 @@ __decorate([
 ], CommissionRuleEntity.prototype, "maxOrderValue", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], CommissionRuleEntity.prototype, "validFrom", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], CommissionRuleEntity.prototype, "validTo", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: CommissionStatus, default: CommissionStatus.ACTIVE }),
@@ -90,11 +91,11 @@ __decorate([
 ], CommissionRuleEntity.prototype, "excludedItems", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], CommissionRuleEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
 ], CommissionRuleEntity.prototype, "updatedAt", void 0);
 exports.CommissionRuleEntity = CommissionRuleEntity = __decorate([
     (0, typeorm_1.Entity)('commission_rules')

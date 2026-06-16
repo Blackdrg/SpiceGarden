@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DisputeEntity = exports.DisputeStatus = exports.DisputeType = void 0;
 const typeorm_1 = require("typeorm");
@@ -109,7 +110,7 @@ __decorate([
 ], DisputeEntity.prototype, "resolvedBy", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], DisputeEntity.prototype, "resolvedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)('simple-json', { nullable: true }),
@@ -121,7 +122,7 @@ __decorate([
 ], DisputeEntity.prototype, "escalated", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], DisputeEntity.prototype, "escalatedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
@@ -129,11 +130,11 @@ __decorate([
 ], DisputeEntity.prototype, "escalatedTo", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], DisputeEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
 ], DisputeEntity.prototype, "updatedAt", void 0);
 exports.DisputeEntity = DisputeEntity = __decorate([
     (0, typeorm_1.Entity)('disputes')

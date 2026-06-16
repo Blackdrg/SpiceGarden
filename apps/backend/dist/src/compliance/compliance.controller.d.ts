@@ -18,85 +18,31 @@ export declare class ComplianceController {
     private secretsService;
     private dataPrivacyService;
     constructor(complianceService: ComplianceService, soc2Service: Soc2ReadinessService, pciDssService: PciDssValidationService, secretsService: SecretsRotationService, dataPrivacyService: DataPrivacyService);
-    getSoc2Readiness(): Promise<import("./soc2-readiness.service").Soc2Report>;
-    getSoc2Evidence(): Promise<Record<string, any>>;
-    getPciDssStatus(): Promise<import("./pci-dss-validation.service").PciDssReport>;
-    validatePaymentFlow(): Promise<{
-        valid: boolean;
-        issues: string[];
-    }>;
-    getPciDssSaqMetrics(): Promise<{
-        totalTransactions: number;
-        fraudFlags: number;
-        chargebackRate: number;
-        blockedTransactions: number;
-    }>;
-    getSecretsRotationStatus(): Promise<{
-        secretsRequiringRotation: {
-            name: string;
-            lastRotation?: Date;
-        }[];
-        validation: {
-            canRotateAll: boolean;
-            details: string[];
-        };
-    }>;
-    getSecretsRotationProof(): Promise<Record<string, any>>;
-    rotateSecrets(secrets?: string): Promise<{
-        success: boolean;
-        message: string;
-        rotated: string[];
-    }>;
-    getRetentionStatistics(): Promise<any>;
-    applyDataRetention(): Promise<{
-        deletedSessions: number;
-        oldAuditLogs: number;
-    }>;
-    exportUserDataGdpr(userId: string, req: any): Promise<{
-        regulation: string;
-        data: any;
-        exportedAt: Date;
-        rightExercised: string;
-    }>;
-    exportUserDataDpdp(userId: string, req: any): Promise<{
-        regulation: string;
-        data: any;
-        exportedAt: Date;
-        rightExercised: string;
-    }>;
-    requestGdprDeletion(userId: string, dto: DeletionRequestDto, req: any): Promise<any>;
-    requestDpdpDeletion(userId: string, dto: DeletionRequestDto, req: any): Promise<any>;
-    cancelGdprDeletion(userId: string, req: any): Promise<{
-        regulation: string;
-        message: string;
-        success: boolean;
-    }>;
-    getDeletionStatus(userId: string): Promise<{
-        userId: string;
-        hasActiveRequest: boolean;
-        deletionRequest: {
-            status: string;
-            scheduledDeletionDate: Date;
-            regulation: string;
-        } | null;
-    }>;
-    getExportHistory(userId: string): Promise<{
-        userId: string;
-        exports: any[];
-        regulation: string;
-    }>;
-    verifyPiiEncryption(userId: string): Promise<any>;
-    getUserDataExport(userId: string): Promise<any>;
+    getSoc2Readiness(): unknown;
+    getSoc2Evidence(): unknown;
+    getPciDssStatus(): unknown;
+    validatePaymentFlow(): unknown;
+    getPciDssSaqMetrics(): unknown;
+    getSecretsRotationStatus(): unknown;
+    getSecretsRotationProof(): unknown;
+    rotateSecrets(secrets?: string): unknown;
+    getRetentionStatistics(): unknown;
+    applyDataRetention(): unknown;
+    exportUserDataGdpr(userId: string, req: any): unknown;
+    exportUserDataDpdp(userId: string, req: any): unknown;
+    requestGdprDeletion(userId: string, dto: DeletionRequestDto, req: any): unknown;
+    requestDpdpDeletion(userId: string, dto: DeletionRequestDto, req: any): unknown;
+    cancelGdprDeletion(userId: string, req: any): unknown;
+    getDeletionStatus(userId: string): unknown;
+    getExportHistory(userId: string): unknown;
+    verifyPiiEncryption(userId: string): unknown;
+    getUserDataExport(userId: string): unknown;
     maskPiiFields(dto: {
         data: Record<string, any>;
         fields: string[];
-    }): Promise<{
-        maskedData: Record<string, any>;
-    }>;
+    }): unknown;
     unmaskPiiFields(dto: {
         data: Record<string, any>;
         fields: string[];
-    }): Promise<{
-        decryptedData: Record<string, any>;
-    }>;
+    }): unknown;
 }

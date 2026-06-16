@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriverEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -99,7 +100,7 @@ __decorate([
 ], DriverEntity.prototype, "failureCount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], DriverEntity.prototype, "lastLocationUpdate", void 0);
 __decorate([
     (0, typeorm_1.Column)('decimal', { precision: 5, scale: 2, default: 0 }),
@@ -115,7 +116,7 @@ __decorate([
 ], DriverEntity.prototype, "isFraudSuspicious", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], DriverEntity.prototype, "lastFraudCheck", void 0);
 __decorate([
     (0, typeorm_1.Column)('simple-json', { nullable: true }),
@@ -123,11 +124,11 @@ __decorate([
 ], DriverEntity.prototype, "fraudFlags", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], DriverEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
 ], DriverEntity.prototype, "updatedAt", void 0);
 exports.DriverEntity = DriverEntity = __decorate([
     (0, typeorm_1.Entity)('drivers')

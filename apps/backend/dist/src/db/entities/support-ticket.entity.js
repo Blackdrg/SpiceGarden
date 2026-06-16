@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TicketMessageEntity = exports.SupportTicketEntity = exports.TicketStatus = exports.TicketCategory = exports.TicketPriority = void 0;
 const typeorm_1 = require("typeorm");
@@ -116,7 +117,7 @@ __decorate([
 ], SupportTicketEntity.prototype, "escalationLevel", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], SupportTicketEntity.prototype, "slaBreachedAt", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)('TicketMessageEntity', (message) => message.ticket),
@@ -132,7 +133,7 @@ __decorate([
 ], SupportTicketEntity.prototype, "resolutionNotes", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], SupportTicketEntity.prototype, "resolvedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
@@ -148,11 +149,11 @@ __decorate([
 ], SupportTicketEntity.prototype, "escalated", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], SupportTicketEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
 ], SupportTicketEntity.prototype, "updatedAt", void 0);
 exports.SupportTicketEntity = SupportTicketEntity = __decorate([
     (0, typeorm_1.Entity)('support_tickets')
@@ -208,7 +209,7 @@ __decorate([
 ], TicketMessageEntity.prototype, "attachments", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
 ], TicketMessageEntity.prototype, "createdAt", void 0);
 exports.TicketMessageEntity = TicketMessageEntity = __decorate([
     (0, typeorm_1.Entity)('ticket_messages')
