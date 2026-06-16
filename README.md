@@ -33,8 +33,26 @@ This README restores the detailed repository guide from `git show 57e5bd0:README
 - `package-lock.json` now resolves Next.js workspace ESLint configs consistently with the installed Next.js `15.5.19` runtime.
 - Workspace installs are deterministic after clean install.
 
+### Phase 1 — Build and Typecheck
+
+**Completed fixes**
+- Verified all workspace build scripts complete without timed-out workspaces.
+- Verified all project-reference TypeScript configurations typecheck with no errors.
+
+**Verified commands**
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Passed for all workspaces |
+| `npx tsc --noEmit` | Passed at root level |
+| `npx tsc -b --verbose --noEmit` | Passed project references |
+| Per-workspace `npx tsc --noEmit -p <tsconfig>` | Passed for backend, customer-web, restaurant-dashboard, super-admin, delivery-partner, customer-mobile, shared, ui, api-types, proto, and grpc-transport |
+
+**Architecture/typecheck updates**
+- No TS config changes were required.
+- Generated `tsconfig.tsbuildinfo` files were restored after verification to avoid committing build artifacts.
+
 **Blockers**
-- Environment-level Node.js version: current `v25.5.0`; npm doctor recommends `v25.9.0`. Repository commands still pass under the current runtime.
+- None for build or typecheck.
 
 ---
 
