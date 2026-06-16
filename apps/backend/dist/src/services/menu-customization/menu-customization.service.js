@@ -32,7 +32,7 @@ let MenuCustomizationService = class MenuCustomizationService {
         const whereClause = { restaurantId };
         const items = await this.menuItemRepo.find({
             where: whereClause,
-            relations: ['addons', 'category'],
+            relations: { addons: true, category: true },
             order: { createdAt: 'DESC' },
         });
         return items.map(item => ({
@@ -54,7 +54,7 @@ let MenuCustomizationService = class MenuCustomizationService {
     async getItemDetails(itemId) {
         const item = await this.menuItemRepo.findOne({
             where: { id: itemId },
-            relations: ['addons', 'category'],
+            relations: { addons: true, category: true },
         });
         if (!item) {
             return null;

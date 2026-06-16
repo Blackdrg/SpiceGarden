@@ -16,15 +16,9 @@ const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
 const security_module_1 = require("../../security/security.module");
+const missing_env_error_1 = require("../../common/errors/missing-env.error");
 function requireJwtSecret(configService) {
-    const secret = configService.get('JWT_SECRET');
-    if (!secret) {
-        throw new Error('JWT_SECRET must be configured');
-    }
-    if (secret.includes('CHANGE_ME') || secret.includes('secret_here') || secret.includes('placeholder')) {
-        throw new Error('JWT_SECRET contains a placeholder value');
-    }
-    return secret;
+    return (0, missing_env_error_1.getRequiredSecret)(configService, 'JWT_SECRET');
 }
 let AuthServiceModule = class AuthServiceModule {
 };

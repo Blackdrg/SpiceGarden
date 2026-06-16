@@ -46,7 +46,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
                 status: order_interface_1.OrderStatus.DELIVERED,
                 createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
             },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
         const commissionRules = await this.commissionRepo.find({
@@ -119,7 +119,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
         }
         return this.payoutRepo.find({
             where,
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { createdAt: 'ASC' },
         });
     }

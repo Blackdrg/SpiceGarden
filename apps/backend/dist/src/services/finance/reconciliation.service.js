@@ -127,7 +127,7 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
                 restaurantId: restaurantId,
                 createdAt: (0, typeorm_2.Between)(startDate, endDate),
             },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail);
         return {

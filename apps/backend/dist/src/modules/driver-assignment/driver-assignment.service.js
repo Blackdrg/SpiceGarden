@@ -64,14 +64,14 @@ let DriverAssignmentService = class DriverAssignmentService {
         }
         return this.assignmentRepo.find({
             where,
-            relations: ['order', 'driver', 'branch'],
+            relations: { order: true, driver: true, branch: true },
             order: { createdAt: 'DESC' }
         });
     }
     async getOrderAssignments(orderId) {
         return this.assignmentRepo.find({
             where: { order: { id: orderId } },
-            relations: ['driver', 'branch'],
+            relations: { driver: true, branch: true },
             order: { createdAt: 'DESC' }
         });
     }
@@ -118,7 +118,7 @@ let DriverAssignmentService = class DriverAssignmentService {
         }
         const recentAssignments = await this.assignmentRepo.find({
             where: { driver: { id: driverId }, status: 'delivered' },
-            relations: ['order'],
+            relations: { order: true },
             order: { createdAt: 'DESC' },
             take: 50
         });

@@ -47,7 +47,7 @@ let DispatchEngineService = class DispatchEngineService {
         return this.dataSource.transaction(async (manager) => {
             const order = await manager.findOne(order_entity_1.OrderEntity, {
                 where: { id: orderId },
-                relations: ['restaurantId']
+                relations: { branch: true }
             });
             if (!order) {
                 throw new Error('Order not found');
@@ -155,7 +155,7 @@ let DispatchEngineService = class DispatchEngineService {
         return this.dataSource.transaction(async (manager) => {
             const currentAssignment = await manager.findOne(driver_assignment_entity_1.DriverAssignmentEntity, {
                 where: { id: assignmentId },
-                relations: ['driver', 'order', 'branch']
+                relations: { driver: true, order: true, branch: true }
             });
             if (!currentAssignment) {
                 throw new Error('Assignment not found');

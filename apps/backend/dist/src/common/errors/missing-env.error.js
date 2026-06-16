@@ -1,8 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MissingEnvError = void 0;
+exports.isPlaceholderValue = isPlaceholderValue;
+exports.getRequiredSecret = getRequiredSecret;
+exports.requireSecrets = requireSecrets;
 exports.requireEnv = requireEnv;
 exports.requireOneOf = requireOneOf;
+const PLACEHOLDER_MARKERS = [
+    'CHANGE_ME',
+    'secret_here',
+    'placeholder',
+    'sk_test_placeholder',
+    'rzp_test_placeholder',
+    'whsec_test_placeholder',
+    'test_placeholder',
+    '<fill',
+    '<must replace',
+];
 class MissingEnvError extends Error {
     key;
     hint;
@@ -14,6 +28,25 @@ class MissingEnvError extends Error {
     }
 }
 exports.MissingEnvError = MissingEnvError;
+function isPlaceholderValue(value) {
+    if (!value || value.trim() === '') {
+        return true;
+    }
+    const normalized = value.trim().toLowerCase();
+    return PLACEHOLDER_MARKERS.some((marker) => normalized.includes(marker.toLowerCase()));
+}
+function getRequiredSecret(configService, key) {
+    const value = configService.get(key);
+    if (isPlaceholderValue(value)) {
+        throw new MissingEnvError(key, 'Set a real, non-placeholder value before starting the server.');
+    }
+    return value;
+}
+function requireSecrets(keys, configService) {
+    for (const key of keys) {
+        getRequiredSecret(configService, key);
+    }
+}
 function requireEnv(keys, configService) {
     for (const key of keys) {
         const value = configService.get(key);
@@ -25,7 +58,7 @@ function requireEnv(keys, configService) {
 function requireOneOf(keys, configService) {
     for (const key of keys) {
         const value = configService.get(key);
-        if (value && value.trim() !== '' && !value.includes('CHANGE_ME')) {
+        if (value && value.trim() !== '' && !isPlaceholderValue(value)) {
             return value;
         }
     }

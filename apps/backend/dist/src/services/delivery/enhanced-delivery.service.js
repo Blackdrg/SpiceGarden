@@ -106,7 +106,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
                 driverId,
                 status: order_interface_1.OrderStatus.DRIVER_ASSIGNED,
             });
-            await manager.increment(driver_entity_1.DriverEntity, driverId, 'totalDeliveries', 0);
+            await manager.increment(driver_entity_1.DriverEntity, { id: driverId }, 'totalDeliveries', 1);
             const assignment = manager.create(driver_assignment_entity_1.DriverAssignmentEntity, {
                 driverId: driverId,
                 orderId: orderId,

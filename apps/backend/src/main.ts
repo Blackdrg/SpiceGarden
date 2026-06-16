@@ -8,13 +8,49 @@ import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
+import { getAllowedOrigins } from "./security/cors-origin";
+import { requireSecrets } from "./common/errors/missing-env.error";
+
+function getTrustProxySetting(configService: ConfigService): boolean {
+  const value = configService.get<string>('TRUST_PROXY');
+  if (value === undefined) {
+    return true;
+  }
+
+  return !['0', 'false', 'no', 'off'].includes(value.toLowerCase());
+}
+
+function validateProductionEnvironment(configService: ConfigService): void {
+  if (configService.get<string>('NODE_ENV') !== 'production') {
+    return;
+  }
+
+  requireSecrets([
+    'JWT_SECRET',
+    'ENCRYPTION_SECRET',
+    'DB_HOST',
+    'DB_USER',
+    'DB_PASS',
+    'DB_NAME',
+    'MONGO_URI',
+    'REDIS_HOST',
+    'REDIS_PORT',
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'RAZORPAY_KEY_ID',
+    'RAZORPAY_KEY_SECRET',
+    'RAZORPAY_WEBHOOK_SECRET',
+    'CORS_ALLOWED_ORIGINS',
+  ], configService);
+}
 
 async function bootstrap() {
   const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
   const app = await NestFactory.create(localMode ? LocalDevModule : AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
-  // Initialize Sentry if available
+  validateProductionEnvironment(configService);
+
   try {
     const Sentry = (await import("@sentry/node")) as any;
     const dsn = configService.get<string>("SENTRY_DSN");
@@ -66,6 +102,15 @@ async function bootstrap() {
     }
   };
 
+  (app as any).set('trust proxy', getTrustProxySetting(configService));
+  (app as any).disable('x-powered-by');
+  app.enableCors({
+    origin: getAllowedOrigins(),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id', 'Idempotency-Key'],
+  });
+
   // Security middleware
   app.use(helmet());
   
@@ -77,25 +122,34 @@ async function bootstrap() {
   
   // Rate limiting to prevent abuse
   const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    windowMs: Number(configService.get<number>('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    max: Number(configService.get<number>('RATE_LIMIT_MAX', 100)),
+    standardHeaders: true,
+    legacyHeaders: false,
   });
   app.use("/api/", apiLimiter);
   
   // Stricter rate limiting for auth endpoints
   const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // limit each IP to 10 requests per windowMs
+    windowMs: Number(configService.get<number>('AUTH_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    max: Number(configService.get<number>('AUTH_RATE_LIMIT_MAX', 10)),
     standardHeaders: true,
     legacyHeaders: false,
   });
   app.use("/auth/", authLimiter);
 
-  // Body size limiting to prevent DoS
-  app.use(express.json({ limit: "10kb" }));
-  app.use(express.urlencoded({ limit: "10kb", extended: true }));
+// Body size limiting to prevent DoS
+  app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
+  app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+
+  // Reject dangerous HTTP methods
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const dangerousMethods = ['TRACE', 'TRACK', 'DEBUG', 'CONNECT'];
+    if (dangerousMethods.includes(req.method)) {
+      return res.status(405).json({ message: `Method ${req.method} not allowed`, error: 'Method Not Allowed' });
+    }
+    next();
+  });
 
   // Prometheus metrics endpoint
   app.use("/metrics", async (_req: express.Request, res: express.Response) => {

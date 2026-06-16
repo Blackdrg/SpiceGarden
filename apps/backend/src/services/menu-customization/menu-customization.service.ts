@@ -21,7 +21,7 @@ export class MenuCustomizationService {
     
     const items = await this.menuItemRepo.find({
       where: whereClause,
-      relations: ['addons', 'category'],
+      relations: { addons: true, category: true },
       order: { createdAt: 'DESC' },
     });
 
@@ -45,7 +45,7 @@ export class MenuCustomizationService {
   async getItemDetails(itemId: string) {
     const item = await this.menuItemRepo.findOne({
       where: { id: itemId },
-      relations: ['addons', 'category'],
+      relations: { addons: true, category: true },
     });
 
     if (!item) {

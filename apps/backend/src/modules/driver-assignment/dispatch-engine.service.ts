@@ -37,10 +37,10 @@ export class DispatchEngineService {
     // Start transaction for consistency
     return this.dataSource.transaction(async (manager) => {
       // 1. Get the order details
-      const order = await manager.findOne(OrderEntity, {
-        where: { id: orderId },
-        relations: ['restaurantId'] // Assuming we have restaurant relation
-      });
+const order = await manager.findOne(OrderEntity, {
+         where: { id: orderId },
+         relations: { branch: true }
+       });
 
       if (!order) {
         throw new Error('Order not found');
@@ -256,10 +256,10 @@ export class DispatchEngineService {
   ): Promise<DriverAssignmentEntity> {
     return this.dataSource.transaction(async (manager) => {
       // Get current assignment
-      const currentAssignment = await manager.findOne(DriverAssignmentEntity, {
-        where: { id: assignmentId },
-        relations: ['driver', 'order', 'branch']
-      });
+const currentAssignment = await manager.findOne(DriverAssignmentEntity, {
+         where: { id: assignmentId },
+         relations: { driver: true, order: true, branch: true }
+       });
 
       if (!currentAssignment) {
         throw new Error('Assignment not found');

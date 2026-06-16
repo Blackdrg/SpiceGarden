@@ -21,13 +21,19 @@ export class SearchService {
       ],
     });
 
-    const items = await this.menuRepo.find({
-      where: [
-        { name: Like(`%${query}%`) },
-        { description: Like(`%${query}%`) },
-      ],
-      relations: ['category', 'category.branch', 'category.branch.restaurant'],
-    });
+const items = await this.menuRepo.find({
+       where: [
+         { name: Like(`%${query}%`) },
+         { description: Like(`%${query}%`) },
+       ],
+       relations: { 
+         category: { 
+           branch: { 
+             restaurant: true 
+           } 
+         } 
+       },
+     });
 
     return { restaurants, items };
   }

@@ -101,7 +101,7 @@ export class RestaurantOpsService {
   async getOnboardingProgress(onboardingId: string): Promise<any> {
     const onboarding = await this.onboardingRepo.findOne({
       where: { id: onboardingId },
-      relations: ['restaurant'],
+      relations: { restaurant: true },
     });
 
     if (!onboarding) {

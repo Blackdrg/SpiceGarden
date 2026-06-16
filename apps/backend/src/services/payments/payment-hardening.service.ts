@@ -7,6 +7,7 @@ import { PaymentValidationEventEntity } from './payment-validation.entity';
 import Stripe from 'stripe';
 import { AuditService } from '../../audit/audit.service';
 import { Request } from 'express';
+import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 export interface PaymentValidationOptions {
   enableFraudCheck?: boolean;
@@ -43,7 +44,7 @@ export class PaymentHardeningService {
     private readonly validationRepo: Repository<PaymentValidationEventEntity>,
   ) {
     this.stripe = new Stripe(
-      this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
+      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
       {
         apiVersion: '2024-04-10',
       }
@@ -348,11 +349,7 @@ export class PaymentHardeningService {
   }
 
   async validateWebhookSignature(payload: Buffer, signature: string): Promise<boolean> {
-    const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
-    if (!webhookSecret) {
-      this.logger.error('Stripe webhook secret not configured');
-      return false;
-    }
+    const webhookSecret = getRequiredSecret(this.configService, 'STRIPE_WEBHOOK_SECRET');
 
     try {
       this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);

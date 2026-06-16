@@ -35,7 +35,7 @@ export class TicketRoutingService {
   async routeTicket(ticketId: string): Promise<SupportTicketEntity> {
     const ticket = await this.ticketRepo.findOne({
       where: { id: ticketId },
-      relations: ['assignedTo'],
+      relations: { assignedTo: true },
     });
     
     if (!ticket) {

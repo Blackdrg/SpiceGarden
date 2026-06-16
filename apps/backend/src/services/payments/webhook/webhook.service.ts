@@ -13,6 +13,7 @@ import { ProductionNotificationService } from '../../../services/notifications/p
 import { LedgerService } from '../../../modules/ledger/ledger.service';
 import { PaymentGatewayFactory } from '../../../services/payments/gateway-factory.service';
 import { ChargebackService } from '../chargeback/chargeback.service';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 @Injectable()
 export class WebhookService {
@@ -36,7 +37,7 @@ export class WebhookService {
     private chargebackService: ChargebackService,
   ) {
     this.stripe = new Stripe(
-      this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
+      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
       {
         apiVersion: '2024-04-10' as any,
       }
@@ -136,19 +137,13 @@ export class WebhookService {
   }
 
   private async verifyStripeWebhook(payload: Buffer, signature: string): Promise<any> {
-    const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
-    if (!webhookSecret) {
-      throw new InternalServerErrorException('Stripe webhook secret not configured');
-    }
+    const webhookSecret = getRequiredSecret(this.configService, 'STRIPE_WEBHOOK_SECRET');
 
     return this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   }
 
   private async verifyRazorpayWebhook(payload: Buffer, signature: string): Promise<any> {
-    const webhookSecret = this.configService.get<string>('RAZORPAY_WEBHOOK_SECRET');
-    if (!webhookSecret) {
-      throw new InternalServerErrorException('Razorpay webhook secret not configured');
-    }
+    const webhookSecret = getRequiredSecret(this.configService, 'RAZORPAY_WEBHOOK_SECRET');
 
     const generatedSignature = crypto
       .createHmac('sha256', webhookSecret)

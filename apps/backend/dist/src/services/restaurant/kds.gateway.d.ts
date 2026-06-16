@@ -10,5 +10,7 @@ export declare class KdsGateway implements OnGatewayConnection, OnGatewayDisconn
         orderId: string;
         status: string;
         branchId: string;
-    }): void;
+    }): {
+        error: string;
+    } | undefined;
 }

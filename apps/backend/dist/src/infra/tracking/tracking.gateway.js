@@ -22,6 +22,9 @@ const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const notification_entity_1 = require("../../db/entities/notification.entity");
 const cors_origin_1 = require("../../security/cors-origin");
+const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
+const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 var SocketNamespace;
 (function (SocketNamespace) {
     SocketNamespace["TRACKING"] = "/tracking";
@@ -44,6 +47,11 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         this.ackTimeoutMs = this.configService.get('WS_ACK_TIMEOUT_MS', 5000);
     }
     handleConnection(client) {
+        const origin = client.handshake.headers.origin;
+        if (typeof origin === 'string' && !(0, cors_origin_1.isAllowedOrigin)(origin)) {
+            client.disconnect(true);
+            return;
+        }
         const namespace = client.nsp.name;
         this.connectedClients.set(client.id, {
             id: client.id,
@@ -66,6 +74,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'pong', serverTime: Date.now() };
     }
     handleJoin(data, client) {
+        if (typeof data.room !== 'string' || !ROOM_PATTERN.test(data.room)) {
+            return { error: 'Invalid room' };
+        }
         client.join(data.room);
         this.logger.log(`Client ${client.id} joined room ${data.room}`);
         return { status: 'joined', room: data.room };
@@ -105,7 +116,7 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'received' };
     }
     async handleLocationUpdate(data, client) {
-        if (!this.isValidLocation(data)) {
+        if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || !this.isValidLocation(data)) {
             return { error: 'Invalid location data' };
         }
         const messageId = `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -119,6 +130,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'ok', messageId };
     }
     async handleKDSUpdate(data) {
+        if (typeof data.orderId !== 'string' || typeof data.status !== 'string' || typeof data.branchId !== 'string' || !ROOM_PATTERN.test(data.branchId)) {
+            return { error: 'Invalid KDS update' };
+        }
         const messageId = `kds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const topic = `kds:${data.branchId}`;
         this.server.to(topic).emit('kdsUpdate', {
@@ -129,6 +143,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'ok', messageId };
     }
     async handleDriverEvent(data) {
+        if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || typeof data.event !== 'string') {
+            return { error: 'Invalid driver event' };
+        }
         const messageId = `drv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const topic = `driver:${data.driverId}`;
         this.server.to(topic).emit('driverEvent', {
@@ -147,6 +164,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'sent', messageId };
     }
     async publishToRoom(room, data, requireAck = false) {
+        if (typeof room !== 'string' || !ROOM_PATTERN.test(room)) {
+            return { error: 'Invalid room' };
+        }
         const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         if (requireAck) {
             return this.waitForAcknowledgement(`room:${room}`, { ...data, messageId });
@@ -275,6 +295,8 @@ exports.TrackingGateway = TrackingGateway = TrackingGateway_1 = __decorate([
             credentials: true,
         },
         namespace: '/',
+        maxHttpBufferSize: MAX_HTTP_BUFFER_SIZE,
+        allowEIO3: false,
         pingInterval: 10000,
         pingTimeout: 20000,
     }),

@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as CryptoJS from 'crypto-js';
+import { getRequiredSecret } from '../common/errors/missing-env.error';
 
 @Injectable()
 export class EncryptionService {
   private readonly secretKey: string;
 
   constructor(private configService: ConfigService) {
-    this.secretKey = this.configService.get<string>('ENCRYPTION_SECRET')!;
-    if (!this.secretKey || this.secretKey.includes('CHANGE_ME')) {
-      throw new Error(
-        'ENCRYPTION_SECRET not configured. Set secure random secret before starting.',
-      );
-    }
+    this.secretKey = getRequiredSecret(this.configService, 'ENCRYPTION_SECRET');
   }
 
   encrypt(text: string): string {

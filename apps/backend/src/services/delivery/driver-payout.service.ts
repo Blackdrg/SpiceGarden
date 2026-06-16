@@ -121,7 +121,7 @@ export class DriverPayoutService {
 
     return this.incentiveRepo.find({
       where,
-      relations: ['driver'],
+      relations: { driver: true },
       order: { createdAt: 'ASC' },
     });
   }

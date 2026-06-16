@@ -11,16 +11,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { SessionEntity } from '../../db/entities/session.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 import { SecurityModule } from '../../security/security.module';
+import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 function requireJwtSecret(configService: ConfigService): string {
-  const secret = configService.get<string>('JWT_SECRET');
-  if (!secret) {
-    throw new Error('JWT_SECRET must be configured');
-  }
-  if (secret.includes('CHANGE_ME') || secret.includes('secret_here') || secret.includes('placeholder')) {
-    throw new Error('JWT_SECRET contains a placeholder value');
-  }
-  return secret;
+  return getRequiredSecret(configService, 'JWT_SECRET');
 }
 
 @Module({

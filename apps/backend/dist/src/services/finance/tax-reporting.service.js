@@ -46,7 +46,12 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
                 restaurantId: restaurantId,
                 createdAt: (0, typeorm_2.Between)(startDate, endDate),
             },
-            relations: ['gstDetail', 'items', 'items.menuItem'],
+            relations: {
+                gstDetail: true,
+                items: {
+                    menuItem: true
+                }
+            },
         });
         const gstDetails = orders
             .filter(o => o.gstDetail)
@@ -124,7 +129,7 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
         const year = reportingMonth.getFullYear();
         const orders = await this.orderRepo.find({
             where: { createdAt: (0, typeorm_2.Between)(new Date(year, month - 1, 1), new Date(year, month, 0)) },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const totalGST = orders.reduce((sum, o) => sum + Number(o.tax || 0), 0);
         const taxReceivable = totalGST;

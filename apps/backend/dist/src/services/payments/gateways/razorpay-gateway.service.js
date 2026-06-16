@@ -47,6 +47,7 @@ exports.RazorpayGateway = void 0;
 const common_1 = require("@nestjs/common");
 const crypto = __importStar(require("crypto"));
 const config_1 = require("@nestjs/config");
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
 function safeParse(json) {
     try {
         return JSON.parse(json);
@@ -62,8 +63,8 @@ let RazorpayGateway = RazorpayGateway_1 = class RazorpayGateway {
     keySecret;
     constructor(configService) {
         this.configService = configService;
-        this.keyId = this.configService.get('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-        this.keySecret = this.configService.get('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+        this.keyId = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_ID');
+        this.keySecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_SECRET');
     }
     async razorpayRequest(method, endpoint, data = {}) {
         try {

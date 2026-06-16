@@ -14,13 +14,14 @@ exports.StripeGateway = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const stripe_1 = require("stripe");
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
 let StripeGateway = StripeGateway_1 = class StripeGateway {
     configService;
     logger = new common_1.Logger(StripeGateway_1.name);
     stripe;
     constructor(configService) {
         this.configService = configService;
-        this.stripe = new stripe_1.Stripe(this.configService.get('STRIPE_SECRET_KEY') || 'sk_test_placeholder', {
+        this.stripe = new stripe_1.Stripe((0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY'), {
             apiVersion: '2024-04-10',
         });
     }

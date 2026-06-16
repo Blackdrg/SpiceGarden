@@ -56,14 +56,26 @@ export class BusinessEngineService {
   async getActiveRestaurants(): Promise<RestaurantEntity[]> {
     return this.restaurantRepo.find({
       where: { status: 'active' },
-      relations: ['branches', 'branches.categories', 'branches.categories.items'],
+      relations: { 
+        branches: { 
+          categories: { 
+            items: true 
+          } 
+        } 
+      },
     });
   }
 
   async getRestaurantMenu(restaurantId: string) {
     const restaurant = await this.restaurantRepo.findOne({
       where: { id: restaurantId },
-      relations: ['branches', 'branches.categories', 'branches.categories.items'],
+      relations: { 
+        branches: { 
+          categories: { 
+            items: true 
+          } 
+        } 
+      },
     });
 
     if (!restaurant) return [];
@@ -138,9 +150,9 @@ export class BusinessEngineService {
 
   // Order Flow - Real order processing with driver assignment
   async processOrderFlow(orderId: string) {
-    const order = await this.orderRepo.findOne({
+const order = await this.orderRepo.findOne({
       where: { id: orderId },
-      relations: ['branch', 'branch.restaurant'],
+      relations: { branch: { restaurant: true } },
     });
 
     if (!order) return;
@@ -163,7 +175,7 @@ export class BusinessEngineService {
       try {
         const branch = await this.branchRepo.findOne({ 
           where: { id: order.branchId || order.restaurantId },
-          relations: ['restaurant'] 
+          relations: { restaurant: true }
         });
 
         if (branch && branch.location) {
@@ -291,7 +303,7 @@ export class BusinessEngineService {
         where: { status: OrderStatus.PLACED },
         order: { createdAt: 'DESC' },
         take: 10,
-        relations: ['branch', 'branch.restaurant'],
+        relations: { branch: { restaurant: true } },
       }),
     ]);
 

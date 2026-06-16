@@ -46,15 +46,13 @@ exports.EncryptionService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const CryptoJS = __importStar(require("crypto-js"));
+const missing_env_error_1 = require("../common/errors/missing-env.error");
 let EncryptionService = class EncryptionService {
     configService;
     secretKey;
     constructor(configService) {
         this.configService = configService;
-        this.secretKey = this.configService.get('ENCRYPTION_SECRET');
-        if (!this.secretKey || this.secretKey.includes('CHANGE_ME')) {
-            throw new Error('ENCRYPTION_SECRET not configured. Set secure random secret before starting.');
-        }
+        this.secretKey = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'ENCRYPTION_SECRET');
     }
     encrypt(text) {
         return CryptoJS.AES.encrypt(text, this.secretKey).toString();

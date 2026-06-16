@@ -75,7 +75,7 @@ export class DriverAssignmentService {
     }
     return this.assignmentRepo.find({
       where,
-      relations: ['order', 'driver', 'branch'],
+      relations: { order: true, driver: true, branch: true },
       order: { createdAt: 'DESC' }
     });
   }
@@ -86,7 +86,7 @@ export class DriverAssignmentService {
   async getOrderAssignments(orderId: string): Promise<DriverAssignmentEntity[]> {
     return this.assignmentRepo.find({
       where: { order: { id: orderId } },
-      relations: ['driver', 'branch'],
+      relations: { driver: true, branch: true },
       order: { createdAt: 'DESC' }
     });
   }
@@ -175,11 +175,11 @@ export class DriverAssignmentService {
       throw new Error('Driver not found');
     }
 
-    // Get recent assignments for scoring calculations
+// Get recent assignments for scoring calculations
     const recentAssignments = await this.assignmentRepo.find({
       where: { driver: { id: driverId }, status: 'delivered' },
-      relations: ['order'],
-       order: { createdAt: 'DESC' },
+      relations: { order: true },
+      order: { createdAt: 'DESC' },
       take: 50 // Look at last 50 deliveries
     });
 

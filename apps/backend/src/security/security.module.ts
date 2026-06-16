@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { EncryptionService } from './encryption.service';
+import { SecretLoaderService } from '../infra/secret-loader.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LocalRepositoryModule } from '../db/local-repository.module';
 import { AuditLogEntity } from '../db/entities/audit-log.entity';
@@ -15,7 +16,7 @@ import { SessionEntity } from '../db/entities/session.entity';
     }]),
     LocalRepositoryModule,
   ],
-  providers: [EncryptionService],
+  providers: [SecretLoaderService, EncryptionService],
   exports: [EncryptionService, ThrottlerModule],
 })
 export class SecurityModule {}

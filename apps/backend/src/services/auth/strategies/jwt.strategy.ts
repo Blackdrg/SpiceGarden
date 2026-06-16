@@ -2,16 +2,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 function requireJwtSecret(configService: ConfigService): string {
-  const secret = configService.get<string>('JWT_SECRET');
-  if (!secret) {
-    throw new Error('JWT_SECRET must be configured');
-  }
-  if (secret.includes('CHANGE_ME') || secret.includes('secret_here') || secret.includes('placeholder')) {
-    throw new Error('JWT_SECRET contains a placeholder value');
-  }
-  return secret;
+  return getRequiredSecret(configService, 'JWT_SECRET');
 }
 
 @Injectable()

@@ -129,7 +129,7 @@ export class EnhancedDeliveryService {
         status: OrderStatus.DRIVER_ASSIGNED,
       });
 
-      await manager.increment(DriverEntity, driverId, 'totalDeliveries', 0);
+      await manager.increment(DriverEntity, { id: driverId } as any, 'totalDeliveries', 1);
 
       const assignment = manager.create(DriverAssignmentEntity, {
         driverId: driverId as any,

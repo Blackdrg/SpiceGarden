@@ -28,7 +28,6 @@ export declare class KitchenService {
     private readonly logger;
     constructor(inventoryRepo: Repository<InventoryItemEntity>, recipeRepo: Repository<RecipeEntity>, batchRepo: Repository<BatchEntity>, foodPrepRepo: Repository<FoodPrepEntity>, slaRepo: Repository<KitchenSLAEntity>, supplierRepo: Repository<SupplierEntity>, branchRepo: Repository<RestaurantBranchEntity>, inventoryAlertRepo: Repository<InventoryAlertEntity>, slaAlertRepo: Repository<SLAAlertEntity>, menuItemAvailabilityRepo: Repository<MenuItemAvailabilityEntity>, orderRepo: Repository<OrderEntity>, orderItemRepo: Repository<OrderItemEntity>, dataSource: DataSource);
     private checkAndCreateInventoryAlert;
-    private createInventoryAlert;
     private resolveInventoryAlerts;
     private checkAndCreateWastageAlert;
     createInventoryItem(data: Partial<InventoryItemEntity>): Promise<InventoryItemEntity>;

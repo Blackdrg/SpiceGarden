@@ -96,7 +96,7 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
     async getOnboardingProgress(onboardingId) {
         const onboarding = await this.onboardingRepo.findOne({
             where: { id: onboardingId },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
         });
         if (!onboarding) {
             throw new common_1.NotFoundException('Onboarding not found');

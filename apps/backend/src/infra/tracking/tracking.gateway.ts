@@ -16,6 +16,10 @@ import { NotificationEntity } from '../../db/entities/notification.entity';
 import { NotificationStatus } from '../../db/entities/notification-status.enum';
 import { isAllowedOrigin } from '../../security/cors-origin';
 
+const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
+const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+
 export enum SocketNamespace {
   TRACKING = '/tracking',
   KDS = '/kds',
@@ -55,6 +59,8 @@ interface SocketConnection {
     credentials: true,
   },
   namespace: '/',
+  maxHttpBufferSize: MAX_HTTP_BUFFER_SIZE,
+  allowEIO3: false,
   pingInterval: 10000,
   pingTimeout: 20000,
 })
@@ -77,6 +83,12 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   handleConnection(client: Socket) {
+    const origin = client.handshake.headers.origin;
+    if (typeof origin === 'string' && !isAllowedOrigin(origin)) {
+      client.disconnect(true);
+      return;
+    }
+
     const namespace = client.nsp.name;
     this.connectedClients.set(client.id, {
       id: client.id,
@@ -105,6 +117,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('join')
   handleJoin(@MessageBody() data: { room: string }, @ConnectedSocket() client: Socket) {
+    if (typeof data.room !== 'string' || !ROOM_PATTERN.test(data.room)) {
+      return { error: 'Invalid room' };
+    }
+
     client.join(data.room);
     this.logger.log(`Client ${client.id} joined room ${data.room}`);
     return { status: 'joined', room: data.room };
@@ -156,7 +172,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('updateLocation')
   async handleLocationUpdate(@MessageBody() data: LocationUpdate, @ConnectedSocket() client: Socket) {
-    if (!this.isValidLocation(data)) {
+    if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || !this.isValidLocation(data)) {
       return { error: 'Invalid location data' };
     }
 
@@ -176,6 +192,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('kdsUpdate')
   async handleKDSUpdate(@MessageBody() data: { orderId: string; status: string; branchId: string; timestamp?: Date }) {
+    if (typeof data.orderId !== 'string' || typeof data.status !== 'string' || typeof data.branchId !== 'string' || !ROOM_PATTERN.test(data.branchId)) {
+      return { error: 'Invalid KDS update' };
+    }
+
     const messageId = `kds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const topic = `kds:${data.branchId}`;
     
@@ -190,6 +210,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('driverEvent')
   async handleDriverEvent(@MessageBody() data: { driverId: string; orderId?: string; event: string }) {
+    if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || typeof data.event !== 'string') {
+      return { error: 'Invalid driver event' };
+    }
+
     const messageId = `drv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const topic = `driver:${data.driverId}`;
     
@@ -214,6 +238,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   async publishToRoom(room: string, data: any, requireAck: boolean = false): Promise<any> {
+    if (typeof room !== 'string' || !ROOM_PATTERN.test(room)) {
+      return { error: 'Invalid room' };
+    }
+
     const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {

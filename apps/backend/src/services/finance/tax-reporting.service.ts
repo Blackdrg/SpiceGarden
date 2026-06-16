@@ -34,7 +34,12 @@ export class TaxReportingService {
         restaurantId: restaurantId as any,
         createdAt: Between(startDate, endDate),
       },
-      relations: ['gstDetail', 'items', 'items.menuItem'],
+      relations: { 
+        gstDetail: true, 
+        items: { 
+          menuItem: true 
+        } 
+      },
     });
 
     const gstDetails = orders
@@ -131,7 +136,7 @@ export class TaxReportingService {
 
     const orders = await this.orderRepo.find({
       where: { createdAt: Between(new Date(year, month - 1, 1), new Date(year, month, 0)) },
-      relations: ['gstDetail'],
+      relations: { gstDetail: true },
     });
 
     const totalGST = orders.reduce((sum, o) => sum + Number(o.tax || 0), 0);

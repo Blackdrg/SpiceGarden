@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Stripe } from 'stripe';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 @Injectable()
 export class StripeGateway implements PaymentGateway {
@@ -11,7 +12,7 @@ export class StripeGateway implements PaymentGateway {
 
   constructor(private configService: ConfigService) {
     this.stripe = new Stripe(
-      this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
+      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
       {
         apiVersion: '2024-04-10',
       }

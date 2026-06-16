@@ -27,28 +27,28 @@ export class DriverController {
 
   @Get('me')
   async getProfile(@Request() req: { user: { id: string } }) {
-    const driver = await this.driverRepo.findOne({
-      where: { userId: req.user.id },
-      relations: ['user'],
-    });
+const driver = await this.driverRepo.findOne({
+       where: { userId: req.user.id },
+       relations: { user: true },
+     });
     return driver;
   }
 
   @Get(':id')
   async getDriver(@Param('id') id: string) {
-    const driver = await this.driverRepo.findOne({
-      where: { id },
-      relations: ['user'],
-    });
+const driver = await this.driverRepo.findOne({
+       where: { id },
+       relations: { user: true },
+     });
     return driver;
   }
 
   @Get(':id/earnings')
   async getEarnings(@Param('id') id: string) {
-    const assignments = await this.assignmentRepo.find({
-      where: { driver: { id } as any, status: 'delivered' } as any,
-      relations: ['order'],
-    });
+const assignments = await this.assignmentRepo.find({
+       where: { driver: { id } as any, status: 'delivered' } as any,
+       relations: { order: true },
+     });
 
     const totalEarnings = assignments.reduce((sum, a) => sum + (a.order?.grandTotal || 0), 0);
     const todayAssignments = assignments.filter(a => {
@@ -262,10 +262,10 @@ export class OrderDriverController {
     @Param('id') id: string,
     @Body() body: { otp: string; driverId: string }
   ) {
-    const assignment = await this.assignmentRepo.findOne({
-      where: { order: { id } } as any,
-      relations: ['order'],
-    });
+const assignment = await this.assignmentRepo.findOne({
+       where: { order: { id } } as any,
+       relations: { order: true },
+     });
 
     if (!assignment || !assignment.order.otpCode) {
       return { valid: false };

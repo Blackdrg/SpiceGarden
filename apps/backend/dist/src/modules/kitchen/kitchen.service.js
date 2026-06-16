@@ -63,36 +63,14 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const item = await this.inventoryRepo.findOne({
                 where: { id: itemId },
-                relations: ['branch']
-            });
-            if (!item)
-                return;
-            if (item.currentStock === 0) {
-                await this.createInventoryAlert(item.id, 'out_of_stock', item.currentStock, item.lowStockThreshold);
-            }
-            else if (item.currentStock <= item.lowStockThreshold) {
-                await this.createInventoryAlert(item.id, 'low_stock', item.currentStock, item.lowStockThreshold);
-            }
-            else {
-                await this.resolveInventoryAlerts(item.id, ['low_stock', 'out_of_stock']);
-            }
-        }
-        catch (error) {
-            this.logger.error(`Error checking inventory alerts for item ${itemId}`, error);
-        }
-    }
-    async createInventoryAlert(itemId, alertType, currentLevel, thresholdLevel) {
-        try {
-            const item = await this.inventoryRepo.findOne({
-                where: { id: itemId },
-                relations: ['branch']
+                relations: { branch: true }
             });
             if (!item || !item.branch)
                 return;
             const existingAlert = await this.inventoryAlertRepo.findOne({
                 where: {
                     inventoryItem: { id: itemId },
-                    alertType,
+                    alertType: (0, typeorm_2.In)(['out_of_stock', 'low_stock']),
                     isResolved: false
                 }
             });
@@ -100,12 +78,12 @@ let KitchenService = KitchenService_1 = class KitchenService {
                 const alert = this.inventoryAlertRepo.create({
                     inventoryItem: item,
                     branch: item.branch,
-                    alertType,
-                    currentLevel,
-                    thresholdLevel
+                    alertType: 'out_of_stock',
+                    currentLevel: item.currentStock,
+                    thresholdLevel: item.lowStockThreshold
                 });
                 await this.inventoryAlertRepo.save(alert);
-                this.logger.log(`Created ${alertType} alert for item ${item.name}`);
+                this.logger.log(`Created out_of_stock alert for item ${item.name}`);
             }
         }
         catch (error) {
@@ -131,7 +109,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const item = await this.inventoryRepo.findOne({
                 where: { id: itemId },
-                relations: ['branch']
+                relations: { branch: true }
             });
             if (!item)
                 return;
@@ -222,7 +200,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
         return this.recipeRepo.save(recipe);
     }
     async getRecipeById(id) {
-        return (await this.recipeRepo.findOne({ where: { id }, relations: ['branch'] }));
+        return (await this.recipeRepo.findOne({ where: { id }, relations: { branch: true } }));
     }
     async createBatch(data) {
         const batch = this.batchRepo.create(data);
@@ -270,7 +248,12 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const foodPrep = await this.foodPrepRepo.findOne({
                 where: { id: prepId },
-                relations: ['batch', 'batch.recipe', 'branch']
+                relations: {
+                    batch: {
+                        recipe: true
+                    },
+                    branch: true
+                }
             });
             if (!foodPrep || !foodPrep.startedAt)
                 return;
@@ -308,7 +291,10 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const batch = await this.batchRepo.findOne({
                 where: { id: batchId },
-                relations: ['recipe', 'branch']
+                relations: {
+                    recipe: true,
+                    branch: true
+                }
             });
             if (!batch || !batch.startedAt)
                 return;

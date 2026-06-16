@@ -85,3 +85,126 @@ Verified as of: 2026-06-15 21:15 IST
 - React quality: `npx react-doctor@latest --verbose`.
 - Load/security/env/deployment: `npm run test:load --workspace @spicegarden/backend`, `node infra/scripts/security-tests.js`, `node infra/scripts/penetration-tests.js`, `node infra/scripts/validate-env-consistency.js`, `node infra/scripts/deployment-check.js`.
 - Source inventory: filesystem scans of backend, apps, packages, infrastructure, and tests.
+
+---
+
+## README Update Changelog — 2026-06-16 21:17 IST
+
+### What changed
+
+- Preserved existing `README.md` content and appended a new current verified engineering status section.
+- Marked the stale `Current Verified Engineering Update — 2026-06-15 21:15 IST` heading with `[OUTDATED — VERIFIED UPDATE BELOW]`.
+- Added the requested current classification: **“Advanced Startup-Grade Pre-Production System”**.
+- Added current project maturity: **~74–79% complete**.
+- Added explicit verdict: **NOT PRODUCTION READY**.
+- Added current verified status sections for build, lint, typecheck, tests, security, dependencies, infrastructure, and observability.
+- Added a test reliability matrix for backend, customer-web, customer-mobile, delivery-partner, restaurant-dashboard, super-admin, and packages.
+- Added P0 release blockers with severity, evidence, impact, required fix, production risk, and confidence.
+- Added frontend reality assessment distinguishing real, partially verified, and not-yet-production-verified capabilities.
+- Added architecture maturity ratings for backend, frontend, shared packages, UI/UX, testing, security, infrastructure, observability, and documentation.
+- Added current positioning, remaining work to production, current verdict, verification sources, command output excerpts, and required output file status.
+- Updated `README_GAP_REPORT.md`, `PROJECT_STATUS_REPORT.md`, and `README_CHANGELOG.md` by append only.
+- Generated `CURRENT_STATUS_SUMMARY.md`.
+
+### Fresh verification commands added
+
+| Command | Result | Confidence |
+| :--- | :--- | :---: |
+| `git ls-files \| Measure-Object -Line` | `2696` tracked files | HIGH |
+| `npm run lint` | Exit `0` | HIGH |
+| `npm run build` | Exit `2`; TypeORM relation/select errors and missing declaration files | HIGH |
+| `npm audit --json` | `51` moderate, `5` high, `56` total vulnerabilities; exit `1` | HIGH |
+| `npm ls --workspaces --depth=0 --json` | Invalid `@sentry/node@10.58.0`; exit `1` | HIGH |
+| `npm run test --workspace @spicegarden/backend -- --runInBand` | `201` passed, `1` skipped, `202` total, `1` failed suite; exit `1` | HIGH |
+| `node infra/scripts/security-tests.js` | `Rate limited responses: 0/100`; `Total vulnerabilities found: 100`; exit `1` | HIGH |
+| `node infra/scripts/penetration-tests.js` | `ECONNREFUSED` for `localhost:3001`; exit `1` | HIGH |
+| `node infra/scripts/deployment-check.js` | `ERROR: Cannot connect to cluster`; exit `1` | HIGH |
+| `node infra/scripts/validate-env-consistency.js` | `All environment configurations are valid`; exit `0` | HIGH |
+| `npx react-doctor@latest --verbose` | `61/100`, `62 issues`, `32 bugs`, `2 performance`, `28 maintainability`; exit `0` | HIGH |
+
+### Stale claims marked
+
+| Claim area | Marker added | Reason | Confidence |
+| :--- | :--- | :--- | :---: |
+| `README.md` current verified engineering update from 2026-06-15 | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh rerun observed build/typecheck failures and dependency/security gaps not reflected by the older passing build/audit summary | HIGH |
+
+### Required output files
+
+| File | Status | Timestamp | Confidence |
+| :--- | :--- | :--- | :---: |
+| `README.md` | Updated by append | 2026-06-16 21:17 IST | HIGH |
+| `README_GAP_REPORT.md` | Updated by append | 2026-06-16 21:17 IST | HIGH |
+| `PROJECT_STATUS_REPORT.md` | Updated by append | 2026-06-16 21:17 IST | HIGH |
+| `CURRENT_STATUS_SUMMARY.md` | Generated | 2026-06-16 21:17 IST | HIGH |
+| `README_CHANGELOG.md` | Updated by append | 2026-06-16 21:17 IST | HIGH |
+
+---
+
+## README Update Changelog — 2026-06-17 04:01 IST
+
+### What changed
+
+- Preserved existing `README.md` content and appended a fresh current verified engineering baseline.
+- Updated supporting files by append only: `README_GAP_REPORT.md`, `PROJECT_STATUS_REPORT.md`, `CURRENT_STATUS_SUMMARY.md`, and `README_CHANGELOG.md`.
+- Added fresh command evidence for repository inventory, build, typecheck, lint, root/workspace tests, dependency audit, outdated packages, workspace dependency resolution, security tests, penetration tests, environment validation, deployment validation, and React Doctor.
+- Added current classification, maturity, production readiness, frontend reality assessment, architecture maturity, P0 blockers, positioning, and current verdict.
+
+### Fresh verification commands added
+
+| Command | Result | Exit Code | Confidence |
+| :--- | :--- | :---: | :---: |
+| `git ls-files` | `2696` tracked files | `0` | HIGH |
+| `git status --short` | Modified and untracked files present | `0` | HIGH |
+| Repository directory/extension inventory scans | `281` project directories excluding generated/cache directories; extension inventory captured | `0` | MEDIUM |
+| `npm run build` | PASS | `0` | HIGH |
+| `npx tsc --noEmit` | PASS | `0` | HIGH |
+| `npm run lint` | PASS | `0` | HIGH |
+| `npm run test` | FAILED — missing root script `test` | `1` | HIGH |
+| `npm run test:unit` | FAILED — customer-web, delivery-partner, restaurant-dashboard, super-admin failed | `1` | HIGH |
+| `npm run test:integration` | FAILED — customer-web, delivery-partner, restaurant-dashboard, super-admin failed | `1` | HIGH |
+| `npm run test:e2e` | FAILED — customer-web, delivery-partner, restaurant-dashboard, super-admin failed | `1` | HIGH |
+| `npm run test:all` | FAILED — customer-web, delivery-partner, restaurant-dashboard, super-admin failed | `1` | HIGH |
+| `npm audit --json` | `51` moderate, `0` high, `0` critical, `51` total | `1` | HIGH |
+| `npm outdated` | Outdated packages reported | `1` | HIGH |
+| `npm ls --workspaces --depth=0 --json` | PASS; no fresh invalid/extraneous problems in output | `0` | HIGH |
+| `node infra/scripts/security-tests.js` | `Rate limited responses: 0/100`; `Total vulnerabilities found: 100` | `1` | HIGH |
+| `node infra/scripts/penetration-tests.js` | `ECONNREFUSED` for `localhost:3001` | `1` | HIGH |
+| `node infra/scripts/validate-env-consistency.js` | `All environment configurations are valid` | `0` | HIGH |
+| `node infra/scripts/deployment-check.js` | `ERROR: Cannot connect to cluster` | `1` | HIGH |
+| `npx react-doctor@latest --verbose` | `61/100`, `62` issues, `32` bugs, `2` performance, `28` maintainability | `0` | HIGH |
+
+### Stale claims marked
+
+| Claim area | Marker added | Reason | Confidence |
+| :--- | :--- | :--- | :---: |
+| Older build/typecheck failure claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh `npm run build` and `npx tsc --noEmit` both exited `0` | HIGH |
+| Older invalid dependency install claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh `npm ls --workspaces --depth=0 --json` exited `0`; audit/outdated still fail | HIGH |
+| Older environment validation failure claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh `validate-env-consistency.js` exited `0` | HIGH |
+| Older React Doctor `49`/`60` issue claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh React Doctor reported `61/100` with `62` issues | HIGH |
+| Older security pass claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Fresh `security-tests.js` failed rate limiting with `100` vulnerabilities | HIGH |
+| Older load-test pass/fail claims | `[OUTDATED — VERIFIED UPDATE BELOW]` | Load tests were not run in this pass; no pass/fail claim is made | MEDIUM |
+
+### New blockers added
+
+- rate limiting bypass
+- dependency audit vulnerabilities
+- failing workspace test gates
+- React Doctor quality issues
+- deployment validation failure
+- penetration test reachability failure
+- root `npm run test` script missing
+
+### Not counted as fresh blockers
+
+| Item | Reason | Confidence |
+| :--- | :--- | :---: |
+| Invalid dependency installs | Fresh `npm ls --workspaces --depth=0 --json` exited `0` with no invalid/extraneous problems in output | HIGH |
+| Build/typecheck failures | Fresh `npm run build` and `npx tsc --noEmit` both exited `0` | HIGH |
+| Environment validation failures | Fresh `validate-env-consistency.js` exited `0` | HIGH |
+
+### New maturity score
+
+- Current maturity: **~74–79%**
+- Confidence: **MEDIUM**
+- Production readiness: **NOT PRODUCTION READY**
+

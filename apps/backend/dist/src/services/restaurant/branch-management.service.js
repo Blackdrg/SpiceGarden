@@ -72,13 +72,13 @@ let BranchManagementService = BranchManagementService_1 = class BranchManagement
     async getBranchDetails(branchId) {
         return (await this.branchRepo.findOne({
             where: { id: branchId },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
         }));
     }
     async getBranchesByRestaurant(restaurantId) {
         return this.branchRepo.find({
             where: { restaurant: { id: restaurantId } },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { branchName: 'ASC' },
         });
     }
@@ -92,7 +92,7 @@ let BranchManagementService = BranchManagementService_1 = class BranchManagement
         }
         return this.branchRepo.find({
             where,
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { branchName: 'ASC' },
         });
     }

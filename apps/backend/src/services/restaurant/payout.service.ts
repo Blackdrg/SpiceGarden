@@ -37,7 +37,7 @@ export class PayoutService {
         status: OrderStatus.DELIVERED,
         createdAt: Between(periodStart, periodEnd),
       },
-      relations: ['gstDetail'],
+      relations: { gstDetail: true },
     });
 
     const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
@@ -122,7 +122,7 @@ export class PayoutService {
 
     return this.payoutRepo.find({
       where,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { createdAt: 'ASC' },
     });
   }

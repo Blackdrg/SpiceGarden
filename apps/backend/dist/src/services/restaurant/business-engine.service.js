@@ -51,13 +51,25 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
     async getActiveRestaurants() {
         return this.restaurantRepo.find({
             where: { status: 'active' },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
     }
     async getRestaurantMenu(restaurantId) {
         const restaurant = await this.restaurantRepo.findOne({
             where: { id: restaurantId },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
         if (!restaurant)
             return [];
@@ -120,7 +132,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
     async processOrderFlow(orderId) {
         const order = await this.orderRepo.findOne({
             where: { id: orderId },
-            relations: ['branch', 'branch.restaurant'],
+            relations: { branch: { restaurant: true } },
         });
         if (!order)
             return;
@@ -137,7 +149,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
             try {
                 const branch = await this.branchRepo.findOne({
                     where: { id: order.branchId || order.restaurantId },
-                    relations: ['restaurant']
+                    relations: { restaurant: true }
                 });
                 if (branch && branch.location) {
                     const availableDrivers = await this.driverAssignmentService.getAvailableDrivers(branch.location.lat, branch.location.lng, 5);
@@ -231,7 +243,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
                 where: { status: order_interface_1.OrderStatus.PLACED },
                 order: { createdAt: 'DESC' },
                 take: 10,
-                relations: ['branch', 'branch.restaurant'],
+                relations: { branch: { restaurant: true } },
             }),
         ]);
         return {

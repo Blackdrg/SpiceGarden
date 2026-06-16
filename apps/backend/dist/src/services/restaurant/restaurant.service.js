@@ -29,7 +29,7 @@ let RestaurantService = class RestaurantService {
     }
     async getAllRestaurants() {
         return this.restaurantRepo.find({
-            relations: ['branches'],
+            relations: { branches: true },
             where: { status: 'active' },
         });
     }
@@ -53,21 +53,27 @@ let RestaurantService = class RestaurantService {
             catch (e) {
                 return this.branchRepo.find({
                     where: { isOnline: true },
-                    relations: ['restaurant'],
+                    relations: { restaurant: true },
                     take: 20,
                 });
             }
         }
         return this.branchRepo.find({
             where: { isOnline: true },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             take: 20,
         });
     }
     async getRestaurantDetails(slug) {
         return this.restaurantRepo.findOne({
             where: { slug },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
     }
     async searchRestaurants(query) {
@@ -76,7 +82,7 @@ let RestaurantService = class RestaurantService {
                 { name: (0, typeorm_2.Like)(`%${query}%`) },
                 { description: (0, typeorm_2.Like)(`%${query}%`) },
             ],
-            relations: ['branches'],
+            relations: { branches: true },
         });
     }
     async updateBranchStatus(branchId, isOnline) {

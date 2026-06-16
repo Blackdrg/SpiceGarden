@@ -1,11 +1,13 @@
-import { Controller, Post, Body, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request } from 'express';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
+@UseGuards(ThrottlerGuard)
 export class AuthController {
   constructor(
     private authService: AuthService,

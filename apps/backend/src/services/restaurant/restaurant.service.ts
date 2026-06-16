@@ -16,7 +16,7 @@ export class RestaurantService {
 
   async getAllRestaurants() {
     return this.restaurantRepo.find({
-      relations: ['branches'],
+      relations: { branches: true },
       where: { status: 'active' },
     });
   }
@@ -41,24 +41,30 @@ export class RestaurantService {
           .orderBy('distance', 'ASC')
           .getMany();
       } catch (e) {
-        return this.branchRepo.find({
-          where: { isOnline: true },
-          relations: ['restaurant'],
-          take: 20,
-        });
-      }
-    }
-    return this.branchRepo.find({
-      where: { isOnline: true },
-      relations: ['restaurant'],
-      take: 20,
-    });
+return this.branchRepo.find({
+           where: { isOnline: true },
+           relations: { restaurant: true },
+           take: 20,
+         });
+       }
+     }
+     return this.branchRepo.find({
+       where: { isOnline: true },
+       relations: { restaurant: true },
+       take: 20,
+     });
   }
 
   async getRestaurantDetails(slug: string) {
     return this.restaurantRepo.findOne({
       where: { slug },
-      relations: ['branches', 'branches.categories', 'branches.categories.items'],
+      relations: { 
+        branches: { 
+          categories: { 
+            items: true 
+          } 
+        } 
+      },
     });
   }
 
@@ -68,7 +74,7 @@ export class RestaurantService {
         { name: Like(`%${query}%`) },
         { description: Like(`%${query}%`) },
       ],
-      relations: ['branches'],
+      relations: { branches: true },
     });
   }
 

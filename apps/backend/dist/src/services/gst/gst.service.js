@@ -47,14 +47,20 @@ let GSTService = GSTService_1 = class GSTService {
             this.logger.log(`Calculating GST for order ${orderId}`);
             const order = await this.orderRepo.findOne({
                 where: { id: orderId },
-                relations: ['items', 'items.menuItem', 'items.menuItem.hsnSac'],
+                relations: {
+                    items: {
+                        menuItem: {
+                            hsnSac: true
+                        }
+                    }
+                },
             });
             if (!order) {
                 throw new Error(`Order not found: ${orderId}`);
             }
             const restaurant = await this.restaurantRepo.findOne({
                 where: { id: order.restaurantId },
-                relations: ['gstDetail'],
+                relations: { gstDetail: true },
             });
             if (!restaurant) {
                 throw new Error(`Restaurant not found: ${order.restaurantId}`);
@@ -140,12 +146,14 @@ let GSTService = GSTService_1 = class GSTService {
             this.logger.log(`Generating GST invoice for order ${orderId}`);
             const order = await this.orderRepo.findOne({
                 where: { id: orderId },
-                relations: [
-                    'items',
-                    'items.menuItem',
-                    'items.menuItem.hsnSac',
-                    'gstDetail',
-                ],
+                relations: {
+                    items: {
+                        menuItem: {
+                            hsnSac: true
+                        }
+                    },
+                    gstDetail: true,
+                },
             });
             if (!order) {
                 throw new Error(`Order not found: ${orderId}`);
@@ -154,12 +162,14 @@ let GSTService = GSTService_1 = class GSTService {
                 await this.calculateGSTForOrder(orderId);
                 const reloadedOrder = await this.orderRepo.findOne({
                     where: { id: orderId },
-                    relations: [
-                        'items',
-                        'items.menuItem',
-                        'items.menuItem.hsnSac',
-                        'gstDetail',
-                    ],
+                    relations: {
+                        items: {
+                            menuItem: {
+                                hsnSac: true
+                            }
+                        },
+                        gstDetail: true,
+                    },
                 });
                 if (reloadedOrder?.gstDetail) {
                     order.gstDetail = reloadedOrder.gstDetail;
@@ -167,7 +177,7 @@ let GSTService = GSTService_1 = class GSTService {
             }
             const restaurant = await this.restaurantRepo.findOne({
                 where: { id: order.restaurantId },
-                relations: ['gstDetail'],
+                relations: { gstDetail: true },
             });
             if (!restaurant || !restaurant.gstDetail) {
                 throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);

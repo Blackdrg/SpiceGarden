@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
+import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 export interface RazorpaySettlementAccountData {
   legalBusinessName: string;
@@ -61,8 +62,8 @@ export class RazorpaySettlementService {
     @InjectRepository(PayoutReportEntity)
     private readonly payoutRepo: Repository<PayoutReportEntity>,
   ) {
-    this.keyId = this.configService.get<string>('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-    this.keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+    this.keyId = getRequiredSecret(this.configService, 'RAZORPAY_KEY_ID');
+    this.keySecret = getRequiredSecret(this.configService, 'RAZORPAY_KEY_SECRET');
   }
 
   private async rzpRequest(method: string, endpoint: string, data?: Record<string, any>): Promise<any> {

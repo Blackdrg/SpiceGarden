@@ -76,14 +76,14 @@ export class BranchManagementService {
   async getBranchDetails(branchId: string): Promise<RestaurantBranchEntity> {
     return (await this.branchRepo.findOne({
       where: { id: branchId },
-      relations: ['restaurant'],
+      relations: { restaurant: true },
     }))!;
   }
 
   async getBranchesByRestaurant(restaurantId: string): Promise<RestaurantBranchEntity[]> {
     return this.branchRepo.find({
       where: { restaurant: { id: restaurantId } } as any,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { branchName: 'ASC' },
     });
   }
@@ -99,7 +99,7 @@ export class BranchManagementService {
 
     return this.branchRepo.find({
       where,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { branchName: 'ASC' },
     });
   }

@@ -8,6 +8,7 @@ import { UserEntity } from '../../../db/entities/user.entity';
 import { NotificationService } from '../../../services/notifications/notification.service';
 import { ProductionNotificationService } from '../../../services/notifications/production-notification.service';
 import Stripe from 'stripe';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 @Injectable()
 export class ChargebackService {
@@ -26,7 +27,7 @@ export class ChargebackService {
     private readonly productionNotification: ProductionNotificationService,
   ) {
     this.stripe = new Stripe(
-      this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
+      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
       {
         apiVersion: '2024-04-10' as any,
       }
@@ -154,7 +155,7 @@ export class ChargebackService {
   async getDisputeById(disputeId: string): Promise<PaymentDisputeEntity> {
     const dispute = await this.disputeRepo.findOne({
       where: { disputeId: disputeId },
-      relations: ['order']
+      relations: { order: true }
     });
     
     if (!dispute) {

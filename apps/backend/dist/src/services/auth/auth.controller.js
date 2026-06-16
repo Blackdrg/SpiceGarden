@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
+const throttler_1 = require("@nestjs/throttler");
 let AuthController = class AuthController {
     authService;
     userRepo;
@@ -77,6 +78,7 @@ __decorate([
 ], AuthController.prototype, "register", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
+    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         typeorm_2.Repository])

@@ -17,6 +17,6 @@
     "types": ["jest", "node"],
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.tsx", "*.stories.tsx"],
+  "include": ["*.ts", "*.tsx", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "__tests__", "jest.config.js", ".babelrc", "**/*.stories.tsx"]
 }

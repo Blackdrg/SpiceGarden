@@ -10,6 +10,7 @@ exports.SecurityModule = void 0;
 const common_1 = require("@nestjs/common");
 const throttler_1 = require("@nestjs/throttler");
 const encryption_service_1 = require("./encryption.service");
+const secret_loader_service_1 = require("../infra/secret-loader.service");
 const local_repository_module_1 = require("../db/local-repository.module");
 let SecurityModule = class SecurityModule {
 };
@@ -24,7 +25,7 @@ exports.SecurityModule = SecurityModule = __decorate([
                 }]),
             local_repository_module_1.LocalRepositoryModule,
         ],
-        providers: [encryption_service_1.EncryptionService],
+        providers: [secret_loader_service_1.SecretLoaderService, encryption_service_1.EncryptionService],
         exports: [encryption_service_1.EncryptionService, throttler_1.ThrottlerModule],
     })
 ], SecurityModule);

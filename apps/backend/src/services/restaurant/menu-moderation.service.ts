@@ -84,7 +84,7 @@ export class MenuModerationService {
 
     return this.moderationRepo.find({
       where,
-      relations: ['menuItem', 'restaurant'],
+      relations: { menuItem: true, restaurant: true },
       order: { createdAt: 'DESC' },
     });
   }
@@ -122,7 +122,7 @@ export class MenuModerationService {
       { status: ModerationStatus.APPROVED, moderatorId, reviewedAt: new Date() },
     );
 
-    const moderations = await this.moderationRepo.findByIds(moderationIds);
+    const moderations = await this.moderationRepo.findBy({ id: In(moderationIds) });
     for (const m of moderations) {
       await this.itemRepo.update(m.menuItemId, { status: 'available' });
     }

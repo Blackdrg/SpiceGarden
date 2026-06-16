@@ -78,7 +78,7 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
         }
         return this.moderationRepo.find({
             where,
-            relations: ['menuItem', 'restaurant'],
+            relations: { menuItem: true, restaurant: true },
             order: { createdAt: 'DESC' },
         });
     }
@@ -103,7 +103,7 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
     }
     async bulkApprove(moderationIds, moderatorId) {
         await this.moderationRepo.update({ id: (0, typeorm_2.In)(moderationIds) }, { status: menu_moderation_entity_1.ModerationStatus.APPROVED, moderatorId, reviewedAt: new Date() });
-        const moderations = await this.moderationRepo.findByIds(moderationIds);
+        const moderations = await this.moderationRepo.findBy({ id: (0, typeorm_2.In)(moderationIds) });
         for (const m of moderations) {
             await this.itemRepo.update(m.menuItemId, { status: 'available' });
         }

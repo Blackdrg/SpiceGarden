@@ -18,12 +18,19 @@ const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
 const cors_origin_1 = require("../../security/cors-origin");
+const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const BRANCH_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 let KdsGateway = KdsGateway_1 = class KdsGateway {
     logger = new common_1.Logger(KdsGateway_1.name);
     server;
     handleConnection(client) {
+        const origin = client.handshake.headers.origin;
+        if (typeof origin === 'string' && !(0, cors_origin_1.isAllowedOrigin)(origin)) {
+            client.disconnect(true);
+            return;
+        }
         const branchId = client.handshake.query.branchId;
-        if (branchId) {
+        if (typeof branchId === 'string' && BRANCH_ID_PATTERN.test(branchId)) {
             client.join(`branch:${branchId}`);
             this.logger.log(`Kitchen staff joined branch: ${branchId}`);
         }
@@ -32,9 +39,19 @@ let KdsGateway = KdsGateway_1 = class KdsGateway {
         this.logger.log(`Kitchen staff disconnected: ${client.id}`);
     }
     notifyNewOrder(branchId, order) {
+        if (!BRANCH_ID_PATTERN.test(branchId)) {
+            this.logger.warn(`Rejected KDS notification for invalid branch: ${branchId}`);
+            return;
+        }
         this.server.to(`branch:${branchId}`).emit('newOrder', order);
     }
     handleStatusUpdate(data) {
+        if (typeof data.orderId !== 'string' ||
+            typeof data.status !== 'string' ||
+            typeof data.branchId !== 'string' ||
+            !BRANCH_ID_PATTERN.test(data.branchId)) {
+            return { error: 'Invalid prep status update' };
+        }
         this.logger.log(`Order ${data.orderId} status updated to ${data.status} by kitchen`);
         this.server.to(`branch:${data.branchId}`).emit('orderStatusUpdated', data);
     }
@@ -55,6 +72,8 @@ exports.KdsGateway = KdsGateway = KdsGateway_1 = __decorate([
     (0, common_1.Injectable)(),
     (0, websockets_1.WebSocketGateway)({
         namespace: 'kds',
+        maxHttpBufferSize: MAX_HTTP_BUFFER_SIZE,
+        allowEIO3: false,
         cors: { origin: cors_origin_1.isAllowedOrigin, credentials: true },
     })
 ], KdsGateway);

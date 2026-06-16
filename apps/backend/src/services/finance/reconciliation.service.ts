@@ -128,13 +128,13 @@ export class ReconciliationService {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
-    const orders = await this.orderRepo.find({
-      where: {
-        restaurantId: restaurantId as any,
-        createdAt: Between(startDate, endDate),
-      },
-      relations: ['gstDetail'],
-    });
+const orders = await this.orderRepo.find({
+       where: {
+         restaurantId: restaurantId as any,
+         createdAt: Between(startDate, endDate),
+       },
+       relations: { gstDetail: true },
+     });
 
     const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail!);
 

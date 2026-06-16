@@ -38,21 +38,21 @@ let DriverController = class DriverController {
     async getProfile(req) {
         const driver = await this.driverRepo.findOne({
             where: { userId: req.user.id },
-            relations: ['user'],
+            relations: { user: true },
         });
         return driver;
     }
     async getDriver(id) {
         const driver = await this.driverRepo.findOne({
             where: { id },
-            relations: ['user'],
+            relations: { user: true },
         });
         return driver;
     }
     async getEarnings(id) {
         const assignments = await this.assignmentRepo.find({
             where: { driver: { id }, status: 'delivered' },
-            relations: ['order'],
+            relations: { order: true },
         });
         const totalEarnings = assignments.reduce((sum, a) => sum + (a.order?.grandTotal || 0), 0);
         const todayAssignments = assignments.filter(a => {
@@ -257,7 +257,7 @@ let OrderDriverController = class OrderDriverController {
     async verifyOTP(id, body) {
         const assignment = await this.assignmentRepo.findOne({
             where: { order: { id } },
-            relations: ['order'],
+            relations: { order: true },
         });
         if (!assignment || !assignment.order.otpCode) {
             return { valid: false };

@@ -28,7 +28,13 @@ let AiService = class AiService {
     async getRecommendations(userId) {
         const recentOrders = await this.orderRepo.find({
             where: { userId },
-            relations: ['items', 'items.menuItem', 'items.menuItem.category'],
+            relations: {
+                items: {
+                    menuItem: {
+                        category: true
+                    }
+                }
+            },
             take: 5,
             order: { createdAt: 'DESC' },
         });

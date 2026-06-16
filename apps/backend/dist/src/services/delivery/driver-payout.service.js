@@ -108,7 +108,7 @@ let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
         }
         return this.incentiveRepo.find({
             where,
-            relations: ['driver'],
+            relations: { driver: true },
             order: { createdAt: 'ASC' },
         });
     }

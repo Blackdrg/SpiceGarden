@@ -20,6 +20,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 const payout_report_entity_1 = require("../../db/entities/payout-report.entity");
+const missing_env_error_1 = require("../../common/errors/missing-env.error");
 let RazorpaySettlementService = RazorpaySettlementService_1 = class RazorpaySettlementService {
     configService;
     restaurantRepo;
@@ -32,8 +33,8 @@ let RazorpaySettlementService = RazorpaySettlementService_1 = class RazorpaySett
         this.configService = configService;
         this.restaurantRepo = restaurantRepo;
         this.payoutRepo = payoutRepo;
-        this.keyId = this.configService.get('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-        this.keySecret = this.configService.get('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+        this.keyId = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_ID');
+        this.keySecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_SECRET');
     }
     async rzpRequest(method, endpoint, data) {
         const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');

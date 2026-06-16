@@ -43,8 +43,13 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     handleJoin(data: {
         room: string;
     }, client: Socket): {
+        error: string;
+        status?: undefined;
+        room?: undefined;
+    } | {
         status: string;
         room: string;
+        error?: undefined;
     };
     handleAcknowledgement(data: {
         messageId: string;
@@ -67,16 +72,26 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
         branchId: string;
         timestamp?: Date;
     }): Promise<{
+        error: string;
+        status?: undefined;
+        messageId?: undefined;
+    } | {
         status: string;
         messageId: string;
+        error?: undefined;
     }>;
     handleDriverEvent(data: {
         driverId: string;
         orderId?: string;
         event: string;
     }): Promise<{
+        error: string;
+        status?: undefined;
+        messageId?: undefined;
+    } | {
         status: string;
         messageId: string;
+        error?: undefined;
     }>;
     publish(topic: string, data: any, requireAck?: boolean): Promise<any>;
     publishToRoom(room: string, data: any, requireAck?: boolean): Promise<any>;

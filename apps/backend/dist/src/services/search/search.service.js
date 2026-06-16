@@ -37,7 +37,13 @@ let SearchService = class SearchService {
                 { name: (0, typeorm_2.Like)(`%${query}%`) },
                 { description: (0, typeorm_2.Like)(`%${query}%`) },
             ],
-            relations: ['category', 'category.branch', 'category.branch.restaurant'],
+            relations: {
+                category: {
+                    branch: {
+                        restaurant: true
+                    }
+                }
+            },
         });
         return { restaurants, items };
     }

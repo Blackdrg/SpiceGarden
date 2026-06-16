@@ -64,7 +64,7 @@ let ComplianceService = ComplianceService_1 = class ComplianceService {
     async shouldRetainUserData(userId) {
         const user = await this.userRepo.findOne({
             where: { id: userId },
-            select: ['deletedAt'],
+            select: { deletedAt: true },
         });
         if (!user || !user.deletedAt) {
             return true;

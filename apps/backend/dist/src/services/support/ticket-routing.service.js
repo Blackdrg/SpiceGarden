@@ -46,7 +46,7 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
     async routeTicket(ticketId) {
         const ticket = await this.ticketRepo.findOne({
             where: { id: ticketId },
-            relations: ['assignedTo'],
+            relations: { assignedTo: true },
         });
         if (!ticket) {
             throw new Error('Ticket not found');

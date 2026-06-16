@@ -40,7 +40,13 @@ export class GSTService {
       // Get order with items
       const order = await this.orderRepo.findOne({
         where: { id: orderId },
-        relations: ['items', 'items.menuItem', 'items.menuItem.hsnSac'],
+        relations: { 
+          items: { 
+            menuItem: { 
+              hsnSac: true 
+            } 
+          } 
+        },
       });
 
       if (!order) {
@@ -50,7 +56,7 @@ export class GSTService {
       // Get restaurant GST details
       const restaurant = await this.restaurantRepo.findOne({
         where: { id: order.restaurantId },
-        relations: ['gstDetail'],
+        relations: { gstDetail: true },
       });
 
       if (!restaurant) {
@@ -175,12 +181,14 @@ export class GSTService {
       // Get order with all related data
       const order = await this.orderRepo.findOne({
         where: { id: orderId },
-        relations: [
-          'items',
-          'items.menuItem',
-          'items.menuItem.hsnSac',
-          'gstDetail',
-        ],
+        relations: {
+          items: { 
+            menuItem: { 
+              hsnSac: true 
+            } 
+          },
+          gstDetail: true,
+        },
       });
 
       if (!order) {
@@ -193,12 +201,14 @@ export class GSTService {
         // Reload order with GST detail
         const reloadedOrder = await this.orderRepo.findOne({
           where: { id: orderId },
-          relations: [
-            'items',
-            'items.menuItem',
-            'items.menuItem.hsnSac',
-            'gstDetail',
-          ],
+          relations: {
+            items: { 
+              menuItem: { 
+                hsnSac: true 
+              } 
+            },
+            gstDetail: true,
+          },
         });
         if (reloadedOrder?.gstDetail) {
           order.gstDetail = reloadedOrder.gstDetail;
@@ -208,7 +218,7 @@ export class GSTService {
       // Get restaurant GST details
       const restaurant = await this.restaurantRepo.findOne({
         where: { id: order.restaurantId },
-        relations: ['gstDetail'],
+        relations: { gstDetail: true },
       });
 
       if (!restaurant || !restaurant.gstDetail) {

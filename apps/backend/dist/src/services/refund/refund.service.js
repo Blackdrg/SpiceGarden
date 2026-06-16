@@ -210,7 +210,7 @@ let RefundService = RefundService_1 = class RefundService {
     async getRefundRequest(approvalId) {
         const approval = await this.refundApprovalRepo.findOne({
             where: { id: approvalId },
-            relations: ['order', 'requester', 'approver']
+            relations: { order: true }
         });
         if (!approval) {
             throw new common_1.NotFoundException(`Refund approval not found: ${approvalId}`);
@@ -220,14 +220,14 @@ let RefundService = RefundService_1 = class RefundService {
     async getRefundRequestsForOrder(orderId) {
         return await this.refundApprovalRepo.find({
             where: { order: { id: orderId } },
-            relations: ['requester', 'approver'],
+            relations: {},
             order: { createdAt: 'DESC' }
         });
     }
     async getRefundRequestsByStatus(status) {
         return await this.refundApprovalRepo.find({
             where: { approvalStatus: status },
-            relations: ['order', 'requester', 'approver'],
+            relations: { order: true },
             order: { createdAt: 'DESC' }
         });
     }
