@@ -16,7 +16,7 @@ export declare class VaultService implements OnModuleInit {
     private cache;
     private readonly cacheTtlMs;
     constructor(configService: ConfigService);
-    onModuleInit(): any;
+    onModuleInit(): Promise<void>;
     private initializeVault;
     getSecret<T = string>(key: string, fallback?: T): Promise<T>;
     private fetchSecretFromVault;

@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KitchenSLAEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -57,7 +56,7 @@ __decorate([
 ], KitchenSLAEntity.prototype, "measurementPeriod", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
+    __metadata("design:type", Date)
 ], KitchenSLAEntity.prototype, "measuredAt", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => restaurant_branch_entity_1.RestaurantBranchEntity),
@@ -65,11 +64,11 @@ __decorate([
 ], KitchenSLAEntity.prototype, "branch", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
+    __metadata("design:type", Date)
 ], KitchenSLAEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+    __metadata("design:type", Date)
 ], KitchenSLAEntity.prototype, "updatedAt", void 0);
 exports.KitchenSLAEntity = KitchenSLAEntity = __decorate([
     (0, typeorm_1.Entity)('kitchen_sla')

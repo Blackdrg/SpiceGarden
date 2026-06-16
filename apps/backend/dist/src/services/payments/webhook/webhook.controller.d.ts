@@ -6,6 +6,6 @@ export declare class PaymentWebhookController {
     private readonly webhookService;
     private readonly configService;
     constructor(webhookService: WebhookService, configService: ConfigService);
-    handleWebhook(req: RawBodyRequest<Request>, stripeSignature?: string, razorpaySignature?: string): unknown;
-    getWebhookStats(): unknown;
+    handleWebhook(req: RawBodyRequest<Request>, stripeSignature?: string, razorpaySignature?: string): Promise<any>;
+    getWebhookStats(): Promise<any>;
 }

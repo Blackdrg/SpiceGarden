@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var DataPrivacyService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataPrivacyService = void 0;
 const common_1 = require("@nestjs/common");
@@ -129,5 +128,6 @@ let DataPrivacyService = DataPrivacyService_1 = class DataPrivacyService {
 exports.DataPrivacyService = DataPrivacyService;
 exports.DataPrivacyService = DataPrivacyService = DataPrivacyService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [encryption_service_1.EncryptionService, typeof (_a = typeof typeorm_1.DataSource !== "undefined" && typeorm_1.DataSource) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [encryption_service_1.EncryptionService,
+        typeorm_1.DataSource])
 ], DataPrivacyService);

@@ -7,15 +7,20 @@ interface AuthenticatedRequest {
 export declare class WalletController {
     private readonly walletService;
     constructor(walletService: WalletService);
-    getWallet(req: AuthenticatedRequest): unknown;
-    getBalance(req: AuthenticatedRequest): unknown;
-    getTransactions(req: AuthenticatedRequest, limit?: number, offset?: number): unknown;
-    creditWallet(req: AuthenticatedRequest, amount: number, description: string, referenceId?: string): unknown;
-    debitWallet(req: AuthenticatedRequest, amount: number, description: string, referenceId?: string): unknown;
-    compensateUser(req: AuthenticatedRequest, amount: number, reason: string): unknown;
-    processCODPayment(req: AuthenticatedRequest, orderId: string, amount: string | number): unknown;
-    confirmCODCollection(req: AuthenticatedRequest, orderId: string, amount: string | number): unknown;
-    refundCOD(req: AuthenticatedRequest, orderId: string, amount: string | number, reason: string): unknown;
-    preventDuplicatePayment(req: AuthenticatedRequest, orderId: string, amount: number): unknown;
+    getWallet(req: AuthenticatedRequest): Promise<import("../../db/entities/wallet.entity").WalletEntity>;
+    getBalance(req: AuthenticatedRequest): Promise<{
+        balance: number;
+        currency: string;
+    }>;
+    getTransactions(req: AuthenticatedRequest, limit?: number, offset?: number): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity[]>;
+    creditWallet(req: AuthenticatedRequest, amount: number, description: string, referenceId?: string): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity>;
+    debitWallet(req: AuthenticatedRequest, amount: number, description: string, referenceId?: string): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity>;
+    compensateUser(req: AuthenticatedRequest, amount: number, reason: string): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity>;
+    processCODPayment(req: AuthenticatedRequest, orderId: string, amount: string | number): Promise<boolean>;
+    confirmCODCollection(req: AuthenticatedRequest, orderId: string, amount: string | number): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity>;
+    refundCOD(req: AuthenticatedRequest, orderId: string, amount: string | number, reason: string): Promise<import("../../db/entities/wallet-transaction.entity").WalletTransactionEntity>;
+    preventDuplicatePayment(req: AuthenticatedRequest, orderId: string, amount: number): Promise<{
+        allowed: boolean;
+    }>;
 }
 export {};

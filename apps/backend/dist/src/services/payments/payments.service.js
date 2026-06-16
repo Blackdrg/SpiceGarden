@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var PaymentService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const common_1 = require("@nestjs/common");
@@ -125,7 +124,8 @@ let PaymentService = PaymentService_1 = class PaymentService {
 exports.PaymentService = PaymentService;
 exports.PaymentService = PaymentService = PaymentService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, audit_service_1.AuditService,
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        audit_service_1.AuditService,
         ledger_service_1.LedgerService,
         gateway_factory_service_1.PaymentGatewayFactory])
 ], PaymentService);

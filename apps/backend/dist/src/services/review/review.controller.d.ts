@@ -9,8 +9,10 @@ export declare class ReviewController {
         rating: number;
         comment?: string;
         images?: string[];
-    }): unknown;
-    findByOrder(orderId: string): unknown;
-    findByRestaurant(restaurantId: string): unknown;
-    getAverageRating(restaurantId: string): unknown;
+    }): Promise<import("../../db/schemas/review.schema").ReviewDocument>;
+    findByOrder(orderId: string): Promise<import("../../db/schemas/review.schema").ReviewDocument | null>;
+    findByRestaurant(restaurantId: string): Promise<import("../../db/schemas/review.schema").ReviewDocument[]>;
+    getAverageRating(restaurantId: string): Promise<{
+        averageRating: number;
+    }>;
 }

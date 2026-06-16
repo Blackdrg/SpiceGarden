@@ -7,4 +7,32 @@ export declare class ReviewDocument extends Document {
     comment: string;
     images: string[];
 }
-export declare const ReviewSchema: any;
+export declare const ReviewSchema: import("mongoose").Schema<any, import("mongoose").Model<any, any, any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
+    [x: number]: unknown;
+    [x: symbol]: unknown;
+    [x: string]: unknown;
+}, Document<unknown, {}, {
+    [x: number]: unknown;
+    [x: symbol]: unknown;
+    [x: string]: unknown;
+}, {
+    id: string;
+}, import("mongoose").DefaultSchemaOptions> & Omit<{
+    [x: number]: unknown;
+    [x: symbol]: unknown;
+    [x: string]: unknown;
+} & Required<{
+    _id: unknown;
+}> & {
+    __v: number;
+}, "id"> & {
+    id: string;
+}, unknown, {
+    [x: number]: {};
+    [x: symbol]: {};
+    [x: string]: {};
+} & Required<{
+    _id: unknown;
+}> & {
+    __v: number;
+}>;

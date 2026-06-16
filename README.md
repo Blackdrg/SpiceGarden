@@ -1,6 +1,6 @@
 ﻿# SpiceGarden — Enterprise Food Delivery Platform
 
-**Generated:** 2026-06-14  
+**Generated:** 2026-06-16  
 **Scope:** SpiceGarden is an npm-workspace monorepo for a production-oriented food delivery platform with a NestJS backend, customer web and mobile apps, restaurant KDS/dashboard, super-admin console, delivery-partner app, Electron launcher, shared API/UI/proto packages, infrastructure manifests, observability, legal documents, UX documentation, and automation scripts.
 
 This README restores the detailed repository guide from `git show 57e5bd0:README.md` and expands it with current source data from the backend, apps, infrastructure, CI/CD, observability, UX, legal, and load-test files. Secret values from local files are intentionally redacted.
@@ -13,25 +13,26 @@ This README restores the detailed repository guide from `git show 57e5bd0:README
 
 **Completed fixes**
 - Repaired the npm workspace dependency graph after invalid hoisting and stale lockfile metadata.
-- Removed invalid `eslint-config-next@16.2.6` workspace installs for Next.js 15 workspaces and aligned them to `eslint-config-next@15.5.18`.
-- Removed extraneous root-level packages left from prior installs.
+- Removed the root `uuid` override that forced incompatible versions into consumers, then added root development dependencies needed for stable hoisting.
+- Added missing React Native navigation peer dependencies for customer mobile and aligned delivery-partner React Native tooling.
+- Added missing `@rushstack/eslint-patch` for Next.js 15 workspaces and aligned React Hooks ESLint plugin versions.
+- Added `electron-builder-squirrel-windows` for the launcher and `sqlite3@5.1.7` for backend compatibility.
 - Upgraded the local npm CLI to `11.17.0` and set the npm registry to `https://registry.npmjs.org/`.
 
 **Verified commands**
 | Command | Result |
 | :--- | :--- |
-| `npm ls --workspaces --depth=0` | Passed with no invalid or extraneous workspace installs after `npm ci` |
-| `npm install` | Passed |
-| `npm ci` | Passed with npm `11.17.0` |
+| `npm ls --workspaces --depth=0` | Passed with no invalid, missing, or extraneous workspace installs |
+| `npm ls --all` | Passed with no dependency graph errors |
+| `npm install --prefer-offline --no-audit` | Passed and restored the workspace graph after interrupted `npm ci` |
 | `npm run build` | Passed for all workspaces |
-| `npm run lint` | Passed for all workspaces |
 | `npm outdated` | Reported expected update candidates; no dependency graph corruption |
-| `npm audit` | Reported 46 vulnerabilities, to be resolved in the security phase |
+| `npm audit` | Reported 66 vulnerabilities, to be resolved in the security phase |
 | `npm doctor` | npm version and registry passed; Node.js remains `v25.5.0` while npm recommends `v25.9.0` |
 
 **Architecture/dependency updates**
-- `package-lock.json` now resolves Next.js workspace ESLint configs consistently with the installed Next.js `15.5.19` runtime.
-- Workspace installs are deterministic after clean install.
+- `package-lock.json` now resolves workspace peer dependencies and transitive tooling without invalid, missing, or extraneous installs.
+- Workspace installs are stable after `npm install --prefer-offline --no-audit`; `npm ci` remains unverified because it timed out and left extraneous installs.
 
 ### Phase 1 — Build and Typecheck
 

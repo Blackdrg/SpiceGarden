@@ -3,21 +3,33 @@ export declare class LegalController {
         title: string;
         effectiveDate: string;
         lastUpdated: string;
-        sections: {};
+        sections: {
+            id: string;
+            title: string;
+            content: string;
+        }[];
         contact: string;
     };
     getTermsOfService(): {
         title: string;
         effectiveDate: string;
         lastUpdated: string;
-        sections: {};
+        sections: {
+            id: string;
+            title: string;
+            content: string;
+        }[];
         contact: string;
     };
     getIntellectualProperty(): {
         title: string;
         copyright: string;
         license: string;
-        ownedAssets: {};
-        thirdPartyLicenses: {};
+        ownedAssets: string[];
+        thirdPartyLicenses: {
+            name: string;
+            license: string;
+            compatible: boolean;
+        }[];
     };
 }

@@ -24,13 +24,17 @@ interface PaymentMethodCreateBody {
 export declare class UserProfileController {
     private readonly profileService;
     constructor(profileService: UserProfileService);
-    getAddresses(req: any): unknown;
-    createAddress(req: any, body: AddressCreateBody): unknown;
-    updateAddress(req: any, id: string, body: Partial<AddressCreateBody>): unknown;
-    deleteAddress(req: any, id: string): unknown;
-    getPaymentMethods(req: any): unknown;
-    createPaymentMethod(req: any, body: PaymentMethodCreateBody): unknown;
-    deletePaymentMethod(req: any, id: string): unknown;
-    setDefaultPaymentMethod(req: any, id: string): unknown;
+    getAddresses(req: any): Promise<import("../../db/entities/address.entity").AddressEntity[]>;
+    createAddress(req: any, body: AddressCreateBody): Promise<import("../../db/entities/address.entity").AddressEntity>;
+    updateAddress(req: any, id: string, body: Partial<AddressCreateBody>): Promise<import("../../db/entities/address.entity").AddressEntity>;
+    deleteAddress(req: any, id: string): Promise<{
+        success: boolean;
+    }>;
+    getPaymentMethods(req: any): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity[]>;
+    createPaymentMethod(req: any, body: PaymentMethodCreateBody): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity>;
+    deletePaymentMethod(req: any, id: string): Promise<{
+        success: boolean;
+    }>;
+    setDefaultPaymentMethod(req: any, id: string): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity>;
 }
 export {};

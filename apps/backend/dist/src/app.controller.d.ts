@@ -5,10 +5,10 @@ export declare class AppController {
     getHealth(): {
         status: string;
         service: string;
-        timestamp: any;
+        timestamp: string;
     };
     healthCheck(): {
         status: string;
-        timestamp: any;
+        timestamp: string;
     };
 }

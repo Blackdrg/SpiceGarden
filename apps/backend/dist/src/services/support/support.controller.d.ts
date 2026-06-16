@@ -11,32 +11,32 @@ export declare class SupportController {
         customerId: string;
         type: DisputeType;
         description: string;
-    }): unknown;
+    }): Promise<import("../../db/entities/dispute.entity").DisputeEntity>;
     getDisputes(query: {
         status?: DisputeStatus;
         customerId?: string;
         restaurantId?: string;
         driverId?: string;
-    }): unknown;
+    }): Promise<import("../../db/entities/dispute.entity").DisputeEntity[]>;
     reviewDispute(id: string, body: {
         reviewerId: string;
         status: DisputeStatus;
         notes?: string;
-    }): unknown;
+    }): Promise<import("../../db/entities/dispute.entity").DisputeEntity>;
     requestRefund(body: {
         orderId: string;
         requestedBy: string;
         type: RefundType;
         amount: number;
         reason: string;
-    }): unknown;
+    }): Promise<import("../../db/entities/refund.entity").RefundEntity>;
     processRefund(id: string, body: {
         processedBy: string;
         paymentReference?: string;
-    }): unknown;
-    getQueueStats(): unknown;
-    routeTicket(id: string): unknown;
+    }): Promise<import("../../db/entities/refund.entity").RefundEntity>;
+    getQueueStats(): Promise<any>;
+    routeTicket(id: string): Promise<import("../../db/entities/support-ticket.entity").SupportTicketEntity>;
     escalateTicket(id: string, body: {
         level?: number;
-    }): unknown;
+    }): Promise<import("../../db/entities/support-ticket.entity").SupportTicketEntity>;
 }

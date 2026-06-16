@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { OrderStatus } from '../../shared/domain/order.interface';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
@@ -38,23 +39,46 @@ export declare class BusinessEngineService {
     private readonly orderProcessingQueue;
     constructor(orderRepo: Repository<OrderEntity>, driverRepo: Repository<DriverEntity>, restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, driverAssignmentService: DriverAssignmentService, trackingGateway: TrackingGateway, notificationService: NotificationService, auditService: AuditService);
     getActiveRestaurants(): Promise<RestaurantEntity[]>;
-    getRestaurantMenu(restaurantId: string): unknown;
+    getRestaurantMenu(restaurantId: string): Promise<{
+        id: string;
+        name: string;
+        price: number;
+        categoryId: string;
+        categoryName: string;
+    }[]>;
     registerDriverLocation(driverId: string, location: {
         lat: number;
         lng: number;
         heading?: number;
         speed?: number;
-    }): unknown;
+    }): Promise<{
+        status: string;
+        driverId: string;
+    }>;
     getLiveDrivers(): Promise<DriverLocation[]>;
-    toggleDriverAvailability(driverId: string, isAvailable: boolean): unknown;
-    processOrderFlow(orderId: string): any;
+    toggleDriverAvailability(driverId: string, isAvailable: boolean): Promise<{
+        driverId: string;
+        isAvailable: boolean;
+    }>;
+    processOrderFlow(orderId: string): Promise<void>;
     getBusinessMetrics(): Promise<BusinessMetrics>;
     private getAvgPrepTime;
     private getAvgDeliveryTime;
-    recordOrderCompleted(orderId: string, userId: string): any;
+    recordOrderCompleted(orderId: string, userId: string): Promise<void>;
     getSystemUptime(): Promise<{
         uptime: number;
         lastCheck: string;
     }>;
-    getRealtimeDashboard(): unknown;
+    getRealtimeDashboard(): Promise<{
+        metrics: BusinessMetrics;
+        liveDrivers: DriverLocation[];
+        recentOrders: {
+            id: string;
+            restaurant: string;
+            amount: number;
+            status: OrderStatus;
+            createdAt: Date;
+        }[];
+        timestamp: string;
+    }>;
 }

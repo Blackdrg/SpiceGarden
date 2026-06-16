@@ -4,32 +4,32 @@ export declare class DriverOpsController {
     private onboardingService;
     private payoutService;
     constructor(onboardingService: DriverOnboardingService, payoutService: DriverPayoutService);
-    startOnboarding(body: any): unknown;
+    startOnboarding(body: any): Promise<import("../../db/entities/driver.entity").DriverEntity>;
     uploadDocument(body: {
         driverId: string;
         type: string;
         url: string;
         expiryDate?: string;
-    }): unknown;
-    getDocuments(driverId: string): unknown;
+    }): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity>;
+    getDocuments(driverId: string): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity[]>;
     verifyDocument(id: string, body: {
         status: string;
         notes?: string;
         verifierId?: string;
-    }): unknown;
-    getOnboardingStatus(id: string): unknown;
+    }): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity>;
+    getOnboardingStatus(id: string): Promise<any>;
     calculateIncentives(body: {
         driverId: string;
         weekStart: string;
-    }): unknown;
+    }): Promise<any>;
     generateIncentive(body: {
         driverId: string;
         type: string;
         amount: number;
         description: string;
-    }): unknown;
+    }): Promise<import("../../db/entities/driver-incentive.entity").DriverIncentiveEntity>;
     approveIncentive(id: string, body: {
         approverId: string;
-    }): unknown;
-    getPendingIncentives(driverId?: string): unknown;
+    }): Promise<import("../../db/entities/driver-incentive.entity").DriverIncentiveEntity>;
+    getPendingIncentives(driverId?: string): Promise<import("../../db/entities/driver-incentive.entity").DriverIncentiveEntity[]>;
 }

@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestaurantGSTEntity = void 0;
 const typeorm_1 = require("typeorm");
@@ -70,11 +69,11 @@ __decorate([
 ], RestaurantGSTEntity.prototype, "state", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
+    __metadata("design:type", Date)
 ], RestaurantGSTEntity.prototype, "registrationDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
+    __metadata("design:type", Date)
 ], RestaurantGSTEntity.prototype, "cancellationDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: true }),
@@ -90,11 +89,11 @@ __decorate([
 ], RestaurantGSTEntity.prototype, "phone", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+    __metadata("design:type", Date)
 ], RestaurantGSTEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
+    __metadata("design:type", Date)
 ], RestaurantGSTEntity.prototype, "updatedAt", void 0);
 exports.RestaurantGSTEntity = RestaurantGSTEntity = __decorate([
     (0, typeorm_1.Entity)('restaurant_gst')

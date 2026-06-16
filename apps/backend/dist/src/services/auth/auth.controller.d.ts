@@ -6,6 +6,12 @@ export declare class AuthController {
     private authService;
     private readonly userRepo;
     constructor(authService: AuthService, userRepo: Repository<UserEntity>);
-    login(body: any, req: Request): unknown;
-    register(body: any, req: Request): unknown;
+    login(body: any, req: Request): Promise<{
+        access_token: string;
+        refresh_token: any;
+    }>;
+    register(body: any, req: Request): Promise<{
+        access_token: string;
+        refresh_token: any;
+    }>;
 }

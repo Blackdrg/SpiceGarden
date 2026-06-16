@@ -7,6 +7,6 @@ export declare class RetentionJob {
     private dataSource;
     private readonly logger;
     constructor(complianceService: ComplianceService, dataPrivacyService: DataPrivacyService, dataSource: DataSource);
-    handleDailyRetention(): any;
+    handleDailyRetention(): Promise<void>;
     private autoProcessDeletionRequests;
 }

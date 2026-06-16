@@ -22,9 +22,9 @@
     "test:mongo": "jest --testPathPattern=\"mongo-connection.spec\" --passWithNoTests"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.0",
+    "@nestjs/common": "11.1.27",
     "@nestjs/config": "^4.0.0",
-    "@nestjs/core": "^11.0.0",
+    "@nestjs/core": "11.1.27",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/microservices": "^11.1.0",
     "@nestjs/mongoose": "^11.0.0",
@@ -48,8 +48,8 @@
     "hpp": "^0.2.3",
     "ioredis": "^5.10.1",
     "mongo-sanitize": "^1.1.0",
-    "mongodb": "^6.21.0",
-    "mongoose": "^8.0.0",
+    "mongodb": "7.3.0",
+    "mongoose": "9.7.0",
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
@@ -61,9 +61,9 @@
     "sha.js": "^2.4.12",
     "socket.io": "^4.7.0",
     "sql-highlight": "^6.1.0",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "6.0.1",
     "stripe": "^15.0.0",
-    "typeorm": "^0.3.17"
+    "typeorm": "1.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",

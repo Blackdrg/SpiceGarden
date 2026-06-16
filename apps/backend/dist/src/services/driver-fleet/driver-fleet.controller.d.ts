@@ -4,7 +4,7 @@ export declare class DriverFleetController {
     constructor(fleetService: DriverFleetService);
     startShift(driverId: string): Promise<import("../../db/entities/driver-shift.entity").DriverShiftEntity>;
     endShift(driverId: string, shiftId: string): Promise<import("../../db/entities/driver-shift.entity").DriverShiftEntity>;
-    getShifts(driverId: string): Promise<{}>;
+    getShifts(driverId: string): Promise<import("../../db/entities/driver-shift.entity").DriverShiftEntity[]>;
     getEarnings(body: {
         driverId: string;
         start: string;

@@ -9,7 +9,7 @@ export declare class LoyaltyController {
         orderAmount: number;
         orderId?: string;
     }): Promise<any>;
-    getCoupons(filters: any): Promise<{}>;
+    getCoupons(filters: any): Promise<import("../../db/entities/coupon.entity").CouponEntity[]>;
     getCouponAnalytics(id: string): Promise<any>;
     deactivateCoupon(id: string): Promise<import("../../db/entities/coupon.entity").CouponEntity>;
     generateReferralCode(body: {

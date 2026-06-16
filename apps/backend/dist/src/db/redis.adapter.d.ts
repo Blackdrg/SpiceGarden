@@ -4,9 +4,9 @@ export declare class RedisAdapter implements OnModuleInit, OnModuleDestroy {
     private configService;
     private client;
     constructor(configService: ConfigService);
-    onModuleInit(): any;
+    onModuleInit(): Promise<void>;
     connect(): Promise<void>;
-    onModuleDestroy(): any;
+    onModuleDestroy(): Promise<void>;
     get(key: string): Promise<string | null>;
     set(key: string, value: string, ttl?: number): Promise<void>;
     del(key: string): Promise<void>;

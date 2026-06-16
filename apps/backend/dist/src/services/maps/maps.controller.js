@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MapsController = void 0;
 const common_1 = require("@nestjs/common");
@@ -58,7 +57,7 @@ __decorate([
     __param(3, (0, common_1.Query)('destLng')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, String]),
-    __metadata("design:returntype", typeof (_a = typeof Promise !== "undefined" && Promise) === "function" ? _a : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "getETA", null);
 __decorate([
     (0, common_1.Get)('surge-eta'),
@@ -68,14 +67,14 @@ __decorate([
     __param(3, (0, common_1.Query)('destLng')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, String]),
-    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "getSurgeETA", null);
 __decorate([
     (0, common_1.Post)('reroute'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "getRerouting", null);
 __decorate([
     (0, common_1.Get)('heatmap'),
@@ -86,13 +85,13 @@ __decorate([
     __param(4, (0, common_1.Query)('zoom')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, String, String]),
-    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "getHeatmap", null);
 __decorate([
     (0, common_1.Get)('surge-zones'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "getSurgeZones", null);
 __decorate([
     (0, common_1.Get)('check-surge-zone'),
@@ -100,7 +99,7 @@ __decorate([
     __param(1, (0, common_1.Query)('lng')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+    __metadata("design:returntype", Promise)
 ], MapsController.prototype, "checkSurgeZone", null);
 exports.MapsController = MapsController = __decorate([
     (0, common_1.Controller)('maps'),

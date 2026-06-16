@@ -5,7 +5,7 @@ export declare class UserProfileService {
     private readonly addressRepo;
     private readonly paymentMethodRepo;
     constructor(addressRepo: Repository<AddressEntity>, paymentMethodRepo: Repository<PaymentMethodEntity>);
-    getAddresses(userId: string): unknown;
+    getAddresses(userId: string): Promise<AddressEntity[]>;
     createAddress(userId: string, data: {
         label: string;
         addressLine: string;
@@ -17,7 +17,7 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault?: boolean;
-    }): unknown;
+    }): Promise<AddressEntity>;
     updateAddress(userId: string, id: string, data: Partial<{
         label: string;
         addressLine: string;
@@ -29,9 +29,11 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault: boolean;
-    }>): unknown;
-    deleteAddress(userId: string, id: string): unknown;
-    getPaymentMethods(userId: string): unknown;
+    }>): Promise<AddressEntity>;
+    deleteAddress(userId: string, id: string): Promise<{
+        success: boolean;
+    }>;
+    getPaymentMethods(userId: string): Promise<PaymentMethodEntity[]>;
     createPaymentMethod(userId: string, data: {
         type: 'card' | 'upi' | 'wallet';
         cardLast4?: string;
@@ -41,8 +43,10 @@ export declare class UserProfileService {
         walletProvider?: string;
         externalPaymentMethodId?: string;
         isDefault?: boolean;
-    }): unknown;
-    deletePaymentMethod(userId: string, id: string): unknown;
-    setDefaultPaymentMethod(userId: string, id: string): unknown;
-    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): unknown;
+    }): Promise<PaymentMethodEntity>;
+    deletePaymentMethod(userId: string, id: string): Promise<{
+        success: boolean;
+    }>;
+    setDefaultPaymentMethod(userId: string, id: string): Promise<PaymentMethodEntity>;
+    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): Promise<PaymentMethodEntity>;
 }
