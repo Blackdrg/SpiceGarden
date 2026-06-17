@@ -23,7 +23,6 @@
   "devDependencies": {
     "@babel/preset-react": "^7.29.7",
     "@next/eslint-plugin-next": "15.5.18",
-    "@rushstack/eslint-patch": "^1.10.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.0.0",

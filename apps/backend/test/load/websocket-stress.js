@@ -5,7 +5,6 @@ import { WebSocket } from 'k6/ws';
 import { randomInt } from 'k6/data';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const ws_connection_success = new Rate('ws_connection_success');
 const ws_message_success = new Rate('ws_message_success');
 const ws_reconnect_success = new Rate('ws_reconnect_success');
@@ -120,7 +119,6 @@ export function testOrderFlood() {
       'no server error': (r) => r.status < 500,
     });
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
     if (!success) order_errors.add(1);
   });
 

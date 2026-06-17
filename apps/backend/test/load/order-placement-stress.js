@@ -3,7 +3,6 @@ import { check, sleep, group } from 'k6';
 import { Trend, Counter, Rate, Gauge } from 'k6/metrics';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const order_placement_latency = new Trend('order_placement_latency');
 const order_errors = new Counter('order_errors');
 const concurrent_orders = new Counter('concurrent_orders');
@@ -102,7 +101,6 @@ export function testOrderPlacement() {
       'no server error': (r) => r.status < 500,
     });
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
     concurrent_orders.add(1);
     if (!success) {
       order_errors.add(1);

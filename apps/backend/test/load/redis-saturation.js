@@ -3,7 +3,6 @@ import { check, sleep, group } from 'k6';
 import { Trend, Counter, Rate } from 'k6/metrics';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const redis_cache_errors = new Counter('redis_cache_errors');
 const session_errors = new Counter('session_errors');
 
@@ -55,7 +54,6 @@ export function testRedisSaturation() {
       'write handled': (r) => r.status < 500,
     });
     http_req_success.add(writeOk);
-    http_req_duration.add(writeRes.timings.duration);
     if (!writeOk) redis_cache_errors.add(1);
 
     sleep(0.05);

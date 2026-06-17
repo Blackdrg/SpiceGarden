@@ -3,7 +3,6 @@ import { check, sleep, group } from 'k6';
 import { Trend, Counter, Rate } from 'k6/metrics';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const errors = new Counter('errors_total');
 
 export const options = {
@@ -44,7 +43,6 @@ export default function() {
     });
     
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
     if (!success) errors.add(1);
   });
 

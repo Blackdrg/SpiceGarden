@@ -3,7 +3,6 @@ import { check, sleep, group } from 'k6';
 import { Trend, Counter, Rate } from 'k6/metrics';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const db_slow_queries = new Counter('db_slow_queries');
 const db_errors = new Counter('db_errors');
 
@@ -75,7 +74,6 @@ export function testReadBottleneck() {
       'read handled': (r) => r.status < 500,
     });
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
 
     if (res.timings.duration > 2000) {
       db_slow_queries.add(1);
@@ -139,7 +137,6 @@ export function testWriteBottleneck() {
       'no server error': (r) => r.status < 500,
     });
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
 
     if (res.timings.duration > 3000) {
       db_slow_queries.add(1);

@@ -3014,4 +3014,69 @@ flowchart TD
   class PROM,GRAF,ALERT,OS,OSD,FILEBEAT,SENTRY observability
 ```
 
+---
+
+## Latest Production-Hardening Update — 2026-06-17
+
+**Generated:** 2026-06-17T11:50+05:30  
+**Branch:** `feat/add-react-doctor`  
+**Classification:** Advanced Startup-Grade Pre-Production System  
+**Verdict:** Not fully production-ready; P0 hardening is substantially complete.
+
+### Verified passing gates
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Exit `0` |
+| `npx tsc --noEmit` | Exit `0` |
+| `npm run lint` | Exit `0` |
+| `npm run test:unit` | Exit `0`; 143 tests passed |
+| `npm run test:e2e` | Exit `0`; 65 tests passed |
+| `npm run test` | Exit `0` |
+| `cd apps/backend && npm run test` | 210 passed, 1 skipped |
+| `node infra/scripts/security-tests.js` | Exit `0`; 0 vulnerabilities; 96/100 rate-limited responses |
+| `npm ls --workspaces --depth=0` | Exit `0` |
+
+### Current audit and quality status
+
+| Area | Status |
+| :--- | :--- |
+| npm audit | 0 critical, 0 high, 51 moderate |
+| React Doctor | 0 errors, 62 warnings, score `null`; 80+ target unverified |
+| Load testing | Fails before metrics because `apps/backend/test/load/10k-users.js:6` redeclares built-in `http_req_duration` |
+| Redis-backed rate limiting | Implemented but not locally verified because Redis was unavailable |
+| Penetration testing | Not completed in this pass |
+| Docker/compose validation | Not completed in this pass |
+| Kubernetes/staging validation | Not completed in this pass |
+| Monitoring validation | Prometheus, Grafana, Sentry, Alertmanager, and OpenSearch assets exist but are not end-to-end validated |
+
+### Production-hardening changes
+
+- Added Redis-capable rate-limit store at `apps/backend/src/security/redis-rate-limit.store.ts`.
+- Added layered rate limits for OTP, auth, orders, and general API in `apps/backend/src/main.ts`.
+- Added method/route/IP rate-limit keying and disabled trust proxy by default unless explicitly configured.
+- Added root `test` script in `package.json`.
+- Narrowed backend unit/e2e scripts in `apps/backend/package.json` to deterministic local suites.
+- Stabilized customer-web checkout, restaurant-dashboard KDS, super-admin analytics, and delivery-partner AsyncStorage tests.
+- Removed unused `@rushstack/eslint-patch` from selected Next workspaces.
+- Normalized UI icon `aria-hidden` rendering for Burger, Dessert, and Drink commerce icons.
+
+### New report files
+
+- `CURRENT_ENGINEERING_BASELINE.md`
+- `SECURITY_FIX_REPORT.md`
+- `BUILD_FIX_REPORT.md`
+- `TYPECHECK_REPORT.md`
+- `DEPENDENCY_HEALTH_REPORT.md`
+- `TEST_RELIABILITY_REPORT.md`
+- `REACT_DOCTOR_PROGRESS.md`
+- `LOAD_TEST_REPORT.md`
+- `SECURITY_AUDIT_V2.md`
+- `OBSERVABILITY_REPORT.md`
+- `UI_UX_IMPROVEMENT_REPORT.md`
+- `FINAL_PRODUCTION_READINESS_REPORT.md`
+- `CURRENT_STATUS_SUMMARY.md`
+- `README_GAP_REPORT.md`
+- `README_CHANGELOG.md`
+
 

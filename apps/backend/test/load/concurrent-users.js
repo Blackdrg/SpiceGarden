@@ -3,7 +3,6 @@ import { check, sleep, group } from 'k6';
 import { Trend, Counter, Rate } from 'k6/metrics';
 
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const order_errors = new Counter('order_errors');
 const payment_errors = new Counter('payment_errors');
 
@@ -171,7 +170,6 @@ function runUserFlow(label: string, user: Record<string, string>, order: Record<
 
     const success = check(res, { 'order placed': (r) => r.status === 201 });
     http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
     if (!success) order_errors.add(1);
   });
 

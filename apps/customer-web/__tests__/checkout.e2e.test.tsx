@@ -2,10 +2,10 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Checkout from '../src/pages/checkout';
 
+const mockRouter = { push: jest.fn() };
+
 jest.mock('next/router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter: () => mockRouter,
 }));
 
 jest.mock('react-redux', () => ({
@@ -37,7 +37,7 @@ jest.mock('../src/utils/cachedLocalStorage', () => ({
 const { ordersApi } = jest.requireMock('@spicegarden/shared/api') as {
   ordersApi: { create: jest.Mock };
 };
-const { useRouter } = jest.requireMock('next/router') as { useRouter: () => { push: jest.Mock } };
+const { useRouter } = jest.requireMock('next/router') as { useRouter: () => typeof mockRouter };
 
 describe('Customer Web checkout e2e flow', () => {
   beforeEach(() => {
@@ -58,6 +58,7 @@ describe('Customer Web checkout e2e flow', () => {
       expect(screen.getByText(/Applied! You saved ₹100/i)).toBeInTheDocument();
     });
 
+    ordersApi.create.mockResolvedValueOnce({ data: { id: 'ORD-123' } });
     fireEvent.click(screen.getByRole('button', { name: /place order/i }));
 
     await waitFor(() => {

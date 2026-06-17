@@ -4,7 +4,6 @@ import { Trend, Counter, Rate } from 'k6/metrics';
 
 // Custom metrics
 const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
 const signup_errors = new Counter('signup_errors');
 const order_errors = new Counter('order_errors');
 const payment_errors = new Counter('payment_errors');
@@ -141,7 +140,6 @@ export function test10kUsers() {
       });
 
       http_req_success.add(paymentSuccess);
-      http_req_duration.add(paymentRes.timings.duration);
       if (!paymentSuccess) payment_errors.add(1);
     }
   });
@@ -197,7 +195,6 @@ export function test20kUsers() {
     });
 
     http_req_success.add(placeSuccess);
-    http_req_duration.add(placeRes.timings.duration);
     if (!placeSuccess) order_errors.add(1);
   });
 
