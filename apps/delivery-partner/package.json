@@ -10,9 +10,9 @@
     "build": "tsc --noEmit",
     "lint": "eslint .",
     "test:unit": "jest --config jest.config.js --runInBand",
-    "test:integration": "jest --config jest.config.js --testPathPattern=\"integration\" --runInBand",
-    "test:e2e": "jest --config jest.config.js --testPathPattern=\"e2e\" --runInBand",
-    "test:smoke": "jest --config jest.config.js --testPathPattern=\"delivery-api.service\" --runInBand",
+    "test:integration": "jest --config jest.config.js --testPathPatterns=\"integration\" --runInBand",
+    "test:e2e": "jest --config jest.config.js --testPathPatterns=\"e2e\" --runInBand",
+    "test:smoke": "jest --config jest.config.js --testPathPatterns=\"delivery-api.service\" --runInBand",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:smoke"
   },
   "dependencies": {

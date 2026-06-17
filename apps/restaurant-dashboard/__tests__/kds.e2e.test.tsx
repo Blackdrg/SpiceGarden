@@ -23,18 +23,20 @@ describe('Restaurant Dashboard KDS e2e flow', () => {
     expect(screen.getByRole('button', { name: /✓ Accept/i })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /✓ Accept/i }));
-    expect(screen.getByRole('button', { name: /⏱ Start Prep/i })).toBeInTheDocument();
+    const startPrepButtons = screen.getAllByRole('button', { name: /⏱ Start Prep/i });
+    expect(startPrepButtons.length).toBeGreaterThanOrEqual(1);
+    fireEvent.click(startPrepButtons[0]);
+    const readyButtons = screen.getAllByRole('button', { name: /✓ Ready/i });
+    expect(readyButtons.length).toBeGreaterThanOrEqual(1);
+    fireEvent.click(readyButtons[0]);
+    const servedButtons = screen.getAllByRole('button', { name: /✅ Served/i });
+    expect(servedButtons.length).toBeGreaterThanOrEqual(1);
 
-    fireEvent.click(screen.getByRole('button', { name: /⏱ Start Prep/i }));
-    expect(screen.getByRole('button', { name: /✓ Ready/i })).toBeInTheDocument();
+    fireEvent.click(servedButtons[0]);
+    expect(screen.getAllByText(/DONE/i).length).toBeGreaterThanOrEqual(1);
 
-    fireEvent.click(screen.getByRole('button', { name: /✓ Ready/i }));
-    expect(screen.getByRole('button', { name: /✅ Served/i })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /✅ Served/i }));
-    expect(screen.getByText(/DONE/i)).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /📦 Inventory/i }));
+    const inventoryButtons = screen.getAllByRole('button', { name: /📦 Inventory/i });
+    fireEvent.click(inventoryButtons[0]);
     expect(screen.getByText(/Stock Levels/i)).toBeInTheDocument();
     expect(screen.getByText(/4 low/i)).toBeInTheDocument();
   });

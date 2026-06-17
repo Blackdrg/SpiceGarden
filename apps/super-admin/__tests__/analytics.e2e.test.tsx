@@ -26,10 +26,13 @@ function renderWithProviders(ui: React.ReactElement) {
 
 describe('Super Admin analytics e2e flow', () => {
   beforeEach(() => {
-    jest.spyOn(global, 'fetch').mockImplementation((() => Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve(analyticsPayload),
-    })) as typeof fetch);
+    Object.defineProperty(global, 'fetch', {
+      configurable: true,
+      value: jest.fn(() => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(analyticsPayload),
+      })),
+    });
   });
 
   afterEach(() => {

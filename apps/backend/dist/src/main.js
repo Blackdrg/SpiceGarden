@@ -47,11 +47,12 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express = __importStar(require("express"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 const cors_origin_1 = require("./security/cors-origin");
+const redis_rate_limit_store_1 = require("./security/redis-rate-limit.store");
 const missing_env_error_1 = require("./common/errors/missing-env.error");
 function getTrustProxySetting(configService) {
     const value = configService.get('TRUST_PROXY');
     if (value === undefined) {
-        return true;
+        return false;
     }
     return !['0', 'false', 'no', 'off'].includes(value.toLowerCase());
 }
@@ -76,6 +77,54 @@ function validateProductionEnvironment(configService) {
         'RAZORPAY_WEBHOOK_SECRET',
         'CORS_ALLOWED_ORIGINS',
     ], configService);
+}
+function getRedisRateLimitUrl(configService) {
+    return configService.get('REDIS_RATE_LIMIT_URL')
+        || configService.get('REDIS_URL')
+        || `redis://${configService.get('REDIS_HOST', 'localhost')}:${configService.get('REDIS_PORT', 6379)}`;
+}
+function getRateLimitWindow(configService, name, fallbackMs) {
+    return Number(configService.get(`RATE_LIMIT_${name}_WINDOW_MS`, fallbackMs));
+}
+function getRateLimitMax(configService, name, fallbackMax) {
+    return Number(configService.get(`RATE_LIMIT_${name}_MAX`, fallbackMax));
+}
+function createRateLimitStore(configService, namespace) {
+    const requiredInProduction = configService.get('RATE_LIMIT_REDIS_REQUIRED', 'true') !== 'false';
+    const fallbackToMemory = process.env.NODE_ENV !== 'production' || !requiredInProduction;
+    return new redis_rate_limit_store_1.RedisRateLimitStore({
+        redisUrl: getRedisRateLimitUrl(configService),
+        prefix: `spicegarden:${namespace}`,
+        fallbackToMemory,
+    });
+}
+function createRateLimiter(configService, namespace, fallbackMax, fallbackWindowMs, skipSuccessfulRequests = false) {
+    return (0, express_rate_limit_1.default)({
+        windowMs: getRateLimitWindow(configService, namespace, fallbackWindowMs),
+        max: getRateLimitMax(configService, namespace, fallbackMax),
+        store: createRateLimitStore(configService, namespace),
+        keyGenerator: getRateLimitKey,
+        standardHeaders: true,
+        legacyHeaders: false,
+        skipSuccessfulRequests,
+        message: {
+            error: 'Too many requests',
+            message: 'Rate limit exceeded. Please retry after the reset window.',
+        },
+    });
+}
+function getRateLimitKey(req) {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
+    const ip = forwardedIp || req.ip || req.socket.remoteAddress || 'unknown';
+    const route = req.path.split('/').filter(Boolean).slice(0, 3).join(':') || 'root';
+    return `${req.method}:${route}:${ip}`;
+}
+function installRateLimiters(app, configService) {
+    app.use('/auth/otp', createRateLimiter(configService, 'AUTH_OTP', 3, 10 * 60 * 1000));
+    app.use('/auth/', createRateLimiter(configService, 'AUTH', 5, 15 * 60 * 1000, true));
+    app.use('/api/orders', createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
+    app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
 }
 async function bootstrap() {
     const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
@@ -137,20 +186,7 @@ async function bootstrap() {
     app.use((0, helmet_1.default)());
     app.use(safeMongoSanitize);
     app.use((0, hpp_1.default)());
-    const apiLimiter = (0, express_rate_limit_1.default)({
-        windowMs: Number(configService.get('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
-        max: Number(configService.get('RATE_LIMIT_MAX', 100)),
-        standardHeaders: true,
-        legacyHeaders: false,
-    });
-    app.use("/api/", apiLimiter);
-    const authLimiter = (0, express_rate_limit_1.default)({
-        windowMs: Number(configService.get('AUTH_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
-        max: Number(configService.get('AUTH_RATE_LIMIT_MAX', 10)),
-        standardHeaders: true,
-        legacyHeaders: false,
-    });
-    app.use("/auth/", authLimiter);
+    installRateLimiters(app, configService);
     app.use(express.json({ limit: configService.get('BODY_SIZE_LIMIT', "10kb") }));
     app.use(express.urlencoded({ limit: configService.get('BODY_SIZE_LIMIT', "10kb"), extended: true }));
     app.use((req, res, next) => {

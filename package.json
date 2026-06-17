@@ -10,6 +10,7 @@
     "dev": "npm run --workspaces dev",
     "build": "npm run --workspaces build",
     "lint": "npm run --workspaces lint",
+    "test": "npm run test:unit",
     "format": "npm run --workspaces format",
     "test:unit": "npm run --workspaces --if-present test:unit",
     "test:integration": "npm run --workspaces --if-present test:integration",

@@ -8,9 +8,9 @@
     "start": "next start -p 3004",
     "lint": "eslint src",
     "test:unit": "jest --testPathPatterns=__tests__ --runInBand",
-    "test:integration": "jest --config jest.config.js --testPathPattern=\"integration\" --runInBand",
-    "test:e2e": "jest --config jest.config.js --testPathPattern=\"e2e\" --runInBand",
-    "test:smoke": "jest --config jest.config.js --testPathPattern=\"admin-flow.e2e.test\" --runInBand",
+    "test:integration": "jest --config jest.config.js --testPathPatterns=\"integration\" --runInBand",
+    "test:e2e": "jest --config jest.config.js --testPathPatterns=\"e2e\" --runInBand",
+    "test:smoke": "jest --config jest.config.js --testPathPatterns=\"admin-flow.e2e.test\" --runInBand",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:smoke"
   },
   "dependencies": {

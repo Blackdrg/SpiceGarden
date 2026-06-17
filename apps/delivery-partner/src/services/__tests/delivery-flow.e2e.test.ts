@@ -1,6 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deliveryApi, type DriverProfile } from '../delivery-api.service';
 
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+  getAllKeys: jest.fn(),
+}));
+
 const profile: DriverProfile = {
   id: 'driver-123',
   name: 'Raj Kumar',

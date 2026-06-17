@@ -2445,4 +2445,573 @@ Added: 2026-06-17 04:01 IST
 - Confidence: **MEDIUM**
 - Production readiness: **NOT PRODUCTION READY**
 
+### System Architecture Flowchart
+
+The following Mermaid flowcharts are generated from the current repository structure, backend modules, shared packages, frontend apps, infrastructure manifests, CI/CD workflows, observability assets, payment gateways, real-time gateways, and diagnostics reports. They intentionally show only systems that are present in code or manifests.
+
+#### 1. High-Level System Flow
+
+```mermaid
+flowchart TD
+  classDef user fill:#D6EAF8,stroke:#2E86C1,color:#17202A
+  classDef frontend fill:#D5F5E3,stroke:#27AE60,color:#145A32
+  classDef backend fill:#FADBD8,stroke:#C0392B,color:#641E16
+  classDef data fill:#FDEBD0,stroke:#D68910,color:#7D3C00
+  classDef realtime fill:#E8DAEF,stroke:#8E44AD,color:#4A235A
+  classDef payment fill:#D1F2EB,stroke:#16A085,color:#0B5345
+  classDef observability fill:#FCF3CF,stroke:#F1C40F,color:#7D6608
+  classDef devops fill:#E5E7E9,stroke:#7F8C8D,color:#34495E
+
+  subgraph USER["User Layer"]
+    CW["Customer Web\nNext.js 15 / React 19"]
+    CM["Customer Mobile\nExpo / React Native"]
+    DP["Delivery Partner App\nExpo / React Native"]
+    RD["Restaurant Dashboard\nNext.js KDS + inventory"]
+    SA["Super Admin Panel\nNext.js analytics"]
+  end
+
+  subgraph FRONTEND["Frontend Layer"]
+    NEXT["Next.js apps\ncustomer-web:3002\nrestaurant-dashboard:3003\nsuper-admin:3004"]
+    RN["React Native / Expo apps\ncustomer-mobile\ndelivery-partner"]
+    UI["@spicegarden/ui\ndesign tokens + components"]
+    API["@spicegarden/shared\nAPI helpers + constants"]
+    TYPES["@spicegarden/api-types\nshared delivery types"]
+    GRPC["@spicegarden/grpc-transport\nport 50051 transport package"]
+    PROTO["@spicegarden/proto\nGRPC_PORT=50051"]
+  end
+
+  subgraph APIG["API / Backend Layer\nNestJS Backend :3001"]
+    APIGW["HTTP API entrypoint\nCORS + Helmet + rate limit + validation"]
+    AUTH["Auth\nJWT + Passport + RBAC guards"]
+    CORE["Core commerce\nUsers, Restaurants, Menu, Orders, Search, Loyalty, Wallet"]
+    CHECKOUT["Checkout flow\nOrderService + PaymentService"]
+    PAY["Payments\nStripe / Razorpay gateways\nidempotency + webhooks"]
+    DELIV["Delivery ops\nDelivery, Driver Ops, Driver Fleet, Driver Assignment"]
+    REST["Restaurant ops\nKitchen/KDS, menu customization, analytics"]
+    NOTIF["Notifications\npush, SMS, email, queue"]
+    ADMIN["Admin + Compliance\nAdmin, Support, Audit Logs, GST, Finance, Refund, AI"]
+    QUEUE["Queue / BullMQ\norder lifecycle worker"]
+    REAL["Realtime gateways\n/tracking + /kds + /admin + /driver"]
+    GRPCS["gRPC services\nAuthService + OrderService"]
+  end
+
+  subgraph DATA["Data Layer"]
+    PG[("PostgreSQL\nTypeORM entities")]
+    MONGO[("MongoDB\nReviewDocument via Mongoose")]
+    REDIS[("Redis\nioredis cache/session")]
+    BULL[("BullMQ Queue\nRedis-backed worker")]
+    VAULT["Vault integration\noptional secret path"]
+  end
+
+  subgraph REALTIME["Real-Time Layer"]
+    WS["Socket.IO / WebSockets\ntracking + KDS + notifications"]
+    TRACK["Tracking events\nlocationUpdate"]
+    KDS["KDS events\nnewOrder + orderStatusUpdated"]
+    NOTIFY["Notification events\norder updates"]
+  end
+
+  subgraph PAYMENT["Payment Layer"]
+    STRIPE["Stripe\npayment intents + webhooks"]
+    RAZOR["Razorpay\norders + webhooks"]
+  end
+
+  subgraph OBS["Observability Layer"]
+    SENTRY["Sentry\nerror tracking"]
+    METRICS["Metrics\n/metrics + prom-client"]
+    PROM["Prometheus\nscrape backend:3001"]
+    GRAF["Grafana\ndashboards"]
+    LOG["Logging\nLoggingModule"]
+    OS["OpenSearch\nFilebeat log shipping"]
+  end
+
+  subgraph DEVOPS["DevOps / Infra Layer"]
+    GH["GitHub Actions\nCI/CD"]
+    DOCKER["Docker\nbackend image"]
+    COMPOSE["Docker Compose\ndev + infra"]
+    K8S["Kubernetes\nstaging/production manifests"]
+    CI["CI/CD\nlint, tests, build, deploy"]
+  end
+
+  CW --> NEXT
+  RD --> NEXT
+  SA --> NEXT
+  CM --> RN
+  DP --> RN
+  NEXT --> UI
+  NEXT --> API
+  NEXT --> TYPES
+  RN --> API
+  RN --> TYPES
+  UI --> API
+  API --> PROTO
+  GRPC --> PROTO
+
+  NEXT --> APIGW
+  RN --> APIGW
+  APIGW --> AUTH
+  APIGW --> CORE
+  APIGW --> CHECKOUT
+  APIGW --> PAY
+  APIGW --> DELIV
+  APIGW --> REST
+  APIGW --> NOTIF
+  APIGW --> ADMIN
+  APIGW --> QUEUE
+  APIGW --> REAL
+  APIGW --> GRPCS
+  CHECKOUT --> PAY
+  CORE --> REAL
+  DELIV --> REAL
+  REST --> REAL
+  NOTIF --> REAL
+
+  APIGW --> PG
+  AUTH --> REDIS
+  PAY --> PG
+  CORE --> PG
+  DELIV --> PG
+  REST --> PG
+  MONGO --> REST
+  QUEUE --> REDIS
+  QUEUE --> BULL
+  BULL --> PG
+  ADMIN --> PG
+  VAULT -.->|optional secrets| AUTH
+  VAULT -.->|optional secrets| PAY
+
+  REAL --> WS
+  WS --> TRACK
+  WS --> KDS
+  WS --> NOTIFY
+  TRACK --> CM
+  TRACK --> DP
+  KDS --> RD
+  NOTIFY --> CW
+  NOTIFY --> CM
+
+  PAY --> STRIPE
+  PAY --> RAZOR
+  STRIPE --> PAY
+  RAZOR --> PAY
+
+  APIGW --> SENTRY
+  APIGW --> METRICS
+  METRICS --> PROM
+  PROM --> GRAF
+  APIGW --> LOG
+  LOG --> OS
+
+  GH --> CI
+  CI --> DOCKER
+  DOCKER --> COMPOSE
+  DOCKER --> K8S
+  K8S --> APIGW
+
+  class CW,CM,DP,RD,SA user
+  class NEXT,RN,UI,API,TYPES,GRPC,PROTO frontend
+  class APIG,APIGW,AUTH,CORE,CHECKOUT,PAY,DELIV,REST,NOTIF,ADMIN,QUEUE,REAL,GRPCS backend
+  class PG,MONGO,REDIS,BULL,VAULT data
+  class WS,TRACK,KDS,NOTIFY realtime
+  class STRIPE,RAZOR payment
+  class SENTRY,METRICS,PROM,GRAF,LOG,OS observability
+  class GH,DOCKER,COMPOSE,K8S,CI devops
+```
+
+#### 2. Backend Service Architecture
+
+```mermaid
+flowchart TD
+  classDef entry fill:#FADBD8,stroke:#C0392B,color:#641E16
+  classDef security fill:#FDEBD0,stroke:#D68910,color:#7D3C00
+  classDef core fill:#D5F5E3,stroke:#27AE60,color:#145A32
+  classDef ops fill:#D6EAF8,stroke:#2E86C1,color:#17202A
+  classDef finance fill:#D1F2EB,stroke:#16A085,color:#0B5345
+  classDef intel fill:#E8DAEF,stroke:#8E44AD,color:#4A235A
+  classDef realtime fill:#FCF3CF,stroke:#F1C40F,color:#7D6608
+  classDef grpc fill:#E5E7E9,stroke:#7F8C8D,color:#34495E
+
+  subgraph BACKEND["NestJS Backend :3001"]
+    ENTRY["main.ts bootstrap\nCORS, Helmet, HPP, rate limit, body limit, ValidationPipe, /metrics"]:::entry
+
+    subgraph SEC["Security & Access"]
+      JWT["JwtAuthGuard"]
+      RBAC["RolesGuard\n8 roles + permissions"]
+      ENCRYPT["EncryptionService"]
+      SECRET["SecretLoaderService"]
+      VAULT["VaultService\noptional"]
+      CSRF["CSRF middleware\nproduction path"]
+    end
+
+    subgraph CORE["Core Commerce"]
+      AUTH["Auth"]
+      USERS["Users / User Profile / Addresses"]
+      RESTAURANTS["Restaurants / Menu / Menu Customization"]
+      ORDERS["Orders"]
+      CHECKOUT["Checkout flow\nOrderService + PaymentService"]
+      SEARCH["Search"]
+      LOYALTY["Loyalty"]
+      WALLET["Wallet"]
+      REVIEWS["Review"]
+    end
+
+    subgraph OPS["Restaurant & Delivery Operations"]
+      KITCHEN["Kitchen / KDS"]
+      ASSIGN["Driver Assignment"]
+      DELIVERY["Delivery"]
+      DRIVEROPS["Driver Ops"]
+      FLEET["Driver Fleet"]
+      MAPS["Maps"]
+      GEO["Geo"]
+    end
+
+    subgraph FIN["Finance & Payments"]
+      PAYMENTS["Payments"]
+      STRIPE["StripeGateway"]
+      RAZOR["RazorpayGateway"]
+      COD["CODGateway"]
+      IDEMPOTENCY["Idempotency"]
+      WEBHOOKS["Webhooks"]
+      REFUND["Refund"]
+      GST["GST"]
+      FINANCE["Finance"]
+      LEDGER["Ledger"]
+      CHARGEBACK["Chargeback"]
+      PROVIDER["Payment Provider\nConnect / Settlement / Payouts"]
+    end
+
+    subgraph INT["Intelligence, Admin, Support"]
+      ADMIN["Admin"]
+      ANALYTICS["Analytics"]
+      AI["AI\nrecommendations, chatbot, forecast"]
+      COMPLIANCE["Compliance"]
+      SUPPORT["Support"]
+      AUDIT["Audit Logs"]
+      LEGAL["Legal"]
+      APIS["ApisModule"]
+    end
+
+    subgraph RTQ["Realtime & Async"]
+      QUEUE["Queue / BullMQ\nOrder lifecycle worker"]
+      TRACKING["TrackingGateway\n/tracking"]
+      KDSGW["KdsGateway\n/kds"]
+      SOCKETS["SocketNamespace\n/admin + /driver"]
+      NOTIFICATIONS["NotificationModule\nFCM, SMS, email, APNs"]
+    end
+
+    subgraph GRPC["gRPC"]
+      MAIN["main-grpc.ts\n0.0.0.0:50051"]
+      AUTHG["AuthGrpcController"]
+      ORDERG["OrderGrpcController"]
+      PROTO["@spicegarden/proto\nGRPC_PORT=50051"]
+      TRANSPORT["@spicegarden/grpc-transport"]
+    end
+  end
+
+  ENTRY --> SEC
+  ENTRY --> CORE
+  ENTRY --> OPS
+  ENTRY --> FIN
+  ENTRY --> INT
+  ENTRY --> RTQ
+  ENTRY --> GRPC
+
+  JWT --> RBAC
+  ENCRYPT --> SECRET
+  SECRET --> VAULT
+  CSRF --> JWT
+
+  AUTH --> USERS
+  USERS --> ORDERS
+  RESTAURANTS --> ORDERS
+  ORDERS --> CHECKOUT
+  CHECKOUT --> PAYMENTS
+  SEARCH --> RESTAURANTS
+  LOYALTY --> WALLET
+  REVIEWS --> RESTAURANTS
+
+  KITCHEN --> KDSGW
+  ASSIGN --> DELIVERY
+  DELIVERY --> DRIVEROPS
+  DRIVEROPS --> FLEET
+  MAPS --> GEO
+  GEO --> ASSIGN
+  GEO --> DELIVERY
+
+  PAYMENTS --> STRIPE
+  PAYMENTS --> RAZOR
+  PAYMENTS --> COD
+  PAYMENTS --> IDEMPOTENCY
+  PAYMENTS --> WEBHOOKS
+  PAYMENTS --> REFUND
+  REFUND --> GST
+  REFUND --> FINANCE
+  FINANCE --> LEDGER
+  WEBHOOKS --> CHARGEBACK
+  PROVIDER --> LEDGER
+
+  ADMIN --> AUDIT
+  ANALYTICS --> ADMIN
+  AI --> ORDERS
+  AI --> RESTAURANTS
+  COMPLIANCE --> AUDIT
+  SUPPORT --> AUDIT
+  LEGAL --> APIS
+
+  ORDERS --> QUEUE
+  QUEUE --> NOTIFICATIONS
+  TRACKING --> KDSGW
+  KDSGW --> NOTIFICATIONS
+  SOCKETS --> TRACKING
+  SOCKETS --> KDSGW
+  NOTIFICATIONS --> QUEUE
+
+  MAIN --> AUTHG
+  MAIN --> ORDERG
+  AUTHG --> AUTH
+  ORDERG --> ORDERS
+  PROTO --> MAIN
+  TRANSPORT --> PROTO
+
+  class ENTRY entry
+  class JWT,RBAC,ENCRYPT,SECRET,VAULT,CSRF security
+  class AUTH,USERS,RESTAURANTS,ORDERS,CHECKOUT,SEARCH,LOYALTY,WALLET,REVIEWS core
+  class KITCHEN,ASSIGN,DELIVERY,DRIVEROPS,FLEET,MAPS,GEO ops
+  class PAYMENTS,STRIPE,RAZOR,COD,IDEMPOTENCY,WEBHOOKS,REFUND,GST,FINANCE,LEDGER,CHARGEBACK,PROVIDER finance
+  class ADMIN,ANALYTICS,AI,COMPLIANCE,SUPPORT,AUDIT,LEGAL,APIS intel
+  class QUEUE,TRACKING,KDSGW,SOCKETS,NOTIFICATIONS realtime
+  class MAIN,AUTHG,ORDERG,PROTO,TRANSPORT grpc
+```
+
+#### 3. Database & Queue Flow
+
+```mermaid
+flowchart TD
+  classDef app fill:#D6EAF8,stroke:#2E86C1,color:#17202A
+  classDef backend fill:#FADBD8,stroke:#C0392B,color:#641E16
+  classDef db fill:#FDEBD0,stroke:#D68910,color:#7D3C00
+  classDef queue fill:#E8DAEF,stroke:#8E44AD,color:#4A235A
+  classDef secret fill:#FCF3CF,stroke:#F1C40F,color:#7D6608
+
+  API["API requests\nHTTP :3001"]:::app
+  GRPC["gRPC :50051\nAuthService + OrderService"]:::app
+  BACKEND["NestJS Backend\nTypeORM + Mongoose + ioredis"]:::backend
+
+  subgraph TYPEORM["TypeORM repositories"]
+    USERS[("Users / Sessions / Addresses")]
+    RESTAURANTS[("Restaurants / Branches / Menu")]
+    ORDERS[("Orders / OrderItems")]
+    PAYMENTS[("Payments / Refunds / Disputes")]
+    DELIVERY[("Drivers / Assignments / SLA")]
+    FINANCE[("Wallet / Loyalty / GST / Ledger")]
+    AUDIT[("Audit Logs / Compliance")]
+  end
+
+  subgraph MONGO["MongoDB"]
+    REVIEWS[("ReviewDocument\nuserId + restaurantId + orderId")]
+  end
+
+  subgraph REDIS["Redis"]
+    CACHE[("Cache / Sessions")]
+    QUEUE[("BullMQ Queue\nORDER_LIFECYCLE")]
+  end
+
+  subgraph WORKERS["BullMQ Workers"]
+    ORDERPROC["OrderProcessor\nupdate order status"]
+    NOTIFYPROC["Notification queue\npush / SMS / email"]
+    WEBHOOKPROC["Webhook retry queue"]
+  end
+
+  VAULT["VaultService\noptional secret lookup"]:::secret
+
+  API --> BACKEND
+  GRPC --> BACKEND
+  BACKEND --> TYPEORM
+  BACKEND --> MONGO
+  BACKEND --> REDIS
+  BACKEND --> VAULT
+
+  TYPEORM --> USERS
+  TYPEORM --> RESTAURANTS
+  TYPEORM --> ORDERS
+  TYPEORM --> PAYMENTS
+  TYPEORM --> DELIVERY
+  TYPEORM --> FINANCE
+  TYPEORM --> AUDIT
+
+  MONGO --> REVIEWS
+  REDIS --> CACHE
+  REDIS --> QUEUE
+
+  ORDERS --> ORDERPROC
+  QUEUE --> ORDERPROC
+  ORDERPROC --> ORDERS
+  ORDERPROC --> NOTIFYPROC
+  NOTIFYPROC --> PAYMENTS
+  WEBHOOKPROC --> PAYMENTS
+  PAYMENTS --> AUDIT
+  FINANCE --> AUDIT
+
+  class API,GRPC app
+  class BACKEND backend
+  class USERS,RESTAURANTS,ORDERS,PAYMENTS,DELIVERY,FINANCE,AUDIT,REVIEWS db
+  class CACHE,QUEUE,ORDERPROC,NOTIFYPROC,WEBHOOKPROC queue
+  class VAULT secret
+```
+
+#### 4. Real-Time Delivery Tracking Flow
+
+```mermaid
+flowchart LR
+  classDef customer fill:#D6EAF8,stroke:#2E86C1,color:#17202A
+  classDef restaurant fill:#D5F5E3,stroke:#27AE60,color:#145A32
+  classDef backend fill:#FADBD8,stroke:#C0392B,color:#641E16
+  classDef driver fill:#D1F2EB,stroke:#16A085,color:#0B5345
+  classDef realtime fill:#E8DAEF,stroke:#8E44AD,color:#4A235A
+  classDef notify fill:#FCF3CF,stroke:#F1C40F,color:#7D6608
+
+  CW["Customer Web\n/tracking"]:::customer
+  CM["Customer Mobile\nTrackingScreen"]:::customer
+  RD["Restaurant Dashboard\nKDS view"]:::restaurant
+  DP["Delivery Partner App\nactive delivery"]:::driver
+  API["OrderService\nHTTP :3001"]:::backend
+  KITCHEN["KitchenModule\nprep status"]:::backend
+  ASSIGN["DriverAssignmentModule\nproximity dispatch"]:::backend
+  FLEET["Driver Fleet\navailability + KYC"]:::backend
+  TRACK["TrackingGateway\n/tracking\nupdateLocation"]:::realtime
+  KDSGW["KdsGateway\n/kds\nnewOrder + status"]:::realtime
+  DRIVERNS["SocketNamespace\n/driver"]:::realtime
+  ADMINNS["SocketNamespace\n/admin"]:::realtime
+  NOTIF["NotificationModule\npush + SMS + email"]:::notify
+  QUEUE["BullMQ\nORDER_LIFECYCLE"]:::realtime
+
+  CW --> API
+  CM --> API
+  API --> KITCHEN
+  KITCHEN --> KDSGW
+  KDSGW --> RD
+  RD -->|prep status update| KDSGW
+  KDSGW --> API
+  API --> ASSIGN
+  ASSIGN --> FLEET
+  FLEET --> DRIVERNS
+  DRIVERNS --> DP
+  DP -->|location updates| TRACK
+  TRACK -->|locationUpdate| CW
+  TRACK -->|locationUpdate| CM
+  API --> QUEUE
+  QUEUE --> NOTIF
+  NOTIF --> CW
+  NOTIF --> CM
+  NOTIF --> DP
+  ADMINNS -->|ops visibility| CW
+  ADMINNS -->|ops visibility| RD
+
+  class CW,CM customer
+  class RD restaurant
+  class DP driver
+  class API,KITCHEN,ASSIGN,FLEET backend
+  class TRACK,KDSGW,DRIVERNS,ADMINNS,QUEUE realtime
+  class NOTIF notify
+```
+
+#### 5. DevOps / Deployment Architecture
+
+```mermaid
+flowchart TD
+  classDef ci fill:#E5E7E9,stroke:#7F8C8D,color:#34495E
+  classDef docker fill:#D6EAF8,stroke:#2E86C1,color:#17202A
+  classDef compose fill:#D5F5E3,stroke:#27AE60,color:#145A32
+  classDef k8s fill:#FDEBD0,stroke:#D68910,color:#7D3C00
+  classDef runtime fill:#FADBD8,stroke:#C0392B,color:#641E16
+  classDef observability fill:#FCF3CF,stroke:#F1C40F,color:#7D6608
+
+  GH["GitHub Actions\npush / pull_request / scheduled audit"]:::ci
+  AUDIT["security-audit\nnpm audit + Snyk monitor"]:::ci
+  BUILD["build-test\nnpm ci, lint, tests, build"]:::ci
+  LOAD["load test quick check\nk6 path"]:::ci
+  DOCKER["Docker build\nDockerfile\nnode:20-alpine backend image"]:::docker
+  GHCR["GHCR image\nspicegarden/backend"]:::docker
+
+  subgraph COMPOSE["Docker Compose"]
+    DEV["compose.dev.yaml\npostgres, redis, mongo, prometheus, grafana, opensearch, alertmanager"]
+    INFRA["compose.infra.yaml\nbackend + infra + Sentry + Filebeat"]
+  end
+
+  subgraph K8S["Kubernetes"]
+    STAGING["staging.yaml\nstaging deployment"]
+    PROD["production-hardened.yaml\nDeployment, Service, ConfigMap, PDB, HPA, NetworkPolicy, CronJob, PVC"]
+    INGRESS["cdn-ingress.yaml\ncdn.spicegarden.com"]
+    SECRETS["secrets.yaml\nKubernetes secret template"]
+  end
+
+  subgraph RUNTIME["Runtime"]
+    BACKEND["spicegarden-backend\nNestJS :3001"]
+    PG[("PostgreSQL :5432")]
+    REDIS[("Redis :6379")]
+    MONGO[("MongoDB :27017")]
+  end
+
+  subgraph OBS["Observability"]
+    PROM["Prometheus :9090\nscrape /metrics"]
+    GRAF["Grafana :3000"]
+    ALERT["Alertmanager :9093"]
+    OS["OpenSearch :9200"]
+    OSD["OpenSearch Dashboards :5601"]
+    FILEBEAT["Filebeat"]
+    SENTRY["Sentry :9000\napp-level error tracking"]
+  end
+
+  GH --> AUDIT
+  GH --> BUILD
+  BUILD --> LOAD
+  BUILD --> DOCKER
+  DOCKER --> GHCR
+  GHCR --> COMPOSE
+  GHCR --> K8S
+  COMPOSE --> DEV
+  COMPOSE --> INFRA
+  DEV --> PG
+  DEV --> REDIS
+  DEV --> MONGO
+  DEV --> PROM
+  DEV --> GRAF
+  DEV --> OS
+  DEV --> ALERT
+  INFRA --> BACKEND
+  INFRA --> PG
+  INFRA --> REDIS
+  INFRA --> MONGO
+  INFRA --> PROM
+  INFRA --> GRAF
+  INFRA --> OS
+  INFRA --> FILEBEAT
+  INFRA --> SENTRY
+  K8S --> STAGING
+  K8S --> PROD
+  K8S --> INGRESS
+  K8S --> SECRETS
+  STAGING --> BACKEND
+  PROD --> BACKEND
+  BACKEND --> PG
+  BACKEND --> REDIS
+  BACKEND --> MONGO
+  BACKEND --> PROM
+  BACKEND --> GRAF
+  BACKEND --> ALERT
+  BACKEND --> OS
+  BACKEND --> FILEBEAT
+  BACKEND --> SENTRY
+  PROM --> GRAF
+  FILEBEAT --> OS
+  OS --> OSD
+  ALERT --> GRAF
+
+  class GH,AUDIT,BUILD,LOAD ci
+  class DOCKER,GHCR docker
+  class COMPOSE,DEV,INFRA compose
+  class K8S,STAGING,PROD,INGRESS,SECRETS k8s
+  class BACKEND,PG,REDIS,MONGO runtime
+  class PROM,GRAF,ALERT,OS,OSD,FILEBEAT,SENTRY observability
+```
+
 

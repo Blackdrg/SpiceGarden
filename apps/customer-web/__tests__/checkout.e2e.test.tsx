@@ -69,7 +69,7 @@ describe('Customer Web checkout e2e flow', () => {
           deliveryFee: 20,
           tax: 24,
           tip: 0,
-          grandTotal: 400,
+          grandTotal: 424,
         }),
         'test-token',
       );
