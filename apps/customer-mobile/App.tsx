@@ -12,7 +12,7 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import TrackingScreen from './src/screens/TrackingScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 function AppNavigator() {

@@ -7,5 +7,8 @@ exports.KitchenIcon = void 0;
 const react_1 = __importDefault(require("react"));
 const lucide_react_1 = require("lucide-react");
 const tokens_1 = require("../../tokens");
-const KitchenIcon = ({ size = 24, color, strokeWidth = 2, className, ...props }) => { const iconColor = color || tokens_1.DESIGN_TOKENS.colors.primary; return (react_1.default.createElement(lucide_react_1.ChefHat, { size: size, color: iconColor, strokeWidth: strokeWidth, className: className, "aria-hidden": props['aria-label'] ? undefined : true, ...props })); };
+const KitchenIcon = ({ size = 24, color, strokeWidth = 2, className, ...props }) => {
+    const iconColor = color || tokens_1.DESIGN_TOKENS.colors.primary;
+    return (react_1.default.createElement(lucide_react_1.ChefHat, { size: size, color: iconColor, strokeWidth: strokeWidth, className: className, "aria-hidden": props['aria-label'] ? undefined : true, ...props }));
+};
 exports.KitchenIcon = KitchenIcon;

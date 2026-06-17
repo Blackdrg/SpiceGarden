@@ -208,3 +208,144 @@ No repository-backed file storage service such as S3 or MinIO was found during v
 - Dockerfile is backend-only and does not build or serve frontend/mobile apps.
 - Kubernetes manifests exist, but deployment validation against a real cluster is not fully proven.
 - Payment, auth, RBAC, rate limiting, and WebSocket synchronization should be treated as implementation areas that still need production validation.
+
+---
+
+## Mermaid Diagrams — 2026-06-17 Audit
+
+### High-Level Architecture
+
+```mermaid
+flowchart TD
+  CW[Customer Web] --> API[Backend API :3001]
+  CM[Customer Mobile] --> API
+  DP[Delivery Partner App] --> API
+  RD[Restaurant Dashboard] --> API
+  SA[Super Admin] --> API
+  API --> PG[(PostgreSQL)]
+  API --> MONGO[(MongoDB Reviews)]
+  API --> REDIS[(Redis)]
+  API --> QUEUE[BullMQ Queue]
+  QUEUE --> PROC[Order Processor]
+  PROC --> API
+  API --> WS[Socket.IO Tracking Gateway]
+  WS --> CW
+  WS --> CM
+  WS --> RD
+  WS --> DP
+  API --> PAY[Payments]
+  PAY --> STRIPE[Stripe]
+  PAY --> RAZORPAY[Razorpay]
+```
+
+### Backend Architecture
+
+```mermaid
+flowchart LR
+  MAIN[main.ts] --> APP[AppModule]
+  APP --> AUTH[Auth]
+  APP --> USERS[Users]
+  APP --> RESTAURANTS[Restaurants]
+  APP --> ORDERS[Orders]
+  APP --> PAYMENTS[Payments]
+  APP --> NOTIFICATIONS[Notifications]
+  APP --> QUEUE[QueueModule]
+  APP --> TRACKING[TrackingModule]
+  APP --> SECURITY[SecurityModule]
+  APP --> METRICS[MetricsModule]
+  SECURITY --> JWT[JwtAuthGuard]
+  SECURITY --> ROLES[RolesGuard]
+  SECURITY --> CORS[CORS Origin Guard]
+  SECURITY --> RATE[Throttler]
+  QUEUE --> ORDERPROC[OrderProcessor]
+  TRACKING --> SOCKET[Socket.IO Namespaces]
+```
+
+### Database Flow
+
+```mermaid
+flowchart TD
+  SERVICE[Domain Services] --> TYPEORM[TypeORM]
+  TYPEORM --> PG[(PostgreSQL)]
+  SERVICE --> MONGOOSE[Mongoose]
+  MONGOOSE --> MONGO[(MongoDB Reviews)]
+  SERVICE --> REDIS[(Redis)]
+  REDIS --> BULL[BullMQ]
+  BULL --> PROC[Order Processor]
+```
+
+### Order Lifecycle
+
+```mermaid
+sequenceDiagram
+  participant C as Customer App
+  participant API as Backend API
+  participant DB as PostgreSQL
+  participant Q as BullMQ
+  participant K as Kitchen/Restaurant
+  participant D as Delivery Partner
+  participant W as Socket.IO
+
+  C->>API: Create order
+  API->>DB: Persist order
+  API->>Q: Enqueue ORDER_LIFECYCLE
+  Q->>API: Process order status
+  API->>K: Kitchen update
+  API->>D: Delivery assignment
+  API->>W: Broadcast status/location
+  W->>C: Tracking update
+```
+
+### Delivery Lifecycle
+
+```mermaid
+flowchart LR
+  ORDER[Order Created] --> ASSIGN[Driver Assignment]
+  ASSIGN --> ACCEPT[Driver Accepts]
+  ACCEPT --> PICKUP[Pickup]
+  PICKUP --> DELIVER[Delivery]
+  DELIVER --> COMPLETE[Completed]
+  COMPLETE --> NOTIFY[Notifications]
+  NOTIFY --> WALLET[Driver/Wallet Updates]
+```
+
+### Payment Flow
+
+```mermaid
+sequenceDiagram
+  participant C as Customer App
+  participant API as Backend API
+  participant PAY as PaymentService
+  participant GW as GatewayFactory
+  participant STRIPE as Stripe
+  participant RAZORPAY as Razorpay
+  participant DB as PostgreSQL
+
+  C->>API: Payment request
+  API->>PAY: Handle payment
+  PAY->>GW: Select gateway
+  alt Stripe
+    GW->>STRIPE: Payment intent
+  else Razorpay
+    GW->>RAZORPAY: Create order
+  end
+  PAY->>DB: Persist payment state
+  PAY-->>C: Payment result
+```
+
+### DevOps Pipeline
+
+```mermaid
+flowchart TD
+  GH[GitHub Actions] --> LINT[Lint]
+  GH --> UNIT[Unit Tests]
+  GH --> INTEGRATION[Integration Tests]
+  GH --> E2E[E2E Tests]
+  GH --> BUILD[Build]
+  GH --> LOAD[Load Test]
+  BUILD --> DOCKER[Docker Build]
+  DOCKER --> GHCR[GHCR Push]
+  GHCR --> STAGING[Staging Deploy]
+  STAGING --> PROD[Production Deploy]
+  GH --> ROLLBACK[Rollback Workflow]
+```

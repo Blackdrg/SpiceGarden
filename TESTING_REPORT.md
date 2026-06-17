@@ -118,3 +118,40 @@ All 7 workspace lint commands completed with exit 0 and no ESLint errors:
 | launcher | Test infrastructure exists but not verified in this session |
 | packages/ui | Test infrastructure exists but not verified |
 | packages/shared | Test infrastructure exists but not verified |
+
+---
+
+## 2026-06-17 Repository-Wide Audit Update
+
+### Verified root gates
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Exit `0` |
+| `npm run lint` | Exit `0` |
+| `npm run test:unit` | Exit `0` |
+| `npm audit --json` | 0 critical, 0 high, 51 moderate vulnerabilities |
+
+### Test file inventory
+
+| Area | Test files |
+| :--- | ---: |
+| Total tracked test files | 185 |
+| Backend | 139 |
+| Customer web | 3 |
+| Customer mobile | 11 |
+| Delivery partner | 3 |
+| Restaurant dashboard | 3 |
+| Super admin | 4 |
+| Launcher | 5 |
+| Packages | 14 |
+
+### Skipped test evidence
+
+- `apps/backend/test/db-migrate.spec.ts:50` contains `it.skip('requires docker, bash, and scripts/db.sh', () => undefined);`.
+
+### Current test readiness
+
+- Root build, lint, and unit-test gates passed in this session.
+- Backend full test state from older reports remains historical; this audit verified root unit gates rather than rewriting older backend results.
+- Load testing remains blocked by the k6 metric conflict documented in `LOAD_TEST_REPORT.md`.

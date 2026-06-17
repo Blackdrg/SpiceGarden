@@ -42,3 +42,37 @@ The README contains stale sections that describe older failing or passing states
 ## Current README status
 
 README has not yet been fully reconciled with the latest verification state. This report and `README_CHANGELOG.md` should be used to update it without deleting historical content.
+
+---
+
+## 2026-06-17 Repository-Wide Audit Update
+
+**Generated:** 2026-06-17T21:30+05:30  
+**Method:** Append-only audit update; historical gap-report content preserved.
+
+### Gap assessment
+
+The root README already documents project overview, setup, architecture, testing, deployment, monitoring, and troubleshooting. The 2026-06-17 audit added a concise verified status section rather than rewriting historical content.
+
+### Gaps addressed by this audit
+
+| Gap | Action |
+| :--- | :--- |
+| Missing repository-wide inventory | Added `REPOSITORY_INVENTORY.md` |
+| Missing API endpoint inventory | Added `API_INVENTORY.md` |
+| Missing database report | Added `DATABASE_REPORT.md` |
+| Missing frontend status report | Added `FRONTEND_STATUS_REPORT.md` |
+| Missing security audit report | Added `SECURITY_AUDIT_REPORT.md` |
+| Missing DevOps report | Added `DEVOPS_REPORT.md` |
+| Missing performance report | Added `PERFORMANCE_REPORT.md` |
+| Missing production readiness report | Added `PRODUCTION_READINESS_REPORT.md` |
+| Missing project positioning report | Added `PROJECT_POSITIONING_REPORT.md` |
+| Missing system architecture report | Added `SYSTEM_ARCHITECTURE_REPORT.md` |
+| README historical content at risk of overwrite | Appended a concise current status section |
+
+### Remaining gaps
+
+- Runtime backend tests that require the backend to be running remain blocked.
+- Load testing remains blocked by k6 metric conflict.
+- React Doctor warnings remain above the older report baseline.
+- Production readiness depends on external secrets, Kubernetes credentials, and backend runtime validation.

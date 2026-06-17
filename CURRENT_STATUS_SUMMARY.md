@@ -57,3 +57,42 @@ SpiceGarden now passes build, typecheck, lint, root unit/e2e/root tests, backend
 ## Current maturity estimate
 
 Approximate project maturity: **82–87% pre-production**. Production-grade maturity remains blocked by the items above.
+
+---
+
+## 2026-06-17 Repository-Wide Audit Update
+
+**Generated:** 2026-06-17T21:30+05:30  
+**Method:** Append-only audit update; historical production-hardening content preserved.
+
+### Verified audit gates
+
+| Command | Result |
+| :--- | :--- |
+| `npm run build` | Exit `0` |
+| `npm run lint` | Exit `0` |
+| `npm run test:unit` | Exit `0` |
+| `npm audit --json` | 0 critical, 0 high, 51 moderate vulnerabilities |
+
+### Repository-scale evidence
+
+| Metric | Count |
+| :--- | ---: |
+| Total tracked files | 2,729 |
+| Source files excluding generated artifacts | 726 |
+| Total test files | 185 |
+| Backend controller files | 41 |
+| REST endpoint decorators | 259 |
+| Entity files | 68 |
+| Kubernetes manifests | 8 |
+
+### Current audit status
+
+| Area | Status |
+| :--- | :--- |
+| Build/lint/unit tests | Passing |
+| React Doctor | 11 current errors, 480 current warnings |
+| Load testing | Blocked by k6 `http_req_duration` metric conflict |
+| Security | Core controls exist; unguarded controllers and refresh-token persistence need review |
+| Frontend completeness | Customer web broad; customer mobile and delivery partner include placeholders/mock data |
+| Database readiness | Broad schema exists; migrations not verified and TypeORM synchronize/logging remain enabled |

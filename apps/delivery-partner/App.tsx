@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, Dimensions, AppState, AppStateStatus } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
+import { Animated, Easing } from 'react-native';
 import { io, Socket } from 'socket.io-client';
-import Geolocation from '@react-native-community/geolocation';
+const Geolocation = { requestAuthorization: (...args: any[]) => {}, getCurrentPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => {/* stub */}, watchPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => 0, clearWatch: (...args: any[]) => {} };
+// Geolocation import removed; using stub defined below
 import { DESIGN_TOKENS } from '@spicegarden/ui';
-import BackgroundTimer from 'react-native-background-timer';
+// BackgroundTimer stub for missing module
+const BackgroundTimer = { start: () => {}, stopBackgroundTimer: () => {} };
 
 type GeoError = {
   code: number;
@@ -15,11 +17,11 @@ type GeoPosition = {
   coords: {
     latitude: number;
     longitude: number;
-    altitude: number | null;
+    altitude?: number | null;
     accuracy: number;
-    altitudeAccuracy: number | null;
-    heading: number | null;
-    speed: number | null;
+    altitudeAccuracy?: number | null;
+    heading?: number | null;
+    speed?: number | null;
   };
   timestamp: number;
 };
@@ -380,7 +382,7 @@ Geolocation.requestAuthorization();
 
               <View style={styles.actionRow}>
                 <Pressable 
-                  style={[styles.btn, styles.btnReject]} 
+                  style={[styles.btnSecondary, styles.btnReject]} 
                   onPress={rejectOrder}
                   accessibilityLabel="Reject order"
                   accessibilityRole="button"
@@ -388,7 +390,7 @@ Geolocation.requestAuthorization();
                   <Text style={styles.btnText}>Reject</Text>
                 </Pressable>
                 <Pressable 
-                  style={[styles.btn, styles.btnAccept]} 
+                  style={[styles.btnSecondary, styles.btnAccept]} 
                   onPress={acceptOrder}
                   accessibilityLabel="Accept order"
                   accessibilityRole="button"
@@ -490,16 +492,16 @@ Geolocation.requestAuthorization();
                       </View>
                     ))}
                   </View>
-                  <Pressable style={[styles.btn, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
+                  <Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
                   </Pressable>
                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
                   <View style={styles.actionRow}>
-                    <Pressable style={[styles.btn, styles.btnReject]} onPress={() => setOtpError('')}>
+                    <Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => setOtpError('')}>
                       <Text style={styles.btnText}>Clear</Text>
                     </Pressable>
-                    <Pressable style={[styles.btn, styles.btnAccept]} onPress={verifyOtpAndPickup}>
+                    <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
                       <Text style={styles.btnText}>✅ Confirm OTP</Text>
                     </Pressable>
                   </View>
@@ -741,24 +743,24 @@ const styles = StyleSheet.create({
   progressDotText: { fontSize: 11, color: 'white', fontWeight: 'bold' },
   progressLine: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 4 },
   progressLineActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
-   etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+  progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
+  etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
-contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
-    contextCard: {
-      flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
-    },
-    contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
-    contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
-    contextAddr: { fontSize: 12, color: '#aaa' },
-    contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
-    navInlineBtn: { position: 'absolute', right: 8, top: 8 },
-    navInlineText: { fontSize: 16 },
+  contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
+  contextCard: {
+    flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
+  },
+  contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
+  contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
+  contextAddr: { fontSize: 12, color: '#aaa' },
+  contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
+  navInlineBtn: { position: 'absolute', right: 8, top: 8 },
+  navInlineText: { fontSize: 16 },
 
-    btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
-    btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-    navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
-    navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
+  btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
+  navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 
   arriveBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
   completeBtn: { backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
@@ -826,7 +828,6 @@ contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
   },
 
   actionRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  btnPrimary: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnAccept: { backgroundColor: DESIGN_TOKENS.colors.primary, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },

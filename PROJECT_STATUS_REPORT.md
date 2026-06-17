@@ -10,7 +10,7 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 ## Latest verified status
 
 | Area | Score | Status | Confidence |
-| :--- | :---: | :--- | :---: |
+| :--- | ---: | :--- | :---: |
 | Build | 100% | PASS | HIGH |
 | Typecheck | 100% | PASS | HIGH |
 | Lint | 100% | PASS | HIGH |
@@ -55,3 +55,46 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 ## Verdict
 
 P0 production-hardening work is substantially complete. The project is not fully production-ready until the remaining validation blockers are closed.
+
+---
+
+## 2026-06-17 Repository-Wide Audit Update
+
+**Generated:** 2026-06-17T21:30+05:30  
+**Method:** Append-only audit update; historical production-hardening content preserved.
+
+### Status
+
+SpiceGarden is in a production-readiness audit and stabilization phase. The codebase has passed build, lint, and unit-test gates in this session, but several production-readiness signals remain incomplete.
+
+### Completed in this audit
+
+- Repository inventory collected.
+- Backend, frontend, infra, security, and DevOps source evidence audited.
+- Required audit reports generated.
+- Existing status/gap/changelog documents updated append-only.
+- Build, lint, and unit-test gates verified.
+
+### Open items
+
+| Item | Severity | Owner |
+| :--- | :--- | :--- |
+| Fix k6 load-test metric conflict | High | Performance/devops |
+| Apply or document guards for unguarded controllers | High | Backend/security |
+| Persist and validate refresh tokens | High | Backend/auth |
+| Harden payment/fraud checks | High | Backend/payments |
+| Reduce React Doctor errors/warnings | Medium | Frontend |
+| Add or verify migrations | Medium | Backend/database |
+| Disable TypeORM synchronize/logging in production | Medium | Backend/database |
+| Remove hardcoded dev credentials | Medium | Devops |
+
+### Evidence
+
+- 2,729 tracked files.
+- 726 source files excluding generated artifacts.
+- 259 REST endpoint decorators.
+- 41 controller files.
+- 185 tracked test files.
+- 68 entity files.
+- Production hardening manifest exists.
+- Build/lint/unit gates passed.
