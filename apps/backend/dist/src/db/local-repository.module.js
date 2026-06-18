@@ -164,10 +164,12 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
                     transaction: async (_, work) => (work || _)(undefined),
                 },
             },
-            ...repositoryDefinitions.map((entity) => ({
-                provide: (0, typeorm_1.getRepositoryToken)(entity),
-                useValue: createRepository(entity),
-            })),
+            ...repositoryDefinitions.flatMap((entity) => [
+                {
+                    provide: (0, typeorm_1.getRepositoryToken)(entity),
+                    useValue: createRepository(entity),
+                },
+            ]),
         ],
         exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
     })

@@ -162,7 +162,20 @@ const imports = localSqlite
         }),
     ];
 if (!localSqlite) {
-    imports.push(mongoose_1.MongooseModule.forRootAsync({
+    imports.push(typeorm_1.TypeOrmModule.forRootAsync({
+        imports: [config_1.ConfigModule],
+        useFactory: (configService) => ({
+            type: "postgres",
+            host: configService.get("DB_HOST") || "localhost",
+            port: configService.get("DB_PORT", 5432),
+            username: configService.get("DB_USER") || "spicegarden",
+            password: configService.get("DB_PASS") || "spicegarden_dev",
+            database: configService.get("DB_NAME") || "spicegarden",
+            entities,
+            synchronize: true,
+        }),
+        inject: [config_1.ConfigService],
+    }), mongoose_1.MongooseModule.forRootAsync({
         imports: [config_1.ConfigModule],
         useFactory: (configService) => ({
             uri: configService.get("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
@@ -178,9 +191,6 @@ if (!localSqlite) {
         }),
         inject: [config_1.ConfigService],
     }), mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }]));
-}
-else {
-    imports.push(localReviewModelProvider());
 }
 let DbModule = class DbModule {
 };

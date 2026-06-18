@@ -15,6 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderDriverController = exports.DriverController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../security/jwt-auth.guard");
+const roles_guard_1 = require("../security/roles.guard");
+const roles_decorator_1 = require("../security/roles.decorator");
+const user_interface_1 = require("../shared/domain/user.interface");
 const driver_entity_1 = require("../db/entities/driver.entity");
 const order_entity_1 = require("../db/entities/order.entity");
 const typeorm_1 = require("typeorm");
@@ -313,7 +316,8 @@ __decorate([
 ], OrderDriverController.prototype, "reportIssue", null);
 exports.OrderDriverController = OrderDriverController = __decorate([
     (0, common_1.Controller)('orders'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN),
     __param(0, (0, typeorm_2.InjectRepository)(order_entity_1.OrderEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),

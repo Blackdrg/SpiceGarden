@@ -1,4 +1,5 @@
 import { AdminService } from './admin.service';
+import { type Request } from 'express';
 export declare class AdminController {
     private adminService;
     constructor(adminService: AdminService);
@@ -56,7 +57,12 @@ export declare class AdminController {
     banUser(body: {
         userId: string;
         reason: string;
-    }, req: any): Promise<{
+    }, req: Request & {
+        user: {
+            id: string;
+            role: string;
+        };
+    }): Promise<{
         success: boolean;
     }>;
 }

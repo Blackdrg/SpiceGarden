@@ -101,9 +101,13 @@ function getRateLimitKey(req: express.Request): string {
 }
 
 function installRateLimiters(app: any, configService: ConfigService): void {
+  // Skip rate limiting in load test mode to prevent blocking legitimate test traffic
+  if (process.env.LOAD_TEST_MODE === 'true') {
+    return;
+  }
   app.use('/auth/otp', createRateLimiter(configService, 'AUTH_OTP', 3, 10 * 60 * 1000));
   app.use('/auth/', createRateLimiter(configService, 'AUTH', 5, 15 * 60 * 1000, true));
-  app.use('/api/orders', createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
+  app.use(/\/orders/, createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
   app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
 }
 

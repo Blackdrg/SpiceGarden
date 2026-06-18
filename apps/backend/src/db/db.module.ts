@@ -127,6 +127,20 @@ const imports: any[] = localSqlite
 
 if (!localSqlite) {
   imports.push(
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: "postgres",
+        host: configService.get<string>("DB_HOST") || "localhost",
+        port: configService.get<number>("DB_PORT", 5432),
+        username: configService.get<string>("DB_USER") || "spicegarden",
+        password: configService.get<string>("DB_PASS") || "spicegarden_dev",
+        database: configService.get<string>("DB_NAME") || "spicegarden",
+        entities,
+        synchronize: true,
+      }),
+      inject: [ConfigService],
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -145,8 +159,6 @@ if (!localSqlite) {
     } as any),
     MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]) as any,
   );
-} else {
-  imports.push(localReviewModelProvider() as any);
 }
 
 @Global()

@@ -155,10 +155,12 @@ const repositoryDefinitions = [
         transaction: async (_: any, work?: any) => (work || _)(undefined),
       },
     },
-    ...repositoryDefinitions.map((entity) => ({
-      provide: getRepositoryToken(entity),
-      useValue: createRepository(entity),
-    })),
+    ...repositoryDefinitions.flatMap((entity) => [
+      {
+        provide: getRepositoryToken(entity),
+        useValue: createRepository(entity),
+      },
+    ]),
   ],
   exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
 })

@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetricsController = void 0;
 const common_1 = require("@nestjs/common");
 const metrics_service_1 = require("./metrics.service");
+const jwt_auth_guard_1 = require("../security/jwt-auth.guard");
+const roles_guard_1 = require("../security/roles.guard");
+const roles_decorator_1 = require("../security/roles.decorator");
+const user_interface_1 = require("../shared/domain/user.interface");
 let MetricsController = class MetricsController {
     metricsService;
     constructor(metricsService) {
@@ -24,11 +28,13 @@ let MetricsController = class MetricsController {
 exports.MetricsController = MetricsController;
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], MetricsController.prototype, "getMetrics", null);
 exports.MetricsController = MetricsController = __decorate([
     (0, common_1.Controller)('metrics'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [metrics_service_1.MetricsService])
 ], MetricsController);

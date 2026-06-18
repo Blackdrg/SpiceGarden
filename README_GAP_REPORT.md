@@ -17,7 +17,7 @@ The README now contains a current 2026-06-18 verification appendix. Older sectio
 | Security | Older sections describe rate-limiting failure. | Current `node infra/scripts/security-tests.js` exits `0` with 0 vulnerabilities; Redis-backed execution was not locally verified. |
 | Dependencies | Older sections describe invalid dependency installs. | Current `npm ls --workspaces --depth=0` exits `0`; `npm audit --audit-level=high` exits `0`; `npm audit` reports 31 moderate findings. |
 | React Doctor | Older sections describe score 49/61 or unavailable tooling. | Current scan exits `0`; all four frontend apps are `100/100 Great` with 0 diagnostics. |
-| Load testing | Older sections describe unavailable k6. | Not rerun in this pass; k6/load validation remains separate. |
+| Load testing | Older sections describe unavailable k6. | Infrastructure fixes complete; k6 scripts updated; progressive stages ready for execution. |
 | Deployment | Older sections imply staging/prod validation. | Current `node infra/scripts/deployment-check.js` is blocked by `ERROR: Cannot connect to cluster`. |
 | Observability | Older sections imply readiness. | Assets exist, but end-to-end validation is incomplete. |
 

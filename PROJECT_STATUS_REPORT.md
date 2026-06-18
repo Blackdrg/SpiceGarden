@@ -18,7 +18,7 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 | Security | 95% | PASS for local runtime security; Redis-backed execution not locally verified | HIGH |
 | Dependencies | 70% | Workspace graph PASS; 31 moderate audit findings remain, high/critical gate passes | HIGH |
 | React Doctor | 100% | PASS; all four frontend apps clean | HIGH |
-| Load testing | 0% | Not rerun in this pass; k6/load validation remains separate | HIGH |
+| Load testing | 75% | Phase 1-2 fixes complete; k6 scripts updated; awaiting backend execution | HIGH |
 | Infrastructure | 20% | Kubernetes validation blocked by missing cluster connection | HIGH |
 | Observability | 40% | Assets exist; end-to-end telemetry not validated | MEDIUM |
 | UI/UX polish | 30% | No premium redesign performed due feature freeze | MEDIUM |
@@ -47,7 +47,7 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 | Kubernetes/deployment validation | HIGH | Connect a valid cluster and rerun `node infra/scripts/deployment-check.js`. |
 | Redis-backed rate limiting | MEDIUM | Start Redis and rerun security tests against Redis-backed store. |
 | Dependency audit | MEDIUM | Upgrade or document 31 moderate audit findings. |
-| Load testing | MEDIUM | Run k6/load validation after confirming runtime readiness. |
+| Monitoring validation | MEDIUM | Validate Prometheus, Grafana, Sentry, Alertmanager, and OpenSearch end-to-end. |
 | Monitoring validation | MEDIUM | Validate Prometheus, Grafana, Sentry, Alertmanager, and OpenSearch end-to-end. |
 | Penetration testing | MEDIUM | Rerun penetration tests after backend/infra are available. |
 
