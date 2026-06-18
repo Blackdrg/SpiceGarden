@@ -48,7 +48,7 @@ export const useEnterAnimation = (show: boolean, type = 'fade', duration = 300) 
  * @param {boolean} prefersReducedMotion - Whether user prefers reduced motion
  * @returns {Object} Hover style object
  */
-export const useHoverAnimation = (prefersReducedMotion: boolean) => {
+const useHoverAnimation = (prefersReducedMotion: boolean) => {
   if (prefersReducedMotion) {
     return {};
   }

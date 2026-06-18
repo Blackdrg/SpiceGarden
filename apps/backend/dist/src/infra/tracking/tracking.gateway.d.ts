@@ -30,12 +30,14 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     server: Server;
     private readonly logger;
     private readonly connectedClients;
+    private readonly connectionAttempts;
     private readonly messageQueue;
     private readonly pendingAcks;
     private readonly ackTimeoutMs;
     constructor(configService: ConfigService, notificationRepo: Repository<NotificationEntity>);
     handleConnection(client: Socket): void;
     handleDisconnect(client: Socket): void;
+    private isConnectionAllowed;
     handlePing(client: Socket): {
         status: string;
         serverTime: number;

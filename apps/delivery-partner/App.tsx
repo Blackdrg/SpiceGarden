@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, Dimensions, AppState, AppStateStatus } from 'react-native';
-import { Animated, Easing } from 'react-native';
+import React, { useReducer, useEffect, useRef, useCallback } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, useWindowDimensions, AppState, AppStateStatus, TextInput } from 'react-native';
 import { io, Socket } from 'socket.io-client';
-const Geolocation = { requestAuthorization: (...args: any[]) => {}, getCurrentPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => {/* stub */}, watchPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => 0, clearWatch: (...args: any[]) => {} };
-// Geolocation import removed; using stub defined below
 import { DESIGN_TOKENS } from '@spicegarden/ui';
-// BackgroundTimer stub for missing module
+
+const Geolocation = { requestAuthorization: (...args: any[]) => {}, getCurrentPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => {/* stub */}, watchPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => 0, clearWatch: (...args: any[]) => {} };
+
 const BackgroundTimer = { start: () => {}, stopBackgroundTimer: () => {} };
 
 type GeoError = {
@@ -26,7 +25,16 @@ type GeoPosition = {
   timestamp: number;
 };
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const STATUS_LABEL: Record<string, string> = {
+  idle: '✋ IDLE',
+  assigned: '📋 ASSIGNED',
+  navigating_to_pickup: '🛵 → PICKUP',
+  at_pickup: '🏪 AT PICKUP',
+  navigating_to_drop: '🛵 → CUSTOMER',
+  completed: '🏁 DONE',
+  failed: '❗ FAILED',
+  delayed: '⏰ DELAYED',
+};
 
 type DeliveryStatus = 'idle' | 'assigned' | 'navigating_to_pickup' | 'at_pickup' | 'navigating_to_drop' | 'completed' | 'failed' | 'delayed';
 
@@ -58,6 +66,90 @@ interface ShiftInfo {
   isActive: boolean;
   type: string;
   endTime: string;
+}
+
+type AppState = {
+  isOnline: boolean;
+  incomingOrder: Order | null;
+  activeDelivery: Order | null;
+  earnings: DailyEarnings;
+  shift: ShiftInfo | null;
+  deliveryOtp: string;
+  otpError: string;
+  log: string[];
+  expandedIssue: boolean;
+  activeScreen: 'home' | 'earnings';
+  locationPermission: 'granted' | 'denied' | 'pending';
+};
+
+type AppAction =
+  | { type: 'SET_ONLINE'; payload: boolean }
+  | { type: 'SET_INCOMING_ORDER'; payload: Order | null }
+  | { type: 'SET_ACTIVE_DELIVERY'; payload: Order | null }
+  | { type: 'ADD_EARNINGS'; payload: { amount: number; incentive?: number } }
+  | { type: 'SET_SHIFT'; payload: ShiftInfo | null }
+  | { type: 'SET_DELIVERY_OTP'; payload: string }
+  | { type: 'SET_OTP_ERROR'; payload: string }
+  | { type: 'ADD_LOG'; payload: string }
+  | { type: 'SET_EXPANDED_ISSUE'; payload: boolean }
+  | { type: 'SET_ACTIVE_SCREEN'; payload: 'home' | 'earnings' }
+  | { type: 'SET_LOCATION_PERMISSION'; payload: 'granted' | 'denied' | 'pending' }
+  | { type: 'COMPLETE_DELIVERY'; payload: { amount: number; incentive?: number; orderNumber: string } }
+  | { type: 'ACCEPT_ORDER'; payload: Order };
+
+function appReducer(state: AppState, action: AppAction): AppState {
+  switch (action.type) {
+    case 'SET_ONLINE':
+      return { ...state, isOnline: action.payload };
+    case 'SET_INCOMING_ORDER':
+      return { ...state, incomingOrder: action.payload };
+    case 'SET_ACTIVE_DELIVERY':
+      return { ...state, activeDelivery: action.payload };
+    case 'ADD_EARNINGS':
+      return {
+        ...state,
+        earnings: {
+          ...state.earnings,
+          pending: state.earnings.pending + action.payload.amount,
+        },
+      };
+    case 'SET_SHIFT':
+      return { ...state, shift: action.payload };
+    case 'SET_DELIVERY_OTP':
+      return { ...state, deliveryOtp: action.payload };
+    case 'SET_OTP_ERROR':
+      return { ...state, otpError: action.payload };
+    case 'ADD_LOG':
+      return { ...state, log: [action.payload, ...state.log.slice(0, 9)] };
+    case 'SET_EXPANDED_ISSUE':
+      return { ...state, expandedIssue: action.payload };
+    case 'SET_ACTIVE_SCREEN':
+      return { ...state, activeScreen: action.payload };
+    case 'SET_LOCATION_PERMISSION':
+      return { ...state, locationPermission: action.payload };
+    case 'COMPLETE_DELIVERY':
+      return {
+        ...state,
+        earnings: {
+          ...state.earnings,
+          today: state.earnings.today + action.payload.amount + (action.payload.incentive || 0),
+          ordersToday: state.earnings.ordersToday + 1,
+          pending: state.earnings.pending - action.payload.amount,
+          bonus: state.earnings.bonus + (action.payload.incentive ? action.payload.amount * 0.1 : 0),
+        },
+        activeDelivery: null,
+        deliveryOtp: '',
+      };
+    case 'ACCEPT_ORDER':
+      return {
+        ...state,
+        activeDelivery: { ...action.payload, status: 'assigned' as const, acceptedAt: new Date() },
+        incomingOrder: null,
+        earnings: { ...state.earnings, pending: state.earnings.pending + action.payload.amount },
+      };
+    default:
+      return state;
+  }
 }
 
 const DRIVER_NAME = 'Raj Kumar';
@@ -109,49 +201,75 @@ function demoIncoming(): Order {
   };
 }
 
-export default function DriverApp() {
-  const [isOnline, setIsOnline] = useState(false);
-  const [incomingOrder, setIncomingOrder] = useState<Order | null>(null);
-  const [activeDelivery, setActiveDelivery] = useState<Order | null>(null);
-  const [earnings, setEarnings] = useState<DailyEarnings>({ today: 1450, pending: 350, bonus: 200, ordersToday: 8 });
-  const [shift, setShift] = useState<ShiftInfo | null>(null);
-  const [deliveryOtp, setDeliveryOtp] = useState('');
-  const [otpError, setOtpError] = useState('');
-  const [log, setLog] = useState<string[]>([]);
-   const [expandedIssue, setExpandedIssue] = useState(false);
-   const [activeScreen, setActiveScreen] = useState<'home' | 'earnings'>('home');
-   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'pending'>('pending');
+function StatCard({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <View style={styles.statCard}>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statSub}>{sub}</Text>
+    </View>
+  );
+}
 
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
-  const slideAnim = useMemo(() => new Animated.Value(20), []);
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
+      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
+      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
+    </View>
+  );
+}
+
+function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
+  return (
+    <View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
+      </View>
+      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
+        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
+      </View>
+    </View>
+  );
+}
+
+export default function DriverApp() {
+  const { width: SCREEN_W } = useWindowDimensions();
+  const [state, dispatch] = useReducer(appReducer, {
+    isOnline: false,
+    incomingOrder: null,
+    activeDelivery: null,
+    earnings: { today: 1450, pending: 350, bonus: 200, ordersToday: 8 },
+    shift: null,
+    deliveryOtp: '',
+    otpError: '',
+    log: [],
+    expandedIssue: false,
+    activeScreen: 'home' as const,
+    locationPermission: 'pending' as const,
+  });
   const locationWatchId = useRef<number | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  const addLog = useCallback((msg: string) => setLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 9)]), []);
+  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: DESIGN_TOKENS.motion.page,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-
-Geolocation.requestAuthorization();
-      Geolocation.getCurrentPosition(
-        () => {
-          setLocationPermission('granted');
-        },
-        (error: GeoError) => {
-          setLocationPermission('denied');
-          addLog(`Location error: ${error.message}`);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-      );
-    }, [fadeAnim, addLog]);
+    Geolocation.requestAuthorization();
+    Geolocation.getCurrentPosition(
+      () => {
+        dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'granted' });
+      },
+      (error: GeoError) => {
+        dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
+        dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+  }, []);
 
   useEffect(() => {
-    if (!isOnline || locationPermission !== 'granted') {
+    if (!state.isOnline || state.locationPermission !== 'granted') {
       if (locationWatchId.current !== null) {
         Geolocation.clearWatch(locationWatchId.current);
         locationWatchId.current = null;
@@ -160,30 +278,30 @@ Geolocation.requestAuthorization();
     }
 
     locationWatchId.current = Geolocation.watchPosition(
-        (position: GeoPosition) => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          socketRef.current?.emit('driverLocationUpdate', { 
-            driverId: 'current',
-            location 
-          });
-        },
-        (error: GeoError) => addLog(`Location watch error: ${error.message}`),
-{ 
-           enableHighAccuracy: true, 
-           distanceFilter: 10,
-           timeout: 5000
-         }
-      );
+      (position: GeoPosition) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        socketRef.current?.emit('driverLocationUpdate', { 
+          driverId: 'current',
+          location 
+        });
+      },
+      (error: GeoError) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
+      { 
+        enableHighAccuracy: true, 
+        distanceFilter: 10,
+        timeout: 5000
+      }
+    );
 
     return () => {
       if (locationWatchId.current !== null) {
         Geolocation.clearWatch(locationWatchId.current);
       }
     };
-   }, [isOnline, locationPermission, addLog]);
+  }, [state.isOnline, state.locationPermission]);
 
   useEffect(() => {
     const s: Socket = io('http://localhost:3001', {
@@ -192,29 +310,29 @@ Geolocation.requestAuthorization();
     });
     socketRef.current = s;
 
-    s.on('connect', () => addLog('Connected to backend'));
-    s.on('disconnect', () => addLog('Disconnected'));
+    s.on('connect', () => dispatch({ type: 'ADD_LOG', payload: 'Connected to backend' }));
+    s.on('disconnect', () => dispatch({ type: 'ADD_LOG', payload: 'Disconnected' }));
     s.on('orderAssigned', (order: Order) => {
-      if (isOnline) { setIncomingOrder(order); addLog(`New order: #${order.orderNumber} (₹${order.amount})`); }
+      if (state.isOnline) dispatch({ type: 'ACCEPT_ORDER', payload: order });
     });
     s.on('orderRerouted', (data: { orderId: string; reason: string }) => {
       if (activeDelivery?.id === data.orderId) {
-        addLog(`Re-routed: ${data.reason}`);
+        dispatch({ type: 'ADD_LOG', payload: `Re-routed: ${data.reason}` });
         Alert.alert('🚗 Re-routing', `New destination: ${data.reason}`);
       }
     });
     s.on('shiftReminder', (data: { shiftType: string; endTime: string }) => {
-       addLog(`Shift reminder: ${data.shiftType} ends at ${data.endTime}`);
-       Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
-       setShift({ isActive: true, type: data.shiftType, endTime: data.endTime });
-     });
+      dispatch({ type: 'ADD_LOG', payload: `Shift reminder: ${data.shiftType} ends at ${data.endTime}` });
+      Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
+      dispatch({ type: 'SET_SHIFT', payload: { isActive: true, type: data.shiftType, endTime: data.endTime }});
+    });
 
     return () => { s.disconnect(); };
-  }, [isOnline, activeDelivery?.id, addLog]);
+  }, [state.isOnline, activeDelivery?.id]);
 
   useEffect(() => {
     const appStateHandler = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isOnline) {
+      if (nextAppState === 'background' && state.isOnline) {
         BackgroundTimer.start();
       } else if (nextAppState === 'active') {
         BackgroundTimer.stopBackgroundTimer();
@@ -223,93 +341,80 @@ Geolocation.requestAuthorization();
 
     const subscription = AppState.addEventListener('change', appStateHandler);
     return () => subscription.remove();
-  }, [isOnline]);
+  }, [state.isOnline]);
 
   useEffect(() => {
-    if (!isOnline) { socketRef.current?.emit('driverOffline'); return; }
-    socketRef.current?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
-    addLog('Went online — awaiting orders');
-    return () => { socketRef.current?.emit('driverOffline'); };
-  }, [isOnline, addLog]);
+    if (!state.isOnline) return;
+    const socket = socketRef.current;
+    socket?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
+    dispatch({ type: 'ADD_LOG', payload: 'Went online — awaiting orders' });
+    return () => { socket?.emit('driverOffline'); };
+  }, [state.isOnline]);
 
   const acceptOrder = useCallback(() => {
     if (!incomingOrder) return;
-    const accepted = { ...incomingOrder, status: 'assigned' as const, acceptedAt: new Date() };
-    setActiveDelivery(accepted);
-    setIncomingOrder(null);
-    setEarnings((prev) => ({ ...prev, pending: prev.pending + accepted.amount }));
-    addLog(`Accepted #${accepted.orderNumber}`);
-    Alert.alert('🎉 Order Accepted', `Heading to ${accepted.restaurant.name}`);
-  }, [incomingOrder, addLog]);
+    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
+    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
+  }, [incomingOrder]);
 
   const rejectOrder = useCallback(() => {
     if (!incomingOrder) return;
-    setIncomingOrder(null);
-    addLog(`Rejected #${incomingOrder.orderNumber}`);
+    dispatch({ type: 'SET_INCOMING_ORDER', payload: null });
+    dispatch({ type: 'ADD_LOG', payload: `Rejected #${incomingOrder.orderNumber}` });
     socketRef.current?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
-  }, [incomingOrder, addLog]);
+  }, [incomingOrder]);
 
   const navigateTo = useCallback((destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
       Alert.alert('🚗 Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
-      addLog(`Navigating → ${destination}`);
+      dispatch({ type: 'ADD_LOG', payload: `Navigating → ${destination}` });
     } else {
       Alert.alert('📍 Navigation', `Opening maps to ${destination}: ${addr}`);
     }
-  }, [addLog]);
+  }, []);
 
   const confirmPickup = useCallback(() => {
     if (!activeDelivery) return;
-    setDeliveryOtp(DEFAULT_OTP);
-    addLog(`Arrived at pickup: ${activeDelivery.restaurant.name}`);
-  }, [activeDelivery, addLog]);
+    dispatch({ type: 'SET_DELIVERY_OTP', payload: DEFAULT_OTP });
+    dispatch({ type: 'ADD_LOG', payload: `Arrived at pickup: ${activeDelivery.restaurant.name}` });
+  }, [activeDelivery]);
 
   const verifyOtpAndPickup = useCallback(() => {
     if (!activeDelivery) return;
     if (deliveryOtp !== activeDelivery.otp) {
-      setOtpError('Invalid OTP — ask the customer');
-      addLog('OTP verification failed');
+      dispatch({ type: 'SET_OTP_ERROR', payload: 'Invalid OTP — ask the customer' });
+      dispatch({ type: 'ADD_LOG', payload: 'OTP verification failed' });
       return;
     }
-    setOtpError('');
-    const picked: Order = { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() };
-    setActiveDelivery(picked);
-    addLog(`OTP verified — picked up #${picked.orderNumber}`);
+    dispatch({ type: 'SET_OTP_ERROR', payload: '' });
+    dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() }});
+    dispatch({ type: 'ADD_LOG', payload: `OTP verified — picked up #${activeDelivery.orderNumber}` });
     Alert.alert('✅ Pickup Confirmed', 'Navigate to customer now!');
-  }, [activeDelivery, deliveryOtp, addLog]);
+  }, [activeDelivery, deliveryOtp]);
 
   const completeDelivery = useCallback(() => {
     if (!activeDelivery) return;
-    setEarnings((prev) => ({
-      ...prev,
-      today: prev.today + activeDelivery.amount + (activeDelivery.incentiveAmount || 0),
-      ordersToday: prev.ordersToday + 1,
-      pending: prev.pending - activeDelivery.amount,
-      bonus: prev.bonus + (activeDelivery.surgeMultiplier ? activeDelivery.amount * 0.1 : 0),
-    }));
-    addLog(`Delivered #${activeDelivery.orderNumber} — +₹${activeDelivery.amount}`);
+    dispatch({ type: 'COMPLETE_DELIVERY', payload: { amount: activeDelivery.amount, incentive: activeDelivery.incentiveAmount, orderNumber: activeDelivery.orderNumber }});
     Alert.alert('✅ Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
-    setActiveDelivery(null);
-    setDeliveryOtp('');
-  }, [activeDelivery, addLog]);
+  }, [activeDelivery]);
 
   const handleFailedDelivery = useCallback((reason: string) => {
     if (!activeDelivery) return;
-    addLog(`Delivery failed: ${reason}`);
+    dispatch({ type: 'ADD_LOG', payload: `Delivery failed: ${reason}` });
     Alert.alert('❗ Delivery Failed', `Marked as ${reason}`, [
-      { text: 'OK', onPress: () => setActiveDelivery(null) }
+      { text: 'OK', onPress: () => dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: null }) }
     ]);
-  }, [activeDelivery, addLog]);
+  }, [activeDelivery]);
 
   const reportIssue = useCallback((label: string) => {
-    addLog(`Issue reported: ${label}`);
+    dispatch({ type: 'ADD_LOG', payload: `Issue reported: ${label}` });
     socketRef.current?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
     Alert.alert('Issue Reported', `${label} — Support has been notified.`);
-    setExpandedIssue(false);
-  }, [activeDelivery, addLog]);
+    dispatch({ type: 'SET_EXPANDED_ISSUE', payload: false });
+  }, [activeDelivery]);
 
   return (
-    <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+    <View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
       <View style={styles.header}>
         <View>
           <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
@@ -326,13 +431,13 @@ Geolocation.requestAuthorization();
           <Text style={isOnline ? styles.onlineText : styles.offlineText}>
             {isOnline ? '● ONLINE' : '● OFFLINE'}
           </Text>
-          <Switch 
-            value={isOnline} 
-            onValueChange={setIsOnline}
-            trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
-            thumbColor="white"
-            accessibilityLabel="Toggle online status"
-          />
+<Switch 
+             value={state.isOnline} 
+             onValueChange={(value) => dispatch({ type: 'SET_ONLINE', payload: value })}
+             trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
+             thumbColor="white"
+             accessibilityLabel="Toggle online status"
+           />
         </View>
       </View>
 
@@ -346,7 +451,7 @@ Geolocation.requestAuthorization();
         {(['home', 'earnings'] as const).map((t) => (
           <Pressable
             key={t}
-            onPress={() => setActiveScreen(t)}
+            onPress={() => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: t })}
             style={[styles.tab, activeScreen === t && styles.tabActive]}
             accessibilityLabel={`Switch to ${t} screen`}
             accessibilityRole="tab"
@@ -492,15 +597,15 @@ Geolocation.requestAuthorization();
                       </View>
                     ))}
                   </View>
-                  <Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
-                    <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
-                  </Pressable>
-                  {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
+<Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
+                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
+                   </Pressable>
+                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
                   <View style={styles.actionRow}>
-                    <Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => setOtpError('')}>
-                      <Text style={styles.btnText}>Clear</Text>
-                    </Pressable>
+<Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
+                       <Text style={styles.btnText}>Clear</Text>
+                     </Pressable>
                     <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
                       <Text style={styles.btnText}>✅ Confirm OTP</Text>
                     </Pressable>
@@ -534,100 +639,100 @@ Geolocation.requestAuthorization();
             </View>
           ) : null}
 
-          {!incomingOrder && !activeDelivery && (
-            <View style={styles.idleCard}>
-              <Text style={styles.idleIcon}>⏳</Text>
-              <Text style={styles.idleText}>
-                {isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
-              </Text>
-              {isOnline && locationPermission === 'denied' && (
-                <Text style={styles.locationWarning}>Location permission required for delivery</Text>
-              )}
-              {isOnline && (
-                <Pressable
-                  style={styles.btnAccept}
-                  onPress={() => {
-                    const demo = demoIncoming();
-                    setIncomingOrder(demo);
-                    addLog('Demo order injected');
-                  }}
-                >
-                  <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
-                </Pressable>
-              )}
+{!state.incomingOrder && !activeDelivery && (
+             <View style={styles.idleCard}>
+               <Text style={styles.idleIcon}>⏳</Text>
+               <Text style={styles.idleText}>
+                 {state.isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
+               </Text>
+               {state.isOnline && locationPermission === 'denied' && (
+                 <Text style={styles.locationWarning}>Location permission required for delivery</Text>
+               )}
+               {state.isOnline && (
+                 <Pressable
+                   style={styles.btnAccept}
+                   onPress={() => {
+                     const demo = demoIncoming();
+                     dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
+                     dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
+                   }}
+                 >
+                   <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
+                 </Pressable>
+               )}
+             </View>
+           )}
+
+           {activeDelivery && (
+             <View style={styles.issueSection}>
+               <Pressable
+                 onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !state.expandedIssue })}
+                 style={styles.issueToggle}
+                 accessibilityLabel="Report an issue"
+                 accessibilityRole="button"
+               >
+                 <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
+                 <Text style={styles.issueChevron}>{state.expandedIssue ? '▲' : '▼'}</Text>
+               </Pressable>
+               {state.expandedIssue && (
+                 <View style={styles.issueGrid}>
+                   {issueTypes.map((issue) => (
+                     <Pressable
+                       key={issue.label}
+                       style={styles.issueBtn}
+                       onPress={() => reportIssue(issue.label)}
+                     >
+                       <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
+                       <Text style={styles.issueLabel}>{issue.label}</Text>
+                     </Pressable>
+                   ))}
+                 </View>
+               )}
             </View>
           )}
 
-          {activeDelivery && (
-            <View style={styles.issueSection}>
-              <Pressable
-                onPress={() => setExpandedIssue(!expandedIssue)}
-                style={styles.issueToggle}
-                accessibilityLabel="Report an issue"
-                accessibilityRole="button"
-              >
-                <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
-                <Text style={styles.issueChevron}>{expandedIssue ? '▲' : '▼'}</Text>
-              </Pressable>
-              {expandedIssue && (
-                <View style={styles.issueGrid}>
-                  {issueTypes.map((issue) => (
-                    <Pressable
-                      key={issue.label}
-                      style={styles.issueBtn}
-                      onPress={() => reportIssue(issue.label)}
-                    >
-                      <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
-                      <Text style={styles.issueLabel}>{issue.label}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
+{state.log.length > 0 && (
+             <View style={styles.logCard}>
+               <Text style={styles.logTitle}>📋 Recent Activity</Text>
+               {state.log.map((entry, i) => (
+                 <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+                   {entry}
+                 </Text>
+               ))}
+             </View>
+           )}
+         </ScrollView>
+       )}
 
-          {log.length > 0 && (
-            <View style={styles.logCard}>
-              <Text style={styles.logTitle}>📋 Recent Activity</Text>
-              {log.map((entry, i) => (
-                <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
-                  {entry}
-                </Text>
-              ))}
-            </View>
-          )}
-        </ScrollView>
-      )}
+       {state.activeScreen === 'earnings' && (
+         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+           <View style={styles.earnBigCard}>
+             <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
+             <Text style={styles.earnAmount}>₹{state.earnings.today}</Text>
+             <Text style={styles.earnSub}>{state.earnings.ordersToday} deliveries completed</Text>
+           </View>
 
-           {activeScreen === 'earnings' && (
-             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-               <View style={styles.earnBigCard}>
-                 <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
-                 <Text style={styles.earnAmount}>₹{earnings.today}</Text>
-                 <Text style={styles.earnSub}>{earnings.ordersToday} deliveries completed</Text>
-               </View>
+           <View style={styles.earnGrid}>
+             <StatCard label="Pending" value={`₹${state.earnings.pending}`} sub="yet to credit" />
+             <StatCard label="Weekly Bonus" value={`₹${state.earnings.bonus}`} sub="on-time reward" />
+             <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
+             <StatCard label="Acceptance" value="97%" sub="this month" />
+           </View>
 
-          <View style={styles.earnGrid}>
-            <StatCard label="Pending" value={`₹${earnings.pending}`} sub="yet to credit" />
-            <StatCard label="Weekly Bonus" value={`₹${earnings.bonus}`} sub="on-time reward" />
-            <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
-            <StatCard label="Acceptance" value="97%" sub="this month" />
-          </View>
+           <View style={styles.card}>
+             <Text style={styles.cardTitle}>🏆 Performance</Text>
+             <Text style={styles.cardSubtitle}>This week</Text>
+             <View style={{ gap: 8 }}>
+               <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
+               <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
+               <EarnRow label="Acceptance rate" value="97%" pct={97} />
+               <EarnRow label="Completed orders" value="42 / week" pct={88} />
+             </View>
+           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>🏆 Performance</Text>
-            <Text style={styles.cardSubtitle}>This week</Text>
-            <View style={{ gap: 8 }}>
-              <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
-              <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
-              <EarnRow label="Acceptance rate" value="97%" pct={97} />
-              <EarnRow label="Completed orders" value="42 / week" pct={88} />
-            </View>
-          </View>
-
-          {shift && (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
+           {state.shift && (
+             <View style={styles.card}>
+               <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
               <Text style={styles.cardSubtitle}>Current shift</Text>
               <View style={styles.shiftInfo}>
                 <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
@@ -640,39 +745,6 @@ Geolocation.requestAuthorization();
           )}
         </ScrollView>
       )}
-    </Animated.View>
-  );
-}
-
-function StatCard({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statSub}>{sub}</Text>
-    </View>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
-      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
-    </View>
-  );
-}
-
-function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
-  return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
-        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
-      </View>
-      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
-        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
-      </View>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 export type { AnalyticsEventType, AnalyticsEvent } from '@spicegarden/shared/analytics';
 
-export const trackEvent = (event: { event: string; properties?: Record<string, unknown> }) => {
+const trackEvent = (event: { event: string; properties?: Record<string, unknown> }) => {
   if (typeof window === 'undefined') return;
 
   fetch('/api/analytics', {

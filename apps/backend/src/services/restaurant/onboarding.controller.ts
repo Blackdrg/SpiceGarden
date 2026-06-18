@@ -1,15 +1,22 @@
-﻿import { Controller, Post, Get, Put, Param, Body, UseGuards, Request, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
+﻿import { Controller, Post, Get, Put, Param, Body, UseGuards, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { RestaurantOnboardingService } from './onboarding.service';
 import { OnboardingStep } from '../../db/entities/restaurant-onboarding.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { Roles } from '../../security/roles.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
+import { type Request } from 'express';
 
 @ApiTags('restaurant-onboarding')
 @Controller('restaurant-onboarding')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class RestaurantOnboardingController {
   constructor(private readonly onboardingService: RestaurantOnboardingService) {}
 
   @Post('initialize/:restaurantId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Initialize onboarding for a restaurant' })
   @ApiResponse({ status: 200, description: 'Onboarding initialized successfully' })
@@ -22,6 +29,7 @@ export class RestaurantOnboardingController {
   }
 
   @Put('step/:onboardingId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update onboarding step' })
   @ApiResponse({ status: 200, description: 'Onboarding step updated successfully' })
@@ -49,6 +57,7 @@ export class RestaurantOnboardingController {
   }
 
   @Get('status/:restaurantId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get onboarding status for a restaurant' })
   @ApiResponse({ status: 200, description: 'Onboarding status retrieved successfully' })
@@ -61,6 +70,7 @@ export class RestaurantOnboardingController {
   }
 
   @Post('complete/:onboardingId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Complete onboarding' })
   @ApiResponse({ status: 200, description: 'Onboarding completed successfully' })
@@ -86,6 +96,7 @@ export class RestaurantOnboardingController {
   }
 
   @Post('reject/:onboardingId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reject onboarding' })
   @ApiResponse({ status: 200, description: 'Onboarding rejected successfully' })

@@ -1,6 +1,6 @@
 # Current Engineering Baseline - SpiceGarden
 
-Generated: 2026-06-17T11:50+05:30  
+Generated: 2026-06-18T09:46+05:30  
 Branch: `feat/add-react-doctor`  
 Classification: Advanced Startup-Grade Pre-Production System.
 
@@ -8,18 +8,20 @@ Classification: Advanced Startup-Grade Pre-Production System.
 
 | Area | Status | Evidence |
 | :--- | :--- | :--- |
-| Build | PASS | `npm run build` exit `0` |
+| Build | PASS | `npm run build` exit `0`; Next.js SWC native warning is non-blocking |
 | Typecheck | PASS | `npx tsc --noEmit` exit `0` |
 | Lint | PASS | `npm run lint` exit `0` |
-| Root unit tests | PASS | `npm run test:unit` exit `0`; 143 tests passed |
-| Root e2e tests | PASS | `npm run test:e2e` exit `0`; 65 tests passed |
+| Root unit tests | PASS | `npm run test:unit` exit `0` |
+| Root integration tests | PASS | `npm run test:integration` exit `0` |
+| Root e2e tests | PASS | `npm run test:e2e` exit `0` |
 | Root test | PASS | `npm run test` exit `0` |
-| Backend full tests | PASS | `cd apps/backend && npm run test`; 210 passed, 1 skipped |
-| Runtime security | PASS | `node infra/scripts/security-tests.js`; 0 vulnerabilities |
+| Runtime security | PASS | `node infra/scripts/security-tests.js`; 0 vulnerabilities; 95/100 rate-limited responses |
+| React Doctor | PASS | `npx react-doctor@latest --json --verbose`; 0 errors, 0 warnings, score `100/100` |
 | Dependency graph | PASS | `npm ls --workspaces --depth=0` exit `0` |
-| Dependency audit | PARTIAL | `npm audit --json`; 0 critical, 0 high, 51 moderate |
-| React Doctor | PARTIAL | 0 errors, 62 warnings, score `null` |
-| Load testing | FAIL | `npm run test:load --workspace @spicegarden/backend` fails before metrics |
+| High/critical audit | PASS | `npm audit --audit-level=high` exit `0` |
+| Dependency audit | PARTIAL | `npm audit`; 31 moderate findings remain |
+| Deployment | BLOCKED | `node infra/scripts/deployment-check.js`; cannot connect to cluster |
+| Load testing | NOT RERUN | k6/load validation not rerun in this pass |
 
 ## P0 hardening completed
 
@@ -29,25 +31,24 @@ Classification: Advanced Startup-Grade Pre-Production System.
 - Disabled trust proxy by default unless explicitly configured.
 - Added root `test` script.
 - Narrowed backend test scripts to deterministic local tests.
-- Fixed customer-web checkout e2e reliability.
-- Fixed restaurant-dashboard KDS e2e robustness.
-- Fixed super-admin analytics fetch test.
-- Added delivery-partner AsyncStorage Jest mock.
-- Removed unused `@rushstack/eslint-patch` from selected Next workspaces.
+- Completed React Doctor cleanup across customer-web, delivery-partner, restaurant-dashboard, and super-admin.
+- Converted customer-web effect fetching, grouped state, and client redirects to React Query, `useReducer`, and Pages Router guards.
+- Removed Redux hook usage from customer-web `_app.tsx` during SSR.
+- Removed JS-thread `Animated` usage from delivery-partner and replaced `Dimensions.get`.
+- Split restaurant-dashboard and super-admin large dashboard hot spots.
 
 ## Remaining production blockers
 
 | Blocker | Status |
 | :--- | :--- |
+| Kubernetes/deployment validation | Blocked by missing cluster connection. |
 | Redis-backed rate-limit execution | Implemented but not locally verified because Redis was unavailable. |
-| Load testing | k6 script fails on duplicate `http_req_duration` metric. |
-| Penetration testing | Not completed in this pass. |
+| Dependency audit | 31 moderate findings remain; high/critical gate passes. |
+| Load testing | Not rerun in this pass. |
+| Penetration testing | Not rerun in this pass. |
 | Docker/compose validation | Not completed in this pass. |
-| Kubernetes/staging validation | Not completed in this pass. |
 | Monitoring validation | Prometheus, Grafana, Sentry, Alertmanager, and OpenSearch are present but not end-to-end validated. |
-| React Doctor 80+ target | Not verified; score is `null` and 62 warnings remain. |
-| Dependency audit | 51 moderate vulnerabilities remain. |
 
 ## Current verdict
 
-SpiceGarden is materially closer to production readiness, but it remains pre-production until load, infrastructure, monitoring, penetration, Redis-backed security, and React Doctor score validation are completed.
+SpiceGarden is materially closer to production readiness, but it remains pre-production until Kubernetes deployment validation, Redis-backed security validation, moderate dependency remediation, and load/penetration/monitoring checks are completed.

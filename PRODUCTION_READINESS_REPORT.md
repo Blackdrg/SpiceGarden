@@ -10,11 +10,12 @@ Evidence: build/lint/test output, security audit, load test, DevOps manifests, R
 | Build | Passing | `npm run build` exited `0` |
 | Lint | Passing | `npm run lint` exited `0` |
 | Unit tests | Passing | `npm run test:unit` exited `0` |
-| Dependency audit | No high/critical | `npm audit --json`: 0 critical, 0 high, 51 moderate |
-| React Doctor | Needs cleanup | Current scans: 11 errors, 480 warnings |
-| Security | Partial | Auth/security modules exist; unguarded controllers and payment simplifications remain |
-| Load testing | Blocked | k6 script fails on duplicate metric |
-| DevOps | Partial | CI/CD and Kubernetes manifests exist; Dockerfile only covers backend |
+| Integration/e2e tests | Passing | `npm run test:integration` and `npm run test:e2e` exited `0` |
+| Dependency audit | No high/critical | `npm audit --audit-level=high`: 0 critical, 0 high; `npm audit`: 31 moderate |
+| React Doctor | Passing | `npx react-doctor@latest --json --verbose`: 0 errors, 0 warnings, score `100/100` |
+| Security | Partial | Local runtime security script passed; Redis-backed execution not verified |
+| Load testing | Not rerun | k6/load validation not rerun in this pass |
+| DevOps | Partial | Kubernetes manifests exist; cluster validation blocked by missing connection |
 | Database | Partial | Broad schema exists; `synchronize: true` and logging enabled |
 | Frontend completeness | Partial | Customer web broad; mobile/delivery placeholders remain |
 
@@ -28,7 +29,7 @@ Evidence: build/lint/test output, security audit, load test, DevOps manifests, R
 ## Production Gaps
 
 - Fix load-test k6 metric conflict before treating performance as validated.
-- Reduce React Doctor current errors/warnings.
+- Validate Kubernetes/staging/prod deployment with an available cluster.
 - Add or verify database migrations.
 - Disable TypeORM synchronize and SQL logging for production.
 - Apply guards to operational controllers or document explicit public use.
@@ -38,4 +39,4 @@ Evidence: build/lint/test output, security audit, load test, DevOps manifests, R
 
 ## Current Position
 
-SpiceGarden has a substantial production-oriented foundation, but this audit did not validate production runtime behavior because backend-dependent security/load gates require the backend to be running and the k6 script currently fails before producing metrics.
+SpiceGarden has a substantial production-oriented foundation, but this audit did not validate production runtime behavior because Kubernetes deployment validation requires cluster access, Redis-backed security validation requires Redis, and load/penetration/monitoring checks were not rerun in this pass.

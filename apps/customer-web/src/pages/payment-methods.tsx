@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { useRouter } from 'next/router';
-import { Plus, CreditCard, Trash2, Star, AlertCircle } from 'lucide-react';
+import { Plus, CreditCard, Trash2, Star } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
 import { getCachedToken } from '../utils/cachedLocalStorage';
 import styles from './payment-methods.module.css';
@@ -17,99 +17,120 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
+const fetchPaymentMethods = async (token: string): Promise<PaymentMethod[]> => {
+  const res = await fetch(`${API_URL}/payment-methods`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to load payment methods');
+  return res.json();
+};
+
+const addPaymentMethod = async (token: string, method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }): Promise<PaymentMethod> => {
+  const res = await fetch(`${API_URL}/payment-methods`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(method),
+  });
+  if (!res.ok) throw new Error('Failed to add payment method');
+  return res.json();
+};
+
+const setDefaultPaymentMethod = async (token: string, id: string): Promise<void> => {
+  const res = await fetch(`${API_URL}/payment-methods/${id}/default`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to set default');
+};
+
+const deletePaymentMethod = async (token: string, id: string): Promise<void> => {
+  const res = await fetch(`${API_URL}/payment-methods/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to delete');
+};
+
+interface PaymentMethodsState {
+  error: string | null;
+  showAddForm: boolean;
+  newMethod: {
+    type: string;
+    cardLast4: string;
+    cardBrand: string;
+    cardExpiry: string;
+    upiId: string;
+  };
+}
+
+const initialPaymentMethodsState: PaymentMethodsState = {
+  error: null,
+  showAddForm: false,
+  newMethod: { type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' },
+};
+
+function paymentMethodsReducer(state: PaymentMethodsState, action: { type: string; payload?: unknown }): PaymentMethodsState {
+  switch (action.type) {
+    case 'SET_ERROR':
+      return { ...state, error: action.payload as string | null };
+    case 'SET_SHOW_ADD_FORM':
+      return { ...state, showAddForm: action.payload as boolean };
+    case 'SET_NEW_METHOD':
+      return { ...state, newMethod: action.payload as { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string } };
+    default:
+      return state;
+  }
+}
+
 const PaymentMethodsPage = () => {
-  const router = useRouter();
-  const [methods, setMethods] = useState<PaymentMethod[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newMethod, setNewMethod] = useState({
-    type: 'card',
-    cardLast4: '',
-    cardBrand: '',
-    cardExpiry: '',
-    upiId: '',
+  const queryClient = useQueryClient();
+  const token = getCachedToken();
+  const [uiState, dispatch] = useReducer(paymentMethodsReducer, initialPaymentMethodsState);
+
+  const { data = [], isLoading, error } = useQuery({
+    queryKey: ['payment-methods', token],
+    queryFn: () => fetchPaymentMethods(token!),
+    enabled: Boolean(token && token !== 'demo-token'),
   });
 
-  useEffect(() => {
-    const loadMethods = async () => {
-      try {
-        const token = getCachedToken();
-        if (!token || token === 'demo-token') {
-          return;
-        }
-        
-        const res = await fetch(`${API_URL}/payment-methods`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        setMethods(await res.json());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load payment methods');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMethods();
-  }, [router]);
+  const addMutation = useMutation({
+    mutationFn: (method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }) => addPaymentMethod(token!, method),
+    onSuccess: (added) => {
+      queryClient.setQueryData<PaymentMethod[]>(['payment-methods', token], prev => [...(prev || []), added]);
+    },
+    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
+  });
+
+  const setDefaultMutation = useMutation({
+    mutationFn: setDefaultPaymentMethod.bind(null, token!),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
+    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deletePaymentMethod.bind(null, token!),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
+    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
+  });
 
   const handleAddMethod = async () => {
-    const token = getCachedToken();
     if (!token || token === 'demo-token') return;
-    
-    try {
-      const res = await fetch(`${API_URL}/payment-methods`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(newMethod),
-      });
-      
-      if (!res.ok) throw new Error('Failed to add payment method');
-      
-      const added = await res.json();
-      setMethods([...methods, added]);
-      setShowAddForm(false);
-      setNewMethod({ type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add payment method');
-    }
+    addMutation.mutate(uiState.newMethod);
+    dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false });
+    dispatch({ type: 'SET_NEW_METHOD', payload: { type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' } });
   };
 
   const handleSetDefault = async (id: string) => {
-    const token = getCachedToken();
     if (!token) return;
-    
-    try {
-      const res = await fetch(`${API_URL}/payment-methods/${id}/default`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (!res.ok) throw new Error('Failed to set default');
-      setMethods(methods.map(m => ({ ...m, isDefault: m.id === id })));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set default');
-    }
+    setDefaultMutation.mutate(id);
   };
 
   const handleDelete = async (id: string) => {
-    const token = getCachedToken();
     if (!token) return;
-    
-    try {
-      const res = await fetch(`${API_URL}/payment-methods/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (!res.ok) throw new Error('Failed to delete');
-      setMethods(methods.filter(m => m.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
-    }
+    deleteMutation.mutate(id);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.loadingState}>
         <p>Loading payment methods...</p>
@@ -119,26 +140,25 @@ const PaymentMethodsPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {error && (
+      {uiState.error && (
         <div className={styles.errorBanner}>
-          <AlertCircle size={16} />
-          <span>{error}</span>
+          <span>{uiState.error}</span>
         </div>
       )}
-      
+
       <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>Payment Methods</h2>
-        <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add payment method">
+        <button type="button" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: true })} aria-label="Add payment method">
           <Plus size={24} />
         </button>
       </div>
 
-      {methods.length === 0 ? (
+      {data.length === 0 ? (
         <div className={styles.emptyState}>
           <p className={styles.emptyText}>No payment methods saved yet. Add one to get started!</p>
         </div>
       ) : (
-        methods.map(method => (
+        data.map(method => (
           <Card key={method.id} title={method.type === 'card' ? `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || '****'}` : `UPI • ${method.upiId || '****'}`}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
@@ -166,67 +186,67 @@ const PaymentMethodsPage = () => {
         ))
       )}
 
-      {showAddForm && (
+      {uiState.showAddForm && (
         <div className={styles.modalOverlay}>
           <Card title="Add Payment Method">
             <div className={styles.form}>
               <select
                 className={styles.select}
-                value={newMethod.type}
-                onChange={(e) => setNewMethod({ ...newMethod, type: e.target.value })}
+                value={uiState.newMethod.type}
+                onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
               >
                 <option value="card">Credit/Debit Card</option>
                 <option value="upi">UPI</option>
               </select>
-              {newMethod.type === 'card' && (
+              {uiState.newMethod.type === 'card' && (
                 <div>
                   <div className={styles.fieldGroup}>
                     <label htmlFor="pm-card-brand" className={styles.label}>Card Brand (Visa, Mastercard)</label>
-                    <input 
+                    <input
                       id="pm-card-brand"
                       className={styles.input}
-                      placeholder="Card Brand (Visa, Mastercard)" 
-                      value={newMethod.cardBrand} 
-                      onChange={(e) => setNewMethod({ ...newMethod, cardBrand: e.target.value })} 
+                      placeholder="Card Brand (Visa, Mastercard)"
+                      value={uiState.newMethod.cardBrand}
+                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardBrand: e.target.value } })}
                     />
                   </div>
                   <div className={styles.fieldGroup}>
                     <label htmlFor="pm-card-last4" className={styles.label}>Last 4 digits</label>
-                    <input 
+                    <input
                       id="pm-card-last4"
                       className={styles.input}
-                      placeholder="Last 4 digits" 
-                      value={newMethod.cardLast4} 
-                      onChange={(e) => setNewMethod({ ...newMethod, cardLast4: e.target.value })} 
-                      maxLength={4} 
+                      placeholder="Last 4 digits"
+                      value={uiState.newMethod.cardLast4}
+                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardLast4: e.target.value } })}
+                      maxLength={4}
                     />
                   </div>
                   <div className={styles.fieldGroup}>
                     <label htmlFor="pm-card-expiry" className={styles.label}>Expiry (MM/YY)</label>
-                    <input 
+                    <input
                       id="pm-card-expiry"
                       className={styles.input}
-                      placeholder="Expiry (MM/YY)" 
-                      value={newMethod.cardExpiry} 
-                      onChange={(e) => setNewMethod({ ...newMethod, cardExpiry: e.target.value })} 
+                      placeholder="Expiry (MM/YY)"
+                      value={uiState.newMethod.cardExpiry}
+                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardExpiry: e.target.value } })}
                     />
                   </div>
                 </div>
               )}
-              {newMethod.type === 'upi' && (
+              {uiState.newMethod.type === 'upi' && (
                 <div className={styles.fieldGroup}>
                   <label htmlFor="pm-upi-id" className={styles.label}>UPI ID (example@upi)</label>
-                  <input 
+                  <input
                     id="pm-upi-id"
                     className={styles.input}
-                    placeholder="UPI ID (example@upi)" 
-                    value={newMethod.upiId} 
-                    onChange={(e) => setNewMethod({ ...newMethod, upiId: e.target.value })} 
+                    placeholder="UPI ID (example@upi)"
+                    value={uiState.newMethod.upiId}
+                    onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, upiId: e.target.value } })}
                   />
                 </div>
               )}
               <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
+                <Button label="Cancel" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false })} variant="secondary" />
                 <Button label="Save" onClick={handleAddMethod} />
               </div>
             </div>

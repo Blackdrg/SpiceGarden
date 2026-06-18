@@ -1,6 +1,6 @@
 # Current Status Summary
 
-Generated: 2026-06-17T11:50+05:30  
+Generated: 2026-06-18T09:46+05:30  
 Branch: `feat/add-react-doctor`
 
 ## Current classification
@@ -9,26 +9,28 @@ Branch: `feat/add-react-doctor`
 
 ## Production readiness verdict
 
-**NOT FULLY PRODUCTION READY**
+**BETA READY / PRE-PRODUCTION**
 
-SpiceGarden now passes build, typecheck, lint, root unit/e2e/root tests, backend full tests, dependency graph validation, and local runtime security tests. It remains pre-production because load testing, Redis-backed rate-limit validation, Docker/Kubernetes validation, monitoring validation, penetration testing, React Doctor 80+ score verification, and dependency audit cleanup are incomplete.
+SpiceGarden now passes build, typecheck, lint, root unit/integration/e2e tests, backend full tests, dependency graph validation, local runtime security tests, and React Doctor. It remains pre-production because deployment validation is blocked by unavailable Kubernetes cluster access, Redis-backed rate-limit validation is incomplete, moderate dependency advisories remain, and load/penetration/monitoring validations were not rerun in this pass.
 
 ## Latest verified evidence
 
 | Area | Result |
 | :--- | :--- |
-| Build | PASS, `npm run build` exit `0` |
+| Build | PASS, `npm run build` exit `0`; Next.js SWC native warning is non-blocking |
 | Typecheck | PASS, `npx tsc --noEmit` exit `0` |
 | Lint | PASS, `npm run lint` exit `0` |
-| Unit tests | PASS, `npm run test:unit` exit `0`; 143 tests passed |
-| E2E tests | PASS, `npm run test:e2e` exit `0`; 65 tests passed |
+| Unit tests | PASS, `npm run test:unit` exit `0` |
+| Integration tests | PASS, `npm run test:integration` exit `0` |
+| E2E tests | PASS, `npm run test:e2e` exit `0` |
 | Root test | PASS, `npm run test` exit `0` |
-| Backend full tests | PASS, 210 passed, 1 skipped |
-| Runtime security | PASS, 0 vulnerabilities; 96/100 rate-limited responses |
+| Runtime security | PASS, 0 vulnerabilities; 95/100 rate-limited responses |
+| React Doctor | PASS, 0 errors, 0 warnings, score `100/100` |
 | Dependency graph | PASS, `npm ls --workspaces --depth=0` exit `0` |
-| Audit | PARTIAL, 0 critical, 0 high, 51 moderate |
-| React Doctor | PARTIAL, 0 errors, 62 warnings, score `null` |
-| Load testing | FAIL, duplicate k6 metric at `apps/backend/test/load/10k-users.js:6` |
+| High/critical audit | PASS, `npm audit --audit-level=high` exit `0` |
+| Audit | PARTIAL, 31 moderate findings remain |
+| Deployment | BLOCKED, `node infra/scripts/deployment-check.js` cannot connect to cluster |
+| Load testing | NOT RERUN in this pass |
 
 ## Completed production-hardening work
 
@@ -37,26 +39,28 @@ SpiceGarden now passes build, typecheck, lint, root unit/e2e/root tests, backend
 - Trust proxy default changed to disabled unless explicitly configured.
 - Root test script added.
 - Backend test scripts narrowed to deterministic local suites.
-- Checkout, KDS, analytics, and AsyncStorage tests stabilized.
-- Unused `@rushstack/eslint-patch` removed from selected Next workspaces.
-- Reports generated for current baseline, security, build, typecheck, dependency health, test reliability, React Doctor, load testing, security audit, observability, UI/UX, and final readiness.
+- React Doctor cleanup completed across customer-web, delivery-partner, restaurant-dashboard, and super-admin.
+- Customer-web auth callback redirect handling fixed.
+- Customer-web address management wired to existing hook.
+- Delivery-partner animation/state hot spots fixed.
+- Restaurant-dashboard and super-admin large-component hot spots fixed.
+- Reports updated for current project status, React Doctor, current audit, README changelog, and README gaps.
 
 ## Remaining blockers
 
 | Blocker | Status |
 | :--- | :--- |
+| Kubernetes/deployment validation | Blocked by missing cluster connection. |
 | Redis-backed rate-limit execution | Implemented but not locally verified because Redis was unavailable. |
-| Load testing | k6 script fails before producing metrics. |
-| Penetration testing | Not completed. |
-| Docker/compose validation | Not completed. |
-| Kubernetes/staging validation | Not completed. |
+| Dependency audit | 31 moderate findings remain; high/critical gate passes. |
+| Load testing | Not rerun in this pass. |
+| Penetration testing | Not rerun in this pass. |
+| Docker/compose validation | Not completed in this pass. |
 | Monitoring validation | Not end-to-end validated. |
-| React Doctor 80+ score | Not verified. |
-| Dependency audit | 51 moderate vulnerabilities remain. |
 
 ## Current maturity estimate
 
-Approximate project maturity: **82–87% pre-production**. Production-grade maturity remains blocked by the items above.
+Approximate project maturity: **BETA READY / pre-production**. React Doctor and core local verification gates are clean; production-grade maturity remains blocked by Kubernetes access, Redis-backed validation, moderate advisories, and unrerun load/penetration/monitoring checks.
 
 ---
 

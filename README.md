@@ -390,7 +390,7 @@ Reference: `apps/super-admin/src/pages/index.tsx:9`, `apps/super-admin/src/pages
 
 ### Delivery partner: `apps/delivery-partner`
 
-Delivery partner is an Expo 56 / React Native 0.85.3 app. Screens include Home, Deliveries, Earnings, Profile, Login, Onboarding, Map, ActiveDelivery, ShiftManagement, Help, and Performance.
+Delivery partner is an Expo 56 / React Native 0.85.3 app. The previous per-screen React Navigation files were removed because the current app entry point is a consolidated `App.tsx` driver flow with active order acceptance, OTP/pickup/drop delivery state, navigation links, earnings, performance, shift schedule, issue reporting, and activity log. The deleted screen files had no current code references.
 
 ```ts
 export interface DeliveryOrder {
@@ -830,7 +830,7 @@ Verified in `apps/backend/src/main.ts`:
 | Restaurant dashboard | `index`, onboarding routes, orders/inventory API routes |
 | Super admin | `analytics`, `driver-fleet`, `loyalty`, `index`, plus API routes |
 | Customer mobile | `AddressesScreen`, `AuthScreen`, `CartScreen`, `CheckoutScreen`, `HistoryScreen`, `HomeScreen`, `MenuItemCustomizationScreen`, `NotificationsScreen`, `OnboardingScreen`, `OrderDetailsScreen`, `PaymentMethodsScreen`, `ProfileScreen`, `RestaurantScreen`, `SearchScreen`, `TrackingScreen` |
-| Delivery partner | `ActiveDeliveryScreen`, `DeliveriesScreen`, `EarningsScreen`, `HelpScreen`, `HomeScreen`, `LoginScreen`, `MapScreen`, `OnboardingScreen`, `PerformanceScreen`, `ProfileScreen`, `ShiftManagementScreen` |
+| Delivery partner | Consolidated `App.tsx` driver flow; deleted dead screen files: `ActiveDeliveryScreen`, `DeliveriesScreen`, `EarningsScreen`, `HelpScreen`, `HomeScreen`, `LoginScreen`, `MapScreen`, `OnboardingScreen`, `PerformanceScreen`, `ProfileScreen`, `ShiftManagementScreen` |
 
 ### Environment data summary
 
@@ -1064,14 +1064,44 @@ A project-only sample excluding `node_modules`, `dist`, `build`, `.next`, `ios`,
 | Encryption | Startup fails if `ENCRYPTION_SECRET` is missing or placeholder, which is safer than silent fallback. |
 | Tax/GST | GST reporting exists, but tax payable/receivable logic is simplified and should be reviewed with finance requirements. |
 | Next builds | ESLint is ignored during Next builds, so lint failures can be hidden unless CI runs `npm run lint` separately. |
-| Customer web | [OUTDATED — VERIFIED UPDATE BELOW] React Doctor JSON reports a critical score of 49 and flags a vulnerable React Server Components runtime through Next.js `15.5.6`. |
+| Customer web | [HISTORICAL] React Doctor previously reported low scores; the 2026-06-18 appendix now supersedes this with `100/100 Great` across frontend apps. |
 | UX docs | Phase 1 UX architecture and Phase 2 flow completion are documented, but optional future-phase items remain open. |
 | Automation | `scripts/clean-any.js` is useful for type tightening but should be reviewed before bulk replacement. |
 | Code quality | The sampled project still contains many `any` markers and console calls, indicating maintainability and logging cleanup work remains. |
 
 ---
 
-## [OUTDATED — VERIFIED UPDATE BELOW] Latest Production Verification Update
+## Historical Verification Status — 2026-06-15
+
+This historical section is preserved for audit continuity. The latest source of truth is the `Latest Production-Hardening Update — 2026-06-18` appendix near the end of this README.
+
+### Verification Summary
+
+| Area | Status | Confidence |
+| :--- | :--- | :---: |
+| Build | ✅ PASS - `npm run build` exited 0 | HIGH |
+| Typecheck | ✅ PASS - `npx tsc --noEmit` exited 0 | HIGH |
+| Lint | ✅ PASS - `npm run lint` exited 0 | HIGH |
+| Tests | ✅ PASS - 231 passed, 1 skipped | HIGH |
+| Security tests | ⚠️ BLOCKED - requires running backend on localhost:3001 | HIGH |
+| Load tests | ⚠️ BLOCKED - requires running backend on localhost:3001 | HIGH |
+| Test coverage | ⚠️ 52.16% (target 80%) | HIGH |
+| React Doctor | ⚠️ 61-77/100 at the time; later superseded by 2026-06-18 cleanup | HIGH |
+
+### Improvements Since Last Update
+
+- Added 8 tests for EncryptionService
+- Added 11 tests for NotificationService
+- Coverage improved from 49.09% to 52.16% statements
+- All backend tests passing (231 passed, 1 skipped)
+- Frontend completion verified (all screens/routes implemented)
+
+### Production Readiness
+
+**Historical: ~75%** — Not production ready at that point due to:
+- Test coverage 27.84% below target
+- React Doctor score below target
+- Security/load tests blocked (require running backend)
 
 Verified as of: 2026-06-15 11:30 IST
 
@@ -3078,6 +3108,79 @@ flowchart TD
 - `CURRENT_STATUS_SUMMARY.md`
 - `README_GAP_REPORT.md`
 - `README_CHANGELOG.md`
+
+---
+
+## Latest Production-Hardening Update — 2026-06-18
+
+**Generated:** 2026-06-18T09:46+05:30  
+**Branch:** `feat/add-react-doctor`  
+**Classification:** Advanced Startup-Grade Pre-Production System  
+**Verdict:** React Doctor is production-clean; deployment validation remains blocked by unavailable Kubernetes cluster access.
+
+### Final verification after documentation updates
+
+| Command | Result |
+| :--- | :--- |
+| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
+| `npm run lint` | Exit `0` across all workspaces |
+| `npx tsc --noEmit` | Exit `0` |
+| `npm run build` | Exit `0`; Next.js SWC native warning remains non-blocking and falls back to WASM |
+| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
+
+### Verified passing gates
+
+| Command | Result |
+| :--- | :--- |
+| `npm run lint` | Exit `0` across all workspaces |
+| `npm run build` | Exit `0` across all workspaces; Next.js SWC native warning remains non-blocking and falls back to WASM |
+| `npx tsc --noEmit` | Exit `0` |
+| `npm run test` | Exit `0`; root script runs workspace unit tests |
+| `npm run test:unit` | Exit `0`; backend 30, customer-mobile 33, customer-web 11, delivery-partner 6, launcher 1, restaurant-dashboard 9, super-admin 23, shared 2, ui 28 |
+| `npm run test:integration` | Exit `0`; backend 231 passed, 1 skipped; customer-mobile 33 passed; customer-web 2 passed; delivery-partner 6 passed; restaurant-dashboard 2 passed; super-admin 2 passed |
+| `npm run test:e2e` | Exit `0`; backend 35, customer-mobile 1, customer-web 1, delivery-partner 6, restaurant-dashboard 1, super-admin 21 |
+| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
+| `node infra/scripts/security-tests.js` | Exit `0`; 0 vulnerabilities; 95/100 rate-limited responses |
+| `npm audit --audit-level=high` | Exit `0`; no high or critical findings |
+| `npm audit` | Exit `1`; 31 moderate findings remain, no critical/high findings |
+| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
+
+### Current audit and quality status
+
+| Area | Status |
+| :--- | :--- |
+| React Doctor | `100/100 Great`; all four scanned frontend apps clean |
+| npm audit | 31 moderate findings remain; high/critical gate passes |
+| Load testing | Not rerun in this pass; backend is running but k6/load validation still requires separate execution |
+| Redis-backed rate limiting | Implemented; local security script passed with process-local fallback because Redis is unavailable |
+| Penetration testing | Not completed in this pass |
+| Kubernetes/staging validation | Blocked by missing cluster connection |
+| Monitoring validation | Assets exist; end-to-end telemetry not validated in this pass |
+
+### Production-hardening changes
+
+- Converted customer-web pages to React Query or `useReducer` where React Doctor flagged effect fetching, grouped state, or client-side redirects.
+- Converted customer-web auth callback to a server-side redirect guard plus client-side credential hydration without `router.replace()` in `useEffect`.
+- Wired customer-web address management to the existing `useAddresses` hook.
+- Removed Redux hook usage from customer-web `_app.tsx` during SSR to prevent prerender failures.
+- Removed JS-thread `Animated` usage from delivery-partner screens and replaced `Dimensions.get` with `useWindowDimensions`.
+- Consolidated delivery-partner app state into reducer-driven updates and split large render paths into named components.
+- Split restaurant-dashboard and super-admin large dashboard components, added reducer-based state, dynamic imports, and direct state initialization.
+- Imported previously unreachable customer-web utility hooks/components from real entry points instead of suppressing dead-code diagnostics.
+
+### Root cause analysis
+
+- React Doctor failures were caused by client-only redirects inside `useEffect`, effect-based data fetching, redundant derived state, JS-thread animations, uninitialized clock state, giant components, and unreachable utility files.
+- Customer-web production build failed during static prerender because `_app.tsx` called Redux hooks before the Redux provider could be established during server rendering. The fix moved Redux hydration into the auth callback page and kept `_app.tsx` free of Redux context reads.
+- Deployment validation remains blocked by environment access, not by code: `deployment-check.js` cannot connect to a Kubernetes cluster.
+
+### New report files updated
+
+- `REACT_DOCTOR_SESSION_SUMMARY.md`
+- `PROJECT_STATUS_REPORT.md`
+- `CURRENT_PROJECT_AUDIT.md`
+- `README_CHANGELOG.md`
+- `README_GAP_REPORT.md`
 
 ---
 

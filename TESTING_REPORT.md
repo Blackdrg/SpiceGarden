@@ -130,7 +130,11 @@ All 7 workspace lint commands completed with exit 0 and no ESLint errors:
 | `npm run build` | Exit `0` |
 | `npm run lint` | Exit `0` |
 | `npm run test:unit` | Exit `0` |
-| `npm audit --json` | 0 critical, 0 high, 51 moderate vulnerabilities |
+| `npm run test:integration` | Exit `0` |
+| `npm run test:e2e` | Exit `0` |
+| `npm run test` | Exit `0` |
+| `npm audit --audit-level=high` | Exit `0`; 0 high, 0 critical |
+| `npm audit` | Exit `1`; 31 moderate findings remain |
 
 ### Test file inventory
 
@@ -152,6 +156,5 @@ All 7 workspace lint commands completed with exit 0 and no ESLint errors:
 
 ### Current test readiness
 
-- Root build, lint, and unit-test gates passed in this session.
-- Backend full test state from older reports remains historical; this audit verified root unit gates rather than rewriting older backend results.
-- Load testing remains blocked by the k6 metric conflict documented in `LOAD_TEST_REPORT.md`.
+- Root build, lint, unit, integration, e2e, and aggregate test gates passed in this session.
+- Load testing was not rerun in this pass.

@@ -17,6 +17,8 @@ import { NotificationStatus } from '../../db/entities/notification-status.enum';
 import { isAllowedOrigin } from '../../security/cors-origin';
 
 const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
+const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
 const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
 const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 
@@ -70,6 +72,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   private readonly logger = new Logger(TrackingGateway.name);
   private readonly connectedClients = new Map<string, SocketConnection>();
+  private readonly connectionAttempts = new Map<string, { count: number; resetAt: number }>();
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
@@ -83,6 +86,11 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   handleConnection(client: Socket) {
+    if (!this.isConnectionAllowed(client)) {
+      client.disconnect(true);
+      return;
+    }
+
     const origin = client.handshake.headers.origin;
     if (typeof origin === 'string' && !isAllowedOrigin(origin)) {
       client.disconnect(true);
@@ -104,6 +112,28 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.cleanupPendingAcks(client.id);
     this.connectedClients.delete(client.id);
     this.logger.log(`Client ${client.id} disconnected`);
+  }
+
+  private isConnectionAllowed(client: Socket): boolean {
+    const now = Date.now();
+    const forwardedFor = client.handshake.headers['x-forwarded-for'];
+    const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
+    const key = forwardedIp || client.handshake.address || client.id;
+    const current = this.connectionAttempts.get(key);
+
+    if (!current || now >= current.resetAt) {
+      this.connectionAttempts.set(key, { count: 1, resetAt: now + WS_RATE_LIMIT_WINDOW_MS });
+      return true;
+    }
+
+    if (current.count >= WS_RATE_LIMIT_MAX) {
+      this.logger.warn(`Rejected websocket connection from ${key}: rate limit exceeded`);
+      return false;
+    }
+
+    current.count += 1;
+    this.connectionAttempts.set(key, current);
+    return true;
   }
 
   @SubscribeMessage('ping')

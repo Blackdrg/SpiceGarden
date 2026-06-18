@@ -1,14 +1,65 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS, Skeleton, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi } from '@spicegarden/shared/api';
-import { getCachedToken, clearCachedToken } from '../utils/cachedLocalStorage';
+import { getCachedToken } from '../utils/cachedLocalStorage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface OrderResponse {
   id: string;
+}
+
+interface CheckoutState {
+  paymentMethod: string;
+  address: string;
+  tip: number;
+  promoCode: string;
+  promoError: string;
+  promoSuccess: string;
+  promoDiscount: number;
+  loading: boolean;
+  orderError: string;
+}
+
+const initialCheckoutState: CheckoutState = {
+  paymentMethod: 'card',
+  address: 'Home - Sector 17, Chandigarh',
+  tip: 0,
+  promoCode: '',
+  promoError: '',
+  promoSuccess: '',
+  promoDiscount: 0,
+  loading: false,
+  orderError: '',
+};
+
+function checkoutReducer(state: CheckoutState, action: { type: string; payload?: unknown }): CheckoutState {
+  switch (action.type) {
+    case 'SET_PAYMENT_METHOD':
+      return { ...state, paymentMethod: action.payload as string };
+    case 'SET_ADDRESS':
+      return { ...state, address: action.payload as string };
+    case 'SET_TIP':
+      return { ...state, tip: action.payload as number };
+    case 'SET_PROMO_CODE':
+      return { ...state, promoCode: action.payload as string };
+    case 'SET_PROMO_ERROR':
+      return { ...state, promoError: action.payload as string };
+    case 'SET_PROMO_SUCCESS':
+      return { ...state, promoSuccess: action.payload as string };
+    case 'SET_PROMO_DISCOUNT':
+      return { ...state, promoDiscount: action.payload as number };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload as boolean };
+    case 'SET_ORDER_ERROR':
+      return { ...state, orderError: action.payload as string };
+    case 'RESET_PROMO_STATES':
+      return { ...state, promoError: '', promoSuccess: '' };
+    default:
+      return state;
+  }
 }
 
 const CheckoutPage = () => {
@@ -16,64 +67,50 @@ const CheckoutPage = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const restaurantId = useSelector((state: RootState) => state.cart.restaurantId);
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [address, setAddress] = useState('Home - Sector 17, Chandigarh');
-  const [tip, setTip] = useState(0);
-  const [promoCode, setPromoCode] = useState('');
-  const [promoError, setPromoError] = useState('');
-  const [promoSuccess, setPromoSuccess] = useState('');
-  const [promoDiscount, setPromoDiscount] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [orderError, setOrderError] = useState(''); // New state for order/payment errors
+  const [state, dispatch] = useReducer(checkoutReducer, initialCheckoutState);
 
-  // Calculate totals from cart items
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 20;
   const taxes = subtotal * 0.05;
-  const grandTotal = subtotal + deliveryFee + taxes + tip - promoDiscount;
+  const grandTotal = subtotal + deliveryFee + taxes + state.tip - state.promoDiscount;
 
   const applyPromo = async () => {
-    if (!promoCode.trim()) {
-      setPromoError('Please enter a promo code');
+    if (!state.promoCode.trim()) {
+      dispatch({ type: 'SET_PROMO_ERROR', payload: 'Please enter a promo code' });
       return;
     }
 
     try {
-      // Simulate promo validation - in real app this would be an API call
-      setPromoError('');
-      setPromoSuccess('');
-      
-      // Simple simulation: WELCOME50 gives 50% off up to ₹100
-      if (promoCode.toUpperCase() === 'WELCOME50') {
+      dispatch({ type: 'SET_PROMO_ERROR', payload: '' });
+      dispatch({ type: 'SET_PROMO_SUCCESS', payload: '' });
+
+      if (state.promoCode.toUpperCase() === 'WELCOME50') {
         const discount = Math.min(subtotal * 0.5, 100);
-        setPromoDiscount(discount);
-        setPromoSuccess(`Applied! You saved ₹${discount.toFixed(0)}`);
-      } else if (promoCode.toUpperCase() === 'SAVE20') {
+        dispatch({ type: 'SET_PROMO_DISCOUNT', payload: discount });
+        dispatch({ type: 'SET_PROMO_SUCCESS', payload: `Applied! You saved ₹${discount.toFixed(0)}` });
+      } else if (state.promoCode.toUpperCase() === 'SAVE20') {
         const discount = Math.min(subtotal * 0.2, 50);
-        setPromoDiscount(discount);
-        setPromoSuccess(`Applied! You saved ₹${discount.toFixed(0)}`);
+        dispatch({ type: 'SET_PROMO_DISCOUNT', payload: discount });
+        dispatch({ type: 'SET_PROMO_SUCCESS', payload: `Applied! You saved ₹${discount.toFixed(0)}` });
       } else {
-        setPromoError('Invalid promo code');
-        setPromoDiscount(0);
+        dispatch({ type: 'SET_PROMO_ERROR', payload: 'Invalid promo code' });
+        dispatch({ type: 'SET_PROMO_DISCOUNT', payload: 0 });
       }
-    } catch (err) {
-      setPromoError('Failed to apply promo code');
-      setPromoDiscount(0);
+    } catch {
+      dispatch({ type: 'SET_PROMO_ERROR', payload: 'Failed to apply promo code' });
+      dispatch({ type: 'SET_PROMO_DISCOUNT', payload: 0 });
     }
   };
 
   const handlePlaceOrder = async () => {
-    setLoading(true);
-    // Reset unknown previous error states
-    setPromoError('');
-    setPromoSuccess('');
-    setOrderError('');
-    
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'RESET_PROMO_STATES' });
+    dispatch({ type: 'SET_ORDER_ERROR', payload: '' });
+
     try {
-      // Prepare order data
       const orderData = {
-        restaurantId: restaurantId || 'rest-001', // Fallback for demo
-        deliveryAddressId: 'addr-001', // In real app, this would come from address selection
+        restaurantId: restaurantId || 'rest-001',
+        deliveryAddressId: 'addr-001',
         items: cartItems.map(item => ({
           menuItemId: item.id,
           quantity: item.quantity,
@@ -82,62 +119,46 @@ const CheckoutPage = () => {
         subtotal,
         deliveryFee,
         tax: taxes,
-        tip,
+        tip: state.tip,
         grandTotal
       };
 
-// Try to place order via API
       try {
         const response = await ordersApi.create(orderData, user?.token || getCachedToken() || '');
         router.push(`/tracking?order=${(response.data as OrderResponse).id}`);
       } catch (apiError: unknown) {
-        // Check if it's a payment-related error
         const errorMessage = apiError instanceof Error ? apiError.message : '';
-        
+
         if (errorMessage.includes('payment') || errorMessage.includes('card') || errorMessage.includes('insufficient')) {
-          // Payment-specific error
-          setOrderError('Payment failed: ' + errorMessage);
-          // Don't proceed to tracking on payment failure
+          dispatch({ type: 'SET_ORDER_ERROR', payload: 'Payment failed: ' + errorMessage });
         } else if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
-          // Auth error - try to refresh token
           const refreshToken = getCachedToken();
           if (refreshToken) {
             try {
               const refreshResponse = await authApi.refreshToken(refreshToken);
-              // Update token in localStorage and state
               localStorage.setItem('sg_token:v1', (refreshResponse.data as { access_token: string }).access_token);
-// Retry the order with new token
               const retryResponse = await ordersApi.create(orderData, (refreshResponse.data as { access_token: string }).access_token);
               router.push(`/tracking?order=${(retryResponse.data as OrderResponse).id}`);
               return;
-            } catch (refreshError) {
-              // If refresh fails, show auth error
-              setOrderError('Session expired. Please sign in again.');
-              // Redirect to login after a delay
-              setTimeout(() => {
-                router.push('/auth');
-              }, 2000);
+            } catch {
+              dispatch({ type: 'SET_ORDER_ERROR', payload: 'Session expired. Please sign in again.' });
+              setTimeout(() => router.push('/auth'), 2000);
               return;
             }
           } else {
-            setOrderError('Session expired. Please sign in again.');
-            setTimeout(() => {
-              router.push('/auth');
-            }, 2000);
+            dispatch({ type: 'SET_ORDER_ERROR', payload: 'Session expired. Please sign in again.' });
+            setTimeout(() => router.push('/auth'), 2000);
             return;
           }
         } else {
-          // Generic error
-          setOrderError('Order failed: ' + errorMessage);
+          dispatch({ type: 'SET_ORDER_ERROR', payload: 'Order failed: ' + errorMessage });
         }
-        
-        // Don't proceed to tracking on error
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      setOrderError('An unexpected error occurred. Please try again.');
+      dispatch({ type: 'SET_ORDER_ERROR', payload: 'An unexpected error occurred. Please try again.' });
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
@@ -145,7 +166,7 @@ const CheckoutPage = () => {
     <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
       <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Checkout</h2>
 
-      {loading ? (
+      {state.loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.lg }}>
           <SkeletonCard count={2} />
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
@@ -178,11 +199,11 @@ const CheckoutPage = () => {
         <>
           <Card title="Delivery Address">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p style={{ margin: 0 }}>{address}</p>
+              <p style={{ margin: 0 }}>{state.address}</p>
               <Button label="Change" onClick={() => {
-                const newAddress = prompt('Enter your delivery address:', address);
+                const newAddress = prompt('Enter your delivery address:', state.address);
                 if (newAddress !== null && newAddress.trim() !== '') {
-                  setAddress(newAddress);
+                  dispatch({ type: 'SET_ADDRESS', payload: newAddress });
                 }
               }} variant="secondary" />
             </div>
@@ -191,75 +212,75 @@ const CheckoutPage = () => {
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
             <h3>Payment Method</h3>
             <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, flexWrap: 'wrap' }}>
-              <Button label="&#x1F4B3; Card" onClick={() => setPaymentMethod('card')} variant={paymentMethod === 'card' ? 'primary' : 'secondary'} />
-              <Button label="&#x1F4B0; UPI" onClick={() => setPaymentMethod('upi')} variant={paymentMethod === 'upi' ? 'primary' : 'secondary'} />
-              <Button label="&#x1F4B5; Cash" onClick={() => setPaymentMethod('cash')} variant={paymentMethod === 'cash' ? 'primary' : 'secondary'} />
+              <Button label="💳 Card" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' })} variant={state.paymentMethod === 'card' ? 'primary' : 'secondary'} />
+              <Button label="💰 UPI" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'upi' })} variant={state.paymentMethod === 'upi' ? 'primary' : 'secondary'} />
+              <Button label="💵 Cash" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'cash' })} variant={state.paymentMethod === 'cash' ? 'primary' : 'secondary'} />
             </div>
           </div>
 
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
             <h3>Tip</h3>
             <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-              <Button label="No tip" onClick={() => setTip(0)} variant={tip === 0 ? 'primary' : 'secondary'} />
-              <Button label="&#x20B9;30" onClick={() => setTip(30)} variant={tip === 30 ? 'primary' : 'secondary'} />
-              <Button label="&#x20B9;50" onClick={() => setTip(50)} variant={tip === 50 ? 'primary' : 'secondary'} />
-              <Button label="&#x20B9;100" onClick={() => setTip(100)} variant={tip === 100 ? 'primary' : 'secondary'} />
+              <Button label="No tip" onClick={() => dispatch({ type: 'SET_TIP', payload: 0 })} variant={state.tip === 0 ? 'primary' : 'secondary'} />
+              <Button label="₹30" onClick={() => dispatch({ type: 'SET_TIP', payload: 30 })} variant={state.tip === 30 ? 'primary' : 'secondary'} />
+              <Button label="₹50" onClick={() => dispatch({ type: 'SET_TIP', payload: 50 })} variant={state.tip === 50 ? 'primary' : 'secondary'} />
+              <Button label="₹100" onClick={() => dispatch({ type: 'SET_TIP', payload: 100 })} variant={state.tip === 100 ? 'primary' : 'secondary'} />
             </div>
           </div>
 
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
             <h3>Promo Code</h3>
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-                <input
-                  type="text"
-                  placeholder="Enter promo code"
-                  aria-label="Promo code"
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  style={{ flex: 1, padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-                />
-                <Button label="Apply" onClick={applyPromo} variant="secondary" />
-              </div>
-            {promoError && (
-              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{promoError}</p>
+            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
+              <input
+                type="text"
+                placeholder="Enter promo code"
+                aria-label="Promo code"
+                value={state.promoCode}
+                onChange={(e) => dispatch({ type: 'SET_PROMO_CODE', payload: e.target.value })}
+                style={{ flex: 1, padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+              />
+              <Button label="Apply" onClick={applyPromo} variant="secondary" />
+            </div>
+            {state.promoError && (
+              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{state.promoError}</p>
             )}
-{promoSuccess && (
-               <div style={{ textAlign: 'center', margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-                 <p style={{ color: '#2e7d32', fontSize: '14px', marginTop: 4 }}>{promoSuccess}</p>
-               </div>
-             )}
-            {orderError && (
-              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{orderError}</p>
+            {state.promoSuccess && (
+              <div style={{ textAlign: 'center', margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
+                <p style={{ color: '#2e7d32', fontSize: '14px', marginTop: 4 }}>{state.promoSuccess}</p>
+              </div>
+            )}
+            {state.orderError && (
+              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{state.orderError}</p>
             )}
           </div>
 
           <Card title="Order Summary">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
               <span>Item Total</span>
-              <span>&#8377;{subtotal.toFixed(0)}</span>
+              <span>₹{subtotal.toFixed(0)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
               <span>Delivery Fee</span>
-              <span>&#8377;{deliveryFee}</span>
+              <span>₹{deliveryFee}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
               <span>Taxes</span>
-              <span>&#8377;{taxes.toFixed(0)}</span>
+              <span>₹{taxes.toFixed(0)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
               <span>Tip</span>
-              <span>&#8377;{tip.toFixed(0)}</span>
+              <span>₹{state.tip.toFixed(0)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold', borderTop: '1px solid #ddd', paddingTop: DESIGN_TOKENS.spacing.sm }}>
               <span>Total</span>
-              <span>&#8377;{grandTotal.toFixed(0)}</span>
+              <span>₹{grandTotal.toFixed(0)}</span>
             </div>
           </Card>
         </>
       )}
 
       <div style={{ marginTop: DESIGN_TOKENS.spacing.xl }}>
-        <Button label={loading ? 'Placing Order...' : 'Place Order'} onClick={handlePlaceOrder} />
+        <Button label={state.loading ? 'Placing Order...' : 'Place Order'} onClick={handlePlaceOrder} />
       </div>
     </div>
   );

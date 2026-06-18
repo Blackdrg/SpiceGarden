@@ -2,9 +2,11 @@ import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 export declare class KdsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly logger;
+    private readonly connectionAttempts;
     server: Server;
     handleConnection(client: Socket): void;
     handleDisconnect(client: Socket): void;
+    private isConnectionAllowed;
     notifyNewOrder(branchId: string, order: any): void;
     handleStatusUpdate(data: {
         orderId: string;

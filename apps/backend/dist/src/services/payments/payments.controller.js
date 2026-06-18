@@ -21,6 +21,10 @@ const fraud_hardening_service_1 = require("./fraud-hardening.service");
 const idempotency_service_1 = require("./idempotency.service");
 const config_1 = require("@nestjs/config");
 const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let PaymentsController = class PaymentsController {
     paymentService;
     paymentHardening;
@@ -105,6 +109,7 @@ let PaymentsController = class PaymentsController {
 exports.PaymentsController = PaymentsController;
 __decorate([
     (0, common_1.Post)('create-intent'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Create a payment intent' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Payment intent created successfully' }),
@@ -119,6 +124,7 @@ __decorate([
 ], PaymentsController.prototype, "createPaymentIntent", null);
 __decorate([
     (0, common_1.Post)('refund'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Refund a payment' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Refund processed successfully' }),
@@ -132,6 +138,7 @@ __decorate([
 ], PaymentsController.prototype, "refund", null);
 __decorate([
     (0, common_1.Get)('gateways'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get available payment gateways' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'List of available payment gateways' }),
@@ -141,6 +148,7 @@ __decorate([
 ], PaymentsController.prototype, "getAvailableGateways", null);
 __decorate([
     (0, common_1.Get)('gateway/config'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get payment gateway configuration' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Payment gateway configuration' }),
@@ -150,6 +158,7 @@ __decorate([
 ], PaymentsController.prototype, "getGatewayConfig", null);
 exports.PaymentsController = PaymentsController = __decorate([
     (0, common_1.Controller)('payments'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [payments_service_1.PaymentService,
         payment_hardening_service_1.PaymentHardeningService,
         retry_service_1.RetryService,

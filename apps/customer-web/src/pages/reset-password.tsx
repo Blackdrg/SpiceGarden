@@ -1,74 +1,103 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { API_URL } from '@spicegarden/shared/constants';
 import styles from './reset-password.module.css';
 
+interface ResetPasswordState {
+  step: 'email' | 'code' | 'password';
+  formData: { email: string; code: string; password: string; confirmPassword: string };
+  error: string;
+  loading: boolean;
+  successMessage: string;
+}
+
+const initialResetPasswordState: ResetPasswordState = {
+  step: 'email',
+  formData: { email: '', code: '', password: '', confirmPassword: '' },
+  error: '',
+  loading: false,
+  successMessage: '',
+};
+
+function resetPasswordReducer(state: ResetPasswordState, action: { type: string; payload?: unknown }): ResetPasswordState {
+  switch (action.type) {
+    case 'SET_STEP':
+      return { ...state, step: action.payload as 'email' | 'code' | 'password' };
+    case 'SET_FORM_DATA':
+      return { ...state, formData: action.payload as { email: string; code: string; password: string; confirmPassword: string } };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload as string };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload as boolean };
+    case 'SET_SUCCESS_MESSAGE':
+      return { ...state, successMessage: action.payload as string };
+    default:
+      return state;
+  }
+}
+
 const ResetPasswordPage = () => {
   const router = useRouter();
-  const [step, setStep] = useState<'email' | 'code' | 'password'>('email');
-  const [formData, setFormData] = useState({ email: '', code: '', password: '', confirmPassword: '' });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [state, dispatch] = useReducer(resetPasswordReducer, initialResetPasswordState);
 
   const handleSubmit = async () => {
-    setError('');
-    setSuccessMessage('');
+    dispatch({ type: 'SET_ERROR', payload: '' });
+    dispatch({ type: 'SET_SUCCESS_MESSAGE', payload: '' });
 
     try {
-      setLoading(true);
+      dispatch({ type: 'SET_LOADING', payload: true });
 
-      if (step === 'email') {
-        if (!formData.email) {
-          setError('Please enter your email');
+      if (state.step === 'email') {
+        if (!state.formData.email) {
+          dispatch({ type: 'SET_ERROR', payload: 'Please enter your email' });
           return;
         }
 
         const res = await fetch(`${API_URL}/auth/forgot-password`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email }),
+          body: JSON.stringify({ email: state.formData.email }),
         });
 
         if (res.ok) {
-          setStep('code');
-          setSuccessMessage('If your email exists in our system, we have sent a reset code to it.');
+          dispatch({ type: 'SET_STEP', payload: 'code' });
+          dispatch({ type: 'SET_SUCCESS_MESSAGE', payload: "If your email exists in our system, we have sent a reset code to it." });
         } else {
           const errorData = await res.json();
-          setError(errorData.message || 'Failed to send reset code');
+          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Failed to send reset code' });
         }
-      } else if (step === 'code') {
-        if (!formData.code) {
-          setError('Please enter the reset code');
+      } else if (state.step === 'code') {
+        if (!state.formData.code) {
+          dispatch({ type: 'SET_ERROR', payload: 'Please enter the reset code' });
           return;
         }
 
         const res = await fetch(`${API_URL}/auth/verify-reset-code`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email, code: formData.code }),
+          body: JSON.stringify({ email: state.formData.email, code: state.formData.code }),
         });
 
         if (res.ok) {
-          setStep('password');
+          dispatch({ type: 'SET_STEP', payload: 'password' });
         } else {
           const errorData = await res.json();
-          setError(errorData.message || 'Invalid or expired code');
+          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Invalid or expired code' });
         }
-      } else if (step === 'password') {
-        if (!formData.password) {
-          setError('Please enter a new password');
+      } else if (state.step === 'password') {
+        if (!state.formData.password) {
+          dispatch({ type: 'SET_ERROR', payload: 'Please enter a new password' });
           return;
         }
 
-        if (formData.password !== formData.confirmPassword) {
-          setError('Passwords do not match');
+        if (state.formData.password !== state.formData.confirmPassword) {
+          dispatch({ type: 'SET_ERROR', payload: 'Passwords do not match' });
           return;
         }
 
-        if (formData.password.length < 8) {
-          setError('Password must be at least 8 characters');
+        if (state.formData.password.length < 8) {
+          dispatch({ type: 'SET_ERROR', payload: 'Password must be at least 8 characters' });
           return;
         }
 
@@ -76,72 +105,72 @@ const ResetPasswordPage = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: formData.email,
-            code: formData.code,
-            password: formData.password,
+            email: state.formData.email,
+            code: state.formData.code,
+            password: state.formData.password,
           }),
         });
 
         if (res.ok) {
-          setSuccessMessage('Password reset successful! You can now log in with your new password.');
+          dispatch({ type: 'SET_SUCCESS_MESSAGE', payload: 'Password reset successful! You can now log in with your new password.' });
           setTimeout(() => {
             router.push('/auth');
           }, 2000);
         } else {
           const errorData = await res.json();
-          setError(errorData.message || 'Failed to reset password');
+          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Failed to reset password' });
         }
       }
-    } catch (err) {
-      setError('Network error. Please check your connection and try again.');
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: 'Network error. Please check your connection and try again.' });
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>&#x1F511; Reset Password</h1>
+        <h1 className={styles.title}>🔑 Reset Password</h1>
         <p className={styles.subtitle}>Enter your email to reset your password</p>
       </div>
 
-      <Card title={step === 'email' ? 'Reset Password' : step === 'code' ? 'Verify Code' : 'Set New Password'}>
-        {error && (
+      <Card title={state.step === 'email' ? 'Reset Password' : state.step === 'code' ? 'Verify Code' : 'Set New Password'}>
+        {state.error && (
           <div className={styles.error}>
-            {error}
+            {state.error}
           </div>
         )}
-        {successMessage && (
+        {state.successMessage && (
           <div className={styles.success}>
-            {successMessage}
+            {state.successMessage}
           </div>
         )}
 
-        {step === 'email' && (
+        {state.step === 'email' && (
           <>
             <div className={styles.inputWrapper}>
               <input
                 type="email"
                 placeholder="Email Address"
                 aria-label="Email address"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={state.formData.email}
+                onChange={(e) => dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, email: e.target.value } })}
                 className={styles.input}
               />
             </div>
 
             <Button
-              label={loading ? 'Sending...' : 'Send Reset Code'}
+              label={state.loading ? 'Sending...' : 'Send Reset Code'}
               onClick={handleSubmit}
             />
           </>
         )}
 
-        {step === 'code' && (
+        {state.step === 'code' && (
           <>
             <p className={styles.text}>
-              We've sent a reset code to <strong>{formData.email}</strong>. Please check your email.
+              We've sent a reset code to <strong>{state.formData.email}</strong>. Please check your email.
             </p>
 
             <div className={styles.inputWrapper}>
@@ -149,28 +178,28 @@ const ResetPasswordPage = () => {
                 type="text"
                 placeholder="Reset Code"
                 aria-label="Reset code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                value={state.formData.code}
+                onChange={(e) => dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, code: e.target.value } })}
                 className={styles.input}
               />
             </div>
 
             <Button
-              label={loading ? 'Verifying...' : 'Verify Code'}
+              label={state.loading ? 'Verifying...' : 'Verify Code'}
               onClick={handleSubmit}
             />
           </>
         )}
 
-        {step === 'password' && (
+        {state.step === 'password' && (
           <>
             <div className={styles.inputWrapper}>
               <input
                 type="password"
                 placeholder="New Password"
                 aria-label="New password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={state.formData.password}
+                onChange={(e) => dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, password: e.target.value } })}
                 className={styles.input}
               />
             </div>
@@ -180,14 +209,14 @@ const ResetPasswordPage = () => {
                 type="password"
                 placeholder="Confirm Password"
                 aria-label="Confirm password"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                value={state.formData.confirmPassword}
+                onChange={(e) => dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, confirmPassword: e.target.value } })}
                 className={styles.input}
               />
             </div>
 
             <Button
-              label={loading ? 'Resetting...' : 'Reset Password'}
+              label={state.loading ? 'Resetting...' : 'Reset Password'}
               onClick={handleSubmit}
             />
           </>

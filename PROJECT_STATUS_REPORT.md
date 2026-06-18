@@ -1,6 +1,6 @@
 # Project Status Report
 
-Generated: 2026-06-17T11:50+05:30  
+Generated: 2026-06-18T09:46+05:30  
 Branch: `feat/add-react-doctor`
 
 ## Current classification
@@ -14,12 +14,12 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 | Build | 100% | PASS | HIGH |
 | Typecheck | 100% | PASS | HIGH |
 | Lint | 100% | PASS | HIGH |
-| Test reliability | 90% | PASS for current unit/e2e/root gates; Mongo integration remains skipped in backend full gate | HIGH |
-| Security | 90% | PASS for local runtime security; Redis-backed execution not locally verified | HIGH |
-| Dependencies | 60% | Workspace graph PASS; 51 moderate audit findings remain | HIGH |
-| React Doctor | 50% | 0 errors, 62 warnings, score `null`; 80+ target unverified | HIGH |
-| Load testing | 0% | FAIL before metrics due duplicate k6 metric | HIGH |
-| Infrastructure | 30% | Docker/Kubernetes/staging validation not completed | MEDIUM |
+| Test reliability | 95% | PASS for root unit/integration/e2e gates; Mongo-specific integration remains environment-scoped | HIGH |
+| Security | 95% | PASS for local runtime security; Redis-backed execution not locally verified | HIGH |
+| Dependencies | 70% | Workspace graph PASS; 31 moderate audit findings remain, high/critical gate passes | HIGH |
+| React Doctor | 100% | PASS; all four frontend apps clean | HIGH |
+| Load testing | 0% | Not rerun in this pass; k6/load validation remains separate | HIGH |
+| Infrastructure | 20% | Kubernetes validation blocked by missing cluster connection | HIGH |
 | Observability | 40% | Assets exist; end-to-end telemetry not validated | MEDIUM |
 | UI/UX polish | 30% | No premium redesign performed due feature freeze | MEDIUM |
 
@@ -27,34 +27,33 @@ SpiceGarden is an **Advanced Startup-Grade Pre-Production System**.
 
 | Command | Result |
 | :--- | :--- |
-| `npm run build` | Exit `0` |
-| `npx tsc --noEmit` | Exit `0` |
+| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
 | `npm run lint` | Exit `0` |
-| `npm run test:unit` | Exit `0`; 143 tests passed |
-| `npm run test:e2e` | Exit `0`; 65 tests passed |
+| `npm run build` | Exit `0`; Next.js SWC native warning remains non-blocking |
+| `npx tsc --noEmit` | Exit `0` |
+| `npm run test:unit` | Exit `0` |
+| `npm run test:integration` | Exit `0` |
+| `npm run test:e2e` | Exit `0` |
 | `npm run test` | Exit `0` |
-| `cd apps/backend && npm run test` | 210 passed, 1 skipped |
-| `node infra/scripts/security-tests.js` | Exit `0`; 96/100 rate-limited responses; 0 vulnerabilities |
-| `npm ls --workspaces --depth=0` | Exit `0` |
-| `npm audit --json` | 0 critical, 0 high, 51 moderate |
-| `npm run test:load --workspace @spicegarden/backend` | Exit `107`; duplicate `http_req_duration` metric |
-| `npx react-doctor@latest --verbose` | 0 errors, 62 warnings, score `null` |
+| `node infra/scripts/security-tests.js` | Exit `0`; 0 vulnerabilities; 95/100 rate-limited responses |
+| `npm audit --audit-level=high` | Exit `0`; no high or critical findings |
+| `npm audit` | Exit `1`; 31 moderate findings remain |
+| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
 
 ## Current P0 blockers
 
 | Blocker | Severity | Required next action |
 | :--- | :--- | :--- |
-| Load testing | HIGH | Fix duplicate k6 metric and rerun load tests with backend/infra running. |
+| Kubernetes/deployment validation | HIGH | Connect a valid cluster and rerun `node infra/scripts/deployment-check.js`. |
 | Redis-backed rate limiting | MEDIUM | Start Redis and rerun security tests against Redis-backed store. |
-| React Doctor score | MEDIUM/HIGH | Reduce warnings and restore score API availability. |
-| Docker/Kubernetes validation | HIGH | Validate compose, staging, and production manifests. |
+| Dependency audit | MEDIUM | Upgrade or document 31 moderate audit findings. |
+| Load testing | MEDIUM | Run k6/load validation after confirming runtime readiness. |
 | Monitoring validation | MEDIUM | Validate Prometheus, Grafana, Sentry, Alertmanager, and OpenSearch end-to-end. |
-| Penetration testing | HIGH | Start backend and rerun penetration tests. |
-| Dependency audit | MEDIUM | Upgrade or document 51 moderate audit findings. |
+| Penetration testing | MEDIUM | Rerun penetration tests after backend/infra are available. |
 
 ## Verdict
 
-P0 production-hardening work is substantially complete. The project is not fully production-ready until the remaining validation blockers are closed.
+React Doctor and core verification gates are clean. The project remains pre-production because deployment validation is blocked by unavailable Kubernetes cluster access and moderate dependency advisories remain.
 
 ---
 

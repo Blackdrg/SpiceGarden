@@ -57,7 +57,8 @@ Evidence: `git ls-files`, workspace package manifests, source scans, build/lint/
 | `npm run build` | Exit `0`; all workspaces built |
 | `npm run lint` | Exit `0`; all workspaces linted |
 | `npm run test:unit` | Exit `0`; root workspace unit gates passed |
-| `npm audit --json` | 0 critical, 0 high, 51 moderate vulnerabilities |
+| `npm audit --audit-level=high` | Exit `0`; 0 high, 0 critical |
+| `npm audit` | Exit `1`; 31 moderate findings remain |
 
 ## Notes
 

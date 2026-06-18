@@ -10,7 +10,7 @@ import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
-import { requireSecrets } from "./common/errors/missing-env.error";
+import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 
 function getTrustProxySetting(configService: ConfigService): boolean {
   const value = configService.get<string>('TRUST_PROXY');
@@ -43,6 +43,14 @@ function validateProductionEnvironment(configService: ConfigService): void {
     'RAZORPAY_WEBHOOK_SECRET',
     'CORS_ALLOWED_ORIGINS',
   ], configService);
+
+  const corsOrigins = configService.get<string>('CORS_ALLOWED_ORIGINS', '') || '';
+  if (!corsOrigins.trim() || corsOrigins.split(',').some((origin) => origin.trim() === '*' || origin.trim().includes('*'))) {
+    throw new MissingEnvError(
+      'CORS_ALLOWED_ORIGINS',
+      'Set a comma-separated list of explicit production origins. Wildcards are not allowed.'
+    );
+  }
 }
 
 function getRedisRateLimitUrl(configService: ConfigService): string {
@@ -87,9 +95,7 @@ function createRateLimiter(configService: ConfigService, namespace: string, fall
 }
 
 function getRateLimitKey(req: express.Request): string {
-  const forwardedFor = req.headers['x-forwarded-for'];
-  const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
-  const ip = forwardedIp || req.ip || req.socket.remoteAddress || 'unknown';
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
   const route = req.path.split('/').filter(Boolean).slice(0, 3).join(':') || 'root';
   return `${req.method}:${route}:${ip}`;
 }
@@ -108,6 +114,11 @@ async function bootstrap() {
 
   validateProductionEnvironment(configService);
 
+  if (configService.get<string>('NODE_ENV') === 'production') {
+    const server = app.getHttpAdapter().getInstance();
+    server.set('trust proxy', 1);
+  }
+
   try {
     const Sentry = (await import("@sentry/node")) as any;
     const dsn = configService.get<string>("SENTRY_DSN");
@@ -116,8 +127,13 @@ async function bootstrap() {
         dsn,
         tracesSampleRate: 1.0,
       });
-      Sentry.Handlers && app.use(Sentry.Handlers.requestHandler());
-      Sentry.Handlers && app.use(Sentry.Handlers.tracingHandler());
+      if (Sentry.Handlers) {
+        app.use(Sentry.Handlers.requestHandler());
+        app.use(Sentry.Handlers.tracingHandler());
+      }
+      if (Sentry.setupExpressErrorHandler) {
+        app.use(Sentry.setupExpressErrorHandler());
+      }
     }
   } catch (e) {
     // Sentry not installed - continue without error tracking

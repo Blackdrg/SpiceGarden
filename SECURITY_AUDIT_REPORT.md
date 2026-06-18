@@ -14,8 +14,8 @@ Evidence: backend security modules, controllers, compose files, `npm audit --jso
 | Rate limiting can fall back to memory in production | Medium | `main.ts` uses memory store unless `RATE_LIMIT_REDIS_REQUIRED` is true |
 | Vault is disabled by default | Medium | `vault.service.ts` defaults `VAULT_ENABLED` to `false` |
 | Database logging and synchronization are enabled | Medium | `db.module.ts` sets `synchronize: true` and `logging: true` |
-| Dependency audit has moderate vulnerabilities | Medium | `npm audit --json` reported 51 moderate vulnerabilities, 0 high, 0 critical |
-| Existing security vulnerability script passed | Low | `SECURITY_AUDIT_V2.md` reports 0 vulnerabilities and 0 issues |
+| Dependency audit has moderate vulnerabilities | Medium | `npm audit`: 31 moderate findings remain, 0 high, 0 critical |
+| Existing security vulnerability script passed | Low | `node infra/scripts/security-tests.js` reports 0 vulnerabilities and 95/100 rate-limited responses |
 
 ## Auth and Session Evidence
 
@@ -38,14 +38,16 @@ Evidence: backend security modules, controllers, compose files, `npm audit --jso
 
 ## Dependency Audit Evidence
 
-`npm audit --json` result:
+`npm audit` result:
 
 | Severity | Count |
 | :--- | ---: |
 | Critical | 0 |
 | High | 0 |
-| Moderate | 51 |
+| Moderate | 31 |
 | Low | 0 |
+
+`npm audit --audit-level=high` passes because no high or critical findings remain.
 
 ## Security Readiness
 

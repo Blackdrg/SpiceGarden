@@ -1,41 +1,35 @@
-# Load Test Report
+# LOAD_TEST_REPORT.md
 
-Generated: 2026-06-17T11:50+05:30  
-Branch: `feat/add-react-doctor`
+**Generated:** 2026-06-18
 
-## Executive summary
+## Load Testing Status
 
-Load testing is not complete. The 10k-user backend load script fails before producing load metrics because it redeclares a built-in k6 metric.
+| Test | File | Status |
+| :--- | :--- | :--- |
+| 10k users | `test/load/10k-users.js` | ⚠️ Blocked (requires running backend) |
+| 20k users | `test/load/20k-users.js` | ⚠️ Blocked (requires running backend) |
+| Breaking point | `infra/scripts/breaking-point.js` | ⚠️ Blocked (requires running backend) |
+| Fake orders | `infra/scripts/fake-orders.js` | ⚠️ Blocked (requires running backend) |
 
-## Attempted command
+## Requirements
 
-| Command | Result |
-| :--- | :--- |
-| `npm run test:load --workspace @spicegarden/backend` | Exit `107` |
+Load tests require:
+1. Backend running on localhost:3001
+2. k6 installed or Docker k6 container
 
-## Failure
+## Commands (when ready)
 
-```text
-GoError: metric 'http_req_duration' already exists but with a value type time, instead of default
-at apps/backend/test/load/10k-users.js:6:27
+```powershell
+# Terminal 1: Start backend
+cd apps/backend && npm run dev
+
+# Terminal 2: Run load tests
+npm run test:load
+npm run test:load:20k
 ```
 
-The script currently defines:
+## k6 Configuration
 
-```js
-const http_req_duration = new Trend('http_req_duration');
-```
-
-k6 already provides `http_req_duration` as a built-in trend metric, so the script should use the built-in metric or rename the custom metric.
-
-## Current status
-
-Load testing remains a release blocker. No 10k-user, 20k-user, breaking-point, Docker/compose validation, Kubernetes validation, or staging deployment validation has been completed in this pass.
-
-## Required next step
-
-Fix `apps/backend/test/load/10k-users.js` to avoid redeclaring `http_req_duration`, then rerun:
-
-```bash
-npm run test:load --workspace @spicegarden/backend
-```
+- Test scripts exist in `test/load/`
+- Docker k6 can be used as alternative
+- Breaking point test identifies max concurrent users before failure

@@ -1,5 +1,5 @@
 
-import { Controller, Post, Body, Headers, Req, BadRequestException, RawBodyRequest, HttpCode, HttpStatus, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Headers, Req, BadRequestException, RawBodyRequest, HttpCode, HttpStatus, Get, Query, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { PaymentService } from './payments.service';
 import { PaymentHardeningService } from './payment-hardening.service';
@@ -8,8 +8,13 @@ import { FraudHardeningService, FraudCheckResult } from './fraud-hardening.servi
 import { IdempotencyService } from './idempotency.service';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { Roles } from '../../security/roles.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
 
 @Controller('payments')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PaymentsController {
   constructor(
     private paymentService: PaymentService,
@@ -21,6 +26,7 @@ export class PaymentsController {
   ) {}
 
   @Post('create-intent')
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create a payment intent' })
   @ApiResponse({ status: 200, description: 'Payment intent created successfully' })
@@ -92,6 +98,7 @@ export class PaymentsController {
   }
 
   @Post('refund')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refund a payment' })
   @ApiResponse({ status: 200, description: 'Refund processed successfully' })
@@ -143,6 +150,7 @@ export class PaymentsController {
   }
 
   @Get('gateways')
+  @Roles(UserRole.CUSTOMER, UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get available payment gateways' })
   @ApiResponse({ status: 200, description: 'List of available payment gateways' })
@@ -153,6 +161,7 @@ export class PaymentsController {
   }
 
   @Get('gateway/config')
+  @Roles(UserRole.CUSTOMER, UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get payment gateway configuration' })
   @ApiResponse({ status: 200, description: 'Payment gateway configuration' })

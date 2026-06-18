@@ -15,28 +15,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceController = void 0;
 const common_1 = require("@nestjs/common");
 const notification_service_1 = require("./notification.service");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let DeviceController = class DeviceController {
     notificationService;
     constructor(notificationService) {
         this.notificationService = notificationService;
     }
-    async registerDevice(body) {
-        const { userId, fcmToken, apnsToken, deviceInfo } = body;
+    async registerDevice(req, body) {
+        const { fcmToken, apnsToken, deviceInfo } = body;
+        const authenticatedUserId = req.user?.userId || req.user?.sub;
+        const targetUserId = (authenticatedUserId || body.userId || 'anonymous');
         if (fcmToken) {
-            await this.notificationService.registerDevice(userId, fcmToken, deviceInfo ?? {});
+            await this.notificationService.registerDevice(targetUserId, fcmToken, deviceInfo ?? {});
         }
         if (apnsToken) {
-            await this.notificationService.registerDevice(userId, apnsToken, { ...(deviceInfo || {}), type: 'ios' });
+            await this.notificationService.registerDevice(targetUserId, apnsToken, { ...(deviceInfo || {}), type: 'ios' });
         }
         return { success: true, message: 'Device registered successfully' };
     }
-    async unregisterDevice(body) {
-        const { userId, fcmToken, apnsToken } = body;
+    async unregisterDevice(req, body) {
+        const authenticatedUserId = req.user?.userId || req.user?.sub;
+        const targetUserId = (authenticatedUserId || body.userId || 'anonymous');
+        const { fcmToken, apnsToken } = body;
         if (fcmToken) {
-            await this.notificationService.unregisterDevice(userId, fcmToken);
+            await this.notificationService.unregisterDevice(targetUserId, fcmToken);
         }
         if (apnsToken) {
-            await this.notificationService.unregisterDevice(userId, apnsToken);
+            await this.notificationService.unregisterDevice(targetUserId, apnsToken);
         }
         return { success: true, message: 'Device unregistered successfully' };
     }
@@ -44,21 +52,26 @@ let DeviceController = class DeviceController {
 exports.DeviceController = DeviceController;
 __decorate([
     (0, common_1.Post)('register'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.KITCHEN_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], DeviceController.prototype, "registerDevice", null);
 __decorate([
     (0, common_1.Delete)('unregister'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.KITCHEN_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], DeviceController.prototype, "unregisterDevice", null);
 exports.DeviceController = DeviceController = __decorate([
     (0, common_1.Controller)('devices'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [notification_service_1.NotificationService])
 ], DeviceController);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import {
   Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard,
   BurgerIcon, PizzaIcon, DrinkIcon, DessertIcon, HealthyIcon,
@@ -8,6 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { useQuery } from '@tanstack/react-query';
 import styles from './index.module.css';
 
 interface Restaurant {
@@ -44,56 +45,45 @@ const distanceFromId = (id: string) => {
   return (0.5 + (hash % 50) / 10).toFixed(1);
 };
 
+const fetchRestaurants = async (): Promise<Restaurant[]> => {
+  const response = await fetch('/api/restaurants');
+  if (!response.ok) throw new Error('Failed to load restaurants');
+  return response.json();
+};
+
+const handleRetry = () => {
+  window.location.reload();
+};
+
+const getTabClass = (tabKey: string) => {
+  return `${styles.tab} ${tabKey === 'home' ? styles.activeTab : styles.inactiveTab}`;
+};
+
+const categories: Category[] = [
+  { name: 'Burgers', Icon: BurgerIcon },
+  { name: 'Pizza', Icon: PizzaIcon },
+  { name: 'Drinks', Icon: DrinkIcon },
+  { name: 'Dessert', Icon: DessertIcon },
+  { name: 'Healthy', Icon: HealthyIcon },
+];
+
+const navTabs: NavTab[] = [
+  { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+  { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+  { key: 'orders', label: 'Orders', Icon: CartIcon, path: '/history' },
+  { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+];
+
 const HomePage = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('home');
 
-  useEffect(() => {
-    const loadRestaurants = async () => {
-      try {
-        const response = await fetch('/api/restaurants');
-        if (!response.ok) throw new Error('Failed to load restaurants');
-        const data = await response.json();
-        setRestaurants(data);
-      } catch (error) {
-        console.error('Failed to load restaurants:', error);
-        setError('Unable to load restaurants. Please check your connection.');
-        setRestaurants([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadRestaurants();
-  }, []);
+  const { data: restaurants = [], isLoading: loading, error: fetchError } = useQuery({
+    queryKey: ['restaurants'],
+    queryFn: fetchRestaurants,
+  });
 
-  const categories = useMemo<Category[]>(() => [
-    { name: 'Burgers', Icon: BurgerIcon },
-    { name: 'Pizza', Icon: PizzaIcon },
-    { name: 'Drinks', Icon: DrinkIcon },
-    { name: 'Dessert', Icon: DessertIcon },
-    { name: 'Healthy', Icon: HealthyIcon },
-  ], []);
-
-  const navTabs = useMemo<NavTab[]>(() => [
-    { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
-    { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
-    { key: 'orders', label: 'Orders', Icon: CartIcon, path: '/history' },
-    { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
-  ], []);
-
-  const handleRetry = () => {
-    setLoading(true);
-    setError(null);
-    window.location.reload();
-  };
-
-  const getTabClass = (tabKey: string) => {
-    return `${styles.tab} ${activeTab === tabKey ? styles.activeTab : styles.inactiveTab}`;
-  };
+  const error = fetchError instanceof Error ? fetchError.message : null;
 
   return (
     <div className={styles.container}>
@@ -226,7 +216,6 @@ const HomePage = () => {
               type="button"
               key={tab.key}
               onClick={() => {
-                setActiveTab(tab.key);
                 if (tab.path) router.push(tab.path);
               }}
               className={getTabClass(tab.key)}

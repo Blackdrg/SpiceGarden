@@ -120,7 +120,8 @@ const assignments = await this.assignmentRepo.find({
 }
 
 @Controller('orders')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN)
 export class OrderDriverController {
   constructor(
     @InjectRepository(OrderEntity)

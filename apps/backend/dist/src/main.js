@@ -77,6 +77,10 @@ function validateProductionEnvironment(configService) {
         'RAZORPAY_WEBHOOK_SECRET',
         'CORS_ALLOWED_ORIGINS',
     ], configService);
+    const corsOrigins = configService.get('CORS_ALLOWED_ORIGINS', '') || '';
+    if (!corsOrigins.trim() || corsOrigins.split(',').some((origin) => origin.trim() === '*' || origin.trim().includes('*'))) {
+        throw new missing_env_error_1.MissingEnvError('CORS_ALLOWED_ORIGINS', 'Set a comma-separated list of explicit production origins. Wildcards are not allowed.');
+    }
 }
 function getRedisRateLimitUrl(configService) {
     return configService.get('REDIS_RATE_LIMIT_URL')
@@ -114,9 +118,7 @@ function createRateLimiter(configService, namespace, fallbackMax, fallbackWindow
     });
 }
 function getRateLimitKey(req) {
-    const forwardedFor = req.headers['x-forwarded-for'];
-    const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
-    const ip = forwardedIp || req.ip || req.socket.remoteAddress || 'unknown';
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const route = req.path.split('/').filter(Boolean).slice(0, 3).join(':') || 'root';
     return `${req.method}:${route}:${ip}`;
 }
@@ -131,6 +133,10 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(localMode ? local_dev_module_1.LocalDevModule : app_module_1.AppModule, { rawBody: true });
     const configService = app.get(config_1.ConfigService);
     validateProductionEnvironment(configService);
+    if (configService.get('NODE_ENV') === 'production') {
+        const server = app.getHttpAdapter().getInstance();
+        server.set('trust proxy', 1);
+    }
     try {
         const Sentry = (await Promise.resolve().then(() => __importStar(require("@sentry/node"))));
         const dsn = configService.get("SENTRY_DSN");
@@ -139,8 +145,13 @@ async function bootstrap() {
                 dsn,
                 tracesSampleRate: 1.0,
             });
-            Sentry.Handlers && app.use(Sentry.Handlers.requestHandler());
-            Sentry.Handlers && app.use(Sentry.Handlers.tracingHandler());
+            if (Sentry.Handlers) {
+                app.use(Sentry.Handlers.requestHandler());
+                app.use(Sentry.Handlers.tracingHandler());
+            }
+            if (Sentry.setupExpressErrorHandler) {
+                app.use(Sentry.setupExpressErrorHandler());
+            }
         }
     }
     catch (e) {

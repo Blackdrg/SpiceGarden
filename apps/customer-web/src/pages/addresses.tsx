@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { Plus, MapPin, Trash2, Star, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
 import { getCachedToken } from '../utils/cachedLocalStorage';
+import { useAddresses } from '../hooks/useAddresses';
 import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './addresses.module.css';
 
@@ -18,9 +19,10 @@ interface Address {
 }
 
 const AddressesPage = () => {
-  const [errorText, setErrorText] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const token = getCachedToken();
+  const safeToken = token && token !== 'demo-token' ? token : null;
+  const { addresses, isLoading, error } = useAddresses(safeToken);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: '',
@@ -29,18 +31,6 @@ const AddressesPage = () => {
     state: '',
     postalCode: '',
   });
-  const { data = [], isLoading, error } = useQuery({
-    queryKey: ['addresses', token],
-    enabled: Boolean(token && token !== 'demo-token'),
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/addresses`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Failed to load addresses');
-      return res.json() as Promise<Address[]>;
-    },
-  });
-  const addresses = data;
   const loading = isLoading;
   const queryErrorText = error instanceof Error ? error.message : (error ? 'Failed to load addresses' : null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -59,7 +49,7 @@ const AddressesPage = () => {
       if (!res.ok) throw new Error('Failed to add address');
       
       const added = await res.json();
-      queryClient.setQueryData<Address[]>(['addresses', token], prev => [...(prev || []), added]);
+      queryClient.setQueryData<Address[]>(['addresses'], prev => [...(prev || []), added]);
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       setShowAddForm(false);
       setNewAddress({ label: '', addressLine: '', city: '', state: '', postalCode: '' });
@@ -79,7 +69,7 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to set default');
-      queryClient.setQueryData<Address[]>(['addresses', token], prev => (prev || []).map(a => ({ ...a, isDefault: a.id === id })));
+      queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).map(a => ({ ...a, isDefault: a.id === id })));
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to set default');
@@ -97,7 +87,7 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to delete');
-      queryClient.setQueryData<Address[]>(['addresses', token], prev => (prev || []).filter(a => a.id !== id));
+      queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).filter(a => a.id !== id));
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to delete');

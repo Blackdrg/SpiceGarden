@@ -1,7 +1,43 @@
-# DevOps Report
+# INFRA_VALIDATION_REPORT.md
 
-Generated: 2026-06-17T21:30+05:30  
-Evidence: `Dockerfile`, compose files, GitHub workflows, Kubernetes manifests, infra scripts.
+**Generated:** 2026-06-18
+
+## Infrastructure Validation Status
+
+### Docker Compose
+
+| File | Services | Status |
+| :--- | :---: | :--- |
+| compose.yaml | 1 | ✅ Valid YAML |
+| compose.dev.yaml | 15 | ✅ Valid YAML |
+| compose.infra.yaml | 27 | ✅ Valid YAML |
+
+### Kubernetes Manifests
+
+| File | Resources | Status |
+| :--- | :---: | :--- |
+| production-hardened.yaml | 10 | ✅ Valid YAML |
+| staging.yaml | 5 | ✅ Valid YAML |
+| backend-deployment.yaml | 2 | ✅ Valid YAML |
+| postgres-ha.yaml | 4 | ✅ Valid YAML |
+| redis-cluster.yaml | 4 | ✅ Valid YAML |
+
+### Validation Commands
+
+| Command | Status |
+| :--- | :--- |
+| Docker builds | ⚠️ Not verified (no Docker daemon) |
+| Compose stack boot | ⚠️ Not verified (no Docker daemon) |
+| kubectl apply --dry-run | ⚠️ Not verified (no cluster) |
+
+### Infrastructure Health
+
+| Component | Status | Notes |
+| :--- | :--- | :--- |
+| Production manifests | ✅ Defined | Hardening controls present |
+| Staging manifests | ✅ Defined | Standard deployment |
+| CI/CD workflows | ✅ Present | 3 workflows configured |
+| Load test integration | ⚠️ Script needs backend | k6 scripts exist |
 
 ## Local Infrastructure
 
