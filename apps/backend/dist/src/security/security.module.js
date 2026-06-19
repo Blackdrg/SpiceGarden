@@ -12,6 +12,9 @@ const throttler_1 = require("@nestjs/throttler");
 const encryption_service_1 = require("./encryption.service");
 const secret_loader_service_1 = require("../infra/secret-loader.service");
 const local_repository_module_1 = require("../db/local-repository.module");
+const permission_guard_1 = require("./permission.guard");
+const roles_guard_1 = require("./roles.guard");
+const loadTestLimit = parseInt(process.env.LOAD_TEST_LIMIT || '1000000', 10);
 let SecurityModule = class SecurityModule {
 };
 exports.SecurityModule = SecurityModule;
@@ -19,13 +22,13 @@ exports.SecurityModule = SecurityModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
+            local_repository_module_1.LocalRepositoryModule,
             throttler_1.ThrottlerModule.forRoot([{
                     ttl: 60000,
-                    limit: 10,
+                    limit: process.env.LOAD_TEST_MODE === 'true' && process.env.NODE_ENV !== 'production' ? loadTestLimit : 10,
                 }]),
-            local_repository_module_1.LocalRepositoryModule,
         ],
-        providers: [secret_loader_service_1.SecretLoaderService, encryption_service_1.EncryptionService],
-        exports: [encryption_service_1.EncryptionService, throttler_1.ThrottlerModule],
+        providers: [secret_loader_service_1.SecretLoaderService, encryption_service_1.EncryptionService, permission_guard_1.PermissionGuard, roles_guard_1.RolesGuard],
+        exports: [encryption_service_1.EncryptionService, throttler_1.ThrottlerModule, permission_guard_1.PermissionGuard, roles_guard_1.RolesGuard],
     })
 ], SecurityModule);

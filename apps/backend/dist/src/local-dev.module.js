@@ -48,6 +48,7 @@ const app_service_1 = require("./app.service");
 const db_module_1 = require("./db/db.module");
 const security_module_1 = require("./security/security.module");
 const logging_module_1 = require("./logging/logging.module");
+const auth_module_1 = require("./services/auth/auth.module");
 let LocalDevModule = class LocalDevModule {
 };
 exports.LocalDevModule = LocalDevModule;
@@ -61,6 +62,7 @@ exports.LocalDevModule = LocalDevModule = __decorate([
             db_module_1.DbModule,
             security_module_1.SecurityModule,
             logging_module_1.LoggingModule,
+            auth_module_1.AuthServiceModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

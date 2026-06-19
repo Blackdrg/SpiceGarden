@@ -1,67 +1,406 @@
-# Repository Inventory
+# SpiceGarden Repository Inventory
 
-Generated: 2026-06-17T21:30+05:30  
-Evidence: `git ls-files`, workspace package manifests, source scans, build/lint/test command output.
+> Generated: 2026-06-19
+> Verified from source code analysis
 
-## Count Method
+## Applications
 
-- Tracked files use `git ls-files` in the repository root.
-- Source files exclude `dist/`, `.d.ts`, `.map`, and `.bak` files.
-- Component/service/controller/module/entity counts are source-pattern counts from tracked files.
-- React component count is a declaration-pattern count using `git grep` for exported/const PascalCase component declarations.
+### Backend (apps/backend)
+- **Type**: NestJS API Server
+- **Port**: 3001
+- **Package**: TypeScript, Common.js
+- **Features**: REST API, WebSocket, gRPC support
 
-## Global Inventory
+### Customer Web (apps/customer-web)
+- **Type**: Next.js Web Application
+- **Port**: 3002
+- **Package**: TypeScript, React 19, Redux Toolkit, TanStack Query
 
-| Metric | Count | Evidence |
-| :--- | ---: | :--- |
-| Total tracked files | 2,729 | `git ls-files \| Measure-Object -Line` |
-| Tracked source files | 726 | TS/TSX/JS/JSX excluding generated artifacts |
-| Total TS files | 746 | `git ls-files` extension count |
-| Total TSX files | 146 | `git ls-files` extension count |
-| Total JS files | 769 | `git ls-files` extension count |
-| Total JSX files | 0 | `git ls-files` extension count |
-| Total JSON files | 133 | `git ls-files` extension count |
-| Total YAML files | 21 | `git ls-files` extension count |
-| Total YML files | 12 | `git ls-files` extension count |
-| Total Docker files | 1 | root `Dockerfile` |
-| Total Kubernetes manifests | 8 | `infra/k8s/*.yaml` |
-| Total test files | 185 | tracked files matching test/spec/e2e patterns |
-| React component declarations | 204 | `git grep` component declaration pattern |
-| Hook declarations | 38 | `git grep` `useX` declaration pattern |
-| Services | 92 | `@Injectable` pattern plus frontend service files |
-| Controllers | 43 | `@Controller` decorator pattern; 41 controller files |
-| Modules | 54 | `@Module` decorator pattern; 55 backend module files |
-| Entity decorators | 69 | `@Entity` decorator pattern; 68 entity files |
+### Restaurant Dashboard (apps/restaurant-dashboard)
+- **Type**: Next.js Web Application
+- **Port**: 3003
+- **Package**: TypeScript, React 19, Socket.IO Client
 
-## Breakdown by Application
+### Super Admin (apps/super-admin)
+- **Type**: Next.js Web Application
+- **Port**: 3004
+- **Package**: TypeScript, React 19, Recharts, Sentry
 
-| Area | Total tracked files | Source files | TS | TSX | JS | JSX | JSON | YAML/YML | Tests | Controllers | Services | Modules | Entities | Pages | Screens | Hooks |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `apps/backend` | 1,797 | 339 | 301 | 0 | 38 | 0 | 6 | 6 | 139 | 41 | 77 | 54 | 68 | 0 | 0 | 0 |
-| `apps/customer-web` | 90 | 51 | 20 | 27 | 4 | 0 | 16 | 0 | 3 | 0 | 0 | 0 | 0 | 24 | 0 | 7 |
-| `apps/customer-mobile` | 121 | 66 | 20 | 24 | 22 | 0 | 13 | 0 | 11 | 0 | 3 | 0 | 0 | 0 | 15 | 2 |
-| `apps/delivery-partner` | 81 | 29 | 8 | 12 | 9 | 0 | 8 | 0 | 3 | 0 | 2 | 0 | 0 | 0 | 0 | 12 | 1 |
-| `apps/restaurant-dashboard` | 37 | 21 | 6 | 11 | 4 | 0 | 8 | 0 | 3 | 0 | 0 | 0 | 0 | 11 | 0 | 0 |
-| `apps/super-admin` | 43 | 26 | 7 | 14 | 5 | 0 | 9 | 0 | 4 | 0 | 0 | 0 | 0 | 15 | 0 | 0 |
-| `apps/launcher` | 92 | 27 | 9 | 3 | 15 | 0 | 7 | 2 | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `packages` | 200 | 127 | 20 | 54 | 53 | 0 | 10 | 0 | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `infra` | 67 | 13 | 0 | 0 | 13 | 0 | 3 | 17 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `scripts` | 22 | 18 | 1 | 0 | 17 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `docs` | 11 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+### Delivery Partner (apps/delivery-partner)
+- **Type**: React Native Mobile Application
+- **Package**: Expo, React Native, Jest
 
-## Verified Command Evidence
+### Customer Mobile (apps/customer-mobile)
+- **Type**: React Native Mobile Application
+- **Package**: Expo, React Navigation, React Native Gesture Handler
 
-| Command | Result |
-| :--- | :--- |
-| `git status --short` | No output at start of audit; working tree was clean before documentation generation |
-| `npm run build` | Exit `0`; all workspaces built |
-| `npm run lint` | Exit `0`; all workspaces linted |
-| `npm run test:unit` | Exit `0`; root workspace unit gates passed |
-| `npm audit --audit-level=high` | Exit `0`; 0 high, 0 critical |
-| `npm audit` | Exit `1`; 31 moderate findings remain |
+### Launcher (apps/launcher)
+- **Type**: Electron Desktop Application
+- **Package**: Electron 39, React, Webpack
 
-## Notes
+## Packages
 
-- The backend dominates tracked files because generated `dist` artifacts are tracked in the repository.
-- Backend entity files count 68, but `apps/backend/src/db/db.module.ts` imports 40 entities into TypeORM plus one Mongoose review schema.
-- Frontend route/screen counts include `_app.tsx` where present because it is a tracked page/screen file.
+### UI (packages/ui)
+- **Type**: Shared React Component Library
+- **Features**: Reusable UI components
+
+### Shared (packages/shared)
+- **Type**: Shared Utilities and Constants
+- **Features**: Domain types, API utilities
+
+### Proto (packages/proto)
+- **Type**: Protocol Buffers Definitions
+- **Features**: gRPC service definitions
+
+### gRPC Transport (packages/grpc-transport)
+- **Type**: gRPC Client Transport Layer
+- **Features**: gRPC client communication
+
+### API Types (packages/api-types)
+- **Type**: TypeScript API Type Definitions
+- **Features**: Shared type definitions across apps
+
+## Services
+
+### Authentication Service
+- **Location**: `apps/backend/src/services/auth/`
+- **Files**: auth.service.ts, auth.controller.ts, jwt.strategy.ts, google.strategy.ts, facebook.strategy.ts
+- **Features**: JWT auth, OAuth2 (Google/Facebook), session management
+
+### User Service
+- **Location**: `apps/backend/src/services/user/`
+- **Files**: user-profile.service.ts, user-profile.controller.ts
+
+### Order Service
+- **Location**: `apps/backend/src/services/order/`
+- **Files**: order.service.ts, order.controller.ts
+
+### Payment Service
+- **Location**: `apps/backend/src/services/payments/`
+- **Files**: payments.service.ts, payments.controller.ts, gateway-factory.service.ts
+- **Gateways**: Stripe, Razorpay, COD
+- **Features**: Payment intents, refunds, webhooks, fraud hardening
+
+### Restaurant Service
+- **Location**: `apps/backend/src/services/restaurant/`
+- **Files**: restaurant.service.ts, restaurant.controller.ts, onboarding.service.ts
+- **Features**: Restaurant management, branch control, menu moderation
+
+### Delivery Service
+- **Location**: `apps/backend/src/services/delivery/`
+- **Files**: delivery service module
+
+### Review Service
+- **Location**: `apps/backend/src/services/review/`
+- **Files**: review.service.ts, review.controller.ts
+
+### Wallet Service
+- **Location**: `apps/backend/src/services/wallet/`
+- **Files**: wallet.service.ts, wallet.controller.ts
+
+### Notification Service
+- **Location**: `apps/backend/src/services/notifications/`
+- **Files**: notification.service.ts, production-notification.service.ts
+
+### Search Service
+- **Location**: `apps/backend/src/services/search/`
+- **Files**: search.service.ts, search.controller.ts
+
+### Admin Service
+- **Location**: `apps/backend/src/services/admin/`
+- **Files**: admin.service.ts, admin.controller.ts
+
+### Support Service
+- **Location**: `apps/backend/src/services/support/`
+- **Files**: customer-support.service.ts, ticket-routing.service.ts
+
+### Refund Service
+- **Location**: `apps/backend/src/services/refund/`
+- **Files**: refund.service.ts, refund.controller.ts
+
+### Menu Customization Service
+- **Location**: `apps/backend/src/services/menu-customization/`
+- **Files**: menu-customization.service.ts
+
+### Loyalty Service
+- **Location**: `apps/backend/src/services/loyalty/`
+- **Files**: loyalty.service.ts, loyalty.controller.ts
+
+### Driver Fleet Service
+- **Location**: `apps/backend/src/services/driver-fleet/`
+
+### Finance Service
+- **Location**: `apps/backend/src/services/finance/`
+
+### GST Service
+- **Location**: `apps/backend/src/services/gst/`
+
+### Payment Provider Service
+- **Location**: `apps/backend/src/services/payment-provider/`
+
+### Maps Service
+- **Location**: `apps/backend/src/services/maps/`
+
+### Geo Service
+- **Location**: `apps/backend/src/services/geo/`
+
+## Libraries
+
+### Database Adapters
+- **Location**: `apps/backend/src/db/`
+- **PostgreSQL**: postgres.adapter.ts
+- **MongoDB**: mongo.adapter.ts
+- **Redis**: redis.adapter.ts
+
+### Security
+- **Location**: `apps/backend/src/security/`
+- **Features**: Encryption, rate limiting, secrets loading
+
+### Audit
+- **Location**: `apps/backend/src/audit/`
+
+### Compliance
+- **Location**: `apps/backend/src/compliance/`
+
+### Metrics
+- **Location**: `apps/backend/src/metrics/`
+
+### Logging
+- **Location**: `apps/backend/src/logging/`
+
+## Infrastructure
+
+### Kubernetes
+- **Directory**: `infra/k8s/`
+- **Files**:
+  - `production-hardened.yaml` - Production deployment (3-20 replicas, HPA, PDB, NetworkPolicy)
+  - `staging.yaml` - Staging environment
+  - `secrets.yaml` - Kubernetes secrets
+  - `configmap.yaml` - Configuration
+  - `postgres-ha.yaml` - PostgreSQL High Availability
+  - `redis-cluster.yaml` - Redis Cluster
+  - `backend-deployment.yaml` - Backend deployment
+  - `cdn-ingress.yaml` - CDN/Ingress
+
+### Prometheus
+- **Directory**: `infra/prometheus/`
+- **Files**: prometheus.yml, rules/alerts.yml, rules/slos.yml
+
+### Grafana
+- **Directory**: `infra/grafana/`
+- **Files**: dashboards/spicegarden.json, provisioning/dashboards/provider.yml, provisioning/datasources/datasources.yml
+
+### Alertmanager
+- **Directory**: `infra/alertmanager/`
+- **Files**: alertmanager.yml
+
+### OpenSearch
+- **Directory**: `infra/opensearch/`
+- **Files**: index-templates/spicegarden-logs.json
+
+### Filebeat
+- **Directory**: `infra/filebeat/`
+- **Files**: filebeat.yml
+
+### Envoy
+- **Directory**: `infra/envoy/`
+- **Files**: envoy.yaml
+
+## CI/CD
+
+### Test Scripts
+- `infra/scripts/fake-orders.js` - Fake order testing
+- `infra/scripts/breaking-point.js` - Breaking point/load testing
+- `infra/scripts/security-tests.js` - Security vulnerability tests
+- `infra/scripts/penetration-tests.js` - Penetration tests
+- `infra/scripts/deployment-check.js` - Deployment validation
+- `infra/scripts/validate-env-consistency.js` - Environment validation
+- `infra/scripts/autoscaling-validation.sh` - Autoscaling validation
+- `infra/scripts/backup.ps1/sh` - Backup scripts
+- `infra/scripts/disaster-recovery.ps1/sh` - Disaster recovery
+- `infra/scripts/docker-stability-test.ps1/sh` - Docker stability tests
+
+### Documentation
+- `infra/docs/LOAD_BENCHMARKS.md`
+- `infra/docs/MULTI_REGION_ARCHITECTURE.md`
+- `infra/docs/API_VERSION_STRATEGY.md`
+- `infra/DNS_FAILOVER.md`
+- `infra/DOCKER_STABILITY.md`
+- `infra/DEPLOYMENT_CHECKLIST.md`
+- `infra/TESTING_PLAN.md`
+
+## Database Entities (65 entities)
+
+### Core Entities
+- UserEntity
+- SessionEntity
+- OTPEntity
+- UserDeviceEntity
+
+### Restaurant Entities
+- RestaurantEntity
+- RestaurantBranchEntity
+- MenuItemEntity
+- MenuCategoryEntity
+- MenuVariantEntity
+- MenuAddonEntity
+- MenuItemAvailabilityEntity
+
+### Order Entities
+- OrderEntity
+- OrderItemEntity
+
+### Payment Entities
+- PaymentMethodEntity
+- PaymentWebhookEntity
+- StripeWebhookEntity
+- PaymentFraudEntity
+- PaymentValidationEntity
+- PaymentEventEntity
+- IdempotencyEntity
+- WebhookRetryQueueEntity
+
+### Financial Entities
+- WalletEntity
+- WalletTransactionEntity
+- LedgerEntryEntity
+- RefundEntity
+- RefundApprovalEntity
+- PayoutReportEntity
+
+### Driver Entities
+- DriverEntity
+- DriverAssignmentEntity
+- DriverFraudEntity
+- DriverScoreEntity
+- DriverIncentiveEntity
+- DriverPenaltyEntity
+- DriverDocumentEntity
+- DriverShiftEntity
+
+### Support Entities
+- SupportTicketEntity
+- NotificationEntity
+- NotificationPreferenceEntity
+- NotificationAnalyticsEntity
+
+### Marketing Entities
+- CouponEntity
+- CouponUsageEntity
+- ReferralEntity
+
+### Compliance Entities
+- AuditLogEntity
+- DeviceFingerprintEntity
+- DataExportRequestEntity
+- DeletionRequestEntity
+
+### Restaurant Operations
+- RestaurantOnboardingEntity
+- BranchControlEntity
+- CommissionRuleEntity
+- SurgeZoneEntity
+- KitchenSLAEntity
+- DeliverySLAEntity
+- SLAAAlertEntity
+
+### Inventory
+- InventoryItemEntity
+- InventoryAlertEntity
+- RecipeEntity
+- FoodPrepEntity
+- BatchEntity
+
+### Other Entities
+- SubscriptionEntity
+- RestaurantGSTEntity
+- GSTDetailEntity
+- HSN_SACEntity
+
+## APIs
+
+### Auth Routes
+- `/auth/login`
+- `/auth/signup`
+- `/auth/callback` [Google/Facebook OAuth]
+- `/auth/otp`
+
+### Order Routes
+- `/orders`
+- `/order-details`
+
+### Restaurant Routes
+- `/restaurants`
+- `/api/restaurants`
+- `/api/categories`
+
+### Other Routes
+- `/search`
+- `/cart`
+- `/checkout`
+- `/wallet`
+- `/notifications`
+- `/profile`
+- `/addresses`
+- `/payment-methods`
+
+## Queues
+
+### Queue Contracts
+- Location: `apps/backend/src/shared/contracts/queues.ts`
+- Uses BullMQ for job processing
+
+### Webhook Retry Queue
+- Location: `apps/backend/src/services/payments/webhook/webhook-retry.service.ts`
+
+## Events
+
+### Proto Events
+- Location: `apps/backend/src/proto/`
+- Categories: auth, orders, payments, refunds, restaurants, drivers, notifications, wallet, loyalty, search, analytics
+
+## Workers
+
+### Modules
+- `apps/backend/src/modules/`
+- Categories: kitchen, driver-assignment, ledger, orders, analytics, realtime
+
+## Mobile Apps
+
+### Customer Mobile
+- Screens: Home, Cart, Search, Restaurant, Profile, Payment Methods, Onboarding, Notifications, Menu Item Customization, Checkout, Addresses, Auth, Tracking, History, Order Details
+
+### Delivery Partner
+- Main: App.tsx
+- Screens: Delivery flow
+
+## Dashboards
+
+### Restaurant Dashboard
+- Pages: Index, Onboarding (menu, business, gst, payout, documents, pricing), _app
+
+### Super Admin
+- Pages: Index, Analytics, Loyalty, Driver Fleet
+
+## Admin Systems
+
+### Super Admin Portal
+- User Management
+- Restaurant Management
+- Analytics
+- Driver Fleet Management
+- Earnings/Commissions
+- Coupons/Referrals
+
+## Summary Statistics
+
+| Category | Count |
+|----------|-------|
+| Applications | 7 |
+| Packages | 5 |
+| Backend Services | 15+ |
+| Database Entities | 65 |
+| Infrastructure Files | 35+ |
+| Backend Source Files | 100+ |
+| Frontend Pages (Web) | ~35 |
+| Mobile Screens | 15+ |

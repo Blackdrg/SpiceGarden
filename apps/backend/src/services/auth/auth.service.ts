@@ -7,6 +7,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { SessionEntity } from '../../db/entities/session.entity';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
+
+interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  passwordHash?: string;
+}
+
+interface LoginTokenResponse {
+  access_token: string;
+  refresh_token: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -27,19 +41,20 @@ export class AuthService {
     return argon2.verify(hash, password);
   }
 
-  async createSession(userId: string, deviceInfo: { name: string; type: string; ip: string }) {
-    const sessionDurationDays = this.configService.get<number>('SESSION_DURATION_DAYS', 30);
+  async createSession(userId: string, deviceInfo: { name: string; type: string; ip: string }, refreshToken: string) {
+    const sessionDurationDays = Number(this.configService.get<number>('SESSION_DURATION_DAYS', 30));
     const session = this.sessionRepo.create({
       userId,
       deviceName: deviceInfo.name,
       deviceType: deviceInfo.type,
       ipAddress: deviceInfo.ip,
+      refreshToken,
       expiresAt: new Date(Date.now() + sessionDurationDays * 24 * 60 * 60 * 1000),
     });
     return this.sessionRepo.save(session);
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<AuthenticatedUser> {
     if (!email || !pass) {
       throw new UnauthorizedException('Credentials required');
     }
@@ -51,21 +66,64 @@ export class AuthService {
 
     if (await this.verifyPassword(pass, user.passwordHash)) {
       const { passwordHash, ...result } = user;
-      return result;
+      return result as AuthenticatedUser;
     }
     
     throw new UnauthorizedException('Invalid email or password');
   }
 
-async login(user: any, deviceInfo: { name: string; type: string; ip: string }) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
+  async login(user: AuthenticatedUser, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
+    const payload = { email: user.email, sub: user.id, role: user.role, status: user.status };
     const accessToken = this.jwtService.sign(payload);
+    const refreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
     
-    await this.createSession(user.id, deviceInfo);
+    await this.createSession(user.id, deviceInfo, refreshToken);
 
     return {
       access_token: accessToken,
-      refresh_token: crypto.randomBytes(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40)).toString('hex'),
+      refresh_token: refreshToken,
     };
+  }
+
+  async refreshAccessToken(refreshToken: string, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
+    const session = await this.sessionRepo.findOne({
+      where: { refreshToken, isActive: true },
+      relations: { user: true },
+    });
+
+    if (!session || !session.user || session.expiresAt.getTime() <= Date.now()) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const nextRefreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
+    session.refreshToken = nextRefreshToken;
+    session.lastActiveAt = new Date();
+    session.deviceName = deviceInfo.name;
+    session.deviceType = deviceInfo.type;
+    session.ipAddress = deviceInfo.ip;
+    await this.sessionRepo.save(session);
+
+    const payload = {
+      email: session.user.email,
+      sub: session.user.id,
+      role: session.user.role,
+      status: session.user.status,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: nextRefreshToken,
+    };
+  }
+
+  async revokeSession(refreshToken: string): Promise<void> {
+    const session = await this.sessionRepo.findOne({ where: { refreshToken } });
+    if (!session) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    session.isActive = false;
+    session.lastActiveAt = new Date();
+    await this.sessionRepo.save(session);
   }
 }

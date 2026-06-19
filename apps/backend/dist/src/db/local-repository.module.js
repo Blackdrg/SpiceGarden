@@ -41,8 +41,19 @@ function createRepository(entity) {
         }),
         find: async () => rows,
         findBy: async () => rows,
-        findOne: async () => rows[0] || null,
-        findOneBy: async () => rows[0] || null,
+        findOne: async (options) => {
+            if (!options || !options.where) {
+                return rows[0] || null;
+            }
+            const criteria = options.where;
+            return rows.find((row) => Object.entries(criteria).every(([key, value]) => row[key] === value)) || null;
+        },
+        findOneBy: async (criteria) => {
+            if (!criteria) {
+                return rows[0] || null;
+            }
+            return rows.find((row) => Object.entries(criteria).every(([key, value]) => row[key] === value)) || null;
+        },
         findAndCount: async () => [rows, rows.length],
         count: async () => rows.length,
         create: (data = {}) => ({ ...(data || {}) }),

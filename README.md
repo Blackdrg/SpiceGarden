@@ -1,6 +1,7 @@
 ﻿# SpiceGarden — Enterprise Food Delivery Platform
 
-**Generated:** 2026-06-16  
+**Generated:** 2026-06-19  
+**Last Updated:** 2026-06-19 — Auth flows fixed, load test infrastructure ready
 **Scope:** SpiceGarden is an npm-workspace monorepo for a production-oriented food delivery platform with a NestJS backend, customer web and mobile apps, restaurant KDS/dashboard, super-admin console, delivery-partner app, Electron launcher, shared API/UI/proto packages, infrastructure manifests, observability, legal documents, UX documentation, and automation scripts.
 
 This README restores the detailed repository guide from `git show 57e5bd0:README.md` and expands it with current source data from the backend, apps, infrastructure, CI/CD, observability, UX, legal, and load-test files. Secret values from local files are intentionally redacted.
@@ -3108,78 +3109,12 @@ flowchart TD
 - `CURRENT_STATUS_SUMMARY.md`
 - `README_GAP_REPORT.md`
 - `README_CHANGELOG.md`
+- `AUTH_ENTITY_AUDIT.md`
+- `AUTH_ROOT_CAUSE_REPORT.md`
+- `AUTH_VALIDATION_REPORT.md`
+- `LOAD_TEST_REPORT.md`
+- `QUALITY_GATE_REPORT.md`
 
----
-
-## Latest Production-Hardening Update — 2026-06-18
-
-**Generated:** 2026-06-18T09:46+05:30  
-**Branch:** `feat/add-react-doctor`  
-**Classification:** Advanced Startup-Grade Pre-Production System  
-**Verdict:** React Doctor is production-clean; deployment validation remains blocked by unavailable Kubernetes cluster access.
-
-### Final verification after documentation updates
-
-| Command | Result |
-| :--- | :--- |
-| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
-| `npm run lint` | Exit `0` across all workspaces |
-| `npx tsc --noEmit` | Exit `0` |
-| `npm run build` | Exit `0`; Next.js SWC native warning remains non-blocking and falls back to WASM |
-| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
-
-### Verified passing gates
-
-| Command | Result |
-| :--- | :--- |
-| `npm run lint` | Exit `0` across all workspaces |
-| `npm run build` | Exit `0` across all workspaces; Next.js SWC native warning remains non-blocking and falls back to WASM |
-| `npx tsc --noEmit` | Exit `0` |
-| `npm run test` | Exit `0`; root script runs workspace unit tests |
-| `npm run test:unit` | Exit `0`; backend 30, customer-mobile 33, customer-web 11, delivery-partner 6, launcher 1, restaurant-dashboard 9, super-admin 23, shared 2, ui 28 |
-| `npm run test:integration` | Exit `0`; backend 231 passed, 1 skipped; customer-mobile 33 passed; customer-web 2 passed; delivery-partner 6 passed; restaurant-dashboard 2 passed; super-admin 2 passed |
-| `npm run test:e2e` | Exit `0`; backend 35, customer-mobile 1, customer-web 1, delivery-partner 6, restaurant-dashboard 1, super-admin 21 |
-| `npx react-doctor@latest --json --verbose` | Exit `0`; 0 errors, 0 warnings, score `100/100` |
-| `node infra/scripts/security-tests.js` | Exit `0`; 0 vulnerabilities; 95/100 rate-limited responses |
-| `npm audit --audit-level=high` | Exit `0`; no high or critical findings |
-| `npm audit` | Exit `1`; 31 moderate findings remain, no critical/high findings |
-| `node infra/scripts/deployment-check.js` | Blocked; `ERROR: Cannot connect to cluster` |
-
-### Current audit and quality status
-
-| Area | Status |
-| :--- | :--- |
-| React Doctor | `100/100 Great`; all four scanned frontend apps clean |
-| npm audit | 31 moderate findings remain; high/critical gate passes |
-| Load testing | Not rerun in this pass; backend is running but k6/load validation still requires separate execution |
-| Redis-backed rate limiting | Implemented; local security script passed with process-local fallback because Redis is unavailable |
-| Penetration testing | Not completed in this pass |
-| Kubernetes/staging validation | Blocked by missing cluster connection |
-| Monitoring validation | Assets exist; end-to-end telemetry not validated in this pass |
-
-### Production-hardening changes
-
-- Converted customer-web pages to React Query or `useReducer` where React Doctor flagged effect fetching, grouped state, or client-side redirects.
-- Converted customer-web auth callback to a server-side redirect guard plus client-side credential hydration without `router.replace()` in `useEffect`.
-- Wired customer-web address management to the existing `useAddresses` hook.
-- Removed Redux hook usage from customer-web `_app.tsx` during SSR to prevent prerender failures.
-- Removed JS-thread `Animated` usage from delivery-partner screens and replaced `Dimensions.get` with `useWindowDimensions`.
-- Consolidated delivery-partner app state into reducer-driven updates and split large render paths into named components.
-- Split restaurant-dashboard and super-admin large dashboard components, added reducer-based state, dynamic imports, and direct state initialization.
-- Imported previously unreachable customer-web utility hooks/components from real entry points instead of suppressing dead-code diagnostics.
-
-### Root cause analysis
-
-- React Doctor failures were caused by client-only redirects inside `useEffect`, effect-based data fetching, redundant derived state, JS-thread animations, uninitialized clock state, giant components, and unreachable utility files.
-- Customer-web production build failed during static prerender because `_app.tsx` called Redux hooks before the Redux provider could be established during server rendering. The fix moved Redux hydration into the auth callback page and kept `_app.tsx` free of Redux context reads.
-- Deployment validation remains blocked by environment access, not by code: `deployment-check.js` cannot connect to a Kubernetes cluster.
-
-### New report files updated
-
-- `REACT_DOCTOR_SESSION_SUMMARY.md`
-- `PROJECT_STATUS_REPORT.md`
-- `CURRENT_PROJECT_AUDIT.md`
-- `README_CHANGELOG.md`
 - `README_GAP_REPORT.md`
 
 ---

@@ -9,20 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RolesGuard = void 0;
+exports.RolesGuard = exports.rolePermissions = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const user_interface_1 = require("../shared/domain/user.interface");
-const rolePermissions = {
-    [user_interface_1.UserRole.CUSTOMER]: ['orders:read_own', 'orders:create', 'wallet:read_own', 'wallet:transact_own'],
-    [user_interface_1.UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own'],
-    [user_interface_1.UserRole.KITCHEN_STAFF]: ['kitchen:manage_own', 'orders:read_assigned'],
-    [user_interface_1.UserRole.DELIVERY_PARTNER]: ['deliveries:manage_assigned', 'orders:read_assigned'],
-    [user_interface_1.UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read'],
-    [user_interface_1.UserRole.SUPER_ADMIN]: ['*'],
-    [user_interface_1.UserRole.SUPPORT_STAFF]: ['support:manage', 'orders:read'],
-    [user_interface_1.UserRole.FINANCE_STAFF]: ['finance:read', 'payments:read', 'refunds:read'],
-};
+const permissions_1 = require("./permissions");
+Object.defineProperty(exports, "rolePermissions", { enumerable: true, get: function () { return permissions_1.rolePermissions; } });
 let RolesGuard = class RolesGuard {
     reflector;
     constructor(reflector) {
@@ -38,33 +30,24 @@ let RolesGuard = class RolesGuard {
         if (!user) {
             throw new common_1.ForbiddenException('Authentication is required');
         }
-        if (user.status && user.status !== user_interface_1.UserStatus.ACTIVE) {
+        if (user.status !== user_interface_1.UserStatus.ACTIVE) {
             throw new common_1.ForbiddenException('User account is not active');
         }
         if (!user.role) {
             throw new common_1.ForbiddenException('User role is required');
         }
-        const role = this.normalizeRole(user.role);
+        const role = (0, permissions_1.normalizeUserRole)(user.role);
         if (!role) {
             throw new common_1.ForbiddenException('Invalid user role');
         }
-        const hasRequiredRole = requiredRoles.map(this.normalizeRole).includes(role);
+        const hasRequiredRole = requiredRoles.map(permissions_1.normalizeUserRole).includes(role);
         if (!hasRequiredRole) {
             throw new common_1.ForbiddenException('Insufficient role permissions');
         }
         return true;
     }
-    hasPermission(role, permission) {
-        const normalizedRole = this.normalizeRole(role);
-        if (!normalizedRole) {
-            return false;
-        }
-        const permissions = rolePermissions[normalizedRole] || [];
-        return permissions.includes('*') || permissions.includes(permission);
-    }
-    normalizeRole(role) {
-        const normalized = String(role).toLowerCase();
-        return Object.values(user_interface_1.UserRole).find((value) => value === normalized);
+    hasPermission(role, permission, userPermissions = []) {
+        return (0, permissions_1.hasRolePermission)(role, permission, userPermissions);
     }
 };
 exports.RolesGuard = RolesGuard;

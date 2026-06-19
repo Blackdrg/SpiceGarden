@@ -18,7 +18,6 @@ const auth_service_1 = require("./auth.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
-const throttler_1 = require("@nestjs/throttler");
 let AuthController = class AuthController {
     authService;
     userRepo;
@@ -31,17 +30,13 @@ let AuthController = class AuthController {
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
-        const deviceInfo = {
-            name: body.deviceName || 'any Device',
-            type: body.deviceType || 'any Type',
-            ip: req.ip || '0.0.0.0',
-        };
+        const deviceInfo = this.getDeviceInfo(body, req);
         return this.authService.login(user, deviceInfo);
     }
     async register(body, req) {
         const existing = await this.userRepo.findOne({ where: { email: body.email } });
         if (existing) {
-            throw new common_1.UnauthorizedException('Email already registered');
+            throw new common_1.ConflictException('Email already registered');
         }
         const passwordHash = await this.authService.hashPassword(body.password);
         const user = this.userRepo.create({
@@ -50,13 +45,24 @@ let AuthController = class AuthController {
             fullName: body.fullName,
             passwordHash,
         });
-        await this.userRepo.save(user);
-        const deviceInfo = {
+        const savedUser = await this.userRepo.save(user);
+        const deviceInfo = this.getDeviceInfo(body, req);
+        return this.authService.login(savedUser, deviceInfo);
+    }
+    async refreshToken(body, req) {
+        const deviceInfo = this.getDeviceInfo(body, req);
+        return this.authService.refreshAccessToken(body.refresh_token, deviceInfo);
+    }
+    async logout(body) {
+        await this.authService.revokeSession(body.refresh_token);
+        return { revoked: true };
+    }
+    getDeviceInfo(body, req) {
+        return {
             name: body.deviceName || 'any Device',
             type: body.deviceType || 'any Type',
             ip: req.ip || '0.0.0.0',
         };
-        return this.authService.login(user, deviceInfo);
     }
 };
 exports.AuthController = AuthController;
@@ -76,9 +82,23 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('refresh-token'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "refreshToken", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         typeorm_2.Repository])

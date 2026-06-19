@@ -3,6 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { SessionEntity } from '../../db/entities/session.entity';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
+interface AuthenticatedUser {
+    id: string;
+    email: string;
+    role: UserRole;
+    status: UserStatus;
+    passwordHash?: string;
+}
+interface LoginTokenResponse {
+    access_token: string;
+    refresh_token: string;
+}
 export declare class AuthService {
     private readonly jwtService;
     private readonly configService;
@@ -15,14 +27,18 @@ export declare class AuthService {
         name: string;
         type: string;
         ip: string;
-    }): Promise<SessionEntity>;
-    validateUser(email: string, pass: string): Promise<any>;
-    login(user: any, deviceInfo: {
+    }, refreshToken: string): Promise<SessionEntity>;
+    validateUser(email: string, pass: string): Promise<AuthenticatedUser>;
+    login(user: AuthenticatedUser, deviceInfo: {
         name: string;
         type: string;
         ip: string;
-    }): Promise<{
-        access_token: string;
-        refresh_token: any;
-    }>;
+    }): Promise<LoginTokenResponse>;
+    refreshAccessToken(refreshToken: string, deviceInfo: {
+        name: string;
+        type: string;
+        ip: string;
+    }): Promise<LoginTokenResponse>;
+    revokeSession(refreshToken: string): Promise<void>;
 }
+export {};
