@@ -8,15 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewServiceModule = void 0;
 const common_1 = require("@nestjs/common");
+const mongoose_1 = require("@nestjs/mongoose");
 const review_service_1 = require("./review.service");
 const review_controller_1 = require("./review.controller");
 const db_module_1 = require("../../db/db.module");
+const review_schema_1 = require("../../db/schemas/review.schema");
+const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
 let ReviewServiceModule = class ReviewServiceModule {
 };
 exports.ReviewServiceModule = ReviewServiceModule;
 exports.ReviewServiceModule = ReviewServiceModule = __decorate([
     (0, common_1.Module)({
-        imports: [db_module_1.DbModule],
+        imports: localSqlite ? [db_module_1.DbModule] : [db_module_1.DbModule, mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])],
         providers: [review_service_1.ReviewService],
         controllers: [review_controller_1.ReviewController],
         exports: [review_service_1.ReviewService],

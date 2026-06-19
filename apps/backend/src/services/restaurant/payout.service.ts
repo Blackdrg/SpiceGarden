@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -23,6 +23,7 @@ export class PayoutService {
     private commissionRepo: Repository<CommissionRuleEntity>,
     @InjectRepository(GSTDetailEntity)
     private gstRepo: Repository<GSTDetailEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 

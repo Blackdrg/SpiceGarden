@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 const DATA_SOURCE_TOKEN = 'DataSource';
 
@@ -155,6 +156,10 @@ const repositoryDefinitions = [
         transaction: async (_: any, work?: any) => (work || _)(undefined),
       },
     },
+    {
+      provide: DataSource,
+      useExisting: DATA_SOURCE_TOKEN,
+    },
     ...repositoryDefinitions.flatMap((entity) => [
       {
         provide: getRepositoryToken(entity),
@@ -162,6 +167,6 @@ const repositoryDefinitions = [
       },
     ]),
   ],
-  exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
+  exports: [DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
 })
 export class LocalRepositoryModule {}

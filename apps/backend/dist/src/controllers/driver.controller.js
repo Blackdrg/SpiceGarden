@@ -20,9 +20,9 @@ const roles_decorator_1 = require("../security/roles.decorator");
 const user_interface_1 = require("../shared/domain/user.interface");
 const driver_entity_1 = require("../db/entities/driver.entity");
 const order_entity_1 = require("../db/entities/order.entity");
+const driver_assignment_entity_1 = require("../db/entities/driver-assignment.entity");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
-const driver_assignment_entity_1 = require("../db/entities/driver-assignment.entity");
 const typeorm_3 = require("typeorm");
 const tracking_gateway_1 = require("../infra/tracking/tracking.gateway");
 const order_interface_1 = require("../shared/domain/order.interface");
@@ -155,6 +155,7 @@ exports.DriverController = DriverController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(2, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_3.DataSource,
@@ -321,6 +322,7 @@ exports.OrderDriverController = OrderDriverController = __decorate([
     __param(0, (0, typeorm_2.InjectRepository)(order_entity_1.OrderEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(3, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_1.Repository,

@@ -5,9 +5,9 @@ import { Roles } from '../security/roles.decorator';
 import { UserRole } from '../shared/domain/user.interface';
 import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DriverAssignmentEntity } from '../db/entities/driver-assignment.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
 import { OrderStatus } from '../shared/domain/order.interface';
@@ -21,6 +21,7 @@ export class DriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
   ) {}
@@ -130,6 +131,7 @@ export class OrderDriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
     private notificationService: NotificationService,

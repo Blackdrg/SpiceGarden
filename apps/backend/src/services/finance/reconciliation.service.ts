@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -22,6 +22,7 @@ export class ReconciliationService {
     private incentiveRepo: Repository<DriverIncentiveEntity>,
     @InjectRepository(GSTDetailEntity)
     private gstRepo: Repository<GSTDetailEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 

@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -18,6 +18,7 @@ export class WalletService {
     @InjectRepository(WalletTransactionEntity)
     private readonly walletTransactionRepo: Repository<WalletTransactionEntity>,
     private readonly configService: ConfigService,
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,

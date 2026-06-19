@@ -9,16 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const local_repository_module_1 = require("../../db/local-repository.module");
 const queue_service_1 = require("./queue.service");
 const order_processor_1 = require("./order.processor");
 const order_entity_1 = require("../../db/entities/order.entity");
+const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
 let QueueModule = class QueueModule {
 };
 exports.QueueModule = QueueModule;
 exports.QueueModule = QueueModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([order_entity_1.OrderEntity])],
+        imports: [localSqlite ? local_repository_module_1.LocalRepositoryModule : typeorm_1.TypeOrmModule.forFeature([order_entity_1.OrderEntity])],
         providers: [queue_service_1.QueueService, order_processor_1.OrderProcessor],
         exports: [queue_service_1.QueueService, order_processor_1.OrderProcessor],
     })

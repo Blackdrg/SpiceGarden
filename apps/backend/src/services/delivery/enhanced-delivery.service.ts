@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -50,6 +50,7 @@ export class EnhancedDeliveryService {
     @InjectRepository(DriverAssignmentEntity)
     private driverAssignmentRepo: Repository<DriverAssignmentEntity>,
     private geoService: GeoService,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {
     this.initializeSurgeZones();

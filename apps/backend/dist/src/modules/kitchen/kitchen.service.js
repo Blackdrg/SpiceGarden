@@ -763,6 +763,7 @@ exports.KitchenService = KitchenService = KitchenService_1 = __decorate([
     __param(9, (0, typeorm_1.InjectRepository)(menu_item_availability_entity_1.MenuItemAvailabilityEntity)),
     __param(10, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(11, (0, typeorm_1.InjectRepository)(order_item_entity_1.OrderItemEntity)),
+    __param(12, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

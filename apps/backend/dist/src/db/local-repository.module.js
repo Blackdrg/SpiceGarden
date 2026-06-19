@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalRepositoryModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 const DATA_SOURCE_TOKEN = 'DataSource';
 function createRepository(entity) {
     const rows = [];
@@ -164,6 +165,10 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
                     transaction: async (_, work) => (work || _)(undefined),
                 },
             },
+            {
+                provide: typeorm_2.DataSource,
+                useExisting: DATA_SOURCE_TOKEN,
+            },
             ...repositoryDefinitions.flatMap((entity) => [
                 {
                     provide: (0, typeorm_1.getRepositoryToken)(entity),
@@ -171,6 +176,6 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
                 },
             ]),
         ],
-        exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
+        exports: [typeorm_2.DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
     })
 ], LocalRepositoryModule);

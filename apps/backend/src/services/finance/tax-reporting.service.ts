@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, MoreThanOrEqual } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { GSTDetailEntity } from '../../db/entities/gst-detail.entity';
@@ -22,6 +22,7 @@ export class TaxReportingService {
     private restaurantGstRepo: Repository<RestaurantGSTEntity>,
     @InjectRepository(OrderItemEntity)
     private orderItemRepo: Repository<OrderItemEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 

@@ -141,6 +141,7 @@ exports.MenuModerationService = MenuModerationService = MenuModerationService_1 
     __param(0, (0, typeorm_1.InjectRepository)(menu_moderation_entity_1.MenuModerationEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
+    __param(3, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

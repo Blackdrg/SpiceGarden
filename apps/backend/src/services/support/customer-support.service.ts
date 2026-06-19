@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { DisputeEntity, DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
 import { RefundEntity, RefundStatus, RefundType } from '../../db/entities/refund.entity';
@@ -20,6 +20,7 @@ export class CustomerSupportService {
     private orderRepo: Repository<OrderEntity>,
     private walletService: WalletService,
     private paymentService: PaymentService,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 

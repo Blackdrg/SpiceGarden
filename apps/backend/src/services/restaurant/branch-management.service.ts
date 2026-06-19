@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, FindOptionsWhere } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -13,6 +13,7 @@ export class BranchManagementService {
     private branchRepo: Repository<RestaurantBranchEntity>,
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 

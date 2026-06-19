@@ -1,7 +1,7 @@
 import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
-import { Repository } from 'typeorm';
 import { DriverAssignmentEntity } from '../db/entities/driver-assignment.entity';
+import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
 import { NotificationService } from '../services/notifications/notification.service';
@@ -66,7 +66,7 @@ export declare class OrderDriverController {
         failureReason?: string;
     }): Promise<{
         orderId: string;
-        status: "delivered" | "failed" | "pickedUp" | "onTheWay";
+        status: "pickedUp" | "onTheWay" | "delivered" | "failed";
     }>;
     verifyOTP(id: string, body: {
         otp: string;

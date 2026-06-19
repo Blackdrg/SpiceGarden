@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, IsNull } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -29,6 +29,7 @@ export class DriverAssignmentService {
     private readonly slaRepo: Repository<DeliverySLAEntity>,
     @InjectRepository(DriverFraudEntity)
     private readonly fraudRepo: Repository<DriverFraudEntity>,
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly dispatchEngine: DispatchEngineService,
     private readonly etaIntelligence: ETAIntelligenceService

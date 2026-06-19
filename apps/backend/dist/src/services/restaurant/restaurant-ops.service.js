@@ -120,6 +120,7 @@ exports.RestaurantOpsService = RestaurantOpsService = RestaurantOpsService_1 = _
     __param(3, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(menu_category_entity_1.MenuCategoryEntity)),
     __param(5, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __param(6, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

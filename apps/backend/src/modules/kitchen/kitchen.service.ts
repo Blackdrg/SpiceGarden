@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, MoreThan, LessThan, Between, IsNull, Not } from 'typeorm';
 import { InventoryItemEntity } from '../../db/entities/inventory-item.entity';
 import { RecipeEntity } from '../../db/entities/recipe.entity';
@@ -43,6 +43,7 @@ export class KitchenService {
     private readonly orderRepo: Repository<OrderEntity>,
     @InjectRepository(OrderItemEntity)
     private readonly orderItemRepo: Repository<OrderItemEntity>,
+    @InjectDataSource()
     private readonly dataSource: DataSource
   ) {}
 
