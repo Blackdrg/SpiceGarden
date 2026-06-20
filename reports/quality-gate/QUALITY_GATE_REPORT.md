@@ -1,4 +1,9 @@
-﻿# SpiceGarden Quality Gate Report
+﻿> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
+
+# SpiceGarden Quality Gate Report
 
 **Generated:** 2026-06-18T03:27:52.0231157+05:30  
 **Repository:** SpiceGarden  

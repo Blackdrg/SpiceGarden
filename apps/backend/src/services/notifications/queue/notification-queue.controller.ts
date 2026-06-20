@@ -1,11 +1,20 @@
 ﻿
-import { Controller, Post, Get, Param, Body, Request, Query, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Request, Query, HttpCode, HttpStatus, NotFoundException, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { NotificationQueueService } from './notification-queue.service';
 import { NotificationEntity } from '../../../db/entities/notification.entity';
 import { NotificationStatus } from '../../../db/entities/notification-status.enum';
+import { JwtAuthGuard } from '../../../security/jwt-auth.guard';
+import { RolesGuard } from '../../../security/roles.guard';
+import { PermissionGuard } from '../../../security/permission.guard';
+import { Roles } from '../../../security/roles.decorator';
+import { Permissions } from '../../../security/permissions.decorator';
+import { UserRole } from '../../../shared/domain/user.interface';
 
 @Controller('notification-queue')
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Permissions('notifications:manage')
 export class NotificationQueueController {
   constructor(private readonly notificationQueueService: NotificationQueueService) {}
 

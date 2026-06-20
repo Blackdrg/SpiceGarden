@@ -21,7 +21,10 @@ const secrets_rotation_service_1 = require("./secrets-rotation.service");
 const data_privacy_service_1 = require("../services/privacy/data-privacy.service");
 const jwt_auth_guard_1 = require("../security/jwt-auth.guard");
 const roles_guard_1 = require("../security/roles.guard");
+const permission_guard_1 = require("../security/permission.guard");
 const roles_decorator_1 = require("../security/roles.decorator");
+const permissions_decorator_1 = require("../security/permissions.decorator");
+const user_interface_1 = require("../shared/domain/user.interface");
 let ComplianceController = class ComplianceController {
     complianceService;
     soc2Service;
@@ -74,7 +77,7 @@ let ComplianceController = class ComplianceController {
         return this.complianceService.applyDataRetentionPolicies();
     }
     async exportUserDataGdpr(userId, req) {
-        if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+        if (req.user?.sub !== userId && ![user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN].includes(req.user?.role)) {
             throw new Error('Unauthorized to export this user data');
         }
         const data = await this.complianceService.exportUserData(userId);
@@ -86,7 +89,7 @@ let ComplianceController = class ComplianceController {
         };
     }
     async exportUserDataDpdp(userId, req) {
-        if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+        if (req.user?.sub !== userId && ![user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN].includes(req.user?.role)) {
             throw new Error('Unauthorized to export this user data');
         }
         const data = await this.complianceService.exportUserData(userId);
@@ -98,7 +101,7 @@ let ComplianceController = class ComplianceController {
         };
     }
     async requestGdprDeletion(userId, dto, req) {
-        if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+        if (req.user?.sub !== userId && ![user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN].includes(req.user?.role)) {
             throw new Error('Unauthorized to submit deletion request for this user');
         }
         const result = await this.complianceService.requestUserDataDeletion(userId, 'gdpr', dto.reason);
@@ -111,7 +114,7 @@ let ComplianceController = class ComplianceController {
         };
     }
     async requestDpdpDeletion(userId, dto, req) {
-        if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+        if (req.user?.sub !== userId && ![user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN].includes(req.user?.role)) {
             throw new Error('Unauthorized to submit deletion request for this user');
         }
         const result = await this.complianceService.requestUserDataDeletion(userId, 'dpdp', dto.reason);
@@ -124,7 +127,7 @@ let ComplianceController = class ComplianceController {
         };
     }
     async cancelGdprDeletion(userId, req) {
-        if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+        if (req.user?.sub !== userId && ![user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN].includes(req.user?.role)) {
             throw new Error('Unauthorized');
         }
         const result = await this.complianceService.cancelUserDataDeletion(userId);
@@ -174,48 +177,72 @@ let ComplianceController = class ComplianceController {
 };
 exports.ComplianceController = ComplianceController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('soc2'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getSoc2Readiness", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('soc2/evidence'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getSoc2Evidence", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('pci-dss'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getPciDssStatus", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('pci-dss/payment-flow'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "validatePaymentFlow", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('pci-dss/saq'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getPciDssSaqMetrics", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('secrets/rotation-status'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getSecretsRotationStatus", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('secrets/proof'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getSecretsRotationProof", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Post)('secrets/rotate'),
     __param(0, (0, common_1.Query)('secrets')),
     __metadata("design:type", Function),
@@ -223,12 +250,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "rotateSecrets", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('retention-stats'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getRetentionStatistics", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Post)('retention/apply'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -236,8 +269,8 @@ __decorate([
 ], ComplianceController.prototype, "applyDataRetention", null);
 __decorate([
     (0, common_1.Get)('gdpr/user/:userId/export'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin', 'super_admin', 'customer'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.CUSTOMER),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -246,8 +279,8 @@ __decorate([
 ], ComplianceController.prototype, "exportUserDataGdpr", null);
 __decorate([
     (0, common_1.Get)('dpdp/user/:userId/export'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin', 'super_admin', 'customer'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.CUSTOMER),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -256,8 +289,8 @@ __decorate([
 ], ComplianceController.prototype, "exportUserDataDpdp", null);
 __decorate([
     (0, common_1.Post)('gdpr/user/:userId/deletion-request'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin', 'customer'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.CUSTOMER),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Request)()),
@@ -267,8 +300,8 @@ __decorate([
 ], ComplianceController.prototype, "requestGdprDeletion", null);
 __decorate([
     (0, common_1.Post)('dpdp/user/:userId/deletion-request'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin', 'customer'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.CUSTOMER),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Request)()),
@@ -278,8 +311,8 @@ __decorate([
 ], ComplianceController.prototype, "requestDpdpDeletion", null);
 __decorate([
     (0, common_1.Post)('gdpr/user/:userId/deletion-request/cancel'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin', 'customer'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.CUSTOMER),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -287,6 +320,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "cancelGdprDeletion", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('user/:userId/deletion-status'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -294,6 +330,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getDeletionStatus", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('user/:userId/export-history'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -301,6 +340,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "getExportHistory", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('user/:userId/pii-verification'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -308,6 +350,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ComplianceController.prototype, "verifyPiiEncryption", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('compliance:read'),
     (0, common_1.Get)('user/:userId/data-export'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -316,7 +361,7 @@ __decorate([
 ], ComplianceController.prototype, "getUserDataExport", null);
 __decorate([
     (0, common_1.Post)('mask/pii'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     (0, roles_decorator_1.Roles)('admin', 'super_admin'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -325,7 +370,7 @@ __decorate([
 ], ComplianceController.prototype, "maskPiiFields", null);
 __decorate([
     (0, common_1.Post)('unmask/pii'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     (0, roles_decorator_1.Roles)('admin', 'super_admin'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

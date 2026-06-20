@@ -9,7 +9,7 @@ exports.rolePermissions = {
     [user_interface_1.UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own'],
     [user_interface_1.UserRole.KITCHEN_STAFF]: ['kitchen:manage_own', 'orders:read_assigned'],
     [user_interface_1.UserRole.DELIVERY_PARTNER]: ['deliveries:manage_assigned', 'orders:read_assigned'],
-    [user_interface_1.UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read', 'finance:read', 'notifications:manage'],
+    [user_interface_1.UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read', 'finance:read', 'notifications:manage', 'compliance:read'],
     [user_interface_1.UserRole.SUPER_ADMIN]: ['*'],
     [user_interface_1.UserRole.SUPPORT_STAFF]: ['support:manage', 'orders:read'],
     [user_interface_1.UserRole.FINANCE_STAFF]: ['finance:read', 'payments:read', 'refunds:read'],

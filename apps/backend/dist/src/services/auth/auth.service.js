@@ -72,7 +72,7 @@ let AuthService = class AuthService {
     async verifyPassword(password, hash) {
         return argon2.verify(hash, password);
     }
-    async createSession(userId, deviceInfo, refreshToken) {
+    async createSession(userId, deviceInfo, refreshToken = '') {
         const sessionDurationDays = Number(this.configService.get('SESSION_DURATION_DAYS', 30));
         const session = this.sessionRepo.create({
             userId,

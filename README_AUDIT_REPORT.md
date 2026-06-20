@@ -1,3 +1,8 @@
+> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
+
 # README Audit Report
 Generated: 2026-06-16T01:10:40+05:30
 

@@ -1,3 +1,4 @@
+import { UserRole } from '../shared/domain/user.interface';
 import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../db/entities/driver-assignment.entity';
@@ -16,8 +17,18 @@ export declare class DriverController {
             id: string;
         };
     }): Promise<DriverEntity | null>;
-    getDriver(id: string): Promise<DriverEntity | null>;
-    getEarnings(id: string): Promise<{
+    getDriver(id: string, req: {
+        user: {
+            id: string;
+            role: UserRole;
+        };
+    }): Promise<DriverEntity | null>;
+    getEarnings(id: string, req: {
+        user: {
+            id: string;
+            role: UserRole;
+        };
+    }): Promise<{
         availableBalance: number;
         pendingBalance: number;
         lifetimeEarnings: number;
@@ -29,11 +40,21 @@ export declare class DriverController {
         lng: number;
         heading?: number;
         speed?: number;
+    }, req: {
+        user: {
+            id: string;
+            role: UserRole;
+        };
     }): Promise<{
         status: string;
     }>;
     toggleAvailability(id: string, body: {
         isAvailable: boolean;
+    }, req: {
+        user: {
+            id: string;
+            role: UserRole;
+        };
     }): Promise<{
         driverId: string;
         isAvailable: boolean;
@@ -66,7 +87,7 @@ export declare class OrderDriverController {
         failureReason?: string;
     }): Promise<{
         orderId: string;
-        status: "pickedUp" | "onTheWay" | "delivered" | "failed";
+        status: "delivered" | "failed" | "pickedUp" | "onTheWay";
     }>;
     verifyOTP(id: string, body: {
         otp: string;

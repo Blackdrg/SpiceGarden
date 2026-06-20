@@ -1,8 +1,10 @@
+import { type Request as ExpressRequest } from 'express';
 import { ComplianceService } from './compliance.service';
 import { Soc2ReadinessService } from './soc2-readiness.service';
 import { PciDssValidationService } from './pci-dss-validation.service';
 import { SecretsRotationService } from './secrets-rotation.service';
 import { DataPrivacyService } from '../services/privacy/data-privacy.service';
+import { UserRole } from '../shared/domain/user.interface';
 export interface DeletionRequestDto {
     userId: string;
     regulation: 'gdpr' | 'dpdp' | 'self_service';
@@ -52,21 +54,46 @@ export declare class ComplianceController {
         deletedSessions: number;
         oldAuditLogs: number;
     }>;
-    exportUserDataGdpr(userId: string, req: any): Promise<{
+    exportUserDataGdpr(userId: string, req: ExpressRequest & {
+        user?: {
+            sub?: string;
+            role?: UserRole;
+        };
+    }): Promise<{
         regulation: string;
         data: any;
         exportedAt: Date;
         rightExercised: string;
     }>;
-    exportUserDataDpdp(userId: string, req: any): Promise<{
+    exportUserDataDpdp(userId: string, req: ExpressRequest & {
+        user?: {
+            sub?: string;
+            role?: UserRole;
+        };
+    }): Promise<{
         regulation: string;
         data: any;
         exportedAt: Date;
         rightExercised: string;
     }>;
-    requestGdprDeletion(userId: string, dto: DeletionRequestDto, req: any): Promise<any>;
-    requestDpdpDeletion(userId: string, dto: DeletionRequestDto, req: any): Promise<any>;
-    cancelGdprDeletion(userId: string, req: any): Promise<{
+    requestGdprDeletion(userId: string, dto: DeletionRequestDto, req: ExpressRequest & {
+        user?: {
+            sub?: string;
+            role?: UserRole;
+        };
+    }): Promise<any>;
+    requestDpdpDeletion(userId: string, dto: DeletionRequestDto, req: ExpressRequest & {
+        user?: {
+            sub?: string;
+            role?: UserRole;
+        };
+    }): Promise<any>;
+    cancelGdprDeletion(userId: string, req: ExpressRequest & {
+        user?: {
+            sub?: string;
+            role?: UserRole;
+        };
+    }): Promise<{
         regulation: string;
         message: string;
         success: boolean;

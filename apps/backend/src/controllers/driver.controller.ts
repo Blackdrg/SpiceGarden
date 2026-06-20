@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { RolesGuard } from '../security/roles.guard';
 import { Roles } from '../security/roles.decorator';
+import { PermissionGuard } from '../security/permission.guard';
+import { Permissions } from '../security/permissions.decorator';
 import { UserRole } from '../shared/domain/user.interface';
 import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
@@ -14,7 +16,7 @@ import { OrderStatus } from '../shared/domain/order.interface';
 import { NotificationService } from '../services/notifications/notification.service';
 
 @Controller('drivers')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 export class DriverController {
   constructor(
     @InjectRepository(DriverEntity)
@@ -27,6 +29,8 @@ export class DriverController {
   ) {}
 
   @Get('me')
+  @Roles(UserRole.DELIVERY_PARTNER)
+  @Permissions('deliveries:manage_assigned')
   async getProfile(@Request() req: { user: { id: string } }) {
 const driver = await this.driverRepo.findOne({
        where: { userId: req.user.id },
@@ -36,7 +40,12 @@ const driver = await this.driverRepo.findOne({
   }
 
   @Get(':id')
-  async getDriver(@Param('id') id: string) {
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
+  async getDriver(@Param('id') id: string, @Request() req: { user: { id: string; role: UserRole } }) {
+    if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
+      throw new ForbiddenException('Driver profile access denied');
+    }
 const driver = await this.driverRepo.findOne({
        where: { id },
        relations: { user: true },
@@ -45,7 +54,12 @@ const driver = await this.driverRepo.findOne({
   }
 
   @Get(':id/earnings')
-  async getEarnings(@Param('id') id: string) {
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
+  async getEarnings(@Param('id') id: string, @Request() req: { user: { id: string; role: UserRole } }) {
+    if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
+      throw new ForbiddenException('Driver earnings access denied');
+    }
 const assignments = await this.assignmentRepo.find({
        where: { driver: { id } as any, status: 'delivered' } as any,
        relations: { order: true },
@@ -69,10 +83,16 @@ const assignments = await this.assignmentRepo.find({
   }
 
   @Post(':id/location')
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
   async updateLocation(
     @Param('id') id: string,
-    @Body() body: { lat: number; lng: number; heading?: number; speed?: number }
+    @Body() body: { lat: number; lng: number; heading?: number; speed?: number },
+    @Request() req: { user: { id: string; role: UserRole } },
   ) {
+    if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
+      throw new ForbiddenException('Driver location update denied');
+    }
     await this.driverRepo.update(id, {
       currentLocation: { lat: body.lat, lng: body.lng },
       lastLocationUpdate: new Date(),
@@ -92,15 +112,23 @@ const assignments = await this.assignmentRepo.find({
   }
 
   @Post(':id/availability')
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
   async toggleAvailability(
     @Param('id') id: string,
-    @Body() body: { isAvailable: boolean }
+    @Body() body: { isAvailable: boolean },
+    @Request() req: { user: { id: string; role: UserRole } },
   ) {
+    if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
+      throw new ForbiddenException('Driver availability update denied');
+    }
     await this.driverRepo.update(id, { isAvailable: body.isAvailable });
     return { driverId: id, isAvailable: body.isAvailable };
   }
 
   @Get('available')
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
   async getAvailableDrivers(
     @Query('lat') lat: number,
     @Query('lng') lng: number,
@@ -121,8 +149,9 @@ const assignments = await this.assignmentRepo.find({
 }
 
 @Controller('orders')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN)
+@Permissions('deliveries:manage_assigned')
 export class OrderDriverController {
   constructor(
     @InjectRepository(OrderEntity)

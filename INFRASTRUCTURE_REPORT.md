@@ -1,157 +1,156 @@
-# Infrastructure Report
+# INFRASTRUCTURE REPORT
 
-> Generated: 2026-06-19
-> Verified from source code analysis
+**Generated:** 2026-06-20  
+**Status:** Configured; runtime validation pending
 
-## Infrastructure Components
+---
 
-### Kubernetes (`infra/k8s/`)
+## Docker Compose
 
-| File | Purpose | Status |
-|------|---------|--------|
-| production-hardened.yaml | Production deployment | ✅ Complete |
-| staging.yaml | Staging environment | ✅ Present |
-| secrets.yaml | K8s secrets | ✅ Present |
-| configmap.yaml | Configuration map | ✅ Present |
-| postgres-ha.yaml | PostgreSQL HA | ✅ Present |
-| redis-cluster.yaml | Redis cluster | ✅ Present |
-| backend-deployment.yaml | Backend deployment | ✅ Present |
-| cdn-ingress.yaml | CDN ingress | ✅ Present |
+### Files Present
+| File | Services | Status |
+|------|----------|--------|
+| `compose.yaml` | 1 service | ⚠️ Minimal |
+| `compose.dev.yaml` | 13 services | ✅ Configured |
+| `compose.infra.yaml` | 12 services | ✅ Configured |
+| `compose.debug.yaml` | Debug services | ✅ Configured |
 
-### Production Hardened Configuration
+### compose.dev.yaml Services
+| Service | Port | Notes |
+|---------|------|-------|
+| postgres | 5432 | PostgreSQL 16 |
+| redis | 6379 | Redis 7 with appendonly |
+| mongo | 27017 | MongoDB 7 |
+| prometheus | 9090 | Metrics |
+| grafana | 3000 | Dashboards |
+| opensearch | 9200 | Log aggregation |
+| opensearch-dashboards | 5601 | OpenSearch UI |
+| alertmanager | 9093 | Alerting |
+| backend | 3001 | Depends on DB health |
+| customer-web | 3002 | Next.js |
+| restaurant-dashboard | 3003 | Next.js |
+| super-admin | 3004 | Next.js |
+| delivery-partner | No HTTP port | Expo |
 
-| Setting | Value | Status |
-|---------|-------|--------|
-| Replicas | 3 (min) - 20 (max) | ✅ Auto-scaling |
-| HPA CPU Threshold | 70% | ✅ Configured |
-| HPA Memory Threshold | 80% | ✅ Configured |
-| HPA Scale Down | 10% per minute | ✅ Conservative |
-| HPA Scale Up | 50% or 2 pods | ✅ Aggressive |
-| PDB minAvailable | 2 | ✅ HA |
-| PDB maxUnavailable | 1 | ✅ Conservative |
+### Validation
+| Check | Result |
+|-------|--------|
+| `docker-compose -f compose.dev.yaml config` | ✅ PASS |
+| `docker-compose -f compose.infra.yaml config` | ✅ PASS |
+| Stack startup | NOT RUN |
+| Health endpoint runtime check | NOT VALIDATED |
 
-### Security Context
+---
 
-| Setting | Value | Status |
-|---------|-------|--------|
-| runAsNonRoot | true | ✅ Secure |
-| runAsUser | 1001 | ✅ Non-root |
-| runAsGroup | 1001 | ✅ Non-root |
-| readOnlyRootFilesystem | true | ✅ Secure |
-| seccompProfile | RuntimeDefault | ✅ Secure |
-| allowPrivilegeEscalation | false | ✅ Secure |
-| capabilities.drop | ALL | ✅ Secure |
+## compose.infra.yaml Services (12 services)
+| Service | Notes |
+|---------|-------|
+| spicegarden | Main application |
+| postgres | Primary database |
+| redis | Cache/rate limiting |
+| mongo | Document store |
+| prometheus | Metrics |
+| grafana | Dashboards |
+| opensearch | Log aggregation |
+| opensearch-dashboards | UI |
+| filebeat | Log shipper |
+| alertmanager | Alerting |
+| sentry | Error tracking |
+| sentry-worker | Background worker |
 
-## Database Infrastructure
+---
 
-### PostgreSQL
-| Aspect | Value | Status |
-|--------|-------|--------|
-| Init Script | infra/postgres/init.sql | ✅ Complete |
-| Migrations | 2 files (up/down) | ✅ Version controlled |
-| Seed Data | 001, 002 test users | ✅ Present |
-| Ports | 5432 (standard) | ✅ Standard |
+## Kubernetes Manifests
 
-### MongoDB
-| Aspect | Value | Status |
-|--------|-------|--------|
-| Integration | @nestjs/mongoose | ✅ Integrated |
-| Schema | db/schemas/review.schema.ts | ✅ Present |
-| Entity | 12+ entities | ✅ Integrated |
+### Files Present (infra/k8s/)
+| File | Resources | Status |
+|------|-----------|--------|
+| `production-hardened.yaml` | 10 | ✅ Hardened |
+| `staging.yaml` | 5 | ✅ Configured |
+| `backend-deployment.yaml` | 2 | ✅ Basic |
+| `cdn-ingress.yaml` | 1 | ✅ Configured |
+| `configmap.yaml` | 1 | ✅ Configured |
+| `secrets.yaml` | 2 | ✅ Configured |
+| `postgres-ha.yaml` | 4 | ✅ HA |
+| `redis-cluster.yaml` | 4 | ✅ Cluster |
 
-### Redis
-| Aspect | Value | Status |
-|--------|-------|--------|
-| Integration | ioredis | ✅ Integrated |
-| Use Cases | Cache, rate limiting, queues | ✅ Multi-purpose |
-| Cluster | redis-cluster.yaml | ✅ HA configuration |
+### Legacy Manifest
+| File | Issue |
+|------|-------|
+| `k8s/backend-deployment.yaml` | Uses port 3000; backend listens on 3001 |
 
-## Observability Stack
+### Hardening in production-hardened.yaml
+- Security context with non-root user
+- ReadOnly root filesystem
+- Dropped capabilities
+- NetworkPolicy restrictions
+- HPA (autoscaling)
+- PodDisruptionBudget
 
-### Prometheus
-| File | Purpose | Status |
-|------|---------|--------|
-| prometheus.yml | Scrape config | ✅ Complete |
-| rules/alerts.yml | Alert rules | ✅ Complete |
-| rules/slos.yml | SLO definitions | ✅ Present |
+### Validation
+| Check | Result |
+|-------|--------|
+| Manifests present | ✅ YES |
+| Client/server dry-run | ❌ FAIL; no cluster API reachable at localhost:8080 |
+| Deployment to staging/production | NOT VALIDATED |
 
-**Alert Rules:**
-- HighErrorRate: >5% 5xx errors for 1m
-- HighLatency: >1s 95th percentile for 2m
-- DatabaseDown: Backend down for 1m
-- QueueFailures: Any failures for 1m
-- PaymentFailures: >5 failures for 1m
+---
 
-### Grafana
-| File | Purpose | Status |
-|------|---------|--------|
-| dashboards/spicegarden.json | Main dashboard | ✅ Present |
-| provisioning/dashboards/provider.yml | Dashboard provisioning | ✅ Complete |
-| provisioning/datasources/datasources.yml | Data source config | ✅ Complete |
+## Monitoring Stack
 
-### Alertmanager
-| File | Purpose | Status |
-|------|---------|--------|
-| alertmanager.yml | Alert routing | ✅ Present |
+| Tool | Port | Config |
+|------|------|--------|
+| Prometheus | 9090 | `infra/prometheus/prometheus.dev.yml` |
+| Grafana | 3000 | `infra/grafana/dashboards/*.json` |
+| Alertmanager | 9093 | `infra/alertmanager/alertmanager.yml` |
+| OpenSearch | 9200 | Log aggregation |
+| OpenSearch Dashboards | 5601 | `infra/opensearch/dashboards/` |
 
-### Sentry
-| Aspect | Value | Status |
-|--------|-------|--------|
-| Integration | @sentry/node | ✅ Configured |
-| DSN via env | SENTRY_DSN | ✅ Secure |
-
-## Logging & Traces
-
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Logging Module | logging/logging.module.ts | ✅ Present |
-| Logging Service | logging/logging.service.ts | ✅ Present |
-| Audit Service | audit/audit.service.ts | ✅ Present |
-
-## Queue Infrastructure
-
-| Queue | Technology | Status |
-|-------|------------|--------|
-| BullMQ | Redis-backed | ✅ Implemented |
-| Retry Queue | Webhook retries | ✅ Present |
-| Notification Queue | Push notifications | ✅ Present |
-| Order Lifecycle | State transitions | ✅ Present |
+---
 
 ## Infrastructure Scripts
 
-| Script | Purpose | Status |
-|--------|---------|--------|
-| generate-secrets.ps1 | Secret generation | ✅ Present |
-| fake-orders.js | Test order generation | ✅ Present |
-| breaking-point.js | Load testing | ✅ Present |
-| security-tests.js | Vulnerability tests | ✅ Present |
-| penetration-tests.js | Security testing | ✅ Present |
-| deployment-check.js | K8s validation | ✅ Present |
-| validate-env-consistency.js | Env validation | ✅ Passing |
-| load-secrets.ps1/sh | Secret injection | ✅ Present |
-| backup.ps1/sh | Database backup | ✅ Present |
-| disaster-recovery.ps1/sh | DR procedures | ✅ Present |
-| autoscaling-validation.sh | HPA validation | ✅ Present |
-| chaos-runner.js/sh | Chaos testing | ✅ Present |
-| production-validation.ps1 | Production check | ✅ Present |
+| Script | Purpose | Verification |
+|--------|---------|--------------|
+| `security-tests.js` | Security vulnerability tests | ✅ Present |
+| `penetration-tests.js` | Penetration testing | ✅ Present |
+| `deployment-check.js` | Deployment validation | ✅ Present (Node.js) |
+| `validate-env-consistency.js` | Env validation | ✅ Present |
+| `validate-secrets.js` | Secret validation | ✅ Present |
+| `fake-orders.js` | Synthetic order testing | ✅ Present |
+| `breaking-point.js` | Stress testing | ✅ Present |
+| `autoscaling-validation.sh` | Autoscaling validation | ✅ Present |
+| `backup.sh` | Backup operations | ✅ Present |
+| `disaster-recovery.sh` | Recovery operations | ✅ Present |
 
-## Compose Configuration
+---
 
-| File | Purpose | Status |
-|------|---------|--------|
-| compose.dev.yaml | Development infrastructure | ✅ Present (referenced in AGENTS.md) |
+## Validation Status
 
-## Infrastructure Summary
+| Check | Result |
+|-------|--------|
+| Docker compose syntax | ✅ PASS |
+| K8s manifest syntax | ✅ Present |
+| Secrets rotation script | ✅ Present |
+| Backup scripts | ✅ Present |
+| Health checks defined | ✅ Yes (in compose.dev.yaml) |
+| Environment consistency | ✅ `validate-env-consistency.js` PASS |
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Kubernetes | ✅ CONFIGURED | Not accessible in current environment |
-| PostgreSQL | ✅ CONFIGURED | Init/seed scripts present |
-| MongoDB | ✅ CONFIGURED | Mongoose integration |
-| Redis | ✅ CONFIGURED | Cluster HA setup |
-| Prometheus | ✅ CONFIGURED | Alert rules defined |
-| Grafana | ✅ CONFIGURED | Dashboards provisioned |
-| Alertmanager | ✅ CONFIGURED | Alert routing |
-| Sentry | ✅ CONFIGURED | Error tracking |
-| Queues | ✅ CONFIGURED | BullMQ with Redis |
-| Scripts | ✅ COMPLETE | 15+ scripts for ops |
+---
+
+## Known Infra Caveats
+
+| Issue | Location | Required Fix |
+|-------|----------|--------------|
+| Backend healthcheck path | `compose.dev.yaml` | Uses `/orders/health`; public health is `/health` |
+| Legacy K8s port mismatch | `k8s/backend-deployment.yaml` | Uses port 3000; backend listens on 3001 |
+| Grafana provisioning path | `compose.dev.yaml` vs provisioning | Mount path `/etc/grafana/dashboards` vs provisioning path `/etc/grafana/provisioning/dashboards` |
+| Alert rules mismatch | Prometheus rules | Reference queue/payment/socket/order metrics not verified as emitted |
+
+---
+
+## Runtime Validation Required
+
+1. `docker-compose -f compose.dev.yaml up -d`
+2. `kubectl apply -f infra/k8s/staging.yaml`
+3. Health endpoint verification: `curl http://localhost:3001/health`

@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { LocalDevModule } from "./local-dev.module";
 import { ConfigService } from "@nestjs/config";
@@ -11,6 +12,38 @@ import mongoSanitize from "express-mongo-sanitize";
 import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
+import { csrfProtection } from "./security/csrf.middleware";
+import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
+import * as Sentry from "@sentry/node";
+
+const metricsRegistry = new Registry();
+collectDefaultMetrics({ register: metricsRegistry });
+
+type SentryRuntime = typeof Sentry & {
+  init: (options: { dsn: string; tracesSampleRate: number }) => void;
+  Handlers?: {
+    requestHandler?: express.RequestHandler;
+    tracingHandler?: express.RequestHandler;
+  };
+  setupExpressErrorHandler?: () => express.ErrorRequestHandler;
+};
+
+const sentry = Sentry as SentryRuntime;
+
+const httpRequestCounter = new Counter({
+  name: "http_requests_total",
+  help: "Total HTTP requests by method, route, and status code.",
+  labelNames: ["method", "route", "status_code"] as const,
+  registers: [metricsRegistry],
+});
+
+const httpRequestDuration = new Histogram({
+  name: "http_request_duration_seconds",
+  help: "HTTP request duration in seconds.",
+  labelNames: ["method", "route", "status_code"] as const,
+  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [metricsRegistry],
+});
 
 function getTrustProxySetting(configService: ConfigService): boolean {
   const value = configService.get<string>('TRUST_PROXY');
@@ -100,9 +133,8 @@ function getRateLimitKey(req: express.Request): string {
   return `${req.method}:${route}:${ip}`;
 }
 
-function installRateLimiters(app: any, configService: ConfigService): void {
-  // Skip rate limiting in load test mode to prevent blocking legitimate test traffic
-  if (process.env.LOAD_TEST_MODE === 'true') {
+function installRateLimiters(app: NestExpressApplication, configService: ConfigService): void {
+  if (process.env.LOAD_TEST_MODE === 'true' && configService.get<string>('NODE_ENV') !== 'production') {
     return;
   }
   app.use('/auth/otp', createRateLimiter(configService, 'AUTH_OTP', 3, 10 * 60 * 1000));
@@ -113,7 +145,7 @@ function installRateLimiters(app: any, configService: ConfigService): void {
 
 async function bootstrap() {
   const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-  const app = await NestFactory.create(localMode ? LocalDevModule : AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(localMode ? LocalDevModule : AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
   validateProductionEnvironment(configService);
@@ -123,25 +155,17 @@ async function bootstrap() {
     server.set('trust proxy', 1);
   }
 
-  try {
-    const Sentry = (await import("@sentry/node")) as any;
-    const dsn = configService.get<string>("SENTRY_DSN");
-    if (Sentry && dsn) {
-      Sentry.init({
-        dsn,
-        tracesSampleRate: 1.0,
-      });
-      if (Sentry.Handlers) {
-        app.use(Sentry.Handlers.requestHandler());
-        app.use(Sentry.Handlers.tracingHandler());
-      }
-      if (Sentry.setupExpressErrorHandler) {
-        app.use(Sentry.setupExpressErrorHandler());
-      }
-    }
-  } catch (e) {
-    // Sentry not installed - continue without error tracking
+  const dsn = configService.get<string>("SENTRY_DSN");
+  if (dsn) {
+    sentry.init({
+      dsn,
+      tracesSampleRate: 1.0,
+    });
+    sentry.Handlers?.requestHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.requestHandler!(req, res, next));
+    sentry.Handlers?.tracingHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.tracingHandler!(req, res, next));
+    sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
   }
+
 
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
@@ -179,24 +203,40 @@ async function bootstrap() {
     }
   };
 
-  (app as any).set('trust proxy', getTrustProxySetting(configService));
-  (app as any).disable('x-powered-by');
+  app.set('trust proxy', getTrustProxySetting(configService));
+  app.disable('x-powered-by');
   app.enableCors({
     origin: getAllowedOrigins(),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id', 'Idempotency-Key'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id', 'Idempotency-Key', 'x-csrf-token'],
   });
 
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'https:'],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  }));
+  app.use(csrfProtection());
   app.use(safeMongoSanitize);
   app.use(hpp());
   installRateLimiters(app, configService);
 
-  app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
-  app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
-
-  // Reject dangerous HTTP methods
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     const dangerousMethods = ['TRACE', 'TRACK', 'DEBUG', 'CONNECT'];
     if (dangerousMethods.includes(req.method)) {
@@ -205,21 +245,28 @@ async function bootstrap() {
     next();
   });
 
+  app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
+  app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+
   // Prometheus metrics endpoint
   app.use("/metrics", async (_req: express.Request, res: express.Response) => {
-    res.set("Content-Type", "text/plain");
-    res.send("spicegarden_backend_local_mode=true\n");
+    res.set("Content-Type", metricsRegistry.contentType);
+    res.send(await metricsRegistry.metrics());
   });
 
   // Metrics middleware
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     const start = Date.now();
     res.on("finish", () => {
-      const duration = Date.now() - start;
-      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
+      const duration = (Date.now() - start) / 1000;
+      const route = req.route?.path ? req.path : req.baseUrl || req.path;
+      httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
+      httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
+      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
     });
     next();
   });
+
 
   // Global validation pipe
   app.useGlobalPipes(

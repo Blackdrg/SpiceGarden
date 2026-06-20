@@ -17,7 +17,9 @@ const common_1 = require("@nestjs/common");
 const wallet_service_1 = require("./wallet.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let WalletController = class WalletController {
     walletService;
@@ -59,6 +61,8 @@ let WalletController = class WalletController {
 exports.WalletController = WalletController;
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:read_own'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -66,6 +70,8 @@ __decorate([
 ], WalletController.prototype, "getWallet", null);
 __decorate([
     (0, common_1.Get)('balance'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:read_own'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -73,6 +79,8 @@ __decorate([
 ], WalletController.prototype, "getBalance", null);
 __decorate([
     (0, common_1.Get)('transactions'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:read_own'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('limit')),
     __param(2, (0, common_1.Body)('offset')),
@@ -82,6 +90,8 @@ __decorate([
 ], WalletController.prototype, "getTransactions", null);
 __decorate([
     (0, common_1.Post)('credit'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
+    (0, permissions_decorator_1.Permissions)('finance:read'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('amount')),
     __param(2, (0, common_1.Body)('description')),
@@ -92,6 +102,8 @@ __decorate([
 ], WalletController.prototype, "creditWallet", null);
 __decorate([
     (0, common_1.Post)('debit'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
+    (0, permissions_decorator_1.Permissions)('finance:read'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('amount')),
     __param(2, (0, common_1.Body)('description')),
@@ -102,6 +114,8 @@ __decorate([
 ], WalletController.prototype, "debitWallet", null);
 __decorate([
     (0, common_1.Post)('compensate'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
+    (0, permissions_decorator_1.Permissions)('finance:read'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('amount')),
     __param(2, (0, common_1.Body)('reason')),
@@ -111,6 +125,8 @@ __decorate([
 ], WalletController.prototype, "compensateUser", null);
 __decorate([
     (0, common_1.Post)('cod/process'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:transact_own'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('orderId')),
     __param(2, (0, common_1.Body)('amount')),
@@ -120,6 +136,8 @@ __decorate([
 ], WalletController.prototype, "processCODPayment", null);
 __decorate([
     (0, common_1.Post)('cod/confirm'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('orderId')),
     __param(2, (0, common_1.Body)('amount')),
@@ -129,6 +147,8 @@ __decorate([
 ], WalletController.prototype, "confirmCODCollection", null);
 __decorate([
     (0, common_1.Post)('cod/refund'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
+    (0, permissions_decorator_1.Permissions)('finance:read'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('orderId')),
     __param(2, (0, common_1.Body)('amount')),
@@ -139,6 +159,8 @@ __decorate([
 ], WalletController.prototype, "refundCOD", null);
 __decorate([
     (0, common_1.Post)('prevent-duplicate'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:transact_own'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)('orderId')),
     __param(2, (0, common_1.Body)('amount')),
@@ -148,7 +170,6 @@ __decorate([
 ], WalletController.prototype, "preventDuplicatePayment", null);
 exports.WalletController = WalletController = __decorate([
     (0, common_1.Controller)('wallet'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [wallet_service_1.WalletService])
 ], WalletController);

@@ -18,6 +18,8 @@ const notification_service_1 = require("./notification.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permission_guard_1 = require("../../security/permission.guard");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let DeviceController = class DeviceController {
     notificationService;
@@ -38,7 +40,10 @@ let DeviceController = class DeviceController {
     }
     async unregisterDevice(req, body) {
         const authenticatedUserId = req.user?.userId || req.user?.sub;
-        const targetUserId = (authenticatedUserId || body.userId || 'anonymous');
+        const targetUserId = authenticatedUserId;
+        if (!targetUserId) {
+            return { success: false, message: 'Authenticated user ID is required' };
+        }
         const { fcmToken, apnsToken } = body;
         if (fcmToken) {
             await this.notificationService.unregisterDevice(targetUserId, fcmToken);
@@ -72,6 +77,7 @@ __decorate([
 ], DeviceController.prototype, "unregisterDevice", null);
 exports.DeviceController = DeviceController = __decorate([
     (0, common_1.Controller)('devices'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, permissions_decorator_1.Permissions)('orders:read_own'),
     __metadata("design:paramtypes", [notification_service_1.NotificationService])
 ], DeviceController);

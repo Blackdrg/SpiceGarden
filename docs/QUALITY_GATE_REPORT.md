@@ -1,278 +1,65 @@
-# Quality Gate Report - SpiceGarden Platform
+> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
 
-**Report Date:** 2026-06-18  
-**Prepared By:** Kilo AI Engineering  
-**Pipeline:** Production Readiness Verification
+# Quality Gate Report
 
----
-
-## Executive Summary
-
-All quality gates have been verified and passed. The SpiceGarden platform meets the production readiness criteria with zero blocking issues.
-
-| Gate | Status | Details |
-|------|--------|---------|
-| Lint | ✅ PASS | 0 errors across 11 workspaces |
-| Typecheck | ✅ PASS | 0 TypeScript errors |
-| Build | ✅ PASS | 11/11 workspaces compiled |
-| Unit Tests | ✅ PASS | 30/30 passed |
-| Integration Tests | ✅ PASS | 200/200 passed |
-| E2E Tests | ✅ PASS | 35/35 passed |
-| Security Tests | ✅ PASS | Auth security tests added |
-| Dependency Audit | ⚠️ PASS | 31 moderate (dev-only, non-breaking) |
+**Report Date:** 2026-06-20  
+**Status:** Partially verified
 
 ---
 
-## Detailed Gate Results
+## Verified Gate Results
 
-### 1. Lint Gate
-
-**Command:** `npm run lint`  
-**Result:** ✅ PASS
-
-All 11 workspaces passed ESLint validation:
-- @spicegarden/backend
-- @spicegarden/customer-mobile
-- @spicegarden/customer-web
-- @spicegarden/delivery-partner
-- spicegarden-launcher
-- @spicegarden/restaurant-dashboard
-- @spicegarden/super-admin
-- @spicegarden/api-types
-- @spicegarden/grpc-transport
-- @spicegarden/proto
-- @spicegarden/shared
-- @spicegarden/ui
-
-**Errors:** 0  
-**Warnings:** 0
+| Gate | Status | Evidence |
+|------|--------|----------|
+| Lint | ✅ Verified | Exit code 0 |
+| Backend Build | ✅ Verified | TypeScript compiles |
+| Backend Unit Tests | ✅ Verified | 30 tests PASS |
+| Backend Integration Tests | ✅ Verified | 34+ tests PASS |
+| Backend E2E Tests | ✅ Verified | 35 tests PASS |
 
 ---
 
-### 2. Typecheck Gate
+## Pending Gate Results
 
-**Command:** `npx tsc -p tsconfig.build.json --noEmit`  
-**Result:** ✅ PASS
-
-All TypeScript files compiled without errors across all workspaces.
-
-**Type Errors:** 0  
-**Strict Mode:** Enabled
-
----
-
-### 3. Build Gate
-
-**Command:** `npm run build`  
-**Result:** ✅ PASS
-
-All workspaces compiled successfully:
-- Backend: TypeScript compilation ✅
-- Customer Web: Next.js build ✅
-- Restaurant Dashboard: Next.js build ✅
-- Super Admin: Next.js build ✅
-- Customer Mobile: TypeScript check ✅
-- Delivery Partner: TypeScript check ✅
-- Launcher: Main + Renderer ✅
-- API Types: TypeScript check ✅
-- gRPC Transport: TypeScript check ✅
-- Proto: TypeScript check ✅
-- Shared: TypeScript compilation ✅
-- UI: TypeScript compilation ✅
-
-**Status:** 11/11 workspaces PASS
+| Gate | Status | Notes |
+|------|--------|-------|
+| Frontend Build | ⏳ Pending | Build timeout observed |
+| Frontend Tests | ⏳ Pending | Not verified |
+| Load Tests | ⏳ Blocked | Requires running backend |
+| Security Tests | ⏳ Blocked | Requires running backend |
+| Coverage Threshold | ⚠️ Pending | 80% target not verified |
 
 ---
 
-### 4. Test Gate
+## Test Commands Verified
 
-**Command:** `npm test` (backend)  
-**Result:** ✅ PASS
-
-#### Backend Test Results
-| Suite | Status | Tests |
-|--------|--------|-------|
-| test/order.service.spec.ts | ✅ PASS | 10 |
-| test/kitchen.service.spec.ts | ✅ PASS | 10 |
-| test/delivery.service.spec.ts | ✅ PASS | 10 |
-| test/compliance.service.spec.ts | ✅ PASS | 15 |
-| test/nnotification.service.spec.ts | ✅ PASS | 12 |
-| test/wallet-edge-cases.spec.ts | ✅ PASS | 18 |
-| test/reliability.failure-recovery.spec.ts | ✅ PASS | 8 |
-| test/loyalty-edge-cases.spec.ts | ✅ PASS | 14 |
-| test/delivery-edge-cases.spec.ts | ✅ PASS | 12 |
-| test/payment-verification.e2e.spec.ts | ✅ PASS | 10 |
-| test/payment.integration.spec.ts | ✅ PASS | 15 |
-| test/payment-order.integration.spec.ts | ✅ PASS | 8 |
-| test/order-flow.integration.spec.ts | ✅ PASS | 12 |
-| test/order-kds.integration.spec.ts | ✅ PASS | 6 |
-| test/order-edge-cases.spec.ts | ✅ PASS | 10 |
-| test/auth.service.spec.ts | ✅ PASS | 8 |
-| test/driver-customer.integration.spec.ts | ✅ PASS | 6 |
-| test/encryption.service.spec.ts | ✅ PASS | 5 |
-| test/auth.integration.spec.ts | ✅ PASS | 10 |
-| test/payments.module.spec.ts | ✅ PASS | 8 |
-| test/payments.service.spec.ts | ✅ PASS | 12 |
-| test/delivery.service.spec.ts | ✅ PASS | 10 |
-| test/delivery.integration.spec.ts | ✅ PASS | 8 |
-| test/refund-wallet.integration.spec.ts | ✅ PASS | 6 |
-| test/e2e.spec.ts | ✅ PASS | 25 |
-
-**Total:** 25 passed, 1 skipped, 232 total tests  
-**Status:** ✅ PASS
-
-#### Frontend Tests
-- Customer Web: ✅ Cart slice tests (8 tests)
-- Shared Package: ✅ API tests, Constants tests
-- UI Package: ✅ Component tests
+| Command | Suites | Tests | Status |
+|---------|--------|-------|--------|
+| `npm run test:unit` | 3 | 30 | ✅ PASS |
+| `npm run test:integration` | 8+ | 34+ | ✅ PASS |
+| `npm run test:e2e` | 2 | 35 | ✅ PASS |
 
 ---
 
-### 5. Security Gate
+## Security Gates
 
-**Command:** `npm audit` + manual review  
-**Result:** ✅ PASS (with observations)
-
-#### Vulnerability Summary
-```
-Total: 31
-Critical: 0
-High: 0
-Moderate: 31
-Low: 0
-```
-
-#### Vulnerability Details
-All 31 moderate vulnerabilities are in **devDependencies only**:
-- `js-yaml` (via babel-plugin-istanbul, jest)
-- `uuid` (via xcode, @expo/config-plugins)
-
-**Production Impact:** NONE  
-**Action:** Safe to defer; requires `npm audit fix --force` which would break Next.js 15 compatibility
-
-#### Security Remediations Applied
-1. ✅ JWT + RBAC on all protected endpoints (10 controllers hardened)
-2. ✅ Rate limiter IP key fixed (no X-Forwarded-For bypass)
-3. ✅ Production trust proxy configured
-4. ✅ CORS strict origins enforced
-5. ✅ Docker compose hardened (read-only, no-new-privileges)
-6. ✅ Infrastructure secrets parameterized (compose.dev.yaml)
+| Control | Status | Evidence |
+|---------|--------|----------|
+| Helmet | ✅ Verified | main.ts:215 |
+| HPP | ✅ Verified | main.ts:237 |
+| NoSQL sanitization | ✅ Verified | main.ts:172 |
+| CSRF | ✅ Verified | main.ts:235 |
+| Rate limiting | ✅ Verified | main.ts:136-144 |
+| Production validation | ✅ Verified | main.ts:57-78 |
 
 ---
 
-### 8. Load Testing Gate (NEW)
+## Next Steps
 
-**Command:** k6 progressive load testing  
-**Status:** ⏳ INFRASTRUCTURE READY - AWAITING EXECUTION
-
-#### Phase 2 Fixes Applied
-1. ✅ LocalDevModule configuration updated
-2. ✅ .env DB_HOST enabled for full AppModule
-3. ✅ k6 user generation fixed (unique phones, unique item IDs)
-4. ✅ JWT token extraction corrected
-5. ✅ Detailed failure logging added
-
-#### Scripts Created
-- `test/load/10-users.js` - 10 VUs
-- `test/load/50-users.js` - 50 VUs
-- `test/load/250-users.js` - 250 VUs
-- `test/load/2.5k-users.js` - 2500 VUs
-
-#### Prerequisites for Execution
-- PostgreSQL on localhost:5432
-- Redis on localhost:6379
-- MongoDB on localhost:27017
-- Seed restaurants in database
-
----
-
-### 6. Dependency Gate
-
-**Command:** `npm ls --depth=0`  
-**Result:** ✅ PASS
-
-All workspace dependencies resolved correctly:
-- No missing dependencies
-- No extraneous packages
-- No invalid installations
-- Peer dependencies satisfied
-
----
-
-### 7. Infrastructure Gate
-
-**Command:** Manual review of compose.dev.yaml, infra/k8s/*  
-**Result:** ✅ PASS
-
-#### Docker Compose
-- ✅ All services have health checks
-- ✅ Backend depends_on with service_healthy conditions
-- ✅ Read-only containers for all apps
-- ✅ Security options (no-new-privileges)
-- ✅ Resource limits defined
-- ✅ Network isolation (spicegarden-net)
-- ✅ Volume declarations for persistence
-
-#### Kubernetes
-- ✅ Production-hardened manifests present
-- ✅ Staging environment configured
-- ✅ CDN/Ingress configured
-- ✅ PostgreSQL HA (StatefulSet)
-- ✅ Redis cluster (StatefulSet)
-
----
-
-## Non-Blocking Observations
-
-### Known Issues (Not Blocking)
-
-1. **npm audit moderate vulnerabilities**
-   - **Severity:** Low (dev dependencies only)
-   - **Impact:** None on production
-   - **Action:** Defer to next major dependency update
-
-2. **Next.js SWC Windows native binary warning**
-   - **Severity:** Info
-   - **Impact:** None (WASM fallback works)
-   - **Action:** Will resolve on Linux CI environment
-
-3. **MongoDB connection test timeout**
-   - **Severity:** Low
-   - **Impact:** One test skipped
-   - **Action:** Use in-memory MongoDB for testing
-
-4. **Compliance document dates**
-   - **Severity:** Low
-   - **Impact:** Legal review needed
-   - **Action:** Update with actual effective dates
-
----
-
-## Final Verdict
-
-**✅ ALL QUALITY GATES PASS (Load Testing Infrastructure Ready)**
-
-The SpiceGarden platform is cleared for production deployment. All critical quality checks pass, security vulnerabilities have been remediated, infrastructure is production-ready, and load testing infrastructure is prepared.
-
-**Production Readiness Score:** 92/100  
-**Load Testing Readiness:** 75% (infrastructure fixes complete)  
-**Confidence Level:** HIGH
-
----
-
-## Sign-Off
-
-| Role | Status |
-|------|--------|
-| Build Engineer | ✅ Approved |
-| QA Lead | ✅ Approved |
-| Security Engineer | ✅ Approved |
-| DevOps Engineer | ✅ Approved |
-| Technical Writer | ✅ Pending final docs |
-
-**Next Steps:**
-1. Complete README updates with architecture diagrams
-2. Generate configuration diagrams (Mermaid)
-3. Deploy to staging for final smoke tests
-4. Rotate infrastructure secrets
-5. Enable production monitoring
+1. Verify frontend builds
+2. Start infrastructure: `docker-compose -f compose.dev.yaml up -d`
+3. Run security tests
+4. Run smoke load test

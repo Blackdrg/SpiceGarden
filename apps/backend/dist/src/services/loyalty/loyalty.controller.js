@@ -17,6 +17,11 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const loyalty_service_1 = require("./loyalty.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let LoyaltyController = class LoyaltyController {
     loyaltyService;
     constructor(loyaltyService) {
@@ -56,6 +61,8 @@ let LoyaltyController = class LoyaltyController {
 exports.LoyaltyController = LoyaltyController;
 __decorate([
     (0, common_1.Post)('coupons'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('orders:manage'),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new coupon' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -64,6 +71,8 @@ __decorate([
 ], LoyaltyController.prototype, "createCoupon", null);
 __decorate([
     (0, common_1.Post)('coupons/apply'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:transact_own'),
     (0, swagger_1.ApiOperation)({ summary: 'Apply coupon to order' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -72,6 +81,8 @@ __decorate([
 ], LoyaltyController.prototype, "applyCoupon", null);
 __decorate([
     (0, common_1.Get)('coupons'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('orders:manage'),
     (0, swagger_1.ApiOperation)({ summary: 'Get all coupons' }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
@@ -80,6 +91,8 @@ __decorate([
 ], LoyaltyController.prototype, "getCoupons", null);
 __decorate([
     (0, common_1.Get)('coupons/:id/analytics'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get coupon analytics' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -88,6 +101,8 @@ __decorate([
 ], LoyaltyController.prototype, "getCouponAnalytics", null);
 __decorate([
     (0, common_1.Put)('coupons/:id/deactivate'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('orders:manage'),
     (0, swagger_1.ApiOperation)({ summary: 'Deactivate coupon' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -96,6 +111,8 @@ __decorate([
 ], LoyaltyController.prototype, "deactivateCoupon", null);
 __decorate([
     (0, common_1.Post)('referrals/code'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('orders:read_own'),
     (0, swagger_1.ApiOperation)({ summary: 'Generate referral code' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -104,6 +121,8 @@ __decorate([
 ], LoyaltyController.prototype, "generateReferralCode", null);
 __decorate([
     (0, common_1.Post)('referrals/process'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('orders:manage'),
     (0, swagger_1.ApiOperation)({ summary: 'Process referral' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -112,6 +131,8 @@ __decorate([
 ], LoyaltyController.prototype, "processReferral", null);
 __decorate([
     (0, common_1.Get)('referrals/:userId'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('orders:read_own'),
     (0, swagger_1.ApiOperation)({ summary: 'Get referral history' }),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -120,6 +141,8 @@ __decorate([
 ], LoyaltyController.prototype, "getReferralHistory", null);
 __decorate([
     (0, common_1.Post)('cashback/process'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
+    (0, permissions_decorator_1.Permissions)('finance:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Process cashback for order' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -128,6 +151,8 @@ __decorate([
 ], LoyaltyController.prototype, "processCashback", null);
 __decorate([
     (0, common_1.Get)('cashback/:userId'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('wallet:read_own'),
     (0, swagger_1.ApiOperation)({ summary: 'Get user cashback summary' }),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -138,6 +163,6 @@ exports.LoyaltyController = LoyaltyController = __decorate([
     (0, swagger_1.ApiTags)('loyalty'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('loyalty'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [loyalty_service_1.LoyaltyService])
 ], LoyaltyController);

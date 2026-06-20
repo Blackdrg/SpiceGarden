@@ -3,14 +3,17 @@ import { CustomerSupportService } from './customer-support.service';
 import { TicketRoutingService } from './ticket-routing.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 import { DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
 import { RefundType } from '../../db/entities/refund.entity';
 
 @Controller('support')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPPORT_STAFF)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.SUPPORT_STAFF)
+@Permissions('support:manage')
 export class SupportController {
   constructor(
     private supportService: CustomerSupportService,

@@ -1,101 +1,93 @@
 # QUALITY GATE REPORT
 
-## Date
-2026-06-19
+**Generated:** 2026-06-20  
+**Status:** Verified with known gaps
 
 ---
 
-## Verification Results
+## Verified Gate Results
 
-### 1. Lint ✅
-```
-Command: npm run lint
-Result: PASS (0 errors, 0 warnings)
-Scope: All packages
-```
-
-### 2. TypeScript Type Check ✅
-```
-Command: npx tsc --noEmit
-Result: PASS (0 type errors)
-Scope: Backend only (frontend packages have pre-existing unrelated errors)
-```
-
-### 3. Build ✅
-```
-Command: cd apps/backend && npm run build
-Result: PASS
-Output: tsc -p tsconfig.build.json (clean compile)
-Note: Root build (npm run build) fails due to ENOSPC on non-backend packages (customer-web, restaurant-dashboard, super-admin, launcher, shared) — disk space issue unrelated to auth changes
-```
-
-### 4. Tests ✅
-```
-Command: cd apps/backend && npm test
-Result: 25 passed, 1 skipped, 232 total
-Duration: ~80s
-Auth tests: PASS (auth.service.spec.ts, auth.integration.spec.ts)
-```
-
-### 5. K6 Load Test ⏸️
-```
-Command: npm run test:load
-Status: BLOCKED — requires backend running with PostgreSQL + Redis
-Infrastructure: Docker compose available (compose.dev.yaml)
-Action needed: Start infra, then run k6
-```
+| Gate | Status | Evidence |
+|------|--------|----------|
+| Build | ✅ Verified | All 12 workspaces build successfully |
+| Lint | ✅ Verified | Exit code 0 for all workspaces |
+| Unit Tests (root) | ✅ Verified | 143 tests passing |
+| Tests (backend) | ✅ Verified | 231 passed, 1 skipped |
+| Integration Tests | ✅ Verified | All backend integration suites passed |
+| E2E Tests | ✅ Verified | Backend 35 tests; frontend e2e-style suites passed |
+| Security Tests | ⏳ Blocked | Requires backend on port 3001 |
+| Penetration Tests | ⏳ Blocked | Requires backend on port 3001 |
+| Infrastructure | ⚠️ Configured | Docker/K8s manifests present; not validated |
 
 ---
 
-## Quality Gate Summary
+## Workspace Results
 
-| Check | Command | Target | Result | Status |
-|-------|---------|--------|--------|--------|
-| Lint | `npm run lint` | 0 errors | 0 errors | ✅ PASS |
-| TypeScript | `npx tsc --noEmit` | 0 errors | 0 errors | ✅ PASS |
-| Build | `npm run build` (backend) | Clean compile | Clean | ✅ PASS |
-| Tests | `npm test` | 231+ pass | 231 pass, 1 skip | ✅ PASS |
-| Load Test | `npm run test:load` | >95% success | Requires running backend | ⏸️ BLOCKED |
-
----
-
-## Root Cause Confirmed and Fixed
-
-### Before Fix
-- Register: ❌ FAIL (401 "Email already registered")
-- Login: ❌ FAIL (could not register first)
-- Root cause: `findOne()` ignored `where` parameter
-
-### After Fix
-- Register: ✅ PASS (200 for new email, 409 for duplicate)
-- Login: ✅ PASS (200 for valid credentials, 401 for invalid)
-- Root cause: Fixed in `local-repository.module.ts`
+| Workspace | Build | Lint | Unit Tests | Integration | E2E Tests |
+|-----------|-------|------|------------|-------------|-----------|
+| `apps/backend` | ✅ | ✅ | 30 passed | Included in full (231 passed, 1 skipped) | 35 passed |
+| `apps/customer-mobile` | ✅ | ✅ | 33 passed | 33 passed | 1 passed |
+| `apps/customer-web` | ✅ | ✅ | 11 passed | passed | 1 passed |
+| `apps/delivery-partner` | ✅ | ✅ | 6 passed | 6 passed | 6 passed |
+| `apps/launcher` | ✅ | ✅ | 1 passed | not present | not present |
+| `apps/restaurant-dashboard` | ✅ | ✅ | 9 passed | 2 passed | 1 passed |
+| `apps/super-admin` | ✅ | ✅ | 23 passed | 2 passed | 21 passed |
 
 ---
 
-## Completion Criteria Status
+## Coverage Status
 
-| Criterion | Status |
-|-----------|--------|
-| ✅ Register flow works | PASS |
-| ✅ Login flow works | PASS |
-| ✅ Duplicate email handling returns 409 | PASS |
-| ✅ Unique user generation implemented | PASS (already correct in K6) |
-| ✅ K6 tests pass | ⏸️ Requires running backend |
-| ⏸️ Load Success > 95% | Pending K6 execution |
-| ✅ Auth documentation updated | PASS |
-| ✅ Root cause documented | PASS |
-| ✅ All findings backed by code evidence | PASS |
+| Metric | Actual | Target | Status |
+|--------|--------|--------|--------|
+| Statements | 51.72% | 80% | ❌ FAIL |
+| Branches | 20.11% | 80% | ❌ FAIL |
+| Functions | 24.76% | 80% | ❌ FAIL |
+| Lines | 50.65% | 80% | ❌ FAIL |
+
+**Coverage gate:** Failed - see `cd apps/backend && npm run test:cov`
 
 ---
 
-## Overall Completion
+## Category Scores
 
-| Area | Completion |
-|------|-----------|
-| Auth Completion | 100% |
-| Backend Completion | 95% (tests pass, build passes, lint passes) |
-| Production Readiness | 90% (auth fixed, need K6 with real DB) |
-| Remaining Blockers | 1: Run K6 with real PostgreSQL + Redis |
-| Overall Project Completion | 92% |
-| SaaS Readiness | 90% (auth fully functional, load testing pending) |
+| Category | Score | Notes |
+|----------|-------|-------|
+| Build | 100% | All workspaces build |
+| Lint | 100% | All workspaces lint clean |
+| Unit Tests | 100% | Root unit tests pass |
+| Integration Tests | 100% | All suites pass |
+| E2E Tests | 100% | All suites pass |
+| Coverage | 0% | Below 80% thresholds |
+
+---
+
+## Commands Verified
+
+| Command | Result |
+|---------|--------|
+| `npm run build` | ✅ All workspaces PASS |
+| `npm run lint` | ✅ PASS |
+| `npm run test:unit` | ✅ 143 tests PASS |
+| `npm run test:integration` | ✅ PASS |
+| `npm run test:e2e` | ✅ PASS |
+| `cd apps/backend && npm run test:cov` | ⚠️ Tests passed; coverage gate FAILED |
+
+---
+
+## Blockers
+
+| Blocker | Reason |
+|---------|--------|
+| Runtime security tests | Backend not running on port 3001 |
+| Penetration tests | Backend not running |
+| Load tests | Backend + databases not running |
+| Coverage thresholds | 51.72% vs 80% target |
+
+---
+
+## Next Steps
+
+1. Start infrastructure: `docker-compose -f compose.dev.yaml up -d`
+2. Run security tests: `node infra/scripts/security-tests.js`
+3. Run penetration tests: `node infra/scripts/penetration-tests.js`
+4. Improve backend coverage to meet thresholds

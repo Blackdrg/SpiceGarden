@@ -1,7 +1,10 @@
 import { WalletService } from './wallet.service';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 interface AuthenticatedRequest {
     user: {
         id: string;
+        role: UserRole;
+        status: UserStatus;
     };
 }
 export declare class WalletController {

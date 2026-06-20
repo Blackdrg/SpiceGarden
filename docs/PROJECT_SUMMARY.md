@@ -1,3 +1,8 @@
+> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
+
 # SpiceGarden Production Completion Summary
 
 **Date**: 2026-06-18  

@@ -1,71 +1,95 @@
+> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
+
 # LOAD TEST REPORT
 
-## Test Date
-2026-06-19
+**Generated:** 2026-06-20  
+**Status:** Scripts ready; execution blocked
 
-## Configuration
+---
 
-### Test Environment
-- Backend: Local development mode (LOCAL_DB=sqlite equivalent via LocalRepositoryModule)
-- Rate Limiting: Disabled (LOAD_TEST_MODE=true, throttler limit set to 1000000)
-- Node: v22.14.0
-- K6: v0.59
+## Load Test Assets Verified
 
-### Test File
-`apps/backend/test/load/smoke-test.js`
+### k6 Scripts (apps/backend/test/load/)
+| Script | VUs | Stages | Status |
+|--------|-----|--------|--------|
+| `smoke-test.js` | 5-50 | 3 stages | ✅ Ready |
+| `10-users.js` | 10 | Ramp-up | ✅ Ready |
+| `50-users.js` | 50 | Ramp-up | ✅ Ready |
+| `250-users.js` | 250 | Ramp-up | ✅ Ready |
+| `1k-users.js` | 1000 | Ramp-up | ✅ Ready |
+| `2.5k-users.js` | 2500 | Ramp-up | ✅ Ready |
+| `5k-users.js` | 5000 | Ramp-up | ✅ Ready |
+| `10k-users.js` | 10000 | 7 stages | ✅ Ready |
+| `20k-users.js` | 20000 | 7 stages | ✅ Ready |
+| `breaking-point.js` | Variable | Stress | ✅ Ready |
 
-### Stages
-```javascript
-{ duration: '15s', target: 5 },
-{ duration: '15s', target: 25 },
-{ duration: '30s', target: 50 },
+**Total scripts:** 16 k6 files verified
+
+---
+
+## Test Flow (Verified in common.js)
+
+1. **Health Check:** GET `/health`
+2. **Register:** POST `/auth/register` (with phone, email, fullName)
+3. **Login:** POST `/auth/login` (if register token not returned)
+4. **Browse:** GET `/restaurants`
+5. **Address:** POST `/user/addresses`
+6. **Order:** POST `/orders` (with items, totals)
+7. **Payment:** POST `/payments/create-intent` (optional)
+
+---
+
+## Load Test Bypass
+
+**Source:** `apps/backend/src/main.ts:137-139`
+```typescript
+if (process.env.LOAD_TEST_MODE === 'true' && configService.get<string>('NODE_ENV') !== 'production') {
+  return; // Skips rate limiting
+}
 ```
 
-### Thresholds
-```javascript
-http_req_failed: ['rate<0.01']
-load_success: ['rate>0.99']
-signup_success: ['rate>0.99']
-login_success: ['rate>0.99']
-browse_restaurants_success: ['rate>0.99']
-http_req_duration: ['p(95)<1500']
+**Usage:** Set `LOAD_TEST_MODE=true` to bypass rate limiting in non-production.
+
+---
+
+## Prerequisites for Execution
+
+| Service | Port | Required |
+|---------|------|----------|
+| Backend | 3001 | ✅ Yes |
+| PostgreSQL | 5432 | ⚠️ Recommended |
+| Redis | 6379 | ⚠️ Recommended |
+| MongoDB | 27017 | ⚠️ Optional |
+
+**Commands:**
+```bash
+# Start infrastructure
+docker-compose -f compose.dev.yaml up -d
+
+# Run smoke test
+npm run --prefix apps/backend test:load
+
+# Or specific test
+k6 run apps/backend/test/load/smoke-test.js
 ```
 
 ---
 
-## Results
+## Status
 
-### Summary: PASS ✅
-
-| Metric | Threshold | Actual | Status |
-|--------|-----------|--------|--------|
-| http_req_failed | <1% | 0.00% | ✅ PASS |
-| signup_success | >99% | 100.00% | ✅ PASS |
-| login_success | >99% | 100.00% | ✅ PASS |
-| load_success | >99% | 100.00% | ✅ PASS |
-| browse_restaurants_success | >99% | 100.00% | ✅ PASS |
-| http_req_duration (p95) | <1500ms | 11.49s | ⚠️ NOTE |
-
-### Detailed Metrics
-- **Iterations**: 249 complete, 0 interrupted
-- **HTTP Requests**: 499 total, 0 failed
-- **Data Received**: 553 kB
-- **Data Sent**: 159 kB
-- **VUs**: 50 max, 0 min
-- **Duration**: 1m0s test + 12s graceful ramp-down
-
-### Performance Notes
-- p95 latency of 11.49s is due to argon2 password hashing CPU cost on single-machine local testing
-- All functional checks pass: register returns 200/201, login returns 200, browse returns 200
-- Zero failed requests across 500 total HTTP calls
-- 249 successful user flows (register + browse) completed
-
-### Root Cause of Latency
-- `argon2.hash()` is intentionally slow (~100ms per hash) for security
-- Concurrent hashing under 50 VUs saturates single CPU core
-- Production deployment with dedicated crypto workers or hardware acceleration will achieve p95 < 500ms
+| Test | Executed |
+|------|----------|
+| Smoke test | ⏳ Blocked |
+| 10-users | ⏳ Blocked |
+| 10k-users | ⏳ Blocked |
 
 ---
 
-## Conclusion
-Auth flows (register, login) verified under concurrent load. Zero failures. All functional thresholds met. Latency p95 exceeds 1500ms threshold due to intentional argon2 cost on local single-core — acceptable for local validation, production will use multi-core deployment.
+## Verification Required
+
+1. Start Docker infrastructure: `docker-compose -f compose.dev.yaml up -d`
+2. Run backend: `cd apps/backend && npm run dev`
+3. Execute smoke test: `npm run --prefix apps/backend test:load`

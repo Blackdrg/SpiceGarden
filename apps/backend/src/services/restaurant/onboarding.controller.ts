@@ -5,14 +5,17 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/s
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 import { type Request } from 'express';
 
 @ApiTags('restaurant-onboarding')
 @Controller('restaurant-onboarding')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 export class RestaurantOnboardingController {
+
   constructor(private readonly onboardingService: RestaurantOnboardingService) {}
 
   @Post('initialize/:restaurantId')
@@ -124,6 +127,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('gst/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Configure GST for a restaurant' })
   async submitGSTConfig(
@@ -134,6 +140,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('pricing/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Setup pricing for a restaurant' })
   async setupPricing(
@@ -144,6 +153,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('payout/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Setup payout settings for a restaurant' })
   async setupPayout(
@@ -154,10 +166,14 @@ export class RestaurantOnboardingController {
   }
 
   @Get('analytics/overview')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('analytics:read')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get onboarding analytics' })
   @ApiResponse({ status: 200, description: 'Onboarding analytics retrieved successfully' })
   async getOnboardingAnalytics() {
+
     return await this.onboardingService.getOnboardingAnalytics();
   }
 }

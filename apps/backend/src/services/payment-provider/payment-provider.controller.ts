@@ -5,13 +5,16 @@ import { StripeConnectService } from './stripe-connect.service';
 import { RazorpaySettlementService } from './razorpay-settlement.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 
 @ApiTags('payment-provider')
 @Controller('payment-provider')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.RESTAURANT, UserRole.ADMIN)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Permissions('payments:manage')
 export class PaymentProviderController {
   constructor(
     private readonly stripeConnectService: StripeConnectService,

@@ -1,72 +1,65 @@
-# README Changelog - Load Testing Updates
+# README Changelog
 
-## Load Testing Architecture
+**Last Updated:** 2026-06-20
 
-### Prerequisites
-- k6 installed (https://k6.io/docs/getting-started/installation/)
-- Node.js with bcrypt package: `npm install bcrypt`
+---
 
-### Quick Start
-```bash
-# Start load test server
-node load-test-server.js
+## Changes Made in This Audit Pass
 
-# Run load test
-npm run test:load
+### Files Updated
+| File | Action | Notes |
+|------|--------|-------|
+| README.md | Rewritten | Replaced with verified evidence; corrected service counts |
+| CURRENT_STATUS_SUMMARY.md | Rewritten | Corrected maturity/readiness percentages |
+| QUALITY_GATE_REPORT.md | Rewritten | Corrected test counts and coverage metrics |
+| SECURITY_AUDIT_REPORT.md | Rewritten | Removed historical banner; added runtime test results |
+| PRODUCTION_READINESS_REPORT.md | Rewritten | Corrected scores per rubric |
+| INFRASTRUCTURE_REPORT.md | Rewritten | Corrected service counts (13/12, not 15/27) |
+| BUSINESS_VALUE_REPORT.md | Rewritten | Removed historical banner; corrected estimates |
 
-# Or run with custom parameters
-k6 run --vus 100 --duration 60s test/load/10k-users.js
-```
+### Outdated Claims Corrected
+| Claim | Previous | Corrected |
+|-------|----------|-----------|
+| Test count | Various (30, 99, 143, 210, 231) | Root unit: 143; Backend full: 231 passed, 1 skipped |
+| Production status | "READY", "Staging-ready" | NOT PRODUCTION READY (38% estimated) |
+| RBAC coverage | "100%" | "Exists; controller coverage unverified" |
+| Load test status | "100% functional" | "Scripts ready; not executed" |
+| compose.dev.yaml services | 15 services | 13 services |
+| compose.infra.yaml services | 27 services | 12 services |
+| Maturity | Various percentages | 67% estimated (per rubric) |
+| Readiness | Various percentages | 38% estimated (per rubric) |
+| Security tests | Implied ready | Blocked - backend not running |
+| Penetration tests | Implied ready | Failed - backend unavailable |
 
-### Test Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Simple health check |
-| `/auth/register` | POST | Register new user (returns JWT) |
-| `/auth/login` | POST | Login existing user (returns JWT) |
-| `/orders/health` | GET | Orders service health check |
-| `/orders` | POST | Place order (optional auth) |
+### Commands Verified
+| Command | Verified | Status |
+|---------|----------|--------|
+| `npm run build` | Yes | All workspaces PASS |
+| `npm run lint` | Yes | PASS |
+| `npm run test:unit` | Yes | 143 tests PASS |
+| `npm run test:integration` | Yes | PASS |
+| `npm run test:e2e` | Yes | PASS |
+| `cd apps/backend && npm run test:cov` | Yes | Tests passed; coverage FAILED |
+| `npm audit --audit-level=moderate` | Yes | FAIL (33 vulnerabilities) |
+| `node infra/scripts/security-tests.js` | Yes | FAIL (backend not running) |
+| `node infra/scripts/penetration-tests.js` | Yes | FAIL (backend not running) |
+| `docker-compose -f compose.dev.yaml config` | Yes | PASS |
+| `docker-compose -f compose.infra.yaml config` | Yes | PASS |
 
-## Test Methodology
+### Sections Updated
+- Executive Summary: Maturity/readiness scores aligned with rubric
+- Current Verified Status: Correct test counts and status labels
+- Build/Test status: Accurate reporting of coverage gate failure
+- Production claims: Downgraded to reflect verification gaps
+- Infrastructure: Corrected service counts
 
-### Test Flow
-1. Health check (no auth required)
-2. Register user (creates user + returns JWT)
-3. Login user (returns JWT)
-4. Orders health check
-5. Place order (JWT optional in test server)
+---
 
-### Success Criteria
-- Success rate: >99%
-- p(95) latency: <500ms
-- All endpoints reachable
+## Next Audit Required
 
-## Verified Results
-
-### Test Configuration
-- Script: `test/load/10k-users.js`
-- Stages: 100 → 500 → 1000 → 5000 → 10000 users (ramped)
-- Duration: 20+ minutes at full load
-
-### Actual Results (100 iterations, 10 VUs test)
-- Success rate: 100%
-- p(95) latency: 189.83ms
-- All checks passed
-
-## Scalability Findings
-
-### Configuration Changes Required
-1. **BASE_URL**: Changed from `localhost:3000` to `localhost:3001`
-2. **Auth Endpoint**: Changed from `/auth/signup` to `/auth/register`
-3. **Required Fields**: Added `phone` to register, `userId` to order payloads
-4. **Auth Flow**: Now extracts JWT from login response for order requests
-
-### Infrastructure Requirements for Full Load Test
-- PostgreSQL (connection pooling recommended)
-- MongoDB
-- Redis (for rate limiting and queues)
-- Start with: `docker-compose -f compose.dev.yaml up -d`
-
-### Rate Limiting Note
-The backend has rate limiting (5 req/15min on `/auth/`) which blocks load test traffic. 
-For production testing, either disable rate limiting or use higher limits.
+1. Verify frontend builds in isolation
+2. Execute security tests: `node infra/scripts/security-tests.js` (backend required)
+3. Execute penetration tests: `node infra/scripts/penetration-tests.js` (backend required)
+4. Execute load tests: `npm run test:load` (full stack required)
+5. Verify RBAC controller coverage
+6. Remediate npm audit vulnerabilities

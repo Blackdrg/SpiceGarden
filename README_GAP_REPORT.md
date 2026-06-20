@@ -1,78 +1,82 @@
+> HISTORICAL DOCUMENT
+> This report reflects a prior audit state and is superseded by:
+> `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`
+> and the latest README / status reports.
+
 # README Gap Report
 
-Generated: 2026-06-18T09:46+05:30  
-Branch: `feat/add-react-doctor`
-
-## README gap summary
-
-The README now contains a current 2026-06-18 verification appendix. Older sections remain historical and should be superseded by this latest appendix where they conflict with current evidence.
-
-## Stale README claims to supersede
-
-| README area | Stale claim | Current correction |
-| :--- | :--- | :--- |
-| Build | Older sections describe build failures or outdated passes. | Current `npm run build` exits `0`; Next.js SWC native warning remains non-blocking. |
-| Typecheck | Older sections describe typecheck failures. | Current `npx tsc --noEmit` exits `0`. |
-| Tests | Older sections describe root test missing and workspace test failures. | Current `npm run test`, `npm run test:unit`, `npm run test:integration`, and `npm run test:e2e` exit `0`. |
-| Security | Older sections describe rate-limiting failure. | Current `node infra/scripts/security-tests.js` exits `0` with 0 vulnerabilities; Redis-backed execution was not locally verified. |
-| Dependencies | Older sections describe invalid dependency installs. | Current `npm ls --workspaces --depth=0` exits `0`; `npm audit --audit-level=high` exits `0`; `npm audit` reports 31 moderate findings. |
-| React Doctor | Older sections describe score 49/61 or unavailable tooling. | Current scan exits `0`; all four frontend apps are `100/100 Great` with 0 diagnostics. |
-| Load testing | Older sections describe unavailable k6. | Infrastructure fixes complete; k6 scripts updated; progressive stages ready for execution. |
-| Deployment | Older sections imply staging/prod validation. | Current `node infra/scripts/deployment-check.js` is blocked by `ERROR: Cannot connect to cluster`. |
-| Observability | Older sections imply readiness. | Assets exist, but end-to-end validation is incomplete. |
-
-## Required README updates
-
-- Append a `Latest Production-Hardening Update — 2026-06-18` section.
-- Add a concise current verdict: React Doctor and core gates are clean; deployment validation remains blocked by Kubernetes access.
-- Add a remaining-blockers table for Kubernetes/deployment validation, Redis-backed rate limiting, moderate audit findings, load testing, monitoring validation, and penetration testing.
-- Link to the new report files:
-  - `SECURITY_FIX_REPORT.md`
-  - `BUILD_FIX_REPORT.md`
-  - `TYPECHECK_REPORT.md`
-  - `DEPENDENCY_HEALTH_REPORT.md`
-  - `TEST_RELIABILITY_REPORT.md`
-  - `REACT_DOCTOR_PROGRESS.md`
-  - `LOAD_TEST_REPORT.md`
-  - `SECURITY_AUDIT_V2.md`
-  - `OBSERVABILITY_REPORT.md`
-  - `UI_UX_IMPROVEMENT_REPORT.md`
-  - `FINAL_PRODUCTION_READINESS_REPORT.md`
-
-## Current README status
-
-README has not yet been fully reconciled with the latest verification state. This report and `README_CHANGELOG.md` should be used to update it without deleting historical content.
+**Audit Date:** 2026-06-20  
+**Purpose:** Compare documentation claims against verified repository state
 
 ---
 
-## 2026-06-17 Repository-Wide Audit Update
+## README Claims vs Reality
 
-**Generated:** 2026-06-17T21:30+05:30  
-**Method:** Append-only audit update; historical gap-report content preserved.
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| "231 passed, 1 skipped" | ❌ Incorrect | Backend: 99 tests (30 unit + 34 integration + 35 e2e) |
+| "Backend build: PASS" | ✅ Verified | `tsc -p tsconfig.build.json` compiles |
+| "All 11 workspaces compile" | ⚠️ Unverified | Some frontend builds timed out |
+| "RBAC Coverage: 100%" | ⚠️ Unverified | RolesGuard exists but controller coverage not verified |
+| "Zero critical security vulnerabilities" | ⚠️ Unverified | Security tests not executed |
+| "Load tests: 100% functional" | ❌ Unverified | Load tests not executed, backend not running |
+| "Production Ready" | ⚠️ Unverified | Infrastructure not validated |
+| "Grafana/OpenSearch passwords hardcoded" | ✅ Verified | In compose.dev.yaml defaults |
 
-### Gap assessment
+---
 
-The root README already documents project overview, setup, architecture, testing, deployment, monitoring, and troubleshooting. The 2026-06-17 audit added a concise verified status section rather than rewriting historical content.
+## Section-by-Section Analysis
 
-### Gaps addressed by this audit
+### Production Readiness Log
+- **Status:** Partial
+- **Issues:** Test counts incorrect, claims about security not verified
 
-| Gap | Action |
-| :--- | :--- |
-| Missing repository-wide inventory | Added `REPOSITORY_INVENTORY.md` |
-| Missing API endpoint inventory | Added `API_INVENTORY.md` |
-| Missing database report | Added `DATABASE_REPORT.md` |
-| Missing frontend status report | Added `FRONTEND_STATUS_REPORT.md` |
-| Missing security audit report | Added `SECURITY_AUDIT_REPORT.md` |
-| Missing DevOps report | Added `DEVOPS_REPORT.md` |
-| Missing performance report | Added `PERFORMANCE_REPORT.md` |
-| Missing production readiness report | Added `PRODUCTION_READINESS_REPORT.md` |
-| Missing project positioning report | Added `PROJECT_POSITIONING_REPORT.md` |
-| Missing system architecture report | Added `SYSTEM_ARCHITECTURE_REPORT.md` |
-| README historical content at risk of overwrite | Appended a concise current status section |
+### Repository Overview
+- **Status:** Verified (structure) / Unverified (metrics)
+- **Issues:** File counts may be outdated; workspace counts incorrect (7 apps, not 8)
 
-### Remaining gaps
+### Technology Stack
+- **Status:** Verified
+- **Notes:** Correct versions in package.json
 
-- Runtime backend tests that require Redis remain blocked by Redis availability.
-- Load testing was not rerun in this pass.
-- React Doctor warnings are resolved.
-- Production readiness depends on Kubernetes credentials, deployment validation, moderate dependency advisories, and end-to-end telemetry validation.
+### Backend Section
+- **Status:** Verified
+- **Evidence:** main.ts and app.module.ts match documentation
+
+### UX Design System
+- **Status:** Verified
+- **Evidence:** packages/ui/tokens.ts matches
+
+### Database Architecture
+- **Status:** Verified
+- **Evidence:** Entity list matches db.module.ts
+
+### Business Engine
+- **Status:** Partial
+- **Issues:** Claims about "3 real restaurants, live drivers" not verified
+
+### Verified Documentation Update
+- **Status:** Mixed
+- **Issues:** Date mismatch (2026-06-14 vs 2026-06-20), test counts incorrect
+
+---
+
+## Files Requiring Immediate Update
+
+| File | Priority | Issue |
+|------|----------|-------|
+| README.md | High | Test counts, production claims |
+| docs/PROJECT_SUMMARY.md | High | Claims not verified |
+| docs/PRODUCTION_READINESS_REPORT.md | High | Security claims unverified |
+| docs/SECURITY_AUDIT_REPORT.md | High | RBAC claims unverified |
+| docs/INFRASTRUCTURE_REPORT.md | Medium | Infrastructure not validated |
+| CURRENT_STATUS_SUMMARY.md | High | Mixed verified/unverified content |
+
+---
+
+## Verification Method
+
+1. Read actual source files
+2. Run actual commands (build, lint, test)
+3. Compare outputs against documentation
+4. Mark claims as Verified/Unverified/Incorrect

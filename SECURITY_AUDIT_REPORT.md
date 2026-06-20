@@ -1,151 +1,108 @@
-# Security Audit Report
+# SECURITY AUDIT REPORT
 
-> Generated: 2026-06-19
-> Verified from source code analysis
+**Audit Date:** 2026-06-20  
+**Scope:** Backend security controls, infrastructure, runtime validation
 
-## Security Controls Audit
+---
 
-### JWT Authentication
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| JWT Strategy | services/auth/strategies/jwt.strategy.ts | ✅ Implemented |
-| Token Signing | auth.service.ts - jwtService.sign() | ✅ Secure |
-| Token Expiry | Configurable via JWT_EXPIRES_IN | ✅ Flexible |
-| Secret Validation | requireJwtSecret() - required in production | ✅ Enforced |
+## Security Controls Implemented
 
-### RBAC (Role-Based Access Control)
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| User Roles | UserEntity.role enum | ✅ Defined |
-| Role Enum | shared/domain/user.interface.ts | ✅ CUSTOMER, RESTAURANT, DRIVER, ADMIN |
-| Guard Implementation | Not found in codebase | ⚠️ MISSING |
-| Authorization | Not found | ⚠️ MISSING |
+| Control | Status | Evidence |
+|---------|--------|----------|
+| JWT Auth | ✅ Implemented | `apps/backend/src/services/auth/auth.module.ts` |
+| Password Hashing | ✅ Implemented | Argon2 used (`apps/backend/package.json:42`) |
+| Rate Limiting | ✅ Implemented | `main.ts:136-144` |
+| Helmet Headers | ✅ Implemented | `main.ts:215-234` |
+| HPP Protection | ✅ Implemented | `main.ts:238` |
+| NoSQL Sanitization | ✅ Implemented | `main.ts:170-204, 237` |
+| CSRF Protection | ✅ Implemented | `main.ts:235` |
+| CORS | ✅ Implemented | `getAllowedOrigins()` in `apps/backend/src/security/cors-origin.ts` |
+| RBAC Guard | ⚠️ Partial | `roles.guard.ts` exists; controller coverage unverified |
+| Production Validation | ✅ Implemented | `main.ts:57-87` |
 
-### Rate Limiting
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Service | express-rate-limit in main.ts | ✅ Implemented |
-| Store | RedisRateLimitStore | ✅ Redis-backed |
-| Auth OTP | 3 req/10min window | ✅ Configured |
-| Auth General | 5 req/15min window | ✅ Configured |
-| Orders | 10 req/15min window | ✅ Configured |
-| API General | 100 req/15min window | ✅ Configured |
-| Fallback | Memory store for non-prod | ✅ Graceful |
+---
 
-### CORS
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Origin Validation | getAllowedOrigins() | ✅ Configurable |
-| Credentials | credentials: true | ✅ Enabled |
-| Methods | GET, POST, PUT, PATCH, DELETE, OPTIONS | ✅ Full REST |
-| Headers | Content-Type, Authorization, X-Request-Id, Idempotency-Key | ✅ Complete |
+## Rate Limiting Configuration
 
-### CSRF Protection
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Implementation | Not detected | ⚠️ MISSING |
-| Note | SameSite cookies implied by credentials | ⚠️ Basic |
+| Endpoint | Window | Max | Source |
+|----------|--------|-----|--------|
+| `/auth/otp` | 10 min | 3 | main.ts:140 |
+| `/auth/` | 15 min | 5 | main.ts:141 |
+| `/orders` | 15 min | 10 | main.ts:142 |
+| `/api/` | 15 min | 100 | main.ts:143 |
 
-### Secrets Management
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Secret Loader | infra/secret-loader.service.ts | ✅ Implemented |
-| File-based Secrets | secrets/*.txt files | ✅ Git-ignored |
-| Environment Variables | .env files | ✅ Separated |
-| Production Keys | STRIPE_SECRET_KEY_FILE | ✅ File references |
-| Required Secrets | JWT_SECRET, ENCRYPTION_SECRET, DB_* | ✅ Validated |
+**Rate Limit Bypass:** `LOAD_TEST_MODE=true` skips rate limiting in non-production
 
-### Encryption
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| AES Encryption | EncryptionService.encrypt() | ✅ Implemented |
-| PII Fields | encryptPiiFields() method | ✅ Selective |
-| Secret Validation | ENCRYPTION_SECRET required | ✅ Enforced |
+---
 
-### PII Handling
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| PII Encryption | EncryptionService | ✅ Field-level |
-| Data Privacy | privacy/data-privacy.service.ts | ✅ Service exists |
-| Export Requests | data-export-request.entity.ts | ✅ Available |
-| Deletion Requests | deletion-request.entity.ts | ✅ Available |
+## CORS Configuration
 
-### Password Storage
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Algorithm | Argon2 | ✅ Secure (modern) |
-| Hashing | auth.service.ts - hashPassword() | ✅ Implemented |
-| Verification | auth.service.ts - verifyPassword() | ✅ Implemented |
+- `getAllowedOrigins()` helper (`apps/backend/src/security/cors-origin.ts`)
+- Credentials enabled
+- Restricted methods/headers
+- Validates `CORS_ALLOWED_ORIGINS` environment variable
 
-### Token Lifecycle
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Access Token | JWT with expiration | ✅ Implemented |
-| Refresh Token | crypto.randomBytes(40) | ✅ Secure random |
-| Session Store | SessionEntity with expiry | ✅ Database |
-| Session Duration | Configurable (default 30 days) | ✅ Flexible |
+---
 
-## Security Headers (Helmet)
+## Security Tests Executed
 
-| Header | Evidence | Status |
-|--------|----------|--------|
-| X-Frame-Options | helmet() | ✅ Auto-set |
-| X-Content-Type | helmet() | ✅ Auto-set |
-| X-XSS-Protection | helmet() | ✅ Auto-set |
-| Strict-Transport-Security | helmet() | ✅ Auto-set |
+| Test | Result | Notes |
+|------|--------|-------|
+| `node infra/scripts/security-tests.js` | ❌ FAIL | 100 rate-limiting issues; backend not running on port 3001 |
+| `node infra/scripts/penetration-tests.js` | ❌ FAIL | 5 issues; backend not running; port 6379 visible |
+| `npm audit --audit-level=moderate` | ❌ FAIL | 33 vulnerabilities: 32 moderate, 1 high |
 
-## Input Validation
+---
 
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| ValidationPipe | main.ts global pipe | ✅ Implemented |
-| Whitelist | whitelist: true | ✅ Strip unknown |
-| Forbid Non-whitelisted | forbidNonWhitelisted: true | ✅ Strict |
-| Transform | transform: true | ✅ Auto-transform |
-| Mongo Sanitize | safeMongoSanitize middleware | ✅ Implemented |
+## Infrastructure Security
 
-## HTTP Security
+### Docker Configuration
+- Read-only containers for apps (`compose.dev.yaml:166`)
+- `no-new-privileges` security option (`compose.dev.yaml:167`)
+- Resource limits defined (`compose.dev.yaml:170-178`)
+- Health checks for services (`compose.dev.yaml:158-163`)
 
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Dangerous Methods | TRACE/TRACK/DEBUG/CONNECT blocked | ✅ Implemented |
-| Body Size Limit | 10kb default | ✅ Limited |
-| Trust Proxy | Configurable | ✅ Production ready |
-| X-Powered-By | Disabled | ✅ Hidden |
-| HPP Protection | hpp() middleware | ✅ Implemented |
+### Kubernetes Hardening (`infra/k8s/production-hardened.yaml`)
+- Security context with non-root user
+- ReadOnly root filesystem
+- Dropped capabilities
+- NetworkPolicy restrictions
+- HPA (autoscaling)
+- PodDisruptionBudget
 
-## Payment Security
+---
 
-| Component | Evidence | Status |
-|-----------|----------|--------|
-| Webhook Verification | webhook.service.ts | ✅ Implemented |
-| Idempotency | idempotency.service.ts | ✅ Implemented |
-| Fraud Detection | fraud-hardening.service.ts | ✅ Implemented |
-| Payment Gateway | Stripe/Razorpay certified | ✅ PCI compliant gateways |
-| Retry Logic | retry.service.ts | ✅ Implemented |
+## Unresolved Findings
 
-## Security Audit Summary
+| Finding | Severity | Status |
+|---------|----------|--------|
+| Runtime security tests blocked | P0 | Backend not running on port 3001 |
+| Penetration test failures | P0 | Backend unavailable |
+| Dependency vulnerabilities | P0 | 33 findings (1 high, 32 moderate) |
+| RBAC controller coverage unverified | P1 | Guard exists but coverage not audited |
 
-| Category | Status | Notes |
-|----------|--------|-------|
-| JWT | ✅ PASS | Full implementation |
-| RBAC | ⚠️ PARTIAL | Roles defined, guards missing |
-| Rate Limiting | ✅ PASS | Redis-backed, configured |
-| CORS | ✅ PASS | Origin validation, credentials |
-| CSRF | ⚠️ MISSING | SameSite implied only |
-| Secrets | ✅ PASS | File-based, validated |
-| Encryption | ✅ PASS | AES, PII selective |
-| PII Handling | ✅ PASS | Services for export/deletion |
-| Password Storage | ✅ PASS | Argon2 hashing |
-| Token Lifecycle | ✅ PASS | JWT + refresh + sessions |
-| Security Headers | ✅ PASS | Helmet implementation |
-| Input Validation | ✅ PASS | ValidationPipe + sanitization |
-| HTTP Security | ✅ PASS | Method blocking, size limits |
-| Payment Security | ✅ PASS | Webhooks, idempotency, fraud |
+---
 
-## Vulnerabilities Found
+## Configuration Issues
 
-### npm audit Results
-- 1 high severity (undici TLS bypass)
-- 32 moderate severity (js-yaml, uuid, http-proxy-middleware)
-- Recommendation: Run `npm audit fix` for non-breaking fixes
+| Issue | Location | Required Fix |
+|-------|----------|--------------|
+| CORS env var mismatch | `.env.production.example` | Change `ALLOWED_ORIGINS` to `CORS_ALLOWED_ORIGINS` |
+| Payment secret var mismatch | `.env.production.example`, `.env.staging.example` | Remove `_FILE` suffix; use direct vars: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, etc. |
+| Legacy K8s port mismatch | `k8s/backend-deployment.yaml` | Container port uses 3000; backend listens on 3001 |
+| Backend healthcheck path | `compose.dev.yaml` | Uses `/orders/health`; public health is `/health` |
+| Grafana provisioning path | `compose.dev.yaml` | Mount path `/etc/grafana/dashboards` vs provisioning path `/etc/grafana/provisioning/dashboards` |
+
+---
+
+## Verification Required
+
+1. Start backend: `cd apps/backend && npm run dev` (port 3001)
+2. Run security tests: `node infra/scripts/security-tests.js`
+3. Run penetration tests: `node infra/scripts/penetration-tests.js`
+4. Audit RBAC coverage on protected controllers
+5. Remediate npm audit vulnerabilities
+
+---
+
+*This report reflects verified evidence. Security controls are implemented; runtime validation has not succeeded.*

@@ -5,7 +5,7 @@ export const rolePermissions: Record<UserRole, string[]> = {
   [UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own'],
   [UserRole.KITCHEN_STAFF]: ['kitchen:manage_own', 'orders:read_assigned'],
   [UserRole.DELIVERY_PARTNER]: ['deliveries:manage_assigned', 'orders:read_assigned'],
-  [UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read', 'finance:read', 'notifications:manage'],
+  [UserRole.ADMIN]: ['users:manage', 'restaurants:manage', 'orders:manage', 'payments:manage', 'support:manage', 'analytics:read', 'finance:read', 'notifications:manage', 'compliance:read'],
   [UserRole.SUPER_ADMIN]: ['*'],
   [UserRole.SUPPORT_STAFF]: ['support:manage', 'orders:read'],
   [UserRole.FINANCE_STAFF]: ['finance:read', 'payments:read', 'refunds:read'],

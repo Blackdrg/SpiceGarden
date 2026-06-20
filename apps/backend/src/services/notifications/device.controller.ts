@@ -3,10 +3,13 @@ import { NotificationService } from './notification.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
+import { PermissionGuard } from '../../security/permission.guard';
+import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 
 @Controller('devices')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Permissions('orders:read_own')
 export class DeviceController {
   constructor(private readonly notificationService: NotificationService) {}
 
@@ -40,7 +43,11 @@ export class DeviceController {
     @Body() body: { userId?: string; fcmToken?: string; apnsToken?: string }
   ) {
     const authenticatedUserId = req.user?.userId || req.user?.sub;
-    const targetUserId = (authenticatedUserId || body.userId || 'anonymous') as string;
+    const targetUserId = authenticatedUserId;
+
+    if (!targetUserId) {
+      return { success: false, message: 'Authenticated user ID is required' };
+    }
 
     const { fcmToken, apnsToken } = body;
 

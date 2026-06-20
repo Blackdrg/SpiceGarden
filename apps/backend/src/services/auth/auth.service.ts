@@ -9,7 +9,7 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { SessionEntity } from '../../db/entities/session.entity';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
-interface AuthenticatedUser {
+export interface AuthenticatedUser {
   id: string;
   email: string;
   role: UserRole;
@@ -17,7 +17,7 @@ interface AuthenticatedUser {
   passwordHash?: string;
 }
 
-interface LoginTokenResponse {
+export interface LoginTokenResponse {
   access_token: string;
   refresh_token: string;
 }
@@ -41,7 +41,7 @@ export class AuthService {
     return argon2.verify(hash, password);
   }
 
-  async createSession(userId: string, deviceInfo: { name: string; type: string; ip: string }, refreshToken: string) {
+  async createSession(userId: string, deviceInfo: { name: string; type: string; ip: string }, refreshToken = '') {
     const sessionDurationDays = Number(this.configService.get<number>('SESSION_DURATION_DAYS', 30));
     const session = this.sessionRepo.create({
       userId,

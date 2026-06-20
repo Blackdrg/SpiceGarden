@@ -18,7 +18,9 @@ const customer_support_service_1 = require("./customer-support.service");
 const ticket_routing_service_1 = require("./ticket-routing.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let SupportController = class SupportController {
     supportService;
@@ -113,8 +115,9 @@ __decorate([
 ], SupportController.prototype, "escalateTicket", null);
 exports.SupportController = SupportController = __decorate([
     (0, common_1.Controller)('support'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPPORT_STAFF),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.SUPPORT_STAFF),
+    (0, permissions_decorator_1.Permissions)('support:manage'),
     __metadata("design:paramtypes", [customer_support_service_1.CustomerSupportService,
         ticket_routing_service_1.TicketRoutingService])
 ], SupportController);
