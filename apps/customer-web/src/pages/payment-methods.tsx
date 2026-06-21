@@ -160,18 +160,18 @@ const PaymentMethodsPage = () => {
       ) : (
         data.map(method => (
           <Card key={method.id} title={method.type === 'card' ? `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || '****'}` : `UPI • ${method.upiId || '****'}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={styles.cardContent}>
               <div>
                 {method.type === 'card' && method.cardExpiry && (
-                  <p style={{ margin: 0, fontSize: '14px' }}>Expires {method.cardExpiry}</p>
+                  <p className={styles.expiryText}>Expires {method.cardExpiry}</p>
                 )}
                 {method.isDefault && (
-                  <span style={{ color: DESIGN_TOKENS.colors.primary, fontSize: '12px' }}>
+                  <span className={styles.defaultBadge}>
                     <Star size={12} fill={DESIGN_TOKENS.colors.primary} /> Default
                   </span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.xs }}>
+              <div className={styles.actionsContainer}>
                 {!method.isDefault && (
                   <button type="button" onClick={() => handleSetDefault(method.id)} aria-label="Set as default">
                     <Star size={16} />
@@ -194,6 +194,7 @@ const PaymentMethodsPage = () => {
                 className={styles.select}
                 value={uiState.newMethod.type}
                 onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
+                title="Select Payment Method Type"
               >
                 <option value="card">Credit/Debit Card</option>
                 <option value="upi">UPI</option>

@@ -3,10 +3,10 @@ import { View, Text, Pressable, StyleSheet, FlatList, Alert } from 'react-native
 import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from 'expo-location';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { STORAGE_KEYS } from '../constants/storage.keys';
+import { getCurrentMobileLocation, requestMobileLocationPermission, type MobileLocationPermissionStatus } from '../services/location.service';
 
 interface Address {
   id: string;
@@ -21,14 +21,13 @@ export const AddressesScreen = () => {
   const navigation = useNavigation();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
-  const [locationPermission, setLocationPermission] = useState<Location.PermissionStatus | null>(null);
+  const [locationPermission, setLocationPermission] = useState<MobileLocationPermissionStatus | null>(null);
   
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   const requestLocationPermission = async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      setLocationPermission(status);
+      setLocationPermission(await requestMobileLocationPermission());
     } catch (e) {
       console.error('Location permission error:', e);
     }
@@ -71,8 +70,8 @@ export const AddressesScreen = () => {
     }
 
     try {
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+      const location = await getCurrentMobileLocation();
+      const { latitude, longitude } = location;
       
       const newAddress: Address = {
         id: Date.now().toString(),

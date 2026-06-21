@@ -42,6 +42,7 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(SessionEntity),
           useValue: {
+            findOne: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
           },
@@ -98,6 +99,76 @@ describe('AuthService', () => {
         }),
       );
       expect(sessionRepo.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('login', () => {
+    it('should create a new refresh token session and return token pair', async () => {
+      const user = { id: 'user-id', email: 'test@test.com', role: 'customer', status: 'active' } as any;
+      const savedSession = { id: 'session-id', userId: 'user-id', refreshToken: 'refresh-token' };
+
+      (sessionRepo.create as jest.Mock).mockReturnValue({ userId: 'user-id', refreshToken: 'refresh-token' });
+      (sessionRepo.save as jest.Mock).mockResolvedValue(savedSession);
+
+      const result = await service.login(user, { name: 'mobile', type: 'ios', ip: '127.0.0.1' });
+
+      expect(result).toEqual({ access_token: 'mock-jwt-token', refresh_token: expect.stringMatching(/^[0-9a-f]{60}$/) });
+      expect(sessionRepo.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('refreshAccessToken', () => {
+    it('should rotate refresh token for an active unexpired session', async () => {
+      const user = { id: 'user-id', email: 'test@test.com', role: 'customer', status: 'active' } as any;
+      const session = {
+        id: 'session-id',
+        refreshToken: 'old-refresh-token',
+        expiresAt: new Date(Date.now() + 60_000),
+        user,
+        lastActiveAt: undefined,
+      };
+
+      (sessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+      (sessionRepo.save as jest.Mock).mockResolvedValue({ ...session, refreshToken: 'new-refresh-token' });
+
+      const result = await service.refreshAccessToken('old-refresh-token', { name: 'web', type: 'chrome', ip: '127.0.0.1' });
+
+      expect(session.refreshToken).toMatch(/^[0-9a-f]{60}$/);
+      expect(session.lastActiveAt).toBeInstanceOf(Date);
+      expect(result.access_token).toBe('mock-jwt-token');
+      expect(result.refresh_token).toMatch(/^[0-9a-f]{60}$/);
+    });
+
+    it('should reject expired refresh tokens', async () => {
+      (sessionRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 'session-id',
+        refreshToken: 'old-refresh-token',
+        expiresAt: new Date(Date.now() - 1),
+        user: { id: 'user-id', email: 'test@test.com', role: 'customer', status: 'active' },
+      });
+
+      await expect(service.refreshAccessToken('old-refresh-token', { name: 'web', type: 'chrome', ip: '127.0.0.1' }))
+        .rejects.toThrow('Invalid or expired refresh token');
+    });
+  });
+
+  describe('revokeSession', () => {
+    it('should deactivate an existing session', async () => {
+      const session = { id: 'session-id', refreshToken: 'refresh-token', isActive: true, lastActiveAt: undefined } as any;
+      (sessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+      (sessionRepo.save as jest.Mock).mockResolvedValue({ ...session, isActive: false });
+
+      await service.revokeSession('refresh-token');
+
+      expect(session.isActive).toBe(false);
+      expect(session.lastActiveAt).toBeInstanceOf(Date);
+      expect(sessionRepo.save).toHaveBeenCalled();
+    });
+
+    it('should reject unknown refresh tokens', async () => {
+      (sessionRepo.findOne as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.revokeSession('unknown')).rejects.toThrow('Invalid or expired refresh token');
     });
   });
 

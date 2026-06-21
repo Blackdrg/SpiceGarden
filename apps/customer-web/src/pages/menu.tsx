@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
-
-const bottomNavStyle: React.CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const navButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-};
+import styles from './menu.module.css';
 
 interface MenuItem {
   id: number;
@@ -68,9 +48,7 @@ const MenuPage = () => {
   const [loading, setLoading] = useState(true);
 
   // Simulate loading effect for demo purposes
-  // In a real app, this would be set when fetching data from API
   useEffect(() => {
-    // Simulate API call delay
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -98,13 +76,13 @@ const MenuPage = () => {
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg, textAlign: 'center' }}>
+    <div className={styles.pageContainer}>
+      <div className={styles.header}>
         <h2>Menu</h2>
-        <p style={{ color: '#666' }}>Select items to add to your order</p>
+        <p className={styles.subtitle}>Select items to add to your order</p>
       </div>
 
-      <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, overflowX: 'auto', marginBottom: DESIGN_TOKENS.spacing.lg }}>
+      <div className={styles.categoryList}>
         {categories.map((c) => (
           <Button
             key={c.id}
@@ -115,38 +93,29 @@ const MenuPage = () => {
         ))}
       </div>
 
-       <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
+       <div className={styles.itemsList}>
          {loading ? (
-           <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
+           <div className={styles.itemsList}>
              {Array.from({ length: 6 }).map((_, index) => (
-               <div key={index} style={{ 
-                 display: 'flex', 
-                 flexDirection: 'column', 
-                 gap: DESIGN_TOKENS.spacing.sm,
-                 marginBottom: DESIGN_TOKENS.spacing.md
-               }}>
-                 <div style={{ 
-                   display: 'flex', 
-                   justifyContent: 'space-between', 
-                   alignItems: 'center'
-                 }}>
-                   <Skeleton width={48} height={48} variant="circular" />
-                   <div>
-                     <Skeleton height={16} width="70%" style={{ marginBottom: DESIGN_TOKENS.spacing.xs }} />
-                     <Skeleton height={14} width="40%" />
-                   </div>
-                 </div>
-                 <Skeleton height={12} style={{ marginTop: DESIGN_TOKENS.spacing.sm }} />
-                 <Skeleton height={12} width="80%" />
-                 <Skeleton height={12} width="60%" />
+               <div key={index} className={styles.skeletonItem}>
+                  <div className={styles.skeletonHeader}>
+                    <Skeleton width={48} height={48} variant="circular" />
+                    <div>
+                      <Skeleton height={16} width="70%" style={{ marginBottom: 4 }} />
+                      <Skeleton height={14} width="40%" />
+                    </div>
+                  </div>
+                  <Skeleton height={12} style={{ marginTop: 8 }} />
+                  <Skeleton height={12} width="80%" />
+                  <Skeleton height={12} width="60%" />
                </div>
              ))}
            </div>
          ) : filteredItems.length === 0 ? (
-           <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.lg }}>
-             <p style={{ fontSize: '20px', marginBottom: DESIGN_TOKENS.spacing.md }}>🍽️</p>
-             <p style={{ color: DESIGN_TOKENS.colors.textSecondary, marginBottom: DESIGN_TOKENS.spacing.sm }}>No items found</p>
-             <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: '14px' }}>
+           <div className={styles.emptyContainer}>
+             <p className={styles.emptyIcon}>🍽️</p>
+             <p className={styles.emptyText}>No items found</p>
+             <p className={styles.emptyHelpText}>
                Try selecting a different category or check back later for new items.
              </p>
              <Button 
@@ -156,46 +125,37 @@ const MenuPage = () => {
              />
            </div>
          ) : filteredItems.map((item) => (
-           <div key={item.id} style={{ 
-             display: 'flex', 
-             flexDirection: 'column', 
-             gap: DESIGN_TOKENS.spacing.sm,
-             marginBottom: DESIGN_TOKENS.spacing.md
-           }}>
-             <div style={{ 
-               display: 'flex', 
-               justifyContent: 'space-between', 
-               alignItems: 'center'
-             }}>
-               <div style={{ fontSize: '24px' }}>{item.image}</div>
-               <div>
-                 <span style={{ fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>₹{item.price}</span>
-                 <Button 
-                   label="Add" 
-                   onClick={() => addToCart(item)} 
-                   variant="secondary"
-                 />
-               </div>
-             </div>
-             <div style={{ marginTop: DESIGN_TOKENS.spacing.sm, fontSize: '14px', color: '#666' }}>
-               {item.desc}
-             </div>
+           <div key={item.id} className={styles.menuItem}>
+              <div className={styles.itemHeader}>
+                <div className={styles.itemImage}>{item.image}</div>
+                <div>
+                  <span className={styles.priceText}>₹{item.price}</span>
+                  <Button 
+                    label="Add" 
+                    onClick={() => addToCart(item)} 
+                    variant="secondary"
+                  />
+                </div>
+              </div>
+              <div className={styles.itemDesc}>
+                {item.desc}
+              </div>
            </div>
          ))}
        </div>
 
       {cart.length > 0 && (
-        <div style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
+        <div className={styles.cartContainer}>
           <Card title="Your Cart">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+            <div className={styles.cartItemsList}>
               {cart.map((item) => (
-                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div key={item.id} className={styles.cartItemRow}>
                   <div>
-                    <h4 style={{ margin: 0 }}>{item.name}</h4>
-                    <p style={{ margin: '4px 0 0 0', color: '#666' }}>×{item.quantity}</p>
+                    <h4 className={styles.cartItemName}>{item.name}</h4>
+                    <p className={styles.cartItemQty}>×{item.quantity}</p>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>
+                  <div className={styles.cartItemRight}>
+                    <div className={styles.cartItemPrice}>
                       ₹{item.price * item.quantity}
                     </div>
                     <Button 
@@ -207,16 +167,9 @@ const MenuPage = () => {
                 </div>
               ))}
             </div>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              marginTop: DESIGN_TOKENS.spacing.lg,
-              paddingTop: DESIGN_TOKENS.spacing.md,
-              borderTop: '1px solid #eee'
-            }}>
+            <div className={styles.cartTotalRow}>
               <span>Total:</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>₹{cartTotal}</span>
+              <span className={styles.cartTotalText}>₹{cartTotal}</span>
               <Button label="Checkout" onClick={handleCheckout} variant="secondary" />
             </div>
           </Card>
@@ -224,7 +177,7 @@ const MenuPage = () => {
       )}
 
       {/* Bottom nav */}
-      <nav style={bottomNavStyle}>
+      <nav className={styles.bottomNav}>
         {[
           { key: 'home', label: 'Home', icon: '🏠', path: '/' },
           { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
@@ -236,9 +189,9 @@ const MenuPage = () => {
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999' }}
+            className={`${styles.navButton} ${tab.key === 'menu' ? styles.navButtonActive : ''}`}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.navIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
           </button>
         ))}

@@ -294,6 +294,73 @@ describe('WalletService Edge Cases', () => {
     });
   });
 
+  describe('confirmCODCollection', () => {
+    it('should credit wallet when a pending COD transaction is confirmed', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 0 } as WalletEntity;
+      const pendingTransaction = {
+        id: 't-cod-pending',
+        walletId: 'w1',
+        amount: 80,
+        type: 'credit',
+        description: 'COD Payment Pending for Order #order1',
+        referenceId: 'order1',
+      } as WalletTransactionEntity;
+
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.findOne.mockResolvedValue(pendingTransaction);
+      mockWalletTransactionRepo.save.mockResolvedValue({ ...pendingTransaction, description: 'COD Payment Collected for Order #order1' });
+      mockWalletRepo.save.mockResolvedValue({ ...wallet, balance: 80 });
+
+      const result = await service.confirmCODCollection('order1', 80, 'user1');
+
+      expect(result.description).toBe('COD Payment Collected for Order #order1');
+      expect(mockWalletRepo.save).toHaveBeenCalledWith(expect.objectContaining({ balance: 80 }));
+      expect(mockNotificationService.sendPush).toHaveBeenCalled();
+    });
+
+    it('should reject COD confirmation when no pending transaction exists', async () => {
+      mockWalletRepo.findOne.mockResolvedValue({ id: 'w1', userId: 'user1', balance: 0 } as WalletEntity);
+      mockWalletTransactionRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.confirmCODCollection('order1', 80, 'user1')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('refundCOD', () => {
+    it('should debit wallet for a confirmed COD refund', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 100 } as WalletEntity;
+      const confirmedTransaction = {
+        id: 't-cod-collected',
+        walletId: 'w1',
+        amount: 80,
+        type: 'credit',
+        description: 'COD Payment Collected for Order #order1',
+        referenceId: 'order1',
+      } as WalletTransactionEntity;
+
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.findOne.mockResolvedValue(confirmedTransaction);
+      mockWalletRepo.save.mockResolvedValue({ ...wallet, balance: 20 });
+      mockWalletTransactionRepo.create.mockReturnValue({ id: 't-refund', amount: 80, type: 'debit' });
+      mockWalletTransactionRepo.save.mockResolvedValue({ id: 't-refund', amount: 80, type: 'debit' });
+
+      const result = await service.refundCOD('order1', 80, 'user1', 'Cancelled after COD');
+
+      expect(result.type).toBe('debit');
+      expect(mockWalletTransactionRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+        referenceId: expect.stringMatching(/^COD-REF-order1-/),
+        description: 'COD Refund: Cancelled after COD',
+      }));
+    });
+
+    it('should reject COD refund when no confirmed transaction exists', async () => {
+      mockWalletRepo.findOne.mockResolvedValue({ id: 'w1', userId: 'user1', balance: 100 } as WalletEntity);
+      mockWalletTransactionRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.refundCOD('order1', 80, 'user1', 'Cancelled after COD')).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe('debitWalletWithLock - error cases', () => {
     it('should throw BadRequestException when wallet not found in transaction', async () => {
       mockDataSource.manager.transaction.mockImplementation(async (cb) => {

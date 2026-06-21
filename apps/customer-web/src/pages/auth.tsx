@@ -64,66 +64,66 @@ const AuthPage = () => {
     };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.lg, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
-      <div style={{ textAlign: 'center', marginBottom: DESIGN_TOKENS.spacing.xl }}>
-        <h1 style={{ color: DESIGN_TOKENS.colors.primary }}>&#x1F35F; SpiceGarden</h1>
-        <p style={{ color: '#666', margin: 0 }}>Order food from your favourite restaurants</p>
+    <div className={styles.pageContainer}>
+      <div className={styles.headerContainer}>
+        <h1 className={styles.logo}>&#x1F35F; SpiceGarden</h1>
+        <p className={styles.subtitle}>Order food from your favourite restaurants</p>
       </div>
 
       <Card title={isLogin ? 'Welcome Back' : 'Create Account'}>
         {error && (
-          <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
+          <div className={styles.errorMsg}>
             {error}
           </div>
         )}
 
         {!isLogin && (
           <>
-            <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
-              <label htmlFor="auth-name" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Full Name</label>
+            <div className={styles.fieldMd}>
+              <label htmlFor="auth-name" className={styles.label}>Full Name</label>
               <input
                 id="auth-name"
                 type="text"
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                className={styles.input}
               />
             </div>
-            <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
-              <label htmlFor="auth-phone" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Phone Number</label>
+            <div className={styles.fieldMd}>
+              <label htmlFor="auth-phone" className={styles.label}>Phone Number</label>
               <input
                 id="auth-phone"
                 type="tel"
                 placeholder="Phone Number"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                className={styles.input}
               />
             </div>
           </>
         )}
 
-        <div style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
-          <label htmlFor="auth-email" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Email</label>
+        <div className={styles.fieldMd}>
+          <label htmlFor="auth-email" className={styles.label}>Email</label>
           <input
             id="auth-email"
             type="email"
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+            className={styles.input}
           />
         </div>
 
-        <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>
-          <label htmlFor="auth-password" style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Password</label>
+        <div className={styles.fieldLg}>
+          <label htmlFor="auth-password" className={styles.label}>Password</label>
           <input
             id="auth-password"
             placeholder="Password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+            className={styles.input}
           />
         </div>
 
@@ -132,17 +132,17 @@ const AuthPage = () => {
           onClick={handleSubmit}
         />
 
-        <div style={{ textAlign: 'center', marginTop: DESIGN_TOKENS.spacing.lg }}>
+        <div className={styles.footer}>
             {isLogin && (
                 <button
                     type="button"
                     onClick={() => { router.push('/reset-password'); setError(''); }}
-                    style={{ background: 'none', border: 'none', color: DESIGN_TOKENS.colors.primary, cursor: 'pointer', fontSize: 14 }}
+                    className={styles.textButton}
                 >
                     Forgot password?
                 </button>
             )}
-            <div style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
+            <div className={styles.socialSection}>
                 <div className={styles.socialLabel}>Or continue with</div>
                 <div className={styles.socialButtonsRow}>
                     <button
@@ -164,7 +164,7 @@ const AuthPage = () => {
             <button
                 type="button"
                 onClick={() => { setIsLogin(!isLogin); setError(''); }}
-                style={{ background: 'none', border: 'none', color: DESIGN_TOKENS.colors.primary, cursor: 'pointer', fontSize: 14 }}
+                className={styles.textButton}
             >
                 {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
             </button>

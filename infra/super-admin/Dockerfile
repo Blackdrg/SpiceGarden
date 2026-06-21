@@ -1,7 +1,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY ../../package*.json ./
-COPY ../../apps/super-admin/package*.json ./apps/super-admin/
+COPY package*.json ./
+COPY apps/super-admin/package*.json ./apps/super-admin/
+COPY packages/*/package*.json ./packages/
 RUN npm ci
 COPY ../../apps/super-admin .
 RUN npm run build

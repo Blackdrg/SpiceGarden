@@ -93,6 +93,47 @@ export class OrderService {
     return true;
   }
 
+  canTransitionOrderStatus(from: OrderStatus, to: OrderStatus): boolean {
+    const allowedTransitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
+      [OrderStatus.PLACED]: [OrderStatus.PAYMENT_CONFIRMED, OrderStatus.RESTAURANT_ACCEPTED, OrderStatus.CANCELLED],
+      [OrderStatus.PAYMENT_CONFIRMED]: [OrderStatus.RESTAURANT_ACCEPTED, OrderStatus.CANCELLED],
+      [OrderStatus.RESTAURANT_ACCEPTED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
+      [OrderStatus.PREPARING]: [OrderStatus.READY, OrderStatus.READY_FOR_PICKUP, OrderStatus.CANCELLED],
+      [OrderStatus.READY]: [OrderStatus.DRIVER_ASSIGNED, OrderStatus.CANCELLED],
+      [OrderStatus.READY_FOR_PICKUP]: [OrderStatus.DRIVER_ASSIGNED, OrderStatus.CANCELLED],
+      [OrderStatus.DRIVER_ASSIGNED]: [OrderStatus.PICKED_UP, OrderStatus.CANCELLED],
+      [OrderStatus.PICKED_UP]: [OrderStatus.ON_THE_WAY, OrderStatus.CANCELLED],
+      [OrderStatus.ON_THE_WAY]: [OrderStatus.DELIVERED, OrderStatus.CANCELLED],
+    };
+
+    return from === to || (allowedTransitions[from] || []).includes(to);
+  }
+
+  transitionOrderStatus(order: Order, nextStatus: OrderStatus, actor: string): Order {
+    if (!this.canTransitionOrderStatus(order.status, nextStatus)) {
+      throw new BadRequestException(`Invalid order status transition from ${order.status} to ${nextStatus} by ${actor}`);
+    }
+
+    order.status = nextStatus;
+    order.updatedAt = new Date();
+
+    if (nextStatus === OrderStatus.DELIVERED) {
+      order.deliveredAt = order.deliveredAt || new Date();
+    }
+
+    return order;
+  }
+
+  async applyOrderStatusTransition(orderId: string, nextStatus: OrderStatus, actor: string): Promise<Order> {
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    const updated = this.transitionOrderStatus(order, nextStatus, actor);
+    return this.orderRepo.save(updated);
+  }
+
   async placeOrder(orderData: any, idempotencyKey?: string): Promise<Order> {
     const data = orderData as OrderDataInput;
     if (!data.userId || !data.restaurantId || !data.grandTotal) {

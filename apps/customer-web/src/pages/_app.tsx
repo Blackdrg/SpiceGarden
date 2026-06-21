@@ -7,14 +7,20 @@ import OfflineIndicator from '../components/OfflineIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
 import '../analytics';
 import { useAnalytics } from '../analytics';
-import { useEnterAnimation } from '../hooks/useAnimation';
 import { useMotion } from '../hooks/useMotion';
+import { useEffect, useState } from 'react';
+import styles from './_app.module.css';
 
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   const prefersReducedMotion = useMotion();
-  const entryAnimation = useEnterAnimation(true, 'fade', prefersReducedMotion ? 0 : 250);
+  const [animated, setAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   useAnalytics();
 
@@ -23,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <NetworkStatusProvider>
           <ErrorBoundary>
-            <div style={entryAnimation}>
+            <div className={`${styles.entryAnimation} ${animated ? styles.animated : ''} ${prefersReducedMotion ? styles.reducedMotion : ''}`}>
               <Component {...pageProps} />
               <OfflineIndicator />
             </div>

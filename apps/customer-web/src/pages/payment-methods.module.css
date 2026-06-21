@@ -84,3 +84,25 @@
 .deleteButton {
   color: #f44336;
 }
+
+.cardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.expiryText {
+  margin: 0;
+  font-size: 14px;
+}
+
+.defaultBadge {
+  color: #FF5A1F;
+  font-size: 12px;
+}
+
+.actionsContainer {
+  display: flex;
+  gap: 4px;
+}
+

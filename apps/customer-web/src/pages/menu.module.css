@@ -1,104 +1,182 @@
-.menuInline0 {
-color: '#666';
-}
-.menuInline1 {
-display: 'flex';
-justify-content: 'space-between';
-align-items: 'center';
-}
-.menuInline2 {
-display: 'flex';
-justify-content: 'space-between';
-align-items: 'center';
-}
-.menuInline3 {
-display: 'flex';
-justify-content: 'space-between';
-align-items: 'center';
-}
-.menuInline4 {
-margin: 0;
-}
-.menuInline5 {
-margin: '4px 0 0 0';
-color: '#666';
-}
-.menuInline6 {
-display: 'flex';
-justify-content: 'space-between';
-align-items: 'center';
-}
-.menuInline7 {
-font-size: '22px';
+/* menu.module.css */
+
+.pageContainer {
+  padding: 16px;
+  padding-bottom: 80px;
 }
 
-.menuInline0 {
-padding: var(--spacing-md);
-padding-bottom: 80;
+.header {
+  margin-bottom: 24px;
+  text-align: center;
 }
-.menuInline1 {
-display: 'flex';
-gap: var(--spacing-sm);
-overflow-x: 'auto';
-margin-bottom: var(--spacing-lg);
+
+.subtitle {
+  color: #666;
 }
-.menuInline2 {
-display: 'flex';
-flex-direction: 'column';
-gap: var(--spacing-md);
+
+.categoryList {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 24px;
 }
-.menuInline3 {
-display: 'flex';
-flex-direction: 'column';
-gap: var(--spacing-sm);
-margin-bottom: var(--spacing-md);
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-.menuInline4 {
-margin-bottom: var(--spacing-xs);
+
+.skeletonItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
 }
-.menuInline5 {
-margin-top: var(--spacing-sm);
+
+.skeletonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.menuInline6 {
-text-align: 'center';
-padding: var(--spacing-lg);
+
+.skeletonTitle {
+  margin-bottom: 4px !important;
 }
-.menuInline7 {
-color: var(--color-textSecondary);
-margin-bottom: var(--spacing-sm);
+
+.skeletonMarginTop {
+  margin-top: 8px !important;
 }
-.menuInline8 {
-display: 'flex';
-flex-direction: 'column';
-gap: var(--spacing-sm);
-margin-bottom: var(--spacing-md);
+
+.emptyContainer {
+  text-align: center;
+  padding: 24px;
 }
-.menuInline9 {
-font-weight: 'bold';
-color: var(--color-primary);
+
+.emptyIcon {
+  font-size: 20px;
+  margin-bottom: 16px;
 }
-.menuInline10 {
-margin-top: var(--spacing-sm);
-font-size: '14px';
-color: '#666';
+
+.emptyText {
+  color: #6B7280;
+  margin-bottom: 8px;
 }
-.menuInline11 {
-margin-top: var(--spacing-lg);
+
+.emptyHelpText {
+  color: #6B7280;
+  font-size: 14px;
 }
-.menuInline12 {
-display: 'flex';
-flex-direction: 'column';
-gap: var(--spacing-sm);
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
 }
-.menuInline13 {
-font-weight: 'bold';
-color: var(--color-primary);
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.menuInline14 {
-display: 'flex';
-justify-content: 'space-between';
-align-items: 'center';
-margin-top: var(--spacing-lg);
-padding-top: var(--spacing-md);
-border-top: '1px solid #eee';
+
+.itemImage {
+  font-size: 24px;
 }
+
+.priceText {
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.itemDesc {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.cartContainer {
+  margin-top: 24px;
+}
+
+.cartItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cartItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cartItemName {
+  margin: 0;
+}
+
+.cartItemQty {
+  margin: 4px 0 0 0;
+  color: #666;
+}
+
+.cartItemRight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cartItemPrice {
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.cartTotalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.cartTotalText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 10;
+}
+
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  background: none;
+  border: none;
+  color: #999;
+}
+
+.navButtonActive {
+  color: #FF5A1F !important;
+}
+
+.navIcon {
+  font-size: 22px;
+}
+

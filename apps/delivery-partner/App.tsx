@@ -2,8 +2,8 @@ import React, { useReducer, useEffect, useRef, useCallback } from 'react';
 import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, useWindowDimensions, AppState, AppStateStatus, TextInput } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
-
-const Geolocation = { requestAuthorization: (...args: any[]) => {}, getCurrentPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => {/* stub */}, watchPosition: (success: (...args: any[]) => void, error?: (...args: any[]) => void, options?: any) => 0, clearWatch: (...args: any[]) => {} };
+import * as Location from 'expo-location';
+import { getCurrentLocation, requestLocationPermission, watchLocation, type LocationPoint } from './src/services/location.service';
 
 const BackgroundTimer = { start: () => {}, stopBackgroundTimer: () => {} };
 
@@ -255,17 +255,27 @@ export default function DriverApp() {
   const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
 
   useEffect(() => {
-    Geolocation.requestAuthorization();
-    Geolocation.getCurrentPosition(
-      () => {
-        dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'granted' });
-      },
-      (error: GeoError) => {
-        dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
-        dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    );
+    let cancelled = false;
+
+    requestLocationPermission()
+      .then((status) => {
+        if (!cancelled) dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status });
+        if (status === 'granted') return getCurrentLocation({ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+        throw new Error('Location permission denied');
+      })
+      .then(() => {
+        if (!cancelled) dispatch({ type: 'ADD_LOG', payload: 'Current location initialized' });
+      })
+      .catch((error: Error) => {
+        if (!cancelled) {
+          dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
+          dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -277,29 +287,31 @@ export default function DriverApp() {
       return;
     }
 
-    locationWatchId.current = Geolocation.watchPosition(
-      (position: GeoPosition) => {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        socketRef.current?.emit('driverLocationUpdate', { 
+    let watcher: Awaited<ReturnType<typeof watchLocation>> | null = null;
+
+    watchLocation(
+      (location: LocationPoint) => {
+        socketRef.current?.emit('driverLocationUpdate', {
           driverId: 'current',
-          location 
+          location: {
+            lat: location.lat,
+            lng: location.lng,
+          },
         });
       },
-      (error: GeoError) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
-      { 
-        enableHighAccuracy: true, 
-        distanceFilter: 10,
-        timeout: 5000
+      (error) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
+      {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 10,
       }
-    );
+    ).then((activeWatcher) => {
+      watcher = activeWatcher;
+    }).catch((error: Error) => {
+      dispatch({ type: 'ADD_LOG', payload: `Location watch setup error: ${error.message}` });
+    });
 
     return () => {
-      if (locationWatchId.current !== null) {
-        Geolocation.clearWatch(locationWatchId.current);
-      }
+      watcher?.remove();
     };
   }, [state.isOnline, state.locationPermission]);
 

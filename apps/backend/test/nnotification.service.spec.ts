@@ -79,6 +79,24 @@ describe('NotificationService', () => {
       expect(result.reason).toBe('FCM not configured');
     });
 
+    it('should return failure when FCM fetch throws without crashing critical flow', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'FCM_SERVER_KEY') return 'valid-fcm-key';
+        return 'test-key';
+      });
+      (userDeviceRepo.find as jest.Mock).mockResolvedValue([{ fcmToken: 'token-1' }]);
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockRejectedValue(new Error('network down')) as any;
+
+      try {
+        const result = await service.sendPush('user-1', 'title', 'body');
+        expect(result.success).toBe(false);
+        expect(result.error).toBe('network down');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
     it('should return no devices when no active devices', async () => {
       (userDeviceRepo.find as jest.Mock).mockResolvedValue([]);
       const result = await service.sendPush('user-1', 'title', 'body');

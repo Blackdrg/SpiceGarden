@@ -9,3 +9,9 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.reducedMotion {
+  transition: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}

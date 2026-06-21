@@ -1,7 +1,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY ../../package*.json ./
-COPY ../../apps/restaurant-dashboard/package*.json ./apps/restaurant-dashboard/
+COPY package*.json ./
+COPY apps/restaurant-dashboard/package*.json ./apps/restaurant-dashboard/
+COPY packages/*/package*.json ./packages/
 RUN npm ci
 COPY ../../apps/restaurant-dashboard .
 RUN npm run build

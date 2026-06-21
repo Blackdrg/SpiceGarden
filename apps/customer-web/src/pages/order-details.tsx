@@ -150,94 +150,94 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
         </Card>
       )}
 
-<Card title="Order Items">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-            {order.items && order.items.length > 0 ? (
-              order.items.map((item, idx: number) => (
-                <div key={item.id || idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.sm, borderBottom: '1px solid #eee' }}>
-                  <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, alignItems: 'center' }}>
-                    {item.image ? (
-                       <Image
-                         src={item.image}
-                         alt={item.name || 'Order item'}
-                         width={40}
-                         height={40}
-                         style={{ borderRadius: DESIGN_TOKENS.radius.sm, objectFit: 'cover' }}
-                       />
-                    ) : (
-                      <div style={{ width: '40px', height: '40px', borderRadius: DESIGN_TOKENS.radius.sm, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🍔</div>
-                    )}
-                    <div>
-                      <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                      <div style={{ fontSize: '14px', color: '#666' }}>Quantity: {item.quantity}</div>
-                    </div>
+      <Card title="Order Items">
+        <div className={styles.itemsList}>
+          {order.items && order.items.length > 0 ? (
+            order.items.map((item, idx: number) => (
+              <div key={item.id || idx} className={styles.itemRow}>
+                <div className={styles.itemImageWrap}>
+                  {item.image ? (
+                     <Image
+                       src={item.image}
+                       alt={item.name || 'Order item'}
+                       width={40}
+                       height={40}
+                       className={styles.itemImage}
+                     />
+                  ) : (
+                    <div className={styles.itemPlaceholder}>🍔</div>
+                  )}
+                  <div>
+                    <div className={styles.itemName}>{item.name}</div>
+                    <div className={styles.itemMeta}>Quantity: {item.quantity}</div>
                   </div>
-                  <div style={{ textAlign: 'right', fontWeight: 'bold' }}>₹{(item.price || 0) * (item.quantity || 1)}</div>
                 </div>
-              ))
-            ) : (
-              <p style={{ textAlign: 'center', color: '#666', padding: DESIGN_TOKENS.spacing.lg }}>No items in this order</p>
-            )}
-          </div>
-        </Card>
+                <div className={styles.itemPrice}>₹{(item.price || 0) * (item.quantity || 1)}</div>
+              </div>
+            ))
+          ) : (
+            <p className={styles.emptyItems}>No items in this order</p>
+          )}
+        </div>
+      </Card>
 
       <Card title="Order Summary">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.xs }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className={styles.summaryList}>
+          <div className={styles.summaryRow}>
             <span>Item Total</span>
             <span>₹{order.subtotal}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className={styles.summaryRow}>
             <span>Delivery Fee</span>
             <span>₹{order.deliveryFee}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className={styles.summaryRow}>
             <span>Taxes</span>
             <span>₹{order.tax}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className={styles.summaryRow}>
             <span>Tip</span>
             <span>₹{order.tip}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid #ddd', paddingTop: DESIGN_TOKENS.spacing.sm }}>
+          <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
             <span>Total</span>
             <span>₹{order.grandTotal}</span>
           </div>
         </div>
       </Card>
 
-<Card title="Order Information">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Status</span>
-               <span className={styles.statusBadge} style={{ backgroundColor: `${STATUS_COLORS[order.status || 'delivered']}20`, color: STATUS_COLORS[order.status || 'delivered'] }}>{STATUS_LABELS[order.status || ''] || order.status || 'Unknown'}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Order Date</span>
-              <span>{new Date(order.createdAt || '').toLocaleString()}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Last Updated</span>
-              <span>{new Date(order.updatedAt || '').toLocaleString()}</span>
-            </div>
+      <Card title="Order Information">
+        <div className={styles.infoList}>
+          <div className={styles.summaryRow}>
+            <span>Status</span>
+             <span className={`${styles.statusBadge} ${styles[order.status || 'delivered']}`}>{STATUS_LABELS[order.status || ''] || order.status || 'Unknown'}</span>
           </div>
-        </Card>
+          <div className={styles.summaryRow}>
+            <span>Order Date</span>
+            <span>{new Date(order.createdAt || '').toLocaleString()}</span>
+          </div>
+          <div className={styles.summaryRow}>
+            <span>Last Updated</span>
+            <span>{new Date(order.updatedAt || '').toLocaleString()}</span>
+          </div>
+        </div>
+      </Card>
 
       <Card title="Delivery Address">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+        <div className={styles.infoList}>
           {order.deliveryAddress && (
             <>
-              <div style={{ fontWeight: 'bold', marginBottom: DESIGN_TOKENS.spacing.xs }}>Delivery Address</div>
-              <div style={{ color: '#666' }}>{order.deliveryAddress.street}</div>
-              <div style={{ color: '#666' }}>{order.deliveryAddress.city}, {order.deliveryAddress.state} {order.deliveryAddress.pincode}</div>
+              <div className={styles.addressLabel}>Delivery Address</div>
+              <div className={styles.addressText}>{order.deliveryAddress.street}</div>
+              <div className={styles.addressText}>{order.deliveryAddress.city}, {order.deliveryAddress.state} {order.deliveryAddress.pincode}</div>
             </>
           )}
         </div>
       </Card>
 
       <Card title="Payment Information">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className={styles.infoList}>
+          <div className={styles.summaryRow}>
             <span>Payment Method</span>
             <span>{order.paymentMethod?.toUpperCase() || 'Not specified'}</span>
           </div>
@@ -245,18 +245,18 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
       </Card>
 
       {order.status !== 'delivered' && order.status !== 'cancelled' && (
-        <div style={{ marginTop: DESIGN_TOKENS.spacing.lg, textAlign: 'center' }}>
-          <Button label="Contact Restaurant" onClick={() => {}} variant="secondary" style={{ marginRight: DESIGN_TOKENS.spacing.md }} />
+        <div className={styles.actionWrapper}>
+          <Button label="Contact Restaurant" onClick={() => {}} variant="secondary" className={styles.mr16} />
           <Button label="Reorder" onClick={() => {}} />
         </div>
       )}
 
-        {order.status === 'delivered' && (
-          <div style={{ marginTop: DESIGN_TOKENS.spacing.lg, textAlign: 'center' }}>
-            <Button label="Reorder" onClick={() => {}} variant="secondary" style={{ marginRight: DESIGN_TOKENS.spacing.md }} />
-            <Button label="Leave Review" onClick={() => {}} />
-          </div>
-        )}
+      {order.status === 'delivered' && (
+        <div className={styles.actionWrapper}>
+          <Button label="Reorder" onClick={() => {}} variant="secondary" className={styles.mr16} />
+          <Button label="Leave Review" onClick={() => {}} />
+        </div>
+      )}
     </div>
   );
 };

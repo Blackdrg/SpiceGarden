@@ -82,8 +82,8 @@ __decorate([
     (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER),
     (0, permissions_decorator_1.Permissions)('wallet:read_own'),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)('limit')),
-    __param(2, (0, common_1.Body)('offset')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number, Number]),
     __metadata("design:returntype", Promise)

@@ -1,7 +1,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY ../../package*.json ./
-COPY ../../apps/customer-web/package*.json ./apps/customer-web/
+COPY package*.json ./
+COPY apps/customer-web/package*.json ./apps/customer-web/
+COPY packages/*/package*.json ./packages/
 RUN npm ci
 COPY ../../apps/customer-web .
 RUN npm run build

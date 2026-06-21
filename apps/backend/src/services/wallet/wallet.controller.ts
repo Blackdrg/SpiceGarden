@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
@@ -35,8 +35,8 @@ export class WalletController {
   @Permissions('wallet:read_own')
   async getTransactions(
     @Request() req: AuthenticatedRequest,
-    @Body('limit') limit: number = 20,
-    @Body('offset') offset: number = 0,
+    @Query('limit') limit: number = 20,
+    @Query('offset') offset: number = 0,
   ) {
     return await this.walletService.getWalletTransactions(req.user.id, limit, offset);
   }
