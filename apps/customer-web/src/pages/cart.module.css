@@ -1,0 +1,295 @@
+.cartInline0 {
+  color: #666;
+  padding: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartInline1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  min-height: 100vh;
+  background-color: var(--color-neutral);
+}
+
+/* Item container */
+.cartInline2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.cartInline3 {
+  min-width: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cartInline4 {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin-left: var(--spacing-md);
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.cartInline5 {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.cartInline6 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.cartInline7 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.cartInline8 {
+  margin-top: var(--spacing-lg);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Additional classes for header icons and titles */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Header styling */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Header styling */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Header styling */
+.cartHeaderIcon {
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.cartHeaderTitle {
+  margin-bottom: var(--spacing-md);
+}
+/* Updated cart.module.css with header icon and title classes */

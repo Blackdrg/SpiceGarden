@@ -1,0 +1,11 @@
+.entryAnimation {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 250ms ease-out, transform 250ms ease-out;
+  /* When the page loads, we will add the "animated" class via JS (useEnterAnimation hook removed) */
+}
+
+.entryAnimation.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
