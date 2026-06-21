@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Order } from '../../shared/domain/order.interface';
+import { Order, OrderStatus } from '../../shared/domain/order.interface';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
 import { PaymentService } from '../../services/payments/payments.service';
@@ -40,6 +40,9 @@ export declare class OrderService {
     constructor(orderRepo: Repository<OrderEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, paymentService: PaymentService, notificationService: NotificationService, retryService: RetryService, idempotency: IdempotencyService, productionNotification: ProductionNotificationService, loggingService: LoggingService);
     validateOrderItems(items: any): void;
     validateOrderTotals(orderData: OrderDataInput): boolean;
+    canTransitionOrderStatus(from: OrderStatus, to: OrderStatus): boolean;
+    transitionOrderStatus(order: Order, nextStatus: OrderStatus, actor: string): Order;
+    applyOrderStatusTransition(orderId: string, nextStatus: OrderStatus, actor: string): Promise<Order>;
     placeOrder(orderData: any, idempotencyKey?: string): Promise<Order>;
     confirmPayment(orderId: string, paymentId: string, request?: any): Promise<Order>;
     handleWebhookDelayed(orderId: string, paymentId: string): Promise<Order>;

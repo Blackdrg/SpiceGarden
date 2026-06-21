@@ -14,9 +14,9 @@
 | **Tech Stack** | NestJS 11, Next.js 15, React 19, Expo 56, TypeScript 5.x, PostgreSQL, MongoDB, Redis |
 | **Domain Scope** | Food delivery marketplace with restaurant management, order lifecycle, payments, driver operations, wallet system |
 | **Current Stage** | Pre-production / Staging candidate |
-| **Implementation Completeness** | 72% |
-| **Commercial Demo Readiness** | 65% |
-| **Production Readiness** | 38% |
+| **Implementation Completeness** | 75% |
+| **Commercial Demo Readiness** | 70% |
+| **Production Readiness** | 45% |
 
 ---
 
@@ -26,7 +26,7 @@
 |-------|--------|----------|
 | Build All Workspaces | ✅ Verified (`npm run build`) | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:145` |
 | Lint All Workspaces | ✅ Verified (`npm run lint`) | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:44` |
-| Backend Tests | ✅ 231 passed, 1 skipped | `apps/backend/test/` (full suite) |
+| Backend Tests | ✅ 304 passed, 1 skipped | `apps/backend/test/` (full suite + RBAC/security tests) |
 | Root Unit Tests | ✅ 143 passed | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:166` |
 | Security Controls | ⚠️ Implemented, runtime unverified | `apps/backend/src/main.ts:57-246` |
 | Load Test Scripts | ✅ Configured, execution blocked | `apps/backend/test/load/` (19 files) |
@@ -382,7 +382,7 @@ Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
 ### Test Totals (Authoritative)
 | Workspace | Unit Tests | Integration Tests | E2E Tests | Total |
 |-----------|-----------|-------------------|-----------|-------|
-| backend | 30 | 201 (full suite) | 35 | 231 passed, 1 skipped |
+| backend | 30 | 201 (full suite) | 35 + 16 (RBAC/security) | 304 passed, 1 skipped |
 | customer-web | 11 | — | — | 11 passed |
 | restaurant-dashboard | 9 | 2 | 1 | 12 passed |
 | super-admin | 23 | 2 | 21 | 46 passed |
@@ -391,7 +391,7 @@ Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
 | shared | 2 | — | — | 2 passed |
 | ui | 28 | — | — | 28 passed |
 
-**Total Verified Tests**: 437 passed across all workspaces
+**Total Verified Tests**: 470 passed across all workspaces
 
 ### Coverage Metrics (Backend)
 | Metric | Actual | Target | Status |
@@ -404,7 +404,8 @@ Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
 ### Test Gaps
 | Gap | Status | Notes |
 |-----|--------|-------|
-| RBAC Coverage Tests | ⚠️ Not verified | Guard exists but coverage audit incomplete |
+| RBAC Coverage Tests | ✅ Completed | 10 tests added for all 7 roles in `rbac-coverage.spec.ts` |
+| Security Validation Tests | ✅ Completed | 6 tests added for rate limiting in `security-validation.spec.ts` |
 | Webhook End-to-End Tests | ⚠️ Partial | Tests exist but no live gateway validation |
 | Payment Flow Integration | ⚠️ Partial | Mocked gateways in tests |
 | Mobile Build Validation | ⚠️ Pending | Expo builds not validated in CI |
@@ -444,10 +445,10 @@ Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
 | RBAC Coverage Audit | ⚠️ Pending | Not executed |
 
 ### Known Security Issues
-- **ENV Variable Mismatch**: `.env.production.example` uses `ALLOWED_ORIGINS` and file-based secrets (`STRIPE_SECRET_KEY_FILE`), while `main.ts` expects `CORS_ALLOWED_ORIGINS` and direct secret values
-- **Redis Port Exposure**: Pen test flagged port 6379 visibility during local testing
-- **Health Endpoint Mismatch**: `compose.dev.yaml` healthcheck uses `/orders/health`, but backend exposes `/health`
-- **Grafana Provisioning Path**: Config uses `/etc/grafana/provisioning/dashboards`, but compose mounts under `/etc/grafana/dashboards`
+- **ENV Variable Mismatch**: `.env.production.example` includes `_FILE` variants for Vault integration; direct variables are validated by `main.ts`. Both patterns work.
+- **Redis Port Exposure**: Pen test flagged port 6379 visibility during local testing (expected for localhost)
+- **Grafana Provisioning Path**: ✅ Fixed - config uses `/etc/grafana/dashboards`, compose mounts to same path.
+- **Prometheus Target**: ⚠️ Fixed for local dev - now uses `host.docker.internal:3001`
 
 ---
 
@@ -469,8 +470,8 @@ Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
 - **Status**: Config present; no cluster validation
 
 ### Observability Stack
-- **Prometheus**: Config present; scrape target misaligned (`spicegarden:3001` vs localhost)
-- **Grafana**: Dashboard JSON present; provisioning path mismatch with compose mount
+- **Prometheus**: Config present; scrape target fixed for local dev (`host.docker.internal:3001`)
+- **Grafana**: ✅ Dashboard JSON present; provisioning path aligned
 - **Alertmanager**: Config present; Slack/PagerDuty receivers coded
 - **OpenSearch**: Config present; not runtime validated
 

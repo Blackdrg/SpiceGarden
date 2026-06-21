@@ -189,8 +189,8 @@ services:
     ports:
       - "3002:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
-      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NODE_ENV=development
     depends_on:
       - backend
     healthcheck:
@@ -219,8 +219,8 @@ services:
     ports:
       - "3003:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
-      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NODE_ENV=development
     depends_on:
       - backend
     healthcheck:
@@ -246,8 +246,8 @@ services:
     ports:
       - "3004:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
-      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NODE_ENV=development
     depends_on:
       - backend
     healthcheck:
@@ -274,8 +274,8 @@ services:
     ports:
       - "3005:3000"
     environment:
-      - NODE_ENV=production
-      - API_URL=https://api.spicegarden.com
+      - NODE_ENV=development
+      - API_URL=http://localhost:3001
     depends_on:
       - backend
     healthcheck:

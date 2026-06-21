@@ -4,14 +4,15 @@ COPY package*.json ./
 COPY apps/super-admin/package*.json ./apps/super-admin/
 COPY packages/*/package*.json ./packages/
 RUN npm ci
-COPY ../../apps/super-admin .
-RUN npm run build
+COPY apps/super-admin ./apps/super-admin
+COPY packages ./packages
+RUN npm --workspace @spicegarden/super-admin run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/super-admin/.next ./.next
+COPY --from=builder /app/apps/super-admin/public ./public
+COPY --from=builder /app/apps/super-admin/package*.json ./
 ENV NODE_ENV=production
 EXPOSE 3000
 ENV PORT=3000

@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, useWindowDimensions, AppState, AppStateStatus, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, useWindowDimensions, TextInput, AppState as RNAppState, AppStateStatus } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import * as Location from 'expo-location';
@@ -260,7 +260,7 @@ export default function DriverApp() {
     requestLocationPermission()
       .then((status) => {
         if (!cancelled) dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status });
-        if (status === 'granted') return getCurrentLocation({ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+        if (status === 'granted') return getCurrentLocation({ accuracy: Location.Accuracy.Highest });
         throw new Error('Location permission denied');
       })
       .then(() => {
@@ -280,10 +280,6 @@ export default function DriverApp() {
 
   useEffect(() => {
     if (!state.isOnline || state.locationPermission !== 'granted') {
-      if (locationWatchId.current !== null) {
-        Geolocation.clearWatch(locationWatchId.current);
-        locationWatchId.current = null;
-      }
       return;
     }
 
@@ -351,7 +347,7 @@ export default function DriverApp() {
       }
     };
 
-    const subscription = AppState.addEventListener('change', appStateHandler);
+    const subscription = RNAppState.addEventListener('change', appStateHandler);
     return () => subscription.remove();
   }, [state.isOnline]);
 
@@ -691,7 +687,7 @@ export default function DriverApp() {
                    {issueTypes.map((issue) => (
                      <Pressable
                        key={issue.label}
-                       style={styles.issueBtn}
+                        style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
                        onPress={() => reportIssue(issue.label)}
                      >
                        <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
@@ -747,8 +743,8 @@ export default function DriverApp() {
                <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
               <Text style={styles.cardSubtitle}>Current shift</Text>
               <View style={styles.shiftInfo}>
-                <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
-                <Text style={styles.shiftInfoText}>Ends: {shift.endTime}</Text>
+                <Text style={styles.shiftInfoText}>Type: {state.shift!.type}</Text>
+                <Text style={styles.shiftInfoText}>Ends: {state.shift!.endTime}</Text>
                 <Pressable style={styles.shiftEndBtn}>
                   <Text style={styles.shiftEndText}>End Shift Early</Text>
                 </Pressable>
@@ -873,7 +869,7 @@ const styles = StyleSheet.create({
   issueChevron: { color: DESIGN_TOKENS.colors.warning, fontSize: 12, marginLeft: 8 },
   issueGrid: { flexDirection: 'row', flexWrap: 'wrap', padding: 10, gap: 8 },
   issueBtn: {
-    width: (SCREEN_W - 52) / 4, backgroundColor: '#2a2a2a', borderRadius: 8,
+    backgroundColor: '#2a2a2a', borderRadius: 8,
     alignItems: 'center', paddingVertical: 10,
   },
   issueLabel: { color: '#ccc', fontSize: 11, marginTop: 4, textAlign: 'center' },
