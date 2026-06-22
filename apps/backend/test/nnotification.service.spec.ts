@@ -102,6 +102,23 @@ describe('NotificationService', () => {
       const result = await service.sendPush('user-1', 'title', 'body');
       expect(result.reason).toBe('No active devices');
     });
+
+    it('should succeed when FCM is configured and devices exist', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'FCM_SERVER_KEY') return 'valid-fcm-key';
+        return 'test-key';
+      });
+      (userDeviceRepo.find as jest.Mock).mockResolvedValue([{ fcmToken: 'token-1' }]);
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({ ok: true, json: jest.fn().mockResolvedValue({ messageId: 'msg-1' }) }) as any;
+
+      try {
+        const result = await service.sendPush('user-1', 'title', 'body', { orderId: 'o1' });
+        expect(result.success).toBe(true);
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
   });
 
   describe('sendSMS', () => {

@@ -110,6 +110,68 @@ describe('WebhookService payment event handling', () => {
   });
 
   it('rejects webhooks without a gateway signature header', async () => {
-    await expect(mocks.service.processWebhook(Buffer.from('{}'), 'signature', {})).rejects.toThrow('Unable to determine payment gateway');
+    await expect(mocks.service.processWebhook(Buffer.from('{}'), 'signature', {})).rejects.toThrow('Unable to determine payment gateway from webhook headers');
+  });
+
+  it('returns duplicate=true when existingWebhook is found', async () => {
+    const event = { id: 'evt_dup', type: 'payment_intent.succeeded', data: { object: { metadata: {} } } };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue({ id: 'existing-webhook' });
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'stripe-signature', { 'stripe-signature': 'stripe-signature' });
+
+    expect(result).toEqual({ received: true, duplicate: true });
+  });
+
+  it('handles webhook processing errors gracefully', async () => {
+    const event = {
+      id: 'evt_err',
+      type: 'payment_intent.succeeded',
+      data: { object: { id: 'pi_err', metadata: { orderId: 'order-err', userId: 'user-err' } } },
+    };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.productionNotification.sendPaymentNotification.mockRejectedValue(new Error('notification down'));
+
+    await expect(mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'stripe-signature', { 'stripe-signature': 'stripe-signature' })).rejects.toThrow('Webhook processing failed');
+
+    expect(mocks.paymentEventRepo.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isProcessed: false,
+        payload: expect.objectContaining({ error: 'notification down' }),
+      })
+    );
+  });
+
+  it('returns alreadyProcessed=true for a previously processed event', async () => {
+    const event = {
+      id: 'evt_ap',
+      type: 'payment_intent.succeeded',
+      data: { object: { metadata: { orderId: 'order-ap' } } },
+    };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue({ isProcessed: true });
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'stripe-signature', { 'stripe-signature': 'stripe-signature' });
+
+    expect(result).toEqual({ received: true, alreadyProcessed: true });
+  });
+
+  it('skips duplicate webhook event ids via webhookRepo', async () => {
+    const event = { id: 'evt_dup2', type: 'payment_intent.succeeded', data: { object: { metadata: {} } } };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue({ id: 'existing-webhook' });
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'stripe-signature', { 'stripe-signature': 'stripe-signature' });
+
+    expect(result).toEqual({ received: true, duplicate: true });
+    expect(mocks.paymentEventRepo.save).not.toHaveBeenCalled();
+    expect(mocks.webhookRepo.save).not.toHaveBeenCalled();
   });
 });

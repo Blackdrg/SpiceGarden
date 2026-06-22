@@ -1,750 +1,285 @@
-# SpiceGarden — Enterprise Food Delivery Platform
+# SpiceGarden
 
-**SpiceGarden** is an npm-workspace monorepo implementing a full-stack food delivery platform with NestJS backend, Next.js web applications, Expo/React Native mobile apps, and production-grade infrastructure tooling.
+SpiceGarden is an npm-workspace monorepo for a full-stack food-delivery platform. It includes a NestJS backend, Next.js web apps, Expo/React Native mobile apps, shared TypeScript packages, Docker Compose files, Kubernetes manifests, observability configs, validation scripts, and k6 load-test assets.
 
----
-
-## 1. Executive Summary
-
-| Aspect | Detail |
-|--------|--------|
-| **Repo Type** | Monorepo (npm workspaces) |
-| **Primary Apps** | Backend API (NestJS), Customer Web (Next.js), Restaurant Dashboard (Next.js), Super Admin (Next.js), Customer Mobile (Expo/RN), Delivery Partner (Expo/RN), Launcher (Electron) |
-| **Shared Packages** | UI Library, Shared Utils, API Types, Proto |
-| **Tech Stack** | NestJS 11, Next.js 15, React 19, Expo 56, TypeScript 5.x, PostgreSQL, MongoDB, Redis |
-| **Domain Scope** | Food delivery marketplace with restaurant management, order lifecycle, payments, driver operations, wallet system |
-| **Current Stage** | Pre-production / Staging candidate |
-| **Implementation Completeness** | 75% |
-| **Commercial Demo Readiness** | 70% |
-| **Production Readiness** | 45% |
+This README is a concise executive overview. The authoritative current-state report is `docs/CANONICAL_PROJECT_STATE_2026-06-22.md`.
 
 ---
 
-## 2. Current Project Status Snapshot
+## Current Status
+
+**Production readiness:** 42% estimated
+**Implementation completeness:** 82% estimated
+**Commercial demo readiness:** 62% estimated
+
+SpiceGarden is a broad, buildable, testable, and locally runnable technical platform. It is **not production-ready**. The strongest current evidence is backend build/test/runtime, passing local security/penetration scripts, and reduced smoke load. The strongest blockers are failing coverage thresholds, dependency audit findings, unavailable Docker/Kubernetes runtime validation, incomplete full load validation, and missing production provider secrets.
+
+---
+
+## Verification Snapshot
 
 | Check | Status | Evidence |
-|-------|--------|----------|
-| Build All Workspaces | ✅ Verified (`npm run build`) | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:145` |
-| Lint All Workspaces | ✅ Verified (`npm run lint`) | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:44` |
-| Backend Tests | ✅ 304 passed, 1 skipped | `apps/backend/test/` (full suite + RBAC/security tests) |
-| Root Unit Tests | ✅ 143 passed | `docs/CANONICAL_PROJECT_STATE_2026-06-20.md:166` |
-| Security Controls | ⚠️ Implemented, runtime unverified | `apps/backend/src/main.ts:57-246` |
-| Load Test Scripts | ✅ Configured, execution blocked | `apps/backend/test/load/` (19 files) |
-| Docker Compose Config | ✅ Valid syntax | `compose.dev.yaml:1-295` |
-| Kubernetes Manifests | ✅ Present | `infra/k8s/production-hardened.yaml` |
-| Observability Configs | ✅ Present | `infra/prometheus/`, `infra/grafana/`, `infra/alertmanager/` |
+|---|---|---|
+| Build all workspaces | Implemented & verified | `npm run build` passed. |
+| Lint all workspaces | Implemented & verified | `npm run lint` passed. |
+| Root unit tests | Implemented & verified | `npm run test:unit` passed with 134 tests. |
+| Backend full tests | Implemented & verified | `cd apps/backend && npm test` passed with 320 passed, 1 skipped. |
+| Backend coverage | Broken / failing | Statements 59.78%, branches 34.09%, functions 34.73%, lines 59.02% against 80% targets. |
+| Backend `/health` | Implemented & verified | `curl http://localhost:3001/health` returned HTTP 200. |
+| Backend `/metrics` | Implemented & verified | `curl http://localhost:3001/metrics` returned HTTP 200 with Prometheus text. |
+| CORS | Implemented & verified | OPTIONS preflight to `/auth/login` returned HTTP 204 and expected allow headers. |
+| Dangerous method blocking | Implemented & verified | `TRACE /health` returned HTTP 405. |
+| Runtime security | Implemented & verified | `node infra/scripts/security-tests.js` found 0 vulnerabilities. |
+| Penetration | Implemented & verified | `node infra/scripts/penetration-tests.js` found 0 issues. |
+| Reduced smoke load | Implemented & verified | 5-VU k6 smoke passed: 213/213 checks, p95 797.07ms. |
+| Default smoke load | Broken / failing | 50-VU smoke failed p95 latency: 6.3s vs target <1500ms. |
+| Docker Compose config | Implemented but runtime-unverified | `docker-compose -f compose.dev.yaml config` passed; 13 services. |
+| Infra Compose config | Implemented but runtime-unverified | `docker-compose -f compose.infra.yaml config` passed; 12 services. |
+| Docker runtime | Blocked from validation | `docker info` could not connect to the Docker daemon. |
+| Kubernetes validation | Blocked from validation | `kubectl apply --dry-run=client -f infra/k8s/production-hardened.yaml` failed because no cluster API is reachable. |
+| Dependency audit | Broken / failing | `npm audit --audit-level=moderate` reported 33 vulnerabilities: 32 moderate, 1 high. |
+| Secret validation | Blocked from validation | `node infra/scripts/validate-secrets.js` found 3/16 valid secrets and 13 warnings. |
+| gRPC transport | Stubbed / placeholder | `packages/grpc-transport/src/index.ts` throws `GrpcTransportUnavailableError`. |
 
 ---
 
-## 3. Project Status by Part (%)
+## Monorepo Layout
 
-| Area / Subsystem | % Complete | Rationale | Confidence | Key Blockers |
-|------------------|------------|-----------|------------|--------------|
-| **Backend core platform** | 85% | All modules implemented (orders, payments, delivery, auth, wallet, GST, analytics, compliance, audit, queue), 47 entities. Runtime validation incomplete. | High | Security/load tests blocked; coverage 51.72% |
-| **Customer web** | 75% | 17 routes, cart, checkout, wallet, tracking screens implemented. Redux + React Query state management. Build verified, runtime unvalidated. | Medium | No live backend flow validation |
-| **Restaurant dashboard** | 70% | KDS with real-time updates, order management screens. 10 pages compiled. Build verified. | Medium | No live runtime validation |
-| **Super-admin** | 65% | Admin panels, analytics charts (Recharts), reporting. 14 pages compiled. Build verified. | Medium | Sentry configured but not tested |
-| **Customer mobile** | 60% | Navigation, screens, WebSocket service implemented. Expo build type-checks. No native build validation. | Medium | Expo builds not validated in CI; stubbed geolocation |
-| **Delivery partner mobile** | 55% | Driver app with online toggle, earnings, assignment flow. Location stubbed. Build verified. | Medium | No runtime validation; geolocation stubbed |
-| **Shared packages / platform libs** | 90% | UI library (28 tests), shared utils (2 tests), API types, proto types. grpc-transport is stubbed. | High | grpc-transport empty module |
-| **Testing & QA** | 60% | 437 passing tests, but coverage below 80% threshold. Security tests fail without running backend. | Medium | Coverage gap; runtime tests blocked |
-| **Security hardening** | 45% | 13 controls implemented (JWT, Argon2, rate limiting, Helmet, CSRF, CORS, etc.). Runtime tests blocked. npm audit has 33 vulnerabilities. | Medium | Dependency vulnerabilities; runtime tests blocked |
-| **Infrastructure / DevOps** | 65% | Docker Compose valid, K8s manifests hardened, observability configs present. No runtime validation. | Medium | No cluster access; stack not started |
-| **CI/CD** | 75% | GitHub Actions pipeline with lint/test/build/deploy stages. Mobile builds not included. | Medium | No mobile build step |
-| **Observability / monitoring** | 40% | Prometheus, Grafana, Alertmanager, OpenSearch configs present. Metric-name alignment issues. No runtime validation. | Low | Mismatched dashboard paths; metrics unverified |
-| **Documentation / audit coverage** | 85% | Canonical docs reconciled, audit trail complete. Some legacy docs archived. | High | None |
-
-**Summary**
-| Metric | Score |
-|--------|-------|
-| Implementation completeness | 72% |
-| Commercial demo readiness | 65% |
-| Production readiness | 38% |
-
----
-
-## 4. Commercial Readiness vs Production Readiness
-
-| Aspect | Implementation Completeness | Commercial Demo Readiness | Production Readiness |
-|--------|---------------------------|-------------------------|---------------------|
-| **Backend** | 85% (build verified, all modules coded) | 75% (can demo order/payment flows with mock data) | 45% (coverage gap, security/load tests blocked) |
-| **Web apps** | 75% (build verified, screens navigable) | 80% (UI demonstrated, Redux state works) | 50% (no live backend validation) |
-| **Mobile apps** | 60% (Expo dev mode, type-check pass) | 40% (Expo simulator only, stubbed location) | 20% (no native builds, no validation) |
-| **Security** | 100% controls coded | 50% (controls exist, not penetration-tested) | 20% (runtime tests fail, 33 vulnerabilities) |
-| **Observability** | 90% configs | 30% (dashboards present, not connected) | 10% (stack not running, metrics unaligned) |
-| **Infrastructure** | 80% manifests | 50% (can show Kubernetes architecture) | 20% (no cluster, no runtime validation) |
-
----
-
-## 5. Monorepo Overview
-
-```
+```text
 spicegarden/
 ├─ apps/
-│  ├─ backend/                 # NestJS API (port 3001)
-│  ├─ customer-web/            # Next.js storefront (port 3002)
-│  ├─ restaurant-dashboard/    # Next.js KDS (port 3003)
-│  ├─ super-admin/             # Next.js admin panel (port 3004)
-│  ├─ customer-mobile/         # Expo React Native app
-│  ├─ delivery-partner/        # Expo React Native driver app
-│  └─ launcher/              # Electron desktop wrapper
+│├─ backend/ # NestJS API, port 3001
+│├─ customer-web/# Next.js customer storefront
+│├─ restaurant-dashboard/# Next.js restaurant dashboard
+│├─ super-admin/ # Next.js admin dashboard
+│├─ customer-mobile/ # Expo/React Native customer app
+│├─ delivery-partner/# Expo/React Native delivery partner app
+│└─ launcher/# Electron launcher
 ├─ packages/
-│  ├─ ui/                    # Shared React components, design tokens
-│  ├─ shared/                # TypeScript utilities, constants
-│  ├─ api-types/             # API contract typings
-│  ├─ proto/                 # Protobuf type definitions
-│  └─ grpc-transport/        # gRPC client library (STUBBED)
+│├─ ui/# React UI components
+│├─ shared/# shared TypeScript utilities
+│├─ api-types/ # API contract types
+│├─ proto/ # protobuf type definitions
+│└─ grpc-transport/# quarantined gRPC transport stub
 ├─ infra/
-│  ├─ k8s/                   # Kubernetes manifests
-│  ├─ prometheus/            # Metrics config, alert rules
-│  ├─ grafana/               # Dashboard provisioning
-│  ├─ alertmanager/          # Alert routing
-│  └─ scripts/               # Security, validation, backup scripts
-└─ .env.example             # Environment template
+│├─ k8s/ # Kubernetes manifests
+│├─ prometheus/# Prometheus config/rules
+│├─ grafana/ # Grafana provisioning/dashboards
+│├─ alertmanager/# Alertmanager config
+│└─ scripts/ # validation/security/load scripts
+└─ docs/# audit and reconciliation reports
 ```
 
 ---
 
-## 6. Application & Package Inventory
+## Required Status Definitions
 
-### 6.1 Applications
-
-| Name | Path | Framework | Port | Build Status | Test Status | Verification Level |
-|------|------|-----------|------|--------------|-------------|-------------------|
-| **Backend API** | `apps/backend` | NestJS 11 | 3001 | ✅ Build verified | ✅ 231 passed, 1 skipped | Build + tests verified |
-| **Customer Web** | `apps/customer-web` | Next.js 15, React 19 | 3002 | ✅ Build verified | ✅ 11 passed | Build + tests verified |
-| **Restaurant Dashboard** | `apps/restaurant-dashboard` | Next.js 15 | 3003 | ✅ Build verified | ✅ 9 passed | Build + tests verified |
-| **Super Admin** | `apps/super-admin` | Next.js 15, Recharts, Sentry | 3004 | ✅ Build verified | ✅ 23 passed | Build + tests verified |
-| **Customer Mobile** | `apps/customer-mobile` | Expo 56, React Native 0.85 | N/A | ✅ TSC verified | ✅ 33 passed | Build + tests verified |
-| **Delivery Partner** | `apps/delivery-partner` | Expo 56, React Native 0.85 | N/A | ✅ TSC verified | ✅ 6 passed | Build + tests verified |
-| **Launcher** | `apps/launcher` | Electron 42 | Desktop | ✅ Build verified | ✅ 1 passed | Build + tests verified |
-
-### 6.2 Shared Packages
-
-| Name | Path | Purpose | Status | Verification Level |
-|------|------|---------|--------|------------------|
-| **UI Library** | `packages/ui` | React components, design tokens | ✅ Build verified | ✅ 28 tests |
-| **Shared** | `packages/shared` | TypeScript utilities | ✅ Build verified | ✅ 2 tests |
-| **API Types** | `packages/api-types` | API contract typings | ✅ TSC verified | No tests |
-| **Proto** | `packages/proto` | Protobuf definitions | ✅ TSC verified | No tests |
-| **gRPC Transport** | `packages/grpc-transport` | gRPC client implementation | ❌ Stubbed | ❌ Not implemented |
+| Status | Meaning |
+|---|---|
+| Implemented & verified | Code is present and command/runtime/test evidence validates the claim. |
+| Implemented but runtime-unverified | Code exists and may build/test, but no runtime validation was completed. |
+| Partial / scaffolded | Code exists but is incomplete, placeholder-like, or only partially functional. |
+| Stubbed / placeholder | Intentional stub, quarantine, mock, or placeholder module. |
+| Broken / failing | A command, gate, or threshold failed in current validation. |
+| Blocked from validation | The claim cannot be validated because required external/runtime dependency is unavailable. |
+| Not implemented | The capability is absent, not just unvalidated. |
 
 ---
 
-## 7. Capability Matrix (Evidence-Backed)
+## Application and Package Inventory
 
-| Capability | Status | Evidence Source | Notes |
-|------------|--------|-----------------|-------|
-| **Authentication** | ✅ Implemented | `apps/backend/src/services/auth/` | JWT with Argon2, refresh tokens; tests verify |
-| **Authorization / RBAC** | ⚠️ Implemented, runtime unverified | `apps/backend/src/security/roles.guard.ts` | Guard coded; endpoint coverage untested |
-| **User Accounts** | ✅ Implemented | `apps/backend/src/db/entities/user.entity.ts` | Email, phone, profile, verification; entities exist |
-| **Restaurant Catalog** | ✅ Implemented | `apps/backend/src/services/restaurant/` | CRUD for restaurants, branches, menus; code exists |
-| **Search / Filtering** | ✅ Implemented | `apps/backend/src/services/search/` | Search service exists; code present |
-| **Cart** | ✅ Implemented | `apps/customer-web/src/pages/cart.tsx` | Redux slice, cart persistence; frontend tests |
-| **Checkout** | ⚠️ Partial | `apps/customer-web/src/pages/checkout.tsx` | Order creation flows exist; backend integration untested |
-| **Order Lifecycle** | ✅ Implemented | `apps/backend/src/services/order/order.service.ts:1-518` | Full state machine with 8 statuses; service tested |
-| **Delivery Assignment** | ✅ Implemented | `apps/backend/src/services/delivery/` | Driver assignment, WebSocket tracking; service tested |
-| **Live Order Tracking** | ⚠️ Partial | `apps/backend/src/infra/tracking/` | WebSocket gateway exists; no runtime validation |
-| **Payment Integration** | ⚠️ Partial | `apps/backend/src/services/payments/` | Stripe/Razorpay code present; no live gateway validation |
-| **Refund Flow** | ✅ Implemented | `apps/backend/src/services/refund/` | Full refund logic with double-refund prevention; tested |
-| **Wallet System** | ✅ Implemented | `apps/backend/src/services/wallet/wallet.service.ts` | Wallet with transactions; 15 tests passing |
-| **Notifications** | ⚠️ Partial | `apps/backend/src/services/notifications/notification.service.ts` | Twilio/FCM code present; no live provider validation |
-| **Reviews/Ratings** | ✅ Implemented | `apps/backend/src/services/review/` | Review entity and service; code exists |
-| **Admin Analytics** | ⚠️ Partial | `apps/backend/src/modules/analytics/` | Analytics module exists; dashboard runtime untested |
-| **GST / Tax Logic** | ✅ Implemented | `apps/backend/src/services/gst/`, `apps/backend/src/db/entities/gst-detail.entity.ts` | GST entities and tax reporting; code exists |
-| **Compliance Features** | ⚠️ Partial | `apps/backend/src/compliance/` | GDPR/SOC-2 placeholders; no runtime validation |
-| **Audit Logging** | ✅ Implemented | `apps/backend/src/audit/` | Audit log entity and service; code exists |
-| **Observability** | ⚠️ Configured, runtime unverified | `apps/backend/src/main.ts:19-46`, `infra/prometheus/` | Prometheus metrics coded; dashboard metrics misaligned |
-| **Real-time Sockets** | ✅ Implemented | `apps/backend/src/infra/tracking/tracking.gateway.ts`, `apps/backend/src/services/restaurant/kds.gateway.ts` | Socket.IO server; gateway coded |
-| **Background Jobs/Queues** | ✅ Implemented | `apps/backend/src/infra/queue/`, `apps/backend/src/infra/queue/order.processor.ts` | BullMQ with Redis; processor coded |
+| Area | Path | Status | Notes |
+|---|---|---|---|
+| Backend API | `apps/backend` | Implemented & verified for local runtime | 320 backend tests pass; `/health` and `/metrics` verified. |
+| Customer web | `apps/customer-web` | Implemented but runtime-unverified | 24 page/API files. |
+| Restaurant dashboard | `apps/restaurant-dashboard` | Implemented but runtime-unverified | 11 page/API files. |
+| Super admin | `apps/super-admin` | Implemented but runtime-unverified | 15 page/API files. |
+| Customer mobile | `apps/customer-mobile` | Implemented but runtime-unverified | 15 screens; no device/native validation. |
+| Delivery partner | `apps/delivery-partner` | Implemented but runtime-unverified | Uses real `expo-location`; no device validation. |
+| Launcher | `apps/launcher` | Implemented but runtime-unverified | Electron workspace present. |
+| UI/shared packages | `packages/ui`, `packages/shared` | Implemented & verified for workspace gates | Build/lint/test evidence exists. |
+| API/proto packages | `packages/api-types`, `packages/proto` | Implemented but runtime-unverified | Type contract packages. |
+| gRPC transport | `packages/grpc-transport` | Stubbed / placeholder | Quarantined; REST/WebSocket is the production path. |
 
----
+Backend static inventory from source inspection:
 
-## 8. System Architecture
-
-### 8.1 High-Level Architecture
-
-```mermaid
-flowchart LR
-    subgraph Clients
-        CW[Customer Web] -->|HTTPS| API
-        CM[Customer Mobile] -->|HTTPS| API
-        DP[Delivery Partner] -->|HTTPS| API
-        RD[Restaurant Dashboard] -->|HTTPS| API
-        SA[Super Admin] -->|HTTPS| API
-    end
-    
-    subgraph Backend
-        API[Backend API<br/>NestJS 11<br/>Port 3001]
-        WS[Socket.IO<br/>Real-time]
-        API <-->|WebSocket| WS
-    end
-    
-    subgraph Data
-        DB[(PostgreSQL<br/>Primary Data)]
-        MG[(MongoDB<br/>Logs/Reviews)]
-        RDc[(Redis<br/>Cache/Queues)]
-    end
-    
-    subgraph Observability
-        Prom[Prometheus<br/>:9090]
-        Graf[Grafana<br/>:3000]
-        Alert[Alertmanager<br/>:9093]
-        OS[OpenSearch<br/>:9200]
-    end
-    
-    API <--> DB
-    API <--> MG
-    API <--> RDc
-    API --> Prom
-    API --> OS
-```
-
-### 8.2 Backend Module Structure
-
-| Module | Purpose | Evidence |
-|--------|---------|----------|
-| `DbModule` | TypeORM (PostgreSQL), Mongoose (MongoDB), Redis configuration | `apps/backend/src/db/db.module.ts` |
-| `SecurityModule` | Helmet, HPP, CSRF, rate limiting, CORS | `apps/backend/src/security/` |
-| `AuthServiceModule` | JWT issuance, refresh tokens, session management | `apps/backend/src/services/auth/` |
-| `OrderServiceModule` | Order lifecycle, idempotency, state transitions | `apps/backend/src/services/order/` |
-| `PaymentServiceModule` | Stripe/Razorpay gateway, webhooks, refunds | `apps/backend/src/services/payments/` |
-| `RestaurantServiceModule` | Restaurant CRUD, menu management, branches | `apps/backend/src/services/restaurant/` |
-| `DeliveryServiceModule` | Driver assignment, tracking, status updates | `apps/backend/src/services/delivery/` |
-| `WalletModule` | Wallet balance, transactions | `apps/backend/src/services/wallet/` |
-| `GSTModule` | Tax reporting, GST calculations | `apps/backend/src/services/gst/` |
-| `AnalyticsModule` | Metrics, dashboards | `apps/backend/src/modules/analytics/` |
-| `ComplianceModule` | GDPR, SOC-2, PCI placeholders | `apps/backend/src/compliance/` |
-| `AuditModule` | Audit logging | `apps/backend/src/audit/` |
-| `QueueModule` | BullMQ job queues, order processing | `apps/backend/src/infra/queue/` |
-| `TrackingModule` | Real-time location, WebSocket gateway | `apps/backend/src/infra/tracking/` |
-
-All modules imported in `apps/backend/src/app.module.ts:36-71`.
+| Count | Evidence |
+|---:|---|
+| 41 controller files | `apps/backend/src/**/*controller.ts` |
+| 65 entity files | `apps/backend/src/db/entities/*.ts` |
+| 77 service files | `apps/backend/src/**/*.service.ts` |
+| 54 module files | `apps/backend/src/**/*.module.ts` |
+| 265 route decorators | `apps/backend/src/**/*.{ts,tsx}` |
+| 19 load-test scripts | `apps/backend/test/load/*.js` |
 
 ---
 
-## 9. Operational Flows
+## Capability Snapshot
 
-### 9.1 Order Lifecycle Flow
-```
-PENDING → CONFIRMED → PREPARING → READY_FOR_PICKUP → DRIVER_ASSIGNED 
-→ PICKED_UP → OUT_FOR_DELIVERY → DELIVERED → COMPLETED
-Cancel at any step → CANCELLED
-```
-Source: `apps/backend/src/services/order/order.service.ts:1-518`
-
-### 9.2 Payment Flow
-```
-Checkout → POST /payments/create-intent → Stripe/Razorpay SDK
-→ Webhook /payments/webhook (signature verified) → Order status CONFIRMED
-→ Success → Order confirmed
-→ Failure → Order failed + notification
-→ Refund → POST /payments/refund → RefundEntity created
-```
-Source: `apps/backend/src/services/payments/`
-
-### 9.3 Delivery Flow
-```
-Order READY_FOR_PICKUP → DeliveryService.assignDriver() → DriverAssignmentEntity
-→ Socket.IO notification to driver app → Driver accepts
-→ Location tracking via WebSocket → Status: PICKED_UP → OUT_FOR_DELIVERY → DELIVERED
-→ OTP verification at dropoff
-```
-Source: `apps/backend/src/services/delivery/`, `apps/backend/src/infra/tracking/`
-
-### 9.4 Auth / Token / RBAC Flow
-```
-POST /auth/register → Input validation → Argon2.hash(password) → UserEntity
-POST /auth/login → Validate → JwtService.sign(access/refresh) → HttpOnly cookies
-POST /auth/refresh-token → Validate refresh token → New JWT pair
-Protected endpoints → JwtAuthGuard → RolesGuard (if RBAC) → Controller
-```
-Source: `apps/backend/src/services/auth/`, `apps/backend/src/security/roles.guard.ts`
+| Capability | Status | Evidence |
+|---|---|---|
+| Authentication | Implemented & verified | Auth module/service/controller present; backend runtime and security tests passed. |
+| RBAC | Implemented but runtime-unverified | `apps/backend/src/security/roles.guard.ts`; endpoint coverage not fully audited. |
+| Restaurant catalog | Implemented & verified | Backend services/controllers/entities present; reduced smoke browsed restaurants. |
+| Order lifecycle | Implemented & verified | `apps/backend/src/services/order/order.service.ts`; backend tests pass. |
+| Payment integration | Partial / scaffolded | Payment code/tests exist; no live Stripe/Razorpay validation. |
+| Refund flow | Implemented & verified | Refund service/controller/entity present; backend tests pass. |
+| Wallet system | Implemented & verified | Wallet service/entity present; tests pass. |
+| Delivery assignment | Implemented but runtime-unverified | Delivery and driver-assignment modules present. |
+| Live order tracking | Implemented but runtime-unverified | Backend tracking modules and mobile WebSocket service exist. |
+| Notifications | Partial / scaffolded | Notification code exists; no live provider validation. |
+| Admin analytics | Implemented but runtime-unverified | Analytics module/controller and super-admin pages exist. |
+| GST/tax logic | Implemented but runtime-unverified | GST service/controller/entity present. |
+| Compliance | Partial / scaffolded | Compliance modules/entities exist; no external compliance validation. |
+| Audit logging | Implemented but runtime-unverified | Audit module/service/entity present. |
+| Observability | Implemented but runtime-unverified | Backend metrics verified; Prometheus/Grafana/Alertmanager stack runtime blocked. |
+| Background jobs/queues | Implemented but runtime-unverified | Queue module/processor present; Redis runtime blocked. |
+| Docker Compose | Implemented but runtime-unverified | Config renders; stack startup blocked by Docker daemon. |
+| Kubernetes | Implemented but runtime-unverified | Manifests exist; cluster validation blocked. |
 
 ---
 
-## 10. Data Architecture & Storage Model
+## Test, Security, and Load Summary
 
-#### Core Entities (PostgreSQL via TypeORM)
+### Tests
 
-| Entity | Purpose | File |
-|--------|---------|------|
-| `UserEntity` | Customer, restaurant, admin, driver accounts | `apps/backend/src/db/entities/user.entity.ts` |
-| `RestaurantEntity` | Restaurant master data | `apps/backend/src/db/entities/restaurant.entity.ts` |
-| `RestaurantBranchEntity` | Branch locations | `apps/backend/src/db/entities/restaurant-branch.entity.ts` |
-| `MenuItemEntity` | Menu items | `apps/backend/src/db/entities/menu-item.entity.ts` |
-| `MenuCategoryEntity` | Menu categories | `apps/backend/src/db/entities/menu-category.entity.ts` |
-| `OrderEntity` | Order lifecycle, payments, status | `apps/backend/src/db/entities/order.entity.ts` |
-| `OrderItemEntity` | Order line items | `apps/backend/src/db/entities/order-item.entity.ts` |
-| `DriverEntity` | Driver profiles, location, verification | `apps/backend/src/db/entities/driver.entity.ts` |
-| `DriverAssignmentEntity` | Driver-order assignments | `apps/backend/src/db/entities/driver-assignment.entity.ts` |
-| `WalletEntity` | User wallet balances | `apps/backend/src/db/entities/wallet.entity.ts` |
-| `WalletTransactionEntity` | Wallet credit/debit records | `apps/backend/src/db/entities/wallet-transaction.entity.ts` |
-| `RefundEntity` | Refund tracking | `apps/backend/src/db/entities/refund.entity.ts` |
-| `GstDetailEntity` | GST tax records per order | `apps/backend/src/db/entities/gst-detail.entity.ts` |
-| `AuditLogEntity` | Security and business audit trail | `apps/backend/src/db/entities/audit-log.entity.ts` |
-| `NotificationEntity` | Notification history | `apps/backend/src/db/entities/notification.entity.ts` |
-| And 30 additional entities including: `OtpEntity`, `SessionEntity`, `PaymentWebhookEntity`, `SupportTicketEntity` |
+| Scope | Result |
+|---|---|
+| `npm run lint` | Passed |
+| `npm run build` | Passed |
+| `npm run test:unit` | Passed with 134 tests |
+| `npm run test:integration` | Passed |
+| `npm run test:e2e` | Passed |
+| `npm run test:all` | Passed |
+| `cd apps/backend && npm test` | Passed with 320 passed, 1 skipped |
+| `cd apps/backend && npm run test:cov` | Failed coverage thresholds |
 
-Total: **47 PostgreSQL entities**, **MongoDB collections for reviews**
+### Security
 
----
+| Check | Result |
+|---|---|
+| `node infra/scripts/security-tests.js` | Passed with 0 vulnerabilities |
+| `node infra/scripts/penetration-tests.js` | Passed with 0 issues |
+| `npm audit --audit-level=moderate` | Failed: 33 vulnerabilities, including 1 high |
 
-## 11. API Surface Summary
+### Load
 
-### Auth Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| POST | `/auth/register` | None | User registration with device info |
-| POST | `/auth/login` | None | Credential validation, token issuance |
-| POST | `/auth/refresh-token` | Refresh token | JWT refresh |
-| POST | `/auth/logout` | Refresh token | Session revocation |
-
-### Order Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| POST | `/orders` | JWT | Idempotent order creation |
-| GET | `/orders/:id` | JWT | Order details |
-| PATCH | `/orders/:id/status` | JWT + RBAC | Status transitions |
-| GET | `/orders/user/:userId` | JWT | User order history |
-
-### Payment Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| POST | `/payments/create-intent` | JWT | Payment intent creation |
-| POST | `/payments/webhook` | Webhook signature | Stripe/Razorpay webhook |
-| POST | `/payments/refund` | JWT + RBAC | Refund processing |
-
-### Restaurant Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/restaurants` | None | Public catalog |
-| GET | `/restaurants/:id` | None | Restaurant details |
-| GET | `/restaurants/:id/menu` | None | Menu items |
-| POST | `/restaurants` | JWT + RBAC | Restaurant creation |
-
-### Delivery Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| POST | `/delivery/assign` | JWT | Driver assignment |
-| PATCH | `/delivery/:id/status` | JWT | Status updates |
-
-### Admin Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/admin/analytics` | JWT + Admin RBAC | Dashboard metrics |
-| GET | `/admin/users` | JWT + Admin RBAC | User management |
-
-### System Endpoints
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/health` | None | Health check |
-| GET | `/metrics` | None | Prometheus metrics |
+| Check | Result |
+|---|---|
+| Reduced 5-VU smoke | Passed: 213/213 checks, p95 797.07ms |
+| Default 50-VU smoke | Failed latency threshold: p95 6.3s vs <1500ms |
+| Full 10k/20k load | Not completed as production evidence |
 
 ---
 
-## 12. Frontend / Mobile Architecture
+## Infrastructure Summary
 
-### Customer Web
-- **Routing**: Next.js pages, 17 routes
-- **State Management**: Redux Toolkit + React Query
-- **API Client**: Direct fetch + React Query hooks
-- **Socket**: `socket.io-client` for real-time updates
-- **Screens**: Home, Search, Restaurant, Menu, Cart, Checkout, Order Details, Tracking, Profile, Wallet, Notifications, Payment Methods, Addresses
+### Compose
 
-### Restaurant Dashboard
-- **Routing**: Next.js pages
-- **State Management**: React hooks + Socket.IO
-- **KDS**: Kitchen display screen with real-time order updates
-- **Screens**: Index, KDS, Orders
+| Compose file | Config status | Runtime status |
+|---|---|---|
+| `compose.dev.yaml` | Passed; 13 services | Blocked from validation because Docker daemon is unavailable |
+| `compose.infra.yaml` | Passed; 12 services | Blocked from validation because Docker daemon is unavailable |
 
-### Super Admin
-- **Routing**: Next.js pages
-- **Charts**: Recharts library
-- **Error Tracking**: Sentry integration (configured)
+### Kubernetes
 
-### Customer Mobile (Expo)
-- **Navigation**: React Navigation (native stack + bottom tabs)
-- **Screens**: Auth, Home, Search, Cart, Profile, Tracking, History, Order Details, Addresses, Payment Methods, Notifications
-- **WebSocket**: Real-time order tracking (coded, not validated)
-- **Status**: Expo dev mode only; stubbed geolocation
+| Check | Result |
+|---|---|
+| Manifest evidence | `infra/k8s/production-hardened.yaml` includes 3 replicas, `/health` probes, security context, resources, PDB, and HPA. |
+| Server validation | Blocked from validation; no reachable cluster API. |
+| Deployment script | Failed with `ERROR: Cannot connect to cluster`. |
 
-### Delivery Partner (Expo)
-- **Navigation**: React Navigation
-- **Screens**: Home, Earnings, Order Acceptance, Navigation, OTP Verification
-- **WebSocket**: Real-time order assignment (coded, not validated)
-- **Location**: Geolocation stubbed (`App.tsx:6`)
+### Observability
+
+| Component | Status |
+|---|---|
+| Backend metrics | Implemented & verified |
+| Prometheus target | Implemented but runtime-unverified |
+| Grafana provisioning | Implemented but runtime-unverified |
+| Alertmanager | Implemented but runtime-unverified |
+| OpenSearch/Filebeat | Blocked from validation due Docker daemon |
 
 ---
 
-## 13. Testing & QA Audit
+## Known Blockers
 
-### Test Totals (Authoritative)
-| Workspace | Unit Tests | Integration Tests | E2E Tests | Total |
-|-----------|-----------|-------------------|-----------|-------|
-| backend | 30 | 201 (full suite) | 35 + 16 (RBAC/security) | 304 passed, 1 skipped |
-| customer-web | 11 | — | — | 11 passed |
-| restaurant-dashboard | 9 | 2 | 1 | 12 passed |
-| super-admin | 23 | 2 | 21 | 46 passed |
-| customer-mobile | 33 | — | 1 | 34 passed |
-| delivery-partner | 6 | 6 | 6 | 18 passed |
-| shared | 2 | — | — | 2 passed |
-| ui | 28 | — | — | 28 passed |
+### P0
 
-**Total Verified Tests**: 470 passed across all workspaces
+1. Backend coverage below 80% thresholds.
+2. `npm audit --audit-level=moderate` reports 33 vulnerabilities, including 1 high.
+3. Docker daemon unavailable; compose stack startup not validated.
+4. Kubernetes cluster unavailable; manifests not server-validated.
+5. Full load validation incomplete; default smoke p95 failed.
+6. Production provider secrets incomplete.
 
-### Coverage Metrics (Backend)
-| Metric | Actual | Target | Status |
-|--------|--------|--------|--------|
-| Statements | 51.72% | 80% | ❌ Below threshold |
-| Branches | 20.11% | 80% | ❌ Below threshold |
-| Functions | 24.76% | 80% | ❌ Below threshold |
-| Lines | 50.65% | 80% | ❌ Below threshold |
+### P1
 
-### Test Gaps
-| Gap | Status | Notes |
-|-----|--------|-------|
-| RBAC Coverage Tests | ✅ Completed | 10 tests added for all 7 roles in `rbac-coverage.spec.ts` |
-| Security Validation Tests | ✅ Completed | 6 tests added for rate limiting in `security-validation.spec.ts` |
-| Webhook End-to-End Tests | ⚠️ Partial | Tests exist but no live gateway validation |
-| Payment Flow Integration | ⚠️ Partial | Mocked gateways in tests |
-| Mobile Build Validation | ⚠️ Pending | Expo builds not validated in CI |
-| Load Test Execution | ⚠️ Blocked | Requires running backend on port 3001 |
+1. Live payment gateway validation.
+2. Live notification provider validation.
+3. Mobile native/device validation.
+4. Full WebSocket tracking validation.
+5. RBAC endpoint coverage audit.
+
+### P2
+
+1. Full observability stack runtime validation.
+2. Sentry runtime validation.
+3. Mobile native builds in CI.
+4. Historical documentation cleanup beyond the new canonical suite.
 
 ---
 
-## 14. Security Posture
+## Developer Commands
 
-### Implemented Controls
-| Control | Status | Evidence |
-|---------|--------|----------|
-| JWT Auth | ✅ Implemented | `apps/backend/src/services/auth/` |
-| Argon2 Password Hashing | ✅ Implemented | `apps/backend/package.json:42` |
-| Rate Limiting | ✅ Implemented | `apps/backend/src/main.ts:136-144` |
-| Redis-backed Rate Limit Store | ✅ Implemented | `apps/backend/src/security/redis-rate-limit.store.ts` |
-| Helmet Headers | ✅ Implemented | `apps/backend/src/main.ts:215-234` |
-| HPP Protection | ✅ Implemented | `apps/backend/src/main.ts:237` |
-| Mongo Sanitization | ✅ Implemented | `apps/backend/src/main.ts:170-204` |
-| CSRF Protection | ✅ Implemented | `apps/backend/src/main.ts:235` |
-| CORS Allow-list | ✅ Implemented | `apps/backend/src/security/cors-origin.ts` |
-| ValidationPipe (whitelist) | ✅ Implemented | `apps/backend/src/main.ts:271-278` |
-| Dangerous Method Blocking | ✅ Implemented | `apps/backend/src/main.ts:240-246` |
-| RBAC Guard | ✅ Implemented | `apps/backend/src/security/roles.guard.ts` |
-| Production Secret Validation | ✅ Implemented | `apps/backend/src/main.ts:57-87` |
-| Encryption Service (AES-256) | ✅ Implemented | `apps/backend/src/security/encryption.service.ts` |
-| Security Context (K8s) | ✅ Configured | `infra/k8s/production-hardened.yaml:24-30` |
-| ReadOnly Root Filesystem | ✅ Configured | `infra/k8s/production-hardened.yaml:50` |
-| NetworkPolicy | ✅ Configured | `infra/k8s/production-hardened.yaml:197-249` |
-
-### Security Test Results
-| Test | Status | Notes |
-|------|--------|-------|
-| `npm audit` | ❌ FAIL | 33 vulnerabilities (1 high, 32 moderate) |
-| `security-tests.js` | ❌ FAIL (blocked) | 100 rate-limiting issues; backend not running |
-| `penetration-tests.js` | ❌ FAIL (blocked) | 5 issues; backend not running |
-| RBAC Coverage Audit | ⚠️ Pending | Not executed |
-
-### Known Security Issues
-- **ENV Variable Mismatch**: `.env.production.example` includes `_FILE` variants for Vault integration; direct variables are validated by `main.ts`. Both patterns work.
-- **Redis Port Exposure**: Pen test flagged port 6379 visibility during local testing (expected for localhost)
-- **Grafana Provisioning Path**: ✅ Fixed - config uses `/etc/grafana/dashboards`, compose mounts to same path.
-- **Prometheus Target**: ⚠️ Fixed for local dev - now uses `host.docker.internal:3001`
-
----
-
-## 15. Infrastructure / Deployment / Observability
-
-### Docker Compose Services (`compose.dev.yaml`)
-| Service | Image | Port | Purpose | Status |
-|---------|-------|------|---------|--------|
-| postgres | postgres:16-alpine | 5432 | Primary database | ✅ Config valid |
-| redis | redis:7-alpine | 6379 | Cache/queues/rate limiting | ✅ Config valid |
-| mongo | mongo:7 | 27017 | Reviews, logs | ✅ Config valid |
-| prometheus | prom/prometheus:v2.51.0 | 9090 | Metrics scraping | ✅ Config valid |
-| grafana | grafana/grafana-enterprise:10.4.0 | 3000 | Dashboard visualization | ⚠️ Path mismatch |
-| opensearch | opensearchproject/opensearch:2.15.0 | 9200 | Log aggregation | ✅ Config valid |
-| backend | (local build) | 3001 | API server | ❌ Not validated |
-
-### Kubernetes Manifests
-- **Production-hardened.yaml**: 3 replicas, security contexts, HPA (3-20), NetworkPolicy
-- **Status**: Config present; no cluster validation
-
-### Observability Stack
-- **Prometheus**: Config present; scrape target fixed for local dev (`host.docker.internal:3001`)
-- **Grafana**: ✅ Dashboard JSON present; provisioning path aligned
-- **Alertmanager**: Config present; Slack/PagerDuty receivers coded
-- **OpenSearch**: Config present; not runtime validated
-
----
-
-## 16. CI/CD
-
-### Pipeline (`docs/.github/workflows/ci-cd.yml`)
-| Stage | Status | Notes |
-|-------|--------|-------|
-| Lint | ✅ Configured | All workspaces |
-| Unit Tests | ✅ Configured | All workspaces |
-| Integration Tests | ✅ Configured | Backend full suite |
-| E2E Tests | ✅ Configured | Backend + frontend suites |
-| Build | ✅ Configured | All workspaces |
-| Docker Push | ✅ Configured | Production registry |
-| Deploy Staging | ✅ Configured | Helm on develop |
-| Deploy Production | ✅ Configured | Helm on main |
-
-### Missing
-- Mobile app Expo build in CI pipeline
-
----
-
-## 17. Real vs Partial vs Stubbed Implementation
-
-| Bucket | Component | Evidence | Status |
-|--------|-----------|----------|--------|
-| **Fully real / implemented** | Authentication | `apps/backend/src/services/auth/` | ✅ Tests verify |
-| | Order Lifecycle | `apps/backend/src/services/order/order.service.ts` | ✅ Service tested |
-| | Refund Flow | `apps/backend/src/services/refund/` | ✅ Tested |
-| | Wallet System | `apps/backend/src/services/wallet/` | ✅ 15 tests passing |
-| | Reviews/Ratings | `apps/backend/src/services/review/` | ✅ Code exists |
-| | Audit Logging | `apps/backend/src/audit/` | ✅ Code exists |
-| | Real-time Sockets | `apps/backend/src/infra/tracking/tracking.gateway.ts` | ✅ Gateway coded |
-| | Background Jobs/Queues | `apps/backend/src/infra/queue/` | ✅ BullMQ processor coded |
-| **Implemented but runtime-unverified** | Delivery Assignment | `apps/backend/src/services/delivery/` | ⚠️ Service coded, no live validation |
-| | Live Order Tracking | `apps/backend/src/infra/tracking/` | ⚠️ WebSocket gateway, no runtime validation |
-| | RBAC Guard | `apps/backend/src/security/roles.guard.ts` | ⚠️ Guard exists, coverage untested |
-| **Partial / scaffolded** | Payment Gateways | `apps/backend/src/services/payments/gateways/` | ⚠️ Integration code, no live gateway |
-| | Notifications | `apps/backend/src/services/notifications/` | ⚠️ Twilio/FCM code, no provider validation |
-| | Analytics Dashboards | `infra/grafana/dashboards/` | ⚠️ Dashboard JSON present, no runtime |
-| | Compliance (GDPR/SOC-2) | `apps/backend/src/compliance/` | ⚠️ Placeholder modules |
-| **Stubbed / mocked / placeholder** | gRPC Transport | `packages/grpc-transport/src/index.ts` | ❌ Empty `export {};` |
-| | Maps/ETA | `apps/delivery-partner/App.tsx:369` | ❌ "opens Google Maps" alert only |
-| | Geolocation (Mobile) | `apps/delivery-partner/App.tsx:6` | ❌ Mock object, empty implementations |
-
----
-
-## 18. Production Readiness Assessment
-
-### Readiness Rubric
-| Category | Score | Justification |
-|----------|-------|---------------|
-| Code Completeness | ✅ 90% | All modules present, 7 TODO/FIXME tokens documented |
-| Build Health | ✅ 100% | All workspaces compile successfully |
-| Test Coverage | ⚠️ 51.72% | Below 80% threshold; improvement needed |
-| Runtime Validation | ❌ 0% | Security/load tests blocked (backend unavailable) |
-| Security Hardening | ⚠️ 45% | Controls implemented; runtime tests pending; 33 vulnerabilities |
-| Dependency Security | ❌ FAIL | 33 npm audit vulnerabilities |
-| Infra Validation | ⚠️ 35% | Config valid; no cluster deployment |
-| Observability | ⚠️ 40% | Configs present; no runtime validation |
-| Mobile Readiness | ⚠️ 60% | Code present; Expo builds not validated |
-| CI/CD Maturity | ⚠️ 75% | Pipeline present; mobile excluded |
-| Documentation | ✅ 85% | Canonical docs reconciled |
-
-### Blockers to Production
-1. **Runtime Security/Load Tests**: Requires backend on port 3001
-2. **Dependency Remediation**: 33 npm audit findings (1 high, 32 moderate)
-3. **Coverage Improvement**: Backend coverage below 80% threshold
-4. **Kubernetes Validation**: No cluster access for manifest validation
-5. **Environment Variable Alignment**: Production templates mismatched with code
-6. **RBAC Coverage Audit**: Endpoint coverage untested
-
----
-
-## 19. Evidence Reconciliation Notes
-
-### Test Totals Reconciliation
-| Source | Claim | Verified Status |
-|--------|-------|-----------------|
-| Backend full suite | 231 passed, 1 skipped | ✅ Confirmed |
-| Root unit tests | 143 passed | ✅ Confirmed |
-| Total verified tests | 437 passed | ✅ Confirmed (231 backend + 206 workspace tests) |
-| **Backend-only tests** | 231 passed, 1 skipped | **Authoritative** |
-| **Workspace-wide tests** | 143 (root unit) + 206 (frontend/mobile) = 349 tests | **Authoritative** |
-
-### gRPC Transport Status
-| Claim | Evidence | Status |
-|-------|----------|--------|
-| README Section 4.2 | grpc-transport: Build verified, no tests | ❌ **Stubbed only** |
-| `packages/grpc-transport/src/index.ts` | `export {};` with malformed source map only | **Stubbed / placeholder module** |
-
-**Resolution**: gRPC transport is **stubbed**, not implemented. No runtime code exists.
-
-### Mobile Readiness
-| App | Status | Evidence |
-|-----|--------|----------|
-| customer-mobile | Partial | `tsc --noEmit` passes; Expo builds not validated in CI |
-| delivery-partner | Partial | Geolocation stubbed at `App.tsx:6`; no native validation |
-
-### Infra Validation State
-| Component | Status | Evidence |
-|-----------|--------|----------|
-| Docker Compose syntax | ✅ Valid | `docker-compose -f compose.dev.yaml config` PASS |
-| Stack startup | ❌ Not validated | No runtime execution |
-| K8s manifests | ✅ Present | `infra/k8s/production-hardened.yaml` exists |
-| Cluster access | ❌ Blocked | No cluster available in audit environment |
-
-### Coverage Numbers (Authoritative)
-| Metric | Backend Actual | Target | Status |
-|--------|--------------|--------|--------|
-| Statements | 51.72% | 80% | ❌ Below threshold |
-| Branches | 20.11% | 80% | ❌ Below threshold |
-| Functions | 24.76% | 80% | ❌ Below threshold |
-| Lines | 50.65% | 80% | ❌ Below threshold |
-
-### Environment Variable Mismatches
-| File | Variable | Backend Expects | Status |
-|------|----------|---------------|--------|
-| `.env.production.example` | `ALLOWED_ORIGINS` | `CORS_ALLOWED_ORIGINS` | ❌ Mismatch |
-| `.env.production.example` | `STRIPE_SECRET_KEY_FILE` | Direct `STRIPE_SECRET_KEY` | ❌ Mismatch |
-| `compose.dev.yaml` | healthcheck path | `/orders/health` vs `/health` | ❌ Mismatch |
-
----
-
-## 20. Project Valuation (India & Global)
-
-### A) Engineering Replacement Effort
-| Estimate Type | Hours |
-|---------------|-------|
-| Conservative | 3,500 hrs |
-| Likely realistic | 5,200 hrs |
-| Agency/team equivalent | 7,000 hrs |
-| Factors | Backend domain logic (orders/payments/delivery), 47 entities, infra tooling, observability, 7 apps |
-
-### B) India Valuation (INR)
-| Valuation Type | Range (INR) | Notes |
-|----------------|------------|-------|
-| Code asset / white-label sale | ₹15-30 lakh | Technical asset value; excludes business value |
-| Startup / near-MVP acquisition | ₹25-50 lakh | Pre-revenue tech platform; requires 2-3 months polish |
-| Replacement-cost framing | ₹30-60 lakh | Senior engineer rates (₹1,500-2,000/hr) |
-
-### C) Global Valuation (USD)
-| Valuation Type | Range (USD) | Notes |
-|----------------|------------|-------|
-| Code asset / white-label sale | $50K-120K | Technical asset value; excludes business value |
-| Startup accelerator / near-MVP | $75K-150K | Tech base for food-tech startup |
-| Replacement-cost framing | $100K-200K | Senior engineer rates ($15-20/hr) |
-
-### D) What Increases Valuation (Priority)
-1. **Runtime validation** (security/load tests passing) — +30-40% value
-2. **Coverage improvement to 80%** — +15-20% value
-3. **Kubernetes/runtime infra validation** — +10-15% value
-4. **gRPC transport implementation** — +5-10% value
-5. **Mobile native builds validated** — +10-15% value
-6. **Dependency remediation** — baseline requirement
-
----
-
-## 21. Technical Value Summary
-
-### Engineering Assets
-| Metric | Value |
-|--------|-------|
-| Applications | 7 (backend, 4 web, 2 mobile) |
-| Shared Packages | 5 (4 functional, 1 stubbed) |
-| API Endpoints | 15+ routes across 7 controllers |
-| Database Entities | 47 PostgreSQL tables |
-| Background Jobs | BullMQ with Redis |
-| Observability Stack | Prometheus + Grafana + Alertmanager + OpenSearch |
-| Security Controls | 13 implemented controls |
-| Test Coverage | 437 passing tests |
-| Infrastructure Scripts | 15+ scripts |
-
-### Current Weaknesses
-- Backend test coverage below threshold (51.72% statements)
-- No mobile build validation in CI
-- Runtime security tests blocked
-- Environment variable misalignments
-- gRPC transport stubbed
-- 33 npm audit vulnerabilities unresolved
-
----
-
-## 22. Documentation / Evidence Map
-
-| File | Purpose | Evidence Content |
-|------|---------|------------------|
-| `docs/CANONICAL_PROJECT_STATE_2026-06-20.md` | Authoritative current state | Build/test/infra/security status |
-| `docs/DOCUMENTATION_RECONCILIATION_MATRIX.md` | Claim reconciliation | Source-to-report mapping |
-| `README.md` | This document | Executive overview |
-| `infra/k8s/production-hardened.yaml` | Production deployment | K8s manifests, HPA, NetworkPolicy |
-| `compose.dev.yaml` | Local development | 13-service Docker setup |
-| `apps/backend/src/main.ts` | Backend entry | Security middleware, metrics |
-| `apps/backend/src/app.module.ts` | Module registry | All service imports |
-| `apps/backend/test/**/*.ts` | Test definitions | 231 test cases |
-| `infra/scripts/security-tests.js` | Security validation | OWASP-style tests |
-| `infra/prometheus/alerts.yml` | Alert rules | Metric thresholds |
-| `apps/backend/src/db/entities/*.ts` | Data model | 47 entities |
-
----
-
-## 23. Developer Onboarding
-
-### Prerequisites
-- Node.js ≥ 20 (npm ≥ 11)
-- Docker Desktop
-- Expo CLI (for mobile development)
-
-### Quick Start
 ```bash
-# 1. Install dependencies
-npm install
+npm run build
+npm run lint
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+npm run test:all
 
-# 2. Copy environment template
-copy .env.example .env
-
-# 3. Start infrastructure
-docker-compose -f compose.dev.yaml up -d
-
-# 4. Start backend
+cd apps/backend && npm test
+cd apps/backend && npm run test:cov
 cd apps/backend && npm run dev
-
-# 5. Start frontends
-npm run dev  # All workspaces in parallel
 ```
 
-### Verification Commands
+Runtime validation commands used in this audit:
+
 ```bash
-npm run build      # All workspaces
-npm run lint       # All workspaces
-npm run test:unit  # All workspaces
-npm run test:all   # Backend full suite
-cd apps/backend && npm run test:cov  # Coverage report
+curl.exe -sS -i --max-time 10 http://localhost:3001/health
+curl.exe -sS -i --max-time 10 http://localhost:3001/metrics
+curl.exe -sS -i --max-time 10 -X OPTIONS http://localhost:3001/auth/login -H 'Origin: http://localhost:3002' -H 'Access-Control-Request-Method: POST'
+curl.exe -sS -i --max-time 10 -X TRACE http://localhost:3001/health
+
+node infra/scripts/security-tests.js
+node infra/scripts/penetration-tests.js
+node infra/scripts/validate-env-consistency.js
+node infra/scripts/validate-secrets.js
+
+docker-compose -f compose.dev.yaml config
+docker-compose -f compose.infra.yaml config
+kubectl apply --dry-run=client -f infra/k8s/production-hardened.yaml
+npm audit --audit-level=moderate
 ```
 
-### Port Reference
-| Service | Port |
-|---------|------|
-| Backend API | 3001 |
-| Customer Web | 3002 |
-| Restaurant Dashboard | 3003 |
-| Super Admin | 3004 |
-| Grafana | 3000 |
-| Prometheus | 9090 |
-| Alertmanager | 9093 |
-| OpenSearch | 9200 |
+---
+
+## Documentation Map
+
+| File | Purpose |
+|---|---|
+| `docs/CANONICAL_PROJECT_STATE_2026-06-22.md` | Authoritative current-state baseline. |
+| `docs/DOCUMENTATION_RECONCILIATION_MATRIX.md` | Reconciles historical documentation claims. |
+| `docs/PRODUCTION_READINESS_GAP_REPORT.md` | Readiness scores, blockers, and path to 80%+. |
+| `docs/TEST_QUALITY_AUDIT.md` | Test, coverage, security, and load-test audit. |
+| `docs/RUNTIME_INFRA_VALIDATION.md` | Backend runtime and infrastructure validation. |
+| `docs/FEATURE_CAPABILITY_MATRIX.md` | Capability-by-capability status matrix. |
+| `docs/STUBBED_COMPONENTS_STATUS.md` | Stubbed/quarantined component documentation. |
+| `docs/production-readiness/PHASE_5_SECURITY_LOAD_REPORT.md` | Historical phase-5 security/load evidence. |
 
 ---
 
-## 24. Final Verdict / Current Positioning
+## Final Verdict
 
-SpiceGarden is a **72% complete technical codebase** for an enterprise food-delivery platform. It is **NOT production-ready** (38%) due to:
-- Unexecuted runtime security and load tests
-- Backend coverage at 51.72% (below 80% threshold)
-- 33 npm audit vulnerabilities unresolved
-- Infrastructure stack not validated at runtime
-- gRPC transport and mobile geolocation stubbed
-
-**Who would find value in this repo:**
-- Startup founders seeking an accelerated MVP base (3-4 months faster to market)
-- White-label platform buyers (65% demo-ready, 72% implemented)
-- Technical recruiters/evaluators (demonstrates full-stack scope)
-- Agencies needing a food-delivery code scaffold
-- Investors seeking to understand technical replacement cost
-
-**Disclaimers:**
-- This is a **technical asset valuation**, not business valuation
-- No revenue, users, or contracts exist
-- Production deployment requires resolving all P0 blockers listed in Section 18
-- Mobile apps are Expo-development only; no App Store/Play Store builds
-
----
-
-*All technical claims in this README are verified against repository source code and documented evidence in `docs/CANONICAL_PROJECT_STATE_2026-06-20.md`. Claims not yet validated against running infrastructure are explicitly marked as partial, stubbed, or blocked.*
+SpiceGarden is a broad technical platform with meaningful backend, web, mobile, infra, and test assets. The current safe positioning is **local demo candidate, not production-ready**. Production readiness is blocked by coverage, dependency audit, Docker/Kubernetes runtime validation, full load validation, and production provider readiness gaps.

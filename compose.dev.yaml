@@ -113,6 +113,9 @@ services:
       - ./infra/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - PAGERDUTY_ROUTING_KEY=${PAGERDUTY_ROUTING_KEY:-}
     networks:
       - spicegarden-net
 
@@ -124,7 +127,6 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      - LOCAL_DB=sqlite
       - CORS_ALLOWED_ORIGINS=http://localhost:3002,http://localhost:3003,http://localhost:3004,http://localhost:3005
       - JWT_SECRET=${JWT_SECRET:-spicegarden_dev_jwt_secret_at_least_32_chars}
       - ENCRYPTION_SECRET=${ENCRYPTION_SECRET:-spicegarden_dev_encryption_secret_32_chars}

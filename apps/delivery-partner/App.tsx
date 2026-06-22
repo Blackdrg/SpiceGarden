@@ -177,17 +177,6 @@ function timeAgo(d?: Date) {
   return `${Math.floor(mins / 60)}h ago`;
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  idle: '✋ IDLE',
-  assigned: '📋 ASSIGNED',
-  navigating_to_pickup: '🛵 → PICKUP',
-  at_pickup: '🏪 AT PICKUP',
-  navigating_to_drop: '🛵 → CUSTOMER',
-  completed: '🏁 DONE',
-  failed: '❗ FAILED',
-  delayed: '⏰ DELAYED',
-};
-
 function demoIncoming(): Order {
   return {
     id: `ord-${Date.now()}`,
