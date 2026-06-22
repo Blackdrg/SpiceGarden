@@ -157,7 +157,7 @@ let ProductionNotificationService = ProductionNotificationService_1 = class Prod
         }
     }
     async sendSMSForAlert(alert) {
-        const accountSid = this.configService.get('TWILIO_SID');
+        const accountSid = this.configService.get('TWILIO_ACCOUNT_SID');
         const authToken = this.configService.get('TWILIO_AUTH_TOKEN');
         const adminPhone = this.configService.get('ADMIN_ALERT_PHONE');
         if (!accountSid || !authToken || !adminPhone) {

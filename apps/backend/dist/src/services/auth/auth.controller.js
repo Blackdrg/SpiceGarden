@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let AuthController = class AuthController {
     authService;
     userRepo;
@@ -44,6 +45,8 @@ let AuthController = class AuthController {
             phone: body.phone,
             fullName: body.fullName,
             passwordHash,
+            role: user_interface_1.UserRole.CUSTOMER,
+            status: user_interface_1.UserStatus.ACTIVE,
         });
         const savedUser = await this.userRepo.save(user);
         const deviceInfo = this.getDeviceInfo(body, req);

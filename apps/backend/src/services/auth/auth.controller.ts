@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request } from 'express';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
 interface DeviceInfo {
   name: string;
@@ -62,6 +63,8 @@ export class AuthController {
       phone: body.phone,
       fullName: body.fullName,
       passwordHash,
+      role: UserRole.CUSTOMER,
+      status: UserStatus.ACTIVE,
     });
     const savedUser = await this.userRepo.save(user);
     const deviceInfo = this.getDeviceInfo(body, req);

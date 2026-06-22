@@ -113,7 +113,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
         }
     }
     async sendSMS(phone, message) {
-        const accountSid = this.configService.get('TWILIO_SID');
+        const accountSid = this.configService.get('TWILIO_ACCOUNT_SID');
         const authToken = this.configService.get('TWILIO_AUTH_TOKEN');
         const fromPhone = this.configService.get('TWILIO_PHONE');
         if (!accountSid || !authToken || !fromPhone) {
