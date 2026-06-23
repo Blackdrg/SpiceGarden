@@ -1,18 +1,18 @@
-// Type declarations for lucide-react icons
-// Allows TypeScript compilation without @types/lucide-react
-
+// Type declarations for all icons used across the monorepo
+// This allows TypeScript to compile without the actual lucide-react types
 declare module 'lucide-react' {
   import { FC, SVGProps } from 'react';
 
-  interface LucideIconProps extends SVGProps<SVGSVGElement> {
+  type LucideIconProps = SVGProps<SVGSVGElement> & {
     size?: number;
     color?: string;
     strokeWidth?: number;
     className?: string;
     fill?: string;
-  }
+  };
 
-  // Export individual icons as function components
+  // Export all icon names as React components
+  // The actual icons will be resolved at runtime from the JS package
   export const Home: FC<LucideIconProps>;
   export const Search: FC<LucideIconProps>;
   export const ShoppingCart: FC<LucideIconProps>;
@@ -36,5 +36,3 @@ declare module 'lucide-react' {
   export const Plus: FC<LucideIconProps>;
   export const Trash2: FC<LucideIconProps>;
 }
-
-export {};

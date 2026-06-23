@@ -42,8 +42,7 @@ const Button = ({ label, children, onClick, variant = 'primary', size = 'md', is
         }
     };
     const isDisabled = disabled || isLoading;
-    return (react_1.default.createElement("button", {
-        onClick: onClick, disabled: isDisabled, "aria-label": ariaLabel || label, "aria-disabled": isDisabled, className: className, style: {
+    return (react_1.default.createElement("button", { onClick: onClick, disabled: isDisabled, "aria-label": ariaLabel || label, "aria-disabled": isDisabled, className: className, style: {
             backgroundColor: getBgColor(),
             color: getTextColor(),
             border: getBorder(),
@@ -57,7 +56,6 @@ const Button = ({ label, children, onClick, variant = 'primary', size = 'md', is
             padding: getSizeStyles().padding,
             boxShadow: variant === 'primary' ? tokens_1.DESIGN_TOKENS.shadows.small : 'none',
             ...style,
-        }
-    }, isLoading ? 'Loading...' : label));
+        } }, isLoading ? 'Loading...' : label));
 };
 exports.Button = Button;

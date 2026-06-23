@@ -100,6 +100,29 @@ jest.mock('mongoose', () => ({
   connect: jest.fn(),
 }));
 
+// Mock mongodb (MongoClient)
+jest.mock('mongodb', () => ({
+  MongoClient: jest.fn().mockImplementation(() => ({
+    connect: jest.fn().mockResolvedValue(undefined),
+    db: jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnValue({
+        deleteMany: jest.fn().mockResolvedValue({}),
+        insertOne: jest.fn().mockResolvedValue({ insertedId: 'mock-id' }),
+        findOne: jest.fn().mockResolvedValue({}),
+        updateOne: jest.fn().mockResolvedValue({}),
+        deleteOne: jest.fn().mockResolvedValue({}),
+        insertMany: jest.fn().mockResolvedValue({}),
+        aggregate: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+        listCollections: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+      }),
+      admin: jest.fn().mockReturnValue({ serverStatus: jest.fn().mockResolvedValue({ version: '7.0.0' }) }),
+      databaseName: 'test-db',
+    }),
+    close: jest.fn().mockResolvedValue(undefined),
+  })),
+  Db: jest.fn(),
+}));
+
 // Mock stripe
 jest.mock('stripe', () => {
   return jest.fn().mockImplementation(() => ({
