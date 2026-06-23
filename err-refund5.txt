@@ -1,0 +1,22 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    Your test suite must contain at least one test.
+
+      at onResult (../../node_modules/@jest/core/build/TestScheduler.js:133:18)
+      at ../../node_modules/@jest/core/build/TestScheduler.js:254:19
+      at ../../node_modules/emittery/index.js:363:13
+          at Array.map (<anonymous>)
+      at Emittery.emit (../../node_modules/emittery/index.js:361:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        12.735 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

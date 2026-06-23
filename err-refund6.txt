@@ -1,0 +1,351 @@
+﻿node.exe : FAIL test/refund.service.spec.ts (8.293 s)
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refun...ec.ts (8.293 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  RefundService
+    isRefundEligible
+      √ should return true for delivered (24 ms)
+      √ should return true for on_the_way (6 ms)
+      √ should return true for ready (2 ms)
+      √ should return true for preparing (6 ms)
+      √ should return false for cancelled (2 ms)
+      √ should return false for unknown (3 ms)
+    mapRequestTypeToRefundType
+      √ maps customer_request (2 ms)
+      √ maps agent_initiated (8 ms)
+      √ maps policy_exception (3 ms)
+      √ maps dispute_resolution (2 ms)
+      √ defaults to customer_refund (2 ms)
+    createRefundRequest
+      × should create successfully (3 ms)
+      √ throws NotFoundException for missing order (20 ms)
+      √ throws NotFoundException for missing user (non-system) (3 ms)
+      √ allows system without valid user (4 ms)
+      × throws BadRequestException for ineligible order (31 ms)
+      × throws when already refunded (12 ms)
+      √ throws when pending approval exists (4 ms)
+      √ requires manager approval for amount >= threshold (5 ms)
+      √ does not require manager approval for small amount (3 ms)
+    approveRefundRequest
+      × should approve (5 ms)
+      √ throws NotFoundException for missing approval (3 ms)
+      √ throws NotFoundException for missing approver (11 ms)
+      × throws for already processed (16 ms)
+      × handles manager approval required (2 ms)
+    rejectRefundRequest
+      √ should reject (3 ms)
+      √ throws NotFoundException for missing approval (6 ms)
+      √ throws NotFoundException for missing approver (3 ms)
+      × throws for already processed (7 ms)
+    processRefund
+      √ should process refund successfully (6 ms)
+      √ throws NotFoundException for missing approval (4 ms)
+      √ throws NotFoundException for missing processor (3 ms)
+      × throws when already processed (7 ms)
+      × throws when not approved (7 ms)
+      × throws when order not found (8 ms)
+      × throws when order already refunded (6 ms)
+      × handles payment service failure (5 ms)
+      × handles ledger failure gracefully (3 ms)
+    getRefundRequest
+      √ returns approval by id (2 ms)
+      √ throws for missing (1 ms)
+    getRefundRequestsForOrder
+      √ returns approvals (2 ms)
+    getRefundRequestsByStatus
+      √ filters by status (2 ms)
+
+  ● RefundService › createRefundRequest › should create successfully
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+    [0m [90m 112 |[39m
+     [90m 113 |[39m       expect(result[33m.[39mid)[33m.[39mtoBe([32m'appr-1'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 114 |[39m       expect(mocks[33m.[39mproductionNotification[33m.[39msendPaymentNotif
+ication)[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m     |[39m                                                                    [31m[1m^[22m[39m
+     [90m 115 |[39m     })[33m;[39m
+     [90m 116 |[39m
+     [90m 117 |[39m     it([32m'throws NotFoundException for missing order'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (test/refund.service.spec.ts:114:68)
+
+  ● RefundService › createRefundRequest › throws BadRequestException for ineligible order
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: NotFoundException
+
+    Received message: "User not found: user-1"
+
+        [0m [90m 60 |[39m      [36mconst[39m user [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m requestedBy } })[33m;[39m
+         [90m 61 |[39m      [36mif[39m ([33m![39muser [33m&&[39m requestedBy [33m!==[39m [32m'system'[39m) 
+{
+        [31m[1m>[22m[39m[90m 62 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`User not found: ${requestedBy}`[39m)[33m;[39m
+         [90m    |[39m              [31m[1m^[22m[39m
+         [90m 63 |[39m      }
+         [90m 64 |[39m
+         [90m 65 |[39m      [90m// Check if order is eligible for refund[39m[0m
+
+      at RefundService.createRefundRequest (src/services/refund/refund.service.ts:62:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:141:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:141:86)
+
+  ● RefundService › createRefundRequest › throws when already refunded
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected substring: "already been refunded"
+    Received message:   "User not found: user-1"
+
+        [0m [90m 60 |[39m      [36mconst[39m user [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m requestedBy } })[33m;[39m
+         [90m 61 |[39m      [36mif[39m ([33m![39muser [33m&&[39m requestedBy [33m!==[39m [32m'system'[39m) 
+{
+        [31m[1m>[22m[39m[90m 62 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`User not found: ${requestedBy}`[39m)[33m;[39m
+         [90m    |[39m              [31m[1m^[22m[39m
+         [90m 63 |[39m      }
+         [90m 64 |[39m
+         [90m 65 |[39m      [90m// Check if order is eligible for refund[39m[0m
+
+      at RefundService.createRefundRequest (src/services/refund/refund.service.ts:62:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:146:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:146:86)
+
+  ● RefundService › approveRefundRequest › should approve
+
+    expect(received).toBeInstanceOf(expected)
+
+    Expected constructor: Date
+
+    Received value has no prototype
+    Received value: undefined
+
+    [0m [90m 192 |[39m
+     [90m 193 |[39m       expect(result[33m.[39mapprovalStatus)[33m.[39mtoBe([32m'approved'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 194 |[39m       
+expect(result[33m.[39mapprovedAt)[33m.[39mtoBeInstanceOf([33mDate[39m)[33m;[39m
+     [90m     |[39m                                 [31m[1m^[22m[39m
+     [90m 195 |[39m     })[33m;[39m
+     [90m 196 |[39m
+     [90m 197 |[39m     it([32m'throws NotFoundException for missing approval'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (test/refund.service.spec.ts:194:33)
+
+  ● RefundService › approveRefundRequest › throws for already processed
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: NotFoundException
+
+    Received message: "Approver not found: ap-1"
+
+        [0m [90m 124 |[39m      [36mconst[39m approver [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m approverId } })[33m;[39m
+         [90m 125 |[39m      [36mif[39m ([33m![39mapprover) {
+        [31m[1m>[22m[39m[90m 126 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`Approver not found: ${approverId}`[39m)[33m;[39m
+         [90m     |[39m              [31m[1m^[22m[39m
+         [90m 127 |[39m      }
+         [90m 128 |[39m
+         [90m 129 |[39m      [90m// Check if already processed[39m[0m
+
+      at RefundService.approveRefundRequest (src/services/refund/refund.service.ts:126:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:210:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:210:76)
+
+  ● RefundService › approveRefundRequest › handles manager approval required
+
+    BadRequestException: Refund request is already approved
+
+    [0m [90m 129 |[39m      [90m// Check if already processed[39m
+     [90m 130 |[39m      [36mif[39m (approval[33m.[39mapprovalStatus [33m!==[39m [32m'pending'[39m) {
+    [31m[1m>[22m[39m[90m 131 |[39m        [36mthrow[39m [36mnew[39m 
+[33mBadRequestException[39m([32m`Refund request is already ${approval.approvalStatus}`[39m)[33m;[39m
+     [90m     |[39m              [31m[1m^[22m[39m
+     [90m 132 |[39m      }
+     [90m 133 |[39m
+     [90m 134 |[39m      [90m// Check if manager approval is required and if approver is a manager[39m[0m
+
+      at RefundService.approveRefundRequest (src/services/refund/refund.service.ts:131:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:218:22)
+
+  ● RefundService › rejectRefundRequest › throws for already processed
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: NotFoundException
+
+    Received message: "Approver not found: ap-1"
+
+        [0m [90m 171 |[39m      [36mconst[39m approver [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m approverId } })[33m;[39m
+         [90m 172 |[39m      [36mif[39m ([33m![39mapprover) {
+        [31m[1m>[22m[39m[90m 173 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`Approver not found: ${approverId}`[39m)[33m;[39m
+         [90m     |[39m              [31m[1m^[22m[39m
+         [90m 174 |[39m      }
+         [90m 175 |[39m
+         [90m 176 |[39m      [90m// Check if already processed[39m[0m
+
+      at RefundService.rejectRefundRequest (src/services/refund/refund.service.ts:173:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:250:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:250:80)
+
+  ● RefundService › processRefund › throws when already processed
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: NotFoundException
+
+    Received message: "Processor not found: processor-1"
+
+        [0m [90m 212 |[39m      [36mconst[39m processor [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m processedBy } })[33m;[39m
+         [90m 213 |[39m      [36mif[39m ([33m![39mprocessor) {
+        [31m[1m>[22m[39m[90m 214 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`Processor not found: ${processedBy}`[39m)[33m;[39m
+         [90m     |[39m              [31m[1m^[22m[39m
+         [90m 215 |[39m      }
+         [90m 216 |[39m
+         [90m 217 |[39m         [90m// Check if already processed[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:214:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:305:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:305:76)
+
+  ● RefundService › processRefund › throws when not approved
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: NotFoundException
+
+    Received message: "Processor not found: processor-1"
+
+        [0m [90m 212 |[39m      [36mconst[39m processor [33m=[39m [36mawait[39m 
+[36mthis[39m[33m.[39muserRepo[33m.[39mfindOne({ where[33m:[39m { id[33m:[39m processedBy } })[33m;[39m
+         [90m 213 |[39m      [36mif[39m ([33m![39mprocessor) {
+        [31m[1m>[22m[39m[90m 214 |[39m        [36mthrow[39m [36mnew[39m 
+[33mNotFoundException[39m([32m`Processor not found: ${processedBy}`[39m)[33m;[39m
+         [90m     |[39m              [31m[1m^[22m[39m
+         [90m 215 |[39m      }
+         [90m 216 |[39m
+         [90m 217 |[39m         [90m// Check if already processed[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:214:14)
+      at Object.<anonymous> (test/refund.service.spec.ts:310:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:310:76)
+
+  ● RefundService › processRefund › throws when order not found
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: NotFoundException
+    Received constructor: BadRequestException
+
+    Received message: "Refund request has already been processed"
+
+        [0m [90m 217 |[39m         [90m// Check if already processed[39m
+         [90m 218 |[39m         [36mif[39m (approval[33m.[39mapprovalStatus [33m===[39m [32m'processed'[39m) 
+{
+        [31m[1m>[22m[39m[90m 219 |[39m           [36mthrow[39m [36mnew[39m 
+[33mBadRequestException[39m([32m'Refund request has already been processed'[39m)[33m;[39m
+         [90m     |[39m                 [31m[1m^[22m[39m
+         [90m 220 |[39m         }
+         [90m 221 |[39m
+         [90m 222 |[39m         [90m// Check if approved[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:219:17)
+      at Object.<anonymous> (test/refund.service.spec.ts:317:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:317:76)
+
+  ● RefundService › processRefund › throws when order already refunded
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected substring: "already been refunded"
+    Received message:   "Refund request has already been processed"
+
+        [0m [90m 217 |[39m         [90m// Check if already processed[39m
+         [90m 218 |[39m         [36mif[39m (approval[33m.[39mapprovalStatus [33m===[39m [32m'processed'[39m) 
+{
+        [31m[1m>[22m[39m[90m 219 |[39m           [36mthrow[39m [36mnew[39m 
+[33mBadRequestException[39m([32m'Refund request has already been processed'[39m)[33m;[39m
+         [90m     |[39m                 [31m[1m^[22m[39m
+         [90m 220 |[39m         }
+         [90m 221 |[39m
+         [90m 222 |[39m         [90m// Check if approved[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:219:17)
+      at Object.<anonymous> (test/refund.service.spec.ts:324:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:324:76)
+
+  ● RefundService › processRefund › handles payment service failure
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: InternalServerErrorException
+    Received constructor: BadRequestException
+
+    Received message: "Refund request has already been processed"
+
+        [0m [90m 217 |[39m         [90m// Check if already processed[39m
+         [90m 218 |[39m         [36mif[39m (approval[33m.[39mapprovalStatus [33m===[39m [32m'processed'[39m) 
+{
+        [31m[1m>[22m[39m[90m 219 |[39m           [36mthrow[39m [36mnew[39m 
+[33mBadRequestException[39m([32m'Refund request has already been processed'[39m)[33m;[39m
+         [90m     |[39m                 [31m[1m^[22m[39m
+         [90m 220 |[39m         }
+         [90m 221 |[39m
+         [90m 222 |[39m         [90m// Check if approved[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:219:17)
+      at Object.<anonymous> (test/refund.service.spec.ts:334:7)
+      at Object.toThrow (../../node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (test/refund.service.spec.ts:334:76)
+
+  ● RefundService › processRefund › handles ledger failure gracefully
+
+    BadRequestException: Refund request has already been processed
+
+    [0m [90m 217 |[39m         [90m// Check if already processed[39m
+     [90m 218 |[39m         [36mif[39m (approval[33m.[39mapprovalStatus [33m===[39m [32m'processed'[39m) {
+    [31m[1m>[22m[39m[90m 219 |[39m           [36mthrow[39m [36mnew[39m 
+[33mBadRequestException[39m([32m'Refund request has already been processed'[39m)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 220 |[39m         }
+     [90m 221 |[39m
+     [90m 222 |[39m         [90m// Check if approved[39m[0m
+
+      at RefundService.processRefund (src/services/refund/refund.service.ts:219:17)
+      at Object.<anonymous> (test/refund.service.spec.ts:351:22)
+
+Test Suites: 1 failed, 1 total
+Tests:       13 failed, 29 passed, 42 total
+Snapshots:   0 total
+Time:        8.986 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

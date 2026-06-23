@@ -1,0 +1,25 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m217[0m:[93m49[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'baseOrder'.
+
+    [7m217[0m       mocks.orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m   [0m [91m                                                ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m218[0m:[93m48[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'baseUser'.
+
+    [7m218[0m       mocks.userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                               ~~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        13.569 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

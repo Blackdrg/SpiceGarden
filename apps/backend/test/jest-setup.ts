@@ -138,3 +138,10 @@ jest.mock('crypto', () => ({
   ...actualCrypto,
   randomUUID: () => 'mock-uuid',
 }));
+
+// Mock jsonwebtoken
+jest.mock('jsonwebtoken', () => ({
+  sign: jest.fn(() => 'mock-jwt-token'),
+  verify: jest.fn(),
+  decode: jest.fn(),
+}));

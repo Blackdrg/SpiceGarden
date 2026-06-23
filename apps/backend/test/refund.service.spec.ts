@@ -1,173 +1,345 @@
-import { describe, expect, it, beforeEach } from '@jest/globals';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { RefundService, RefundRequestType } from '../src/services/refund/refund.service';
-import { RefundStatus } from '../src/db/entities/refund.entity';
+import { describe, expect, it, jest, beforeEach } from '@jest/globals';
+import { RefundService } from '../src/services/refund/refund.service';
+import { RefundEntity, RefundStatus } from '../src/db/entities/refund.entity';
+import { RefundApprovalEntity } from '../src/db/entities/refund-approval.entity';
 import { OrderStatus, PaymentStatus } from '../src/shared/domain/order.interface';
+import { OrderEntity } from '../src/db/entities/order.entity';
+import { UserEntity } from '../src/db/entities/user.entity';
+import { PaymentService } from '../src/services/payments/payments.service';
+import { NotificationService } from '../src/services/notifications/notification.service';
+import { LedgerService } from '../src/modules/ledger/ledger.service';
+import { ProductionNotificationService } from '../src/services/notifications/production-notification.service';
+import { ConfigService } from '@nestjs/config';
+import { NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
-function createOrder(overrides: any = {}) {
-  return {
-    id: 'order-1',
-    userId: 'user-1',
-    restaurantId: 'restaurant-1',
-    orderNumber: 'ORD-TEST-001',
-    status: OrderStatus.DELIVERED,
-    paymentStatus: PaymentStatus.COMPLETED,
-    subtotal: 100,
-    tax: 18,
-    deliveryFee: 20,
-    discount: 0,
-    tip: 0,
-    grandTotal: 138,
-    paymentIntentId: 'pi_1',
-    deliveryAddressId: 'address-1',
-    createdAt: new Date('2026-06-21T00:00:00.000Z'),
-    updatedAt: new Date('2026-06-21T00:00:00.000Z'),
-    ...overrides,
-  };
+function setup() {
+  const refundRepo: any = { create: jest.fn(), save: jest.fn(), find: jest.fn(), findOne: jest.fn() };
+  const refundApprovalRepo: any = { create: jest.fn(), save: jest.fn(), find: jest.fn(), findOne: jest.fn() };
+  const orderRepo: any = { findOne: jest.fn(), save: jest.fn(), update: jest.fn() };
+  const userRepo: any = { findOne: jest.fn() };
+  const paymentSvc: any = { refundPayment: jest.fn() };
+  const notifSvc: any = {};
+  const ledgerSvc: any = { createTransaction: jest.fn() };
+  const prodNotif: any = { sendPaymentNotification: jest.fn() };
+  const cfg: any = { get: jest.fn((k: string, d?: any) => k === 'REFUND_MANAGER_APPROVAL_THRESHOLD' ? 1000 : d) };
+  const logger: any = { log: jest.fn(), error: jest.fn() };
+
+  const svc = Object.create(RefundService.prototype);
+  Object.assign(svc, { refundRepo, refundApprovalRepo, orderRepo, userRepo, paymentService: paymentSvc, notificationService: notifSvc, ledgerService: ledgerSvc, productionNotification: prodNotif, configService: cfg, logger });
+
+  return { svc, refundRepo, refundApprovalRepo, orderRepo, userRepo, paymentSvc, notifSvc, ledgerSvc, prodNotif, cfg, logger };
 }
 
-function createService() {
-  const refundRepo = { create: jest.fn(), save: jest.fn() };
-  const refundApprovalRepo = { create: jest.fn(), findOne: jest.fn(), save: jest.fn() };
-  const orderRepo = { findOne: jest.fn(), save: jest.fn() };
-  const userRepo = { findOne: jest.fn() };
-  const paymentService = { refundPayment: jest.fn() };
-  const notificationService = { sendPush: jest.fn() };
-  const ledgerService = { createTransaction: jest.fn() };
-  const productionNotification = { sendPaymentNotification: jest.fn() };
-  const configService = { get: jest.fn((key: string, fallback: any) => fallback) };
-  const logger = { log: jest.fn(), error: jest.fn(), warn: jest.fn() };
+const order = () => ({ id: 'ord-1', userId: 'user-1', status: 'delivered', paymentStatus: 'completed' } as any);
+const user = () => ({ id: 'user-1', email: 't@t.com' } as any);
 
-  const service = Object.create(RefundService.prototype) as RefundService;
-  Object.assign(service, {
-    refundRepo,
-    refundApprovalRepo,
-    orderRepo,
-    userRepo,
-    paymentService,
-    notificationService,
-    ledgerService,
-    productionNotification,
-    configService,
-    logger,
+describe('RefundService', () => {
+  beforeEach(() => { jest.clearAllMocks(); void 0; });
+
+  describe('isRefundEligible', () => {
+    it.each([
+      ['delivered', true], ['on_the_way', true], ['ready', true], ['preparing', true], ['cancelled', false],
+    ])('isRefundEligible(%s) => %s', (status: string, expected: boolean) => {
+      const { svc } = setup();
+      expect((svc as any).isRefundEligible({ status })).toBe(expected);
+    });
   });
 
-  return { service, refundRepo, refundApprovalRepo, orderRepo, userRepo, paymentService, ledgerService, productionNotification };
-}
-
-describe('RefundService approval workflow', () => {
-  let mocks: ReturnType<typeof createService>;
-
-  beforeEach(() => {
-    mocks = createService();
+  describe('mapRequestTypeToRefundType', () => {
+    it.each([
+      ['customer_request', 'customer_refund'],
+      ['agent_initiated', 'restaurant_penalty'],
+      ['policy_exception', 'customer_refund'],
+      ['dispute_resolution', 'customer_refund'],
+    ])('%s => %s', (input: string, expected: string) => {
+      const { svc } = setup();
+      expect((svc as any).mapRequestTypeToRefundType(input)).toBe(expected);
+    });
   });
 
-  it('creates a pending refund request for eligible orders', async () => {
-    mocks.orderRepo.findOne.mockResolvedValue(createOrder());
-    mocks.userRepo.findOne.mockResolvedValue({ id: 'user-1' });
-    mocks.refundApprovalRepo.findOne.mockResolvedValue(null);
-    mocks.refundApprovalRepo.create.mockReturnValue({ id: 'approval-1', order: createOrder(), refundAmount: 138, approvalStatus: 'pending' });
-    mocks.refundApprovalRepo.save.mockResolvedValue({ id: 'approval-1', order: createOrder(), refundAmount: 138, approvalStatus: 'pending' });
+describe('createRefundRequest', () => {
+it('creates successfully', async () => {
+        const { svc, orderRepo, userRepo, refundApprovalRepo, prodNotif } = setup();
+        orderRepo.findOne.mockResolvedValue(order());
+        userRepo.findOne.mockResolvedValue(user());
+        refundApprovalRepo.findOne.mockResolvedValue(null);
+        refundApprovalRepo.create.mockReturnValue({ id: 'a1', approvalStatus: 'pending' });
+        refundApprovalRepo.save.mockResolvedValue({ id: 'a1', approvalStatus: 'pending' as const });
+        prodNotif.sendPaymentNotification.mockResolvedValue(undefined);
 
-    const result = await mocks.service.createRefundRequest('order-1', 'user-1', 138, 'Late delivery', RefundRequestType.CUSTOMER_REQUEST);
+        const r = await svc.createRefundRequest('ord-1', 'user-1', 500, 'Damaged');
+        expect(r).toBeDefined();
+      });
 
-    expect(result.approvalStatus).toBe('pending');
-    expect(mocks.refundApprovalRepo.create).toHaveBeenCalledWith(expect.objectContaining({
-      refundAmount: 138,
-      reason: 'Late delivery',
-      requestType: RefundRequestType.CUSTOMER_REQUEST,
-      approvalStatus: 'pending',
-    }));
-    expect(mocks.productionNotification.sendPaymentNotification).toHaveBeenCalled();
-  });
+     it('throws NotFoundException when order missing', async () => {
+       const { svc, orderRepo } = setup();
+       orderRepo.findOne.mockResolvedValue(null);
+       await expect(svc.createRefundRequest('x', 'u', 500, 'r')).rejects.toThrow(NotFoundException);
+     });
 
-  it('rejects duplicate pending refund requests', async () => {
-    mocks.orderRepo.findOne.mockResolvedValue(createOrder());
-    mocks.userRepo.findOne.mockResolvedValue({ id: 'user-1' });
-    mocks.refundApprovalRepo.findOne.mockResolvedValue({ id: 'approval-1', approvalStatus: 'pending' });
+     it('throws NotFoundException when user missing (non-system)', async () => {
+       const { svc, orderRepo, userRepo } = setup();
+       orderRepo.findOne.mockResolvedValue(order());
+       userRepo.findOne.mockResolvedValue(null);
+       await expect(svc.createRefundRequest('ord-1', 'bad-user', 500, 'r')).rejects.toThrow(NotFoundException);
+     });
 
-    await expect(mocks.service.createRefundRequest('order-1', 'user-1', 138, 'Late delivery')).rejects.toThrow(BadRequestException);
-    expect(mocks.refundApprovalRepo.create).not.toHaveBeenCalled();
-  });
+     it('allows system as requestedBy', async () => {
+       const { svc, orderRepo, refundApprovalRepo, userRepo } = setup();
+       orderRepo.findOne.mockResolvedValue(order());
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       refundApprovalRepo.create.mockReturnValue({} as any);
+       refundApprovalRepo.save.mockResolvedValue({ id: 'a1', approvalStatus: 'pending' } as any);
 
-  it('approves pending refund requests', async () => {
-    const approval = { id: 'approval-1', approvalStatus: 'pending', order: createOrder() };
-    mocks.refundApprovalRepo.findOne.mockResolvedValue(approval);
-    mocks.userRepo.findOne.mockResolvedValue({ id: 'approver-1' });
-    mocks.refundApprovalRepo.save.mockResolvedValue({ ...approval, approvalStatus: 'approved', approverId: 'approver-1' });
+       const r = await svc.createRefundRequest('ord-1', 'system', 500, 'r');
+       expect(r.id).toBe('a1');
+       expect(userRepo.findOne).toHaveBeenCalled();
+     });
 
-    const result = await mocks.service.approveRefundRequest('approval-1', 'approver-1', 'Approved');
+     it('throws BadRequestException for ineligible order', async () => {
+       const { svc, orderRepo, userRepo } = setup();
+       const badOrder = { ...order(), status: 'cancelled' };
+       orderRepo.findOne.mockResolvedValue(badOrder);
+       userRepo.findOne.mockResolvedValue(user());
+       await expect(svc.createRefundRequest('ord-1', 'user-1', 500, 'r')).rejects.toThrow(BadRequestException);
+     });
 
-    expect(result.approvalStatus).toBe('approved');
-    expect(result.approverId).toBe('approver-1');
-  });
+     it('throws when already refunded', async () => {
+       const { svc, orderRepo, userRepo } = setup();
+       orderRepo.findOne.mockResolvedValue({ ...order(), paymentStatus: 'refunded' });
+       userRepo.findOne.mockResolvedValue(user());
+       await expect(svc.createRefundRequest('ord-1', 'user-1', 500, 'r')).rejects.toThrow('already been refunded');
+     });
 
-  it('rejects non-pending refund requests', async () => {
-    mocks.refundApprovalRepo.findOne.mockResolvedValue({ id: 'approval-1', approvalStatus: 'processed', order: createOrder() });
-    mocks.userRepo.findOne.mockResolvedValue({ id: 'approver-1' });
+     it('throws when pending approval exists', async () => {
+       const { svc, orderRepo, userRepo, refundApprovalRepo } = setup();
+       orderRepo.findOne.mockResolvedValue(order());
+       userRepo.findOne.mockResolvedValue(user());
+       refundApprovalRepo.findOne.mockResolvedValue({ id: 'existing', approvalStatus: 'pending' } as any);
+       await expect(svc.createRefundRequest('ord-1', 'user-1', 500, 'r')).rejects.toThrow('already a pending');
+     });
 
-    await expect(mocks.service.rejectRefundRequest('approval-1', 'approver-1', 'Already processed')).rejects.toThrow(BadRequestException);
-  });
+     it('requires manager approval for amount >= threshold', async () => {
+       const { svc, cfg, orderRepo, userRepo, refundApprovalRepo } = setup();
+       cfg.get.mockImplementation((k: string, d?: any) => k === 'REFUND_MANAGER_APPROVAL_THRESHOLD' ? 500 : d);
+       orderRepo.findOne.mockResolvedValue(order());
+       userRepo.findOne.mockResolvedValue(user());
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       refundApprovalRepo.create.mockReturnValue({} as any);
+       refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
 
-  it('processes approved refunds and marks the order refunded', async () => {
-    const approval = {
-      id: 'approval-1',
-      approvalStatus: 'approved',
-      approverId: 'approver-1',
-      approvedAt: new Date('2026-06-21T00:00:00.000Z'),
-      order: createOrder(),
-      refundAmount: 138,
-      reason: 'Late delivery',
-      requestType: RefundRequestType.CUSTOMER_REQUEST,
-      approvalNotes: 'Approved',
-    };
-    const order = createOrder();
-    mocks.refundApprovalRepo.findOne.mockResolvedValue(approval);
-    mocks.userRepo.findOne.mockResolvedValueOnce({ id: 'processor-1' }).mockResolvedValueOnce({ id: 'user-1' });
-    mocks.orderRepo.findOne.mockResolvedValue(order);
-    mocks.paymentService.refundPayment.mockResolvedValue({ id: 're_1', amount: 13800, currency: 'usd', status: 'succeeded' });
-    mocks.refundRepo.create.mockReturnValue({ id: 'refund-1' });
-    mocks.refundRepo.save.mockResolvedValue({ id: 'refund-1', status: RefundStatus.PROCESSED });
-    mocks.refundApprovalRepo.save.mockResolvedValue({ ...approval, approvalStatus: 'processed', processedBy: 'processor-1' });
-    mocks.orderRepo.save.mockResolvedValue(order);
-    mocks.ledgerService.createTransaction.mockResolvedValue(undefined);
+       await svc.createRefundRequest('ord-1', 'user-1', 600, 'Large');
+       expect(refundApprovalRepo.create).toHaveBeenCalledWith(expect.objectContaining({ requiresManagerApproval: true }));
+     });
 
-    const result = await mocks.service.processRefund('approval-1', 'processor-1');
+     it('does not require manager approval for small amount', async () => {
+       const { svc, orderRepo, userRepo, refundApprovalRepo } = setup();
+       orderRepo.findOne.mockResolvedValue(order());
+       userRepo.findOne.mockResolvedValue(user());
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       refundApprovalRepo.create.mockReturnValue({} as any);
+       refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
 
-    expect(result.refund.status).toBe(RefundStatus.PROCESSED);
-    expect(result.approval.approvalStatus).toBe('processed');
-    expect(order.paymentStatus).toBe(PaymentStatus.REFUNDED);
-    expect(mocks.paymentService.refundPayment).toHaveBeenCalledWith('pi_1', 138, 'user-1', 'Late delivery', undefined, undefined);
-    expect(mocks.productionNotification.sendPaymentNotification).toHaveBeenCalled();
-  });
+       await svc.createRefundRequest('ord-1', 'user-1', 100, 'Small');
+       expect(refundApprovalRepo.create).toHaveBeenCalledWith(expect.objectContaining({ requiresManagerApproval: false }));
+     });
+   });
 
-  it('rejects processing when approval is not approved', async () => {
-    mocks.refundApprovalRepo.findOne.mockResolvedValue({ id: 'approval-1', approvalStatus: 'pending', order: createOrder() });
-    mocks.userRepo.findOne.mockResolvedValue({ id: 'processor-1' });
+describe('approveRefundRequest', () => {
+     it('should approve', async () => {
+       const { svc, refundApprovalRepo, userRepo, prodNotif } = setup();
+       const a = { id: 'a1', approvalStatus: 'pending', order: { id: 'ord-1' } } as any;
+       refundApprovalRepo.findOne.mockResolvedValue(a);
+       userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as any);
+       refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e, approvedAt: expect.any(Date) }));
+       prodNotif.sendPaymentNotification.mockResolvedValue(undefined);
 
-    await expect(mocks.service.processRefund('approval-1', 'processor-1')).rejects.toThrow(BadRequestException);
-  });
+       const r = await svc.approveRefundRequest('a1', 'ap-1', 'OK');
+       expect(r.approvalStatus).toBe('approved');
+       expect(r.approverId).toBe('ap-1');
+     });
 
-  it('checks refund eligibility for delivered and on-the-way orders', () => {
-    const service = mocks.service as any;
+     it('throws for missing approval', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       await expect(svc.approveRefundRequest('x', 'ap-1')).rejects.toThrow(NotFoundException);
+     });
 
-    expect(service.isRefundEligible(createOrder({ status: OrderStatus.DELIVERED }))).toBe(true);
-    expect(service.isRefundEligible(createOrder({ status: OrderStatus.ON_THE_WAY }))).toBe(true);
-    expect(service.isRefundEligible(createOrder({ status: OrderStatus.PLACED }))).toBe(false);
-  });
+     it('throws for missing approver', async () => {
+       const { svc, refundApprovalRepo, userRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue({ id: 'a1', approvalStatus: 'pending' } as any);
+       userRepo.findOne.mockResolvedValue(null);
+       await expect(svc.approveRefundRequest('a1', 'x')).rejects.toThrow(NotFoundException);
+     });
 
-  it('maps request types to refund types', () => {
-    const service = mocks.service as any;
+it('throws for already processed', async () => {
+        const { svc, refundApprovalRepo, userRepo } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue({ id: 'a1', approvalStatus: 'approved' } as any);
+        userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as any);
+        await expect(svc.approveRefundRequest('a1', 'ap-1')).rejects.toThrow(BadRequestException);
+      });
+   });
 
-    expect(service.mapRequestTypeToRefundType(RefundRequestType.CUSTOMER_REQUEST)).toBe('customer_refund');
-    expect(service.mapRequestTypeToRefundType(RefundRequestType.AGENT_INITIATED)).toBe('restaurant_penalty');
-    expect(service.mapRequestTypeToRefundType(RefundRequestType.DISPUTE_RESOLUTION)).toBe('customer_refund');
-  });
+describe('rejectRefundRequest', () => {
+     it('should reject', async () => {
+       const { svc, refundApprovalRepo, userRepo } = setup();
+       const a = { id: 'a1', approvalStatus: 'pending' } as any;
+       refundApprovalRepo.findOne.mockResolvedValue(a);
+       userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as any);
+       refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
 
-  it('throws when requested user does not exist', async () => {
-    mocks.orderRepo.findOne.mockResolvedValue(createOrder());
-    mocks.userRepo.findOne.mockResolvedValue(null);
+       const r = await svc.rejectRefundRequest('a1', 'ap-1', 'Invalid');
+       expect(r.approvalStatus).toBe('rejected');
+       expect(r.rejectionReason).toBe('Invalid');
+     });
 
-    await expect(mocks.service.createRefundRequest('order-1', 'missing-user', 138, 'Late delivery')).rejects.toThrow(NotFoundException);
-  });
-});
+     it('throws for missing approval', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       await expect(svc.rejectRefundRequest('x', 'ap-1', 'r')).rejects.toThrow(NotFoundException);
+     });
+
+it('throws for already processed', async () => {
+        const { svc, refundApprovalRepo, userRepo } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue({ id: 'a1', approvalStatus: 'approved' } as any);
+        userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as any);
+        await expect(svc.rejectRefundRequest('a1', 'ap-1', 'r')).rejects.toThrow(BadRequestException);
+      });
+   });
+
+  describe('processRefund', () => {
+    const mkApproval = (status: string = 'approved') => ({
+      id: 'a1', order: { id: 'ord-1', paymentIntentId: 'pi_1', userId: 'u1', paymentStatus: 'completed' },
+      approvalStatus: status, refundAmount: 500, reason: 'requested_by_customer',
+      requestedBy: 'u1', requestType: 'customer_request',
+    } as any);
+
+    const mkOrder = () => ({
+      id: 'ord-1', paymentIntentId: 'pi_1', userId: 'u1',
+      status: 'delivered', paymentStatus: 'completed',
+    } as any);
+
+it('processes refund successfully', async () => {
+        const { svc, refundApprovalRepo, userRepo, orderRepo, paymentSvc, refundRepo, ledgerSvc, prodNotif } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
+        userRepo.findOne.mockImplementation((opts: any) => {
+          if (opts?.where?.id === 'processor-1') return { id: 'processor-1' } as any;
+          return { id: 'u1' } as any;
+        });
+        orderRepo.findOne.mockResolvedValue(mkOrder());
+        paymentSvc.refundPayment.mockResolvedValue({ id: 're_1', amount: 50000, currency: 'usd' } as any);
+        refundRepo.create.mockReturnValue({} as any);
+        refundRepo.save.mockImplementation((e: any) => ({ ...e, status: 'processed' }));
+        refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
+        orderRepo.save.mockImplementation((e: any) => ({ ...e }));
+        ledgerSvc.createTransaction.mockResolvedValue(undefined);
+        prodNotif.sendPaymentNotification.mockResolvedValue(undefined);
+
+        const r = await svc.processRefund('a1', 'processor-1');
+        expect((r as any).refund.status).toBe('processed');
+        expect((r as any).approval.approvalStatus).toBe('processed');
+        expect(paymentSvc.refundPayment).toHaveBeenCalled();
+        expect(ledgerSvc.createTransaction).toHaveBeenCalled();
+      });
+
+     it('throws NotFoundException for missing approval', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       await expect(svc.processRefund('x', 'p')).rejects.toThrow(NotFoundException);
+     });
+
+it('throws when already processed', async () => {
+        const { svc, refundApprovalRepo, userRepo } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue(mkApproval('processed'));
+        userRepo.findOne.mockResolvedValue({ id: 'p' } as any);
+        await expect(svc.processRefund('a1', 'p')).rejects.toThrow(BadRequestException);
+      });
+
+     it('throws when not approved', async () => {
+        const { svc, refundApprovalRepo, userRepo } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue(mkApproval('rejected'));
+        userRepo.findOne.mockResolvedValue({ id: 'p' } as any);
+        await expect(svc.processRefund('a1', 'p')).rejects.toThrow(BadRequestException);
+      });
+
+     it('throws when order not found', async () => {
+       const { svc, refundApprovalRepo, userRepo, orderRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
+       userRepo.findOne.mockResolvedValue({ id: 'p' } as any);
+       orderRepo.findOne.mockResolvedValue(null);
+       await expect(svc.processRefund('a1', 'p')).rejects.toThrow(NotFoundException);
+     });
+
+     it('throws when order already refunded', async () => {
+       const { svc, refundApprovalRepo, userRepo, orderRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
+       userRepo.findOne.mockResolvedValue({ id: 'p' } as any);
+       orderRepo.findOne.mockResolvedValue({ ...mkOrder(), paymentStatus: 'refunded' });
+       await expect(svc.processRefund('a1', 'p')).rejects.toThrow('already been refunded');
+     });
+
+     it('handles payment service failure', async () => {
+       const { svc, refundApprovalRepo, userRepo, orderRepo, paymentSvc } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
+       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as any);
+       orderRepo.findOne.mockResolvedValue(mkOrder());
+       userRepo.findOne.mockResolvedValue({ id: 'u1' } as any);
+       paymentSvc.refundPayment.mockRejectedValue(new Error('Gateway down'));
+
+       await expect(svc.processRefund('a1', 'processor-1')).rejects.toThrow(InternalServerErrorException);
+       expect(refundApprovalRepo.save).toHaveBeenCalled();
+     });
+
+it('handles ledger failure gracefully', async () => {
+        const { svc, refundApprovalRepo, userRepo, orderRepo, paymentSvc, refundRepo, ledgerSvc, prodNotif } = setup();
+        refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
+        userRepo.findOne.mockImplementation((opts: any) => {
+          if (opts?.where?.id === 'processor-1') return { id: 'processor-1' } as any;
+          return { id: 'u1' } as any;
+        });
+        orderRepo.findOne.mockResolvedValue(mkOrder());
+        paymentSvc.refundPayment.mockResolvedValue({ id: 're_1', amount: 50000, currency: 'usd' } as any);
+        refundRepo.create.mockReturnValue({} as any);
+        refundRepo.save.mockImplementation((e: any) => ({ ...e, status: 'processed' }));
+        refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
+        orderRepo.save.mockImplementation((e: any) => ({ ...e }));
+        ledgerSvc.createTransaction.mockRejectedValue(new Error('Ledger down'));
+        prodNotif.sendPaymentNotification.mockResolvedValue(undefined);
+
+        const r = await svc.processRefund('a1', 'processor-1');
+        expect((r as any).refund.status).toBe('processed');
+      });
+   });
+
+describe('getRefundRequest', () => {
+     it('returns approval by id', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue({ id: 'a1' } as any);
+       const r = await svc.getRefundRequest('a1');
+       expect(r.id).toBe('a1');
+     });
+     it('throws for missing', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.findOne.mockResolvedValue(null);
+       await expect(svc.getRefundRequest('x')).rejects.toThrow(NotFoundException);
+     });
+   });
+
+   describe('getRefundRequestsForOrder', () => {
+     it('returns approvals', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.find.mockResolvedValue([{ id: 'a1' }, { id: 'a2' }]);
+       const r = await svc.getRefundRequestsForOrder('ord-1');
+       expect(r).toHaveLength(2);
+     });
+   });
+
+   describe('getRefundRequestsByStatus', () => {
+     it('filters by status', async () => {
+       const { svc, refundApprovalRepo } = setup();
+       refundApprovalRepo.find.mockResolvedValue([{ id: 'a1' }]);
+       const r = await svc.getRefundRequestsByStatus('pending');
+       expect(r).toHaveLength(1);
+     });
+   });
+ });

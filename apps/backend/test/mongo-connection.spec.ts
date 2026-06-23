@@ -1,12 +1,13 @@
-import { MongoClient, Db } from 'mongodb';
+jest.unmock('mongodb');
+const { MongoClient, Db } = require('mongodb');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/spicegarden';
 const TEST_DB = 'spicegarden_test';
 const TEST_TIMEOUT = 15000;
 
 describe('MongoDB Integration', () => {
-  let client: MongoClient;
-  let db: Db;
+  let client: any;
+  let db: any;
 
   beforeAll(() => {
     process.env.NODE_ENV = 'test';
