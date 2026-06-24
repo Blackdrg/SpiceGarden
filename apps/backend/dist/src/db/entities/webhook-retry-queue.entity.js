@@ -12,6 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookRetryQueueEntity = void 0;
 const typeorm_1 = require("typeorm");
 let WebhookRetryQueueEntity = class WebhookRetryQueueEntity {
+    id;
+    webhookId;
+    gateway;
+    eventType;
+    payload;
+    attempt;
+    maxAttempts;
+    status;
+    lastError;
+    scheduledAt;
+    processedAt;
+    createdAt;
+    updatedAt;
 };
 exports.WebhookRetryQueueEntity = WebhookRetryQueueEntity;
 __decorate([
@@ -70,4 +83,3 @@ __decorate([
 exports.WebhookRetryQueueEntity = WebhookRetryQueueEntity = __decorate([
     (0, typeorm_1.Entity)('webhook_retry_queue')
 ], WebhookRetryQueueEntity);
-//# sourceMappingURL=webhook-retry-queue.entity.js.map

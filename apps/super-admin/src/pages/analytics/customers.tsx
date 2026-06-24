@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
 
@@ -22,17 +23,25 @@ interface RepeatData {
 }
 
 export default function AnalyticsCustomers() {
-  const [churn, setChurn] = useState<ChurnData | null>(null);
-  const [repeat, setRepeat] = useState<RepeatData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([
-      fetch(`${API}/analytics/churn?period=90`).then((r) => r.json()),
-      fetch(`${API}/analytics/repeat-users?period=90`).then((r) => r.json()),
-    ]).then(([c, r]) => { setChurn(c); setRepeat(r); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: churn = {}, isLoading: churnLoading } = useQuery<ChurnData>({
+    queryKey: ['analytics-churn'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/churn?period=90`);
+      if (!response.ok) throw new Error('Failed to load churn analytics');
+      return response.json() as Promise<ChurnData>;
+    },
+    initialData: {},
+  });
+  const { data: repeat = {}, isLoading: repeatLoading } = useQuery<RepeatData>({
+    queryKey: ['analytics-repeat-users'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/analytics/repeat-users?period=90`);
+      if (!response.ok) throw new Error('Failed to load repeat customer analytics');
+      return response.json() as Promise<RepeatData>;
+    },
+    initialData: {},
+  });
+  const loading = churnLoading || repeatLoading;
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
@@ -61,10 +70,10 @@ export default function AnalyticsCustomers() {
             <p style={{ color: '#a1a1aa', fontSize: 14, marginBottom: 16 }}>
               {repeat?.repeatCustomers || 0} repeat customers · Avg frequency: {repeat?.avgFrequency || 0} orders
             </p>
-{repeat?.topRepeatCustomers?.length > 0 && (
+{(repeat?.topRepeatCustomers?.length ?? 0) > 0 && (
                <div>
                  <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: '#71717a' }}>Top Customers</h3>
-                 {repeat.topRepeatCustomers!.slice(0, 5).map((c) => (
+                 {(repeat!.topRepeatCustomers ?? []).slice(0, 5).map((c) => (
                    <div key={c.userId} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #27272a', fontSize: 13 }}>
                      <span>{c.userId.slice(0, 10)}</span>
                      <span style={{ color: '#a1a1aa' }}>{c.orderCount} orders · ₹{c.totalSpent?.toFixed(0)}</span>
@@ -75,7 +84,7 @@ export default function AnalyticsCustomers() {
           </div>
         </>
       )}
-      <a href="/analytics" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Analytics</a>
+      <Link href="/analytics" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Analytics</Link>
     </div>
   );
 }

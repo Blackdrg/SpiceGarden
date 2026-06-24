@@ -83,13 +83,23 @@
 }
 
 .statusBadge {
-  min-width: 80px;
-  text-align: center;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: bold;
-}
+   min-width: 80px;
+   text-align: center;
+   padding: 6px 10px;
+   border-radius: 6px;
+   font-size: 11px;
+   font-weight: bold;
+   background-color: var(--badge-bg, #f04e31);
+   border: 1px solid var(--badge-border, #f04e31);
+   color: var(--badge-color, #f04e31);
+ }
+
+.statusBadgeNew { --badge-bg: #f04e3122; --badge-border: #f04e3166; --badge-color: #f04e31; }
+.statusBadgeAccepted { --badge-bg: #ff980022; --badge-border: #ff980066; --badge-color: #ff9800; }
+.statusBadgePreparing { --badge-bg: #2196f322; --badge-border: #2196f366; --badge-color: #2196f3; }
+.statusBadgeReady { --badge-bg: #4caf5022; --badge-border: #4caf5066; --badge-color: #4caf50; }
+.statusBadgeDelayed { --badge-bg: #ff444422; --badge-border: #ff444466; --badge-color: #ff4444; }
+.statusBadgeCompleted { --badge-bg: #999222; --badge-border: #999666; --badge-color: #999; }
 
 /* Sound notification container */
 .soundContainer {
@@ -178,6 +188,13 @@
   font-weight: bold;
 }
 
+.statsCountNew { color: #f04e31; }
+.statsCountAccepted { color: #ff9800; }
+.statsCountPreparing { color: #2196f3; }
+.statsCountReady { color: #4caf50; }
+.statsCountDelayed { color: #ff4444; }
+.statsCountCompleted { color: #999; }
+
 .statsLabel {
   font-size: 10px;
   color: #aaaaaa;
@@ -193,13 +210,22 @@
   font-size: 12px;
   margin-bottom: 8px;
   text-transform: uppercase;
+  color: var(--status-color, #4caf50);
 }
+
+.batchGroupHeaderNew { --status-color: #f04e31; }
+.batchGroupHeaderAccepted { --status-color: #ff9800; }
+.batchGroupHeaderPreparing { --status-color: #2196f3; }
+.batchGroupHeaderReady { --status-color: #4caf50; }
+.batchGroupHeaderDelayed { --status-color: #ff4444; }
+.batchGroupHeaderCompleted { --status-color: #999; }
 
 .statusIndicator {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  background-color: var(--status-color, #4caf50);
 }
 
 .delayedWarning {
@@ -220,7 +246,16 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: var(--card-bg, #2a2a4a);
+  border: 2px solid var(--card-border, #4caf50);
 }
+
+.orderCardNew { --card-border: #f04e31; }
+.orderCardAccepted { --card-border: #ff9800; }
+.orderCardPreparing { --card-border: #2196f3; }
+.orderCardReady { --card-border: #4caf50; }
+.orderCardDelayed { --card-bg: #3b1a1a; --card-border: #ff4444; }
+.orderCardCompleted { --card-border: #999; }
 
 .orderCardHeader {
   display: flex;
@@ -297,18 +332,15 @@
 }
 
 .progressFill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 1s linear;
-}
+   height: 100%;
+   border-radius: 3px;
+   transition: width 1s linear;
+   width: var(--progress-width, 50%);
+  }
 
-.progressFillNormal {
-  background-color: #4caf50;
-}
+.progressFillNormal { --progress-color: #4caf50; }
 
-.progressFillDelayed {
-  background-color: #ff4444;
-}
+.progressFillDelayed { --progress-color: #ff4444; }
 
 .delayText {
   color: #ff4444;
@@ -343,11 +375,18 @@
 
 /* Service label */
 .serviceLabel {
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: bold;
-}
+   padding: 3px 10px;
+   border-radius: 12px;
+   font-size: 11px;
+   font-weight: bold;
+   background: var(--service-bg, #2196f3);
+   color: var(--service-color, #2196f3);
+   border: 1px solid var(--service-border, #2196f3);
+ }
+
+.serviceLabelDelivery { --service-bg: #2196f333; --service-color: #2196f3; --service-border: #2196f366; }
+.serviceLabelTakeaway { --service-bg: #ff980033; --service-color: #ff9800; --service-border: #ff980066; }
+.serviceLabelDineIn { --service-bg: #9c27b033; --service-color: #9c27b0; --service-border: #9c27b066; }
 
 /* Inventory */
 .inventoryContainer {
@@ -387,10 +426,14 @@
 
 .inventoryItemLow {
   border: 2px solid #ff4444;
+  --stock-color: #ff4444;
+  --stock-bg: #ff4444;
 }
 
 .inventoryItemNormal {
   border: 2px solid #333333;
+  --stock-color: #4caf50;
+  --stock-bg: #4caf50;
 }
 
 .inventoryItemName {
@@ -401,7 +444,14 @@
 .inventoryItemCount {
   font-size: 24px;
   font-weight: bold;
+  color: var(--stock-color, #4caf50);
 }
+
+.inventoryItemCountLow { --stock-color: #ff4444; }
+.inventoryItemCountNormal { --stock-color: #4caf50; }
+
+.timerDelay { color: #ff4444; }
+.timerNormal { color: #aaaaaa; }
 
 .inventoryUnit {
   font-size: 14px;
@@ -417,12 +467,16 @@
 .stockProgressBar {
   height: 6px;
   border-radius: 3px;
+  background: var(--stock-bg, #4caf50);
+  opacity: 0.3;
 }
 
 .stockProgressFill {
   height: 6px;
   border-radius: 3px;
   transition: width 0.3s;
+  width: var(--stock-width, 50%);
+  background: var(--stock-bg, #4caf50);
 }
 
 .lowStockWarning {
@@ -658,6 +712,50 @@
   font-size: 24px;
   font-weight: bold;
 }
+
+.progressFill0 { width: 0%; }
+.progressFill5 { width: 5%; }
+.progressFill10 { width: 10%; }
+.progressFill15 { width: 15%; }
+.progressFill20 { width: 20%; }
+.progressFill25 { width: 25%; }
+.progressFill30 { width: 30%; }
+.progressFill35 { width: 35%; }
+.progressFill40 { width: 40%; }
+.progressFill45 { width: 45%; }
+.progressFill50 { width: 50%; }
+.progressFill55 { width: 55%; }
+.progressFill60 { width: 60%; }
+.progressFill65 { width: 65%; }
+.progressFill70 { width: 70%; }
+.progressFill75 { width: 75%; }
+.progressFill80 { width: 80%; }
+.progressFill85 { width: 85%; }
+.progressFill90 { width: 90%; }
+.progressFill95 { width: 95%; }
+.progressFill100 { width: 100%; }
+
+.stockProgressFill0 { width: 0%; }
+.stockProgressFill5 { width: 5%; }
+.stockProgressFill10 { width: 10%; }
+.stockProgressFill15 { width: 15%; }
+.stockProgressFill20 { width: 20%; }
+.stockProgressFill25 { width: 25%; }
+.stockProgressFill30 { width: 30%; }
+.stockProgressFill35 { width: 35%; }
+.stockProgressFill40 { width: 40%; }
+.stockProgressFill45 { width: 45%; }
+.stockProgressFill50 { width: 50%; }
+.stockProgressFill55 { width: 55%; }
+.stockProgressFill60 { width: 60%; }
+.stockProgressFill65 { width: 65%; }
+.stockProgressFill70 { width: 70%; }
+.stockProgressFill75 { width: 75%; }
+.stockProgressFill80 { width: 80%; }
+.stockProgressFill85 { width: 85%; }
+.stockProgressFill90 { width: 90%; }
+.stockProgressFill95 { width: 95%; }
+.stockProgressFill100 { width: 100%; }
 
 /* Pulse animation for new order button */
 @keyframes kdsPulse {

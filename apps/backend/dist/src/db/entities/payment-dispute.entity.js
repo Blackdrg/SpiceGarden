@@ -13,6 +13,23 @@ exports.PaymentDisputeEntity = void 0;
 const typeorm_1 = require("typeorm");
 const order_entity_1 = require("./order.entity");
 let PaymentDisputeEntity = class PaymentDisputeEntity {
+    id;
+    order;
+    orderId;
+    disputeId;
+    disputeType;
+    disputedAmount;
+    currency;
+    reason;
+    evidence;
+    status;
+    chargedBackAmount;
+    chargedBackAt;
+    isRefundedToCustomer;
+    refundedAt;
+    refundedBy;
+    createdAt;
+    updatedAt;
 };
 exports.PaymentDisputeEntity = PaymentDisputeEntity;
 __decorate([
@@ -86,4 +103,3 @@ __decorate([
 exports.PaymentDisputeEntity = PaymentDisputeEntity = __decorate([
     (0, typeorm_1.Entity)('payment_disputes')
 ], PaymentDisputeEntity);
-//# sourceMappingURL=payment-dispute.entity.js.map

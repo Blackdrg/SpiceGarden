@@ -37,6 +37,29 @@ var TicketStatus;
     TicketStatus["CLOSED"] = "closed";
 })(TicketStatus || (exports.TicketStatus = TicketStatus = {}));
 let SupportTicketEntity = class SupportTicketEntity {
+    id;
+    ticketNumber;
+    subject;
+    category;
+    priority;
+    status;
+    createdById;
+    createdBy;
+    assignedToId;
+    assignedTo;
+    escalatedToId;
+    escalatedTo;
+    escalationLevel;
+    slaBreachedAt;
+    messages;
+    metadata;
+    resolutionNotes;
+    resolvedAt;
+    satisfactionSurveySent;
+    satisfactionRating;
+    escalated;
+    createdAt;
+    updatedAt;
 };
 exports.SupportTicketEntity = SupportTicketEntity;
 __decorate([
@@ -135,6 +158,16 @@ exports.SupportTicketEntity = SupportTicketEntity = __decorate([
     (0, typeorm_1.Entity)('support_tickets')
 ], SupportTicketEntity);
 let TicketMessageEntity = class TicketMessageEntity {
+    id;
+    ticketId;
+    ticket;
+    senderId;
+    sender;
+    message;
+    isInternalNote;
+    isSystemMessage;
+    attachments;
+    createdAt;
 };
 exports.TicketMessageEntity = TicketMessageEntity;
 __decorate([
@@ -180,4 +213,3 @@ __decorate([
 exports.TicketMessageEntity = TicketMessageEntity = __decorate([
     (0, typeorm_1.Entity)('ticket_messages')
 ], TicketMessageEntity);
-//# sourceMappingURL=support-ticket.entity.js.map

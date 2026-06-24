@@ -12,6 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripeWebhookEntity = void 0;
 const typeorm_1 = require("typeorm");
 let StripeWebhookEntity = class StripeWebhookEntity {
+    id;
+    webhookId;
+    eventType;
+    processedAt;
+    createdAt;
 };
 exports.StripeWebhookEntity = StripeWebhookEntity;
 __decorate([
@@ -37,4 +42,3 @@ __decorate([
 exports.StripeWebhookEntity = StripeWebhookEntity = __decorate([
     (0, typeorm_1.Entity)('stripe_webhooks')
 ], StripeWebhookEntity);
-//# sourceMappingURL=stripe-webhook.entity.js.map

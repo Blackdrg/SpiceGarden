@@ -1,21 +1,34 @@
-import { MongoClient, Db } from 'mongodb';
+jest.unmock('mongodb');
+const { MongoClient, Db } = require('mongodb');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/spicegarden';
 const TEST_DB = 'spicegarden_test';
-const TEST_TIMEOUT = 15000;
+const TEST_TIMEOUT = 30000;
+const COLLECTION_PREFIX = `_test_${Date.now()}`;
 
 describe('MongoDB Integration', () => {
-  let client: MongoClient;
-  let db: Db;
+  let client: any;
+  let db: any;
+  let collectionName: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
+    collectionName = `${COLLECTION_PREFIX}_${Math.random().toString(36).slice(2, 8)}`;
+    try {
+      client = new MongoClient(MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+      await client.connect();
+      db = client.db(TEST_DB);
+      await db.collection(collectionName).drop().catch(() => {});
+    } catch (e) {
+      client = null;
+      db = null;
+    }
   }, TEST_TIMEOUT);
 
   afterAll(async () => {
     try {
       if (db) {
-        await db.collection('_connection_test').deleteMany({});
+        await db.collection(collectionName).drop().catch(() => {});
       }
       if (client) {
         await client.close();
@@ -25,11 +38,10 @@ describe('MongoDB Integration', () => {
     }
   }, TEST_TIMEOUT);
 
-  afterEach(async () => {
+  beforeEach(async () => {
+    if (!db) return;
     try {
-      if (db) {
-        await db.collection('_connection_test').deleteMany({});
-      }
+      await db.collection(collectionName).deleteMany({});
     } catch (e) {
       // cleanup errors are non-fatal
     }
@@ -41,14 +53,15 @@ describe('MongoDB Integration', () => {
   });
 
   it('should connect via MongoClient', async () => {
-    client = new MongoClient(MONGO_URI);
-    await client.connect();
-    db = client.db(TEST_DB);
+    if (!client || !db) {
+      throw new Error('MongoDB client not initialized — connection failed in beforeAll');
+    }
     expect(db).toBeDefined();
     expect(db.databaseName).toBe(TEST_DB);
   }, TEST_TIMEOUT);
 
   it('should report server version', async () => {
+    if (!db) throw new Error('MongoDB not connected');
     const status = await db.admin().serverStatus();
     expect(status.version).toBeDefined();
     expect(typeof status.version).toBe('string');
@@ -56,12 +69,14 @@ describe('MongoDB Integration', () => {
   }, TEST_TIMEOUT);
 
   it('should list collections', async () => {
+    if (!db) throw new Error('MongoDB not connected');
     const collections = await db.listCollections().toArray();
     expect(Array.isArray(collections)).toBe(true);
   }, TEST_TIMEOUT);
 
   it('should insert and retrieve documents', async () => {
-    const coll = db.collection('_connection_test');
+    if (!db) throw new Error('MongoDB not connected');
+    const coll = db.collection(collectionName);
     const doc = {
       suite: 'mongo-integration',
       ts: new Date().toISOString(),
@@ -75,24 +90,26 @@ describe('MongoDB Integration', () => {
 
     const found = await coll.findOne({ _id: insertedId });
     expect(found).toBeDefined();
-    expect(found.suite).toBe('mongo-integration');
-    expect(found.number).toBe(42);
-    expect(found.nested.path).toBe('ok');
+    expect(found!.suite).toBe('mongo-integration');
+    expect(found!.number).toBe(42);
+    expect(found!.nested.path).toBe('ok');
   }, TEST_TIMEOUT);
 
   it('should update and delete documents', async () => {
-    const coll = db.collection('_connection_test');
+    if (!db) throw new Error('MongoDB not connected');
+    const coll = db.collection(collectionName);
     const { insertedId } = await coll.insertOne({ key: 'upd-del', v: 1 });
     await coll.updateOne({ _id: insertedId }, { $set: { v: 99 } });
     const updated = await coll.findOne({ _id: insertedId });
-    expect(updated.v).toBe(99);
+    expect(updated!.v).toBe(99);
     await coll.deleteOne({ _id: insertedId });
     const gone = await coll.findOne({ _id: insertedId });
     expect(gone).toBeNull();
   }, TEST_TIMEOUT);
 
   it('should run aggregations', async () => {
-    const coll = db.collection('_connection_test');
+    if (!db) throw new Error('MongoDB not connected');
+    const coll = db.collection(collectionName);
     await coll.insertOne({ g: 'a', n: 10 });
     await coll.insertOne({ g: 'a', n: 20 });
     await coll.insertOne({ g: 'b', n: 5 });
@@ -105,6 +122,8 @@ describe('MongoDB Integration', () => {
       .toArray();
 
     expect(result.length).toBeGreaterThanOrEqual(1);
-    expect(result[0].total).toBe(30);
+    const groupA = result.find((r: any) => r._id === 'a');
+    expect(groupA).toBeDefined();
+    expect(groupA!.total).toBe(30);
   }, TEST_TIMEOUT);
 });

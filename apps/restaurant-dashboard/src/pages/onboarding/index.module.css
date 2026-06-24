@@ -1,0 +1,117 @@
+.page {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding: 48px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.description {
+  color: #a1a1aa;
+  font-size: 16px;
+  margin-bottom: 48px;
+}
+
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stepDot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.stepDotActive {
+  background: #f97316;
+  color: #fff;
+}
+
+.stepDotInactive {
+  background: #27272a;
+  color: #71717a;
+}
+
+.stepTitle {
+  font-size: 12px;
+  text-align: center;
+}
+
+.stepTitleActive {
+  color: #fff;
+}
+
+.stepTitleInactive {
+  color: #71717a;
+}
+
+.stepLine {
+  flex: 1;
+  height: 2px;
+  margin: 0 8px;
+  margin-bottom: 24px;
+}
+
+.stepLineActive {
+  background: #f97316;
+}
+
+.stepLineInactive {
+  background: #27272a;
+}
+
+.card {
+  background: #171717;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid #27272a;
+}
+
+.cardTitle {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.cardText {
+  color: #a1a1aa;
+  margin-bottom: 24px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}

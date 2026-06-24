@@ -13,6 +13,17 @@ exports.NotificationPreferenceEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let NotificationPreferenceEntity = class NotificationPreferenceEntity {
+    id;
+    userId;
+    user;
+    pushOrders;
+    pushPromotions;
+    pushDeliveryUpdates;
+    emailOrders;
+    emailPromotions;
+    smsDeliveryUpdates;
+    createdAt;
+    updatedAt;
 };
 exports.NotificationPreferenceEntity = NotificationPreferenceEntity;
 __decorate([
@@ -63,4 +74,3 @@ __decorate([
 exports.NotificationPreferenceEntity = NotificationPreferenceEntity = __decorate([
     (0, typeorm_1.Entity)('notification_preferences')
 ], NotificationPreferenceEntity);
-//# sourceMappingURL=notification-preference.entity.js.map

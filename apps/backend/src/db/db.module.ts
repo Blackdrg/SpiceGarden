@@ -123,36 +123,29 @@ const imports: any[] = localSqlite
         }),
         inject: [ConfigService],
       }),
+      MongooseModule.forRootAsync({
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          uri: configService.get<string>("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
+          connectionFactory: (connection: any) => {
+            connection.on('error', (err: unknown) => {
+              console.error('MongoDB connection error:', err);
+            });
+            connection.on('connected', () => {
+              console.log('MongoDB connected successfully');
+            });
+            return connection;
+          },
+        }),
+        inject: [ConfigService],
+      } as any),
+      MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]) as any,
     ];
-
-if (!localSqlite) {
-  imports.push(
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
-        connectionFactory: (connection) => {
-          connection.on('error', (err) => {
-            console.error('MongoDB connection error:', err);
-          });
-          connection.on('connected', () => {
-            console.log('MongoDB connected successfully');
-          });
-          return connection;
-        },
-      }),
-      inject: [ConfigService],
-    } as any),
-    MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]) as any,
-  );
-} else {
-  imports.push(localReviewModelProvider() as any);
-}
 
 @Global()
 @Module({
   imports,
   providers: [...(localSqlite ? [localReviewModelProvider()] : [])],
-  exports: localSqlite ? [LocalRepositoryModule] : [TypeOrmModule, MongooseModule],
+  exports: localSqlite ? [LocalRepositoryModule, getModelToken(ReviewDocument.name)] : [TypeOrmModule, MongooseModule],
 })
 export class DbModule {}

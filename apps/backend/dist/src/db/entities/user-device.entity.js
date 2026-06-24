@@ -13,6 +13,18 @@ exports.UserDeviceEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let UserDeviceEntity = class UserDeviceEntity {
+    id;
+    userId;
+    user;
+    fcmToken;
+    apnsToken;
+    deviceName;
+    deviceType;
+    userAgent;
+    ipAddress;
+    isActive;
+    createdAt;
+    updatedAt;
 };
 exports.UserDeviceEntity = UserDeviceEntity;
 __decorate([
@@ -67,4 +79,3 @@ __decorate([
 exports.UserDeviceEntity = UserDeviceEntity = __decorate([
     (0, typeorm_1.Entity)('user_devices')
 ], UserDeviceEntity);
-//# sourceMappingURL=user-device.entity.js.map

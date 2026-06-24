@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const address_service_1 = require("./address.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 let AddressController = class AddressController {
+    addressService;
     constructor(addressService) {
         this.addressService = addressService;
     }
@@ -74,4 +75,3 @@ exports.AddressController = AddressController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [address_service_1.AddressService])
 ], AddressController);
-//# sourceMappingURL=address.controller.js.map

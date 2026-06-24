@@ -12,6 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LedgerEntryEntity = void 0;
 const typeorm_1 = require("typeorm");
 let LedgerEntryEntity = class LedgerEntryEntity {
+    id;
+    transactionId;
+    account;
+    amount;
+    currency;
+    type;
+    referenceId;
+    description;
+    createdAt;
 };
 exports.LedgerEntryEntity = LedgerEntryEntity;
 __decorate([
@@ -53,4 +62,3 @@ __decorate([
 exports.LedgerEntryEntity = LedgerEntryEntity = __decorate([
     (0, typeorm_1.Entity)('ledger_entries')
 ], LedgerEntryEntity);
-//# sourceMappingURL=ledger-entry.entity.js.map

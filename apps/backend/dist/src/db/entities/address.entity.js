@@ -13,6 +13,18 @@ exports.AddressEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let AddressEntity = class AddressEntity {
+    id;
+    userId;
+    user;
+    label;
+    addressLine;
+    city;
+    state;
+    postalCode;
+    location;
+    isDefault;
+    createdAt;
+    updatedAt;
 };
 exports.AddressEntity = AddressEntity;
 __decorate([
@@ -69,4 +81,3 @@ __decorate([
 exports.AddressEntity = AddressEntity = __decorate([
     (0, typeorm_1.Entity)('user_addresses')
 ], AddressEntity);
-//# sourceMappingURL=address.entity.js.map

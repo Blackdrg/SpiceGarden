@@ -23,6 +23,13 @@ const payout_report_entity_1 = require("../../db/entities/payout-report.entity")
 const driver_incentive_entity_1 = require("../../db/entities/driver-incentive.entity");
 const gst_detail_entity_1 = require("../../db/entities/gst-detail.entity");
 let ReconciliationService = ReconciliationService_1 = class ReconciliationService {
+    orderRepo;
+    transactionRepo;
+    payoutRepo;
+    incentiveRepo;
+    gstRepo;
+    dataSource;
+    logger = new common_1.Logger(ReconciliationService_1.name);
     constructor(orderRepo, transactionRepo, payoutRepo, incentiveRepo, gstRepo, dataSource) {
         this.orderRepo = orderRepo;
         this.transactionRepo = transactionRepo;
@@ -30,7 +37,6 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
         this.incentiveRepo = incentiveRepo;
         this.gstRepo = gstRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(ReconciliationService_1.name);
     }
     async reconcilePayments(startDate, endDate) {
         const orders = await this.orderRepo.find({
@@ -121,7 +127,7 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
                 restaurantId: restaurantId,
                 createdAt: (0, typeorm_2.Between)(startDate, endDate),
             },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail);
         return {
@@ -163,6 +169,7 @@ exports.ReconciliationService = ReconciliationService = ReconciliationService_1 
     __param(2, (0, typeorm_1.InjectRepository)(payout_report_entity_1.PayoutReportEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_incentive_entity_1.DriverIncentiveEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(gst_detail_entity_1.GSTDetailEntity)),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -170,4 +177,3 @@ exports.ReconciliationService = ReconciliationService = ReconciliationService_1 
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], ReconciliationService);
-//# sourceMappingURL=reconciliation.service.js.map

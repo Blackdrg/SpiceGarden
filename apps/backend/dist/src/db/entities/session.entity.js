@@ -13,6 +13,17 @@ exports.SessionEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let SessionEntity = class SessionEntity {
+    id;
+    userId;
+    user;
+    deviceName;
+    deviceType;
+    ipAddress;
+    refreshToken;
+    expiresAt;
+    isActive;
+    createdAt;
+    lastActiveAt;
 };
 exports.SessionEntity = SessionEntity;
 __decorate([
@@ -63,4 +74,3 @@ __decorate([
 exports.SessionEntity = SessionEntity = __decorate([
     (0, typeorm_1.Entity)('user_sessions')
 ], SessionEntity);
-//# sourceMappingURL=session.entity.js.map

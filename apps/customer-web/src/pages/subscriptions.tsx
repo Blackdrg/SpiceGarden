@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import styles from './subscriptions.module.css';
+import ProtectedRoute from '../components/ProtectedRoute';
+
+type SubscriptionStyles = typeof styles;
 
 interface Subscription {
   id: number;
@@ -11,6 +14,10 @@ interface Subscription {
   active: boolean;
   nextBilling: string;
 }
+
+const getStatusClass = (styles: SubscriptionStyles, isActive: boolean) => {
+  return `${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`;
+};
 
 const SubscriptionsPage = () => {
   const router = useRouter();
@@ -22,10 +29,6 @@ const SubscriptionsPage = () => {
 
   const toggleSubscription = (id: number) => {
     setSubscriptions((prev) => prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s)));
-  };
-
-  const getStatusClass = (isActive: boolean) => {
-    return `${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`;
   };
 
   const getNavClass = (key: string) => {
@@ -44,10 +47,10 @@ const SubscriptionsPage = () => {
                 <span className={styles.price}>&#8377;{sub.price}</span>
                 <span className={styles.priceLabel}> / month</span>
               </div>
-              <span className={getStatusClass(sub.active)}>{sub.active ? 'ACTIVE' : 'INACTIVE'}</span>
+              <span className={getStatusClass(styles, sub.active)}>{sub.active ? 'ACTIVE' : 'INACTIVE'}</span>
             </div>
             <ul className={styles.benefits}>
-              {sub.benefits.map((b, i) => <li key={i} className={styles.benefitItem}>{b}</li>)}
+              {sub.benefits.map((b) => <li key={`${sub.id}-${b}`} className={styles.benefitItem}>{b}</li>)}
             </ul>
             <div className={styles.cardFooter}>
               <span className={styles.nextBilling}>Next billing: {sub.nextBilling}</span>
@@ -69,21 +72,23 @@ const SubscriptionsPage = () => {
           { key: 'subs', label: 'Subs', icon: '⭐', path: '/subscriptions' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
-            key={tab.key}
-            className={getNavClass(tab.key)}
-            onClick={() => tab.path && router.push(tab.path)}
-            role="button"
-            tabIndex={0}
-            aria-label={tab.label}
-          >
+            <button
+              type="button"
+              key={tab.key}
+              className={getNavClass(tab.key)}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              aria-label={tab.label}
+            >
             <span className={styles.navIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>
   );
 };
 
-export default SubscriptionsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><SubscriptionsPage {...props} /></ProtectedRoute>;
+}

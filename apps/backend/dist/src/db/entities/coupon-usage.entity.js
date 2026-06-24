@@ -19,6 +19,14 @@ var CouponUsageStatus;
     CouponUsageStatus["CANCELLED"] = "cancelled";
 })(CouponUsageStatus || (exports.CouponUsageStatus = CouponUsageStatus = {}));
 let CouponUsageEntity = class CouponUsageEntity {
+    id;
+    couponId;
+    userId;
+    status;
+    orderId;
+    discountApplied;
+    orderAmount;
+    usedAt;
 };
 exports.CouponUsageEntity = CouponUsageEntity;
 __decorate([
@@ -56,4 +64,3 @@ __decorate([
 exports.CouponUsageEntity = CouponUsageEntity = __decorate([
     (0, typeorm_1.Entity)('coupon_usages')
 ], CouponUsageEntity);
-//# sourceMappingURL=coupon-usage.entity.js.map

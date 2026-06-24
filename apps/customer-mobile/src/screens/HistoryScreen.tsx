@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -88,15 +88,15 @@ const HistoryScreen = () => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity 
+        <Pressable 
           onPress={handleRetry} 
           style={styles.primaryButton}
           accessibilityLabel={STRINGS.orderHistory.retry}
           accessibilityRole="button"
         >
           <Text style={styles.primaryButtonText}>{STRINGS.orderHistory.retry}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
+        </Pressable>
+        <Pressable 
           onPress={() => navigation.navigate('Home')} 
           style={[styles.primaryButton, styles.secondaryButton]}
           accessibilityLabel={STRINGS.orderHistory.backToHome}
@@ -105,7 +105,7 @@ const HistoryScreen = () => {
           <Text style={[styles.primaryButtonText, styles.secondaryButtonText]}>
             {STRINGS.orderHistory.backToHome}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -113,14 +113,14 @@ const HistoryScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <Pressable 
           onPress={() => navigation.goBack()} 
           style={styles.backButton}
           accessibilityLabel={STRINGS.accessibility.backButton}
           accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
+          <Text style={styles.backButtonText}>Back</Text>
+        </Pressable>
         <Text style={styles.headerText}>{STRINGS.orderHistory.title}</Text>
       </View>
 

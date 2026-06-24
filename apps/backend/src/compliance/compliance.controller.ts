@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { type Request as ExpressRequest } from 'express';
 import { ComplianceService } from './compliance.service';
 import { Soc2ReadinessService } from './soc2-readiness.service';
 import { PciDssValidationService } from './pci-dss-validation.service';
@@ -6,7 +7,10 @@ import { SecretsRotationService } from './secrets-rotation.service';
 import { DataPrivacyService } from '../services/privacy/data-privacy.service';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { RolesGuard } from '../security/roles.guard';
+import { PermissionGuard } from '../security/permission.guard';
 import { Roles } from '../security/roles.decorator';
+import { Permissions } from '../security/permissions.decorator';
+import { UserRole } from '../shared/domain/user.interface';
 
 export interface DeletionRequestDto {
   userId: string;
@@ -28,31 +32,49 @@ export class ComplianceController {
     private dataPrivacyService: DataPrivacyService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('soc2')
   async getSoc2Readiness() {
     return this.soc2Service.assessTrustServicesCriteria();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('soc2/evidence')
   async getSoc2Evidence() {
     return this.soc2Service.generateSoc2EvidenceReport();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('pci-dss')
   async getPciDssStatus() {
     return this.pciDssService.validatePciDssCompliance();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('pci-dss/payment-flow')
   async validatePaymentFlow() {
     return this.pciDssService.validatePaymentFlow();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('pci-dss/saq')
   async getPciDssSaqMetrics() {
     return this.pciDssService.getFraudMetricsForSaq();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('secrets/rotation-status')
   async getSecretsRotationStatus() {
     return {
@@ -61,11 +83,17 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('secrets/proof')
   async getSecretsRotationProof() {
     return this.secretsService.getRotationProof();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Post('secrets/rotate')
   async rotateSecrets(@Query('secrets') secrets?: string) {
     const secretList = secrets ? secrets.split(',') : ['jwt_secret', 'encryption', 'db_password'];
@@ -76,21 +104,28 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('retention-stats')
   async getRetentionStatistics() {
     return this.complianceService.getRetentionStatistics();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Post('retention/apply')
   async applyDataRetention() {
     return this.complianceService.applyDataRetentionPolicies();
   }
 
   @Get('gdpr/user/:userId/export')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'super_admin', 'customer')
-  async exportUserDataGdpr(@Param('userId') userId: string, @Request() req: any) {
-    if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CUSTOMER)
+
+  async exportUserDataGdpr(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
+    if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
       throw new Error('Unauthorized to export this user data');
     }
     const data = await this.complianceService.exportUserData(userId);
@@ -103,10 +138,11 @@ export class ComplianceController {
   }
 
   @Get('dpdp/user/:userId/export')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'super_admin', 'customer')
-  async exportUserDataDpdp(@Param('userId') userId: string, @Request() req: any) {
-    if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CUSTOMER)
+
+  async exportUserDataDpdp(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
+    if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
       throw new Error('Unauthorized to export this user data');
     }
     const data = await this.complianceService.exportUserData(userId);
@@ -119,10 +155,11 @@ export class ComplianceController {
   }
 
   @Post('gdpr/user/:userId/deletion-request')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'customer')
-  async requestGdprDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: any) {
-    if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.CUSTOMER)
+
+  async requestGdprDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
+    if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
       throw new Error('Unauthorized to submit deletion request for this user');
     }
     const result = await this.complianceService.requestUserDataDeletion(userId, 'gdpr', dto.reason);
@@ -136,10 +173,11 @@ export class ComplianceController {
   }
 
   @Post('dpdp/user/:userId/deletion-request')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'customer')
-  async requestDpdpDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: any) {
-    if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.CUSTOMER)
+
+  async requestDpdpDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
+    if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
       throw new Error('Unauthorized to submit deletion request for this user');
     }
     const result = await this.complianceService.requestUserDataDeletion(userId, 'dpdp', dto.reason);
@@ -153,10 +191,11 @@ export class ComplianceController {
   }
 
   @Post('gdpr/user/:userId/deletion-request/cancel')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'customer')
-  async cancelGdprDeletion(@Param('userId') userId: string, @Request() req: any) {
-    if (req.user?.sub !== userId && !['admin', 'super_admin'].includes(req.user?.role)) {
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.CUSTOMER)
+
+  async cancelGdprDeletion(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
+    if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
       throw new Error('Unauthorized');
     }
     const result = await this.complianceService.cancelUserDataDeletion(userId);
@@ -167,6 +206,9 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('user/:userId/deletion-status')
   async getDeletionStatus(@Param('userId') userId: string) {
     const status = await this.complianceService.getUserDataDeletionStatus(userId);
@@ -177,6 +219,9 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('user/:userId/export-history')
   async getExportHistory(@Param('userId') userId: string) {
     const exports = await this.complianceService.getUserExports(userId);
@@ -187,6 +232,9 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('user/:userId/pii-verification')
   async verifyPiiEncryption(@Param('userId') userId: string) {
     const result = await this.complianceService.verifyPiiEncryption(userId);
@@ -199,13 +247,16 @@ export class ComplianceController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('user/:userId/data-export')
   async getUserDataExport(@Param('userId') userId: string) {
     return this.complianceService.exportUserData(userId);
   }
 
   @Post('mask/pii')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
   @Roles('admin', 'super_admin')
   async maskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
     const masked = this.dataPrivacyService.maskPii(dto.data, dto.fields);
@@ -213,7 +264,7 @@ export class ComplianceController {
   }
 
   @Post('unmask/pii')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
   @Roles('admin', 'super_admin')
   async unmaskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
     const decrypted = this.dataPrivacyService.unmaskPii(dto.data, dto.fields);

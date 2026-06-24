@@ -15,12 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewController = void 0;
 const common_1 = require("@nestjs/common");
 const review_service_1 = require("./review.service");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let ReviewController = class ReviewController {
+    reviewService;
     constructor(reviewService) {
         this.reviewService = reviewService;
     }
-    async create(body) {
-        return this.reviewService.create(body.userId, body.restaurantId, body.orderId, body.rating, body.comment, body.images);
+    async create(body, req) {
+        return this.reviewService.create(req.user.id, body.restaurantId, body.orderId, body.rating, body.comment, body.images);
     }
     async findByOrder(orderId) {
         return this.reviewService.findByOrder(orderId);
@@ -35,9 +42,12 @@ let ReviewController = class ReviewController {
 exports.ReviewController = ReviewController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('orders:read_own'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ReviewController.prototype, "create", null);
 __decorate([
@@ -63,6 +73,6 @@ __decorate([
 ], ReviewController.prototype, "getAverageRating", null);
 exports.ReviewController = ReviewController = __decorate([
     (0, common_1.Controller)('reviews'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [review_service_1.ReviewService])
 ], ReviewController);
-//# sourceMappingURL=review.controller.js.map

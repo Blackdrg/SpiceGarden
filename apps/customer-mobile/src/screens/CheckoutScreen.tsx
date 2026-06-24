@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Animated, Easing } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -33,8 +34,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
   const [promoMessage, setPromoMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const scaleAnim = useMemo(() => new Animated.Value(1), []);
 
   useEffect(() => {
     const loadAddress = async () => {
@@ -118,9 +119,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Your cart is empty</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel='Browse Restaurants' accessibilityRole='button'>
+        <Pressable onPress={() => navigation.navigate('Home')} style={styles.primaryButton} accessibilityLabel='Browse Restaurants' accessibilityRole='button'>
           <Text style={styles.primaryButtonText}>Browse Restaurants</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -129,9 +130,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
     <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel='Go back' accessibilityRole='button'>
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel='Go back' accessibilityRole='button'>
+            <Text style={styles.backButtonText}>?</Text>
+          </Pressable>
           <Text style={styles.headerText}>Checkout</Text>
         </View>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -139,9 +140,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
             <Text style={styles.sectionTitle}>Delivery Address</Text>
             <View style={styles.addressRow}>
               <Text style={styles.addressText}>{address}</Text>
-              <TouchableOpacity style={styles.editButton} accessibilityLabel='Change address' accessibilityRole='button' onPress={() => navigation.navigate('Address')}>
+              <Pressable style={styles.editButton} accessibilityLabel='Change address' accessibilityRole='button' onPress={() => navigation.navigate('Address')}>
                 <Text style={styles.editButtonText}>Change</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -151,8 +152,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
               {cartItems.map(item => (
                 <View key={item.id} style={styles.itemRow}>
                   <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemText}>×{item.quantity}</Text>
-                  <Text style={styles.itemPrice}>₹{item.price * item.quantity}</Text>
+                  <Text style={styles.itemText}>�{item.quantity}</Text>
+                  <Text style={styles.itemPrice}>?{item.price * item.quantity}</Text>
                 </View>
               ))}
             </View>
@@ -162,7 +163,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
             <Text style={styles.sectionTitle}>Payment Method</Text>
             <View style={styles.paymentOptions}>
               {['card', 'upi', 'cash'].map(method => (
-                <TouchableOpacity
+                <Pressable
                   key={method}
                   onPress={() => setPaymentMethod(method as PaymentMethod)}
                   style={[styles.paymentOption, paymentMethod === method && styles.selectedPaymentOption]}
@@ -171,9 +172,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
                   accessibilityState={{ checked: paymentMethod === method }}
                 >
                   <Text style={styles.paymentOptionText}>
-                    {method === 'card' ? '💳 Card' : method === 'upi' ? '📱 UPI' : '💵 Cash'}
+                    {method === 'card' ? '?? Card' : method === 'upi' ? '?? UPI' : '?? Cash'}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </View>
@@ -182,16 +183,16 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
             <Text style={styles.sectionTitle}>Tip</Text>
             <View style={styles.tipOptions}>
               {[0, 30, 50, 100].map(tipAmount => (
-                <TouchableOpacity
+                <Pressable
                   key={tipAmount}
                   onPress={() => setTip(tipAmount)}
                   style={[styles.tipOption, tip === tipAmount && styles.selectedTipOption]}
-                  accessibilityLabel={`Add ₹${tipAmount} tip`}
+                  accessibilityLabel={`Add ?${tipAmount} tip`}
                   accessibilityRole='radio'
                   accessibilityState={{ checked: tip === tipAmount }}
                 >
-                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}</Text>
-                </TouchableOpacity>
+                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `?${tipAmount}`}</Text>
+                </Pressable>
               ))}
             </View>
           </View>
@@ -206,9 +207,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
                 style={styles.promoInput}
                 accessibilityLabel='Promo code input'
               />
-              <TouchableOpacity onPress={applyPromo} style={styles.promoButton} accessibilityLabel='Apply promo' accessibilityRole='button'>
+              <Pressable onPress={applyPromo} style={styles.promoButton} accessibilityLabel='Apply promo' accessibilityRole='button'>
                 <Text style={styles.promoButtonText}>Apply</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
             {promoError && <Text style={styles.promoError}>{promoError}</Text>}
             {promoMessage && <Text style={styles.promoSuccess}>{promoMessage}</Text>}
@@ -218,43 +219,43 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
             <Text style={styles.sectionTitle}>Order Summary</Text>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Item Total</Text>
-              <Text style={styles.summaryAmount}>₹{calculateSubtotal().toFixed(0)}</Text>
+              <Text style={styles.summaryAmount}>?{calculateSubtotal().toFixed(0)}</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Delivery Fee</Text>
-              <Text style={styles.summaryAmount}>₹20</Text>
+              <Text style={styles.summaryAmount}>?20</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Taxes</Text>
-              <Text style={styles.summaryAmount}>₹{calculateTax().toFixed(0)}</Text>
+              <Text style={styles.summaryAmount}>?{calculateTax().toFixed(0)}</Text>
             </View>
             {tip > 0 && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Tip</Text>
-                <Text style={styles.summaryAmount}>₹{tip}</Text>
+                <Text style={styles.summaryAmount}>?{tip}</Text>
               </View>
             )}
             {calculatePromoDiscount() > 0 && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Promo Discount</Text>
-                <Text style={styles.summaryAmount}>-₹{calculatePromoDiscount().toFixed(0)}</Text>
+                <Text style={styles.summaryAmount}>-?{calculatePromoDiscount().toFixed(0)}</Text>
               </View>
             )}
             <View style={styles.summaryRowTotal}>
               <Text style={styles.summaryLabelTotal}>Total</Text>
-              <Text style={styles.summaryAmountTotal}>₹{calculateTotal().toFixed(0)}</Text>
+              <Text style={styles.summaryAmountTotal}>?{calculateTotal().toFixed(0)}</Text>
             </View>
           </View>
         </ScrollView>
-        <TouchableOpacity
+        <Pressable
           onPress={handlePlaceOrder}
           style={[styles.placeOrderButton, loading && styles.buttonLoading]}
           accessibilityLabel='Place your order'
           accessibilityRole='button'
           accessibilityState={{ disabled: loading }}
         >
-          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order • ₹${calculateTotal().toFixed(0)}`}</Text>
-        </TouchableOpacity>
+          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order � ?${calculateTotal().toFixed(0)}`}</Text>
+        </Pressable>
       </View>
     </Animated.View>
   );

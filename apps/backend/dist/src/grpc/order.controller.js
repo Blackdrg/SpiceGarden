@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const microservices_1 = require("@nestjs/microservices");
 const order_service_1 = require("../services/order/order.service");
 let OrderGrpcController = class OrderGrpcController {
+    orderService;
     constructor(orderService) {
         this.orderService = orderService;
     }
@@ -32,4 +33,3 @@ exports.OrderGrpcController = OrderGrpcController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderGrpcController);
-//# sourceMappingURL=order.controller.js.map

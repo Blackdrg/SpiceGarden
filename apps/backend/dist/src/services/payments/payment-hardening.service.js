@@ -25,14 +25,20 @@ const idempotency_entity_1 = require("./idempotency.entity");
 const payment_validation_entity_1 = require("./payment-validation.entity");
 const stripe_1 = __importDefault(require("stripe"));
 const audit_service_1 = require("../../audit/audit.service");
+const missing_env_error_1 = require("../../common/errors/missing-env.error");
 let PaymentHardeningService = PaymentHardeningService_1 = class PaymentHardeningService {
+    configService;
+    auditService;
+    idempotencyRepo;
+    validationRepo;
+    logger = new common_1.Logger(PaymentHardeningService_1.name);
+    stripe;
     constructor(configService, auditService, idempotencyRepo, validationRepo) {
         this.configService = configService;
         this.auditService = auditService;
         this.idempotencyRepo = idempotencyRepo;
         this.validationRepo = validationRepo;
-        this.logger = new common_1.Logger(PaymentHardeningService_1.name);
-        this.stripe = new stripe_1.default(this.configService.get('STRIPE_SECRET_KEY') || 'sk_test_placeholder', {
+        this.stripe = new stripe_1.default((0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY'), {
             apiVersion: '2024-04-10',
         });
     }
@@ -252,11 +258,7 @@ let PaymentHardeningService = PaymentHardeningService_1 = class PaymentHardening
         }
     }
     async validateWebhookSignature(payload, signature) {
-        const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
-        if (!webhookSecret) {
-            this.logger.error('Stripe webhook secret not configured');
-            return false;
-        }
+        const webhookSecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_WEBHOOK_SECRET');
         try {
             this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
             return true;
@@ -314,4 +316,3 @@ exports.PaymentHardeningService = PaymentHardeningService = PaymentHardeningServ
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], PaymentHardeningService);
-//# sourceMappingURL=payment-hardening.service.js.map

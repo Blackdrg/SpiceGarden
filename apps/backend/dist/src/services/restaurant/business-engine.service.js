@@ -27,6 +27,17 @@ const tracking_gateway_1 = require("../../infra/tracking/tracking.gateway");
 const notification_service_1 = require("../notifications/notification.service");
 const audit_service_1 = require("../../audit/audit.service");
 let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineService {
+    orderRepo;
+    driverRepo;
+    restaurantRepo;
+    branchRepo;
+    driverAssignmentService;
+    trackingGateway;
+    notificationService;
+    auditService;
+    logger = new common_1.Logger(BusinessEngineService_1.name);
+    driverLocations = new Map();
+    orderProcessingQueue = new Map();
     constructor(orderRepo, driverRepo, restaurantRepo, branchRepo, driverAssignmentService, trackingGateway, notificationService, auditService) {
         this.orderRepo = orderRepo;
         this.driverRepo = driverRepo;
@@ -36,20 +47,29 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
         this.trackingGateway = trackingGateway;
         this.notificationService = notificationService;
         this.auditService = auditService;
-        this.logger = new common_1.Logger(BusinessEngineService_1.name);
-        this.driverLocations = new Map();
-        this.orderProcessingQueue = new Map();
     }
     async getActiveRestaurants() {
         return this.restaurantRepo.find({
             where: { status: 'active' },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
     }
     async getRestaurantMenu(restaurantId) {
         const restaurant = await this.restaurantRepo.findOne({
             where: { id: restaurantId },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
         if (!restaurant)
             return [];
@@ -112,7 +132,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
     async processOrderFlow(orderId) {
         const order = await this.orderRepo.findOne({
             where: { id: orderId },
-            relations: ['branch', 'branch.restaurant'],
+            relations: { branch: { restaurant: true } },
         });
         if (!order)
             return;
@@ -129,7 +149,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
             try {
                 const branch = await this.branchRepo.findOne({
                     where: { id: order.branchId || order.restaurantId },
-                    relations: ['restaurant']
+                    relations: { restaurant: true }
                 });
                 if (branch && branch.location) {
                     const availableDrivers = await this.driverAssignmentService.getAvailableDrivers(branch.location.lat, branch.location.lng, 5);
@@ -150,7 +170,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
                 }
             }
             catch (error) {
-                this.logger.error(`Failed to assign driver to order ${orderId}: ${error.message}`);
+                this.logger.error(`Failed to assign driver to order ${orderId}: ${error instanceof Error ? error.message : String(error)}`);
             }
         }, 1000));
     }
@@ -223,7 +243,7 @@ let BusinessEngineService = BusinessEngineService_1 = class BusinessEngineServic
                 where: { status: order_interface_1.OrderStatus.PLACED },
                 order: { createdAt: 'DESC' },
                 take: 10,
-                relations: ['branch', 'branch.restaurant'],
+                relations: { branch: { restaurant: true } },
             }),
         ]);
         return {
@@ -256,4 +276,3 @@ exports.BusinessEngineService = BusinessEngineService = BusinessEngineService_1 
         notification_service_1.NotificationService,
         audit_service_1.AuditService])
 ], BusinessEngineService);
-//# sourceMappingURL=business-engine.service.js.map

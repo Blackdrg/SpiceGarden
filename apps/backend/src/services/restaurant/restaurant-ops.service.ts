@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { RestaurantOnboardingEntity, OnboardingStep, OnboardingStatus } from '../../db/entities/restaurant-onboarding.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -25,6 +25,7 @@ export class RestaurantOpsService {
     private categoryRepo: Repository<MenuCategoryEntity>,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -79,7 +80,7 @@ export class RestaurantOpsService {
     }
 
     await this.onboardingRepo.update(onboardingId, updateData);
-    return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+    return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }))!;
   }
 
   async completeOnboarding(onboardingId: string, userId: string): Promise<RestaurantOnboardingEntity> {
@@ -95,13 +96,13 @@ export class RestaurantOpsService {
 
     await this.restaurantRepo.update(onboarding.restaurantId, { status: 'active' });
 
-    return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+    return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }))!;
   }
 
   async getOnboardingProgress(onboardingId: string): Promise<any> {
     const onboarding = await this.onboardingRepo.findOne({
       where: { id: onboardingId },
-      relations: ['restaurant'],
+      relations: { restaurant: true },
     });
 
     if (!onboarding) {

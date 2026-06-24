@@ -22,13 +22,18 @@ const driver_document_entity_1 = require("../../db/entities/driver-document.enti
 const user_entity_1 = require("../../db/entities/user.entity");
 const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
 let DriverOnboardingService = DriverOnboardingService_1 = class DriverOnboardingService {
+    driverRepo;
+    documentRepo;
+    userRepo;
+    driverAssignmentRepo;
+    dataSource;
+    logger = new common_1.Logger(DriverOnboardingService_1.name);
     constructor(driverRepo, documentRepo, userRepo, driverAssignmentRepo, dataSource) {
         this.driverRepo = driverRepo;
         this.documentRepo = documentRepo;
         this.userRepo = userRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(DriverOnboardingService_1.name);
     }
     async startOnboarding(userId, data) {
         let driver = await this.driverRepo.findOne({ where: { userId } });
@@ -113,7 +118,7 @@ let DriverOnboardingService = DriverOnboardingService_1 = class DriverOnboarding
                 await this.driverRepo.update(document.driverId, { kycStatus: 'approved' });
             }
         }
-        return this.documentRepo.findOne({ where: { id: documentId } });
+        return (await this.documentRepo.findOne({ where: { id: documentId } }));
     }
     async getOnboardingStatus(driverId) {
         const driver = await this.driverRepo.findOne({ where: { id: driverId } });
@@ -163,4 +168,3 @@ exports.DriverOnboardingService = DriverOnboardingService = DriverOnboardingServ
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], DriverOnboardingService);
-//# sourceMappingURL=driver-onboarding.service.js.map

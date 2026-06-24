@@ -15,6 +15,19 @@ const driver_entity_1 = require("./driver.entity");
 const order_entity_1 = require("./order.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let DriverFraudEntity = class DriverFraudEntity {
+    id;
+    driver;
+    order;
+    branch;
+    fraudType;
+    evidence;
+    severity;
+    isResolved;
+    resolvedAt;
+    resolvedBy;
+    resolutionNotes;
+    createdAt;
+    updatedAt;
 };
 exports.DriverFraudEntity = DriverFraudEntity;
 __decorate([
@@ -72,4 +85,3 @@ __decorate([
 exports.DriverFraudEntity = DriverFraudEntity = __decorate([
     (0, typeorm_1.Entity)('driver_fraud')
 ], DriverFraudEntity);
-//# sourceMappingURL=driver-fraud.entity.js.map

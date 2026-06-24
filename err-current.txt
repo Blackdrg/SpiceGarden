@@ -1,0 +1,545 @@
+﻿node.exe : PASS test/webhook.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS test/webhook.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS test/reliability.failure-recovery.spec.ts
+PASS test/payment-edge-cases.service.spec.ts
+PASS test/retry-service.spec.ts
+PASS test/mongo-connection.spec.ts
+PASS test/production-readiness-edge-cases.spec.ts
+PASS test/loyalty-edge-cases.spec.ts
+PASS test/wallet-edge-cases.spec.ts
+PASS test/chargeback.service.spec.ts
+PASS test/production-notification.service.spec.ts
+PASS test/order.service.flow.spec.ts
+PASS test/audit.service.spec.ts
+PASS test/cod-gateway.spec.ts
+PASS test/delivery-edge-cases.spec.ts
+PASS test/compliance.service.spec.ts
+PASS test/delivery.service.spec.ts
+PASS test/payments.service.spec.ts
+PASS test/notification-preferences.service.spec.ts
+PASS test/wallet.controller.spec.ts
+PASS test/driver-assignment.service.spec.ts
+PASS test/geo.service.spec.ts
+PASS test/database-failover.service.spec.ts
+PASS test/auth.controller.spec.ts
+PASS test/eta-intelligence.service.spec.ts
+PASS test/order.service.spec.ts
+PASS test/order-edge-cases.spec.ts
+PASS test/tax-reporting.service.spec.ts
+PASS test/nnotification.service.spec.ts
+PASS test/payment-order.integration.spec.ts
+PASS test/auth.service.spec.ts
+PASS test/idempotency.service.spec.ts
+PASS test/ledger.service.spec.ts
+PASS test/payment-verification.e2e.spec.ts
+PASS test/rate-limit-store.spec.ts
+  ● Console
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.spec.ts:12:5)
+
+PASS test/rbac-coverage.spec.ts
+PASS test/security-guards.spec.ts
+PASS test/encryption.service.spec.ts
+PASS test/security-validation.spec.ts
+  ● Console
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:17:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:23:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:34:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:48:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:59:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:73:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: Connection is closed.
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.init (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:91:7)
+
+PASS test/gateway-factory.service.spec.ts
+PASS test/razorpay-gateway.spec.ts
+PASS test/auth.integration.spec.ts
+PASS test/stripe-gateway.spec.ts
+PASS test/payments.module.spec.ts
+PASS test/payment.integration.spec.ts
+PASS test/order-flow.integration.spec.ts
+PASS test/driver-customer.integration.spec.ts
+PASS test/cors-origin.spec.ts
+PASS test/refund-wallet.integration.spec.ts
+PASS test/kitchen.service.spec.ts
+PASS test/order-kds.integration.spec.ts
+PASS test/e2e.spec.ts
+PASS test/delivery.integration.spec.ts
+FAIL test/refund.service.spec.ts
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m45[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m90[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                         
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m135[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                                   
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m183[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                                   
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m53[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m98[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                 
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m143[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                   
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m191[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                   
+                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m16[0m:[93m45[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m16[0m   const orderRepo = { findOne: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, update: jest.fn() };
+    [7m  [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m16[0m:[93m90[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m16[0m   const orderRepo = { findOne: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, update: jest.fn() };
+    [7m  [0m [91m                                                                                         
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m17[0m:[93m44[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m17[0m   const userRepo = { findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m92[0m:[93m96[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m92[0m       await expect(service.createRefundRequest('missing', 'user-1', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                               
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m99[0m:[93m100[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m99[0m       await expect(service.createRefundRequest('ord-1', 'missing-user', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m118[0m:[93m94[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m118[0m       await expect(service.createRefundRequest('ord-1', 'user-1', 500, 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                             
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m183[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m183[0m       await expect(service.approveRefundRequest('missing', 'ap-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m190[0m:[93m87[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m190[0m       await expect(service.approveRefundRequest('appr-1', 
+'missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                      
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m196[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m196[0m       await expect(service.approveRefundRequest('appr-1', 
+'ap-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m218[0m:[93m89[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m218[0m       await expect(service.rejectRefundRequest('missing', 'ap-1', 
+'r')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                        
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m224[0m:[93m88[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m224[0m       await expect(service.rejectRefundRequest('appr-1', 'ap-1', 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                       
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m260[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m260[0m       await expect(service.processRefund('missing', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m267[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m267[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m273[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m273[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m281[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m281[0m       await expect(service.processRefund('appr-1', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m300[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'InternalServerErrorException'.
+
+    [7m300[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(InternalServerErrorException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m333[0m:[93m73[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m333[0m       await expect(service.getRefundRequest('missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                        ~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m349[0m:[93m75[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'{ id: string; }[]' is not assignable to parameter of type 'never'.
+
+    [7m349[0m       (refundApprovalRepo.find as unknown as jest.Mock).mockResolvedValue([{ id: 'a1' }]);
+    [7m   [0m [91m                                                                          ~~~~~~~~~~~~~~[0m
+
+Summary of all failing tests
+FAIL test/refund.service.spec.ts
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m45[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m90[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                         
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m135[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                                   
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m14[0m:[93m183[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m14[0m   const refundRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                                                                                   
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m53[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m98[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                 
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m143[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                   
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m15[0m:[93m191[0m - [91merror[0m[90m TS2707: [0mGeneric type 
+'Mock' requires between 0 and 1 type arguments.
+
+    [7m15[0m   const refundApprovalRepo = { create: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as 
+jest.Mock<any, any, any>, find: jest.fn() as jest.Mock<any, any, any>, findOne: jest.fn() as jest.Mock<any, any, any> 
+};
+    [7m  [0m [91m                                                                                                   
+                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m16[0m:[93m45[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m16[0m   const orderRepo = { findOne: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, update: jest.fn() };
+    [7m  [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m16[0m:[93m90[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m16[0m   const orderRepo = { findOne: jest.fn() as jest.Mock<any, any, any>, save: jest.fn() as jest.Mock<any, 
+any, any>, update: jest.fn() };
+    [7m  [0m [91m                                                                                         
+~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m17[0m:[93m44[0m - [91merror[0m[90m TS2707: [0mGeneric type 'Mock' 
+requires between 0 and 1 type arguments.
+
+    [7m17[0m   const userRepo = { findOne: jest.fn() as jest.Mock<any, any, any> };
+    [7m  [0m [91m                                           ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m92[0m:[93m96[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m92[0m       await expect(service.createRefundRequest('missing', 'user-1', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                               
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m99[0m:[93m100[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m99[0m       await expect(service.createRefundRequest('ord-1', 'missing-user', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m118[0m:[93m94[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m118[0m       await expect(service.createRefundRequest('ord-1', 'user-1', 500, 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                             
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m183[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m183[0m       await expect(service.approveRefundRequest('missing', 'ap-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m190[0m:[93m87[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m190[0m       await expect(service.approveRefundRequest('appr-1', 
+'missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                      
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m196[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m196[0m       await expect(service.approveRefundRequest('appr-1', 
+'ap-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m218[0m:[93m89[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m218[0m       await expect(service.rejectRefundRequest('missing', 'ap-1', 
+'r')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                        
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m224[0m:[93m88[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m224[0m       await expect(service.rejectRefundRequest('appr-1', 'ap-1', 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                       
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m260[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m260[0m       await expect(service.processRefund('missing', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m267[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m267[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m273[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m273[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m281[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m281[0m       await expect(service.processRefund('appr-1', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m300[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'InternalServerErrorException'.
+
+    [7m300[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(InternalServerErrorException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m333[0m:[93m73[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m333[0m       await expect(service.getRefundRequest('missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                        ~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m349[0m:[93m75[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'{ id: string; }[]' is not assignable to parameter of type 'never'.
+
+    [7m349[0m       (refundApprovalRepo.find as unknown as jest.Mock).mockResolvedValue([{ id: 'a1' }]);
+    [7m   [0m [91m                                                                          ~~~~~~~~~~~~~~[0m
+
+
+Test Suites: 1 failed, 1 skipped, 52 passed, 53 of 54 total
+Tests:       1 skipped, 593 passed, 594 total
+Snapshots:   0 total
+Time:        54.941 s, estimated 94 s
+Ran all test suites.

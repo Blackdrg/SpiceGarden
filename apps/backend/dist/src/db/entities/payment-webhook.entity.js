@@ -12,6 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentWebhookEntity = void 0;
 const typeorm_1 = require("typeorm");
 let PaymentWebhookEntity = class PaymentWebhookEntity {
+    id;
+    gateway;
+    webhookId;
+    eventType;
+    processedAt;
+    createdAt;
 };
 exports.PaymentWebhookEntity = PaymentWebhookEntity;
 __decorate([
@@ -41,4 +47,3 @@ __decorate([
 exports.PaymentWebhookEntity = PaymentWebhookEntity = __decorate([
     (0, typeorm_1.Entity)('payment_webhooks')
 ], PaymentWebhookEntity);
-//# sourceMappingURL=payment-webhook.entity.js.map

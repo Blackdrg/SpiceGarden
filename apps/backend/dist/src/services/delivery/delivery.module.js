@@ -23,4 +23,3 @@ exports.DeliveryServiceModule = DeliveryServiceModule = __decorate([
         exports: [delivery_service_1.DeliveryService],
     })
 ], DeliveryServiceModule);
-//# sourceMappingURL=delivery.module.js.map

@@ -26,6 +26,16 @@ var OtpStatus;
     OtpStatus["EXPIRED"] = "expired";
 })(OtpStatus || (exports.OtpStatus = OtpStatus = {}));
 let OtpEntity = class OtpEntity {
+    id;
+    userId;
+    user;
+    type;
+    code;
+    status;
+    expiresAt;
+    verifiedAt;
+    createdAt;
+    updatedAt;
 };
 exports.OtpEntity = OtpEntity;
 __decorate([
@@ -72,4 +82,3 @@ __decorate([
 exports.OtpEntity = OtpEntity = __decorate([
     (0, typeorm_1.Entity)('otp_verifications')
 ], OtpEntity);
-//# sourceMappingURL=otp.entity.js.map

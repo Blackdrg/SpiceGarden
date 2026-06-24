@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 
 const API = 'http://localhost:3001/api';
@@ -15,15 +16,16 @@ interface Driver {
 }
 
 export default function DriverFleetOverview() {
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${API}/drivers`)
-      .then((r) => r.json())
-      .then((data) => { setDrivers(data.drivers || data || []); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: drivers = [], isLoading: loading } = useQuery({
+    queryKey: ['drivers'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/drivers`);
+      if (!response.ok) throw new Error('Failed to load drivers');
+      const data = await response.json() as { drivers?: Driver[] } | Driver[];
+      return Array.isArray(data) ? data : data.drivers || [];
+    },
+    initialData: [],
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
@@ -77,6 +79,7 @@ export default function DriverFleetOverview() {
                   <td style={{ padding: '10px 12px', color: '#a1a1aa' }}>{d.totalDeliveries || 0}</td>
                   <td style={{ padding: '10px 12px' }}>
                     <button
+                      type="button"
                       onClick={() => window.location.href = `/driver-fleet/earnings?driverId=${d.id}`}
                       style={{ background: 'transparent', border: '1px solid #f97316', color: '#f97316', padding: '4px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}
                     >

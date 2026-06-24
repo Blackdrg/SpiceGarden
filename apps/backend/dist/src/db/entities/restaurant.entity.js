@@ -14,6 +14,20 @@ const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 const restaurant_gst_entity_1 = require("./restaurant-gst.entity");
 let RestaurantEntity = class RestaurantEntity {
+    id;
+    name;
+    slug;
+    description;
+    logoUrl;
+    bannerUrl;
+    status;
+    branches;
+    gstDetail;
+    stripeAccountId;
+    razorpayFundAccountId;
+    location;
+    createdAt;
+    updatedAt;
 };
 exports.RestaurantEntity = RestaurantEntity;
 __decorate([
@@ -75,4 +89,3 @@ __decorate([
 exports.RestaurantEntity = RestaurantEntity = __decorate([
     (0, typeorm_1.Entity)('restaurants')
 ], RestaurantEntity);
-//# sourceMappingURL=restaurant.entity.js.map

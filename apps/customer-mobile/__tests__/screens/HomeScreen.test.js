@@ -9,7 +9,7 @@ describe('Customer Mobile - Home Screen Tests', () => {
 
     (0, globals_.it)('displays welcome message for guest user', () => {
         const user = { name: null, email: null };
-        const displayName = (user === null || user === void 0 ? void 0 : user.name) === null || user === void 0 ? void 0 : user.name.split(' ')[0] || 'Guest';
+        const displayName = !user.name ? 'Guest' : user.name.split(' ')[0] || 'Guest';
         expect(displayName).toBe('Guest');
     });
 
@@ -47,7 +47,7 @@ describe('Customer Mobile - Home Screen Tests', () => {
 
     (0, globals_.it)('formats currency correctly', () => {
         const amount = 292.5;
-        const formatted = "\u20B9" + amount.toFixed(0);
+        const formatted = "\u20B9" + Math.floor(amount);
         expect(formatted).toBe('₹292');
     });
 });

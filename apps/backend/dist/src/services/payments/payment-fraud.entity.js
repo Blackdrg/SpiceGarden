@@ -12,6 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentFraudFlagEntity = void 0;
 const typeorm_1 = require("typeorm");
 let PaymentFraudFlagEntity = class PaymentFraudFlagEntity {
+    id;
+    userId;
+    paymentIntentId;
+    orderId;
+    flagType;
+    amount;
+    riskScore;
+    evidence;
+    isBlocked;
+    blockedAt;
+    createdAt;
 };
 exports.PaymentFraudFlagEntity = PaymentFraudFlagEntity;
 __decorate([
@@ -62,4 +73,3 @@ __decorate([
 exports.PaymentFraudFlagEntity = PaymentFraudFlagEntity = __decorate([
     (0, typeorm_1.Entity)('payment_fraud_flags')
 ], PaymentFraudFlagEntity);
-//# sourceMappingURL=payment-fraud.entity.js.map

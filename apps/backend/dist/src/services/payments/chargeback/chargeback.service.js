@@ -27,7 +27,16 @@ const user_entity_1 = require("../../../db/entities/user.entity");
 const notification_service_1 = require("../../../services/notifications/notification.service");
 const production_notification_service_1 = require("../../../services/notifications/production-notification.service");
 const stripe_1 = __importDefault(require("stripe"));
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
 let ChargebackService = ChargebackService_1 = class ChargebackService {
+    configService;
+    disputeRepo;
+    orderRepo;
+    userRepo;
+    notificationService;
+    productionNotification;
+    logger = new common_1.Logger(ChargebackService_1.name);
+    stripe;
     constructor(configService, disputeRepo, orderRepo, userRepo, notificationService, productionNotification) {
         this.configService = configService;
         this.disputeRepo = disputeRepo;
@@ -35,8 +44,7 @@ let ChargebackService = ChargebackService_1 = class ChargebackService {
         this.userRepo = userRepo;
         this.notificationService = notificationService;
         this.productionNotification = productionNotification;
-        this.logger = new common_1.Logger(ChargebackService_1.name);
-        this.stripe = new stripe_1.default(this.configService.get('STRIPE_SECRET_KEY') || 'sk_test_placeholder', {
+        this.stripe = new stripe_1.default((0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY'), {
             apiVersion: '2024-04-10',
         });
     }
@@ -102,8 +110,8 @@ let ChargebackService = ChargebackService_1 = class ChargebackService {
                 throw new common_1.NotFoundException(`Dispute ${dispute.id} not found`);
             }
             paymentDispute.status = this.mapStripeDisputeStatus(dispute.status);
-            paymentDispute.chargedBackAmount = dispute.chargeback_amount ? dispute.chargeback_amount / 100 : null;
-            paymentDispute.chargedBackAt = dispute.chargeback_at ? new Date(dispute.chargeback_at * 1000) : null;
+            paymentDispute.chargedBackAmount = (dispute.chargeback_amount ? dispute.chargeback_amount / 100 : null);
+            paymentDispute.chargedBackAt = (dispute.chargeback_at ? new Date(dispute.chargeback_at * 1000) : null);
             if (dispute.status === 'won' && paymentDispute.isRefundedToCustomer === false) {
                 this.logger.log(`Dispute ${dispute.id} was won, considering customer refund`);
             }
@@ -136,7 +144,7 @@ let ChargebackService = ChargebackService_1 = class ChargebackService {
     async getDisputeById(disputeId) {
         const dispute = await this.disputeRepo.findOne({
             where: { disputeId: disputeId },
-            relations: ['order']
+            relations: { order: true }
         });
         if (!dispute) {
             throw new common_1.NotFoundException(`Dispute ${disputeId} not found`);
@@ -224,4 +232,3 @@ exports.ChargebackService = ChargebackService = ChargebackService_1 = __decorate
         notification_service_1.NotificationService,
         production_notification_service_1.ProductionNotificationService])
 ], ChargebackService);
-//# sourceMappingURL=chargeback.service.js.map

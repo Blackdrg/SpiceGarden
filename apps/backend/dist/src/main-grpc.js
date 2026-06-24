@@ -24,4 +24,3 @@ async function bootstrap() {
     console.log("gRPC server listening on 0.0.0.0:50051");
 }
 bootstrap();
-//# sourceMappingURL=main-grpc.js.map

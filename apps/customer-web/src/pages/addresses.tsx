@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { useRouter } from 'next/router';
-import { Plus, MapPin, Trash2, Star, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
+import { getCachedToken } from '../utils/cachedLocalStorage';
+import { useAddresses } from '../hooks/useAddresses';
+import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './addresses.module.css';
 
 interface Address {
   id: string;
@@ -15,10 +19,10 @@ interface Address {
 }
 
 const AddressesPage = () => {
-  const router = useRouter();
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const token = getCachedToken();
+  const safeToken = token && token !== 'demo-token' ? token : null;
+  const { addresses, isLoading, error } = useAddresses(safeToken);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: '',
@@ -27,39 +31,12 @@ const AddressesPage = () => {
     state: '',
     postalCode: '',
   });
-
-  useEffect(() => {
-    const loadAddresses = async () => {
-      try {
-        const token = localStorage.getItem('sg_token:v1');
-        if (!token || token === 'demo-token') {
-          router.push('/auth');
-          return;
-        }
-        
-        const res = await fetch(`${API_URL}/addresses`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push('/auth');
-            return;
-          }
-          throw new Error('Failed to load addresses');
-        }
-        setAddresses(await res.json());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load addresses');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadAddresses();
-  }, [router]);
+  const loading = isLoading;
+  const queryErrorText = error instanceof Error ? error.message : (error ? 'Failed to load addresses' : null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const handleAddAddress = async () => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token || token === 'demo-token') return;
     
     try {
@@ -72,16 +49,17 @@ const AddressesPage = () => {
       if (!res.ok) throw new Error('Failed to add address');
       
       const added = await res.json();
-      setAddresses([...addresses, added]);
+      queryClient.setQueryData<Address[]>(['addresses'], prev => [...(prev || []), added]);
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
       setShowAddForm(false);
       setNewAddress({ label: '', addressLine: '', city: '', state: '', postalCode: '' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add address');
+      setActionError(err instanceof Error ? err.message : 'Failed to add address');
     }
   };
 
   const handleSetDefault = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -91,14 +69,15 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to set default');
-      setAddresses(addresses.map(a => ({ ...a, isDefault: a.id === id })));
+      queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).map(a => ({ ...a, isDefault: a.id === id })));
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set default');
+      setActionError(err instanceof Error ? err.message : 'Failed to set default');
     }
   };
 
   const handleDelete = async (id: string) => {
-    const token = localStorage.getItem('sg_token:v1');
+    const token = getCachedToken();
     if (!token) return;
     
     try {
@@ -108,39 +87,46 @@ const AddressesPage = () => {
       });
       
       if (!res.ok) throw new Error('Failed to delete');
-      setAddresses(addresses.filter(a => a.id !== id));
+      queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).filter(a => a.id !== id));
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
+      setActionError(err instanceof Error ? err.message : 'Failed to delete');
     }
   };
 
   if (loading) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading addresses...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
-      {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, backgroundColor: '#ffebee', color: '#c62828', padding: DESIGN_TOKENS.spacing.md, borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md }}>
+    <div className={styles.pageContainer}>
+      {queryErrorText && (
+        <div className={styles.errorBanner}>
           <AlertCircle size={16} />
-          <span>{error}</span>
+          <span>{queryErrorText}</span>
+        </div>
+      )}
+      {actionError && (
+        <div className={`${styles.errorBanner} ${styles.errorBannerActions}`}>
+          <AlertCircle size={16} />
+          <span>{actionError}</span>
         </div>
       )}
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        <h2 style={{ margin: 0 }}>Saved Addresses</h2>
-        <button onClick={() => setShowAddForm(true)} aria-label="Add new address">
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Saved Addresses</h2>
+        <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add new address">
           <Plus size={24} />
         </button>
       </div>
 
       {addresses.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.xl }}>
-          <p style={{ color: '#666' }}>No addresses saved yet. Add one to get started!</p>
+        <div className={styles.emptyState}>
+          <p className={styles.emptyText}>No addresses saved yet. Add one to get started!</p>
         </div>
       ) : (
         addresses.map(addr => (
@@ -157,11 +143,11 @@ const AddressesPage = () => {
               </div>
               <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.xs }}>
                 {!addr.isDefault && (
-                  <button onClick={() => handleSetDefault(addr.id)} aria-label="Set as default">
+                  <button type="button" onClick={() => handleSetDefault(addr.id)} aria-label="Set as default">
                     <Star size={16} />
                   </button>
                 )}
-                <button onClick={() => handleDelete(addr.id)} aria-label="Delete address" style={{ color: DESIGN_TOKENS.colors.danger }}>
+                <button type="button" onClick={() => handleDelete(addr.id)} aria-label="Delete address" className={styles.deleteButton}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -171,40 +157,60 @@ const AddressesPage = () => {
       )}
 
       {showAddForm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+        <div className={styles.modalOverlay}>
           <Card title="Add New Address">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm, padding: DESIGN_TOKENS.spacing.md, minWidth: '400px' }}>
-              <input
-                placeholder="Label (e.g., Home, Work)"
-                value={newAddress.label}
-                onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="Address Line"
-                value={newAddress.addressLine}
-                onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="City"
-                value={newAddress.city}
-                onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="State"
-                value={newAddress.state}
-                onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <input
-                placeholder="Postal Code"
-                value={newAddress.postalCode}
-                onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
-                style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
-              />
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.md }}>
+            <div className={styles.form}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-label" className={styles.label}>Label (e.g., Home, Work)</label>
+                <input
+                  id="addr-label"
+                  className={styles.input}
+                  placeholder="Label (e.g., Home, Work)"
+                  value={newAddress.label}
+                  onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-address" className={styles.label}>Address Line</label>
+                <input
+                  id="addr-address"
+                  className={styles.input}
+                  placeholder="Address Line"
+                  value={newAddress.addressLine}
+                  onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-city" className={styles.label}>City</label>
+                <input
+                  id="addr-city"
+                  className={styles.input}
+                  placeholder="City"
+                  value={newAddress.city}
+                  onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-state" className={styles.label}>State</label>
+                <input
+                  id="addr-state"
+                  className={styles.input}
+                  placeholder="State"
+                  value={newAddress.state}
+                  onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="addr-postal" className={styles.label}>Postal Code</label>
+                <input
+                  id="addr-postal"
+                  className={styles.input}
+                  placeholder="Postal Code"
+                  value={newAddress.postalCode}
+                  onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
+                />
+              </div>
+              <div className={styles.formActions}>
                 <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
                 <Button label="Save" onClick={handleAddAddress} />
               </div>
@@ -216,4 +222,6 @@ const AddressesPage = () => {
   );
 };
 
-export default AddressesPage;
+export default function AddressesPageProtected(props: any) {
+  return <ProtectedRoute><AddressesPage {...props} /></ProtectedRoute>;
+}

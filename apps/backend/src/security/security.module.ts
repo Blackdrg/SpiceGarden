@@ -1,21 +1,25 @@
 import { Module, Global } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { EncryptionService } from './encryption.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { SecretLoaderService } from '../infra/secret-loader.service';
 import { LocalRepositoryModule } from '../db/local-repository.module';
 import { AuditLogEntity } from '../db/entities/audit-log.entity';
 import { SessionEntity } from '../db/entities/session.entity';
+import { PermissionGuard } from './permission.guard';
+import { RolesGuard } from './roles.guard';
+
+const loadTestLimit = parseInt(process.env.LOAD_TEST_LIMIT || '1000000', 10);
 
 @Global()
 @Module({
   imports: [
+    LocalRepositoryModule,
     ThrottlerModule.forRoot([{
       ttl: 60000,
-      limit: 10,
+      limit: process.env.LOAD_TEST_MODE === 'true' && process.env.NODE_ENV !== 'production' ? loadTestLimit : 10,
     }]),
-    LocalRepositoryModule,
   ],
-  providers: [EncryptionService],
-  exports: [EncryptionService, ThrottlerModule],
+  providers: [SecretLoaderService, EncryptionService, PermissionGuard, RolesGuard],
+  exports: [EncryptionService, ThrottlerModule, PermissionGuard, RolesGuard],
 })
 export class SecurityModule {}

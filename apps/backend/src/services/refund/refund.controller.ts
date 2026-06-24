@@ -1,16 +1,23 @@
 ﻿
-import { Controller, Post, Get, Body, Param, Patch, UseGuards, Request, Query, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Patch, UseGuards, Query, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
 import { RefundService } from './refund.service';
 import { RefundRequestType } from './refund.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { Roles } from '../../security/roles.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
+import { type Request } from 'express';
 
 @ApiTags('refunds')
 @Controller('refunds')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class RefundController {
   constructor(private readonly refundService: RefundService) {}
 
   @Post('request')
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create a refund request' })
   @ApiResponse({ status: 200, description: 'Refund request created successfully' })
@@ -42,6 +49,7 @@ export class RefundController {
   }
 
   @Patch(':approvalId/approve')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Approve a refund request' })
   @ApiResponse({ status: 200, description: 'Refund request approved successfully' })
@@ -70,6 +78,7 @@ export class RefundController {
   }
 
   @Patch(':approvalId/reject')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reject a refund request' })
   @ApiResponse({ status: 200, description: 'Refund request rejected successfully' })
@@ -98,6 +107,7 @@ export class RefundController {
   }
 
   @Post(':approvalId/process')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Process an approved refund' })
   @ApiResponse({ status: 200, description: 'Refund processed successfully' })
@@ -126,6 +136,7 @@ export class RefundController {
   }
 
   @Get(':approvalId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF, UserRole.CUSTOMER)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get refund request by ID' })
   @ApiResponse({ status: 200, description: 'Refund request retrieved successfully' })
@@ -138,6 +149,7 @@ export class RefundController {
   }
 
   @Get('order/:orderId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF, UserRole.CUSTOMER)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get refund requests for an order' })
   @ApiResponse({ status: 200, description: 'Refund requests retrieved successfully' })
@@ -149,6 +161,7 @@ export class RefundController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get refund requests by status' })
   @ApiResponse({ status: 200, description: 'Refund requests retrieved successfully' })

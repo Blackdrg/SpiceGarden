@@ -15,6 +15,20 @@ const menu_category_entity_1 = require("./menu-category.entity");
 const hsn_sac_entity_1 = require("./hsn-sac.entity");
 const menu_addon_entity_1 = require("./menu-addon.entity");
 let MenuItemEntity = class MenuItemEntity {
+    id;
+    name;
+    description;
+    basePrice;
+    imageUrl;
+    isVeg;
+    spiceLevel;
+    status;
+    category;
+    hsnSacId;
+    hsnSac;
+    addons;
+    createdAt;
+    updatedAt;
 };
 exports.MenuItemEntity = MenuItemEntity;
 __decorate([
@@ -76,4 +90,3 @@ __decorate([
 exports.MenuItemEntity = MenuItemEntity = __decorate([
     (0, typeorm_1.Entity)('menu_items')
 ], MenuItemEntity);
-//# sourceMappingURL=menu-item.entity.js.map

@@ -19,9 +19,13 @@ const stripe_connect_service_1 = require("./stripe-connect.service");
 const razorpay_settlement_service_1 = require("./razorpay-settlement.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let PaymentProviderController = class PaymentProviderController {
+    stripeConnectService;
+    razorpaySettlementService;
     constructor(stripeConnectService, razorpaySettlementService) {
         this.stripeConnectService = stripeConnectService;
         this.razorpaySettlementService = razorpaySettlementService;
@@ -142,9 +146,9 @@ __decorate([
 exports.PaymentProviderController = PaymentProviderController = __decorate([
     (0, swagger_1.ApiTags)('payment-provider'),
     (0, common_1.Controller)('payment-provider'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('payments:manage'),
     __metadata("design:paramtypes", [stripe_connect_service_1.StripeConnectService,
         razorpay_settlement_service_1.RazorpaySettlementService])
 ], PaymentProviderController);
-//# sourceMappingURL=payment-provider.controller.js.map

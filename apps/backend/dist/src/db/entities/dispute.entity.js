@@ -33,6 +33,26 @@ var DisputeStatus;
     DisputeStatus["CLOSED"] = "closed";
 })(DisputeStatus || (exports.DisputeStatus = DisputeStatus = {}));
 let DisputeEntity = class DisputeEntity {
+    id;
+    orderId;
+    order;
+    customerId;
+    customer;
+    restaurantId;
+    driverId;
+    type;
+    status;
+    description;
+    resolutionNotes;
+    creditAmount;
+    resolvedBy;
+    resolvedAt;
+    evidence;
+    escalated;
+    escalatedAt;
+    escalatedTo;
+    createdAt;
+    updatedAt;
 };
 exports.DisputeEntity = DisputeEntity;
 __decorate([
@@ -118,4 +138,3 @@ __decorate([
 exports.DisputeEntity = DisputeEntity = __decorate([
     (0, typeorm_1.Entity)('disputes')
 ], DisputeEntity);
-//# sourceMappingURL=dispute.entity.js.map

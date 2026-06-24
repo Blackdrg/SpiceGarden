@@ -21,7 +21,7 @@ export class LedgerService {
     amount: number,
     currency: string = 'INR',
     type: string,
-    referenceId: string = null,
+    referenceId: string | null = null,
     description: string = '',
   ): Promise<LedgerEntryEntity> {
     const entry = this.ledgerRepo.create({
@@ -30,9 +30,9 @@ export class LedgerService {
       amount,
       currency,
       type,
-      referenceId,
+      referenceId: referenceId ?? undefined,
       description,
-    });
+    } as Parameters<typeof this.ledgerRepo.create>[0]);
     return await this.ledgerRepo.save(entry);
   }
 
@@ -54,7 +54,7 @@ export class LedgerService {
     amount: number,
     currency: string = 'INR',
     type: string,
-    referenceId: string = null,
+    referenceId: string | null = null,
     description: string = '',
   ): Promise<void> {
     // Ensure amount is positive

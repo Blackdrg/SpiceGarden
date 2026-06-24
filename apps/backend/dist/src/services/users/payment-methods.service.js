@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const payment_method_entity_1 = require("../../db/entities/payment-method.entity");
 let PaymentMethodsService = class PaymentMethodsService {
+    paymentRepo;
     constructor(paymentRepo) {
         this.paymentRepo = paymentRepo;
     }
@@ -46,4 +47,3 @@ exports.PaymentMethodsService = PaymentMethodsService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(payment_method_entity_1.PaymentMethodEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], PaymentMethodsService);
-//# sourceMappingURL=payment-methods.service.js.map

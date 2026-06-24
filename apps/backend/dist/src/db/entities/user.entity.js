@@ -13,6 +13,19 @@ exports.UserEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let UserEntity = class UserEntity {
+    id;
+    fullName;
+    email;
+    phone;
+    passwordHash;
+    profileImage;
+    role;
+    status;
+    emailVerified;
+    phoneVerified;
+    createdAt;
+    updatedAt;
+    deletedAt;
 };
 exports.UserEntity = UserEntity;
 __decorate([
@@ -70,4 +83,3 @@ __decorate([
 exports.UserEntity = UserEntity = __decorate([
     (0, typeorm_1.Entity)('users')
 ], UserEntity);
-//# sourceMappingURL=user.entity.js.map

@@ -54,8 +54,9 @@ export default function OnboardingPayout() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Holder Name</label>
+            <label htmlFor="payout-holder" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Holder Name</label>
             <input
+              id="payout-holder"
               aria-label="Account Holder Name"
               value={form.accountHolderName}
               onChange={(e) => setForm({ ...form, accountHolderName: e.target.value })}
@@ -64,8 +65,9 @@ export default function OnboardingPayout() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Number</label>
+            <label htmlFor="payout-acct-num" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Number</label>
             <input
+              id="payout-acct-num"
               aria-label="Account Number"
               value={form.accountNumber}
               onChange={(e) => setForm({ ...form, accountNumber: e.target.value })}
@@ -75,8 +77,9 @@ export default function OnboardingPayout() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Confirm Account Number</label>
+            <label htmlFor="payout-confirm-acct" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Confirm Account Number</label>
             <input
+              id="payout-confirm-acct"
               aria-label="Confirm Account Number"
               value={form.confirmAccountNumber}
               onChange={(e) => setForm({ ...form, confirmAccountNumber: e.target.value })}
@@ -86,8 +89,9 @@ export default function OnboardingPayout() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>IFSC Code</label>
+            <label htmlFor="payout-ifsc" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>IFSC Code</label>
             <input
+              id="payout-ifsc"
               aria-label="IFSC Code"
               value={form.ifscCode}
               onChange={(e) => setForm({ ...form, ifscCode: e.target.value.toUpperCase() })}
@@ -97,8 +101,9 @@ export default function OnboardingPayout() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Bank Name</label>
+            <label htmlFor="payout-bank" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Bank Name</label>
             <input
+              id="payout-bank"
               aria-label="Bank Name"
               value={form.bankName}
               onChange={(e) => setForm({ ...form, bankName: e.target.value })}
@@ -107,8 +112,9 @@ export default function OnboardingPayout() {
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Branch Name</label>
+            <label htmlFor="payout-branch" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Branch Name</label>
             <input
+              id="payout-branch"
               aria-label="Branch Name"
               value={form.branchName}
               onChange={(e) => setForm({ ...form, branchName: e.target.value })}
@@ -120,6 +126,7 @@ export default function OnboardingPayout() {
 
         <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
           <button
+            type="button"
             onClick={() => window.location.href = '/onboarding/menu'}
             style={{ ...buttonStyle.secondary, flex: 1 }}
           >

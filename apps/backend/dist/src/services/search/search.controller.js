@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const search_service_1 = require("./search.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 let SearchController = class SearchController {
+    searchService;
     constructor(searchService) {
         this.searchService = searchService;
     }
@@ -56,4 +57,3 @@ exports.SearchController = SearchController = __decorate([
     (0, common_1.Controller)('search'),
     __metadata("design:paramtypes", [search_service_1.SearchService])
 ], SearchController);
-//# sourceMappingURL=search.controller.js.map

@@ -40,7 +40,13 @@ export class GSTService {
       // Get order with items
       const order = await this.orderRepo.findOne({
         where: { id: orderId },
-        relations: ['items', 'items.menuItem', 'items.menuItem.hsnSac'],
+        relations: { 
+          items: { 
+            menuItem: { 
+              hsnSac: true 
+            } 
+          } 
+        },
       });
 
       if (!order) {
@@ -50,7 +56,7 @@ export class GSTService {
       // Get restaurant GST details
       const restaurant = await this.restaurantRepo.findOne({
         where: { id: order.restaurantId },
-        relations: ['gstDetail'],
+        relations: { gstDetail: true },
       });
 
       if (!restaurant) {
@@ -175,12 +181,14 @@ export class GSTService {
       // Get order with all related data
       const order = await this.orderRepo.findOne({
         where: { id: orderId },
-        relations: [
-          'items',
-          'items.menuItem',
-          'items.menuItem.hsnSac',
-          'gstDetail',
-        ],
+        relations: {
+          items: { 
+            menuItem: { 
+              hsnSac: true 
+            } 
+          },
+          gstDetail: true,
+        },
       });
 
       if (!order) {
@@ -191,28 +199,33 @@ export class GSTService {
         // Calculate GST if not already done
         await this.calculateGSTForOrder(orderId);
         // Reload order with GST detail
-        await this.orderRepo.findOne({
+        const reloadedOrder = await this.orderRepo.findOne({
           where: { id: orderId },
-          relations: [
-            'items',
-            'items.menuItem',
-            'items.menuItem.hsnSac',
-            'gstDetail',
-          ],
+          relations: {
+            items: { 
+              menuItem: { 
+                hsnSac: true 
+              } 
+            },
+            gstDetail: true,
+          },
         });
+        if (reloadedOrder?.gstDetail) {
+          order.gstDetail = reloadedOrder.gstDetail;
+        }
       }
 
       // Get restaurant GST details
       const restaurant = await this.restaurantRepo.findOne({
         where: { id: order.restaurantId },
-        relations: ['gstDetail'],
+        relations: { gstDetail: true },
       });
 
       if (!restaurant || !restaurant.gstDetail) {
         throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);
       }
 
-      const gstDetail = order.gstDetail;
+      const gstDetail = order.gstDetail!;
       const restaurantGST = restaurant.gstDetail;
 
       // Generate invoice number (in real implementation, this would be more sophisticated)
@@ -351,7 +364,7 @@ export class GSTService {
           });
         }
 
-        const rateData = rateMap.get(rateKey);
+        const rateData = rateMap.get(rateKey)!;
         rateData.count += 1;
         rateMap.set(rateKey, rateData);
       });

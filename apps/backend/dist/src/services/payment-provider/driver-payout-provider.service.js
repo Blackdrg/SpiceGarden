@@ -21,16 +21,23 @@ const typeorm_2 = require("typeorm");
 const driver_incentive_entity_1 = require("../../db/entities/driver-incentive.entity");
 const driver_entity_1 = require("../../db/entities/driver.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
+const missing_env_error_1 = require("../../common/errors/missing-env.error");
 let DriverPayoutProviderService = DriverPayoutProviderService_1 = class DriverPayoutProviderService {
+    configService;
+    incentiveRepo;
+    driverRepo;
+    orderRepo;
+    logger = new common_1.Logger(DriverPayoutProviderService_1.name);
+    baseUrl = 'https://api.razorpay.com/v1';
+    keyId;
+    keySecret;
     constructor(configService, incentiveRepo, driverRepo, orderRepo) {
         this.configService = configService;
         this.incentiveRepo = incentiveRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
-        this.logger = new common_1.Logger(DriverPayoutProviderService_1.name);
-        this.baseUrl = 'https://api.razorpay.com/v1';
-        this.keyId = this.configService.get('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-        this.keySecret = this.configService.get('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+        this.keyId = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_ID');
+        this.keySecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_KEY_SECRET');
     }
     async rzpRequest(method, endpoint, data) {
         const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
@@ -124,7 +131,7 @@ let DriverPayoutProviderService = DriverPayoutProviderService_1 = class DriverPa
         }
         return this.incentiveRepo.find({
             where,
-            relations: ['driver'],
+            relations: { driver: true },
             order: { createdAt: 'ASC' },
         });
     }
@@ -147,4 +154,3 @@ exports.DriverPayoutProviderService = DriverPayoutProviderService = DriverPayout
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], DriverPayoutProviderService);
-//# sourceMappingURL=driver-payout-provider.service.js.map

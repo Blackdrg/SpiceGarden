@@ -22,4 +22,3 @@ exports.UserProfileModule = UserProfileModule = __decorate([
         exports: [user_profile_service_1.UserProfileService],
     })
 ], UserProfileModule);
-//# sourceMappingURL=user-profile.module.js.map

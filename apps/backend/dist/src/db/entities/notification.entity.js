@@ -13,6 +13,23 @@ exports.NotificationEntity = void 0;
 const typeorm_1 = require("typeorm");
 const notification_status_enum_1 = require("./notification-status.enum");
 let NotificationEntity = class NotificationEntity {
+    id;
+    recipientId;
+    recipientType;
+    notificationType;
+    payload;
+    provider;
+    status;
+    attemptCount;
+    maxAttempts;
+    lastAttemptAt;
+    nextAttemptAt;
+    completedAt;
+    errorInfo;
+    callbackUrl;
+    metadata;
+    createdAt;
+    updatedAt;
 };
 exports.NotificationEntity = NotificationEntity;
 __decorate([
@@ -86,4 +103,3 @@ __decorate([
 exports.NotificationEntity = NotificationEntity = __decorate([
     (0, typeorm_1.Entity)('notifications')
 ], NotificationEntity);
-//# sourceMappingURL=notification.entity.js.map

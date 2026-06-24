@@ -1,0 +1,57 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m125[0m:[93m21[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ status: "unknown_status"; }' to type 'OrderEntity' may be a mistake because neither type sufficiently overlaps with 
+the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ status: "unknown_status"; }' is missing the following properties from type 'OrderEntity': id, items, 
+userId, restaurantId, and 18 more.
+
+    [7m125[0m       const order = { status: 'unknown_status' } as OrderEntity;
+    [7m   [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL test/payment-edge-cases.service.spec.ts
+  ● Test suite failed to run
+
+    [96mtest/payment-edge-cases.service.spec.ts[0m:[93m19[0m:[93m65[0m - [91merror[0m[90m TS2322: [0mType '{ 
+getGatewayName: jest.Mock<string, [], unknown>; createPaymentIntent: jest.Mock<any, any, any>; confirmPayment: 
+jest.Mock<any, any, any>; refundPayment: jest.Mock<any, any, any>; constructEvent: jest.Mock<...>; }' is not 
+assignable to type 'Mocked<PaymentGateway>'.
+      Property 'fetchPaymentDetails' is missing in type '{ getGatewayName: jest.Mock<string, [], unknown>; 
+createPaymentIntent: jest.Mock<any, any, any>; confirmPayment: jest.Mock<any, any, any>; refundPayment: jest.Mock<any, 
+any, any>; constructEvent: jest.Mock<...>; }' but required in type '{ createPaymentIntent: 
+MockInstance<Promise<PaymentIntent>, [amount: number, currency: string, userId: string, metadata: any], unknown>; 
+fetchPaymentDetails: MockInstance<Promise<PaymentIntent>, [paymentId: ...], unknown>; confirmPayment: 
+MockInstance<...>; refundPayment: MockInstance<...>; constructEvent: MockInsta...'.
+
+    [7m 19[0m   const createMockGateway = (): jest.Mocked<PaymentGateway> => ({
+    [7m   [0m [91m                                                                ~[0m
+    [7m 20[0m     getGatewayName: jest.fn(() => 'stripe'),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m 24[0m     constructEvent: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m 25[0m   });
+    [7m   [0m [91m~~~[0m
+
+      [96msrc/services/payments/gateways/payment-gateway.interface.ts[0m:[93m6[0m:[93m3[0m
+        [7m6[0m   fetchPaymentDetails(paymentId: string): Promise<PaymentIntent>;
+        [7m [0m [96m  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+        'fetchPaymentDetails' is declared here.
+    [96mtest/payment-edge-cases.service.spec.ts[0m:[93m301[0m:[93m21[0m - [91merror[0m[90m TS2339: 
+[0mProperty 'id' does not exist on type 'GatewayEvent'.
+
+    [7m301[0m       expect(result.id).toBe('evt_1');
+    [7m   [0m [91m                    ~~[0m
+
+Test Suites: 2 failed, 2 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        15.742 s
+Ran all test suites matching /test\\refund.service.spec.ts|test\\payment-edge-cases.service.spec.ts/i.

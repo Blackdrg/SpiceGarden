@@ -17,4 +17,3 @@ exports.RealtimeModule = RealtimeModule = __decorate([
         providers: []
     })
 ], RealtimeModule);
-//# sourceMappingURL=realtime.module.js.map

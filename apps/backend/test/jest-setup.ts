@@ -1,7 +1,10 @@
 // Jest setup file for mocking modules - must be loaded before test files
+import 'reflect-metadata';
 
 // Mock @nestjs/core logger first
 jest.mock('@nestjs/core', () => {
+  const actualCommon = jest.requireActual('@nestjs/common');
+  actualCommon.REQUEST = actualCommon.REQUEST || Symbol('REQUEST');
   const actual = jest.requireActual('@nestjs/core');
   return Object.assign(function () {}, actual, {
     Logger: class MockLogger {
@@ -15,54 +18,68 @@ jest.mock('@nestjs/core', () => {
 });
 
 // Mock @nestjs/typeorm
-jest.mock('@nestjs/typeorm', () => ({
-  InjectRepository: () => jest.fn(),
-  getRepositoryToken: (entity: unknown) => {
-    const name = typeof entity === 'function' ? entity.name : undefined;
-    return `REPOSITORY_${name || String(entity)}`;
-  },
-}));
+jest.mock('@nestjs/typeorm', () => {
+  const actual = jest.requireActual('@nestjs/typeorm');
+  return {
+    ...actual,
+    InjectRepository: actual.InjectRepository,
+    getRepositoryToken: actual.getRepositoryToken,
+  };
+});
 
 // Mock typeorm
-jest.mock('typeorm', () => ({
-  Entity: () => jest.fn(),
-  PrimaryGeneratedColumn: () => jest.fn(),
-  PrimaryColumn: () => jest.fn(),
-  Column: () => jest.fn(),
-  CreateDateColumn: () => jest.fn(),
-  UpdateDateColumn: () => jest.fn(),
-  OneToMany: () => jest.fn(),
-  ManyToOne: () => jest.fn(),
-  ManyToMany: () => jest.fn(),
-  JoinColumn: () => jest.fn(),
-  RelationId: () => jest.fn(),
-  Index: () => jest.fn(),
-  Unique: () => jest.fn(),
-  DataSource: class MockDataSource {},
-}));
+jest.mock('typeorm', () => {
+  const actual = jest.requireActual('typeorm');
+  return {
+    ...actual,
+    DataSource: class MockDataSource {},
+    Repository: class MockRepository {},
+  };
+});
 
 // Mock @nestjs/common
-jest.mock('@nestjs/common', () => ({
-  Injectable: () => jest.fn(),
-  Controller: () => jest.fn(),
-  Get: () => jest.fn(),
-  Post: () => jest.fn(),
-  Patch: () => jest.fn(),
-  Delete: () => jest.fn(),
-  Put: () => jest.fn(),
-  Body: () => jest.fn(),
-  Param: () => jest.fn(),
-  Query: () => jest.fn(),
-  Headers: () => jest.fn(),
-  Req: () => jest.fn(),
-  BadRequestException: class BadRequestException extends Error { constructor(message?: string) { super(message); this.name = 'BadRequestException'; } },
-  NotFoundException: class NotFoundException extends Error { constructor(message?: string) { super(message); this.name = 'NotFoundException'; } },
-  ConflictException: class ConflictException extends Error { constructor(message?: string) { super(message); this.name = 'ConflictException'; } },
-  UnauthorizedException: class UnauthorizedException extends Error { constructor(message?: string) { super(message); this.name = 'UnauthorizedException'; } },
-  InternalServerErrorException: class InternalServerErrorException extends Error { constructor(message?: string) { super(message); this.name = 'InternalServerErrorException'; } },
-  Global: () => jest.fn(),
-  Module: () => jest.fn(),
-}));
+jest.mock('@nestjs/common', () => {
+  const actual = jest.requireActual('@nestjs/common');
+  return {
+    ...actual,
+    Injectable: () => jest.fn(),
+    Controller: () => jest.fn(),
+    Get: () => jest.fn(),
+    Post: () => jest.fn(),
+    Patch: () => jest.fn(),
+    Delete: () => jest.fn(),
+    Put: () => jest.fn(),
+    Body: () => jest.fn(),
+    Param: () => jest.fn(),
+    Query: () => jest.fn(),
+    Headers: () => jest.fn(),
+    Req: () => jest.fn(),
+    REQUEST: actual.REQUEST || Symbol('REQUEST'),
+    Scope: actual.Scope || {
+      DEFAULT: 0,
+      TRANSIENT: 1,
+      REQUEST: 2,
+    },
+    Logger: class Logger {
+      constructor(private readonly context?: string) {}
+      static overrideLogger() {}
+      log(message: unknown) { return { context: this.context, message }; }
+      error(message: unknown) { return { context: this.context, message }; }
+      warn(message: unknown) { return { context: this.context, message }; }
+      debug(message: unknown) { return { context: this.context, message }; }
+      verbose(message: unknown) { return { context: this.context, message }; }
+    },
+    ConsoleLogger: class ConsoleLogger {
+      constructor(private readonly context?: string) {}
+      static overrideLogger() {}
+      log(message: unknown) { return { context: this.context, message }; }
+      error(message: unknown) { return { context: this.context, message }; }
+      warn(message: unknown) { return { context: this.context, message }; }
+      debug(message: unknown) { return { context: this.context, message }; }
+      verbose(message: unknown) { return { context: this.context, message }; }
+    },
+  };
+});
 
 // Mock @nestjs/config
 jest.mock('@nestjs/config', () => ({
@@ -83,6 +100,29 @@ jest.mock('mongoose', () => ({
   connect: jest.fn(),
 }));
 
+// Mock mongodb (MongoClient)
+jest.mock('mongodb', () => ({
+  MongoClient: jest.fn().mockImplementation(() => ({
+    connect: jest.fn().mockResolvedValue(undefined),
+    db: jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnValue({
+        deleteMany: jest.fn().mockResolvedValue({}),
+        insertOne: jest.fn().mockResolvedValue({ insertedId: 'mock-id' }),
+        findOne: jest.fn().mockResolvedValue({}),
+        updateOne: jest.fn().mockResolvedValue({}),
+        deleteOne: jest.fn().mockResolvedValue({}),
+        insertMany: jest.fn().mockResolvedValue({}),
+        aggregate: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+        listCollections: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+      }),
+      admin: jest.fn().mockReturnValue({ serverStatus: jest.fn().mockResolvedValue({ version: '7.0.0' }) }),
+      databaseName: 'test-db',
+    }),
+    close: jest.fn().mockResolvedValue(undefined),
+  })),
+  Db: jest.fn(),
+}));
+
 // Mock stripe
 jest.mock('stripe', () => {
   return jest.fn().mockImplementation(() => ({
@@ -97,4 +137,37 @@ const actualCrypto = jest.requireActual('crypto');
 jest.mock('crypto', () => ({
   ...actualCrypto,
   randomUUID: () => 'mock-uuid',
+}));
+
+// Mock ioredis to prevent real network connections in tests.
+// The mock simulates a connection failure so the RedisRateLimitStore
+// falls back to in-memory mode, matching the test expectations.
+jest.mock('ioredis', () => {
+  const mem = new Map<string, { hits: number; expiresAt: number }>();
+  return jest.fn().mockImplementation(() => ({
+    connect: jest.fn().mockRejectedValue(new Error('ECONNREFUSED')),
+    ping: jest.fn().mockRejectedValue(new Error('not connected')),
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue('OK'),
+    pexpire: jest.fn().mockResolvedValue(1),
+    incr: jest.fn().mockResolvedValue(1),
+    decr: jest.fn().mockResolvedValue(0),
+    del: jest.fn().mockResolvedValue(1),
+    keys: jest.fn().mockResolvedValue([]),
+    multi: jest.fn(() => ({
+      incr: jest.fn().mockReturnThis(),
+      pexpire: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([[null, 1]]),
+    })),
+    disconnect: jest.fn(),
+    on: jest.fn(),
+    quit: jest.fn().mockResolvedValue('OK'),
+  }));
+});
+
+// Mock jsonwebtoken
+jest.mock('jsonwebtoken', () => ({
+  sign: jest.fn(() => 'mock-jwt-token'),
+  verify: jest.fn(),
+  decode: jest.fn(),
 }));

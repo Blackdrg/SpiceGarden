@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
 
@@ -18,15 +19,15 @@ interface ReferralHistory {
 }
 
 export default function LoyaltyReferrals() {
-  const [history, setHistory] = useState<ReferralHistory | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${API}/loyalty/referrals/demo-user`)
-      .then((r) => r.json())
-      .then((data) => { setHistory(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: history = {}, isLoading: loading } = useQuery<ReferralHistory>({
+    queryKey: ['loyalty-referrals-demo-user'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/loyalty/referrals/demo-user`);
+      if (!response.ok) throw new Error('Failed to load referral history');
+      return response.json() as Promise<ReferralHistory>;
+    },
+    initialData: {},
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
@@ -66,7 +67,7 @@ export default function LoyaltyReferrals() {
           </div>
         </div>
       )}
-      <a href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</a>
+      <Link href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</Link>
     </div>
   );
 }

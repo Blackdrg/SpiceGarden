@@ -1,5 +1,11 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { DriverAssignmentService } from './driver-assignment.service';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
+import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
@@ -8,6 +14,9 @@ import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 
 @Controller('driver-assignment')
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Permissions('deliveries:manage_assigned')
 export class DriverAssignmentController {
   constructor(private readonly driverAssignmentService: DriverAssignmentService) {}
 

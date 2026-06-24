@@ -19,6 +19,8 @@ const typeorm_2 = require("typeorm");
 const address_entity_1 = require("../../db/entities/address.entity");
 const payment_method_entity_1 = require("../../db/entities/payment-method.entity");
 let UserProfileService = class UserProfileService {
+    addressRepo;
+    paymentMethodRepo;
     constructor(addressRepo, paymentMethodRepo) {
         this.addressRepo = addressRepo;
         this.paymentMethodRepo = paymentMethodRepo;
@@ -101,4 +103,3 @@ exports.UserProfileService = UserProfileService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
 ], UserProfileService);
-//# sourceMappingURL=user-profile.service.js.map

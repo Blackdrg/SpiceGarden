@@ -16,6 +16,7 @@ exports.MapsController = void 0;
 const common_1 = require("@nestjs/common");
 const maps_service_1 = require("./maps.service");
 let MapsController = class MapsController {
+    mapsService;
     constructor(mapsService) {
         this.mapsService = mapsService;
     }
@@ -104,4 +105,3 @@ exports.MapsController = MapsController = __decorate([
     (0, common_1.Controller)('maps'),
     __metadata("design:paramtypes", [maps_service_1.MapsService])
 ], MapsController);
-//# sourceMappingURL=maps.controller.js.map

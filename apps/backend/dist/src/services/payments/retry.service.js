@@ -26,17 +26,19 @@ const retryableErrors = [
     'temporary_failure',
 ];
 let RetryService = RetryService_1 = class RetryService {
+    configService;
+    idempotencyRepo;
+    logger = new common_1.Logger(RetryService_1.name);
+    defaultConfig = {
+        maxAttempts: 5,
+        baseDelayMs: 1000,
+        maxDelayMs: 30000,
+        backoffMultiplier: 2,
+        jitterFactor: 0.1,
+    };
     constructor(configService, idempotencyRepo) {
         this.configService = configService;
         this.idempotencyRepo = idempotencyRepo;
-        this.logger = new common_1.Logger(RetryService_1.name);
-        this.defaultConfig = {
-            maxAttempts: 5,
-            baseDelayMs: 1000,
-            maxDelayMs: 30000,
-            backoffMultiplier: 2,
-            jitterFactor: 0.1,
-        };
     }
     getConfig(key) {
         const configKey = `PAYMENT_RETRY_${key.toUpperCase()}`;
@@ -142,4 +144,3 @@ exports.RetryService = RetryService = RetryService_1 = __decorate([
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_2.Repository])
 ], RetryService);
-//# sourceMappingURL=retry.service.js.map

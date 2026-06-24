@@ -1,0 +1,141 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m31[0m:[93m17[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ create: jest.Mock<any, any, any>; save: jest.Mock<any, any, any>; find: jest.Mock<any, any, any>; findOne: 
+jest.Mock<any, any, any>; }' to type 'Mocked<Repository<RefundEntity>>' may be a mistake because neither type 
+sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ create: Mock<any, any, any>; save: Mock<any, any, any>; find: Mock<any, any, any>; findOne: Mock<any, 
+any, any>; }' is missing the following properties from type '{ readonly target: EntityTarget<RefundEntity>; readonly 
+manager: EntityManager; readonly queryRunner?: QueryRunner | undefined; ... 40 more ...; extend: MockInstance<...>; 
+}': target, manager, metadata, createQueryBuilder, and 35 more.
+
+    [7m 31[0m     refundRepo: {
+    [7m   [0m [91m                ~[0m
+    [7m 32[0m       create: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m 35[0m       findOne: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m 36[0m     } as jest.Mocked<Repository<RefundEntity>>,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m37[0m:[93m25[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ create: jest.Mock<any, any, any>; save: jest.Mock<any, any, any>; find: jest.Mock<any, any, any>; findOne: 
+jest.Mock<any, any, any>; }' to type 'Mocked<Repository<RefundApprovalEntity>>' may be a mistake because neither type 
+sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ create: Mock<any, any, any>; save: Mock<any, any, any>; find: Mock<any, any, any>; findOne: Mock<any, 
+any, any>; }' is missing the following properties from type '{ readonly target: EntityTarget<RefundApprovalEntity>; 
+readonly manager: EntityManager; readonly queryRunner?: QueryRunner | undefined; ... 40 more ...; extend: 
+MockInstance<...>; }': target, manager, metadata, createQueryBuilder, and 35 more.
+
+    [7m 37[0m     refundApprovalRepo: {
+    [7m   [0m [91m                        ~[0m
+    [7m 38[0m       create: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m 41[0m       findOne: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m 42[0m     } as jest.Mocked<Repository<RefundApprovalEntity>>,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m43[0m:[93m16[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ findOne: jest.Mock<any, any, any>; save: jest.Mock<any, any, any>; update: jest.Mock<any, any, any>; }' to type 
+'Mocked<Repository<OrderEntity>>' may be a mistake because neither type sufficiently overlaps with the other. If this 
+was intentional, convert the expression to 'unknown' first.
+      Type '{ findOne: Mock<any, any, any>; save: Mock<any, any, any>; update: Mock<any, any, any>; }' is missing the 
+following properties from type '{ readonly target: EntityTarget<OrderEntity>; readonly manager: EntityManager; 
+readonly queryRunner?: QueryRunner | undefined; ... 40 more ...; extend: MockInstance<...>; }': target, manager, 
+metadata, createQueryBuilder, and 36 more.
+
+    [7m 43[0m     orderRepo: {
+    [7m   [0m [91m               ~[0m
+    [7m 44[0m       findOne: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m...[0m 
+    [7m 46[0m       update: jest.fn(),
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m 47[0m     } as jest.Mocked<Repository<OrderEntity>>,
+    [7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m48[0m:[93m15[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ findOne: jest.Mock<any, any, any>; }' to type 'Mocked<Repository<UserEntity>>' may be a mistake because neither 
+type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ findOne: Mock<any, any, any>; }' is missing the following properties from type '{ readonly target: 
+EntityTarget<UserEntity>; readonly manager: EntityManager; readonly queryRunner?: QueryRunner | undefined; ... 40 more 
+...; extend: MockInstance<...>; }': target, manager, metadata, createQueryBuilder, and 38 more.
+
+    [7m48[0m     userRepo: {
+    [7m  [0m [91m              ~[0m
+    [7m49[0m       findOne: jest.fn(),
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m50[0m     } as jest.Mocked<Repository<UserEntity>>,
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m51[0m:[93m21[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ refundPayment: jest.Mock<any, any, any>; }' to type 'Mocked<PaymentService>' may be a mistake because neither type 
+sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ refundPayment: Mock<any, any, any>; }' is missing the following properties from type '{ 
+createPaymentIntent: MockInstance<Promise<PaymentIntent>, [amount: number, currency?: string | undefined, userId?: 
+string | null | undefined, metadata?: Record<string, any> | undefined, request?: Request<...> | undefined, 
+gatewayName?: string | undefined], unknown>; confirmPayment: MockInstance<...>; refundPayment...': 
+createPaymentIntent, confirmPayment, constructEvent
+
+    [7m51[0m     paymentService: {
+    [7m  [0m [91m                    ~[0m
+    [7m52[0m       refundPayment: jest.fn(),
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m53[0m     } as jest.Mocked<PaymentService>,
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m54[0m:[93m26[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ notify: jest.Mock<any, any, any>; }' to type 'Mocked<NotificationService>' may be a mistake because neither type 
+sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ notify: Mock<any, any, any>; }' is missing the following properties from type '{ registerDevice: 
+MockInstance<Promise<UserDeviceEntity>, [userId: string, fcmToken: string, deviceInfo: { name?: string | undefined; 
+type?: string | undefined; userAgent?: string | undefined; ip?: string | undefined; }], unknown>; ... 9 more ...; 
+notifyDriver: MockInstance<...>; }': registerDevice, unregisterDevice, sendPush, sendSMS, and 7 more.
+
+    [7m54[0m     notificationService: {
+    [7m  [0m [91m                         ~[0m
+    [7m55[0m       notify: jest.fn(),
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m56[0m     } as jest.Mocked<NotificationService>,
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m57[0m:[93m20[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ createTransaction: jest.Mock<any, any, any>; }' to type 'Mocked<LedgerService>' may be a mistake because neither 
+type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ createTransaction: Mock<any, any, any>; }' is missing the following properties from type '{ createEntry: 
+MockInstance<Promise<LedgerEntryEntity>, [transactionId: string, account: string, amount: number, currency: string | 
+undefined, type: string, referenceId?: string | null | undefined, description?: string | undefined], unknown>; 
+createTransaction: MockInstance<...>; getEntriesByTransactionId: MockInsta...': createEntry, 
+getEntriesByTransactionId, getEntriesByAccount
+
+    [7m57[0m     ledgerService: {
+    [7m  [0m [91m                   ~[0m
+    [7m58[0m       createTransaction: jest.fn(),
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m59[0m     } as jest.Mocked<LedgerService>,
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m60[0m:[93m29[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ sendPaymentNotification: jest.Mock<any, any, any>; }' to type 'Mocked<ProductionNotificationService>' may be a 
+mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 
+'unknown' first.
+      Type '{ sendPaymentNotification: Mock<any, any, any>; }' is missing the following properties from type '{ 
+sendPaymentNotification: MockInstance<Promise<void>, [userId: string, paymentId: string, alert: Omit<AlertPayload, 
+"userId" | "paymentId">], unknown>; sendOrderNotification: MockInstance<...>; sendFraudAlert: MockInstance<...>; 
+sendWebhookAlert: MockInstance<...>; }': sendOrderNotification, sendFraudAlert, sendWebhookAlert
+
+    [7m60[0m     productionNotification: {
+    [7m  [0m [91m                            ~[0m
+    [7m61[0m       sendPaymentNotification: jest.fn(),
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [7m62[0m     } as jest.Mocked<ProductionNotificationService>,
+    [7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        11.66 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

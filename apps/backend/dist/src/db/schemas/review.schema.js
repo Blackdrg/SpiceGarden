@@ -13,6 +13,12 @@ exports.ReviewSchema = exports.ReviewDocument = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let ReviewDocument = class ReviewDocument extends mongoose_2.Document {
+    userId;
+    restaurantId;
+    orderId;
+    rating;
+    comment;
+    images;
 };
 exports.ReviewDocument = ReviewDocument;
 __decorate([
@@ -43,4 +49,3 @@ exports.ReviewDocument = ReviewDocument = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], ReviewDocument);
 exports.ReviewSchema = mongoose_1.SchemaFactory.createForClass(ReviewDocument);
-//# sourceMappingURL=review.schema.js.map

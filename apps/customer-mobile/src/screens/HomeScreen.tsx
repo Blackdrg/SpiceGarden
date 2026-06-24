@@ -1,6 +1,7 @@
 /* eslint-disable */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, Easing } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
@@ -15,8 +16,8 @@ const HomeScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [user, setUser] = useState<{ name?: string } | null>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
 
   useEffect(() => {
     loadRestaurants();
@@ -105,5 +106,74 @@ const HomeScreen = () => {
     }
   }, [loadRestaurants]);
 
-  // Rest of the component remains the same...
-};
+  const renderRestaurant = useCallback(({ item }: { item: typeof restaurants[0] }) => {
+    return (
+      <Pressable
+        style={styles.restaurantCard}
+        onPress={() => navigation.navigate('Restaurant' as never)}
+        accessibilityLabel={item.name}
+        accessibilityRole="button"
+      >
+        <View style={styles.restaurantInfo}>
+          <Text style={styles.restaurantName}>{item.name}</Text>
+          <Text style={styles.restaurantDescription}>{item.description}</Text>
+          <View style={styles.restaurantMeta}>
+            <Text style={styles.ratingText}>★ {item.rating}</Text>
+            <Text style={styles.metaText}>{item.deliveryTime}</Text>
+            <Text style={styles.metaText}>{item.distance}</Text>
+          </View>
+        </View>
+      </Pressable>
+    );
+  }, [navigation]);
+
+  const keyExtractor = useCallback((item: typeof restaurants[0]) => item.id, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer} accessible={true} accessibilityLabel="Loading restaurants">
+        <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.welcomeText}>
+            Welcome{user?.name ? `, ${user.name}` : ', Guest'}
+          </Text>
+          <Text style={styles.headerSubtext}>Discover restaurants near you</Text>
+        </View>
+        <FlatList
+          data={restaurants}
+          keyExtractor={keyExtractor}
+          renderItem={renderRestaurant}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    </Animated.View>
+  );
+}
+
+export default HomeScreen;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: DESIGN_TOKENS.colors.background },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header: { padding: DESIGN_TOKENS.spacing.md, backgroundColor: DESIGN_TOKENS.colors.surface },
+  welcomeText: { fontSize: 20, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  headerSubtext: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  listContent: { paddingBottom: DESIGN_TOKENS.spacing.md },
+  restaurantCard: { backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, padding: DESIGN_TOKENS.spacing.md },
+  restaurantInfo: {},
+  restaurantName: { fontSize: 18, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  restaurantDescription: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  restaurantMeta: { flexDirection: 'row', marginTop: 8, alignItems: 'center' },
+  ratingText: { fontSize: 14, color: DESIGN_TOKENS.colors.warning, marginRight: DESIGN_TOKENS.spacing.sm, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  metaText: { fontSize: 12, color: DESIGN_TOKENS.colors.textSecondary, marginRight: DESIGN_TOKENS.spacing.sm, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+});
+

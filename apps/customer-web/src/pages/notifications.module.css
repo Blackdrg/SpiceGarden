@@ -1,0 +1,45 @@
+.pageContainer {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.loadingState {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  margin-bottom: 24px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preferenceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.saveActions {
+  margin-top: 24px;
+}

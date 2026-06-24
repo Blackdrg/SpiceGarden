@@ -13,6 +13,14 @@ exports.MenuVariantEntity = void 0;
 const typeorm_1 = require("typeorm");
 const menu_item_entity_1 = require("./menu-item.entity");
 let MenuVariantEntity = class MenuVariantEntity {
+    id;
+    menuItemId;
+    menuItem;
+    payload;
+    price;
+    metadata;
+    createdAt;
+    updatedAt;
 };
 exports.MenuVariantEntity = MenuVariantEntity;
 __decorate([
@@ -50,4 +58,3 @@ __decorate([
 exports.MenuVariantEntity = MenuVariantEntity = __decorate([
     (0, typeorm_1.Entity)('menu_variants')
 ], MenuVariantEntity);
-//# sourceMappingURL=menu-variant.entity.js.map

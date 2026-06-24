@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalRepositoryModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 const DATA_SOURCE_TOKEN = 'DataSource';
 function createRepository(entity) {
     const rows = [];
@@ -40,8 +41,19 @@ function createRepository(entity) {
         }),
         find: async () => rows,
         findBy: async () => rows,
-        findOne: async () => rows[0] || null,
-        findOneBy: async () => rows[0] || null,
+        findOne: async (options) => {
+            if (!options || !options.where) {
+                return rows[0] || null;
+            }
+            const criteria = options.where;
+            return rows.find((row) => Object.entries(criteria).every(([key, value]) => row[key] === value)) || null;
+        },
+        findOneBy: async (criteria) => {
+            if (!criteria) {
+                return rows[0] || null;
+            }
+            return rows.find((row) => Object.entries(criteria).every(([key, value]) => row[key] === value)) || null;
+        },
         findAndCount: async () => [rows, rows.length],
         count: async () => rows.length,
         create: (data = {}) => ({ ...(data || {}) }),
@@ -164,12 +176,17 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
                     transaction: async (_, work) => (work || _)(undefined),
                 },
             },
-            ...repositoryDefinitions.map((entity) => ({
-                provide: (0, typeorm_1.getRepositoryToken)(entity),
-                useValue: createRepository(entity),
-            })),
+            {
+                provide: typeorm_2.DataSource,
+                useExisting: DATA_SOURCE_TOKEN,
+            },
+            ...repositoryDefinitions.flatMap((entity) => [
+                {
+                    provide: (0, typeorm_1.getRepositoryToken)(entity),
+                    useValue: createRepository(entity),
+                },
+            ]),
         ],
-        exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
+        exports: [typeorm_2.DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
     })
 ], LocalRepositoryModule);
-//# sourceMappingURL=local-repository.module.js.map

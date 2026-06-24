@@ -14,6 +14,7 @@ export interface Order {
   grandTotal: number;
   couponId?: string;
   deliveryAddressId: string;
+  deliveredAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,7 @@ export enum OrderStatus {
   RESTAURANT_ACCEPTED = 'restaurant_accepted',
   PREPARING = 'preparing',
   READY = 'ready',
+  READY_FOR_PICKUP = 'ready_for_pickup',
   DRIVER_ASSIGNED = 'driver_assigned',
   PICKED_UP = 'picked_up',
   ON_THE_WAY = 'on_the_way',

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const ai_service_1 = require("./ai.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 let AiController = class AiController {
+    aiService;
     constructor(aiService) {
         this.aiService = aiService;
     }
@@ -58,4 +59,3 @@ exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [ai_service_1.AiService])
 ], AiController);
-//# sourceMappingURL=ai.controller.js.map

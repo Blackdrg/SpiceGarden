@@ -20,4 +20,3 @@ exports.LedgerModule = LedgerModule = __decorate([
         exports: [ledger_service_1.LedgerService],
     })
 ], LedgerModule);
-//# sourceMappingURL=ledger.module.js.map

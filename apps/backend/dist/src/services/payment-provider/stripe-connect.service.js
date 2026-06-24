@@ -24,14 +24,19 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 const payout_report_entity_1 = require("../../db/entities/payout-report.entity");
+const missing_env_error_1 = require("../../common/errors/missing-env.error");
 let StripeConnectService = StripeConnectService_1 = class StripeConnectService {
+    configService;
+    restaurantRepo;
+    payoutRepo;
+    logger = new common_1.Logger(StripeConnectService_1.name);
+    stripe;
     constructor(configService, restaurantRepo, payoutRepo) {
         this.configService = configService;
         this.restaurantRepo = restaurantRepo;
         this.payoutRepo = payoutRepo;
-        this.logger = new common_1.Logger(StripeConnectService_1.name);
-        const secretKey = this.configService.get('STRIPE_CONNECT_SECRET_KEY') || this.configService.get('STRIPE_SECRET_KEY');
-        this.stripe = new stripe_1.default(secretKey || 'sk_test_placeholder', {
+        const secretKey = this.configService.get('STRIPE_CONNECT_SECRET_KEY') || (0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY');
+        this.stripe = new stripe_1.default(secretKey, {
             apiVersion: '2024-04-10',
         });
     }
@@ -268,4 +273,3 @@ exports.StripeConnectService = StripeConnectService = StripeConnectService_1 = _
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], StripeConnectService);
-//# sourceMappingURL=stripe-connect.service.js.map

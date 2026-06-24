@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { DriverIncentiveEntity, IncentiveStatus } from '../../db/entities/driver-incentive.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -17,6 +17,7 @@ export class DriverPayoutService {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(OrderEntity)
     private orderRepo: Repository<OrderEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -95,7 +96,7 @@ export class DriverPayoutService {
       approvedAt: new Date(),
     });
 
-    return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+    return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }))!;
   }
 
   async markPaid(incentiveId: string, payoutReference: string): Promise<DriverIncentiveEntity> {
@@ -110,7 +111,7 @@ export class DriverPayoutService {
       paidAt: new Date(),
     });
 
-    return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+    return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }))!;
   }
 
   async getPendingIncentives(driverId?: string): Promise<DriverIncentiveEntity[]> {
@@ -121,7 +122,7 @@ export class DriverPayoutService {
 
     return this.incentiveRepo.find({
       where,
-      relations: ['driver'],
+      relations: { driver: true },
       order: { createdAt: 'ASC' },
     });
   }

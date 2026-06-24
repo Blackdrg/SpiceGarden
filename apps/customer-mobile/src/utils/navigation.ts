@@ -40,7 +40,7 @@ export const linking = {
 
 // Accessibility focus manager
 export const useAccessibilityFocus = () => {
-  const focusAnim = useRef(new Animated.Value(0)).current;
+  const focusAnim = useMemo(() => new Animated.Value(0), []);
 
   const focusElement = (callback?: () => void) => {
     Animated.sequence([

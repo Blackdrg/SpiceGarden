@@ -18,11 +18,14 @@ const compliance_service_1 = require("../compliance/compliance.service");
 const data_privacy_service_1 = require("../services/privacy/data-privacy.service");
 const deletion_request_entity_1 = require("../db/entities/deletion-request.entity");
 let RetentionJob = RetentionJob_1 = class RetentionJob {
+    complianceService;
+    dataPrivacyService;
+    dataSource;
+    logger = new common_1.Logger(RetentionJob_1.name);
     constructor(complianceService, dataPrivacyService, dataSource) {
         this.complianceService = complianceService;
         this.dataPrivacyService = dataPrivacyService;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(RetentionJob_1.name);
     }
     async handleDailyRetention() {
         this.logger.log('Starting daily data retention job');
@@ -65,4 +68,3 @@ exports.RetentionJob = RetentionJob = RetentionJob_1 = __decorate([
         data_privacy_service_1.DataPrivacyService,
         typeorm_1.DataSource])
 ], RetentionJob);
-//# sourceMappingURL=retention-job.js.map

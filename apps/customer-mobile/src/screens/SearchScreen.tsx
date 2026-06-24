@@ -1,11 +1,25 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, FlatList, Animated, Easing, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STORAGE_KEYS } from '../constants/storage.keys';
 import { safeParse } from '../utils/safe-parse';
 import SkeletonRect from '../components/SkeletonLoader';
+
+function renderSkeleton() {
+  return (
+    <View style={styles.resultCard}>
+      <SkeletonRect width={50} height={50} borderRadius={8} />
+      <View style={{ flex: 1, marginLeft: 12 }}>
+        <SkeletonRect width="70%" height={20} style={{ marginBottom: 6 }} />
+        <SkeletonRect width="50%" height={16} style={{ marginBottom: 4 }} />
+        <SkeletonRect width="90%" height={14} />
+      </View>
+    </View>
+  );
+}
 
 const API_URL = 'http://localhost:3001';
 
@@ -31,8 +45,8 @@ const SearchScreen = () => {
   const [showRecent, setShowRecent] = useState(true);
   const [isOffline, setIsOffline] = useState(false);
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const slideAnim = useMemo(() => new Animated.Value(20), []);
 
   useEffect(() => {
     Animated.parallel([
@@ -122,19 +136,19 @@ const SearchScreen = () => {
   const renderSearchResult = ({ item }: { item: SearchResult }) => {
     if (item.type === 'restaurant') {
       return (
-        <TouchableOpacity 
+        <Pressable 
           style={styles.resultCard}
           onPress={() => navigation.navigate('Restaurant', { restaurantId: item.id })}
           accessibilityLabel={`View ${item.name} restaurant`}
           accessibilityRole="button"
         >
           <View style={styles.resultIcon}>
-            <Text style={{ fontSize: 24 }}>🍽️</Text>
+            <Text style={{ fontSize: 24 }}>Menu</Text>
           </View>
           <View style={styles.resultInfo}>
             <Text style={styles.resultName}>{item.name}</Text>
             <Text style={styles.resultMeta}>
-              ⭐ {item.rating} • ⏱ {item.deliveryTime} • 📍 {item.distance}
+              Rating {item.rating} • ETA {item.deliveryTime} • Distance {item.distance}
             </Text>
             {item.description && (
               <Text style={styles.resultDescription} numberOfLines={1}>
@@ -142,12 +156,12 @@ const SearchScreen = () => {
               </Text>
             )}
           </View>
-        </TouchableOpacity>
+        </Pressable>
       );
     }
 
     return (
-      <TouchableOpacity 
+      <Pressable 
         style={styles.resultCard}
         accessibilityLabel={`View ${item.name} dish`}
         accessibilityRole="button"
@@ -159,7 +173,7 @@ const SearchScreen = () => {
           <Text style={styles.resultName}>{item.name}</Text>
           <Text style={styles.resultPrice}>₹{item.price}</Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -177,28 +191,28 @@ const SearchScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <Pressable 
           onPress={() => navigation.goBack()} 
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
+          <Text style={styles.backButtonText}>Back</Text>
+        </Pressable>
         <Text style={styles.headerText}>Search</Text>
-        <TouchableOpacity 
+        <Pressable 
           onPress={() => setShowFilters(!showFilters)}
           style={styles.filterButton}
           accessibilityLabel="Toggle filters"
           accessibilityRole="button"
         >
-          <Text style={styles.filterButtonText}>⚙️</Text>
-        </TouchableOpacity>
+          <Text style={styles.filterButtonText}>Filters</Text>
+        </Pressable>
       </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Text style={styles.searchIcon}>Search</Text>
           <TextInput
             placeholder="Search restaurants, dishes..."
             value={query}
@@ -231,24 +245,24 @@ const SearchScreen = () => {
           <Text style={styles.filtersTitle}>Filters</Text>
           <View style={styles.filterRow}>
             <Text style={styles.filterLabel}>Min Rating</Text>
-            <TouchableOpacity 
+            <Pressable 
               style={styles.filterOption}
               accessibilityLabel="Set minimum rating filter"
             >
-              <Text style={styles.filterOptionText}>4+ ⭐</Text>
-            </TouchableOpacity>
+              <Text style={styles.filterOptionText}>4+ Rating</Text>
+            </Pressable>
           </View>
           <View style={styles.filterRow}>
             <Text style={styles.filterLabel}>Dietary</Text>
             <View style={styles.dietaryFilters}>
               {['Veg', 'Vegan', 'Gluten-free'].map((diet) => (
-                <TouchableOpacity 
+                <Pressable 
                   key={diet}
                   style={styles.dietaryTag}
                   accessibilityLabel={`Filter by ${diet}`}
                 >
                   <Text style={styles.dietaryTagText}>{diet}</Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </View>
@@ -276,15 +290,15 @@ const SearchScreen = () => {
             <View style={styles.recentHeader}>
               <Text style={styles.recentTitle}>Recent Searches</Text>
               {recentSearches.length > 0 && (
-                <TouchableOpacity onPress={clearRecent}>
+                <Pressable onPress={clearRecent}>
                   <Text style={styles.clearText}>Clear</Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
 {recentSearches.length > 0 ? (
                recentSearches.map((recentItem, index) => (
-                 <TouchableOpacity 
-                   key={index}
+                 <Pressable 
+                   key={recentItem}
                    style={styles.recentItem}
                    onPress={() => {
                      setQuery(recentItem);
@@ -294,7 +308,7 @@ const SearchScreen = () => {
                  >
                    <Text style={styles.recentIcon}>🕒</Text>
                    <Text style={styles.recentSearchText}>{recentItem}</Text>
-                 </TouchableOpacity>
+                 </Pressable>
                ))
             ) : (
               <View style={styles.emptyState}>

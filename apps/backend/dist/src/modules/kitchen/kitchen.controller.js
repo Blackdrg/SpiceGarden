@@ -15,7 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.KitchenController = void 0;
 const common_1 = require("@nestjs/common");
 const kitchen_service_1 = require("./kitchen.service");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let KitchenController = class KitchenController {
+    kitchenService;
     constructor(kitchenService) {
         this.kitchenService = kitchenService;
     }
@@ -293,6 +300,8 @@ __decorate([
 ], KitchenController.prototype, "forecastInventoryNeeds", null);
 exports.KitchenController = KitchenController = __decorate([
     (0, common_1.Controller)('kitchen'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.KITCHEN_STAFF, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('kitchen:manage_own'),
     __metadata("design:paramtypes", [kitchen_service_1.KitchenService])
 ], KitchenController);
-//# sourceMappingURL=kitchen.controller.js.map

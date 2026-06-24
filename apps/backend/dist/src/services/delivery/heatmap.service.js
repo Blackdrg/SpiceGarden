@@ -22,13 +22,18 @@ const driver_entity_1 = require("../../db/entities/driver.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
 const surge_zone_entity_1 = require("../../db/entities/surge-zone.entity");
 let HeatmapService = HeatmapService_1 = class HeatmapService {
+    branchRepo;
+    driverRepo;
+    orderRepo;
+    surgeZoneRepo;
+    dataSource;
+    logger = new common_1.Logger(HeatmapService_1.name);
     constructor(branchRepo, driverRepo, orderRepo, surgeZoneRepo, dataSource) {
         this.branchRepo = branchRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.surgeZoneRepo = surgeZoneRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(HeatmapService_1.name);
     }
     async generateDeliveryHeatmap(centralPoint, radiusKm = 10) {
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -102,7 +107,7 @@ let HeatmapService = HeatmapService_1 = class HeatmapService {
     }
     async updateSurgeZone(zoneId, updates) {
         await this.surgeZoneRepo.update(zoneId, updates);
-        return this.surgeZoneRepo.findOne({ where: { id: zoneId } });
+        return (await this.surgeZoneRepo.findOne({ where: { id: zoneId } }));
     }
     async getAllSurgeZones() {
         return await this.surgeZoneRepo.find({ order: { isActive: 'DESC' } });
@@ -153,4 +158,3 @@ exports.HeatmapService = HeatmapService = HeatmapService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], HeatmapService);
-//# sourceMappingURL=heatmap.service.js.map

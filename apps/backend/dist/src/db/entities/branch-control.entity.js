@@ -12,6 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchControlEntity = void 0;
 const typeorm_1 = require("typeorm");
 let BranchControlEntity = class BranchControlEntity {
+    id;
+    branchId;
+    controlType;
+    controlValue;
+    isActive;
+    activatedAt;
+    activatedBy;
+    expiresAt;
+    deactivatedAt;
+    deactivatedBy;
+    createdAt;
+    updatedAt;
 };
 exports.BranchControlEntity = BranchControlEntity;
 __decorate([
@@ -65,4 +77,3 @@ __decorate([
 exports.BranchControlEntity = BranchControlEntity = __decorate([
     (0, typeorm_1.Entity)('branch_controls')
 ], BranchControlEntity);
-//# sourceMappingURL=branch-control.entity.js.map

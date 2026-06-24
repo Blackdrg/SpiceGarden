@@ -17,23 +17,27 @@ const audit_service_1 = require("../../audit/audit.service");
 const ledger_service_1 = require("../../modules/ledger/ledger.service");
 const gateway_factory_service_1 = require("./gateway-factory.service");
 let PaymentService = PaymentService_1 = class PaymentService {
+    configService;
+    auditService;
+    ledgerService;
+    gatewayFactory;
+    logger = new common_1.Logger(PaymentService_1.name);
     constructor(configService, auditService, ledgerService, gatewayFactory) {
         this.configService = configService;
         this.auditService = auditService;
         this.ledgerService = ledgerService;
         this.gatewayFactory = gatewayFactory;
-        this.logger = new common_1.Logger(PaymentService_1.name);
     }
     async createPaymentIntent(amount, currency = 'usd', userId = null, metadata = {}, request, gatewayName) {
         try {
             const gateway = this.gatewayFactory.getGateway(gatewayName);
-            await this.validatePaymentLimits(userId, amount, request);
-            const paymentIntent = await gateway.createPaymentIntent(amount, currency, userId, metadata);
-            await this.auditService.logPaymentEvent('payment_intent_created', userId, amount, currency, gateway.getGatewayName(), paymentIntent.id, true, request);
+            await this.validatePaymentLimits(userId ?? '', amount, request);
+            const paymentIntent = await gateway.createPaymentIntent(amount, currency, userId ?? '', metadata);
+            await this.auditService.logPaymentEvent('payment_intent_created', userId ?? '', amount, currency, gateway.getGatewayName(), paymentIntent.id, true, request);
             return paymentIntent;
         }
         catch (error) {
-            await this.auditService.logPaymentEvent('payment_intent_failed', userId, amount, currency, gatewayName ? gatewayName : 'any', null, false, request, error.message);
+            await this.auditService.logPaymentEvent('payment_intent_failed', userId ?? '', amount, currency, gatewayName ? gatewayName : 'any', '', false, request, error.message);
             this.logger.error('Payment intent creation failed:', error);
             throw error;
         }
@@ -125,4 +129,3 @@ exports.PaymentService = PaymentService = PaymentService_1 = __decorate([
         ledger_service_1.LedgerService,
         gateway_factory_service_1.PaymentGatewayFactory])
 ], PaymentService);
-//# sourceMappingURL=payments.service.js.map

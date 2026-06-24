@@ -1,7 +1,29 @@
+import React from 'react';
 import { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
+
+const inputStyle: React.CSSProperties = {
+  padding: '8px 12px',
+  background: '#0a0a0a',
+  border: '1px solid #333',
+  borderRadius: 6,
+  color: '#fff',
+  fontSize: 14,
+};
+
+const primaryButtonStyle: React.CSSProperties = {
+  padding: '10px 20px',
+  background: '#f97316',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 6,
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: 14,
+};
 
 interface Coupon {
   id: string;
@@ -37,6 +59,8 @@ export default function LoyaltyCoupons() {
     alert('Coupon created');
   };
 
+  const activeCoupons = coupons.filter((c) => c.status === 'active');
+
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
       <Head><title>Coupon Management - SpiceGarden</title></Head>
@@ -51,14 +75,14 @@ export default function LoyaltyCoupons() {
             value={form.code}
             onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
             placeholder="Coupon code (e.g. SAVE20)"
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <select
             id="coupon-type"
             aria-label="Coupon type"
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           >
             <option value="percentage">Percentage</option>
             <option value="fixed_amount">Fixed Amount</option>
@@ -71,7 +95,7 @@ export default function LoyaltyCoupons() {
             onChange={(e) => setForm({ ...form, discountValue: e.target.value })}
             placeholder="Discount value"
             type="number"
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <input
             id="usage-limit"
@@ -80,12 +104,13 @@ export default function LoyaltyCoupons() {
             onChange={(e) => setForm({ ...form, usageLimit: e.target.value })}
             placeholder="Usage limit"
             type="number"
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <button
+            type="button"
             onClick={createCoupon}
             disabled={creating}
-            style={{ padding: '10px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
+            style={primaryButtonStyle}
           >
             {creating ? 'Creating...' : 'Create Coupon'}
           </button>
@@ -97,7 +122,7 @@ export default function LoyaltyCoupons() {
         <p style={{ color: '#71717a' }}>Loading...</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {coupons.filter((c) => c.status === 'active').map((c) => (
+          {activeCoupons.map((c) => (
             <div key={c.id} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 6, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontWeight: 600, color: '#f97316' }}>{c.code}</span>
@@ -111,7 +136,7 @@ export default function LoyaltyCoupons() {
           )}
         </div>
       )}
-      <a href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</a>
+      <Link href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</Link>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STRINGS } from '../constants/strings';
 import { formatCurrency, formatDate, formatTime } from '../utils/currency';
@@ -12,15 +12,15 @@ export interface OrderCardProps {
   onTrack?: (orderId: string) => void;
 }
 
-export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: OrderCardProps) {
-  const getStatusColor = (status: OrderStatus): string => {
-    switch (status) {
-      case 'delivered': return DESIGN_TOKENS.colors.success;
-      case 'cancelled': return DESIGN_TOKENS.colors.danger;
-      default: return DESIGN_TOKENS.colors.warning;
-    }
-  };
+function getStatusColor(status: OrderStatus): string {
+  switch (status) {
+    case 'delivered': return DESIGN_TOKENS.colors.success;
+    case 'cancelled': return DESIGN_TOKENS.colors.danger;
+    default: return DESIGN_TOKENS.colors.warning;
+  }
+}
 
+export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: OrderCardProps) {
   const totalItems = calculateTotalItems(order.items);
   const formattedTotal = formatCurrency(order.total, 'INR');
 
@@ -72,24 +72,24 @@ export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: 
       </View>
       <View style={styles.orderActions}>
         {isReorderable(order.status) && onReorder && (
-          <TouchableOpacity
+          <Pressable
             onPress={() => onReorder(order.id)}
             style={styles.reorderButton}
             accessibilityLabel={STRINGS.accessibility.reorderButton}
             accessibilityRole="button"
           >
             <Text style={styles.reorderButtonText}>{STRINGS.orderHistory.reorder}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
         {isTrackable(order.status) && onTrack && (
-          <TouchableOpacity
+          <Pressable
             onPress={() => onTrack(order.id)}
             style={styles.trackButton}
             accessibilityLabel={STRINGS.accessibility.trackButton}
             accessibilityRole="button"
           >
             <Text style={styles.trackButtonText}>{STRINGS.orderHistory.track}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
     </View>
@@ -100,14 +100,14 @@ export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: 
     prev.order.total === next.order.total;
 });
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   orderCard: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
     marginHorizontal: DESIGN_TOKENS.spacing.md,
     marginVertical: DESIGN_TOKENS.spacing.xs,
     borderRadius: DESIGN_TOKENS.radius.card,
     overflow: 'hidden',
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   },
   orderInfo: {
     padding: DESIGN_TOKENS.spacing.md,
@@ -200,5 +200,3 @@ export const styles = StyleSheet.create({
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });
-
-export default OrderCard;

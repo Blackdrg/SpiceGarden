@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -50,6 +50,7 @@ export class EnhancedDeliveryService {
     @InjectRepository(DriverAssignmentEntity)
     private driverAssignmentRepo: Repository<DriverAssignmentEntity>,
     private geoService: GeoService,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {
     this.initializeSurgeZones();
@@ -129,7 +130,7 @@ export class EnhancedDeliveryService {
         status: OrderStatus.DRIVER_ASSIGNED,
       });
 
-      await manager.increment(DriverEntity, driverId, 'totalDeliveries', 0);
+      await manager.increment(DriverEntity, { id: driverId } as any, 'totalDeliveries', 1);
 
       const assignment = manager.create(DriverAssignmentEntity, {
         driverId: driverId as any,
@@ -266,12 +267,12 @@ export class EnhancedDeliveryService {
       return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
     }
 
-    if (speed !== undefined && speed > 200) {
+    if (speed !== undefined && speed >= 200) {
       return { isFake: true, reason: 'Unrealistic speed', driverId };
     }
 
     const timestamp = typeof location.timestamp === 'string' ? Number(location.timestamp) : location.timestamp;
-    if (timestamp && Date.now() - timestamp > 60 * 60 * 1000 && speed && speed > 30) {
+    if (timestamp && Date.now() - timestamp >= 60 * 1000 && speed && speed > 30) {
       return { isFake: true, reason: 'GPS staleness', driverId };
     }
 
@@ -316,7 +317,7 @@ export class EnhancedDeliveryService {
         await manager.update(DriverEntity, driverId, {
           failureCount: (driver.failureCount || 0) + 1,
           isFraudSuspicious: (driver.failureCount || 0) + 1 >= 3,
-          fraudFlags: { ...(driver.fraudFlags || {} as any), noShowRisk: 0.8 },
+          fraudFlags: { ...(driver.fraudFlags || {} as any), noShowRisk: 0.8 } as any,
         });
       }
 
@@ -327,7 +328,7 @@ export class EnhancedDeliveryService {
 
   async autoReassignOnNoShow(orderId: string, previousDriverId?: string): Promise<boolean> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
-    if (!order) return false;
+    if (!order || order.status !== OrderStatus.CANCELLED) return false;
 
     const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
     if (!assignment) return false;

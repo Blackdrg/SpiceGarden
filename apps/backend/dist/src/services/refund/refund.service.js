@@ -35,6 +35,16 @@ var RefundRequestType;
     RefundRequestType["DISPUTE_RESOLUTION"] = "dispute_resolution";
 })(RefundRequestType || (exports.RefundRequestType = RefundRequestType = {}));
 let RefundService = RefundService_1 = class RefundService {
+    refundRepo;
+    refundApprovalRepo;
+    orderRepo;
+    userRepo;
+    paymentService;
+    notificationService;
+    ledgerService;
+    productionNotification;
+    configService;
+    logger = new common_1.Logger(RefundService_1.name);
     constructor(refundRepo, refundApprovalRepo, orderRepo, userRepo, paymentService, notificationService, ledgerService, productionNotification, configService) {
         this.refundRepo = refundRepo;
         this.refundApprovalRepo = refundApprovalRepo;
@@ -45,7 +55,6 @@ let RefundService = RefundService_1 = class RefundService {
         this.ledgerService = ledgerService;
         this.productionNotification = productionNotification;
         this.configService = configService;
-        this.logger = new common_1.Logger(RefundService_1.name);
     }
     async createRefundRequest(orderId, requestedBy, amount, reason, requestType = RefundRequestType.CUSTOMER_REQUEST) {
         const order = await this.orderRepo.findOne({ where: { id: orderId } });
@@ -201,7 +210,7 @@ let RefundService = RefundService_1 = class RefundService {
     async getRefundRequest(approvalId) {
         const approval = await this.refundApprovalRepo.findOne({
             where: { id: approvalId },
-            relations: ['order', 'requester', 'approver']
+            relations: { order: true }
         });
         if (!approval) {
             throw new common_1.NotFoundException(`Refund approval not found: ${approvalId}`);
@@ -211,14 +220,14 @@ let RefundService = RefundService_1 = class RefundService {
     async getRefundRequestsForOrder(orderId) {
         return await this.refundApprovalRepo.find({
             where: { order: { id: orderId } },
-            relations: ['requester', 'approver'],
+            relations: {},
             order: { createdAt: 'DESC' }
         });
     }
     async getRefundRequestsByStatus(status) {
         return await this.refundApprovalRepo.find({
             where: { approvalStatus: status },
-            relations: ['order', 'requester', 'approver'],
+            relations: { order: true },
             order: { createdAt: 'DESC' }
         });
     }
@@ -337,4 +346,3 @@ exports.RefundService = RefundService = RefundService_1 = __decorate([
         production_notification_service_1.ProductionNotificationService,
         config_1.ConfigService])
 ], RefundService);
-//# sourceMappingURL=refund.service.js.map

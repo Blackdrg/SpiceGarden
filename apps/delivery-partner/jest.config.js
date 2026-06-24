@@ -1,6 +1,7 @@
 module.exports = {
-  preset: 'react-native',
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transform: {
     '^.+\\.(js|ts|tsx)$': 'babel-jest',
   },
@@ -8,7 +9,7 @@ module.exports = {
     'node_modules/(?!(react-native|@react-native|expo|@expo|@spicegarden)/)',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.spec.ts'],
+  testMatch: ['**/*.test.ts', '**/*.spec.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },

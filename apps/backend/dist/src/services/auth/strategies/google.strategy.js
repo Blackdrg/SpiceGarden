@@ -15,6 +15,7 @@ const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
 const passport_google_oauth20_1 = require("passport-google-oauth20");
 let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrategy)(passport_google_oauth20_1.Strategy, 'google') {
+    configService;
     constructor(configService) {
         super({
             clientID: configService.get('GOOGLE_CLIENT_ID'),
@@ -41,4 +42,3 @@ exports.GoogleStrategy = GoogleStrategy = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], GoogleStrategy);
-//# sourceMappingURL=google.strategy.js.map

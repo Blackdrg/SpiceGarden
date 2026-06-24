@@ -19,10 +19,12 @@ const order_entity_1 = require("../../db/entities/order.entity");
 const data_export_request_entity_1 = require("../../db/entities/data-export-request.entity");
 const deletion_request_entity_1 = require("../../db/entities/deletion-request.entity");
 let DataPrivacyService = DataPrivacyService_1 = class DataPrivacyService {
+    encryptionService;
+    dataSource;
+    logger = new common_1.Logger(DataPrivacyService_1.name);
     constructor(encryptionService, dataSource) {
         this.encryptionService = encryptionService;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(DataPrivacyService_1.name);
     }
     async getUserData(userId) {
         const user = this.dataSource.getRepository(user_entity_1.UserEntity).findOne({ where: { id: userId } });
@@ -129,4 +131,3 @@ exports.DataPrivacyService = DataPrivacyService = DataPrivacyService_1 = __decor
     __metadata("design:paramtypes", [encryption_service_1.EncryptionService,
         typeorm_1.DataSource])
 ], DataPrivacyService);
-//# sourceMappingURL=data-privacy.service.js.map

@@ -8,4 +8,3 @@ exports.QUEUE_NAMES = {
     REFUNDS: 'refunds',
     ANALYTICS: 'analytics',
 };
-//# sourceMappingURL=queues.js.map

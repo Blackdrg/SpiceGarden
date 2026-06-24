@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@spicegarden/ui';
 import { useNetworkStatusContext } from '../contexts/NetworkStatusContext';
+import styles from './OfflineIndicator.module.css';
 
 const OfflineIndicator = () => {
   const { isOnline, lastOnline } = useNetworkStatusContext();
@@ -17,25 +18,12 @@ const OfflineIndicator = () => {
   const seconds = timeOffline % 60;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 40,
-      backgroundColor: '#ffebee',
-      color: '#c62828',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ fontSize: 16 }}>📵</div>
-        <div>
-          <p style={{ margin: 0, fontSize: 14 }}>You're offline</p>
-          <p style={{ margin: 0, fontSize: 12, opacity: 0.8 }}>
+    <div className={styles.banner}>
+      <div className={styles.content}>
+        <div className={styles.icon}>📵</div>
+        <div className={styles.textBlock}>
+          <p className={styles.statusText}>You're offline</p>
+          <p className={styles.lastSeenText}>
             Last seen: {minutes}m {seconds}s ago
           </p>
         </div>
@@ -43,7 +31,7 @@ const OfflineIndicator = () => {
           label="Retry" 
           onClick={() => window.location.reload()} 
           variant="outline"
-          style={{ marginLeft: 16 }}
+          className={styles.retryButton}
         />
       </div>
     </div>

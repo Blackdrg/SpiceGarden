@@ -17,7 +17,13 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const driver_fleet_service_1 = require("./driver-fleet.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let DriverFleetController = class DriverFleetController {
+    fleetService;
     constructor(fleetService) {
         this.fleetService = fleetService;
     }
@@ -150,7 +156,8 @@ exports.DriverFleetController = DriverFleetController = __decorate([
     (0, swagger_1.ApiTags)('driver-fleet'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('fleet'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __metadata("design:paramtypes", [driver_fleet_service_1.DriverFleetService])
 ], DriverFleetController);
-//# sourceMappingURL=driver-fleet.controller.js.map

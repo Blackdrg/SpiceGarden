@@ -13,6 +13,22 @@ exports.RestaurantGSTEntity = void 0;
 const typeorm_1 = require("typeorm");
 const restaurant_entity_1 = require("./restaurant.entity");
 let RestaurantGSTEntity = class RestaurantGSTEntity {
+    id;
+    restaurant;
+    restaurantId;
+    gstin;
+    legalNameOfBusiness;
+    tradeName;
+    address;
+    stateCode;
+    state;
+    registrationDate;
+    cancellationDate;
+    isActive;
+    email;
+    phone;
+    createdAt;
+    updatedAt;
 };
 exports.RestaurantGSTEntity = RestaurantGSTEntity;
 __decorate([
@@ -82,4 +98,3 @@ __decorate([
 exports.RestaurantGSTEntity = RestaurantGSTEntity = __decorate([
     (0, typeorm_1.Entity)('restaurant_gst')
 ], RestaurantGSTEntity);
-//# sourceMappingURL=restaurant-gst.entity.js.map

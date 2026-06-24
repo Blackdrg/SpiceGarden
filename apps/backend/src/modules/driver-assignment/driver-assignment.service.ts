@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, IsNull } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -29,6 +29,7 @@ export class DriverAssignmentService {
     private readonly slaRepo: Repository<DeliverySLAEntity>,
     @InjectRepository(DriverFraudEntity)
     private readonly fraudRepo: Repository<DriverFraudEntity>,
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly dispatchEngine: DispatchEngineService,
     private readonly etaIntelligence: ETAIntelligenceService
@@ -75,7 +76,7 @@ export class DriverAssignmentService {
     }
     return this.assignmentRepo.find({
       where,
-      relations: ['order', 'driver', 'branch'],
+      relations: { order: true, driver: true, branch: true },
       order: { createdAt: 'DESC' }
     });
   }
@@ -86,7 +87,7 @@ export class DriverAssignmentService {
   async getOrderAssignments(orderId: string): Promise<DriverAssignmentEntity[]> {
     return this.assignmentRepo.find({
       where: { order: { id: orderId } },
-      relations: ['driver', 'branch'],
+      relations: { driver: true, branch: true },
       order: { createdAt: 'DESC' }
     });
   }
@@ -175,11 +176,11 @@ export class DriverAssignmentService {
       throw new Error('Driver not found');
     }
 
-    // Get recent assignments for scoring calculations
+// Get recent assignments for scoring calculations
     const recentAssignments = await this.assignmentRepo.find({
       where: { driver: { id: driverId }, status: 'delivered' },
-      relations: ['order'],
-       order: { createdAt: 'DESC' },
+      relations: { order: true },
+      order: { createdAt: 'DESC' },
       take: 50 // Look at last 50 deliveries
     });
 

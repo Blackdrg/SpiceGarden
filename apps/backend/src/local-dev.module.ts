@@ -3,6 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DbModule } from './db/db.module';
+import { SecurityModule } from './security/security.module';
+import { LoggingModule } from './logging/logging.module';
+import { AuthServiceModule } from './services/auth/auth.module';
 
 @Module({
   imports: [
@@ -10,6 +14,10 @@ import { AppService } from './app.service';
       isGlobal: true,
       envFilePath: [path.resolve(process.cwd(), '../../.env'), path.resolve(process.cwd(), '.env')],
     }),
+    DbModule,
+    SecurityModule,
+    LoggingModule,
+    AuthServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

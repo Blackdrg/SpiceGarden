@@ -1,15 +1,25 @@
-﻿import { Controller, Post, Get, Put, Param, Body, UseGuards, Request, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
+﻿import { Controller, Post, Get, Put, Param, Body, UseGuards, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { RestaurantOnboardingService } from './onboarding.service';
 import { OnboardingStep } from '../../db/entities/restaurant-onboarding.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
+import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
+import { type Request } from 'express';
 
 @ApiTags('restaurant-onboarding')
 @Controller('restaurant-onboarding')
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 export class RestaurantOnboardingController {
+
   constructor(private readonly onboardingService: RestaurantOnboardingService) {}
 
   @Post('initialize/:restaurantId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Initialize onboarding for a restaurant' })
   @ApiResponse({ status: 200, description: 'Onboarding initialized successfully' })
@@ -22,6 +32,7 @@ export class RestaurantOnboardingController {
   }
 
   @Put('step/:onboardingId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update onboarding step' })
   @ApiResponse({ status: 200, description: 'Onboarding step updated successfully' })
@@ -49,6 +60,7 @@ export class RestaurantOnboardingController {
   }
 
   @Get('status/:restaurantId')
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get onboarding status for a restaurant' })
   @ApiResponse({ status: 200, description: 'Onboarding status retrieved successfully' })
@@ -61,6 +73,7 @@ export class RestaurantOnboardingController {
   }
 
   @Post('complete/:onboardingId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Complete onboarding' })
   @ApiResponse({ status: 200, description: 'Onboarding completed successfully' })
@@ -86,6 +99,7 @@ export class RestaurantOnboardingController {
   }
 
   @Post('reject/:onboardingId')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reject onboarding' })
   @ApiResponse({ status: 200, description: 'Onboarding rejected successfully' })
@@ -113,6 +127,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('gst/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Configure GST for a restaurant' })
   async submitGSTConfig(
@@ -123,6 +140,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('pricing/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Setup pricing for a restaurant' })
   async setupPricing(
@@ -133,6 +153,9 @@ export class RestaurantOnboardingController {
   }
 
   @Put('payout/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('restaurants:manage_own')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Setup payout settings for a restaurant' })
   async setupPayout(
@@ -143,10 +166,14 @@ export class RestaurantOnboardingController {
   }
 
   @Get('analytics/overview')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('analytics:read')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get onboarding analytics' })
   @ApiResponse({ status: 200, description: 'Onboarding analytics retrieved successfully' })
   async getOnboardingAnalytics() {
+
     return await this.onboardingService.getOnboardingAnalytics();
   }
 }

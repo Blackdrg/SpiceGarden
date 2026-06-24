@@ -13,6 +13,28 @@ exports.DriverEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let DriverEntity = class DriverEntity {
+    id;
+    userId;
+    user;
+    licenseNumber;
+    vehicleNumber;
+    vehicleType;
+    kycStatus;
+    isOnline;
+    isAvailable;
+    rating;
+    currentLocation;
+    totalDeliveries;
+    totalDistance;
+    failureCount;
+    lastLocationUpdate;
+    averageSpeed;
+    fraudScore;
+    isFraudSuspicious;
+    lastFraudCheck;
+    fraudFlags;
+    createdAt;
+    updatedAt;
 };
 exports.DriverEntity = DriverEntity;
 __decorate([
@@ -110,4 +132,3 @@ __decorate([
 exports.DriverEntity = DriverEntity = __decorate([
     (0, typeorm_1.Entity)('drivers')
 ], DriverEntity);
-//# sourceMappingURL=driver.entity.js.map

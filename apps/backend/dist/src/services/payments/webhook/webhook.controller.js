@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const webhook_service_1 = require("./webhook.service");
 const config_1 = require("@nestjs/config");
 let PaymentWebhookController = class PaymentWebhookController {
+    webhookService;
+    configService;
     constructor(webhookService, configService) {
         this.webhookService = webhookService;
         this.configService = configService;
@@ -55,4 +57,3 @@ exports.PaymentWebhookController = PaymentWebhookController = __decorate([
     __metadata("design:paramtypes", [webhook_service_1.WebhookService,
         config_1.ConfigService])
 ], PaymentWebhookController);
-//# sourceMappingURL=webhook.controller.js.map

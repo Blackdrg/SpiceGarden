@@ -14,10 +14,11 @@ exports.SecretsRotationService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 let SecretsRotationService = SecretsRotationService_1 = class SecretsRotationService {
+    configService;
+    logger = new common_1.Logger(SecretsRotationService_1.name);
+    rotationHistory = new Map();
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(SecretsRotationService_1.name);
-        this.rotationHistory = new Map();
     }
     getSecretsRequiringRotation() {
         const secrets = [
@@ -126,4 +127,3 @@ exports.SecretsRotationService = SecretsRotationService = SecretsRotationService
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], SecretsRotationService);
-//# sourceMappingURL=secrets-rotation.service.js.map

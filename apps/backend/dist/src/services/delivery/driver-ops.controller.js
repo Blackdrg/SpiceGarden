@@ -18,9 +18,13 @@ const driver_onboarding_service_1 = require("./driver-onboarding.service");
 const driver_payout_service_1 = require("./driver-payout.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let DriverOpsController = class DriverOpsController {
+    onboardingService;
+    payoutService;
     constructor(onboardingService, payoutService) {
         this.onboardingService = onboardingService;
         this.payoutService = payoutService;
@@ -121,9 +125,9 @@ __decorate([
 ], DriverOpsController.prototype, "getPendingIncentives", null);
 exports.DriverOpsController = DriverOpsController = __decorate([
     (0, common_1.Controller)('drivers'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __metadata("design:paramtypes", [driver_onboarding_service_1.DriverOnboardingService,
         driver_payout_service_1.DriverPayoutService])
 ], DriverOpsController);
-//# sourceMappingURL=driver-ops.controller.js.map

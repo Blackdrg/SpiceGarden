@@ -23,12 +23,16 @@ const notification_status_enum_1 = require("../../../db/entities/notification-st
 const notification_service_1 = require("../notification.service");
 const queue_service_1 = require("../../../infra/queue/queue.service");
 let NotificationQueueService = NotificationQueueService_1 = class NotificationQueueService {
+    notificationRepo;
+    configService;
+    notificationService;
+    queueService;
+    logger = new common_1.Logger(NotificationQueueService_1.name);
     constructor(notificationRepo, configService, notificationService, queueService) {
         this.notificationRepo = notificationRepo;
         this.configService = configService;
         this.notificationService = notificationService;
         this.queueService = queueService;
-        this.logger = new common_1.Logger(NotificationQueueService_1.name);
     }
     async queueNotification(recipientId, recipientType, notificationType, payload, provider, options = {}) {
         const notification = this.notificationRepo.create({
@@ -144,7 +148,7 @@ let NotificationQueueService = NotificationQueueService_1 = class NotificationQu
     }
     async getNotificationsByStatus(status) {
         return await this.notificationRepo.find({
-            where: { status },
+            where: status ? { status } : {},
             order: { createdAt: 'DESC' }
         });
     }
@@ -195,4 +199,3 @@ exports.NotificationQueueService = NotificationQueueService = NotificationQueueS
         notification_service_1.NotificationService,
         queue_service_1.QueueService])
 ], NotificationQueueService);
-//# sourceMappingURL=notification-queue.service.js.map

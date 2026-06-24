@@ -28,6 +28,16 @@ const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 const geo_service_1 = require("../../services/geo/geo.service");
 const common_2 = require("@nestjs/common");
 let DeliveryService = class DeliveryService {
+    driverRepo;
+    walletRepo;
+    transactionRepo;
+    orderRepo;
+    batchRepo;
+    driverAssignmentRepo;
+    driverScoreRepo;
+    driverFraudRepo;
+    geoService;
+    dataSource;
     constructor(driverRepo, walletRepo, transactionRepo, orderRepo, batchRepo, driverAssignmentRepo, driverScoreRepo, driverFraudRepo, geoService, dataSource) {
         this.driverRepo = driverRepo;
         this.walletRepo = walletRepo;
@@ -133,6 +143,7 @@ exports.DeliveryService = DeliveryService = __decorate([
     __param(5, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __param(6, (0, typeorm_1.InjectRepository)(driver_score_entity_1.DriverScoreEntity)),
     __param(7, (0, typeorm_1.InjectRepository)(driver_fraud_entity_1.DriverFraudEntity)),
+    __param(9, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -144,4 +155,3 @@ exports.DeliveryService = DeliveryService = __decorate([
         geo_service_1.GeoService,
         typeorm_2.DataSource])
 ], DeliveryService);
-//# sourceMappingURL=delivery.service.js.map

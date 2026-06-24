@@ -12,6 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentValidationEventEntity = void 0;
 const typeorm_1 = require("typeorm");
 let PaymentValidationEventEntity = class PaymentValidationEventEntity {
+    id;
+    userId;
+    validationType;
+    amount;
+    validationData;
+    passed;
+    failureReason;
+    createdAt;
 };
 exports.PaymentValidationEventEntity = PaymentValidationEventEntity;
 __decorate([
@@ -50,4 +58,3 @@ __decorate([
 exports.PaymentValidationEventEntity = PaymentValidationEventEntity = __decorate([
     (0, typeorm_1.Entity)('payment_validation_events')
 ], PaymentValidationEventEntity);
-//# sourceMappingURL=payment-validation.entity.js.map

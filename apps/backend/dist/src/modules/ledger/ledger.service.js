@@ -19,9 +19,10 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const ledger_entry_entity_1 = require("../../db/entities/ledger-entry.entity");
 let LedgerService = LedgerService_1 = class LedgerService {
+    ledgerRepo;
+    logger = new common_1.Logger(LedgerService_1.name);
     constructor(ledgerRepo) {
         this.ledgerRepo = ledgerRepo;
-        this.logger = new common_1.Logger(LedgerService_1.name);
     }
     async createEntry(transactionId, account, amount, currency = 'INR', type, referenceId = null, description = '') {
         const entry = this.ledgerRepo.create({
@@ -30,7 +31,7 @@ let LedgerService = LedgerService_1 = class LedgerService {
             amount,
             currency,
             type,
-            referenceId,
+            referenceId: referenceId ?? undefined,
             description,
         });
         return await this.ledgerRepo.save(entry);
@@ -65,4 +66,3 @@ exports.LedgerService = LedgerService = LedgerService_1 = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(ledger_entry_entity_1.LedgerEntryEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], LedgerService);
-//# sourceMappingURL=ledger.service.js.map

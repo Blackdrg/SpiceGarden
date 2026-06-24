@@ -15,7 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
 const common_1 = require("@nestjs/common");
 const order_service_1 = require("./order.service");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let OrderController = class OrderController {
+    orderService;
     constructor(orderService) {
         this.orderService = orderService;
     }
@@ -29,6 +34,7 @@ let OrderController = class OrderController {
 exports.OrderController = OrderController;
 __decorate([
     (0, common_1.Post)(),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Headers)('x-idempotency-key')),
     __metadata("design:type", Function),
@@ -43,6 +49,6 @@ __decorate([
 ], OrderController.prototype, "healthCheck", null);
 exports.OrderController = OrderController = __decorate([
     (0, common_1.Controller)('orders'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderController);
-//# sourceMappingURL=order.controller.js.map

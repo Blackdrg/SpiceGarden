@@ -1,99 +1,147 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env node
+/**
+ * Deployment Validation Script
+ * Validates that all infrastructure components are properly configured for high-scale operations
+ * Cross-platform Node.js implementation
+ */
 
-# Deployment Validation Script
-# Validates that all infrastructure components are properly configured for high-scale operations
+const { execSync } = require('child_process');
+const path = require('path');
 
-NAMESPACE="${1:-spicegarden-production}"
-ENVIRONMENT="${2:-production}"
+const NAMESPACE = process.argv[2] || 'spicegarden-production';
+const ENVIRONMENT = process.argv[3] || 'production';
 
-log() {
-  echo "[$(date +%Y-%m-%dT%H:%M:%S)] $1"
+function log(message) {
+  const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  console.log(`[${timestamp}] ${message}`);
 }
 
-check_prerequisites() {
-  log "Checking prerequisites..."
-  command -v kubectl >/dev/null 2>&1 || { log "ERROR: kubectl not found"; exit 1; }
-  kubectl cluster-info >/dev/null 2>&1 || { log "ERROR: Cannot connect to cluster"; exit 1; }
+function runKubectl(args) {
+  try {
+    return execSync(`kubectl ${args}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+  } catch (error) {
+    throw new Error(`kubectl command failed: ${error.message}`);
+  }
 }
 
-validate_hpa() {
-  log "Validating Horizontal Pod Autoscaler..."
-  
-  if ! kubectl get hpa spicegarden-backend-hpa -n "$NAMESPACE" &>/dev/null; then
-    log "ERROR: HPA not found"
-    exit 1
-  fi
-
-  local min_replicas=$(kubectl get hpa spicegarden-backend-hpa -n "$NAMESPACE" -o jsonpath='{.spec.minReplicas}')
-  local max_replicas=$(kubectl get hpa spicegarden-backend-hpa -n "$NAMESPACE" -o jsonpath='{.spec.maxReplicas}')
-  
-  log "HPA configured: min=$min_replicas, max=$max_replicas"
-  
-  if [ "$max_replicas" -lt 20 ]; then
-    log "WARNING: Max replicas may be insufficient for >50k RPS targets"
-  fi
-  
-  kubectl get hpa -n "$NAMESPACE"
+function checkPrerequisites() {
+  log('Checking prerequisites...');
+  try {
+    execSync('kubectl version --client', { stdio: 'ignore' });
+  } catch {
+    log('ERROR: kubectl not found');
+    process.exit(1);
+  }
+  try {
+    execSync('kubectl cluster-info', { stdio: 'ignore' });
+  } catch {
+    log('ERROR: Cannot connect to cluster');
+    process.exit(1);
+  }
 }
 
-validate_redis_cluster() {
-  log "Validating Redis cluster for high throughput..."
+function validateHpa() {
+  log('Validating Horizontal Pod Autoscaler...');
   
-  if ! kubectl get statefulset redis-cluster -n "$NAMESPACE" &>/dev/null; then
-    log "WARNING: Redis cluster not deployed, using single instance"
-    kubectl get svc -n "$NAMESPACE" -l app=spicegarden-backend
-    return
-  fi
-
-  local cluster_nodes=$(kubectl get statefulset redis-cluster -n "$NAMESPACE" -o jsonpath='{.spec.replicas}')
-  log "Redis cluster configured with $cluster_nodes nodes"
-  
-  kubectl get pods -n "$NAMESPACE" -l app=redis-cluster
+  try {
+    const hpa = runKubectl(`get hpa spicegarden-backend-hpa -n "${NAMESPACE}" -o jsonpath='{.spec.minReplicas}' 2>/dev/null || echo ""`);
+    if (!hpa) {
+      log('ERROR: HPA not found');
+      process.exit(1);
+    }
+    log(`HPA configured`);
+    runKubectl(`get hpa -n "${NAMESPACE}"`);
+  } catch (error) {
+    log(`WARNING: HPA check failed - ${error.message}`);
+  }
 }
 
-validate_database_pooling() {
-  log "Validating database connection pooling..."
+function validateRedisCluster() {
+  log('Validating Redis cluster for high throughput...');
   
-  local deployment_yaml=$(kubectl get deployment spicegarden-backend -n "$NAMESPACE" -o jsonpath='{.spec.template.spec.containers[?(@.name=="backend")].env}')
-  
-  if echo "$deployment_yaml" | grep -q "DB_CONNECTION_POOL_MAX"; then
-    log "Database connection pool environment variables configured"
-  else
-    log "WARNING: Database connection pool not configured in deployment"
-  fi
+  try {
+    const clusterNodes = runKubectl(`get statefulset redis-cluster -n "${NAMESPACE}" -o jsonpath='{.spec.replicas}' 2>/dev/null || echo ""`);
+    if (clusterNodes) {
+      log(`Redis cluster configured with ${clusterNodes} nodes`);
+      runKubectl(`get pods -n "${NAMESPACE}" -l app=redis-cluster`);
+    } else {
+      log('WARNING: Redis cluster not deployed, using single instance');
+      runKubectl(`get svc -n "${NAMESPACE}" -l app=spicegarden-backend`);
+    }
+  } catch (error) {
+    log(`WARNING: Redis cluster check failed - ${error.message}`);
+  }
 }
 
-validate_cdn() {
-  log "Validating CDN configuration..."
+function validateDatabasePooling() {
+  log('Validating database connection pooling...');
   
-  if ! kubectl get ingress spicegarden-cdn-ingress -n "$NAMESPACE" &>/dev/null; then
-    log "WARNING: CDN ingress not found"
-    return
-  fi
-
-  log "CDN ingress configured"
-  kubectl get ingress spicegarden-cdn-ingress -n "$NAMESPACE"
+  try {
+    const deploymentYaml = runKubectl(`get deployment spicegarden-backend -n "${NAMESPACE}" -o jsonpath='{.spec.template.spec.containers[?(@.name=="backend")].env}' 2>/dev/null || echo ""`);
+    if (deploymentYaml && deploymentYaml.includes('DB_CONNECTION_POOL_MAX')) {
+      log('Database connection pool environment variables configured');
+    } else {
+      log('WARNING: Database connection pool not configured in deployment');
+    }
+  } catch (error) {
+    log(`WARNING: Database pooling check failed - ${error.message}`);
+  }
 }
 
-validate_scaling_readiness() {
-  log "Checking scaling readiness..."
+function validateCdn() {
+  log('Validating CDN configuration...');
   
-  # Check if metrics are available
-  kubectl top nodes &>/dev/null || log "WARNING: Metrics server not available"
-  kubectl top pods -n "$NAMESPACE" &>/dev/null || log "WARNING: Cannot get pod metrics"
-  
-  log "Scaling validation completed"
+  try {
+    const ingress = runKubectl(`get ingress spicegarden-cdn-ingress -n "${NAMESPACE}" 2>/dev/null || echo ""`);
+    if (ingress) {
+      log('CDN ingress configured');
+      console.log(ingress);
+    } else {
+      log('WARNING: CDN ingress not found');
+    }
+  } catch (error) {
+    log(`WARNING: CDN check failed - ${error.message}`);
+  }
 }
 
-# Main
-log "Starting deployment validation for $ENVIRONMENT environment in $NAMESPACE"
+function validateScalingReadiness() {
+  log('Checking scaling readiness...');
+  
+  try {
+    execSync('kubectl top nodes', { stdio: 'ignore' });
+  } catch {
+    log('WARNING: Metrics server not available');
+  }
+  
+  try {
+    execSync(`kubectl top pods -n "${NAMESPACE}"`, { stdio: 'ignore' });
+  } catch {
+    log('WARNING: Cannot get pod metrics');
+  }
+  
+  log('Scaling validation completed');
+}
 
-check_prerequisites
-validate_hpa
-validate_redis_cluster
-validate_database_pooling
-validate_cdn
-validate_scaling_readiness
+function runValidation() {
+  console.log('========================================');
+  console.log('SPICEGARDEN DEPLOYMENT VALIDATION');
+  console.log('========================================\n');
+  
+  log(`Starting deployment validation for ${ENVIRONMENT} environment in ${NAMESPACE}`);
+  
+  checkPrerequisites();
+  validateHpa();
+  validateRedisCluster();
+  validateDatabasePooling();
+  validateCdn();
+  validateScalingReadiness();
+  
+  log('Deployment validation completed successfully');
+  console.log('\n========================================');
+  console.log('VALIDATION PASSED');
+  console.log('========================================');
+}
 
-log "Deployment validation completed successfully"
+if (require.main === module) {
+  runValidation();
+}

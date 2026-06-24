@@ -14,6 +14,18 @@ const typeorm_1 = require("typeorm");
 const driver_entity_1 = require("./driver.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let DeliverySLAEntity = class DeliverySLAEntity {
+    id;
+    driver;
+    branch;
+    metricName;
+    value;
+    unit;
+    targetValue;
+    targetUnit;
+    measurementPeriod;
+    measuredAt;
+    createdAt;
+    updatedAt;
 };
 exports.DeliverySLAEntity = DeliverySLAEntity;
 __decorate([
@@ -67,4 +79,3 @@ __decorate([
 exports.DeliverySLAEntity = DeliverySLAEntity = __decorate([
     (0, typeorm_1.Entity)('delivery_sla')
 ], DeliverySLAEntity);
-//# sourceMappingURL=delivery-sla.entity.js.map

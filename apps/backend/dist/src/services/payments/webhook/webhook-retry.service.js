@@ -19,9 +19,10 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const webhook_retry_queue_entity_1 = require("../../../db/entities/webhook-retry-queue.entity");
 let WebhookRetryService = WebhookRetryService_1 = class WebhookRetryService {
+    retryRepo;
+    logger = new common_1.Logger(WebhookRetryService_1.name);
     constructor(retryRepo) {
         this.retryRepo = retryRepo;
-        this.logger = new common_1.Logger(WebhookRetryService_1.name);
     }
     async enqueueWebhook(webhookId, gateway, eventType, payload, maxAttempts = 5) {
         const job = this.retryRepo.create({
@@ -125,4 +126,3 @@ exports.WebhookRetryService = WebhookRetryService = WebhookRetryService_1 = __de
     __param(0, (0, typeorm_1.InjectRepository)(webhook_retry_queue_entity_1.WebhookRetryQueueEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], WebhookRetryService);
-//# sourceMappingURL=webhook-retry.service.js.map

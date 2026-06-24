@@ -15,16 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderDriverController = exports.DriverController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../security/jwt-auth.guard");
+const roles_guard_1 = require("../security/roles.guard");
+const roles_decorator_1 = require("../security/roles.decorator");
+const permission_guard_1 = require("../security/permission.guard");
+const permissions_decorator_1 = require("../security/permissions.decorator");
+const user_interface_1 = require("../shared/domain/user.interface");
 const driver_entity_1 = require("../db/entities/driver.entity");
 const order_entity_1 = require("../db/entities/order.entity");
+const driver_assignment_entity_1 = require("../db/entities/driver-assignment.entity");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
-const driver_assignment_entity_1 = require("../db/entities/driver-assignment.entity");
 const typeorm_3 = require("typeorm");
 const tracking_gateway_1 = require("../infra/tracking/tracking.gateway");
 const order_interface_1 = require("../shared/domain/order.interface");
 const notification_service_1 = require("../services/notifications/notification.service");
 let DriverController = class DriverController {
+    driverRepo;
+    assignmentRepo;
+    dataSource;
+    trackingGateway;
     constructor(driverRepo, assignmentRepo, dataSource, trackingGateway) {
         this.driverRepo = driverRepo;
         this.assignmentRepo = assignmentRepo;
@@ -34,21 +43,27 @@ let DriverController = class DriverController {
     async getProfile(req) {
         const driver = await this.driverRepo.findOne({
             where: { userId: req.user.id },
-            relations: ['user'],
+            relations: { user: true },
         });
         return driver;
     }
-    async getDriver(id) {
+    async getDriver(id, req) {
+        if (req.user.role !== user_interface_1.UserRole.ADMIN && req.user.role !== user_interface_1.UserRole.SUPER_ADMIN && req.user.id !== id) {
+            throw new common_1.ForbiddenException('Driver profile access denied');
+        }
         const driver = await this.driverRepo.findOne({
             where: { id },
-            relations: ['user'],
+            relations: { user: true },
         });
         return driver;
     }
-    async getEarnings(id) {
+    async getEarnings(id, req) {
+        if (req.user.role !== user_interface_1.UserRole.ADMIN && req.user.role !== user_interface_1.UserRole.SUPER_ADMIN && req.user.id !== id) {
+            throw new common_1.ForbiddenException('Driver earnings access denied');
+        }
         const assignments = await this.assignmentRepo.find({
             where: { driver: { id }, status: 'delivered' },
-            relations: ['order'],
+            relations: { order: true },
         });
         const totalEarnings = assignments.reduce((sum, a) => sum + (a.order?.grandTotal || 0), 0);
         const todayAssignments = assignments.filter(a => {
@@ -65,7 +80,10 @@ let DriverController = class DriverController {
             todayEarnings,
         };
     }
-    async updateLocation(id, body) {
+    async updateLocation(id, body, req) {
+        if (req.user.role !== user_interface_1.UserRole.ADMIN && req.user.role !== user_interface_1.UserRole.SUPER_ADMIN && req.user.id !== id) {
+            throw new common_1.ForbiddenException('Driver location update denied');
+        }
         await this.driverRepo.update(id, {
             currentLocation: { lat: body.lat, lng: body.lng },
             lastLocationUpdate: new Date(),
@@ -81,7 +99,10 @@ let DriverController = class DriverController {
         });
         return { status: 'updated' };
     }
-    async toggleAvailability(id, body) {
+    async toggleAvailability(id, body, req) {
+        if (req.user.role !== user_interface_1.UserRole.ADMIN && req.user.role !== user_interface_1.UserRole.SUPER_ADMIN && req.user.id !== id) {
+            throw new common_1.ForbiddenException('Driver availability update denied');
+        }
         await this.driverRepo.update(id, { isAvailable: body.isAvailable });
         return { driverId: id, isAvailable: body.isAvailable };
     }
@@ -99,6 +120,8 @@ let DriverController = class DriverController {
 exports.DriverController = DriverController;
 __decorate([
     (0, common_1.Get)('me'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -106,36 +129,50 @@ __decorate([
 ], DriverController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "getDriver", null);
 __decorate([
     (0, common_1.Get)(':id/earnings'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "getEarnings", null);
 __decorate([
     (0, common_1.Post)(':id/location'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "updateLocation", null);
 __decorate([
     (0, common_1.Post)(':id/availability'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "toggleAvailability", null);
 __decorate([
     (0, common_1.Get)('available'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Query)('lat')),
     __param(1, (0, common_1.Query)('lng')),
     __param(2, (0, common_1.Query)('radius')),
@@ -145,15 +182,22 @@ __decorate([
 ], DriverController.prototype, "getAvailableDrivers", null);
 exports.DriverController = DriverController = __decorate([
     (0, common_1.Controller)('drivers'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __param(0, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(2, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_3.DataSource,
         tracking_gateway_1.TrackingGateway])
 ], DriverController);
 let OrderDriverController = class OrderDriverController {
+    orderRepo;
+    driverRepo;
+    assignmentRepo;
+    dataSource;
+    trackingGateway;
+    notificationService;
     constructor(orderRepo, driverRepo, assignmentRepo, dataSource, trackingGateway, notificationService) {
         this.orderRepo = orderRepo;
         this.driverRepo = driverRepo;
@@ -247,7 +291,7 @@ let OrderDriverController = class OrderDriverController {
     async verifyOTP(id, body) {
         const assignment = await this.assignmentRepo.findOne({
             where: { order: { id } },
-            relations: ['order'],
+            relations: { order: true },
         });
         if (!assignment || !assignment.order.otpCode) {
             return { valid: false };
@@ -303,10 +347,13 @@ __decorate([
 ], OrderDriverController.prototype, "reportIssue", null);
 exports.OrderDriverController = OrderDriverController = __decorate([
     (0, common_1.Controller)('orders'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, typeorm_2.InjectRepository)(order_entity_1.OrderEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(3, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_1.Repository,
@@ -314,4 +361,3 @@ exports.OrderDriverController = OrderDriverController = __decorate([
         tracking_gateway_1.TrackingGateway,
         notification_service_1.NotificationService])
 ], OrderDriverController);
-//# sourceMappingURL=driver.controller.js.map

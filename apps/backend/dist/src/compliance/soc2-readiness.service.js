@@ -14,9 +14,10 @@ exports.Soc2ReadinessService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 let Soc2ReadinessService = Soc2ReadinessService_1 = class Soc2ReadinessService {
+    configService;
+    logger = new common_1.Logger(Soc2ReadinessService_1.name);
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(Soc2ReadinessService_1.name);
     }
     async assessTrustServicesCriteria() {
         const [security, availability, processingIntegrity, confidentiality, privacy] = await Promise.all([
@@ -247,4 +248,3 @@ exports.Soc2ReadinessService = Soc2ReadinessService = Soc2ReadinessService_1 = _
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], Soc2ReadinessService);
-//# sourceMappingURL=soc2-readiness.service.js.map

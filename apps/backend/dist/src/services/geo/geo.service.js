@@ -21,14 +21,19 @@ const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.
 const driver_entity_1 = require("../../db/entities/driver.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
 let GeoService = class GeoService {
+    restaurantRepo;
+    branchRepo;
+    driverRepo;
+    orderRepo;
+    dataSource;
+    EARTH_RADIUS_KM = 6371;
+    AVERAGE_SPEED_KMH = 30;
     constructor(restaurantRepo, branchRepo, driverRepo, orderRepo, dataSource) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.dataSource = dataSource;
-        this.EARTH_RADIUS_KM = 6371;
-        this.AVERAGE_SPEED_KMH = 30;
     }
     calculateDistance(point1, point2) {
         const dLat = this.toRadians(point2.lat - point1.lat);
@@ -133,4 +138,3 @@ exports.GeoService = GeoService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], GeoService);
-//# sourceMappingURL=geo.service.js.map

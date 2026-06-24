@@ -23,6 +23,13 @@ const user_entity_1 = require("../../db/entities/user.entity");
 const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 const address_entity_1 = require("../../db/entities/address.entity");
 let AnalyticsService = class AnalyticsService {
+    orderRepo;
+    orderItemRepo;
+    menuItemRepo;
+    userRepo;
+    branchRepo;
+    addressRepo;
+    dataSource;
     constructor(orderRepo, orderItemRepo, menuItemRepo, userRepo, branchRepo, addressRepo, dataSource) {
         this.orderRepo = orderRepo;
         this.orderItemRepo = orderItemRepo;
@@ -327,4 +334,3 @@ exports.AnalyticsService = AnalyticsService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], AnalyticsService);
-//# sourceMappingURL=analytics.service.js.map

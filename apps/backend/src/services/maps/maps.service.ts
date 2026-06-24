@@ -59,7 +59,9 @@ export class MapsService {
         `${this.baseUrl}/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&departure_time=now&key=${this.googleMapsApiKey}`
       );
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        rows?: Array<{ elements: Array<{ duration: { value: number }; duration_in_traffic?: { value: number }; distance: { value: number } }> }>;
+      };
       const row = data.rows?.[0];
       const element = row?.elements?.[0];
 
@@ -179,7 +181,12 @@ export class MapsService {
         `${this.baseUrl}/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&alternatives=true&key=${this.googleMapsApiKey}${waypointParam}`
       );
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        routes?: Array<{
+          summary?: string;
+          legs?: Array<{ distance: { value: number }; duration: { value: number } }>;
+        }>;
+      };
       const routes = data.routes || [];
       const originalRoute = routes[0];
       const alternativeRoutes = routes.slice(1).map((route: any) => ({

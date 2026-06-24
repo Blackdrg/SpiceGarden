@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { useRouter } from 'next/router';
-import { Bell, BellOff, AlertCircle } from 'lucide-react';
+import { Bell, BellOff } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
+import { getCachedToken } from '../utils/cachedLocalStorage';
+import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './notifications.module.css';
 
 interface NotificationPreferences {
   pushOrders: boolean;
@@ -13,110 +16,89 @@ interface NotificationPreferences {
   smsDeliveryUpdates: boolean;
 }
 
+const fetchPreferences = async (token: string): Promise<NotificationPreferences> => {
+  const res = await fetch(`${API_URL}/notification-preferences`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to load preferences');
+  return res.json();
+};
+
+const savePreferences = async (token: string, prefs: NotificationPreferences): Promise<void> => {
+  const res = await fetch(`${API_URL}/notification-preferences`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(prefs),
+  });
+  if (!res.ok) throw new Error('Failed to save preferences');
+};
+
 const NotificationsPage = () => {
-  const router = useRouter();
-  const [prefs, setPrefs] = useState<NotificationPreferences>({
+  const queryClient = useQueryClient();
+  const token = getCachedToken();
+
+  const { data: prefs = {
     pushOrders: true,
     pushPromotions: true,
     pushDeliveryUpdates: true,
     emailOrders: true,
     emailPromotions: false,
     smsDeliveryUpdates: true,
+  }, isLoading, error } = useQuery({
+    queryKey: ['notification-preferences', token],
+    queryFn: () => fetchPreferences(token!),
+    enabled: Boolean(token && token !== 'demo-token'),
   });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadPrefs = async () => {
-      try {
-        const token = localStorage.getItem('sg_token:v1');
-        if (!token || token === 'demo-token') {
-          router.push('/auth');
-          return;
-        }
-        
-        const res = await fetch(`${API_URL}/notification-preferences`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push('/auth');
-            return;
-          }
-          throw new Error('Failed to load preferences');
-        }
-        setPrefs(await res.json());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load preferences');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadPrefs();
-  }, [router]);
+  const mutation = useMutation({
+    mutationFn: (newPrefs: NotificationPreferences) => savePreferences(token!, newPrefs),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notification-preferences'] }),
+  });
 
-  const handleSave = async () => {
-    const token = localStorage.getItem('sg_token:v1');
-    if (!token || token === 'demo-token') return;
-    
-    setSaving(true);
-    try {
-      const res = await fetch(`${API_URL}/notification-preferences`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(prefs),
-      });
-      
-      if (!res.ok) throw new Error('Failed to save preferences');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save preferences');
-    } finally {
-      setSaving(false);
+  const togglePref = (key: keyof NotificationPreferences) => {
+    if (token && token !== 'demo-token') {
+      const newPrefs = { ...prefs, [key]: !prefs[key] };
+      mutation.mutate(newPrefs);
     }
   };
 
-  const togglePref = (key: keyof NotificationPreferences) => {
-    setPrefs({ ...prefs, [key]: !prefs[key] });
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading preferences...</p>
       </div>
     );
   }
 
+  const queryError = error instanceof Error ? error.message : (mutation.error instanceof Error ? mutation.error.message : null);
+
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral }}>
-      {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, backgroundColor: '#ffebee', color: '#c62828', padding: DESIGN_TOKENS.spacing.md, borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md }}>
-          <AlertCircle size={16} />
-          <span>{error}</span>
+    <div className={styles.pageContainer}>
+      {queryError && (
+        <div className={styles.errorBanner}>
+          {queryError}
         </div>
       )}
 
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Notification Preferences</h2>
+      <h2 className={styles.pageTitle}>Notification Preferences</h2>
 
       <Card title="Push Notifications">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.cardContent}>
+          <div className={styles.preferenceRow}>
             <span>Order Updates</span>
-            <button onClick={() => togglePref('pushOrders')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushOrders')} disabled={mutation.isPending} aria-label="Order updates">
               {prefs.pushOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Promotions & Offers</span>
-            <button onClick={() => togglePref('pushPromotions')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushPromotions')} disabled={mutation.isPending} aria-label="Promotions and offers">
               {prefs.pushPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Delivery Updates</span>
-            <button onClick={() => togglePref('pushDeliveryUpdates')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('pushDeliveryUpdates')} disabled={mutation.isPending} aria-label="Delivery updates">
               {prefs.pushDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
@@ -124,16 +106,16 @@ const NotificationsPage = () => {
       </Card>
 
       <Card title="Email Notifications">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.cardContent}>
+          <div className={styles.preferenceRow}>
             <span>Order Confirmations</span>
-            <button onClick={() => togglePref('emailOrders')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('emailOrders')} disabled={mutation.isPending} aria-label="Order confirmations">
               {prefs.emailOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.preferenceRow}>
             <span>Promotional Emails</span>
-            <button onClick={() => togglePref('emailPromotions')} disabled={saving}>
+            <button type="button" onClick={() => togglePref('emailPromotions')} disabled={mutation.isPending} aria-label="Promotional emails">
               {prefs.emailPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
             </button>
           </div>
@@ -141,19 +123,21 @@ const NotificationsPage = () => {
       </Card>
 
       <Card title="SMS Notifications">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.preferenceRow}>
           <span>Delivery Updates</span>
-          <button onClick={() => togglePref('smsDeliveryUpdates')} disabled={saving}>
+          <button type="button" onClick={() => togglePref('smsDeliveryUpdates')} disabled={mutation.isPending} aria-label="SMS delivery updates">
             {prefs.smsDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
           </button>
         </div>
       </Card>
 
-      <div style={{ marginTop: DESIGN_TOKENS.spacing.xl }}>
-        <Button label={saving ? 'Saving...' : 'Save Preferences'} onClick={handleSave} disabled={saving} />
+      <div className={styles.saveActions}>
+        <Button label={mutation.isPending ? 'Saving...' : 'Save Preferences'} onClick={() => {}} disabled={mutation.isPending} />
       </div>
     </div>
   );
 };
 
-export default NotificationsPage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><NotificationsPage {...props} /></ProtectedRoute>;
+}

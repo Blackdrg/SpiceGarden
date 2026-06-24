@@ -1,0 +1,107 @@
+﻿{
+    "timestamp":  "2026-06-18T03:27:52.0231157+05:30",
+    "repository":  "SpiceGarden",
+    "checks":  [
+                   null,
+                   null,
+                   {
+                       "name":  "Build",
+                       "command":  "npm run build",
+                       "status":  "PASS",
+                       "exitCode":  0,
+                       "durationSeconds":  266.344,
+                       "stdoutLength":  10324,
+                       "stderrLength":  1312,
+                       "stdoutPreview":  "\r\n\u003e spicegarden@0.0.0 build\r\n\u003e npm run --workspaces build\r\n\r\n\r\n\u003e @spicegarden/backend@0.0.0 build\r\n\u003e tsc -p tsconfig.build.json\r\n\r\n\r\n\u003e @spicegarden/customer-mobile@1.0.0 build\r\n\u003e tsc --noEmit\r\n\r\n\r\n\u003e @spicegarden/customer-web@0.1.0 build\r\n\u003e next build\r\n\r\n   Γû▓ Next.js 15.5.19\r\n   - Environments: .env.production.local\r\n   - Experiments (use with caution):\r\n     Γ£ô externalDir",
+                       "stderrPreview":  "node.exe :  ΓÜá Attempted to load @next/swc-win32-x64-msvc, but an error occurred: \r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node is not a \r\nvalid Win32 application.\r\nAt line:1 char:1\r\n+ \u0026 \"C:\\Program Files/node.exe\" \"C:\\Users\\mehta\\AppData\\Roaming\\npm/nod ...\r\n+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: ( ΓÜá Attempted ...32 application.:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node\r\n ΓÜá Attempted to load @next/swc-win32-x64-msvc, but an error occurred: \r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node is not a \r\nvalid Win32 application.\r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node\r\n ΓÜá Attempted to load @next/swc-win32-x64-msvc, but an error occurred: \r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node is not a \r\nvalid Win32 application.\r\n\\\\?\\C:\\Users\\mehta\\Desktop\\SpiceGarden\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node\r\n",
+                       "logFile":  "C:\\Users\\mehta\\Desktop\\SpiceGarden\\reports\\quality-gate\\build.log"
+                   },
+                   {
+                       "name":  "Tests",
+                       "command":  "npm test",
+                       "status":  "PASS",
+                       "exitCode":  0,
+                       "durationSeconds":  70.116,
+                       "stdoutLength":  1127,
+                       "stderrLength":  9791,
+                       "stdoutPreview":  "\r\n\u003e spicegarden@0.0.0 test\r\n\u003e npm run test:unit\r\n\r\n\r\n\u003e spicegarden@0.0.0 test:unit\r\n\u003e npm run --workspaces --if-present test:unit\r\n\r\n\r\n\u003e @spicegarden/backend@0.0.0 test:unit\r\n\u003e jest --runInBand test/order.service.spec.ts test/kitchen.service.spec.ts test/delivery.service.spec.ts\r\n\r\n\r\n\u003e @spicegarden/customer-mobile@1.0.0 test:unit\r\n\u003e jest --config jest.config.js __tests__ --runInBand\r\n\r\n\r\n\u003e @spicegarden/customer-web@0.1.0 test:unit\r\n\u003e jest --testPathPatterns=__tests__ --runInBand\r\n",
+                       "stderrPreview":  "node.exe : PASS test/order.service.spec.ts (7.378 s)\r\nAt line:1 char:1\r\n+ \u0026 \"C:\\Program Files/node.exe\" \"C:\\Users\\mehta\\AppData\\Roaming\\npm/nod ...\r\n+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (PASS test/order...ec.ts (7.378 s):String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nPASS test/kitchen.service.spec.ts\r\nPASS test/delivery.service.spec.ts\r\n\r\nTest Suites: 3 passed, 3 total\r\nTests:       30 passed, 30 total\r\nSnapshots:   0 total\r\nTime:        8.259 s, estimated 11 s\r\nRan all test suites matching \r\n/test\\\\order.service.spec.ts|test\\\\kitchen.service.spec.ts|test\\\\delivery.service.spec.ts/i.\r\nPASS __tests__/e2e-flow.test.js\r\n  ΓùÅ Console\r\n\r\n    console.error",
+                       "logFile":  "C:\\Users\\mehta\\Desktop\\SpiceGarden\\reports\\quality-gate\\tests.log"
+                   },
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   {
+                       "name":  "Penetration Tests",
+                       "command":  "node infra/scripts/penetration-tests.js",
+                       "status":  "FAIL",
+                       "exitCode":  1,
+                       "durationSeconds":  2.727,
+                       "stdoutLength":  182,
+                       "stderrLength":  1561,
+                       "stdoutPreview":  "=== SPICEGARDEN PENETRATION TEST SUITE ===\r\n\r\nTarget: localhost:3001\r\n\r\n=== Port Scan ===\r\n\r\n=== Security Headers ===\r\n\r\n=== CORS Misconfiguration ===\r\n\r\n=== HTTP Methods Check ===\r\n",
+                       "stderrPreview":  "node : node:events:486\r\nAt line:1 char:1\r\n+ node infra/scripts/penetration-tests.js \u003e \u0027C:\\Users\\mehta\\Desktop\\Spi ...\r\n+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (node:events:486:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\n      throw er; // Unhandled \u0027error\u0027 event\r\n      ^\r\n\r\nAggregateError [ECONNREFUSED]: \r\n    at internalConnectMultiple (node:net:1134:18)\r\n    at afterConnectMultiple (node:net:1715:7)\r\nEmitted \u0027error\u0027 event on ClientRequest instance at:\r\n    at emitErrorEvent (node:_http_client:108:11)\r\n    at Socket.socketErrorListener (node:_http_client:575:5)\r\n    at Socket.emit (node:events:508:20)\r\n    at emitErrorNT (node:internal/streams/destroy:170:8)\r\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\r\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {",
+                       "logFile":  "C:\\Users\\mehta\\Desktop\\SpiceGarden\\reports\\quality-gate\\security.log"
+                   }
+               ],
+    "metrics":  {
+                    "tests":  {
+                                  "passed":  0,
+                                  "failed":  0,
+                                  "skipped":  0
+                              },
+                    "reactDoctor":  {
+                                        "score":  null,
+                                        "bugCount":  0,
+                                        "performanceCount":  0,
+                                        "maintainabilityCount":  0
+                                    },
+                    "dependencies":  {
+                                         "vulnerabilities":  0,
+                                         "invalidInstalls":  0,
+                                         "extraneousPackages":  0
+                                     },
+                    "security":  {
+                                     "rateLimitingStatus":  "NOT_RUN",
+                                     "penetrationTestStatus":  "NOT_RUN"
+                                 },
+                    "infrastructure":  {
+                                           "deploymentCheckResult":  "NOT_RUN",
+                                           "kubernetesValidationResult":  "NOT_RUN"
+                                       },
+                    "environment":  {
+                                        "envValidationResult":  "NOT_RUN"
+                                    }
+                },
+    "score":  {
+                  "overall_score":  35,
+                  "classification":  "Prototype",
+                  "categoryScores":  {
+                                         "Build":  100,
+                                         "Typecheck":  0,
+                                         "Lint":  0,
+                                         "Tests":  100,
+                                         "React Doctor":  0,
+                                         "Security":  0,
+                                         "Dependencies":  0,
+                                         "Infrastructure":  0,
+                                         "Environment":  0
+                                     },
+                  "weights":  {
+                                  "Build":  15,
+                                  "Typecheck":  15,
+                                  "Lint":  10,
+                                  "Tests":  20,
+                                  "React Doctor":  10,
+                                  "Security":  15,
+                                  "Dependencies":  5,
+                                  "Infrastructure":  5,
+                                  "Environment":  5
+                              }
+              },
+    "overall_status":  "FAIL",
+    "overall_score":  35
+}

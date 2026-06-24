@@ -13,6 +13,16 @@ exports.HSNSACEntity = void 0;
 const typeorm_1 = require("typeorm");
 const menu_item_entity_1 = require("./menu-item.entity");
 let HSNSACEntity = class HSNSACEntity {
+    id;
+    menuItem;
+    menuItemId;
+    hsnCode;
+    description;
+    gstRate;
+    effectiveFrom;
+    effectiveTo;
+    createdAt;
+    updatedAt;
 };
 exports.HSNSACEntity = HSNSACEntity;
 __decorate([
@@ -58,4 +68,3 @@ __decorate([
 exports.HSNSACEntity = HSNSACEntity = __decorate([
     (0, typeorm_1.Entity)('hsn_sac_codes')
 ], HSNSACEntity);
-//# sourceMappingURL=hsn-sac.entity.js.map

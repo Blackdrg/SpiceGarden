@@ -1,0 +1,93 @@
+﻿node.exe : FAIL test/payment-edge-cases.service.spec.ts (12.244 s)
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/payme...c.ts (12.244 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  PaymentService
+    createPaymentIntent
+      √ should create payment intent successfully (24 ms)
+      √ should create payment intent with default currency (4 ms)
+      √ should use null userId when not provided (6 ms)
+      × should throw when amount exceeds max (33 ms)
+      √ should throw when amount is zero or negative (4 ms)
+      √ should log failed payment intent on error (3 ms)
+      √ should use provided gateway name (2 ms)
+    validatePaymentLimits (private)
+      √ should throw when amount exceeds max (4 ms)
+      √ should throw when amount is zero (2 ms)
+      √ should throw when amount is negative (2 ms)
+      √ should pass for valid amount (2 ms)
+    checkSuspiciousPatterns (private)
+      √ should not throw for normal payment (1 ms)
+      √ should not throw for empty userId with large amount (1 ms)
+    confirmPayment
+      √ should confirm payment successfully (5 ms)
+      √ should log failed confirmation on error (3 ms)
+      √ should handle ledger failure gracefully (2 ms)
+    refundPayment
+      × should process refund successfully (2 ms)
+      √ should use full amount when amount is null (1 ms)
+      √ should throw when refund amount exceeds original (2 ms)
+      √ should throw when refund amount is zero (4 ms)
+      √ should throw when refund amount is negative (2 ms)
+      √ should log failed refund on error (3 ms)
+    constructEvent
+      √ should construct and verify gateway event (3 ms)
+      √ should throw on verification failure (2 ms)
+
+  ● PaymentService › createPaymentIntent › should throw when amount exceeds max
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "payment_intent_failed", "user-1", 10000, "usd", "any", "", false, undefined
+    Received: "payment_intent_failed", "user-1", 10000, "usd", "any", "", false, undefined, "Payment amount exceeds 
+maximum allowed: 5000"
+
+    Number of calls: 1
+
+    [0m [90m 110 |[39m       [36mawait[39m 
+expect(service[33m.[39mcreatePaymentIntent([35m10000[39m[33m,[39m [32m'usd'[39m[33m,[39m [32m'user-1'[39m))
+     [90m 111 |[39m         [33m.[39mrejects[33m.[39mtoThrow([33mBadRequestException[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 112 |[39m       
+expect(auditService[33m.[39mlogPaymentEvent)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                            [31m[1m^[22m[39m
+     [90m 113 |[39m         [32m'payment_intent_failed'[39m[33m,[39m [32m'user-1'[39m[33m,[39m 
+[35m10000[39m[33m,[39m [32m'usd'[39m[33m,[39m [32m'any'[39m[33m,[39m [32m''[39m[33m,[39m 
+[36mfalse[39m[33m,[39m undefined
+     [90m 114 |[39m       )[33m;[39m
+     [90m 115 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (test/payment-edge-cases.service.spec.ts:112:44)
+
+  ● PaymentService › refundPayment › should process refund successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "payment_refunded", "user-1", 50, "usd", "stripe", "pi_1", true, undefined, "Reason: 
+requested_by_customer"
+    Received: "payment_refunded", "user-1", 500, "usd", "stripe", "pi_1", true, undefined, "Reason: 
+requested_by_customer"
+
+    Number of calls: 1
+
+    [0m [90m 231 |[39m
+     [90m 232 |[39m       expect(result[33m.[39mid)[33m.[39mtoBe([32m're_1'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 233 |[39m       
+expect(auditService[33m.[39mlogPaymentEvent)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                            [31m[1m^[22m[39m
+     [90m 234 |[39m         [32m'payment_refunded'[39m[33m,[39m [32m'user-1'[39m[33m,[39m 
+[35m50[39m[33m,[39m [32m'usd'[39m[33m,[39m [32m'stripe'[39m[33m,[39m [32m'pi_1'[39m[33m,[39m 
+[36mtrue[39m[33m,[39m undefined[33m,[39m [32m'Reason: requested_by_customer'[39m
+     [90m 235 |[39m       )[33m;[39m
+     [90m 236 |[39m       
+expect(ledgerService[33m.[39mcreateTransaction)[33m.[39mtoHaveBeenCalled()[33m;[39m[0m
+
+      at Object.<anonymous> (test/payment-edge-cases.service.spec.ts:233:44)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 22 passed, 24 total
+Snapshots:   0 total
+Time:        12.791 s
+Ran all test suites matching /test\\payment-edge-cases.service.spec.ts/i.

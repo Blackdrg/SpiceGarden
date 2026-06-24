@@ -20,10 +20,12 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const payment_fraud_entity_1 = require("../services/payments/payment-fraud.entity");
 let PciDssValidationService = PciDssValidationService_1 = class PciDssValidationService {
+    configService;
+    fraudFlagRepo;
+    logger = new common_1.Logger(PciDssValidationService_1.name);
     constructor(configService, fraudFlagRepo) {
         this.configService = configService;
         this.fraudFlagRepo = fraudFlagRepo;
-        this.logger = new common_1.Logger(PciDssValidationService_1.name);
     }
     async validatePciDssCompliance() {
         const requirements = await this.checkAllRequirements();
@@ -267,4 +269,3 @@ exports.PciDssValidationService = PciDssValidationService = PciDssValidationServ
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_2.Repository])
 ], PciDssValidationService);
-//# sourceMappingURL=pci-dss-validation.service.js.map

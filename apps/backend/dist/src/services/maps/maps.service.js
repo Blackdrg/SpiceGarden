@@ -21,12 +21,16 @@ const typeorm_2 = require("typeorm");
 const surge_zone_entity_1 = require("../../db/entities/surge-zone.entity");
 const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 let MapsService = MapsService_1 = class MapsService {
+    configService;
+    surgeZoneRepo;
+    branchRepo;
+    logger = new common_1.Logger(MapsService_1.name);
+    googleMapsApiKey;
+    baseUrl = 'https://maps.googleapis.com/maps/api';
     constructor(configService, surgeZoneRepo, branchRepo) {
         this.configService = configService;
         this.surgeZoneRepo = surgeZoneRepo;
         this.branchRepo = branchRepo;
-        this.logger = new common_1.Logger(MapsService_1.name);
-        this.baseUrl = 'https://maps.googleapis.com/maps/api';
         this.googleMapsApiKey = this.configService.get('GOOGLE_MAPS_API_KEY') || '';
     }
     async calculateETA(origin, destination) {
@@ -35,7 +39,7 @@ let MapsService = MapsService_1 = class MapsService {
         }
         try {
             const response = await fetch(`${this.baseUrl}/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&departure_time=now&key=${this.googleMapsApiKey}`);
-            const data = await response.json();
+            const data = (await response.json());
             const row = data.rows?.[0];
             const element = row?.elements?.[0];
             if (!element) {
@@ -129,7 +133,7 @@ let MapsService = MapsService_1 = class MapsService {
                 ? `&waypoints=${waypoints.map(w => w.lat + ',' + w.lng).join('|')}`
                 : '';
             const response = await fetch(`${this.baseUrl}/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&alternatives=true&key=${this.googleMapsApiKey}${waypointParam}`);
-            const data = await response.json();
+            const data = (await response.json());
             const routes = data.routes || [];
             const originalRoute = routes[0];
             const alternativeRoutes = routes.slice(1).map((route) => ({
@@ -191,4 +195,3 @@ exports.MapsService = MapsService = MapsService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], MapsService);
-//# sourceMappingURL=maps.service.js.map

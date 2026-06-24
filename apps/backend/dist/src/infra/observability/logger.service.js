@@ -10,6 +10,7 @@ exports.StructuredLogger = void 0;
 const common_1 = require("@nestjs/common");
 const logging_service_1 = require("../../logging/logging.service");
 let StructuredLogger = class StructuredLogger {
+    context;
     setContext(context) {
         this.context = context;
     }
@@ -63,4 +64,3 @@ exports.StructuredLogger = StructuredLogger;
 exports.StructuredLogger = StructuredLogger = __decorate([
     (0, common_1.Injectable)({ scope: common_1.Scope.TRANSIENT })
 ], StructuredLogger);
-//# sourceMappingURL=logger.service.js.map

@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard } from '@spicegarden/ui';
+import React from 'react';
+import {
+  Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard,
+  BurgerIcon, PizzaIcon, DrinkIcon, DessertIcon, HealthyIcon,
+  HomeIcon, SearchIcon, CartIcon, ProfileIcon, LocationIcon,
+  RatingIcon, NotificationIcon,
+} from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { useQuery } from '@tanstack/react-query';
 import styles from './index.module.css';
 
 interface Restaurant {
@@ -14,100 +20,129 @@ interface Restaurant {
   isActive: boolean;
 }
 
+interface Category {
+  name: string;
+  Icon: React.FC<{ size?: number; color?: string }>;
+}
+
+interface NavTab {
+  key: string;
+  label: string;
+  Icon: React.FC<{ size?: number; color?: string }>;
+  path: string;
+}
+
+const categoryColors: Record<string, string> = {
+  Burgers: '#FF5A1F',
+  Pizza: '#EF4444',
+  Drinks: '#3B82F6',
+  Dessert: '#EC4899',
+  Healthy: '#10B981',
+};
+
+const distanceFromId = (id: string) => {
+  const hash = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return (0.5 + (hash % 50) / 10).toFixed(1);
+};
+
+const fetchRestaurants = async (): Promise<Restaurant[]> => {
+  const response = await fetch('/api/restaurants');
+  if (!response.ok) throw new Error('Failed to load restaurants');
+  return response.json();
+};
+
+const handleRetry = () => {
+  window.location.reload();
+};
+
+const getTabClass = (tabKey: string) => {
+  return `${styles.tab} ${tabKey === 'home' ? styles.activeTab : styles.inactiveTab}`;
+};
+
+const categories: Category[] = [
+  { name: 'Burgers', Icon: BurgerIcon },
+  { name: 'Pizza', Icon: PizzaIcon },
+  { name: 'Drinks', Icon: DrinkIcon },
+  { name: 'Dessert', Icon: DessertIcon },
+  { name: 'Healthy', Icon: HealthyIcon },
+];
+
+const navTabs: NavTab[] = [
+  { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+  { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+  { key: 'orders', label: 'Orders', Icon: CartIcon, path: '/history' },
+  { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+];
+
 const HomePage = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('home');
 
-  useEffect(() => {
-    const loadRestaurants = async () => {
-      try {
-        const response = await fetch('/api/restaurants');
-        if (!response.ok) throw new Error('Failed to load restaurants');
-        const data = await response.json();
-        setRestaurants(data);
-      } catch (error) {
-        console.error('Failed to load restaurants:', error);
-        setError('Unable to load restaurants. Please check your connection.');
-        setRestaurants([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadRestaurants();
-  }, []);
+  const { data: restaurants = [], isLoading: loading, error: fetchError } = useQuery({
+    queryKey: ['restaurants'],
+    queryFn: fetchRestaurants,
+  });
 
-  const categories = useMemo(() => [
-    { name: 'Burgers', icon: '🍔' },
-    { name: 'Pizza', icon: '🍕' },
-    { name: 'Drinks', icon: '🥤' },
-    { name: 'Dessert', icon: '🍰' },
-    { name: 'Healthy', icon: '🥗' },
-  ], []);
-
-  const handleRetry = () => {
-    setLoading(true);
-    setError(null);
-    window.location.reload();
-  };
-
-  const getTabClass = (tabKey: string) => {
-    return `${styles.tab} ${activeTab === tabKey ? styles.activeTab : styles.inactiveTab}`;
-  };
+  const error = fetchError instanceof Error ? fetchError.message : null;
 
   return (
     <div className={styles.container}>
-      <header className={styles.header} role="banner">
+      <header className={styles.header}>
         <div>
           <h2 className={styles.userName}>
-            👋 {user?.name?.split(' ')[0] || 'Guest'}
+            <LocationIcon size={20} color={DESIGN_TOKENS.colors.primary} />
+            {' '}{user?.name?.split(' ')[0] || 'Guest'}
           </h2>
           <p className={styles.deliveryLocation}>
             Deliver to: Home - Sector 17, Chandigarh
           </p>
         </div>
-        <Button
-          label="🔔"
-          onClick={() => null}
-          variant="secondary"
-          ariaLabel="Notifications"
-        />
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            onClick={() => null}
+            className={styles.iconButton}
+            aria-label="Notifications"
+          >
+            <NotificationIcon size={20} />
+          </button>
+        </div>
       </header>
 
-      <div
-        onClick={() => router.push('/search')}
-        className={styles.searchBar}
-        role="button"
-        tabIndex={0}
-        aria-label="Search restaurants and dishes"
-      >
-        <span className={styles.searchIcon}>🔍</span>
+        <button
+          type="button"
+          onClick={() => router.push('/search')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
+          className={styles.searchBar}
+          aria-label="Search restaurants and dishes"
+        >
+        <span className={styles.searchIcon}><SearchIcon size={20} /></span>
         <span className={styles.searchText}>Search restaurants, dishes…</span>
-      </div>
+      </button>
 
       <div className={styles.categoryContainer}>
         {categories.map((cat) => (
-          <div
+          <button
             key={cat.name}
+            type="button"
             className={styles.categoryItem}
-            role="button"
-            tabIndex={0}
             aria-label={`Browse ${cat.name} category`}
           >
-            <div className={styles.categoryIcon}>{cat.icon}</div>
+            <div className={styles.categoryIcon}>
+              <cat.Icon size={28} color={categoryColors[cat.name]} />
+            </div>
             <div className={styles.categoryName}>{cat.name}</div>
-          </div>
+          </button>
         ))}
       </div>
 
-      <div
-        className={styles.promoBanner}
-        onClick={() => router.push('/search')}
-      >
-        <h2 className={styles.promoTitle}>🎉 50% OFF</h2>
+        <button
+          type="button"
+          onClick={() => router.push('/search')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
+          className={styles.promoBanner}
+        >
+        <h2 className={styles.promoTitle}>50% OFF</h2>
         <p className={styles.promoText}>
           On your first 3 orders. Use code: <strong>WELCOME50</strong>
         </p>
@@ -118,7 +153,7 @@ const HomePage = () => {
             ariaLabel="Order now with welcome discount"
           />
         </div>
-      </div>
+      </button>
 
       <Card title="Recommended Restaurants" variant="elevated">
         {loading ? (
@@ -127,6 +162,7 @@ const HomePage = () => {
           <div className={styles.errorContainer}>
             <p className={styles.errorMessage}>{error}</p>
             <button
+              type="button"
               onClick={handleRetry}
               className={styles.retryButton}
             >
@@ -140,15 +176,14 @@ const HomePage = () => {
         ) : (
           <div className={styles.restaurantItemGrid}>
             {restaurants.slice(0, 3).map((restaurant) => (
-              <div
-                key={restaurant.id}
-                className={styles.restaurantItem}
+<button
+              type="button"
+              key={restaurant.id}
+              className={styles.restaurantItem}
                 onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
-                role="button"
-                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/restaurant?id=${restaurant.id}`); } }}
                 aria-label={`View ${restaurant.name} details`}
               >
-                <div className={styles.restaurantIcon}>🍽️</div>
                 <div className={styles.restaurantContent}>
                   <div className={styles.restaurantName}>
                     {restaurant.name}
@@ -157,12 +192,15 @@ const HomePage = () => {
                     {restaurant.description}
                   </div>
                   <div className={styles.restaurantMeta}>
-                    <span>⭐ {restaurant.rating}</span>
-                    <span>• {restaurant.deliveryTime} min</span>
-                    <span>• {Math.round(Math.random() * 5)} km</span>
+                    <span>
+                      <RatingIcon size={14} fill={DESIGN_TOKENS.colors.warning} />
+                      {' '}{restaurant.rating}
+                    </span>
+                    <span>{restaurant.deliveryTime} min</span>
+                    <span>{distanceFromId(restaurant.id)} km</span>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -170,29 +208,22 @@ const HomePage = () => {
 
       <nav
         className={styles.nav}
-        role="navigation"
         aria-label="Main navigation"
       >
-        <div className={styles.tablist} role="tablist">
-          {[
-            { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-            { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-            { key: 'orders', label: 'Orders', icon: '📦', path: '/history' },
-            { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-          ].map((tab) => (
-            <div
+        <div className={styles.tablist}>
+          {navTabs.map((tab) => (
+            <button
+              type="button"
               key={tab.key}
               onClick={() => {
-                setActiveTab(tab.key);
                 if (tab.path) router.push(tab.path);
               }}
               className={getTabClass(tab.key)}
-              role="tab"
               aria-label={tab.label}
             >
-              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span className={styles.tabIcon}><tab.Icon size={22} /></span>
               <span>{tab.label}</span>
-            </div>
+            </button>
           ))}
         </div>
       </nav>

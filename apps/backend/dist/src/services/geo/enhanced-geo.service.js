@@ -22,17 +22,22 @@ const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.
 const driver_entity_1 = require("../../db/entities/driver.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
 let EnhancedGeoService = EnhancedGeoService_1 = class EnhancedGeoService {
+    restaurantRepo;
+    branchRepo;
+    driverRepo;
+    orderRepo;
+    dataSource;
+    logger = new common_1.Logger(EnhancedGeoService_1.name);
+    EARTH_RADIUS_KM = 6371;
+    AVERAGE_SPEED_KMH = 30;
+    GEOFENCE_RADIUS_M = 100;
+    TRAFFIC_UPDATE_INTERVAL_MS = 30000;
     constructor(restaurantRepo, branchRepo, driverRepo, orderRepo, dataSource) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(EnhancedGeoService_1.name);
-        this.EARTH_RADIUS_KM = 6371;
-        this.AVERAGE_SPEED_KMH = 30;
-        this.GEOFENCE_RADIUS_M = 100;
-        this.TRAFFIC_UPDATE_INTERVAL_MS = 30000;
     }
     calculateDistance(point1, point2) {
         const dLat = this.toRadians(point2.lat - point1.lat);
@@ -310,4 +315,3 @@ exports.EnhancedGeoService = EnhancedGeoService = EnhancedGeoService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], EnhancedGeoService);
-//# sourceMappingURL=enhanced-geo.service.js.map

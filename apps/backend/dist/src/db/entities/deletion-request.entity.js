@@ -13,6 +13,16 @@ exports.DeletionRequestEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let DeletionRequestEntity = class DeletionRequestEntity {
+    id;
+    status;
+    regulation;
+    reason;
+    scheduledDeletionDate;
+    cancellationReason;
+    createdAt;
+    completedAt;
+    user;
+    userId;
 };
 exports.DeletionRequestEntity = DeletionRequestEntity;
 __decorate([
@@ -58,4 +68,3 @@ __decorate([
 exports.DeletionRequestEntity = DeletionRequestEntity = __decorate([
     (0, typeorm_1.Entity)('deletion_requests')
 ], DeletionRequestEntity);
-//# sourceMappingURL=deletion-request.entity.js.map

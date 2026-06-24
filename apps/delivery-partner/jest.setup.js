@@ -1,9 +1,17 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import '@testing-library/jest-dom';
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  default: {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+    getAllKeys: jest.fn(),
+  },
+}));
 
-(globalThis as unknown as Record<string, unknown>).fetch = () =>
+globalThis.fetch = () =>
   Promise.resolve({
     ok: true,
     json: () => Promise.resolve({}),
-  } as Response);
+  });

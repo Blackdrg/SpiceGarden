@@ -35,7 +35,7 @@ export class PaymentService {
   async createPaymentIntent(
     amount: number,
     currency: string = 'usd',
-    userId: string = null,
+    userId: string | null = null,
     metadata: Record<string, any> = {},
     request?: Request,
     gatewayName?: string
@@ -44,15 +44,15 @@ export class PaymentService {
       const gateway = this.gatewayFactory.getGateway(gatewayName);
       
       // Abuse prevention checks
-      await this.validatePaymentLimits(userId, amount, request);
+      await this.validatePaymentLimits(userId ?? '', amount, request);
       
       // Create payment intent using selected gateway
-      const paymentIntent = await gateway.createPaymentIntent(amount, currency, userId, metadata);
+      const paymentIntent = await gateway.createPaymentIntent(amount, currency, userId ?? '', metadata);
 
       // Log successful payment intent creation
       await this.auditService.logPaymentEvent(
         'payment_intent_created',
-        userId,
+        userId ?? '',
         amount,
         currency,
         gateway.getGatewayName(),
@@ -66,11 +66,11 @@ export class PaymentService {
       // Log failed payment attempt
       await this.auditService.logPaymentEvent(
         'payment_intent_failed',
-        userId,
+        userId ?? '',
         amount,
         currency,
         gatewayName ? gatewayName : 'any',
-        null,
+        '',
         false,
         request,
         (error as Error).message

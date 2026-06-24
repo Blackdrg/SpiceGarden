@@ -9,12 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetricsService = void 0;
 const common_1 = require("@nestjs/common");
 let MetricsService = class MetricsService {
-    constructor() {
-        this.httpRequestDuration = new Map();
-        this.queueFailures = new Map();
-        this.socketFailures = new Map();
-        this.paymentFailures = new Map();
-    }
+    httpRequestDuration = new Map();
+    queueFailures = new Map();
+    socketFailures = new Map();
+    paymentFailures = new Map();
     startTimer() {
         const start = Date.now();
         return {
@@ -78,4 +76,3 @@ exports.MetricsService = MetricsService;
 exports.MetricsService = MetricsService = __decorate([
     (0, common_1.Injectable)()
 ], MetricsService);
-//# sourceMappingURL=metrics.service.js.map

@@ -1,0 +1,39 @@
+.walletInline0 {
+margin: 0;
+color: '#666';
+}
+.walletInline1 {
+display: 'flex';
+flex-direction: 'column';
+}
+.walletInline2 {
+margin: 0;
+font-size: '14px';
+}
+.walletInline3 {
+margin: '4px 0 0 0';
+color: '#999';
+font-size: '12px';
+}
+.walletInline4 {
+font-size: '22px';
+}
+
+.walletInline0 {
+padding: var(--spacing-md);
+padding-bottom: 80;
+}
+.walletInline1 {
+margin: '0 0 8px 0';
+font-size: '2.5rem';
+color: var(--color-primary);
+}
+.walletInline2 {
+display: 'flex';
+justify-content: 'center';
+gap: var(--spacing-md);
+margin-top: var(--spacing-lg);
+}
+.walletInline3 {
+margin-top: var(--spacing-lg);
+}

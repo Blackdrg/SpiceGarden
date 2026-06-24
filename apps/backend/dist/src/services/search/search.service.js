@@ -19,6 +19,8 @@ const typeorm_2 = require("typeorm");
 const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let SearchService = class SearchService {
+    menuRepo;
+    restaurantRepo;
     constructor(menuRepo, restaurantRepo) {
         this.menuRepo = menuRepo;
         this.restaurantRepo = restaurantRepo;
@@ -35,7 +37,13 @@ let SearchService = class SearchService {
                 { name: (0, typeorm_2.Like)(`%${query}%`) },
                 { description: (0, typeorm_2.Like)(`%${query}%`) },
             ],
-            relations: ['category', 'category.branch', 'category.branch.restaurant'],
+            relations: {
+                category: {
+                    branch: {
+                        restaurant: true
+                    }
+                }
+            },
         });
         return { restaurants, items };
     }
@@ -54,4 +62,3 @@ exports.SearchService = SearchService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
 ], SearchService);
-//# sourceMappingURL=search.service.js.map

@@ -25,6 +25,14 @@ const restaurant_gst_entity_1 = require("../../db/entities/restaurant-gst.entity
 const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let GSTService = GSTService_1 = class GSTService {
+    orderRepo;
+    orderItemRepo;
+    gstDetailRepo;
+    hsnSacRepo;
+    restaurantGstRepo;
+    menuItemRepo;
+    restaurantRepo;
+    logger = new common_1.Logger(GSTService_1.name);
     constructor(orderRepo, orderItemRepo, gstDetailRepo, hsnSacRepo, restaurantGstRepo, menuItemRepo, restaurantRepo) {
         this.orderRepo = orderRepo;
         this.orderItemRepo = orderItemRepo;
@@ -33,21 +41,26 @@ let GSTService = GSTService_1 = class GSTService {
         this.restaurantGstRepo = restaurantGstRepo;
         this.menuItemRepo = menuItemRepo;
         this.restaurantRepo = restaurantRepo;
-        this.logger = new common_1.Logger(GSTService_1.name);
     }
     async calculateGSTForOrder(orderId) {
         try {
             this.logger.log(`Calculating GST for order ${orderId}`);
             const order = await this.orderRepo.findOne({
                 where: { id: orderId },
-                relations: ['items', 'items.menuItem', 'items.menuItem.hsnSac'],
+                relations: {
+                    items: {
+                        menuItem: {
+                            hsnSac: true
+                        }
+                    }
+                },
             });
             if (!order) {
                 throw new Error(`Order not found: ${orderId}`);
             }
             const restaurant = await this.restaurantRepo.findOne({
                 where: { id: order.restaurantId },
-                relations: ['gstDetail'],
+                relations: { gstDetail: true },
             });
             if (!restaurant) {
                 throw new Error(`Restaurant not found: ${order.restaurantId}`);
@@ -133,31 +146,38 @@ let GSTService = GSTService_1 = class GSTService {
             this.logger.log(`Generating GST invoice for order ${orderId}`);
             const order = await this.orderRepo.findOne({
                 where: { id: orderId },
-                relations: [
-                    'items',
-                    'items.menuItem',
-                    'items.menuItem.hsnSac',
-                    'gstDetail',
-                ],
+                relations: {
+                    items: {
+                        menuItem: {
+                            hsnSac: true
+                        }
+                    },
+                    gstDetail: true,
+                },
             });
             if (!order) {
                 throw new Error(`Order not found: ${orderId}`);
             }
             if (!order.gstDetail) {
                 await this.calculateGSTForOrder(orderId);
-                await this.orderRepo.findOne({
+                const reloadedOrder = await this.orderRepo.findOne({
                     where: { id: orderId },
-                    relations: [
-                        'items',
-                        'items.menuItem',
-                        'items.menuItem.hsnSac',
-                        'gstDetail',
-                    ],
+                    relations: {
+                        items: {
+                            menuItem: {
+                                hsnSac: true
+                            }
+                        },
+                        gstDetail: true,
+                    },
                 });
+                if (reloadedOrder?.gstDetail) {
+                    order.gstDetail = reloadedOrder.gstDetail;
+                }
             }
             const restaurant = await this.restaurantRepo.findOne({
                 where: { id: order.restaurantId },
-                relations: ['gstDetail'],
+                relations: { gstDetail: true },
             });
             if (!restaurant || !restaurant.gstDetail) {
                 throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);
@@ -303,4 +323,3 @@ exports.GSTService = GSTService = GSTService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], GSTService);
-//# sourceMappingURL=gst.service.js.map

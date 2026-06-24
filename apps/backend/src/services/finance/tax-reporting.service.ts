@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, MoreThanOrEqual } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { GSTDetailEntity } from '../../db/entities/gst-detail.entity';
@@ -22,6 +22,7 @@ export class TaxReportingService {
     private restaurantGstRepo: Repository<RestaurantGSTEntity>,
     @InjectRepository(OrderItemEntity)
     private orderItemRepo: Repository<OrderItemEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -34,12 +35,17 @@ export class TaxReportingService {
         restaurantId: restaurantId as any,
         createdAt: Between(startDate, endDate),
       },
-      relations: ['gstDetail', 'items', 'items.menuItem'],
+      relations: { 
+        gstDetail: true, 
+        items: { 
+          menuItem: true 
+        } 
+      },
     });
 
     const gstDetails = orders
       .filter(o => o.gstDetail)
-      .map(o => o.gstDetail);
+      .map(o => o.gstDetail!);
 
     const summary = {
       period: { month, year },
@@ -131,7 +137,7 @@ export class TaxReportingService {
 
     const orders = await this.orderRepo.find({
       where: { createdAt: Between(new Date(year, month - 1, 1), new Date(year, month, 0)) },
-      relations: ['gstDetail'],
+      relations: { gstDetail: true },
     });
 
     const totalGST = orders.reduce((sum, o) => sum + Number(o.tax || 0), 0);

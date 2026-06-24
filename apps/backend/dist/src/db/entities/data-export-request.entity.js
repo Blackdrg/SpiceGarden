@@ -13,6 +13,17 @@ exports.DataExportRequestEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let DataExportRequestEntity = class DataExportRequestEntity {
+    id;
+    regulation;
+    status;
+    exportUrl;
+    filePath;
+    exportFormat;
+    errorMessage;
+    createdAt;
+    completedAt;
+    user;
+    userId;
 };
 exports.DataExportRequestEntity = DataExportRequestEntity;
 __decorate([
@@ -62,4 +73,3 @@ __decorate([
 exports.DataExportRequestEntity = DataExportRequestEntity = __decorate([
     (0, typeorm_1.Entity)('data_exports')
 ], DataExportRequestEntity);
-//# sourceMappingURL=data-export-request.entity.js.map

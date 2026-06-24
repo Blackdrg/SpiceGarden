@@ -13,6 +13,15 @@ exports.SubscriptionEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let SubscriptionEntity = class SubscriptionEntity {
+    id;
+    userId;
+    user;
+    planName;
+    status;
+    expiryDate;
+    benefits;
+    createdAt;
+    updatedAt;
 };
 exports.SubscriptionEntity = SubscriptionEntity;
 __decorate([
@@ -54,4 +63,3 @@ __decorate([
 exports.SubscriptionEntity = SubscriptionEntity = __decorate([
     (0, typeorm_1.Entity)('subscriptions')
 ], SubscriptionEntity);
-//# sourceMappingURL=subscription.entity.js.map

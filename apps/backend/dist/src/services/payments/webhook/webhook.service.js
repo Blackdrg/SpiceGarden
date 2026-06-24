@@ -65,7 +65,20 @@ const production_notification_service_1 = require("../../../services/notificatio
 const ledger_service_1 = require("../../../modules/ledger/ledger.service");
 const gateway_factory_service_1 = require("../../../services/payments/gateway-factory.service");
 const chargeback_service_1 = require("../chargeback/chargeback.service");
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
 let WebhookService = WebhookService_1 = class WebhookService {
+    configService;
+    webhookRepo;
+    paymentEventRepo;
+    orderRepo;
+    fraudFlagRepo;
+    notificationService;
+    productionNotification;
+    ledgerService;
+    paymentGatewayFactory;
+    chargebackService;
+    logger = new common_1.Logger(WebhookService_1.name);
+    stripe;
     constructor(configService, webhookRepo, paymentEventRepo, orderRepo, fraudFlagRepo, notificationService, productionNotification, ledgerService, paymentGatewayFactory, chargebackService) {
         this.configService = configService;
         this.webhookRepo = webhookRepo;
@@ -77,8 +90,7 @@ let WebhookService = WebhookService_1 = class WebhookService {
         this.ledgerService = ledgerService;
         this.paymentGatewayFactory = paymentGatewayFactory;
         this.chargebackService = chargebackService;
-        this.logger = new common_1.Logger(WebhookService_1.name);
-        this.stripe = new stripe_1.default(this.configService.get('STRIPE_SECRET_KEY') || 'sk_test_placeholder', {
+        this.stripe = new stripe_1.default((0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY'), {
             apiVersion: '2024-04-10',
         });
     }
@@ -162,17 +174,11 @@ let WebhookService = WebhookService_1 = class WebhookService {
         return null;
     }
     async verifyStripeWebhook(payload, signature) {
-        const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
-        if (!webhookSecret) {
-            throw new common_1.InternalServerErrorException('Stripe webhook secret not configured');
-        }
+        const webhookSecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_WEBHOOK_SECRET');
         return this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
     }
     async verifyRazorpayWebhook(payload, signature) {
-        const webhookSecret = this.configService.get('RAZORPAY_WEBHOOK_SECRET');
-        if (!webhookSecret) {
-            throw new common_1.InternalServerErrorException('Razorpay webhook secret not configured');
-        }
+        const webhookSecret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'RAZORPAY_WEBHOOK_SECRET');
         const generatedSignature = crypto
             .createHmac('sha256', webhookSecret)
             .update(payload.toString())
@@ -462,4 +468,3 @@ exports.WebhookService = WebhookService = WebhookService_1 = __decorate([
         gateway_factory_service_1.PaymentGatewayFactory,
         chargeback_service_1.ChargebackService])
 ], WebhookService);
-//# sourceMappingURL=webhook.service.js.map

@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-native",
-    "strict": false,
+    "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -26,7 +26,9 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "*.d.ts",
+    "../lucide-react.d.ts"
   ],
   "exclude": [
     "node_modules",

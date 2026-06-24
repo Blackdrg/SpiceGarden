@@ -14,6 +14,19 @@ const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 const order_entity_1 = require("./order.entity");
 let SLAAlertEntity = class SLAAlertEntity {
+    id;
+    branch;
+    slaType;
+    targetValue;
+    actualValue;
+    isBreached;
+    breachSeverity;
+    relatedOrderId;
+    relatedOrder;
+    isNotified;
+    notifiedAt;
+    createdAt;
+    updatedAt;
 };
 exports.SLAAlertEntity = SLAAlertEntity;
 __decorate([
@@ -71,4 +84,3 @@ __decorate([
 exports.SLAAlertEntity = SLAAlertEntity = __decorate([
     (0, typeorm_1.Entity)('sla_alerts')
 ], SLAAlertEntity);
-//# sourceMappingURL=sla-alert.entity.js.map

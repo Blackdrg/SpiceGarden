@@ -23,6 +23,12 @@ const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.
 const delivery_sla_entity_1 = require("../../db/entities/delivery-sla.entity");
 const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 let ETAIntelligenceService = class ETAIntelligenceService {
+    driverRepo;
+    orderRepo;
+    branchRepo;
+    assignmentRepo;
+    slaRepo;
+    fraudRepo;
     constructor(driverRepo, orderRepo, branchRepo, assignmentRepo, slaRepo, fraudRepo) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
@@ -134,4 +140,3 @@ exports.ETAIntelligenceService = ETAIntelligenceService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], ETAIntelligenceService);
-//# sourceMappingURL=eta-intelligence.service.js.map

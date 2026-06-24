@@ -1,22 +1,20 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
     "module": "CommonJS",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
+    "lib": ["ES2022"],
     "skipLibCheck": true,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "types": ["node", "jest"]
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node", "jest"],
+    "composite": true,
+    "declaration": true
   },
   "include": ["src/**/*", "src/types/*.d.ts", "test/**/*"],
   "exclude": ["node_modules", "dist"]

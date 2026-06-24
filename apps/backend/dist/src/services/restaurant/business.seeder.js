@@ -9,6 +9,7 @@ const driver_entity_1 = require("../../db/entities/driver.entity");
 const user_entity_1 = require("../../db/entities/user.entity");
 const user_interface_1 = require("../../shared/domain/user.interface");
 class BusinessSeederService {
+    dataSource;
     constructor(dataSource) {
         this.dataSource = dataSource;
     }
@@ -156,4 +157,3 @@ class BusinessSeederService {
     }
 }
 exports.BusinessSeederService = BusinessSeederService;
-//# sourceMappingURL=business.seeder.js.map

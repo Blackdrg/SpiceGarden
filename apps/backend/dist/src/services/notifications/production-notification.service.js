@@ -14,15 +14,16 @@ exports.ProductionNotificationService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 let ProductionNotificationService = ProductionNotificationService_1 = class ProductionNotificationService {
+    configService;
+    logger = new common_1.Logger(ProductionNotificationService_1.name);
+    defaultChannels = {
+        email: true,
+        sms: false,
+        push: true,
+        webhook: false,
+    };
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(ProductionNotificationService_1.name);
-        this.defaultChannels = {
-            email: true,
-            sms: false,
-            push: true,
-            webhook: false,
-        };
     }
     async sendPaymentNotification(userId, paymentId, alert) {
         const payload = { ...alert, userId, paymentId };
@@ -156,7 +157,7 @@ let ProductionNotificationService = ProductionNotificationService_1 = class Prod
         }
     }
     async sendSMSForAlert(alert) {
-        const accountSid = this.configService.get('TWILIO_SID');
+        const accountSid = this.configService.get('TWILIO_ACCOUNT_SID');
         const authToken = this.configService.get('TWILIO_AUTH_TOKEN');
         const adminPhone = this.configService.get('ADMIN_ALERT_PHONE');
         if (!accountSid || !authToken || !adminPhone) {
@@ -190,4 +191,3 @@ exports.ProductionNotificationService = ProductionNotificationService = Producti
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], ProductionNotificationService);
-//# sourceMappingURL=production-notification.service.js.map

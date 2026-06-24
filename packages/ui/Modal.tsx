@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 

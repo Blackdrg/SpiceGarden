@@ -13,6 +13,19 @@ exports.PaymentMethodEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let PaymentMethodEntity = class PaymentMethodEntity {
+    id;
+    userId;
+    user;
+    type;
+    cardLast4;
+    cardBrand;
+    cardExpiry;
+    upiId;
+    walletProvider;
+    externalPaymentMethodId;
+    isDefault;
+    createdAt;
+    updatedAt;
 };
 exports.PaymentMethodEntity = PaymentMethodEntity;
 __decorate([
@@ -71,4 +84,3 @@ __decorate([
 exports.PaymentMethodEntity = PaymentMethodEntity = __decorate([
     (0, typeorm_1.Entity)('user_payment_methods')
 ], PaymentMethodEntity);
-//# sourceMappingURL=payment-method.entity.js.map

@@ -24,6 +24,13 @@ const payments_service_1 = require("../payments/payments.service");
 const notification_service_1 = require("../notifications/notification.service");
 const typeorm_3 = require("typeorm");
 let WalletService = WalletService_1 = class WalletService {
+    walletRepo;
+    walletTransactionRepo;
+    configService;
+    dataSource;
+    paymentService;
+    notificationService;
+    logger = new common_1.Logger(WalletService_1.name);
     constructor(walletRepo, walletTransactionRepo, configService, dataSource, paymentService, notificationService) {
         this.walletRepo = walletRepo;
         this.walletTransactionRepo = walletTransactionRepo;
@@ -31,7 +38,6 @@ let WalletService = WalletService_1 = class WalletService {
         this.dataSource = dataSource;
         this.paymentService = paymentService;
         this.notificationService = notificationService;
-        this.logger = new common_1.Logger(WalletService_1.name);
     }
     async getWallet(userId) {
         let wallet = await this.walletRepo.findOne({ where: { userId } });
@@ -239,6 +245,7 @@ exports.WalletService = WalletService = WalletService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(wallet_entity_1.WalletEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(wallet_transaction_entity_1.WalletTransactionEntity)),
+    __param(3, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         config_1.ConfigService,
@@ -246,4 +253,3 @@ exports.WalletService = WalletService = WalletService_1 = __decorate([
         payments_service_1.PaymentService,
         notification_service_1.NotificationService])
 ], WalletService);
-//# sourceMappingURL=wallet.service.js.map

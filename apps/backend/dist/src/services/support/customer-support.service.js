@@ -23,6 +23,13 @@ const order_entity_1 = require("../../db/entities/order.entity");
 const wallet_service_1 = require("../wallet/wallet.service");
 const payments_service_1 = require("../payments/payments.service");
 let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportService {
+    disputeRepo;
+    refundRepo;
+    orderRepo;
+    walletService;
+    paymentService;
+    dataSource;
+    logger = new common_1.Logger(CustomerSupportService_1.name);
     constructor(disputeRepo, refundRepo, orderRepo, walletService, paymentService, dataSource) {
         this.disputeRepo = disputeRepo;
         this.refundRepo = refundRepo;
@@ -30,7 +37,6 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
         this.walletService = walletService;
         this.paymentService = paymentService;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(CustomerSupportService_1.name);
     }
     async raiseDispute(orderId, customerId, type, description, evidence) {
         const order = await this.orderRepo.findOne({ where: { id: orderId } });
@@ -70,7 +76,7 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
         });
     }
     async reviewDispute(disputeId, reviewerId, status, notes, creditAmount) {
-        const dispute = await this.disputeRepo.findOne({ where: { id: disputeId } });
+        const dispute = (await this.disputeRepo.findOne({ where: { id: disputeId } }));
         if (!dispute) {
             throw new common_1.NotFoundException('Dispute not found');
         }
@@ -84,10 +90,10 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
         if (status === dispute_entity_1.DisputeStatus.RESOLVED_CREDIT || status === dispute_entity_1.DisputeStatus.RESOLVED_REFUND) {
             await this.initiateRefund(disputeId, reviewerId, creditAmount || 0, status);
         }
-        return this.disputeRepo.findOne({ where: { id: disputeId } });
+        return (await this.disputeRepo.findOne({ where: { id: disputeId } }));
     }
     async initiateRefund(disputeId, initiatedBy, amount, disputeStatus) {
-        const dispute = await this.disputeRepo.findOne({ where: { id: disputeId } });
+        const dispute = (await this.disputeRepo.findOne({ where: { id: disputeId } }));
         const refund = this.refundRepo.create({
             orderId: dispute.orderId,
             requestedBy: initiatedBy,
@@ -129,7 +135,7 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
             paymentReference,
         });
         await this.walletService.creditWallet(order.userId, refund.amount, `Refund for order #${order.orderNumber}: ${refund.reason}`);
-        return this.refundRepo.findOne({ where: { id: refundId } });
+        return (await this.refundRepo.findOne({ where: { id: refundId } }));
     }
     async getRefunds(filter) {
         const where = {};
@@ -175,6 +181,7 @@ exports.CustomerSupportService = CustomerSupportService = CustomerSupportService
     __param(0, (0, typeorm_1.InjectRepository)(dispute_entity_1.DisputeEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(refund_entity_1.RefundEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -182,4 +189,3 @@ exports.CustomerSupportService = CustomerSupportService = CustomerSupportService
         payments_service_1.PaymentService,
         typeorm_2.DataSource])
 ], CustomerSupportService);
-//# sourceMappingURL=customer-support.service.js.map

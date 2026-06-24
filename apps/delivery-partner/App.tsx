@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Alert, Dimensions, Animated, Easing, AppState, AppStateStatus } from 'react-native';
+import React, { useReducer, useEffect, useRef, useCallback } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView, Switch, Alert, useWindowDimensions, TextInput, AppState as RNAppState, AppStateStatus } from 'react-native';
 import { io, Socket } from 'socket.io-client';
-import Geolocation from '@react-native-community/geolocation';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
-import BackgroundTimer from 'react-native-background-timer';
+import * as Location from 'expo-location';
+import { getCurrentLocation, requestLocationPermission, watchLocation, type LocationPoint } from './src/services/location.service';
+
+const BackgroundTimer = { start: () => {}, stopBackgroundTimer: () => {} };
 
 type GeoError = {
   code: number;
@@ -14,16 +16,25 @@ type GeoPosition = {
   coords: {
     latitude: number;
     longitude: number;
-    altitude: number | null;
+    altitude?: number | null;
     accuracy: number;
-    altitudeAccuracy: number | null;
-    heading: number | null;
-    speed: number | null;
+    altitudeAccuracy?: number | null;
+    heading?: number | null;
+    speed?: number | null;
   };
   timestamp: number;
 };
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const STATUS_LABEL: Record<string, string> = {
+  idle: '✋ IDLE',
+  assigned: '📋 ASSIGNED',
+  navigating_to_pickup: '🛵 → PICKUP',
+  at_pickup: '🏪 AT PICKUP',
+  navigating_to_drop: '🛵 → CUSTOMER',
+  completed: '🏁 DONE',
+  failed: '❗ FAILED',
+  delayed: '⏰ DELAYED',
+};
 
 type DeliveryStatus = 'idle' | 'assigned' | 'navigating_to_pickup' | 'at_pickup' | 'navigating_to_drop' | 'completed' | 'failed' | 'delayed';
 
@@ -55,6 +66,90 @@ interface ShiftInfo {
   isActive: boolean;
   type: string;
   endTime: string;
+}
+
+type AppState = {
+  isOnline: boolean;
+  incomingOrder: Order | null;
+  activeDelivery: Order | null;
+  earnings: DailyEarnings;
+  shift: ShiftInfo | null;
+  deliveryOtp: string;
+  otpError: string;
+  log: string[];
+  expandedIssue: boolean;
+  activeScreen: 'home' | 'earnings';
+  locationPermission: 'granted' | 'denied' | 'pending';
+};
+
+type AppAction =
+  | { type: 'SET_ONLINE'; payload: boolean }
+  | { type: 'SET_INCOMING_ORDER'; payload: Order | null }
+  | { type: 'SET_ACTIVE_DELIVERY'; payload: Order | null }
+  | { type: 'ADD_EARNINGS'; payload: { amount: number; incentive?: number } }
+  | { type: 'SET_SHIFT'; payload: ShiftInfo | null }
+  | { type: 'SET_DELIVERY_OTP'; payload: string }
+  | { type: 'SET_OTP_ERROR'; payload: string }
+  | { type: 'ADD_LOG'; payload: string }
+  | { type: 'SET_EXPANDED_ISSUE'; payload: boolean }
+  | { type: 'SET_ACTIVE_SCREEN'; payload: 'home' | 'earnings' }
+  | { type: 'SET_LOCATION_PERMISSION'; payload: 'granted' | 'denied' | 'pending' }
+  | { type: 'COMPLETE_DELIVERY'; payload: { amount: number; incentive?: number; orderNumber: string } }
+  | { type: 'ACCEPT_ORDER'; payload: Order };
+
+function appReducer(state: AppState, action: AppAction): AppState {
+  switch (action.type) {
+    case 'SET_ONLINE':
+      return { ...state, isOnline: action.payload };
+    case 'SET_INCOMING_ORDER':
+      return { ...state, incomingOrder: action.payload };
+    case 'SET_ACTIVE_DELIVERY':
+      return { ...state, activeDelivery: action.payload };
+    case 'ADD_EARNINGS':
+      return {
+        ...state,
+        earnings: {
+          ...state.earnings,
+          pending: state.earnings.pending + action.payload.amount,
+        },
+      };
+    case 'SET_SHIFT':
+      return { ...state, shift: action.payload };
+    case 'SET_DELIVERY_OTP':
+      return { ...state, deliveryOtp: action.payload };
+    case 'SET_OTP_ERROR':
+      return { ...state, otpError: action.payload };
+    case 'ADD_LOG':
+      return { ...state, log: [action.payload, ...state.log.slice(0, 9)] };
+    case 'SET_EXPANDED_ISSUE':
+      return { ...state, expandedIssue: action.payload };
+    case 'SET_ACTIVE_SCREEN':
+      return { ...state, activeScreen: action.payload };
+    case 'SET_LOCATION_PERMISSION':
+      return { ...state, locationPermission: action.payload };
+    case 'COMPLETE_DELIVERY':
+      return {
+        ...state,
+        earnings: {
+          ...state.earnings,
+          today: state.earnings.today + action.payload.amount + (action.payload.incentive || 0),
+          ordersToday: state.earnings.ordersToday + 1,
+          pending: state.earnings.pending - action.payload.amount,
+          bonus: state.earnings.bonus + (action.payload.incentive ? action.payload.amount * 0.1 : 0),
+        },
+        activeDelivery: null,
+        deliveryOtp: '',
+      };
+    case 'ACCEPT_ORDER':
+      return {
+        ...state,
+        activeDelivery: { ...action.payload, status: 'assigned' as const, acceptedAt: new Date() },
+        incomingOrder: null,
+        earnings: { ...state.earnings, pending: state.earnings.pending + action.payload.amount },
+      };
+    default:
+      return state;
+  }
 }
 
 const DRIVER_NAME = 'Raj Kumar';
@@ -95,225 +190,235 @@ function demoIncoming(): Order {
   };
 }
 
+function StatCard({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <View style={styles.statCard}>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statSub}>{sub}</Text>
+    </View>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
+      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
+      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
+    </View>
+  );
+}
+
+function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
+  return (
+    <View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
+      </View>
+      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
+        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
+      </View>
+    </View>
+  );
+}
+
 export default function DriverApp() {
-  const [isOnline, setIsOnline] = useState(false);
-  const [incomingOrder, setIncomingOrder] = useState<Order | null>(null);
-  const [activeDelivery, setActiveDelivery] = useState<Order | null>(null);
-  const [earnings, setEarnings] = useState<DailyEarnings>({ today: 1450, pending: 350, bonus: 200, ordersToday: 8 });
-  const [shift, setShift] = useState<ShiftInfo | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [deliveryOtp, setDeliveryOtp] = useState('');
-  const [otpError, setOtpError] = useState('');
-  const [log, setLog] = useState<string[]>([]);
-   const [expandedIssue, setExpandedIssue] = useState(false);
-   const [activeScreen, setActiveScreen] = useState<'home' | 'earnings'>('home');
-   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'pending'>('pending');
-
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  const { width: SCREEN_W } = useWindowDimensions();
+  const [state, dispatch] = useReducer(appReducer, {
+    isOnline: false,
+    incomingOrder: null,
+    activeDelivery: null,
+    earnings: { today: 1450, pending: 350, bonus: 200, ordersToday: 8 },
+    shift: null,
+    deliveryOtp: '',
+    otpError: '',
+    log: [],
+    expandedIssue: false,
+    activeScreen: 'home' as const,
+    locationPermission: 'pending' as const,
+  });
   const locationWatchId = useRef<number | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-  const addLog = useCallback((msg: string) => setLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 9)]), []);
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: DESIGN_TOKENS.motion.page,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-
-Geolocation.requestAuthorization();
-      Geolocation.getCurrentPosition(
-        () => {
-          setLocationPermission('granted');
-        },
-        (error: GeoError) => {
-          setLocationPermission('denied');
-          addLog(`Location error: ${error.message}`);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-      );
-    }, [fadeAnim, addLog]);
+  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
 
   useEffect(() => {
-    if (!isOnline || locationPermission !== 'granted') {
-      if (locationWatchId.current !== null) {
-        Geolocation.clearWatch(locationWatchId.current);
-        locationWatchId.current = null;
-      }
+    let cancelled = false;
+
+    requestLocationPermission()
+      .then((status) => {
+        if (!cancelled) dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status });
+        if (status === 'granted') return getCurrentLocation({ accuracy: Location.Accuracy.Highest });
+        throw new Error('Location permission denied');
+      })
+      .then(() => {
+        if (!cancelled) dispatch({ type: 'ADD_LOG', payload: 'Current location initialized' });
+      })
+      .catch((error: Error) => {
+        if (!cancelled) {
+          dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
+          dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!state.isOnline || state.locationPermission !== 'granted') {
       return;
     }
 
-    locationWatchId.current = Geolocation.watchPosition(
-        (position: GeoPosition) => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          socket?.emit('driverLocationUpdate', { 
-            driverId: 'current',
-            location 
-          });
-        },
-        (error: GeoError) => addLog(`Location watch error: ${error.message}`),
-{ 
-           enableHighAccuracy: true, 
-           distanceFilter: 10,
-           timeout: 5000
-         }
-      );
+    let watcher: Awaited<ReturnType<typeof watchLocation>> | null = null;
+
+    watchLocation(
+      (location: LocationPoint) => {
+        socketRef.current?.emit('driverLocationUpdate', {
+          driverId: 'current',
+          location: {
+            lat: location.lat,
+            lng: location.lng,
+          },
+        });
+      },
+      (error) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
+      {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 10,
+      }
+    ).then((activeWatcher) => {
+      watcher = activeWatcher;
+    }).catch((error: Error) => {
+      dispatch({ type: 'ADD_LOG', payload: `Location watch setup error: ${error.message}` });
+    });
 
     return () => {
-      if (locationWatchId.current !== null) {
-        Geolocation.clearWatch(locationWatchId.current);
-      }
+      watcher?.remove();
     };
-   }, [isOnline, locationPermission, socket, addLog]);
+  }, [state.isOnline, state.locationPermission]);
 
   useEffect(() => {
     const s: Socket = io('http://localhost:3001', {
       path: '/socket.io/',
       transports: ['websocket', 'polling'],
     });
-    setSocket(s);
+    socketRef.current = s;
 
-    s.on('connect', () => addLog('Connected to backend'));
-    s.on('disconnect', () => addLog('Disconnected'));
+    s.on('connect', () => dispatch({ type: 'ADD_LOG', payload: 'Connected to backend' }));
+    s.on('disconnect', () => dispatch({ type: 'ADD_LOG', payload: 'Disconnected' }));
     s.on('orderAssigned', (order: Order) => {
-      if (isOnline) { setIncomingOrder(order); addLog(`New order: #${order.orderNumber} (₹${order.amount})`); }
+      if (state.isOnline) dispatch({ type: 'ACCEPT_ORDER', payload: order });
     });
     s.on('orderRerouted', (data: { orderId: string; reason: string }) => {
       if (activeDelivery?.id === data.orderId) {
-        addLog(`Re-routed: ${data.reason}`);
+        dispatch({ type: 'ADD_LOG', payload: `Re-routed: ${data.reason}` });
         Alert.alert('🚗 Re-routing', `New destination: ${data.reason}`);
       }
     });
     s.on('shiftReminder', (data: { shiftType: string; endTime: string }) => {
-       addLog(`Shift reminder: ${data.shiftType} ends at ${data.endTime}`);
-       Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
-       setShift({ isActive: true, type: data.shiftType, endTime: data.endTime });
-     });
+      dispatch({ type: 'ADD_LOG', payload: `Shift reminder: ${data.shiftType} ends at ${data.endTime}` });
+      Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
+      dispatch({ type: 'SET_SHIFT', payload: { isActive: true, type: data.shiftType, endTime: data.endTime }});
+    });
 
     return () => { s.disconnect(); };
-  }, [isOnline, activeDelivery?.id, addLog]);
+  }, [state.isOnline, activeDelivery?.id]);
 
   useEffect(() => {
     const appStateHandler = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isOnline) {
+      if (nextAppState === 'background' && state.isOnline) {
         BackgroundTimer.start();
       } else if (nextAppState === 'active') {
         BackgroundTimer.stopBackgroundTimer();
       }
     };
 
-    const subscription = AppState.addEventListener('change', appStateHandler);
+    const subscription = RNAppState.addEventListener('change', appStateHandler);
     return () => subscription.remove();
-  }, [isOnline]);
+  }, [state.isOnline]);
 
   useEffect(() => {
-    if (!isOnline) { socket?.emit('driverOffline'); return; }
+    if (!state.isOnline) return;
+    const socket = socketRef.current;
     socket?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
-    addLog('Went online — awaiting orders');
+    dispatch({ type: 'ADD_LOG', payload: 'Went online — awaiting orders' });
     return () => { socket?.emit('driverOffline'); };
-  }, [isOnline, socket, addLog]);
+  }, [state.isOnline]);
 
   const acceptOrder = useCallback(() => {
     if (!incomingOrder) return;
-    const accepted = { ...incomingOrder, status: 'assigned' as const, acceptedAt: new Date() };
-    setActiveDelivery(accepted);
-    setIncomingOrder(null);
-    setEarnings((prev) => ({ ...prev, pending: prev.pending + accepted.amount }));
-    addLog(`Accepted #${accepted.orderNumber}`);
-    Alert.alert('🎉 Order Accepted', `Heading to ${accepted.restaurant.name}`);
-  }, [incomingOrder, addLog]);
+    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
+    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
+  }, [incomingOrder]);
 
   const rejectOrder = useCallback(() => {
     if (!incomingOrder) return;
-    setIncomingOrder(null);
-    addLog(`Rejected #${incomingOrder.orderNumber}`);
-    socket?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
-  }, [incomingOrder, socket, addLog]);
+    dispatch({ type: 'SET_INCOMING_ORDER', payload: null });
+    dispatch({ type: 'ADD_LOG', payload: `Rejected #${incomingOrder.orderNumber}` });
+    socketRef.current?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
+  }, [incomingOrder]);
 
   const navigateTo = useCallback((destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
       Alert.alert('🚗 Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
-      addLog(`Navigating → ${destination}`);
+      dispatch({ type: 'ADD_LOG', payload: `Navigating → ${destination}` });
     } else {
       Alert.alert('📍 Navigation', `Opening maps to ${destination}: ${addr}`);
     }
-  }, [addLog]);
+  }, []);
 
   const confirmPickup = useCallback(() => {
     if (!activeDelivery) return;
-    setDeliveryOtp(DEFAULT_OTP);
-    addLog(`Arrived at pickup: ${activeDelivery.restaurant.name}`);
-  }, [activeDelivery, addLog]);
+    dispatch({ type: 'SET_DELIVERY_OTP', payload: DEFAULT_OTP });
+    dispatch({ type: 'ADD_LOG', payload: `Arrived at pickup: ${activeDelivery.restaurant.name}` });
+  }, [activeDelivery]);
 
   const verifyOtpAndPickup = useCallback(() => {
     if (!activeDelivery) return;
     if (deliveryOtp !== activeDelivery.otp) {
-      setOtpError('Invalid OTP — ask the customer');
-      addLog('OTP verification failed');
+      dispatch({ type: 'SET_OTP_ERROR', payload: 'Invalid OTP — ask the customer' });
+      dispatch({ type: 'ADD_LOG', payload: 'OTP verification failed' });
       return;
     }
-    setOtpError('');
-    const picked: Order = { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() };
-    setActiveDelivery(picked);
-    addLog(`OTP verified — picked up #${picked.orderNumber}`);
+    dispatch({ type: 'SET_OTP_ERROR', payload: '' });
+    dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() }});
+    dispatch({ type: 'ADD_LOG', payload: `OTP verified — picked up #${activeDelivery.orderNumber}` });
     Alert.alert('✅ Pickup Confirmed', 'Navigate to customer now!');
-  }, [activeDelivery, deliveryOtp, addLog]);
+  }, [activeDelivery, deliveryOtp]);
 
   const completeDelivery = useCallback(() => {
     if (!activeDelivery) return;
-    setEarnings((prev) => ({
-      ...prev,
-      today: prev.today + activeDelivery.amount + (activeDelivery.incentiveAmount || 0),
-      ordersToday: prev.ordersToday + 1,
-      pending: prev.pending - activeDelivery.amount,
-      bonus: prev.bonus + (activeDelivery.surgeMultiplier ? activeDelivery.amount * 0.1 : 0),
-    }));
-    addLog(`Delivered #${activeDelivery.orderNumber} — +₹${activeDelivery.amount}`);
+    dispatch({ type: 'COMPLETE_DELIVERY', payload: { amount: activeDelivery.amount, incentive: activeDelivery.incentiveAmount, orderNumber: activeDelivery.orderNumber }});
     Alert.alert('✅ Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
-    setActiveDelivery(null);
-    setDeliveryOtp('');
-  }, [activeDelivery, addLog]);
+  }, [activeDelivery]);
 
   const handleFailedDelivery = useCallback((reason: string) => {
     if (!activeDelivery) return;
-    addLog(`Delivery failed: ${reason}`);
+    dispatch({ type: 'ADD_LOG', payload: `Delivery failed: ${reason}` });
     Alert.alert('❗ Delivery Failed', `Marked as ${reason}`, [
-      { text: 'OK', onPress: () => setActiveDelivery(null) }
+      { text: 'OK', onPress: () => dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: null }) }
     ]);
-  }, [activeDelivery, addLog]);
+  }, [activeDelivery]);
 
   const reportIssue = useCallback((label: string) => {
-    addLog(`Issue reported: ${label}`);
-    socket?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
+    dispatch({ type: 'ADD_LOG', payload: `Issue reported: ${label}` });
+    socketRef.current?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
     Alert.alert('Issue Reported', `${label} — Support has been notified.`);
-    setExpandedIssue(false);
-  }, [socket, activeDelivery, addLog]);
-
-  const statusLabel: Record<string, string> = {
-    idle: '✋ IDLE',
-    assigned: '📋 ASSIGNED',
-    navigating_to_pickup: '🛵 → PICKUP',
-    at_pickup: '🏪 AT PICKUP',
-    navigating_to_drop: '🛵 → CUSTOMER',
-    completed: '🏁 DONE',
-    failed: '❗ FAILED',
-    delayed: '⏰ DELAYED',
-  };
+    dispatch({ type: 'SET_EXPANDED_ISSUE', payload: false });
+  }, [activeDelivery]);
 
   return (
-    <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+    <View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
       <View style={styles.header}>
         <View>
           <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
           <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
           <Text style={styles.vehicleTag}>{VEHICLE}</Text>
           {activeDelivery && (
-            <Text style={styles.statusLabel}>{statusLabel[activeDelivery.status]}</Text>
+            <Text style={styles.STATUS_LABEL}>{STATUS_LABEL[activeDelivery.status]}</Text>
           )}
           {shift && (
             <Text style={styles.shiftTag}>📅 {shift.type} shift • Ends: {shift.endTime}</Text>
@@ -323,13 +428,13 @@ Geolocation.requestAuthorization();
           <Text style={isOnline ? styles.onlineText : styles.offlineText}>
             {isOnline ? '● ONLINE' : '● OFFLINE'}
           </Text>
-          <Switch 
-            value={isOnline} 
-            onValueChange={setIsOnline}
-            trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
-            thumbColor="white"
-            accessibilityLabel="Toggle online status"
-          />
+<Switch 
+             value={state.isOnline} 
+             onValueChange={(value) => dispatch({ type: 'SET_ONLINE', payload: value })}
+             trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
+             thumbColor="white"
+             accessibilityLabel="Toggle online status"
+           />
         </View>
       </View>
 
@@ -341,9 +446,9 @@ Geolocation.requestAuthorization();
 
       <View style={styles.tabRow}>
         {(['home', 'earnings'] as const).map((t) => (
-          <TouchableOpacity
+          <Pressable
             key={t}
-            onPress={() => setActiveScreen(t)}
+            onPress={() => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: t })}
             style={[styles.tab, activeScreen === t && styles.tabActive]}
             accessibilityLabel={`Switch to ${t} screen`}
             accessibilityRole="tab"
@@ -351,7 +456,7 @@ Geolocation.requestAuthorization();
             <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
               {t === 'home' ? '🏠 Active' : '💰 Earnings'}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
 
@@ -378,22 +483,22 @@ Geolocation.requestAuthorization();
               )}
 
               <View style={styles.actionRow}>
-                <TouchableOpacity 
-                  style={[styles.btn, styles.btnReject]} 
+                <Pressable 
+                  style={[styles.btnSecondary, styles.btnReject]} 
                   onPress={rejectOrder}
                   accessibilityLabel="Reject order"
                   accessibilityRole="button"
                 >
                   <Text style={styles.btnText}>Reject</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.btn, styles.btnAccept]} 
+                </Pressable>
+                <Pressable 
+                  style={[styles.btnSecondary, styles.btnAccept]} 
                   onPress={acceptOrder}
                   accessibilityLabel="Accept order"
                   accessibilityRole="button"
                 >
                   <Text style={styles.btnText}>✅ Accept</Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           ) : null}
@@ -429,51 +534,51 @@ Geolocation.requestAuthorization();
                   <Text style={styles.contextLabel}>🏪 PICKUP</Text>
                   <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
                   <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navInlineBtn}
                     onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                     accessibilityLabel="Navigate to pickup"
                   >
                     <Text style={styles.navInlineText}>📍</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
                 <View style={styles.contextCard}>
                   <Text style={styles.contextLabel}>📍 DROP</Text>
                   <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
                   <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
                   <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navInlineBtn}
                     onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
                     accessibilityLabel="Navigate to customer"
                   >
                     <Text style={styles.navInlineText}>📍</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
               {activeDelivery.status === 'assigned' && (
-                <TouchableOpacity
+                <Pressable
                   style={styles.navBtn}
                   onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                   accessibilityLabel="Navigate to pickup location"
                   accessibilityRole="button"
                 >
                   <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
 
               {activeDelivery.status === 'navigating_to_pickup' && (
                 <>
-                  <TouchableOpacity style={styles.arriveBtn} onPress={confirmPickup}>
+                  <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
                     <Text style={styles.navBtnText}>🏪 I&#39;m at Restaurant</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                  </Pressable>
+                  <Pressable
                     style={styles.navBtn}
                     onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
                   >
                     <Text style={styles.navBtnText}>📍 Open Navigation</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </>
               )}
 
@@ -489,18 +594,18 @@ Geolocation.requestAuthorization();
                       </View>
                     ))}
                   </View>
-                  <TouchableOpacity style={[styles.btn, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => setDeliveryOtp(activeDelivery.otp)}>
-                    <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
-                  </TouchableOpacity>
-                  {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
+<Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
+                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
+                   </Pressable>
+                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
                   <View style={styles.actionRow}>
-                    <TouchableOpacity style={[styles.btn, styles.btnReject]} onPress={() => setOtpError('')}>
-                      <Text style={styles.btnText}>Clear</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.btnAccept]} onPress={verifyOtpAndPickup}>
+<Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
+                       <Text style={styles.btnText}>Clear</Text>
+                     </Pressable>
+                    <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
                       <Text style={styles.btnText}>✅ Confirm OTP</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
                 </View>
               )}
@@ -508,168 +613,135 @@ Geolocation.requestAuthorization();
               {activeDelivery.status === 'navigating_to_drop' && (
                 <View style={{ gap: 10 }}>
                   <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.navBtn}
                     onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
                   >
                     <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
                   <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
                   <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
-                  <TouchableOpacity style={styles.completeBtn} onPress={completeDelivery}>
+                  <Pressable style={styles.completeBtn} onPress={completeDelivery}>
                     <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity 
+                  </Pressable>
+                  <Pressable 
                     style={styles.failBtn} 
                     onPress={() => handleFailedDelivery('customer_unavailable')}
                   >
                     <Text style={styles.failBtnText}>❗ Mark Failed</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               )}
             </View>
           ) : null}
 
-          {!incomingOrder && !activeDelivery && (
-            <View style={styles.idleCard}>
-              <Text style={styles.idleIcon}>⏳</Text>
-              <Text style={styles.idleText}>
-                {isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
-              </Text>
-              {isOnline && locationPermission === 'denied' && (
-                <Text style={styles.locationWarning}>Location permission required for delivery</Text>
-              )}
-              {isOnline && (
-                <TouchableOpacity
-                  style={styles.btnAccept}
-                  onPress={() => {
-                    const demo = demoIncoming();
-                    setIncomingOrder(demo);
-                    addLog('Demo order injected');
-                  }}
-                >
-                  <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
-                </TouchableOpacity>
-              )}
+{!state.incomingOrder && !activeDelivery && (
+             <View style={styles.idleCard}>
+               <Text style={styles.idleIcon}>⏳</Text>
+               <Text style={styles.idleText}>
+                 {state.isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
+               </Text>
+               {state.isOnline && locationPermission === 'denied' && (
+                 <Text style={styles.locationWarning}>Location permission required for delivery</Text>
+               )}
+               {state.isOnline && (
+                 <Pressable
+                   style={styles.btnAccept}
+                   onPress={() => {
+                     const demo = demoIncoming();
+                     dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
+                     dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
+                   }}
+                 >
+                   <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
+                 </Pressable>
+               )}
+             </View>
+           )}
+
+           {activeDelivery && (
+             <View style={styles.issueSection}>
+               <Pressable
+                 onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !state.expandedIssue })}
+                 style={styles.issueToggle}
+                 accessibilityLabel="Report an issue"
+                 accessibilityRole="button"
+               >
+                 <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
+                 <Text style={styles.issueChevron}>{state.expandedIssue ? '▲' : '▼'}</Text>
+               </Pressable>
+               {state.expandedIssue && (
+                 <View style={styles.issueGrid}>
+                   {issueTypes.map((issue) => (
+                     <Pressable
+                       key={issue.label}
+                        style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
+                       onPress={() => reportIssue(issue.label)}
+                     >
+                       <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
+                       <Text style={styles.issueLabel}>{issue.label}</Text>
+                     </Pressable>
+                   ))}
+                 </View>
+               )}
             </View>
           )}
 
-          {activeDelivery && (
-            <View style={styles.issueSection}>
-              <TouchableOpacity
-                onPress={() => setExpandedIssue(!expandedIssue)}
-                style={styles.issueToggle}
-                accessibilityLabel="Report an issue"
-                accessibilityRole="button"
-              >
-                <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
-                <Text style={styles.issueChevron}>{expandedIssue ? '▲' : '▼'}</Text>
-              </TouchableOpacity>
-              {expandedIssue && (
-                <View style={styles.issueGrid}>
-                  {issueTypes.map((issue) => (
-                    <TouchableOpacity
-                      key={issue.label}
-                      style={styles.issueBtn}
-                      onPress={() => reportIssue(issue.label)}
-                    >
-                      <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
-                      <Text style={styles.issueLabel}>{issue.label}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
+{state.log.length > 0 && (
+             <View style={styles.logCard}>
+               <Text style={styles.logTitle}>📋 Recent Activity</Text>
+               {state.log.map((entry, i) => (
+                 <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+                   {entry}
+                 </Text>
+               ))}
+             </View>
+           )}
+         </ScrollView>
+       )}
 
-          {log.length > 0 && (
-            <View style={styles.logCard}>
-              <Text style={styles.logTitle}>📋 Recent Activity</Text>
-              {log.map((entry, i) => (
-                <Text key={i} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
-                  {entry}
-                </Text>
-              ))}
-            </View>
-          )}
-        </ScrollView>
-      )}
+       {state.activeScreen === 'earnings' && (
+         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+           <View style={styles.earnBigCard}>
+             <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
+             <Text style={styles.earnAmount}>₹{state.earnings.today}</Text>
+             <Text style={styles.earnSub}>{state.earnings.ordersToday} deliveries completed</Text>
+           </View>
 
-           {activeScreen === 'earnings' && (
-             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-               <View style={styles.earnBigCard}>
-                 <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
-                 <Text style={styles.earnAmount}>₹{earnings.today}</Text>
-                 <Text style={styles.earnSub}>{earnings.ordersToday} deliveries completed</Text>
-               </View>
+           <View style={styles.earnGrid}>
+             <StatCard label="Pending" value={`₹${state.earnings.pending}`} sub="yet to credit" />
+             <StatCard label="Weekly Bonus" value={`₹${state.earnings.bonus}`} sub="on-time reward" />
+             <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
+             <StatCard label="Acceptance" value="97%" sub="this month" />
+           </View>
 
-          <View style={styles.earnGrid}>
-            <StatCard label="Pending" value={`₹${earnings.pending}`} sub="yet to credit" />
-            <StatCard label="Weekly Bonus" value={`₹${earnings.bonus}`} sub="on-time reward" />
-            <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
-            <StatCard label="Acceptance" value="97%" sub="this month" />
-          </View>
+           <View style={styles.card}>
+             <Text style={styles.cardTitle}>🏆 Performance</Text>
+             <Text style={styles.cardSubtitle}>This week</Text>
+             <View style={{ gap: 8 }}>
+               <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
+               <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
+               <EarnRow label="Acceptance rate" value="97%" pct={97} />
+               <EarnRow label="Completed orders" value="42 / week" pct={88} />
+             </View>
+           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>🏆 Performance</Text>
-            <Text style={styles.cardSubtitle}>This week</Text>
-            <View style={{ gap: 8 }}>
-              <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
-              <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
-              <EarnRow label="Acceptance rate" value="97%" pct={97} />
-              <EarnRow label="Completed orders" value="42 / week" pct={88} />
-            </View>
-          </View>
-
-          {shift && (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
+           {state.shift && (
+             <View style={styles.card}>
+               <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
               <Text style={styles.cardSubtitle}>Current shift</Text>
               <View style={styles.shiftInfo}>
-                <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
-                <Text style={styles.shiftInfoText}>Ends: {shift.endTime}</Text>
-                <TouchableOpacity style={styles.shiftEndBtn}>
+                <Text style={styles.shiftInfoText}>Type: {state.shift!.type}</Text>
+                <Text style={styles.shiftInfoText}>Ends: {state.shift!.endTime}</Text>
+                <Pressable style={styles.shiftEndBtn}>
                   <Text style={styles.shiftEndText}>End Shift Early</Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           )}
         </ScrollView>
       )}
-    </Animated.View>
-  );
-}
-
-function StatCard({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statSub}>{sub}</Text>
-    </View>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
-      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
-    </View>
-  );
-}
-
-function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
-  return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
-        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
-      </View>
-      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
-        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
-      </View>
     </View>
   );
 }
@@ -684,7 +756,7 @@ const styles = StyleSheet.create({
   subtitle: { color: '#888', fontSize: 13, marginTop: 2 },
   vehicleTag: { color: '#555', fontSize: 11, marginTop: 1 },
   shiftTag: { color: DESIGN_TOKENS.colors.warning, fontSize: 11, marginTop: 4 },
-  statusLabel: { color: '#fff', fontSize: 14, marginTop: 4 },
+  STATUS_LABEL: { color: '#fff', fontSize: 14, marginTop: 4 },
   onlineToggle: { flexDirection: 'row', alignItems: 'center' },
   onlineText: { color: DESIGN_TOKENS.colors.success, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
   offlineText: { color: DESIGN_TOKENS.colors.danger, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
@@ -740,24 +812,24 @@ const styles = StyleSheet.create({
   progressDotText: { fontSize: 11, color: 'white', fontWeight: 'bold' },
   progressLine: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 4 },
   progressLineActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
-   etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+  progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
+  etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
-contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
-    contextCard: {
-      flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
-    },
-    contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
-    contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
-    contextAddr: { fontSize: 12, color: '#aaa' },
-    contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
-    navInlineBtn: { position: 'absolute', right: 8, top: 8 },
-    navInlineText: { fontSize: 16 },
+  contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
+  contextCard: {
+    flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
+  },
+  contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
+  contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
+  contextAddr: { fontSize: 12, color: '#aaa' },
+  contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
+  navInlineBtn: { position: 'absolute', right: 8, top: 8 },
+  navInlineText: { fontSize: 16 },
 
-    btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
-    btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-    navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
-    navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
+  btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
+  navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 
   arriveBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
   completeBtn: { backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
@@ -786,7 +858,7 @@ contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
   issueChevron: { color: DESIGN_TOKENS.colors.warning, fontSize: 12, marginLeft: 8 },
   issueGrid: { flexDirection: 'row', flexWrap: 'wrap', padding: 10, gap: 8 },
   issueBtn: {
-    width: (SCREEN_W - 52) / 4, backgroundColor: '#2a2a2a', borderRadius: 8,
+    backgroundColor: '#2a2a2a', borderRadius: 8,
     alignItems: 'center', paddingVertical: 10,
   },
   issueLabel: { color: '#ccc', fontSize: 11, marginTop: 4, textAlign: 'center' },
@@ -825,7 +897,6 @@ contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
   },
 
   actionRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  btnPrimary: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnAccept: { backgroundColor: DESIGN_TOKENS.colors.primary, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },

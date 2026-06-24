@@ -14,6 +14,13 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from '../../db/entities/notification.entity';
 import { NotificationStatus } from '../../db/entities/notification-status.enum';
+import { isAllowedOrigin } from '../../security/cors-origin';
+
+const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
+const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
+const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
+const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 
 export enum SocketNamespace {
   TRACKING = '/tracking',
@@ -50,18 +57,22 @@ interface SocketConnection {
 @Injectable()
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: isAllowedOrigin,
+    credentials: true,
   },
   namespace: '/',
+  maxHttpBufferSize: MAX_HTTP_BUFFER_SIZE,
+  allowEIO3: false,
   pingInterval: 10000,
   pingTimeout: 20000,
 })
 export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(TrackingGateway.name);
   private readonly connectedClients = new Map<string, SocketConnection>();
+  private readonly connectionAttempts = new Map<string, { count: number; resetAt: number }>();
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
@@ -75,6 +86,17 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   handleConnection(client: Socket) {
+    if (!this.isConnectionAllowed(client)) {
+      client.disconnect(true);
+      return;
+    }
+
+    const origin = client.handshake.headers.origin;
+    if (typeof origin === 'string' && !isAllowedOrigin(origin)) {
+      client.disconnect(true);
+      return;
+    }
+
     const namespace = client.nsp.name;
     this.connectedClients.set(client.id, {
       id: client.id,
@@ -92,6 +114,28 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.logger.log(`Client ${client.id} disconnected`);
   }
 
+  private isConnectionAllowed(client: Socket): boolean {
+    const now = Date.now();
+    const forwardedFor = client.handshake.headers['x-forwarded-for'];
+    const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
+    const key = forwardedIp || client.handshake.address || client.id;
+    const current = this.connectionAttempts.get(key);
+
+    if (!current || now >= current.resetAt) {
+      this.connectionAttempts.set(key, { count: 1, resetAt: now + WS_RATE_LIMIT_WINDOW_MS });
+      return true;
+    }
+
+    if (current.count >= WS_RATE_LIMIT_MAX) {
+      this.logger.warn(`Rejected websocket connection from ${key}: rate limit exceeded`);
+      return false;
+    }
+
+    current.count += 1;
+    this.connectionAttempts.set(key, current);
+    return true;
+  }
+
   @SubscribeMessage('ping')
   handlePing(@ConnectedSocket() client: Socket) {
     const conn = this.connectedClients.get(client.id);
@@ -103,6 +147,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('join')
   handleJoin(@MessageBody() data: { room: string }, @ConnectedSocket() client: Socket) {
+    if (typeof data.room !== 'string' || !ROOM_PATTERN.test(data.room)) {
+      return { error: 'Invalid room' };
+    }
+
     client.join(data.room);
     this.logger.log(`Client ${client.id} joined room ${data.room}`);
     return { status: 'joined', room: data.room };
@@ -154,7 +202,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('updateLocation')
   async handleLocationUpdate(@MessageBody() data: LocationUpdate, @ConnectedSocket() client: Socket) {
-    if (!this.isValidLocation(data)) {
+    if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || !this.isValidLocation(data)) {
       return { error: 'Invalid location data' };
     }
 
@@ -174,6 +222,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('kdsUpdate')
   async handleKDSUpdate(@MessageBody() data: { orderId: string; status: string; branchId: string; timestamp?: Date }) {
+    if (typeof data.orderId !== 'string' || typeof data.status !== 'string' || typeof data.branchId !== 'string' || !ROOM_PATTERN.test(data.branchId)) {
+      return { error: 'Invalid KDS update' };
+    }
+
     const messageId = `kds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const topic = `kds:${data.branchId}`;
     
@@ -188,6 +240,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage('driverEvent')
   async handleDriverEvent(@MessageBody() data: { driverId: string; orderId?: string; event: string }) {
+    if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || typeof data.event !== 'string') {
+      return { error: 'Invalid driver event' };
+    }
+
     const messageId = `drv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const topic = `driver:${data.driverId}`;
     
@@ -212,6 +268,10 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   async publishToRoom(room: string, data: any, requireAck: boolean = false): Promise<any> {
+    if (typeof room !== 'string' || !ROOM_PATTERN.test(room)) {
+      return { error: 'Invalid room' };
+    }
+
     const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     if (requireAck) {

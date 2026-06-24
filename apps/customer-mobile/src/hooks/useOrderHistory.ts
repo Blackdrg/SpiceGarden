@@ -83,8 +83,8 @@ export const useOrderHistory = () => {
   }, [loadHistory]);
 
   // Handle filter change
-  const handleFilterChange = useCallback((newFilter: OrderStatusType | 'all') => {
-    setFilter(newFilter);
+  const handleFilterChange = useCallback((newFilter: string) => {
+    setFilter(newFilter as OrderStatusType | 'all');
   }, []);
 
   return {

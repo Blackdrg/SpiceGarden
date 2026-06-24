@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const notification_preference_entity_1 = require("../../db/entities/notification-preference.entity");
 let NotificationPreferencesService = class NotificationPreferencesService {
+    prefRepo;
     constructor(prefRepo) {
         this.prefRepo = prefRepo;
     }
@@ -55,4 +56,3 @@ exports.NotificationPreferencesService = NotificationPreferencesService = __deco
     __param(0, (0, typeorm_1.InjectRepository)(notification_preference_entity_1.NotificationPreferenceEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], NotificationPreferencesService);
-//# sourceMappingURL=notification-preferences.service.js.map

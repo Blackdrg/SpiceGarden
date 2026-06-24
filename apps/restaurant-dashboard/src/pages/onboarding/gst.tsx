@@ -53,8 +53,9 @@ export default function OnboardingGST() {
             </div>
           ))}
           <div>
-            <label className={styles.label}>State Code</label>
+            <label htmlFor="gst-state-code" className={styles.label}>State Code</label>
             <input
+              id="gst-state-code"
               aria-label="State Code"
               value={form.stateCode}
               onChange={(e) => setForm({ ...form, stateCode: e.target.value })}
@@ -67,6 +68,7 @@ export default function OnboardingGST() {
 
         <div className={styles.actions}>
           <button
+            type="button"
             onClick={() => window.location.href = '/onboarding/documents'}
             className={styles.backButton}
           >

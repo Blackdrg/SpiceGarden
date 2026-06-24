@@ -22,12 +22,16 @@ const driver_entity_1 = require("../../db/entities/driver.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
 const order_interface_1 = require("../../shared/domain/order.interface");
 let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
+    incentiveRepo;
+    driverRepo;
+    orderRepo;
+    dataSource;
+    logger = new common_1.Logger(DriverPayoutService_1.name);
     constructor(incentiveRepo, driverRepo, orderRepo, dataSource) {
         this.incentiveRepo = incentiveRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(DriverPayoutService_1.name);
     }
     async calculateWeeklyIncentives(driverId, weekStart) {
         const weekEnd = new Date(weekStart);
@@ -83,7 +87,7 @@ let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
             approvedBy: approverId,
             approvedAt: new Date(),
         });
-        return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+        return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }));
     }
     async markPaid(incentiveId, payoutReference) {
         const incentive = await this.incentiveRepo.findOne({ where: { id: incentiveId } });
@@ -95,7 +99,7 @@ let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
             payoutReference,
             paidAt: new Date(),
         });
-        return this.incentiveRepo.findOne({ where: { id: incentiveId } });
+        return (await this.incentiveRepo.findOne({ where: { id: incentiveId } }));
     }
     async getPendingIncentives(driverId) {
         const where = { status: driver_incentive_entity_1.IncentiveStatus.APPROVED };
@@ -104,7 +108,7 @@ let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
         }
         return this.incentiveRepo.find({
             where,
-            relations: ['driver'],
+            relations: { driver: true },
             order: { createdAt: 'ASC' },
         });
     }
@@ -136,9 +140,9 @@ exports.DriverPayoutService = DriverPayoutService = DriverPayoutService_1 = __de
     __param(0, (0, typeorm_1.InjectRepository)(driver_incentive_entity_1.DriverIncentiveEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
+    __param(3, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], DriverPayoutService);
-//# sourceMappingURL=driver-payout.service.js.map

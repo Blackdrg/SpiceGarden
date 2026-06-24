@@ -13,6 +13,21 @@ exports.GSTDetailEntity = void 0;
 const typeorm_1 = require("typeorm");
 const order_entity_1 = require("./order.entity");
 let GSTDetailEntity = class GSTDetailEntity {
+    id;
+    order;
+    orderId;
+    taxableValue;
+    cgstRate;
+    cgstAmount;
+    sgstRate;
+    sgstAmount;
+    igstRate;
+    igstAmount;
+    totalGstAmount;
+    totalAmount;
+    placeOfSupply;
+    reverseChargeApplicable;
+    createdAt;
 };
 exports.GSTDetailEntity = GSTDetailEntity;
 __decorate([
@@ -78,4 +93,3 @@ __decorate([
 exports.GSTDetailEntity = GSTDetailEntity = __decorate([
     (0, typeorm_1.Entity)('gst_details')
 ], GSTDetailEntity);
-//# sourceMappingURL=gst-detail.entity.js.map

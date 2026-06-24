@@ -121,4 +121,3 @@ __decorate([
 exports.LegalController = LegalController = __decorate([
     (0, common_1.Controller)('legal')
 ], LegalController);
-//# sourceMappingURL=legal.controller.js.map

@@ -6,6 +6,7 @@ import { DriverIncentiveEntity, IncentiveStatus, IncentiveType } from '../../db/
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { OrderStatus } from '../../shared/domain/order.interface';
+import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 export interface DriverBankDetails {
   accountHolderName: string;
@@ -38,8 +39,8 @@ export class DriverPayoutProviderService {
     @InjectRepository(OrderEntity)
     private readonly orderRepo: Repository<OrderEntity>,
   ) {
-    this.keyId = this.configService.get<string>('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-    this.keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+    this.keyId = getRequiredSecret(this.configService, 'RAZORPAY_KEY_ID');
+    this.keySecret = getRequiredSecret(this.configService, 'RAZORPAY_KEY_SECRET');
   }
 
   private async rzpRequest(method: string, endpoint: string, data?: Record<string, any>): Promise<any> {
@@ -149,7 +150,7 @@ export class DriverPayoutProviderService {
 
     return this.incentiveRepo.find({
       where,
-      relations: ['driver'],
+      relations: { driver: true },
       order: { createdAt: 'ASC' },
     });
   }

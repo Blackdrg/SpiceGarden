@@ -15,7 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BusinessEngineController = void 0;
 const common_1 = require("@nestjs/common");
 const business_engine_service_1 = require("./business-engine.service");
+const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let BusinessEngineController = class BusinessEngineController {
+    businessEngine;
     constructor(businessEngine) {
         this.businessEngine = businessEngine;
     }
@@ -47,18 +54,24 @@ let BusinessEngineController = class BusinessEngineController {
 exports.BusinessEngineController = BusinessEngineController;
 __decorate([
     (0, common_1.Get)('metrics'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessEngineController.prototype, "getMetrics", null);
 __decorate([
     (0, common_1.Get)('restaurants'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.RESTAURANT),
+    (0, permissions_decorator_1.Permissions)('restaurants:manage_own'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessEngineController.prototype, "getRestaurants", null);
 __decorate([
     (0, common_1.Get)('restaurants/:id/menu'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.CUSTOMER),
+    (0, permissions_decorator_1.Permissions)('orders:read_own'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -66,12 +79,16 @@ __decorate([
 ], BusinessEngineController.prototype, "getMenu", null);
 __decorate([
     (0, common_1.Get)('drivers/live'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessEngineController.prototype, "getLiveDrivers", null);
 __decorate([
     (0, common_1.Post)('drivers/:id/location'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -80,6 +97,8 @@ __decorate([
 ], BusinessEngineController.prototype, "updateDriverLocation", null);
 __decorate([
     (0, common_1.Post)('drivers/:id/availability'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -88,18 +107,22 @@ __decorate([
 ], BusinessEngineController.prototype, "setDriverAvailability", null);
 __decorate([
     (0, common_1.Get)('dashboard'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessEngineController.prototype, "getDashboard", null);
 __decorate([
     (0, common_1.Get)('uptime'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessEngineController.prototype, "getUptime", null);
 exports.BusinessEngineController = BusinessEngineController = __decorate([
     (0, common_1.Controller)('business'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [business_engine_service_1.BusinessEngineService])
 ], BusinessEngineController);
-//# sourceMappingURL=business-engine.controller.js.map

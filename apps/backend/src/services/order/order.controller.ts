@@ -6,10 +6,12 @@ import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 
 @Controller('orders')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Post()
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async placeOrder(
     @Body() body: any,
     @Headers('x-idempotency-key') idempotencyKey?: string

@@ -15,6 +15,29 @@ const order_entity_1 = require("./order.entity");
 const menu_item_entity_1 = require("./menu-item.entity");
 const hsn_sac_entity_1 = require("./hsn-sac.entity");
 let OrderItemEntity = class OrderItemEntity {
+    id;
+    orderId;
+    order;
+    menuItemId;
+    menuItem;
+    hsnSacId;
+    hsnSac;
+    quantity;
+    unitPrice;
+    totalPrice;
+    instructions;
+    variants;
+    addons;
+    cgstRate;
+    sgstRate;
+    igstRate;
+    cgstAmount;
+    sgstAmount;
+    igstAmount;
+    totalTax;
+    totalAmount;
+    createdAt;
+    updatedAt;
 };
 exports.OrderItemEntity = OrderItemEntity;
 __decorate([
@@ -112,4 +135,3 @@ __decorate([
 exports.OrderItemEntity = OrderItemEntity = __decorate([
     (0, typeorm_1.Entity)('order_items')
 ], OrderItemEntity);
-//# sourceMappingURL=order-item.entity.js.map

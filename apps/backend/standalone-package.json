@@ -1,23 +1,23 @@
-﻿{
-    "private":  true,
-    "name":  "@spicegarden/backend",
-    "version":  "0.0.1",
-    "type":  "commonjs",
-    "dependencies":  {
-                         "@nestjs/microservices":  "11.1.26",
-                         "@nestjs/platform-express":  "11.1.26",
-                         "@nestjs/swagger":  "11.4.4",
-                         "@nestjs/passport":  "11.0.5",
-                         "@sentry/node":  "8.55.2",
-                         "@nestjs/platform-socket.io":  "11.1.26",
-                         "@nestjs/core":  "11.1.26",
-                         "@nestjs/throttler":  "6.5.0",
-                         "@nestjs/common":  "11.1.26",
-                         "@nestjs/typeorm":  "11.0.1",
-                         "typeorm":  "1.0.0",
-                         "@nestjs/jwt":  "11.0.2",
-                         "@nestjs/config":  "4.0.4",
-                         "@nestjs/websockets":  "11.1.26",
-                         "@nestjs/mongoose":  "11.0.4"
-                     }
+{
+  "private": true,
+  "name": "@spicegarden/backend",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "dependencies": {
+    "@nestjs/microservices": "11.1.26",
+    "@nestjs/platform-express": "11.1.26",
+    "@nestjs/swagger": "11.4.4",
+    "@nestjs/passport": "11.0.5",
+    "@sentry/node": "8.55.2",
+    "@nestjs/platform-socket.io": "11.1.26",
+    "@nestjs/core": "11.1.26",
+    "@nestjs/throttler": "6.5.0",
+    "@nestjs/common": "11.1.26",
+    "@nestjs/typeorm": "11.0.1",
+    "typeorm": "1.0.0",
+    "@nestjs/jwt": "11.0.2",
+    "@nestjs/config": "4.0.4",
+    "@nestjs/websockets": "11.1.26",
+    "@nestjs/mongoose": "11.0.4"
+  }
 }

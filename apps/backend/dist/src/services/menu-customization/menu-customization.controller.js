@@ -16,6 +16,7 @@ exports.MenuCustomizationController = void 0;
 const common_1 = require("@nestjs/common");
 const menu_customization_service_1 = require("./menu-customization.service");
 let MenuCustomizationController = class MenuCustomizationController {
+    menuService;
     constructor(menuService) {
         this.menuService = menuService;
     }
@@ -66,4 +67,3 @@ exports.MenuCustomizationController = MenuCustomizationController = __decorate([
     (0, common_1.Controller)('menus'),
     __metadata("design:paramtypes", [menu_customization_service_1.MenuCustomizationService])
 ], MenuCustomizationController);
-//# sourceMappingURL=menu-customization.controller.js.map

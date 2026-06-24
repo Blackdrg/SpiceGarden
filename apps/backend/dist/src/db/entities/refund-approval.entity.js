@@ -13,6 +13,26 @@ exports.RefundApprovalEntity = void 0;
 const typeorm_1 = require("typeorm");
 const order_entity_1 = require("./order.entity");
 let RefundApprovalEntity = class RefundApprovalEntity {
+    id;
+    order;
+    refundId;
+    refundAmount;
+    currency;
+    reason;
+    requestedBy;
+    requestType;
+    approvalStatus;
+    approverId;
+    approvedAt;
+    rejectionReason;
+    approvalNotes;
+    processedAt;
+    processedBy;
+    requiresManagerApproval;
+    managerApproverId;
+    managerApprovedAt;
+    createdAt;
+    updatedAt;
 };
 exports.RefundApprovalEntity = RefundApprovalEntity;
 __decorate([
@@ -98,4 +118,3 @@ __decorate([
 exports.RefundApprovalEntity = RefundApprovalEntity = __decorate([
     (0, typeorm_1.Entity)('refund_approvals')
 ], RefundApprovalEntity);
-//# sourceMappingURL=refund-approval.entity.js.map

@@ -47,4 +47,5 @@ export default ({ config }) => ({
       projectId: 'spicegarden-customer',
     },
   },
+  plugins: [],
 });

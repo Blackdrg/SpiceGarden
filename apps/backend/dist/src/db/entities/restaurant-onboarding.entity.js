@@ -33,6 +33,20 @@ var OnboardingStatus;
     OnboardingStatus["AWAITING_REVIEW"] = "awaiting_review";
 })(OnboardingStatus || (exports.OnboardingStatus = OnboardingStatus = {}));
 let RestaurantOnboardingEntity = class RestaurantOnboardingEntity {
+    id;
+    restaurantId;
+    restaurant;
+    currentStep;
+    status;
+    businessDetails;
+    documentStatus;
+    bankDetails;
+    menuSetup;
+    rejectionReason;
+    reviewedBy;
+    reviewedAt;
+    createdAt;
+    updatedAt;
 };
 exports.RestaurantOnboardingEntity = RestaurantOnboardingEntity;
 __decorate([
@@ -94,4 +108,3 @@ __decorate([
 exports.RestaurantOnboardingEntity = RestaurantOnboardingEntity = __decorate([
     (0, typeorm_1.Entity)('restaurant_onboarding')
 ], RestaurantOnboardingEntity);
-//# sourceMappingURL=restaurant-onboarding.entity.js.map

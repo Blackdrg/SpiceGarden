@@ -22,4 +22,3 @@ exports.MenuCustomizationModule = MenuCustomizationModule = __decorate([
         exports: [menu_customization_service_1.MenuCustomizationService],
     })
 ], MenuCustomizationModule);
-//# sourceMappingURL=menu-customization.module.js.map

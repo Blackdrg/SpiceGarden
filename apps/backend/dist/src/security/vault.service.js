@@ -14,10 +14,16 @@ exports.VaultService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 let VaultService = VaultService_1 = class VaultService {
+    configService;
+    logger = new common_1.Logger(VaultService_1.name);
+    vaultEnabled;
+    vaultAddress;
+    vaultToken;
+    secretPath;
+    cache;
+    cacheTtlMs = 5 * 60 * 1000;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(VaultService_1.name);
-        this.cacheTtlMs = 5 * 60 * 1000;
         this.vaultEnabled = this.configService.get('VAULT_ENABLED', false);
         this.vaultAddress = this.configService.get('VAULT_ADDR', 'http://vault:8200');
         this.vaultToken = this.configService.get('VAULT_TOKEN', '');
@@ -43,7 +49,7 @@ let VaultService = VaultService_1 = class VaultService {
             }
         }
         catch (error) {
-            this.logger.warn(`Vault initialization failed: ${error.message}`);
+            this.logger.warn(`Vault initialization failed: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
     async getSecret(key, fallback) {
@@ -58,7 +64,7 @@ let VaultService = VaultService_1 = class VaultService {
                 return secretValue;
             }
             catch (error) {
-                this.logger.warn(`Failed to fetch secret ${key} from Vault: ${error.message}`);
+                this.logger.warn(`Failed to fetch secret ${key} from Vault: ${error instanceof Error ? error.message : String(error)}`);
                 if (fallback !== undefined) {
                     return fallback;
                 }
@@ -103,7 +109,7 @@ let VaultService = VaultService_1 = class VaultService {
             }
         }
         catch (error) {
-            this.logger.error(`Failed to rotate secret ${key}: ${error.message}`);
+            this.logger.error(`Failed to rotate secret ${key}: ${error instanceof Error ? error.message : String(error)}`);
         }
         return false;
     }
@@ -143,4 +149,3 @@ exports.VaultService = VaultService = VaultService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], VaultService);
-//# sourceMappingURL=vault.service.js.map

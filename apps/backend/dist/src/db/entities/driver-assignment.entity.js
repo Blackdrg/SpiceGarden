@@ -15,6 +15,22 @@ const driver_entity_1 = require("./driver.entity");
 const order_entity_1 = require("./order.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let DriverAssignmentEntity = class DriverAssignmentEntity {
+    id;
+    driver;
+    order;
+    branch;
+    assignmentType;
+    batchId;
+    status;
+    distance;
+    estimatedTimeMinutes;
+    actualTimeMinutes;
+    routeData;
+    isPriority;
+    reassignedFrom;
+    retryCount;
+    createdAt;
+    updatedAt;
 };
 exports.DriverAssignmentEntity = DriverAssignmentEntity;
 __decorate([
@@ -84,4 +100,3 @@ __decorate([
 exports.DriverAssignmentEntity = DriverAssignmentEntity = __decorate([
     (0, typeorm_1.Entity)('driver_assignments')
 ], DriverAssignmentEntity);
-//# sourceMappingURL=driver-assignment.entity.js.map

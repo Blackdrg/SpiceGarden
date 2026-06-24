@@ -14,7 +14,7 @@ export async function safeGetItem(key: StorageKey): Promise<string | null> {
   }
 }
 
-export async function safeGetJSON<T>(key: StorageKey, fallback: T): Promise<T> {
+async function safeGetJSON<T>(key: StorageKey, fallback: T): Promise<T> {
   try {
     const raw = await AsyncStorage.getItem(key);
     if (!raw) return fallback;
@@ -31,7 +31,7 @@ export async function safeGetJSON<T>(key: StorageKey, fallback: T): Promise<T> {
   }
 }
 
-export async function safeSetItem(key: StorageKey, value: string): Promise<void> {
+async function safeSetItem(key: StorageKey, value: string): Promise<void> {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (error) {
@@ -39,7 +39,7 @@ export async function safeSetItem(key: StorageKey, value: string): Promise<void>
   }
 }
 
-export async function safeSetJSON(key: StorageKey, value: unknown): Promise<void> {
+async function safeSetJSON(key: StorageKey, value: unknown): Promise<void> {
   try {
     const serialized = JSON.stringify(value);
     await AsyncStorage.setItem(key, serialized);
@@ -48,7 +48,7 @@ export async function safeSetJSON(key: StorageKey, value: unknown): Promise<void
   }
 }
 
-export async function safeRemoveItem(key: StorageKey): Promise<void> {
+async function safeRemoveItem(key: StorageKey): Promise<void> {
   try {
     await AsyncStorage.removeItem(key);
   } catch (error) {
@@ -56,7 +56,7 @@ export async function safeRemoveItem(key: StorageKey): Promise<void> {
   }
 }
 
-export function validateCartStructure(cart: unknown): boolean {
+function validateCartStructure(cart: unknown): boolean {
   if (!Array.isArray(cart)) return false;
   return cart.every((item) => {
     return (
@@ -117,7 +117,7 @@ export async function saveCartSafe(cart: unknown[]): Promise<boolean> {
   }
 }
 
-export async function secureClearStorage(): Promise<void> {
+async function secureClearStorage(): Promise<void> {
   const keysToRemove = Object.values(STORAGE_KEYS);
   try {
     await AsyncStorage.multiRemove(keysToRemove);

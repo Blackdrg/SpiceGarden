@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const user_profile_service_1 = require("./user-profile.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 let UserProfileController = class UserProfileController {
+    profileService;
     constructor(profileService) {
         this.profileService = profileService;
     }
@@ -122,4 +123,3 @@ exports.UserProfileController = UserProfileController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [user_profile_service_1.UserProfileService])
 ], UserProfileController);
-//# sourceMappingURL=user-profile.controller.js.map

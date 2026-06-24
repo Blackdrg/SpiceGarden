@@ -29,4 +29,3 @@ exports.SupportModule = SupportModule = __decorate([
         exports: [customer_support_service_1.CustomerSupportService, ticket_routing_service_1.TicketRoutingService],
     })
 ], SupportModule);
-//# sourceMappingURL=support.module.js.map

@@ -4,42 +4,42 @@ import { UserEntity } from './user.entity';
 @Entity('user_payment_methods')
 export class PaymentMethodEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity)
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column()
-  type: string; // 'card', 'upi', 'wallet'
+  type!: string; // 'card', 'upi', 'wallet'
 
   @Column({ nullable: true })
-  cardLast4: string;
+  cardLast4!: string;
 
   @Column({ nullable: true })
-  cardBrand: string;
+  cardBrand!: string;
 
   @Column({ nullable: true })
-  cardExpiry: string;
+  cardExpiry!: string;
 
   @Column({ nullable: true })
-  upiId: string;
+  upiId!: string;
 
   @Column({ nullable: true })
-  walletProvider: string;
+  walletProvider!: string;
 
   @Column({ nullable: true })
-  externalPaymentMethodId: string;
+  externalPaymentMethodId!: string;
 
   @Column({ default: false })
-  isDefault: boolean;
+  isDefault!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

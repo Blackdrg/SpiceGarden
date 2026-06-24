@@ -94,4 +94,3 @@ describe('WalletService', () => {
         });
     });
 });
-//# sourceMappingURL=wallet.service.spec.js.map

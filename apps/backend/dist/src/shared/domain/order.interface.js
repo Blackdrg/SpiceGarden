@@ -8,6 +8,7 @@ var OrderStatus;
     OrderStatus["RESTAURANT_ACCEPTED"] = "restaurant_accepted";
     OrderStatus["PREPARING"] = "preparing";
     OrderStatus["READY"] = "ready";
+    OrderStatus["READY_FOR_PICKUP"] = "ready_for_pickup";
     OrderStatus["DRIVER_ASSIGNED"] = "driver_assigned";
     OrderStatus["PICKED_UP"] = "picked_up";
     OrderStatus["ON_THE_WAY"] = "on_the_way";
@@ -22,4 +23,3 @@ var PaymentStatus;
     PaymentStatus["FAILED"] = "failed";
     PaymentStatus["REFUNDED"] = "refunded";
 })(PaymentStatus || (exports.PaymentStatus = PaymentStatus = {}));
-//# sourceMappingURL=order.interface.js.map

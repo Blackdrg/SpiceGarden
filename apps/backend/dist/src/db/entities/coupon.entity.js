@@ -33,6 +33,29 @@ var CouponScope;
     CouponScope["ITEM"] = "item";
 })(CouponScope || (exports.CouponScope = CouponScope = {}));
 let CouponEntity = class CouponEntity {
+    id;
+    code;
+    type;
+    status;
+    scope;
+    restaurantId;
+    categoryId;
+    itemId;
+    discountValue;
+    minOrderAmount;
+    maxDiscountAmount;
+    cashbackPercentage;
+    maxCashbackAmount;
+    usageLimit;
+    usageCount;
+    usagePerUser;
+    applicableDays;
+    applicableSlots;
+    validFrom;
+    validUntil;
+    applicableForNewUsers;
+    createdAt;
+    updatedAt;
 };
 exports.CouponEntity = CouponEntity;
 __decorate([
@@ -130,4 +153,3 @@ __decorate([
 exports.CouponEntity = CouponEntity = __decorate([
     (0, typeorm_1.Entity)('coupons')
 ], CouponEntity);
-//# sourceMappingURL=coupon.entity.js.map

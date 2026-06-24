@@ -21,11 +21,14 @@ const typeorm_2 = require("typeorm");
 const payment_fraud_entity_1 = require("./payment-fraud.entity");
 const audit_service_1 = require("../../audit/audit.service");
 let FraudHardeningService = FraudHardeningService_1 = class FraudHardeningService {
+    configService;
+    auditService;
+    fraudFlagRepo;
+    logger = new common_1.Logger(FraudHardeningService_1.name);
     constructor(configService, auditService, fraudFlagRepo) {
         this.configService = configService;
         this.auditService = auditService;
         this.fraudFlagRepo = fraudFlagRepo;
-        this.logger = new common_1.Logger(FraudHardeningService_1.name);
     }
     async checkPaymentFraud(context) {
         const reasons = [];
@@ -82,7 +85,7 @@ let FraudHardeningService = FraudHardeningService_1 = class FraudHardeningServic
     async checkSuspiciousPatterns(context) {
         const reasons = [];
         let riskScore = 0;
-        const ipCheck = await this.checkIpReputation(context.ipAddress);
+        const ipCheck = await this.checkIpReputation(context.ipAddress ?? '');
         if (ipCheck) {
             riskScore += 15;
             reasons.push('Suspicious IP address detected');
@@ -206,7 +209,6 @@ exports.FraudHardeningService = FraudHardeningService = FraudHardeningService_1 
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(payment_fraud_entity_1.PaymentFraudFlagEntity)),
     __metadata("design:paramtypes", [config_1.ConfigService,
-        audit_service_1.AuditService,
-        typeorm_2.Repository])
+    audit_service_1.AuditService,
+    typeorm_2.Repository])
 ], FraudHardeningService);
-//# sourceMappingURL=fraud-hardening.service.js.map

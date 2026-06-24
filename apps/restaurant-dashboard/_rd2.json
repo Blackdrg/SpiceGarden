@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "mode": "full",
+  "version": "0.5.5",
+  "ok": true,
+  "directory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+  "diff": null,
+  "projects": [
+    {
+      "directory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+      "project": {
+        "rootDirectory": "C:\\Users\\mehta\\Desktop\\SpiceGarden\\apps\\restaurant-dashboard",
+        "projectName": "@spicegarden/restaurant-dashboard",
+        "reactVersion": "^19.2.7",
+        "reactMajorVersion": 19,
+        "tailwindVersion": null,
+        "zodVersion": null,
+        "zodMajorVersion": null,
+        "framework": "nextjs",
+        "hasTypeScript": true,
+        "hasReactCompiler": false,
+        "hasTanStackQuery": false,
+        "preactVersion": null,
+        "preactMajorVersion": null,
+        "hasReactNativeWorkspace": false,
+        "nextjsVersion": "15.5.6",
+        "nextjsMajorVersion": 15,
+        "expoVersion": null,
+        "shopifyFlashListVersion": null,
+        "shopifyFlashListMajorVersion": null,
+        "hasReanimated": false,
+        "isPreES2023Target": false,
+        "sourceFileCount": 25
+      },
+      "diagnostics": [
+        {
+          "filePath": "package.json",
+          "plugin": "react-doctor",
+          "rule": "no-vulnerable-react-server-components",
+          "severity": "error",
+          "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+          "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+          "line": 0,
+          "column": 0,
+          "category": "Security"
+        },
+        {
+          "filePath": "src/pages/onboarding/menu.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-useReducer",
+          "severity": "warning",
+          "title": "Many related useState calls",
+          "message": "5 useState calls in \"OnboardingMenu\" can each trigger a separate render.",
+          "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+          "line": 5,
+          "column": 42,
+          "offset": 152,
+          "length": 5756,
+          "category": "Bugs"
+        },
+        {
+          "filePath": "src/pages/onboarding/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "no-inline-exhaustive-style",
+          "severity": "warning",
+          "title": "Large inline style object rebuilds every render",
+          "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component.",
+          "help": "Move the styles to a CSS class, CSS module, Tailwind utilities, or a styled component. Big inline objects are hard to read and rebuild on every update.",
+          "line": 28,
+          "column": 29,
+          "offset": 1440,
+          "length": 384,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "no-giant-component",
+          "severity": "warning",
+          "title": "Large component is hard to read and change",
+          "message": "Component \"KitchenDashboard\" is 332 lines long, which is hard to read & change. Split it into a few smaller components.",
+          "help": "Pull each section into its own component so the parent is easier to read, test, and change.",
+          "line": 83,
+          "column": 25,
+          "offset": 3042,
+          "length": 16,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-useReducer",
+          "severity": "warning",
+          "title": "Many related useState calls",
+          "message": "7 useState calls in \"KitchenDashboard\" can each trigger a separate render.",
+          "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+          "line": 83,
+          "column": 44,
+          "offset": 3061,
+          "length": 15526,
+          "category": "Bugs"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "no-cascading-set-state",
+          "severity": "warning",
+          "title": "Multiple setState calls in one effect",
+          "message": "3 setState calls in one useEffect redraw your screen each time they run together.",
+          "help": "Combine related updates in `useReducer` so one effect does not redraw the screen once per `setState` call.",
+          "line": 115,
+          "column": 5,
+          "offset": 4681,
+          "length": 941,
+          "category": "Bugs"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-module-scope-static-value",
+          "severity": "warning",
+          "title": "Static value rebuilt every render",
+          "message": "`statuses` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component.",
+          "help": "Move the value above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted and makes it look new every time.",
+          "line": 170,
+          "column": 9,
+          "offset": 7240,
+          "length": 91,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-module-scope-static-value",
+          "severity": "warning",
+          "title": "Static value rebuilt every render",
+          "message": "`statusLabels` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component.",
+          "help": "Move the value above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted and makes it look new every time.",
+          "line": 171,
+          "column": 9,
+          "offset": 7342,
+          "length": 243,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-module-scope-pure-function",
+          "severity": "warning",
+          "title": "Pure function rebuilt every render",
+          "message": "`tryPlay` inside `KitchenDashboard` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component.",
+          "help": "Move the function above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted work.",
+          "line": 183,
+          "column": 19,
+          "offset": 8084,
+          "length": 122,
+          "category": "Maintainability"
+        },
+        {
+          "filePath": "src/pages/index.tsx",
+          "plugin": "react-doctor",
+          "rule": "prefer-tag-over-role",
+          "severity": "warning",
+          "title": "Role used instead of HTML tag",
+          "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead.",
+          "help": "Use the matching HTML element when one exists so browsers and assistive tech get native semantics.",
+          "line": 240,
+          "column": 15,
+          "offset": 10551,
+          "length": 13,
+          "category": "Accessibility"
+        },
+        {
+          "filePath": "package.json",
+          "plugin": "deslop",
+          "rule": "unused-dev-dependency",
+          "severity": "warning",
+          "message": "Unused devDependency: `tinyglobby`",
+          "help": "An unused devDependency adds install time and supply-chain surface without being used; remove it from package.json if it is genuinely unused.",
+          "line": 0,
+          "column": 0,
+          "category": "Maintainability"
+        }
+      ],
+      "score": {
+        "score": 49,
+        "label": "Critical",
+        "rules": {
+          "react-doctor/no-vulnerable-react-server-components": {
+            "priority": null,
+            "tier": "P3"
+          },
+          "react-doctor/prefer-useReducer": {
+            "priority": 22,
+            "tier": "P3"
+          },
+          "react-doctor/no-inline-exhaustive-style": {
+            "priority": 32,
+            "tier": "P3"
+          },
+          "react-doctor/no-giant-component": {
+            "priority": 30,
+            "tier": "P3"
+          },
+          "react-doctor/no-cascading-set-state": {
+            "priority": 50,
+            "tier": "P2"
+          },
+          "react-doctor/prefer-module-scope-static-value": {
+            "priority": 38,
+            "tier": "P3"
+          },
+          "react-doctor/prefer-module-scope-pure-function": {
+            "priority": 31,
+            "tier": "P3"
+          },
+          "react-doctor/prefer-tag-over-role": {
+            "priority": 48,
+            "tier": "P3"
+          },
+          "deslop/unused-dev-dependency": {
+            "priority": 30,
+            "tier": "P3"
+          }
+        }
+      },
+      "skippedChecks": [],
+      "elapsedMilliseconds": 74471.28929999999
+    }
+  ],
+  "diagnostics": [
+    {
+      "filePath": "package.json",
+      "plugin": "react-doctor",
+      "rule": "no-vulnerable-react-server-components",
+      "severity": "error",
+      "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint",
+      "help": "Upgrade Next.js to 15.5.18 (or newer). Next.js bundles its own React Server Components runtime, so bumping Next.js  not `react`  ships the fix. Run `npm install next@15.5.18`. See https://vercel.com/changelog/next-js-may-2026-security-release",
+      "line": 0,
+      "column": 0,
+      "category": "Security"
+    },
+    {
+      "filePath": "src/pages/onboarding/menu.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-useReducer",
+      "severity": "warning",
+      "title": "Many related useState calls",
+      "message": "5 useState calls in \"OnboardingMenu\" can each trigger a separate render.",
+      "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+      "line": 5,
+      "column": 42,
+      "offset": 152,
+      "length": 5756,
+      "category": "Bugs"
+    },
+    {
+      "filePath": "src/pages/onboarding/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "no-inline-exhaustive-style",
+      "severity": "warning",
+      "title": "Large inline style object rebuilds every render",
+      "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component.",
+      "help": "Move the styles to a CSS class, CSS module, Tailwind utilities, or a styled component. Big inline objects are hard to read and rebuild on every update.",
+      "line": 28,
+      "column": 29,
+      "offset": 1440,
+      "length": 384,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "no-giant-component",
+      "severity": "warning",
+      "title": "Large component is hard to read and change",
+      "message": "Component \"KitchenDashboard\" is 332 lines long, which is hard to read & change. Split it into a few smaller components.",
+      "help": "Pull each section into its own component so the parent is easier to read, test, and change.",
+      "line": 83,
+      "column": 25,
+      "offset": 3042,
+      "length": 16,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-useReducer",
+      "severity": "warning",
+      "title": "Many related useState calls",
+      "message": "7 useState calls in \"KitchenDashboard\" can each trigger a separate render.",
+      "help": "Group related state in `useReducer` so one logical update does not fan out into separate renders.",
+      "line": 83,
+      "column": 44,
+      "offset": 3061,
+      "length": 15526,
+      "category": "Bugs"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "no-cascading-set-state",
+      "severity": "warning",
+      "title": "Multiple setState calls in one effect",
+      "message": "3 setState calls in one useEffect redraw your screen each time they run together.",
+      "help": "Combine related updates in `useReducer` so one effect does not redraw the screen once per `setState` call.",
+      "line": 115,
+      "column": 5,
+      "offset": 4681,
+      "length": 941,
+      "category": "Bugs"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-module-scope-static-value",
+      "severity": "warning",
+      "title": "Static value rebuilt every render",
+      "message": "`statuses` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component.",
+      "help": "Move the value above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted and makes it look new every time.",
+      "line": 170,
+      "column": 9,
+      "offset": 7240,
+      "length": 91,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-module-scope-static-value",
+      "severity": "warning",
+      "title": "Static value rebuilt every render",
+      "message": "`statusLabels` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component.",
+      "help": "Move the value above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted and makes it look new every time.",
+      "line": 171,
+      "column": 9,
+      "offset": 7342,
+      "length": 243,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-module-scope-pure-function",
+      "severity": "warning",
+      "title": "Pure function rebuilt every render",
+      "message": "`tryPlay` inside `KitchenDashboard` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component.",
+      "help": "Move the function above the component, at the top of the file. It doesn't use local state, so rebuilding it each update is wasted work.",
+      "line": 183,
+      "column": 19,
+      "offset": 8084,
+      "length": 122,
+      "category": "Maintainability"
+    },
+    {
+      "filePath": "src/pages/index.tsx",
+      "plugin": "react-doctor",
+      "rule": "prefer-tag-over-role",
+      "severity": "warning",
+      "title": "Role used instead of HTML tag",
+      "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead.",
+      "help": "Use the matching HTML element when one exists so browsers and assistive tech get native semantics.",
+      "line": 240,
+      "column": 15,
+      "offset": 10551,
+      "length": 13,
+      "category": "Accessibility"
+    },
+    {
+      "filePath": "package.json",
+      "plugin": "deslop",
+      "rule": "unused-dev-dependency",
+      "severity": "warning",
+      "message": "Unused devDependency: `tinyglobby`",
+      "help": "An unused devDependency adds install time and supply-chain surface without being used; remove it from package.json if it is genuinely unused.",
+      "line": 0,
+      "column": 0,
+      "category": "Maintainability"
+    }
+  ],
+  "summary": {
+    "errorCount": 1,
+    "warningCount": 10,
+    "affectedFileCount": 4,
+    "totalDiagnosticCount": 11,
+    "score": 49,
+    "scoreLabel": "Critical"
+  },
+  "elapsedMilliseconds": 75016.8512,
+  "error": null
+}

@@ -25,6 +25,15 @@ const driver_incentive_entity_1 = require("../../db/entities/driver-incentive.en
 const order_entity_1 = require("../../db/entities/order.entity");
 const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
 let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
+    driverRepo;
+    shiftRepo;
+    scoreRepo;
+    penaltyRepo;
+    incentiveRepo;
+    orderRepo;
+    assignmentRepo;
+    dataSource;
+    logger = new common_1.Logger(DriverFleetService_1.name);
     constructor(driverRepo, shiftRepo, scoreRepo, penaltyRepo, incentiveRepo, orderRepo, assignmentRepo, dataSource) {
         this.driverRepo = driverRepo;
         this.shiftRepo = shiftRepo;
@@ -34,7 +43,6 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
         this.orderRepo = orderRepo;
         this.assignmentRepo = assignmentRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(DriverFleetService_1.name);
     }
     async startShift(driverId) {
         const driver = await this.driverRepo.findOne({ where: { id: driverId } });
@@ -237,4 +245,3 @@ exports.DriverFleetService = DriverFleetService = DriverFleetService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], DriverFleetService);
-//# sourceMappingURL=driver-fleet.service.js.map

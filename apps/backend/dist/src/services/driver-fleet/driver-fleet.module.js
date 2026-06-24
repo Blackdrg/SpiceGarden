@@ -24,4 +24,3 @@ exports.DriverFleetModule = DriverFleetModule = __decorate([
         exports: [driver_fleet_service_1.DriverFleetService],
     })
 ], DriverFleetModule);
-//# sourceMappingURL=driver-fleet.module.js.map

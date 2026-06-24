@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
@@ -33,6 +33,7 @@ export class DeliveryService {
     @InjectRepository(DriverFraudEntity)
     private driverFraudRepo: Repository<DriverFraudEntity>,
     private geoService: GeoService,
+    @InjectDataSource()
     private dataSource: DataSource
   ) {}
 

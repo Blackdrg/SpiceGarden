@@ -52,4 +52,3 @@ exports.RestaurantServiceModule = RestaurantServiceModule = __decorate([
         ],
     })
 ], RestaurantServiceModule);
-//# sourceMappingURL=restaurant.module.js.map

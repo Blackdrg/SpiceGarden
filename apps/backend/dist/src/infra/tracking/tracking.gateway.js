@@ -21,6 +21,12 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const notification_entity_1 = require("../../db/entities/notification.entity");
+const cors_origin_1 = require("../../security/cors-origin");
+const MAX_HTTP_BUFFER_SIZE = Number(process.env.WS_MAX_HTTP_BUFFER_SIZE || 1024);
+const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
+const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
+const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
+const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 var SocketNamespace;
 (function (SocketNamespace) {
     SocketNamespace["TRACKING"] = "/tracking";
@@ -29,16 +35,30 @@ var SocketNamespace;
     SocketNamespace["DRIVER"] = "/driver";
 })(SocketNamespace || (exports.SocketNamespace = SocketNamespace = {}));
 let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
+    configService;
+    notificationRepo;
+    server;
+    logger = new common_1.Logger(TrackingGateway_1.name);
+    connectedClients = new Map();
+    connectionAttempts = new Map();
+    messageQueue = new Map();
+    pendingAcks = new Map();
+    ackTimeoutMs;
     constructor(configService, notificationRepo) {
         this.configService = configService;
         this.notificationRepo = notificationRepo;
-        this.logger = new common_1.Logger(TrackingGateway_1.name);
-        this.connectedClients = new Map();
-        this.messageQueue = new Map();
-        this.pendingAcks = new Map();
         this.ackTimeoutMs = this.configService.get('WS_ACK_TIMEOUT_MS', 5000);
     }
     handleConnection(client) {
+        if (!this.isConnectionAllowed(client)) {
+            client.disconnect(true);
+            return;
+        }
+        const origin = client.handshake.headers.origin;
+        if (typeof origin === 'string' && !(0, cors_origin_1.isAllowedOrigin)(origin)) {
+            client.disconnect(true);
+            return;
+        }
         const namespace = client.nsp.name;
         this.connectedClients.set(client.id, {
             id: client.id,
@@ -53,6 +73,24 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         this.connectedClients.delete(client.id);
         this.logger.log(`Client ${client.id} disconnected`);
     }
+    isConnectionAllowed(client) {
+        const now = Date.now();
+        const forwardedFor = client.handshake.headers['x-forwarded-for'];
+        const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim();
+        const key = forwardedIp || client.handshake.address || client.id;
+        const current = this.connectionAttempts.get(key);
+        if (!current || now >= current.resetAt) {
+            this.connectionAttempts.set(key, { count: 1, resetAt: now + WS_RATE_LIMIT_WINDOW_MS });
+            return true;
+        }
+        if (current.count >= WS_RATE_LIMIT_MAX) {
+            this.logger.warn(`Rejected websocket connection from ${key}: rate limit exceeded`);
+            return false;
+        }
+        current.count += 1;
+        this.connectionAttempts.set(key, current);
+        return true;
+    }
     handlePing(client) {
         const conn = this.connectedClients.get(client.id);
         if (conn) {
@@ -61,6 +99,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'pong', serverTime: Date.now() };
     }
     handleJoin(data, client) {
+        if (typeof data.room !== 'string' || !ROOM_PATTERN.test(data.room)) {
+            return { error: 'Invalid room' };
+        }
         client.join(data.room);
         this.logger.log(`Client ${client.id} joined room ${data.room}`);
         return { status: 'joined', room: data.room };
@@ -100,7 +141,7 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'received' };
     }
     async handleLocationUpdate(data, client) {
-        if (!this.isValidLocation(data)) {
+        if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || !this.isValidLocation(data)) {
             return { error: 'Invalid location data' };
         }
         const messageId = `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -114,6 +155,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'ok', messageId };
     }
     async handleKDSUpdate(data) {
+        if (typeof data.orderId !== 'string' || typeof data.status !== 'string' || typeof data.branchId !== 'string' || !ROOM_PATTERN.test(data.branchId)) {
+            return { error: 'Invalid KDS update' };
+        }
         const messageId = `kds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const topic = `kds:${data.branchId}`;
         this.server.to(topic).emit('kdsUpdate', {
@@ -124,6 +168,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'ok', messageId };
     }
     async handleDriverEvent(data) {
+        if (typeof data.driverId !== 'string' || !DRIVER_ID_PATTERN.test(data.driverId) || typeof data.event !== 'string') {
+            return { error: 'Invalid driver event' };
+        }
         const messageId = `drv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const topic = `driver:${data.driverId}`;
         this.server.to(topic).emit('driverEvent', {
@@ -142,6 +189,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         return { status: 'sent', messageId };
     }
     async publishToRoom(room, data, requireAck = false) {
+        if (typeof room !== 'string' || !ROOM_PATTERN.test(room)) {
+            return { error: 'Invalid room' };
+        }
         const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         if (requireAck) {
             return this.waitForAcknowledgement(`room:${room}`, { ...data, messageId });
@@ -266,9 +316,12 @@ exports.TrackingGateway = TrackingGateway = TrackingGateway_1 = __decorate([
     (0, common_1.Injectable)(),
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: '*',
+            origin: cors_origin_1.isAllowedOrigin,
+            credentials: true,
         },
         namespace: '/',
+        maxHttpBufferSize: MAX_HTTP_BUFFER_SIZE,
+        allowEIO3: false,
         pingInterval: 10000,
         pingTimeout: 20000,
     }),
@@ -276,4 +329,3 @@ exports.TrackingGateway = TrackingGateway = TrackingGateway_1 = __decorate([
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_1.Repository])
 ], TrackingGateway);
-//# sourceMappingURL=tracking.gateway.js.map

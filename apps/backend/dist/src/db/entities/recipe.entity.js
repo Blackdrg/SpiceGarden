@@ -13,6 +13,22 @@ exports.RecipeEntity = void 0;
 const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let RecipeEntity = class RecipeEntity {
+    id;
+    name;
+    description;
+    prepTimeMinutes;
+    cookTimeMinutes;
+    yieldQuantity;
+    yieldUnit;
+    servingsNumber;
+    costPerServing;
+    totalCost;
+    ingredients;
+    instructions;
+    isActive;
+    branch;
+    createdAt;
+    updatedAt;
 };
 exports.RecipeEntity = RecipeEntity;
 __decorate([
@@ -82,4 +98,3 @@ __decorate([
 exports.RecipeEntity = RecipeEntity = __decorate([
     (0, typeorm_1.Entity)('recipes')
 ], RecipeEntity);
-//# sourceMappingURL=recipe.entity.js.map

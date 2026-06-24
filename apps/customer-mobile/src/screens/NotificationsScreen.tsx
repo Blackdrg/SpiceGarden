@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, Switch, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, Switch, ActivityIndicator } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -30,7 +31,7 @@ const NotificationsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   const loadPrefs = useCallback(async () => {
     try {
@@ -87,14 +88,14 @@ const NotificationsScreen = () => {
     }
   }, []);
 
-  const togglePref = (key: keyof NotificationPrefs) => {
+  const togglePref = useCallback((key: keyof NotificationPrefs) => {
     const newPrefs = { ...prefs, [key]: !prefs[key] };
     setPrefs(newPrefs);
     savePrefs(newPrefs);
     Haptics.selectionAsync();
-  };
+  }, [prefs, savePrefs]);
 
-  const renderToggleRow = (label: string, value: boolean, key: keyof NotificationPrefs) => (
+  const renderToggleRow = useCallback((label: string, value: boolean, key: keyof NotificationPrefs) => (
     <View style={styles.toggleRow}>
       <Text style={styles.toggleLabel}>{label}</Text>
       <Switch
@@ -105,7 +106,7 @@ const NotificationsScreen = () => {
         disabled={loading || saving}
       />
     </View>
-  );
+  ), [loading, saving, togglePref]);
 
   if (loading) {
     return (
@@ -119,9 +120,9 @@ const NotificationsScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </Pressable>
           <Text style={styles.headerText}>Notifications</Text>
         </View>
 

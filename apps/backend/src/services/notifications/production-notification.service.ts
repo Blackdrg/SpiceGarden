@@ -196,7 +196,7 @@ export class ProductionNotificationService {
   }
 
   private async sendSMSForAlert(alert: AlertPayload): Promise<void> {
-    const accountSid = this.configService.get<string>('TWILIO_SID');
+    const accountSid = this.configService.get<string>('TWILIO_ACCOUNT_SID');
     const authToken = this.configService.get<string>('TWILIO_AUTH_TOKEN');
     const adminPhone = this.configService.get<string>('ADMIN_ALERT_PHONE');
 

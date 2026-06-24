@@ -24,6 +24,14 @@ const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 const menu_category_entity_1 = require("../../db/entities/menu-category.entity");
 const user_entity_1 = require("../../db/entities/user.entity");
 let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
+    onboardingRepo;
+    restaurantRepo;
+    branchRepo;
+    itemRepo;
+    categoryRepo;
+    userRepo;
+    dataSource;
+    logger = new common_1.Logger(RestaurantOpsService_1.name);
     constructor(onboardingRepo, restaurantRepo, branchRepo, itemRepo, categoryRepo, userRepo, dataSource) {
         this.onboardingRepo = onboardingRepo;
         this.restaurantRepo = restaurantRepo;
@@ -32,7 +40,6 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
         this.categoryRepo = categoryRepo;
         this.userRepo = userRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(RestaurantOpsService_1.name);
     }
     async startOnboarding(userId, restaurantData) {
         const existing = await this.restaurantRepo.findOne({ where: { slug: restaurantData.slug } });
@@ -72,7 +79,7 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
                 break;
         }
         await this.onboardingRepo.update(onboardingId, updateData);
-        return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+        return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }));
     }
     async completeOnboarding(onboardingId, userId) {
         const onboarding = await this.onboardingRepo.findOne({ where: { id: onboardingId } });
@@ -84,12 +91,12 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
             currentStep: restaurant_onboarding_entity_1.OnboardingStep.COMPLETION,
         });
         await this.restaurantRepo.update(onboarding.restaurantId, { status: 'active' });
-        return this.onboardingRepo.findOne({ where: { id: onboardingId } });
+        return (await this.onboardingRepo.findOne({ where: { id: onboardingId } }));
     }
     async getOnboardingProgress(onboardingId) {
         const onboarding = await this.onboardingRepo.findOne({
             where: { id: onboardingId },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
         });
         if (!onboarding) {
             throw new common_1.NotFoundException('Onboarding not found');
@@ -113,6 +120,7 @@ exports.RestaurantOpsService = RestaurantOpsService = RestaurantOpsService_1 = _
     __param(3, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(menu_category_entity_1.MenuCategoryEntity)),
     __param(5, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __param(6, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -121,4 +129,3 @@ exports.RestaurantOpsService = RestaurantOpsService = RestaurantOpsService_1 = _
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], RestaurantOpsService);
-//# sourceMappingURL=restaurant-ops.service.js.map

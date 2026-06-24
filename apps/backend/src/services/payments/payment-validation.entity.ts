@@ -3,27 +3,27 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 
 @Entity('payment_validation_events')
 export class PaymentValidationEventEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Index()
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column()
-  validationType: 'amount_check' | 'daily_limit_check' | 'velocity_check' | 'card_validation' | 'fraud_check';
+  validationType!: 'amount_check' | 'daily_limit_check' | 'velocity_check' | 'card_validation' | 'fraud_check';
 
   @Column('decimal', { precision: 12, scale: 2, nullable: true })
-  amount: number;
+  amount!: number;
 
   @Column('jsonb', { nullable: true })
-  validationData: any;
+  validationData!: any;
 
   @Column({ default: false })
-  passed: boolean;
+  passed!: boolean;
 
   @Column({ nullable: true })
-  failureReason: string;
+  failureReason!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

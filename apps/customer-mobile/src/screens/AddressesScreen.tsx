@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, Easing, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, FlatList, Alert } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from 'expo-location';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { STORAGE_KEYS } from '../constants/storage.keys';
+import { getCurrentMobileLocation, requestMobileLocationPermission, type MobileLocationPermissionStatus } from '../services/location.service';
 
 interface Address {
   id: string;
@@ -20,14 +21,13 @@ export const AddressesScreen = () => {
   const navigation = useNavigation();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
-  const [locationPermission, setLocationPermission] = useState<Location.PermissionStatus | null>(null);
+  const [locationPermission, setLocationPermission] = useState<MobileLocationPermissionStatus | null>(null);
   
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   const requestLocationPermission = async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      setLocationPermission(status);
+      setLocationPermission(await requestMobileLocationPermission());
     } catch (e) {
       console.error('Location permission error:', e);
     }
@@ -70,8 +70,8 @@ export const AddressesScreen = () => {
     }
 
     try {
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+      const location = await getCurrentMobileLocation();
+      const { latitude, longitude } = location;
       
       const newAddress: Address = {
         id: Date.now().toString(),
@@ -126,20 +126,20 @@ export const AddressesScreen = () => {
       <Text style={styles.addressText} numberOfLines={2}>{item.address}</Text>
       <View style={styles.addressActions}>
         {!item.isDefault && (
-          <TouchableOpacity 
+          <Pressable 
             onPress={() => setDefaultAddress(item.id)}
             style={styles.actionButton}
           >
             <Text style={styles.actionButtonText}>Set Default</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
-        <TouchableOpacity 
+        <Pressable 
           onPress={() => deleteAddress(item.id)}
           style={styles.deleteButton}
         >
           <Ionicons name="trash" size={16} color={DESIGN_TOKENS.colors.danger} />
           <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -171,12 +171,12 @@ export const AddressesScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity 
+          <Pressable 
             onPress={() => navigation.goBack()} 
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={DESIGN_TOKENS.colors.textPrimary} />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerText}>Saved Addresses</Text>
           <View style={{ width: 40 }} />
         </View>
@@ -195,13 +195,13 @@ export const AddressesScreen = () => {
           }
         />
 
-        <TouchableOpacity 
+        <Pressable 
           style={styles.addButton}
           onPress={() => Alert.alert('Add Address', 'Address form would go here')}
         >
           <Ionicons name="add" size={24} color="white" />
           <Text style={styles.addButtonText}>Add Address</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </Animated.View>
   );
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.md,
     marginBottom: DESIGN_TOKENS.spacing.md,
-    elevation: 2,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
   },
   addressHeader: {
     flexDirection: 'row',

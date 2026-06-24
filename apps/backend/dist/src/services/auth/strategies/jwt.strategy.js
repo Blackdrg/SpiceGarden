@@ -14,17 +14,28 @@ const passport_jwt_1 = require("passport-jwt");
 const passport_1 = require("@nestjs/passport");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
+function requireJwtSecret(configService) {
+    return (0, missing_env_error_1.getRequiredSecret)(configService, 'JWT_SECRET');
+}
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
+    configService;
     constructor(configService) {
+        const secret = requireJwtSecret(configService);
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get('JWT_SECRET') || 'secretKey',
+            secretOrKey: secret,
         });
         this.configService = configService;
     }
     async validate(payload) {
-        return { userId: payload.sub, email: payload.email, role: payload.role };
+        return {
+            id: payload.sub,
+            email: payload.email,
+            role: payload.role,
+            status: payload.status,
+        };
     }
 };
 exports.JwtStrategy = JwtStrategy;
@@ -32,4 +43,3 @@ exports.JwtStrategy = JwtStrategy = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], JwtStrategy);
-//# sourceMappingURL=jwt.strategy.js.map

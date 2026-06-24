@@ -1,100 +1,126 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import React, { useReducer, useEffect, useMemo, useCallback } from 'react';
+import { Button, Card } from '@spicegarden/ui';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { logout } from '../redux/slices/authSlice';
+import ProtectedRoute from '../components/ProtectedRoute';
+import styles from './profile.module.css';
+
+interface ProfileData {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  profileImage?: string | null;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  createdAt?: string;
+}
+
+interface ProfileState {
+  profileData: ProfileData | null;
+  loading: boolean;
+  error: string | null;
+  isEditing: boolean;
+  editFormData: {
+    fullName: string;
+    email: string;
+    phone: string;
+  };
+}
+
+const initialProfileState: ProfileState = {
+  profileData: null,
+  loading: true,
+  error: null,
+  isEditing: false,
+  editFormData: { fullName: '', email: '', phone: '' },
+};
+
+function profileReducer(state: ProfileState, action: { type: string; payload?: unknown }): ProfileState {
+  switch (action.type) {
+    case 'SET_PROFILE_DATA':
+      return { ...state, profileData: action.payload as ProfileData | null };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload as boolean };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload as string | null };
+    case 'SET_IS_EDITING':
+      return { ...state, isEditing: action.payload as boolean };
+    case 'SET_EDIT_FORM_DATA':
+      return { ...state, editFormData: action.payload as { fullName: string; email: string; phone: string } };
+    default:
+      return state;
+  }
+}
 
 const ProfilePage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state: RootState) => state.auth);
-  interface ProfileData {
-    fullName?: string;
-    email?: string;
-    phone?: string;
-    profileImage?: string | null;
-    emailVerified?: boolean;
-    phoneVerified?: boolean;
-    createdAt?: string;
-  }
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editFormData, setEditFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-  });
+  const [state, dispatchState] = useReducer(profileReducer, initialProfileState);
+
+  const loadProfile = useCallback(async () => {
+    if (!token || token === 'demo-token') {
+      dispatchState({ type: 'SET_PROFILE_DATA', payload: {
+        fullName: 'Rahul Sharma',
+        email: 'rahul@example.com',
+        phone: '+91 98765 43210',
+        profileImage: null,
+        emailVerified: true,
+        phoneVerified: true,
+        createdAt: '2026-05-01T10:00:00Z',
+      } });
+      dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
+        fullName: 'Rahul Sharma',
+        email: 'rahul@example.com',
+        phone: '+91 98765 43210',
+      } });
+      dispatchState({ type: 'SET_LOADING', payload: false });
+      return;
+    }
+
+    try {
+      dispatchState({ type: 'SET_LOADING', payload: true });
+      dispatchState({ type: 'SET_ERROR', payload: null });
+      dispatchState({ type: 'SET_PROFILE_DATA', payload: {
+        fullName: user?.fullName || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        profileImage: user?.profileImage || null,
+        emailVerified: user?.emailVerified || false,
+        phoneVerified: user?.phoneVerified || false,
+        createdAt: user?.createdAt || new Date().toISOString(),
+      } });
+      dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
+        fullName: user?.fullName || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+      } });
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+      dispatchState({ type: 'SET_ERROR', payload: 'Failed to load profile. Please try again later.' });
+    } finally {
+      dispatchState({ type: 'SET_LOADING', payload: false });
+    }
+  }, [token, user]);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!token || token === 'demo-token') {
-        // Use mock data for demo
-        setProfileData({
-          fullName: 'Rahul Sharma',
-          email: 'rahul@example.com',
-          phone: '+91 98765 43210',
-          profileImage: null,
-          emailVerified: true,
-          phoneVerified: true,
-          createdAt: '2026-05-01T10:00:00Z',
-        });
-        setEditFormData({
-          fullName: 'Rahul Sharma',
-          email: 'rahul@example.com',
-          phone: '+91 98765 43210',
-        });
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(null);
-        // In a real app, this would be an API call to fetch user profile
-        // For now, we'll use the user data from auth state
-        setProfileData({
-          fullName: user?.fullName || '',
-          email: user?.email || '',
-          phone: user?.phone || '',
-          profileImage: user?.profileImage || null,
-          emailVerified: user?.emailVerified || false,
-          phoneVerified: user?.phoneVerified || false,
-          createdAt: user?.createdAt || new Date().toISOString(),
-        });
-        setEditFormData({
-          fullName: user?.fullName || '',
-          email: user?.email || '',
-          phone: user?.phone || '',
-        });
-      } catch (err) {
-        console.error('Failed to load profile:', err);
-        setError('Failed to load profile. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadProfile();
-  }, [user, token]);
+  }, [loadProfile]);
 
   const handleSaveProfile = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      // In a real app, this would be an API call to update profile
-      // For now, we'll just update the local state
-      setProfileData(editFormData);
-      // Update auth state as well
-      // dispatch(updateUser(editFormData)); // Assuming we have this action
-      setIsEditing(false);
+      dispatchState({ type: 'SET_LOADING', payload: true });
+      dispatchState({ type: 'SET_ERROR', payload: null });
+      dispatchState({ type: 'SET_PROFILE_DATA', payload: state.editFormData });
+      dispatchState({ type: 'SET_IS_EDITING', payload: false });
     } catch (err) {
       console.error('Failed to save profile:', err);
-      setError('Failed to save profile. Please try again later.');
+      dispatchState({ type: 'SET_ERROR', payload: 'Failed to save profile. Please try again later.' });
     } finally {
-      setLoading(false);
+      dispatchState({ type: 'SET_LOADING', payload: false });
     }
   };
 
@@ -103,104 +129,95 @@ const ProfilePage = () => {
     router.push('/auth');
   };
 
-  if (loading && !profileData) {
+  if (state.loading && !state.profileData) {
     return (
-      <div style={{ padding: DESIGN_TOKENS.spacing.md, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.loadingState}>
         <p>Loading profile...</p>
       </div>
     );
   }
 
-   return (
-     <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
-       {error && (
-         <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
-           {error}
-         </div>
-       )}
-       <div style={{ textAlign: 'center', marginBottom: DESIGN_TOKENS.spacing.xl }}>
-        <div style={{ 
-          width: '100px', 
-          height: '100px', 
-          borderRadius: '50%', 
-          backgroundColor: DESIGN_TOKENS.colors.primary, 
-          margin: '0 auto', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          fontSize: '48px', 
-          color: 'white' 
-        }}>
-          {profileData?.profileImage ? (
-            <img 
-              src={profileData.profileImage} 
-              alt="Profile" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+  return (
+    <div className={styles.pageContainer}>
+      {state.error && (
+        <div className={styles.errorBanner}>
+          {state.error}
+        </div>
+      )}
+      <div className={styles.profileHeader}>
+        <div className={styles.avatar}>
+          {state.profileData?.profileImage ? (
+            <Image
+              src={state.profileData.profileImage}
+              alt="Profile"
+              width={80}
+              height={80}
+              className={styles.avatarImage}
             />
           ) : (
             '👤'
           )}
         </div>
-        <h2 style={{ margin: '12px 0 4px 0' }}>{isEditing ? editFormData.fullName : profileData?.fullName || 'User'}</h2>
-        <p style={{ color: '#666', margin: 0 }}>{isEditing ? editFormData.email : profileData?.email || ''}</p>
-        <p style={{ color: '#999', margin: '4px 0 0 0', fontSize: '14px' }}>{isEditing ? editFormData.phone : profileData?.phone || ''}</p>
-        
-        {!isEditing && (
-          <div style={{ marginTop: DESIGN_TOKENS.spacing.md }}>
-            <Button 
-              label="Edit Profile" 
-              onClick={() => setIsEditing(true)} 
-              variant="secondary" 
+        <h2 className={styles.profileName}>{state.isEditing ? state.editFormData.fullName : state.profileData?.fullName || 'User'}</h2>
+        <p className={styles.profileEmail}>{state.isEditing ? state.editFormData.email : state.profileData?.email || ''}</p>
+        <p className={styles.profilePhone}>{state.isEditing ? state.editFormData.phone : state.profileData?.phone || ''}</p>
+
+        {!state.isEditing && (
+          <div className={styles.editButtonWrapper}>
+            <Button
+              label="Edit Profile"
+              onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: true })}
+              variant="secondary"
             />
           </div>
         )}
       </div>
 
-       {isEditing && (
+      {state.isEditing && (
         <>
           <Card title="Edit Profile">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
-              <div>
-                <label htmlFor="fullName" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+            <div className={styles.form}>
+              <div className={styles.field}>
+                <label htmlFor="fullName" className={styles.label}>
                   Full Name
                 </label>
                 <input
                   id="fullName"
+                  className={styles.input}
                   type="text"
-                  value={editFormData.fullName}
-                  onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                  value={state.editFormData.fullName}
+                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, fullName: e.target.value } })}
                 />
               </div>
-              
-              <div>
-                <label htmlFor="email" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+
+              <div className={styles.field}>
+                <label htmlFor="email" className={styles.label}>
                   Email
                 </label>
                 <input
                   id="email"
+                  className={styles.input}
                   type="email"
-                  value={editFormData.email}
-                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                  value={state.editFormData.email}
+                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, email: e.target.value } })}
                 />
               </div>
-              
-              <div>
-                <label htmlFor="phone" style={{ display: 'block', marginBottom: DESIGN_TOKENS.spacing.xs, fontWeight: '500' }}>
+
+              <div className={styles.field}>
+                <label htmlFor="phone" className={styles.label}>
                   Phone Number
                 </label>
                 <input
                   id="phone"
+                  className={styles.input}
                   type="tel"
-                  value={editFormData.phone}
-                  onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
-                  style={{ width: '100%', padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                  value={state.editFormData.phone}
+                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, phone: e.target.value } })}
                 />
               </div>
-              
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.lg }}>
-                <Button label="Cancel" onClick={() => setIsEditing(false)} variant="secondary" />
+
+              <div className={styles.formActions}>
+                <Button label="Cancel" onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: false })} variant="secondary" />
                 <Button label="Save Changes" onClick={handleSaveProfile} />
               </div>
             </div>
@@ -208,67 +225,67 @@ const ProfilePage = () => {
         </>
       )}
 
-      {!isEditing && (
+      {!state.isEditing && (
         <>
           <Card title="Account Information">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className={styles.infoList}>
+              <div className={styles.infoRow}>
                 <span>Email Verified</span>
-                <span>{profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
+                <span>{state.profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className={styles.infoRow}>
                 <span>Phone Verified</span>
-                <span>{profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
+                <span>{state.profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className={styles.infoRow}>
                 <span>Member Since</span>
-                <span>{new Date(profileData?.createdAt || Date.now()).toLocaleDateString()}</span>
+                <span>{state.profileData?.createdAt ? new Date(state.profileData.createdAt).toLocaleDateString() : 'Not available'}</span>
               </div>
             </div>
           </Card>
 
-           <Card title="Security">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-               <Button 
-                 label="Change Password" 
-                 onClick={() => {/* TODO: Implement password change */}} 
-                 variant="secondary"
-               />
-               <Button 
-                 label="Manage Devices" 
-                 onClick={() => {/* TODO: Implement device management */}} 
-                 variant="secondary"
-               />
-             </div>
-           </Card>
+          <Card title="Security">
+            <div className={styles.infoList}>
+              <Button
+                label="Change Password"
+                onClick={() => {}}
+                variant="secondary"
+              />
+              <Button
+                label="Manage Devices"
+                onClick={() => {}}
+                variant="secondary"
+              />
+            </div>
+          </Card>
 
-           <Card title="Address Management">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-               <Button 
-                 label="Manage Addresses" 
-                 onClick={() => {/* TODO: Implement address management */}} 
-                 variant="secondary"
-               />
-               <p style={{ color: '#666', fontSize: '14px' }}>
-                 Saved addresses will appear here
-               </p>
-             </div>
-           </Card>
+          <Card title="Address Management">
+            <div className={styles.infoList}>
+              <Button
+                label="Manage Addresses"
+                onClick={() => router.push('/addresses')}
+                variant="secondary"
+              />
+              <p className={styles.helperText}>
+                Saved addresses will appear here
+              </p>
+            </div>
+          </Card>
 
-           <Card title="Payment Methods">
-             <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
-               <Button 
-                 label="Manage Payment Methods" 
-                 onClick={() => {/* TODO: Implement payment method management */}} 
-                 variant="secondary"
-               />
-               <p style={{ color: '#666', fontSize: '14px' }}>
-                 Saved payment methods will appear here
-               </p>
-             </div>
-           </Card>
+          <Card title="Payment Methods">
+            <div className={styles.infoList}>
+              <Button
+                label="Manage Payment Methods"
+                onClick={() => router.push('/payment-methods')}
+                variant="secondary"
+              />
+              <p className={styles.helperText}>
+                Saved payment methods will appear here
+              </p>
+            </div>
+          </Card>
 
-          <div style={{ marginTop: DESIGN_TOKENS.spacing.xl, textAlign: 'center' }}>
+          <div className={styles.logoutWrapper}>
             <Button label="Sign Out" onClick={handleLogout} variant="secondary" style={{ width: '100%' }} />
           </div>
         </>
@@ -277,4 +294,6 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default function Wrapped(props: any) {
+  return <ProtectedRoute><ProfilePage {...props} /></ProtectedRoute>;
+}

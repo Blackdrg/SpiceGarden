@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { UserEntity } from '../db/entities/user.entity';
 import { SessionEntity } from '../db/entities/session.entity';
 import { AuditLogEntity } from '../db/entities/audit-log.entity';
+import { OrderEntity } from '../db/entities/order.entity';
 import { DeletionRequestEntity } from '../db/entities/deletion-request.entity';
 import { DataExportRequestEntity } from '../db/entities/data-export-request.entity';
 import { EncryptionService } from '../security/encryption.service';
@@ -19,6 +20,8 @@ export class ComplianceService {
     private readonly sessionRepo: Repository<SessionEntity>,
     @InjectRepository(AuditLogEntity)
     private readonly auditLogRepo: Repository<AuditLogEntity>,
+    @InjectRepository(OrderEntity)
+    private readonly orderRepo: Repository<OrderEntity>,
     @InjectRepository(DeletionRequestEntity)
     private readonly deletionRequestRepo: Repository<DeletionRequestEntity>,
     @InjectRepository(DataExportRequestEntity)
@@ -66,7 +69,7 @@ export class ComplianceService {
   async shouldRetainUserData(userId: string): Promise<boolean> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
-      select: ['deletedAt'],
+      select: { deletedAt: true },
     });
 
     if (!user || !user.deletedAt) {
@@ -103,7 +106,9 @@ export class ComplianceService {
       throw new Error('User not found');
     }
 
-    const orders = []; // In production, fetch from order repository
+    const orders = await this.orderRepo.find({
+      where: { userId },
+    });
     const sessions = await this.sessionRepo.find({
       where: { userId },
     });
@@ -143,11 +148,12 @@ async getRetentionStatistics(): Promise<any> {
     const sessionCutoff = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
     const auditCutoff = new Date(now.getTime() - 3 * 365 * 24 * 60 * 60 * 1000);
 
-    const [totalUsers, totalSessions, expiredSessions, oldAuditLogs] = await Promise.all([
+    const [totalUsers, totalSessions, expiredSessions, oldAuditLogs, pendingDeletionRequests] = await Promise.all([
       this.userRepo.count(),
       this.sessionRepo.count(),
       this.sessionRepo.count({ where: { expiresAt: LessThan(sessionCutoff) } }),
       this.auditLogRepo.count({ where: { timestamp: LessThan(auditCutoff) } }),
+      this.deletionRequestRepo.count({ where: { status: 'pending' } }),
     ]);
 
     return {
@@ -162,6 +168,7 @@ async getRetentionStatistics(): Promise<any> {
         totalSessions,
         expiredSessions,
         oldAuditLogs,
+        pendingDeletionRequests,
       },
     };
   }
@@ -171,14 +178,9 @@ async getRetentionStatistics(): Promise<any> {
        where: { userId, status: 'pending' },
      });
 
-     if (existingRequest) {
-       return {
-         requestId: existingRequest.id,
-         regulation: existingRequest.regulation,
-         status: existingRequest.status,
-         message: 'Deletion request already pending',
-       };
-     }
+      if (existingRequest) {
+        throw new ConflictException('User already has a pending deletion request');
+      }
 
      const scheduledDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
      const request = this.deletionRequestRepo.create({
@@ -279,10 +281,11 @@ async getRetentionStatistics(): Promise<any> {
        }
      }
 
-     return {
-       encryptedFields,
-       fieldsStatus,
-       verified: encryptedFields.length === piiFields.length,
-     };
+      return {
+        encryptedFields,
+        fieldsStatus,
+        isEncrypted: encryptedFields.length === piiFields.length,
+        verified: encryptedFields.length === piiFields.length,
+      };
    }
 }

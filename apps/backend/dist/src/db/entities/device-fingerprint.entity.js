@@ -13,6 +13,17 @@ exports.DeviceFingerprintEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let DeviceFingerprintEntity = class DeviceFingerprintEntity {
+    id;
+    userId;
+    user;
+    fingerprint;
+    deviceName;
+    deviceType;
+    userAgent;
+    ipAddress;
+    isTrusted;
+    createdAt;
+    updatedAt;
 };
 exports.DeviceFingerprintEntity = DeviceFingerprintEntity;
 __decorate([
@@ -64,4 +75,3 @@ exports.DeviceFingerprintEntity = DeviceFingerprintEntity = __decorate([
     (0, typeorm_1.Entity)('device_fingerprints'),
     (0, typeorm_1.Unique)(['userId', 'fingerprint'])
 ], DeviceFingerprintEntity);
-//# sourceMappingURL=device-fingerprint.entity.js.map

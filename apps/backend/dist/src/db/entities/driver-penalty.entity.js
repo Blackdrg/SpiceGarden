@@ -32,6 +32,22 @@ var DriverPenaltyStatus;
     DriverPenaltyStatus["DISPUTED"] = "disputed";
 })(DriverPenaltyStatus || (exports.DriverPenaltyStatus = DriverPenaltyStatus = {}));
 let DriverPenaltyEntity = class DriverPenaltyEntity {
+    id;
+    driverId;
+    driver;
+    type;
+    amount;
+    orderId;
+    description;
+    status;
+    issuedBy;
+    paidAt;
+    waivedAt;
+    waivedBy;
+    waiverReason;
+    disputeReason;
+    createdAt;
+    updatedAt;
 };
 exports.DriverPenaltyEntity = DriverPenaltyEntity;
 __decorate([
@@ -101,4 +117,3 @@ __decorate([
 exports.DriverPenaltyEntity = DriverPenaltyEntity = __decorate([
     (0, typeorm_1.Entity)('driver_penalties')
 ], DriverPenaltyEntity);
-//# sourceMappingURL=driver-penalty.entity.js.map

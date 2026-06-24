@@ -20,4 +20,3 @@ exports.GeoModule = GeoModule = __decorate([
         exports: [enhanced_geo_service_1.EnhancedGeoService],
     })
 ], GeoModule);
-//# sourceMappingURL=geo.module.js.map

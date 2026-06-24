@@ -1,87 +1,213 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { OrderStatus, PaymentStatus } from '../src/shared/domain/order.interface';
+import { describe, expect, it, jest } from '@jest/globals';
+import { DeliveryService } from '../src/services/delivery/delivery.service';
 
-describe('DeliveryService - Unit Tests', () => {
-  // Test order-related functions in isolation without importing actual service
+function createDeliveryService() {
+  return Object.create(DeliveryService.prototype) as any;
+}
 
-  describe('Order Status Logic', () => {
-    it('should validate order status transitions', () => {
-      const validTransitions = [
-        ['placed', 'restaurant_accepted'],
-        ['restaurant_accepted', 'preparing'],
-        ['preparing', 'ready_for_pickup'],
-        ['ready_for_pickup', 'driver_assigned'],
-        ['driver_assigned', 'picked_up'],
-        ['picked_up', 'on_the_way'],
-        ['on_the_way', 'delivered'],
-      ];
-      
-      validTransitions.forEach(([from, to]) => {
-        const statusValue = OrderStatus[from.toUpperCase().replace('_', '') as keyof typeof OrderStatus] || to;
-        expect(statusValue).toBeDefined();
-      });
-    });
+describe('DeliveryService core delivery logic', () => {
+  let service: any;
 
-    it('should calculate driver earnings correctly', () => {
-      const baseEarning = 15.00;
-      const tip = 5.00;
-      const totalEarning = baseEarning + tip;
-      
-      expect(totalEarning).toBe(20.00);
-      expect(baseEarning).toBeGreaterThan(0);
-    });
+  beforeEach(() => {
+    service = createDeliveryService();
+  });
 
-    it('should validate payment status for refund eligibility', () => {
-      const eligibleStatuses = [OrderStatus.ON_THE_WAY, OrderStatus.DELIVERED];
-      const eligiblePaymentStatuses = [PaymentStatus.COMPLETED];
-      
-      expect(eligibleStatuses).toContain(OrderStatus.DELIVERED);
-      expect(eligiblePaymentStatuses).toContain(PaymentStatus.COMPLETED);
+  afterEach(() => {
+    jest.restoreAllMocks();
+    try {
+      (jest as any).useRealTimers();
+    } catch {}
+  });
+
+  it('calculates traffic-aware ETA and distance from the geo service', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(12),
+      predictETA: jest.fn().mockReturnValue({ distance: 12, duration: 24 }),
+    };
+
+    const result = service.calculateTrafficAwareRoute(
+      { lat: 12.9716, lng: 77.5946 },
+      { lat: 12.9352, lng: 77.6245 },
+      40,
+    );
+
+    expect(result.distance).toBe(12);
+    expect(result.duration).toBeGreaterThan(0);
+    expect(result.eta).toBeGreaterThanOrEqual(result.duration);
+    expect(result.trafficFactor).toBeGreaterThanOrEqual(0.5);
+    expect(result.trafficFactor).toBeLessThanOrEqual(3);
+  });
+
+  it('uses bounded traffic factors during rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    const normal = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 }, 30);
+    const rush = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 }, 10);
+
+    expect(normal.trafficFactor).toBeGreaterThanOrEqual(0.5);
+    expect(normal.trafficFactor).toBeLessThanOrEqual(3);
+    expect(rush.trafficFactor).toBeGreaterThanOrEqual(normal.trafficFactor);
+  });
+
+  it('uses default historical speed when not provided', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.distance).toBe(5);
+    expect(result.duration).toBeGreaterThan(0);
+    expect(result.trafficFactor).toBeGreaterThanOrEqual(0.5);
+  });
+
+  it('returns 1.5 traffic factor during morning rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T02:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.5);
+  });
+
+  it('returns 1.3 traffic factor during lunch rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T07:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.3);
+  });
+
+  it('returns 1.7 traffic factor during evening rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T12:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.7);
+  });
+
+  it('returns 1.0 traffic factor during normal hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T05:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.0);
+  });
+
+  it('registers drivers with pending KYC and zero-balance wallet', async () => {
+    const driverRepo = { create: jest.fn(), save: jest.fn() } as any;
+    const walletRepo = { create: jest.fn(), save: jest.fn() } as any;
+    driverRepo.create.mockReturnValue({});
+    driverRepo.save.mockReturnValue({ id: 'driver-1', kycStatus: 'pending' });
+    walletRepo.create.mockReturnValue({});
+    walletRepo.save.mockReturnValue({ id: 'wallet-1', balance: 0 });
+    service.driverRepo = driverRepo;
+    service.walletRepo = walletRepo;
+
+    const result = await service.registerDriver('user-1', { fullName: 'Driver' });
+
+    expect(result.kycStatus).toBe('pending');
+    expect(walletRepo.create).toHaveBeenCalledWith({ userId: 'user-1', balance: 0 });
+    expect(walletRepo.save).toHaveBeenCalled();
+  });
+
+  it('updates driver location', async () => {
+    const driverRepo = { update: jest.fn() } as any;
+    driverRepo.update.mockResolvedValue({ affected: 1 });
+    service.driverRepo = driverRepo;
+
+    await service.updateLocation('driver-1', 12.97, 77.59);
+
+    expect(driverRepo.update).toHaveBeenCalledWith('driver-1', {
+      currentLocation: { lat: 12.97, lng: 77.59 },
     });
   });
 
-  describe('Fraud Detection Logic', () => {
-    it('should detect unrealistic GPS speeds', () => {
-      const maxRealisticSpeedKmh = 100;
-      const detectedSpeed = 150;
-      
-      expect(detectedSpeed).toBeGreaterThan(maxRealisticSpeedKmh);
-    });
+  it('finds available drivers within radius', async () => {
+    const qb: any = {
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getMany: (jest.fn() as any).mockResolvedValue([{ id: 'd1' }]),
+    };
+    const driverRepo = { createQueryBuilder: jest.fn().mockReturnValue(qb) } as any;
+    service.driverRepo = driverRepo;
 
-    it('should calculate fraud risk score', () => {
-      const gpsRisk = 30;
-      const routeRisk = 25;
-      const timingRisk = 20;
-      const fakeRisk = 25;
-      
-      const totalRisk = Math.min(100, gpsRisk * 0.3 + routeRisk * 0.3 + timingRisk * 0.2 + fakeRisk * 0.2);
-      
-      expect(totalRisk).toBe(25.5);
+    const result = await service.findAvailableDrivers(12.97, 77.59, 5);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('d1');
+  });
+
+  it('assigns order to driver and sets status', async () => {
+    const orderRepo = { update: jest.fn() } as any;
+    orderRepo.update.mockResolvedValue({ affected: 1 });
+    service.orderRepo = orderRepo;
+
+    await service.assignOrderToDriver('order-1', 'driver-1');
+
+    expect(orderRepo.update).toHaveBeenCalledWith('order-1', {
+      driverId: 'driver-1',
+      status: 'driver_assigned',
     });
   });
 
-  describe('ETA Calculation', () => {
-    it('should apply time-of-day traffic factor', () => {
-      const baseTimeMinutes = 30;
-      const rushHourFactor = 1.5;
-      const adjustedETA = Math.ceil(baseTimeMinutes * rushHourFactor * 1.2);
-      
-      expect(adjustedETA).toBe(54);
-    });
+  it('calculates score components when driver exists', async () => {
+    const driverRepo = { findOne: jest.fn() } as any;
+    driverRepo.findOne.mockResolvedValue({ id: 'd1', rating: 4.2 });
+    service.driverRepo = driverRepo;
 
-    it('should calculate confidence based on sample size', () => {
-      const sampleSizes = [3, 10, 25];
-      
-      const getConfidence = (n: number) => {
-        if (n >= 20) return 'high';
-        if (n >= 5) return 'medium';
-        return 'low';
-      };
-      
-      expect(getConfidence(sampleSizes[0])).toBe('low');
-      expect(getConfidence(sampleSizes[1])).toBe('medium');
-      expect(getConfidence(sampleSizes[2])).toBe('high');
-    });
+    const result = await service.calculateScoreComponents('d1');
+
+    expect(result.overallScore).toBe(4.2);
+    expect(result.onTimeRate).toBe(0);
+    expect(result.acceptanceRate).toBe(0);
+  });
+
+  it('calculates positive rates when driver has total deliveries', async () => {
+    const driverRepo = { findOne: jest.fn() } as any;
+    driverRepo.findOne.mockResolvedValue({ id: 'd1', rating: 4.5, totalDeliveries: 100 });
+    service.driverRepo = driverRepo;
+
+    const result = await service.calculateScoreComponents('d1');
+
+    expect(result.overallScore).toBe(4.5);
+    expect(result.onTimeRate).toBeCloseTo(0.95, 1);
+    expect(result.acceptanceRate).toBeCloseTo(0.90, 1);
+    expect(result.cancellationRate).toBeCloseTo(0.05, 1);
+  });
+
+  it('throws NotFoundException when driver does not exist', async () => {
+    const driverRepo = { findOne: jest.fn() } as any;
+    driverRepo.findOne.mockResolvedValue(null);
+    service.driverRepo = driverRepo;
+
+    await expect(service.calculateScoreComponents('nonexistent')).rejects.toThrow('Driver not found');
   });
 });

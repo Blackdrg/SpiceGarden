@@ -27,6 +27,22 @@ var ReferralRewardType;
     ReferralRewardType["BOTH"] = "both";
 })(ReferralRewardType || (exports.ReferralRewardType = ReferralRewardType = {}));
 let ReferralEntity = class ReferralEntity {
+    id;
+    code;
+    referrerId;
+    referrer;
+    refereeId;
+    referee;
+    status;
+    rewardType;
+    referrerReward;
+    refereeReward;
+    refereeFirstOrderId;
+    completedAt;
+    rewardGivenAt;
+    expiresAt;
+    createdAt;
+    updatedAt;
 };
 exports.ReferralEntity = ReferralEntity;
 __decorate([
@@ -96,4 +112,3 @@ __decorate([
 exports.ReferralEntity = ReferralEntity = __decorate([
     (0, typeorm_1.Entity)('referrals')
 ], ReferralEntity);
-//# sourceMappingURL=referral.entity.js.map

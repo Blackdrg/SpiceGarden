@@ -15,6 +15,7 @@ const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
 const passport_facebook_1 = require("passport-facebook");
 let FacebookStrategy = class FacebookStrategy extends (0, passport_1.PassportStrategy)(passport_facebook_1.Strategy, 'facebook') {
+    configService;
     constructor(configService) {
         super({
             clientID: configService.get('FACEBOOK_APP_ID'),
@@ -41,4 +42,3 @@ exports.FacebookStrategy = FacebookStrategy = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], FacebookStrategy);
-//# sourceMappingURL=facebook.strategy.js.map

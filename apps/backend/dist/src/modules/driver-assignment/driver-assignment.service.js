@@ -26,6 +26,16 @@ const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 const dispatch_engine_service_1 = require("./dispatch-engine.service");
 const eta_intelligence_service_1 = require("./eta-intelligence.service");
 let DriverAssignmentService = class DriverAssignmentService {
+    driverRepo;
+    orderRepo;
+    assignmentRepo;
+    branchRepo;
+    scoreRepo;
+    slaRepo;
+    fraudRepo;
+    dataSource;
+    dispatchEngine;
+    etaIntelligence;
     constructor(driverRepo, orderRepo, assignmentRepo, branchRepo, scoreRepo, slaRepo, fraudRepo, dataSource, dispatchEngine, etaIntelligence) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
@@ -54,14 +64,14 @@ let DriverAssignmentService = class DriverAssignmentService {
         }
         return this.assignmentRepo.find({
             where,
-            relations: ['order', 'driver', 'branch'],
+            relations: { order: true, driver: true, branch: true },
             order: { createdAt: 'DESC' }
         });
     }
     async getOrderAssignments(orderId) {
         return this.assignmentRepo.find({
             where: { order: { id: orderId } },
-            relations: ['driver', 'branch'],
+            relations: { driver: true, branch: true },
             order: { createdAt: 'DESC' }
         });
     }
@@ -108,7 +118,7 @@ let DriverAssignmentService = class DriverAssignmentService {
         }
         const recentAssignments = await this.assignmentRepo.find({
             where: { driver: { id: driverId }, status: 'delivered' },
-            relations: ['order'],
+            relations: { order: true },
             order: { createdAt: 'DESC' },
             take: 50
         });
@@ -281,6 +291,7 @@ exports.DriverAssignmentService = DriverAssignmentService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(driver_score_entity_1.DriverScoreEntity)),
     __param(5, (0, typeorm_1.InjectRepository)(delivery_sla_entity_1.DeliverySLAEntity)),
     __param(6, (0, typeorm_1.InjectRepository)(driver_fraud_entity_1.DriverFraudEntity)),
+    __param(7, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -292,4 +303,3 @@ exports.DriverAssignmentService = DriverAssignmentService = __decorate([
         dispatch_engine_service_1.DispatchEngineService,
         eta_intelligence_service_1.ETAIntelligenceService])
 ], DriverAssignmentService);
-//# sourceMappingURL=driver-assignment.service.js.map

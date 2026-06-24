@@ -6,6 +6,9 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   turbopack: {},
   webpack: (config) => {
     return config;

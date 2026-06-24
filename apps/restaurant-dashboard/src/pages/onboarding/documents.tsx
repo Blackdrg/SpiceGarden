@@ -82,6 +82,7 @@ export default function OnboardingDocuments() {
 
         <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
           <button
+            type="button"
             onClick={() => window.location.href = '/onboarding/business'}
             style={{ ...buttonStyle.secondary, flex: 1 }}
           >

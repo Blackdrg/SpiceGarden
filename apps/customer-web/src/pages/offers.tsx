@@ -14,6 +14,16 @@ interface Offer {
   minOrder: number;
 }
 
+const copyCode = (code: string) => {
+  navigator.clipboard.writeText(code).catch(() => null);
+};
+
+const getDiscountText = (offer: Offer) => {
+  if (offer.type === 'percentage') return `-${offer.value}%`;
+  if (offer.type === 'fixed') return `-₹${offer.value}`;
+  return 'BOGO';
+};
+
 const OffersPage = () => {
   const router = useRouter();
   const [offers] = useState<Offer[]>([
@@ -22,16 +32,6 @@ const OffersPage = () => {
     { id: 3, title: 'Buy 1 Get 1 Free', description: 'On selected pizzas', code: 'PIZZABOGO', validTill: '2026-06-15', type: 'bogo', value: 0, minOrder: 0 },
   ]);
   const [activeTab] = useState<'home' | 'search' | 'offers' | 'account'>('offers');
-
-  const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code).catch(() => null);
-  };
-
-  const getDiscountText = (offer: Offer) => {
-    if (offer.type === 'percentage') return `-${offer.value}%`;
-    if (offer.type === 'fixed') return `-₹${offer.value}`;
-    return 'BOGO';
-  };
 
   const getTabClass = (key: string) => {
     return `${styles.tabItem} ${activeTab === key ? styles.activeTab : styles.tabText}`;
@@ -75,17 +75,17 @@ const OffersPage = () => {
           { key: 'offers', label: 'Offers', icon: '🎁', path: '/offers' },
           { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
         ].map((tab) => (
-          <div
+          <button
+            type="button"
             key={tab.key}
             className={getTabClass(tab.key)}
             onClick={() => tab.path && router.push(tab.path)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
             aria-label={tab.label}
-            role="button"
-            tabIndex={0}
           >
             <span className={styles.tabIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

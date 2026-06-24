@@ -1,0 +1,84 @@
+/* cart.module.css */
+
+.emptyContainer {
+  padding: 24px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.emptySubtitle {
+  color: #666;
+}
+
+.cartContainer {
+  padding: 16px;
+  min-height: 100vh;
+  background-color: #9CA3AF;
+}
+
+.cartTitle {
+  margin-bottom: 16px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnIcon {
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+}
+
+.qtyText {
+  min-width: 20px;
+  text-align: center;
+}
+
+.priceText {
+  margin-left: 16px;
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.billRowXs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.billRowMd {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.billRowTotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.footer {
+  margin-top: 24px;
+}

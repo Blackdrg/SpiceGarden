@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 const DATA_SOURCE_TOKEN = 'DataSource';
 
@@ -34,8 +35,23 @@ function createRepository(entity: any) {
     }),
     find: async () => rows,
     findBy: async () => rows,
-    findOne: async () => rows[0] || null,
-    findOneBy: async () => rows[0] || null,
+    findOne: async (options: any) => {
+      if (!options || !options.where) {
+        return rows[0] || null;
+      }
+      const criteria = options.where;
+      return rows.find((row) =>
+        Object.entries(criteria).every(([key, value]) => row[key] === value)
+      ) || null;
+    },
+    findOneBy: async (criteria: any) => {
+      if (!criteria) {
+        return rows[0] || null;
+      }
+      return rows.find((row) =>
+        Object.entries(criteria).every(([key, value]) => row[key] === value)
+      ) || null;
+    },
     findAndCount: async () => [rows, rows.length],
     count: async () => rows.length,
     create: (data: any = {}) => ({ ...(data || {}) }),
@@ -155,11 +171,17 @@ const repositoryDefinitions = [
         transaction: async (_: any, work?: any) => (work || _)(undefined),
       },
     },
-    ...repositoryDefinitions.map((entity) => ({
-      provide: getRepositoryToken(entity),
-      useValue: createRepository(entity),
-    })),
+    {
+      provide: DataSource,
+      useExisting: DATA_SOURCE_TOKEN,
+    },
+    ...repositoryDefinitions.flatMap((entity) => [
+      {
+        provide: getRepositoryToken(entity),
+        useValue: createRepository(entity),
+      },
+    ]),
   ],
-  exports: [DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
+  exports: [DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
 })
 export class LocalRepositoryModule {}

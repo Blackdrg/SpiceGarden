@@ -13,6 +13,14 @@ exports.WalletTransactionEntity = void 0;
 const typeorm_1 = require("typeorm");
 const wallet_entity_1 = require("./wallet.entity");
 let WalletTransactionEntity = class WalletTransactionEntity {
+    id;
+    walletId;
+    wallet;
+    amount;
+    type;
+    description;
+    referenceId;
+    createdAt;
 };
 exports.WalletTransactionEntity = WalletTransactionEntity;
 __decorate([
@@ -50,4 +58,3 @@ __decorate([
 exports.WalletTransactionEntity = WalletTransactionEntity = __decorate([
     (0, typeorm_1.Entity)('wallet_transactions')
 ], WalletTransactionEntity);
-//# sourceMappingURL=wallet-transaction.entity.js.map

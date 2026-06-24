@@ -20,6 +20,16 @@ var PushTrackingEvent;
     PushTrackingEvent["REJECTED"] = "rejected";
 })(PushTrackingEvent || (exports.PushTrackingEvent = PushTrackingEvent = {}));
 let NotificationAnalyticsEntity = class NotificationAnalyticsEntity {
+    id;
+    notificationId;
+    deviceToken;
+    event;
+    fcmMessageId;
+    apnsMessageId;
+    receivedAt;
+    openedAt;
+    metadata;
+    createdAt;
 };
 exports.NotificationAnalyticsEntity = NotificationAnalyticsEntity;
 __decorate([
@@ -66,4 +76,3 @@ __decorate([
 exports.NotificationAnalyticsEntity = NotificationAnalyticsEntity = __decorate([
     (0, typeorm_1.Entity)('notification_analytics')
 ], NotificationAnalyticsEntity);
-//# sourceMappingURL=notification-analytics.entity.js.map

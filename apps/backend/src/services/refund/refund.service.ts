@@ -316,10 +316,10 @@ export class RefundService {
     * Get refund request by ID
     */
    async getRefundRequest(approvalId: string): Promise<RefundApprovalEntity> {
-     const approval = await this.refundApprovalRepo.findOne({ 
-       where: { id: approvalId },
-       relations: ['order', 'requester', 'approver']
-     });
+const approval = await this.refundApprovalRepo.findOne({ 
+        where: { id: approvalId },
+        relations: { order: true }
+      });
      if (!approval) {
        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
      }
@@ -330,22 +330,22 @@ export class RefundService {
     * Get refund requests for an order
     */
    async getRefundRequestsForOrder(orderId: string): Promise<RefundApprovalEntity[]> {
-     return await this.refundApprovalRepo.find({
-       where: { order: { id: orderId } },
-       relations: ['requester', 'approver'],
-       order: { createdAt: 'DESC' }
-     });
+return await this.refundApprovalRepo.find({
+        where: { order: { id: orderId } },
+        relations: {},
+        order: { createdAt: 'DESC' }
+      });
    }
 
    /**
     * Get refund requests by status
     */
    async getRefundRequestsByStatus(status: 'pending' | 'approved' | 'rejected' | 'processed' | 'failed'): Promise<RefundApprovalEntity[]> {
-     return await this.refundApprovalRepo.find({
-       where: { approvalStatus: status },
-       relations: ['order', 'requester', 'approver'],
-       order: { createdAt: 'DESC' }
-     });
+return await this.refundApprovalRepo.find({
+        where: { approvalStatus: status },
+        relations: { order: true },
+        order: { createdAt: 'DESC' }
+      });
    }
 
   /**

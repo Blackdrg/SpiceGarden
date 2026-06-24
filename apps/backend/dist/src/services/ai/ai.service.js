@@ -19,6 +19,8 @@ const typeorm_2 = require("typeorm");
 const order_entity_1 = require("../../db/entities/order.entity");
 const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 let AiService = class AiService {
+    orderRepo;
+    menuRepo;
     constructor(orderRepo, menuRepo) {
         this.orderRepo = orderRepo;
         this.menuRepo = menuRepo;
@@ -26,7 +28,13 @@ let AiService = class AiService {
     async getRecommendations(userId) {
         const recentOrders = await this.orderRepo.find({
             where: { userId },
-            relations: ['items', 'items.menuItem', 'items.menuItem.category'],
+            relations: {
+                items: {
+                    menuItem: {
+                        category: true
+                    }
+                }
+            },
             take: 5,
             order: { createdAt: 'DESC' },
         });
@@ -84,4 +92,3 @@ exports.AiService = AiService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
 ], AiService);
-//# sourceMappingURL=ai.service.js.map

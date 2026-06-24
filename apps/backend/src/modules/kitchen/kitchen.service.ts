@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, MoreThan, LessThan, Between, IsNull, Not } from 'typeorm';
 import { InventoryItemEntity } from '../../db/entities/inventory-item.entity';
 import { RecipeEntity } from '../../db/entities/recipe.entity';
@@ -43,61 +43,18 @@ export class KitchenService {
     private readonly orderRepo: Repository<OrderEntity>,
     @InjectRepository(OrderItemEntity)
     private readonly orderItemRepo: Repository<OrderItemEntity>,
+    @InjectDataSource()
     private readonly dataSource: DataSource
   ) {}
 
   /**
    * Check inventory levels and create alerts if thresholds are breached
    */
-  private async checkAndCreateInventoryAlert(itemId: string): Promise<void> {
+private async checkAndCreateInventoryAlert(itemId: string): Promise<void> {
     try {
       const item = await this.inventoryRepo.findOne({
         where: { id: itemId },
-        relations: ['branch']
-      });
-      
-      if (!item) return;
-
-      // Check for out of stock
-      if (item.currentStock === 0) {
-        await this.createInventoryAlert(
-          item.id,
-          'out_of_stock',
-          item.currentStock,
-          item.lowStockThreshold
-        );
-      } 
-      // Check for low stock
-      else if (item.currentStock <= item.lowStockThreshold) {
-        await this.createInventoryAlert(
-          item.id,
-          'low_stock',
-          item.currentStock,
-          item.lowStockThreshold
-        );
-      }
-      // Check if we should resolve existing alerts
-      else {
-        await this.resolveInventoryAlerts(item.id, ['low_stock', 'out_of_stock']);
-      }
-    } catch (error) {
-      this.logger.error(`Error checking inventory alerts for item ${itemId}`, error);
-    }
-  }
-
-  /**
-   * Create an inventory alert
-   */
-  private async createInventoryAlert(
-    itemId: string,
-    alertType: 'low_stock' | 'out_of_stock' | 'expiring_soon' | 'wastage_high',
-    currentLevel: number,
-    thresholdLevel: number
-  ): Promise<void> {
-    try {
-      const item = await this.inventoryRepo.findOne({
-        where: { id: itemId },
-        relations: ['branch']
+        relations: { branch: true }
       });
       
       if (!item || !item.branch) return;
@@ -106,7 +63,7 @@ export class KitchenService {
       const existingAlert = await this.inventoryAlertRepo.findOne({
         where: {
           inventoryItem: { id: itemId },
-          alertType,
+          alertType: In(['out_of_stock', 'low_stock']) as any,
           isResolved: false
         }
       });
@@ -115,13 +72,13 @@ export class KitchenService {
         const alert = this.inventoryAlertRepo.create({
           inventoryItem: item,
           branch: item.branch,
-          alertType,
-          currentLevel,
-          thresholdLevel
+          alertType: 'out_of_stock' as any,
+          currentLevel: item.currentStock,
+          thresholdLevel: item.lowStockThreshold
         });
         
         await this.inventoryAlertRepo.save(alert);
-        this.logger.log(`Created ${alertType} alert for item ${item.name}`);
+        this.logger.log(`Created out_of_stock alert for item ${item.name}`);
       }
     } catch (error) {
       this.logger.error(`Error creating inventory alert`, error);
@@ -154,12 +111,12 @@ export class KitchenService {
    */
   private async checkAndCreateWastageAlert(itemId: string, wastedQuantity: number, reason?: string): Promise<void> {
     try {
-      const item = await this.inventoryRepo.findOne({
-        where: { id: itemId },
-        relations: ['branch']
-      });
-      
-      if (!item) return;
+const item = await this.inventoryRepo.findOne({
+         where: { id: itemId },
+         relations: { branch: true }
+       });
+       
+       if (!item) return;
 
       // Calculate wastage percentage (wastage / total used + wastage)
       // For simplicity, we'll use wastage vs current stock + wastage as proxy for total usage
@@ -278,9 +235,9 @@ export class KitchenService {
     return this.recipeRepo.save(recipe);
   }
 
-  async getRecipeById(id: string): Promise<RecipeEntity> {
-    return this.recipeRepo.findOne({ where: { id }, relations: ['branch'] });
-  }
+async getRecipeById(id: string): Promise<RecipeEntity> {
+     return (await this.recipeRepo.findOne({ where: { id }, relations: { branch: true } }))!;
+   }
 
   async createBatch(data: Partial<BatchEntity>): Promise<BatchEntity> {
     const batch = this.batchRepo.create(data);
@@ -342,10 +299,15 @@ export class KitchenService {
    */
     private async calculateAndRecordFoodPrepTiming(prepId: string): Promise<void> {
      try {
-       const foodPrep = await this.foodPrepRepo.findOne({
-         where: { id: prepId },
-         relations: ['batch', 'batch.recipe', 'branch']
-       });
+const foodPrep = await this.foodPrepRepo.findOne({
+          where: { id: prepId },
+          relations: { 
+            batch: { 
+              recipe: true 
+            }, 
+            branch: true 
+          }
+        });
 
        if (!foodPrep || !foodPrep.startedAt) return;
 
@@ -393,10 +355,13 @@ export class KitchenService {
    
    private async calculateAndRecordBatchTiming(batchId: string): Promise<void> {
      try {
-       const batch = await this.batchRepo.findOne({
-         where: { id: batchId },
-         relations: ['recipe', 'branch']
-       });
+const batch = await this.batchRepo.findOne({
+          where: { id: batchId },
+          relations: { 
+            recipe: true, 
+            branch: true 
+          }
+        });
        
        if (!batch || !batch.startedAt) return;
        
@@ -496,7 +461,7 @@ export class KitchenService {
   async recordAvgPrepTime(branchId: string, prepTimeMinutes: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'avg_prep_time',
       value: prepTimeMinutes,
       unit: 'minutes',
@@ -510,7 +475,7 @@ export class KitchenService {
   async recordLatePrepPercentage(branchId: string, latePercentage: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'late_prep_percentage',
       value: latePercentage,
       unit: 'percentage',
@@ -524,7 +489,7 @@ export class KitchenService {
   async recordFoodRejectionRate(branchId: string, rejectionRate: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'food_rejection_rate',
       value: rejectionRate,
       unit: 'percentage',
@@ -610,7 +575,7 @@ export class KitchenService {
   async recordKitchenThroughput(branchId: string, ordersPerHour: number, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     const branch = await this.branchRepo.findOne({ where: { id: branchId } });
     return this.recordKitchenSLA({
-      branch,
+      branch: branch!,
       metricName: 'kitchen_throughput',
       value: ordersPerHour,
       unit: 'orders_per_hour',
@@ -888,7 +853,7 @@ export class KitchenService {
     return {
       branchId,
       forecastDays: daysAhead,
-      predictions: consumption.consumptionData.map(item => ({
+      predictions: consumption.consumptionData.map((item: { itemId: string; itemName: string; consumed: number; unit: string; cost: number }) => ({
         itemId: item.itemId,
         itemName: item.itemName,
         predictedConsumption: item.consumed * (daysAhead / consumption.periodDays) * 1.2,

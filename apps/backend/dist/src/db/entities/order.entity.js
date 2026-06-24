@@ -16,6 +16,31 @@ const order_item_entity_1 = require("./order-item.entity");
 const gst_detail_entity_1 = require("./gst-detail.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let OrderEntity = class OrderEntity {
+    id;
+    items;
+    userId;
+    restaurantId;
+    branchId;
+    branch;
+    driverId;
+    otpCode;
+    orderNumber;
+    status;
+    paymentStatus;
+    paymentIntentId;
+    subtotal;
+    tax;
+    deliveryFee;
+    discount;
+    tip;
+    grandTotal;
+    refundedAmount;
+    couponId;
+    deliveryAddressId;
+    deliveredAt;
+    gstDetail;
+    createdAt;
+    updatedAt;
 };
 exports.OrderEntity = OrderEntity;
 __decorate([
@@ -121,4 +146,3 @@ __decorate([
 exports.OrderEntity = OrderEntity = __decorate([
     (0, typeorm_1.Entity)('orders')
 ], OrderEntity);
-//# sourceMappingURL=order.entity.js.map

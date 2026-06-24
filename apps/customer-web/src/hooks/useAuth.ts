@@ -6,7 +6,8 @@ const useAuth = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Check for token in localStorage on component mount
+    if (typeof window === 'undefined') return;
+    
     const token = localStorage.getItem('sg_token');
     const userJson = localStorage.getItem('sg_user');
     
@@ -17,7 +18,6 @@ const useAuth = () => {
         dispatch(refreshToken({ token }));
       } catch (error) {
         console.error('Error parsing auth data from localStorage:', error);
-        // Clear invalid data
         localStorage.removeItem('sg_token');
         localStorage.removeItem('sg_user');
       }

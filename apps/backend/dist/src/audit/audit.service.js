@@ -19,9 +19,10 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const audit_log_entity_1 = require("../db/entities/audit-log.entity");
 let AuditService = AuditService_1 = class AuditService {
+    auditLogRepo;
+    logger = new common_1.Logger(AuditService_1.name);
     constructor(auditLogRepo) {
         this.auditLogRepo = auditLogRepo;
-        this.logger = new common_1.Logger(AuditService_1.name);
     }
     async log(action, performedBy = null, entityType = null, entityId = null, metadata = {}, request = null) {
         try {
@@ -173,4 +174,3 @@ exports.AuditService = AuditService = AuditService_1 = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLogEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], AuditService);
-//# sourceMappingURL=audit.service.js.map

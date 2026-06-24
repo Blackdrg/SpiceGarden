@@ -17,8 +17,8 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let MongoAdapter = class MongoAdapter {
+    connection = null;
     constructor(connection) {
-        this.connection = null;
         this.connection = connection || null;
     }
     async connect() {
@@ -47,4 +47,3 @@ exports.MongoAdapter = MongoAdapter = __decorate([
     __param(0, (0, mongoose_1.InjectConnection)()),
     __metadata("design:paramtypes", [mongoose_2.Connection])
 ], MongoAdapter);
-//# sourceMappingURL=mongo.adapter.js.map

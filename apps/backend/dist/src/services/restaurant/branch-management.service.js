@@ -20,11 +20,14 @@ const typeorm_2 = require("typeorm");
 const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let BranchManagementService = BranchManagementService_1 = class BranchManagementService {
+    branchRepo;
+    restaurantRepo;
+    dataSource;
+    logger = new common_1.Logger(BranchManagementService_1.name);
     constructor(branchRepo, restaurantRepo, dataSource) {
         this.branchRepo = branchRepo;
         this.restaurantRepo = restaurantRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(BranchManagementService_1.name);
     }
     async createBranch(restaurantId, branchData) {
         const restaurant = await this.restaurantRepo.findOne({ where: { id: restaurantId } });
@@ -55,7 +58,7 @@ let BranchManagementService = BranchManagementService_1 = class BranchManagement
         }
         await this.branchRepo.update(branchId, updatePayload);
         const updated = await this.branchRepo.findOne({ where: { id: branchId } });
-        return updated;
+        return (await this.branchRepo.findOne({ where: { id: branchId } }));
     }
     async toggleBranchStatus(branchId, isOnline) {
         const branch = await this.branchRepo.findOne({ where: { id: branchId } });
@@ -64,18 +67,18 @@ let BranchManagementService = BranchManagementService_1 = class BranchManagement
         }
         await this.branchRepo.update(branchId, { isOnline });
         this.logger.log(`Branch ${branchId} status updated to ${isOnline ? 'online' : 'offline'}`);
-        return this.branchRepo.findOne({ where: { id: branchId } });
+        return (await this.branchRepo.findOne({ where: { id: branchId } }));
     }
     async getBranchDetails(branchId) {
-        return this.branchRepo.findOne({
+        return (await this.branchRepo.findOne({
             where: { id: branchId },
-            relations: ['restaurant'],
-        });
+            relations: { restaurant: true },
+        }));
     }
     async getBranchesByRestaurant(restaurantId) {
         return this.branchRepo.find({
             where: { restaurant: { id: restaurantId } },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { branchName: 'ASC' },
         });
     }
@@ -89,7 +92,7 @@ let BranchManagementService = BranchManagementService_1 = class BranchManagement
         }
         return this.branchRepo.find({
             where,
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { branchName: 'ASC' },
         });
     }
@@ -106,8 +109,8 @@ exports.BranchManagementService = BranchManagementService = BranchManagementServ
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
+    __param(2, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], BranchManagementService);
-//# sourceMappingURL=branch-management.service.js.map

@@ -17,7 +17,13 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const analytics_service_1 = require("./analytics.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
+const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let AnalyticsController = class AnalyticsController {
+    analyticsService;
     constructor(analyticsService) {
         this.analyticsService = analyticsService;
     }
@@ -49,6 +55,8 @@ let AnalyticsController = class AnalyticsController {
 exports.AnalyticsController = AnalyticsController;
 __decorate([
     (0, common_1.Get)('top-dishes'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get top selling dishes' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -58,6 +66,8 @@ __decorate([
 ], AnalyticsController.prototype, "getTopDishes", null);
 __decorate([
     (0, common_1.Get)('churn'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get churn analysis' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -67,6 +77,8 @@ __decorate([
 ], AnalyticsController.prototype, "getChurnAnalysis", null);
 __decorate([
     (0, common_1.Get)('repeat-users'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get repeat user analytics' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -76,6 +88,8 @@ __decorate([
 ], AnalyticsController.prototype, "getRepeatUsers", null);
 __decorate([
     (0, common_1.Get)('conversion'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get conversion funnel' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -85,6 +99,8 @@ __decorate([
 ], AnalyticsController.prototype, "getConversion", null);
 __decorate([
     (0, common_1.Get)('heatmap'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get delivery heatmap' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -94,6 +110,8 @@ __decorate([
 ], AnalyticsController.prototype, "getHeatmap", null);
 __decorate([
     (0, common_1.Get)('peak-hours'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get peak hours analysis' }),
     __param(0, (0, common_1.Query)('restaurantId')),
     __param(1, (0, common_1.Query)('period')),
@@ -103,6 +121,8 @@ __decorate([
 ], AnalyticsController.prototype, "getPeakHours", null);
 __decorate([
     (0, common_1.Get)('restaurant/:id'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get full restaurant analytics' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -111,6 +131,8 @@ __decorate([
 ], AnalyticsController.prototype, "getRestaurantAnalytics", null);
 __decorate([
     (0, common_1.Get)('platform'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('analytics:read'),
     (0, swagger_1.ApiOperation)({ summary: 'Get platform-wide analytics' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -120,7 +142,6 @@ exports.AnalyticsController = AnalyticsController = __decorate([
     (0, swagger_1.ApiTags)('analytics'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('analytics'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __metadata("design:paramtypes", [analytics_service_1.AnalyticsService])
 ], AnalyticsController);
-//# sourceMappingURL=analytics.controller.js.map

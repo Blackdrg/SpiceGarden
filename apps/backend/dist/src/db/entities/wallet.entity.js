@@ -13,6 +13,13 @@ exports.WalletEntity = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let WalletEntity = class WalletEntity {
+    id;
+    userId;
+    user;
+    balance;
+    currency;
+    createdAt;
+    updatedAt;
 };
 exports.WalletEntity = WalletEntity;
 __decorate([
@@ -46,4 +53,3 @@ __decorate([
 exports.WalletEntity = WalletEntity = __decorate([
     (0, typeorm_1.Entity)('wallets')
 ], WalletEntity);
-//# sourceMappingURL=wallet.entity.js.map

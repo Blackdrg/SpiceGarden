@@ -21,9 +21,16 @@ const branch_management_service_1 = require("./branch-management.service");
 const commission_service_1 = require("./commission.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
+const permission_guard_1 = require("../../security/permission.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
+const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let RestaurantOpsController = class RestaurantOpsController {
+    opsService;
+    moderationService;
+    payoutService;
+    branchService;
+    commissionService;
     constructor(opsService, moderationService, payoutService, branchService, commissionService) {
         this.opsService = opsService;
         this.moderationService = moderationService;
@@ -213,12 +220,12 @@ __decorate([
 ], RestaurantOpsController.prototype, "calculateCommission", null);
 exports.RestaurantOpsController = RestaurantOpsController = __decorate([
     (0, common_1.Controller)('restaurant/ops'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.RESTAURANT, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('restaurants:manage_own'),
     __metadata("design:paramtypes", [restaurant_ops_service_1.RestaurantOpsService,
         menu_moderation_service_1.MenuModerationService,
         payout_service_1.PayoutService,
         branch_management_service_1.BranchManagementService,
         commission_service_1.CommissionService])
 ], RestaurantOpsController);
-//# sourceMappingURL=restaurant-ops.controller.js.map

@@ -1,11 +1,5 @@
-import http from 'k6/http';
-import { check, sleep, group } from 'k6';
-import { Trend, Counter, Rate } from 'k6/metrics';
-
-const http_req_success = new Rate('http_req_success');
-const http_req_duration = new Trend('http_req_duration');
-const db_slow_queries = new Counter('db_slow_queries');
-const db_errors = new Counter('db_errors');
+import { browseRestaurants, createOrder, ensureToken, metrics, request, setup, userIdFromToken } from './common.js';
+import { group, sleep } from 'k6';
 
 export const options = {
   scenarios: {
@@ -37,115 +31,56 @@ export const options = {
     },
   },
   thresholds: {
-    http_req_success: ['rate>0.85'],
-    http_req_duration: ['p(95)<2000'],
-    'http_req_duration{scenario:db-bottleneck,type:read}': ['p(95)<1000'],
-    'http_req_duration{scenario:db-bottleneck,type:write}': ['p(95)<2000'],
+    http_req_failed: ['rate<0.01'],
+    load_success: ['rate>0.99'],
+    browse_restaurants_success: ['rate>0.99'],
+    order_success: ['rate>0.99'],
+    http_req_duration: [`p(95)<${Number(__ENV.P95_LIMIT_MS || 2000)}`],
   },
 };
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
-const API_TOKEN = __ENV.API_TOKEN || 'test-token-123';
-
-const readEndpoints = [
-  '/restaurants',
-  '/restaurants?page=1&limit=20',
-  '/menu/rest-1',
-  '/api/search?q=pizza',
-  '/api/analytics/restaurant/rest-1',
-  '/api/drivers/available',
-];
-
-const complexQueryEndpoints = [
-  '/api/analytics/orders?startDate=2024-01-01&endDate=2024-12-31',
-  '/api/reports/sales?period=monthly',
-  '/api/drivers/performance?period=weekly',
-];
+export { setup };
 
 export function testReadBottleneck() {
-  const endpoint = readEndpoints[__VU % readEndpoints.length];
-
-  group('DB Bottleneck - Heavy Reads', () => {
-    const res = http.get(`${BASE_URL}${endpoint}`, {
-      headers: { Authorization: `Bearer ${API_TOKEN}` },
-      tags: { scenario: 'db-bottleneck', type: 'read' },
-    });
-
-    const success = check(res, {
-      'read handled': (r) => r.status < 500,
-    });
-    http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
-
-    if (res.timings.duration > 2000) {
-      db_slow_queries.add(1);
-    }
-    if (!success) db_errors.add(1);
-  });
-
-  if (__VU % 10 === 0) {
-    group('DB Bottleneck - Complex Queries', () => {
-      const endpoint = complexQueryEndpoints[__ITER % complexQueryEndpoints.length];
-      const res = http.get(`${BASE_URL}${endpoint}`, {
-        headers: { Authorization: `Bearer ${API_TOKEN}` },
-        tags: { scenario: 'db-bottleneck', type: 'read-complex' },
-      });
-
-      const success = check(res, {
-        'complex query handled': (r) => r.status < 500,
-      });
-      http_req_success.add(success);
-      if (res.timings.duration > 3000) {
-        db_slow_queries.add(1);
-      }
-      if (!success) db_errors.add(1);
-    });
+  const auth = ensureToken('db-read');
+  if (!auth.token) {
+    return;
   }
-
+  group('DB bottleneck - read restaurants', () => {
+    browseRestaurants(auth.token);
+  });
   sleep(0.2);
 }
 
 export function testWriteBottleneck() {
-  const restaurantId = `rest-${(__VU % 5) + 1}`;
-  const itemPrice = 100 + (__VU % 10) * 50;
-  const quantity = 1 + (__VU % 3);
-  const subtotal = itemPrice * quantity;
-  const tax = Math.round(subtotal * 0.05 * 100) / 100;
-  const deliveryFee = Math.round(subtotal * 0.10 * 100) / 100;
-  const grandTotal = Math.round((subtotal + tax + deliveryFee) * 100) / 100;
-
-  group('DB Bottleneck - Heavy Writes', () => {
-    const payload = JSON.stringify({
-      userId: `db-write-user-${__VU}`,
-      restaurantId,
-      items: [{ itemId: `item-${(__VU % 10) + 1}`, quantity, price: itemPrice }],
-      deliveryAddressId: `addr-${(__VU % 3) + 1}`,
-      subtotal,
-      tax,
-      deliveryFee,
-      grandTotal,
-    });
-
-    const res = http.post(`${BASE_URL}/orders`, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_TOKEN}`,
-      },
-      tags: { scenario: 'db-bottleneck', type: 'write' },
-    });
-
-    const success = check(res, {
-      'write handled': (r) => r.status === 201 || r.status === 429,
-      'no server error': (r) => r.status < 500,
-    });
-    http_req_success.add(success);
-    http_req_duration.add(res.timings.duration);
-
-    if (res.timings.duration > 3000) {
-      db_slow_queries.add(1);
+  const auth = ensureToken('db-write');
+  if (!auth.token) {
+    return;
+  }
+  const userId = auth.userId || userIdFromToken(auth.token);
+  group('DB bottleneck - write order', () => {
+    const restaurants = browseRestaurants(auth.token);
+    if (!restaurants || restaurants.length === 0) {
+      metrics.orderSuccess.add(false);
+      metrics.loadSuccess.add(false);
+      return;
     }
-    if (!success) db_errors.add(1);
+    const restaurant = restaurants[__VU % restaurants.length];
+    const restaurantId = restaurant.id || restaurant.slug;
+    createOrder(auth.token, userId, restaurantId, `addr-${userId}`);
   });
-
   sleep(0.3);
+}
+
+export function testCacheEndpoint() {
+  request(
+    'GET',
+    `${__ENV.BASE_URL || 'http://localhost:3001'}/metrics`,
+    null,
+    { tags: { step: 'metrics' } },
+    'metrics endpoint',
+    [200],
+    metrics.browseSuccess,
+  );
+  sleep(0.2);
 }

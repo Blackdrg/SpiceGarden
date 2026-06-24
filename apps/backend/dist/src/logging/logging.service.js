@@ -33,7 +33,7 @@ function sanitizeForLog(obj) {
     const sanitized = {};
     for (const [key, value] of Object.entries(obj)) {
         const lowerKey = key.toLowerCase();
-        if (SENSITIVE_KEYS.some(sk => lowerKey.includes(sk))) {
+        if (SENSITIVE_KEYS.some(sk => lowerKey.includes(sk.toLowerCase()))) {
             sanitized[key] = '[REDACTED]';
         }
         else if (typeof value === 'object' && value !== null) {
@@ -57,6 +57,7 @@ function sanitizeErrorMessage(error) {
     };
 }
 let LoggingService = class LoggingService {
+    context;
     constructor(context = 'Application') {
         this.context = context;
     }
@@ -98,4 +99,3 @@ exports.LoggingService = LoggingService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [String])
 ], LoggingService);
-//# sourceMappingURL=logging.service.js.map

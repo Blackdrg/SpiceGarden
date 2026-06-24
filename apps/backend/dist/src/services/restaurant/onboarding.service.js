@@ -20,11 +20,14 @@ const typeorm_2 = require("typeorm");
 const restaurant_onboarding_entity_1 = require("../../db/entities/restaurant-onboarding.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let RestaurantOnboardingService = RestaurantOnboardingService_1 = class RestaurantOnboardingService {
+    onboardingRepo;
+    restaurantRepo;
+    dataSource;
+    logger = new common_1.Logger(RestaurantOnboardingService_1.name);
     constructor(onboardingRepo, restaurantRepo, dataSource) {
         this.onboardingRepo = onboardingRepo;
         this.restaurantRepo = restaurantRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(RestaurantOnboardingService_1.name);
     }
     async getOnboardingByRestaurantId(restaurantId) {
         let onboarding = await this.onboardingRepo.findOne({ where: { restaurantId } });
@@ -183,8 +186,8 @@ exports.RestaurantOnboardingService = RestaurantOnboardingService = RestaurantOn
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(restaurant_onboarding_entity_1.RestaurantOnboardingEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
+    __param(2, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], RestaurantOnboardingService);
-//# sourceMappingURL=onboarding.service.js.map

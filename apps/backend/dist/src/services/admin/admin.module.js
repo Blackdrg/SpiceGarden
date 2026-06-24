@@ -24,4 +24,3 @@ exports.AdminServiceModule = AdminServiceModule = __decorate([
         exports: [admin_service_1.AdminService],
     })
 ], AdminServiceModule);
-//# sourceMappingURL=admin.module.js.map

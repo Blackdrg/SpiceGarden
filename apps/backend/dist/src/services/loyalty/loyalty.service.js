@@ -24,6 +24,14 @@ const coupon_usage_entity_1 = require("../../db/entities/coupon-usage.entity");
 const referral_entity_1 = require("../../db/entities/referral.entity");
 const subscription_entity_1 = require("../../db/entities/subscription.entity");
 let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
+    couponRepo;
+    couponUsageRepo;
+    referralRepo;
+    subscriptionRepo;
+    userRepo;
+    orderRepo;
+    dataSource;
+    logger = new common_1.Logger(LoyaltyService_1.name);
     constructor(couponRepo, couponUsageRepo, referralRepo, subscriptionRepo, userRepo, orderRepo, dataSource) {
         this.couponRepo = couponRepo;
         this.couponUsageRepo = couponUsageRepo;
@@ -32,7 +40,6 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         this.userRepo = userRepo;
         this.orderRepo = orderRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(LoyaltyService_1.name);
     }
     async createCoupon(data) {
         const coupon = this.couponRepo.create();
@@ -52,7 +59,8 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         const userUsage = await this.couponUsageRepo.count({
             where: { couponId: coupon.id, userId, status: coupon_usage_entity_1.CouponUsageStatus.USED }
         });
-        if (userUsage >= coupon.usagePerUser)
+        const usagePerUser = coupon.usagePerUser ?? 1;
+        if (userUsage >= usagePerUser)
             throw new common_1.BadRequestException('You have already used this coupon');
         if (coupon.minOrderAmount && orderAmount < coupon.minOrderAmount) {
             throw new common_1.BadRequestException(`Minimum order amount of ₹${coupon.minOrderAmount} required`);
@@ -91,7 +99,7 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         const existing = await this.referralRepo.findOne({ where: { referrerId: userId } });
         if (existing)
             return existing;
-        const user = await this.userRepo.findOne({ where: { id: userId } });
+        const user = (await this.userRepo.findOne({ where: { id: userId } }));
         const code = `SG${user.email.substring(0, 3).toUpperCase()}${Date.now().toString(36).toUpperCase().slice(-4)}`;
         const referral = this.referralRepo.create();
         Object.assign(referral, {
@@ -219,7 +227,11 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
             order: { createdAt: 'DESC' },
             take: 10,
         });
-        if (recentReferrals.length > 1) {
+        const recentCount = recentReferrals.filter(r => {
+            const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : 0;
+            return createdAt >= Date.now() - 24 * 60 * 60 * 1000;
+        }).length;
+        if (recentCount > 1) {
             return { isFraud: true, reason: 'Multiple referral usage within 24h' };
         }
         const referredUsers = await this.referralRepo
@@ -265,4 +277,3 @@ exports.LoyaltyService = LoyaltyService = LoyaltyService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], LoyaltyService);
-//# sourceMappingURL=loyalty.service.js.map

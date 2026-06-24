@@ -19,6 +19,18 @@ var DriverShiftStatus;
     DriverShiftStatus["CANCELLED"] = "cancelled";
 })(DriverShiftStatus || (exports.DriverShiftStatus = DriverShiftStatus = {}));
 let DriverShiftEntity = class DriverShiftEntity {
+    id;
+    driverId;
+    startTime;
+    endTime;
+    status;
+    totalEarnings;
+    totalDeliveries;
+    totalDistance;
+    totalHours;
+    notes;
+    createdAt;
+    updatedAt;
 };
 exports.DriverShiftEntity = DriverShiftEntity;
 __decorate([
@@ -72,4 +84,3 @@ __decorate([
 exports.DriverShiftEntity = DriverShiftEntity = __decorate([
     (0, typeorm_1.Entity)('driver_shifts')
 ], DriverShiftEntity);
-//# sourceMappingURL=driver-shift.entity.js.map

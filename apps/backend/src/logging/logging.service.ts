@@ -19,7 +19,7 @@ export function sanitizeForLog(obj: any): any {
   const sanitized: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
     const lowerKey = key.toLowerCase();
-    if (SENSITIVE_KEYS.some(sk => lowerKey.includes(sk))) {
+    if (SENSITIVE_KEYS.some(sk => lowerKey.includes(sk.toLowerCase()))) {
       sanitized[key] = '[REDACTED]';
     } else if (typeof value === 'object' && value !== null) {
       sanitized[key] = sanitizeForLog(value);

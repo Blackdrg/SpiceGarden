@@ -4,32 +4,32 @@ import { InventoryItemEntity } from './inventory-item.entity';
 @Entity('suppliers')
 export class SupplierEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  contactPerson: string;
+  contactPerson!: string;
 
   @Column({ nullable: true })
-  email: string;
+  email!: string;
 
   @Column({ nullable: true })
-  phone: string;
+  phone!: string;
 
   @Column({ nullable: true })
-  address: string;
+  address!: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @OneToMany(() => InventoryItemEntity, inventory => inventory.supplier)
-  inventoryItems: InventoryItemEntity[];
+  inventoryItems!: InventoryItemEntity[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -1,0 +1,15 @@
+.callbackInline0 {
+text-align: 'center';
+}
+
+.callbackInline0 {
+padding: var(--spacing-lg);
+min-height: '100vh';
+background-color: var(--color-neutral);
+display: 'flex';
+align-items: 'center';
+justify-content: 'center';
+}
+.callbackInline1 {
+margin-top: var(--spacing-md);
+}

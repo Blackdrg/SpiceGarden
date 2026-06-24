@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -23,6 +23,7 @@ export class PayoutService {
     private commissionRepo: Repository<CommissionRuleEntity>,
     @InjectRepository(GSTDetailEntity)
     private gstRepo: Repository<GSTDetailEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -37,7 +38,7 @@ export class PayoutService {
         status: OrderStatus.DELIVERED,
         createdAt: Between(periodStart, periodEnd),
       },
-      relations: ['gstDetail'],
+      relations: { gstDetail: true },
     });
 
     const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
@@ -111,7 +112,7 @@ export class PayoutService {
       payoutDate: new Date(),
     });
 
-    return this.payoutRepo.findOne({ where: { id: payoutId } });
+    return (await this.payoutRepo.findOne({ where: { id: payoutId } }))!;
   }
 
   async getPendingPayouts(restaurantId?: string): Promise<PayoutReportEntity[]> {
@@ -122,7 +123,7 @@ export class PayoutService {
 
     return this.payoutRepo.find({
       where,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { createdAt: 'ASC' },
     });
   }

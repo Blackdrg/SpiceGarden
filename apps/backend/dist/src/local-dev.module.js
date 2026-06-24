@@ -45,6 +45,10 @@ const config_1 = require("@nestjs/config");
 const path = __importStar(require("path"));
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const db_module_1 = require("./db/db.module");
+const security_module_1 = require("./security/security.module");
+const logging_module_1 = require("./logging/logging.module");
+const auth_module_1 = require("./services/auth/auth.module");
 let LocalDevModule = class LocalDevModule {
 };
 exports.LocalDevModule = LocalDevModule;
@@ -55,9 +59,12 @@ exports.LocalDevModule = LocalDevModule = __decorate([
                 isGlobal: true,
                 envFilePath: [path.resolve(process.cwd(), '../../.env'), path.resolve(process.cwd(), '.env')],
             }),
+            db_module_1.DbModule,
+            security_module_1.SecurityModule,
+            logging_module_1.LoggingModule,
+            auth_module_1.AuthServiceModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
 ], LocalDevModule);
-//# sourceMappingURL=local-dev.module.js.map

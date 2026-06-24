@@ -8,6 +8,7 @@ import { UserEntity } from '../../../db/entities/user.entity';
 import { NotificationService } from '../../../services/notifications/notification.service';
 import { ProductionNotificationService } from '../../../services/notifications/production-notification.service';
 import Stripe from 'stripe';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 @Injectable()
 export class ChargebackService {
@@ -26,7 +27,7 @@ export class ChargebackService {
     private readonly productionNotification: ProductionNotificationService,
   ) {
     this.stripe = new Stripe(
-      this.configService.get<string>('STRIPE_SECRET_KEY') || 'sk_test_placeholder',
+      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
       {
         apiVersion: '2024-04-10' as any,
       }
@@ -67,7 +68,7 @@ export class ChargebackService {
          reason: dispute.reason,
          evidence: dispute.evidence || {},
          status: this.mapStripeDisputeStatus(dispute.status),
-       });
+       } as any);
 
       const savedDispute = await this.disputeRepo.save(paymentDispute);
       
@@ -90,7 +91,7 @@ export class ChargebackService {
       }
       
       this.logger.log(`Created dispute record for Stripe dispute ${dispute.id}`);
-      return savedDispute;
+      return savedDispute as unknown as PaymentDisputeEntity;
     } catch (error) {
       this.logger.error(`Failed to handle dispute created:`, error);
       throw new InternalServerErrorException('Failed to process dispute');
@@ -111,8 +112,8 @@ export class ChargebackService {
       }
 
       paymentDispute.status = this.mapStripeDisputeStatus(dispute.status);
-       paymentDispute.chargedBackAmount = (dispute as any).chargeback_amount ? (dispute as any).chargeback_amount / 100 : null;
-       paymentDispute.chargedBackAt = (dispute as any).chargeback_at ? new Date((dispute as any).chargeback_at * 1000) : null;
+       paymentDispute.chargedBackAmount = ((dispute as any).chargeback_amount ? (dispute as any).chargeback_amount / 100 : null) as any;
+       paymentDispute.chargedBackAt = ((dispute as any).chargeback_at ? new Date((dispute as any).chargeback_at * 1000) : null) as any;
       
       if (dispute.status === 'won' && paymentDispute.isRefundedToCustomer === false) {
         this.logger.log(`Dispute ${dispute.id} was won, considering customer refund`);
@@ -154,7 +155,7 @@ export class ChargebackService {
   async getDisputeById(disputeId: string): Promise<PaymentDisputeEntity> {
     const dispute = await this.disputeRepo.findOne({
       where: { disputeId: disputeId },
-      relations: ['order']
+      relations: { order: true }
     });
     
     if (!dispute) {

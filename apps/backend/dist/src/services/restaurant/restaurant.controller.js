@@ -20,6 +20,7 @@ const roles_guard_1 = require("../../security/roles.guard");
 const roles_decorator_1 = require("../../security/roles.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let RestaurantController = class RestaurantController {
+    restaurantService;
     constructor(restaurantService) {
         this.restaurantService = restaurantService;
     }
@@ -83,4 +84,3 @@ exports.RestaurantController = RestaurantController = __decorate([
     (0, common_1.Controller)('restaurants'),
     __metadata("design:paramtypes", [restaurant_service_1.RestaurantService])
 ], RestaurantController);
-//# sourceMappingURL=restaurant.controller.js.map

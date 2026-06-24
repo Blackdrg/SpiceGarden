@@ -60,6 +60,14 @@ const production_notification_service_1 = require("../../services/notifications/
 const logging_service_1 = require("../../logging/logging.service");
 const crypto = __importStar(require("crypto"));
 let OrderService = class OrderService {
+    orderRepo;
+    driverAssignmentRepo;
+    paymentService;
+    notificationService;
+    retryService;
+    idempotency;
+    productionNotification;
+    loggingService;
     constructor(orderRepo, driverAssignmentRepo, paymentService, notificationService, retryService, idempotency, productionNotification, loggingService) {
         this.orderRepo = orderRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
@@ -115,6 +123,39 @@ let OrderService = class OrderService {
             throw new common_1.BadRequestException('Order total does not match items');
         }
         return true;
+    }
+    canTransitionOrderStatus(from, to) {
+        const allowedTransitions = {
+            [order_interface_1.OrderStatus.PLACED]: [order_interface_1.OrderStatus.PAYMENT_CONFIRMED, order_interface_1.OrderStatus.RESTAURANT_ACCEPTED, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.PAYMENT_CONFIRMED]: [order_interface_1.OrderStatus.RESTAURANT_ACCEPTED, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.RESTAURANT_ACCEPTED]: [order_interface_1.OrderStatus.PREPARING, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.PREPARING]: [order_interface_1.OrderStatus.READY, order_interface_1.OrderStatus.READY_FOR_PICKUP, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.READY]: [order_interface_1.OrderStatus.DRIVER_ASSIGNED, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.READY_FOR_PICKUP]: [order_interface_1.OrderStatus.DRIVER_ASSIGNED, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.DRIVER_ASSIGNED]: [order_interface_1.OrderStatus.PICKED_UP, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.PICKED_UP]: [order_interface_1.OrderStatus.ON_THE_WAY, order_interface_1.OrderStatus.CANCELLED],
+            [order_interface_1.OrderStatus.ON_THE_WAY]: [order_interface_1.OrderStatus.DELIVERED, order_interface_1.OrderStatus.CANCELLED],
+        };
+        return from === to || (allowedTransitions[from] || []).includes(to);
+    }
+    transitionOrderStatus(order, nextStatus, actor) {
+        if (!this.canTransitionOrderStatus(order.status, nextStatus)) {
+            throw new common_1.BadRequestException(`Invalid order status transition from ${order.status} to ${nextStatus} by ${actor}`);
+        }
+        order.status = nextStatus;
+        order.updatedAt = new Date();
+        if (nextStatus === order_interface_1.OrderStatus.DELIVERED) {
+            order.deliveredAt = order.deliveredAt || new Date();
+        }
+        return order;
+    }
+    async applyOrderStatusTransition(orderId, nextStatus, actor) {
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        const updated = this.transitionOrderStatus(order, nextStatus, actor);
+        return this.orderRepo.save(updated);
     }
     async placeOrder(orderData, idempotencyKey) {
         const data = orderData;
@@ -440,4 +481,3 @@ exports.OrderService = OrderService = __decorate([
         production_notification_service_1.ProductionNotificationService,
         logging_service_1.LoggingService])
 ], OrderService);
-//# sourceMappingURL=order.service.js.map

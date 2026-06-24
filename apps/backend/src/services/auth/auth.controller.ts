@@ -1,9 +1,34 @@
-import { Controller, Post, Body, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Post, Body, ConflictException, UnauthorizedException, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request } from 'express';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
+
+interface DeviceInfo {
+  name: string;
+  type: string;
+  ip: string;
+}
+
+interface LoginBody {
+  email: string;
+  password: string;
+  deviceName?: string;
+  deviceType?: string;
+}
+
+interface RegisterBody extends LoginBody {
+  phone: string;
+  fullName: string;
+}
+
+interface RefreshBody {
+  refresh_token: string;
+  deviceName?: string;
+  deviceType?: string;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -14,26 +39,22 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: any, @Req() req: Request) {
+  async login(@Body() body: LoginBody, @Req() req: Request) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException();
     }
     
-    const deviceInfo = {
-      name: body.deviceName || 'any Device',
-      type: body.deviceType || 'any Type',
-      ip: req.ip || '0.0.0.0',
-    };
+    const deviceInfo = this.getDeviceInfo(body, req);
 
     return this.authService.login(user, deviceInfo);
   }
 
   @Post('register')
-  async register(@Body() body: any, @Req() req: Request) {
+  async register(@Body() body: RegisterBody, @Req() req: Request) {
     const existing = await this.userRepo.findOne({ where: { email: body.email } });
     if (existing) {
-      throw new UnauthorizedException('Email already registered');
+      throw new ConflictException('Email already registered');
     }
 
     const passwordHash = await this.authService.hashPassword(body.password);
@@ -42,15 +63,33 @@ export class AuthController {
       phone: body.phone,
       fullName: body.fullName,
       passwordHash,
+      role: UserRole.CUSTOMER,
+      status: UserStatus.ACTIVE,
     });
-    await this.userRepo.save(user);
+    const savedUser = await this.userRepo.save(user);
+    const deviceInfo = this.getDeviceInfo(body, req);
 
-    const deviceInfo = {
+    return this.authService.login(savedUser, deviceInfo);
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() body: RefreshBody, @Req() req: Request) {
+    const deviceInfo = this.getDeviceInfo(body, req);
+    return this.authService.refreshAccessToken(body.refresh_token, deviceInfo);
+  }
+
+  @Post('logout')
+  async logout(@Body() body: RefreshBody) {
+    await this.authService.revokeSession(body.refresh_token);
+    return { revoked: true };
+  }
+
+  private getDeviceInfo(body: { deviceName?: string; deviceType?: string }, req: Request): DeviceInfo {
+    return {
       name: body.deviceName || 'any Device',
       type: body.deviceType || 'any Type',
       ip: req.ip || '0.0.0.0',
     };
-
-    return this.authService.login(user, deviceInfo);
   }
 }
+

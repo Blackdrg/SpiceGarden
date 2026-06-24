@@ -14,6 +14,18 @@ const typeorm_1 = require("typeorm");
 const menu_item_entity_1 = require("./menu-item.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let MenuItemAvailabilityEntity = class MenuItemAvailabilityEntity {
+    id;
+    menuItem;
+    branch;
+    isAvailable;
+    unavailableReason;
+    unavailableSince;
+    isAutoDisabled;
+    autoDisabledAt;
+    autoDisabledReason;
+    predictedAvailability;
+    createdAt;
+    updatedAt;
 };
 exports.MenuItemAvailabilityEntity = MenuItemAvailabilityEntity;
 __decorate([
@@ -67,4 +79,3 @@ __decorate([
 exports.MenuItemAvailabilityEntity = MenuItemAvailabilityEntity = __decorate([
     (0, typeorm_1.Entity)('menu_item_availability')
 ], MenuItemAvailabilityEntity);
-//# sourceMappingURL=menu-item-availability.entity.js.map

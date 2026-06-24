@@ -14,6 +14,18 @@ const typeorm_1 = require("typeorm");
 const inventory_item_entity_1 = require("./inventory-item.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let InventoryAlertEntity = class InventoryAlertEntity {
+    id;
+    inventoryItem;
+    branch;
+    alertType;
+    currentLevel;
+    thresholdLevel;
+    expiresAt;
+    isResolved;
+    resolvedAt;
+    resolvedBy;
+    createdAt;
+    updatedAt;
 };
 exports.InventoryAlertEntity = InventoryAlertEntity;
 __decorate([
@@ -67,4 +79,3 @@ __decorate([
 exports.InventoryAlertEntity = InventoryAlertEntity = __decorate([
     (0, typeorm_1.Entity)('inventory_alerts')
 ], InventoryAlertEntity);
-//# sourceMappingURL=inventory-alert.entity.js.map

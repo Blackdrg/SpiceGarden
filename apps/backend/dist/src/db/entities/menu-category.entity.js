@@ -14,6 +14,13 @@ const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 const menu_item_entity_1 = require("./menu-item.entity");
 let MenuCategoryEntity = class MenuCategoryEntity {
+    id;
+    name;
+    sortOrder;
+    branch;
+    items;
+    createdAt;
+    updatedAt;
 };
 exports.MenuCategoryEntity = MenuCategoryEntity;
 __decorate([
@@ -47,4 +54,3 @@ __decorate([
 exports.MenuCategoryEntity = MenuCategoryEntity = __decorate([
     (0, typeorm_1.Entity)('menu_categories')
 ], MenuCategoryEntity);
-//# sourceMappingURL=menu-category.entity.js.map

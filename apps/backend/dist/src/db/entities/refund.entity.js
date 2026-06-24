@@ -28,6 +28,25 @@ var RefundStatus;
     RefundStatus["REJECTED"] = "rejected";
 })(RefundStatus || (exports.RefundStatus = RefundStatus = {}));
 let RefundEntity = class RefundEntity {
+    id;
+    orderId;
+    order;
+    requestedBy;
+    requester;
+    type;
+    amount;
+    status;
+    reason;
+    approvalNotes;
+    approvedBy;
+    approvedAt;
+    processedBy;
+    processedAt;
+    paymentReference;
+    rejectionReason;
+    evidence;
+    createdAt;
+    updatedAt;
 };
 exports.RefundEntity = RefundEntity;
 __decorate([
@@ -109,4 +128,3 @@ __decorate([
 exports.RefundEntity = RefundEntity = __decorate([
     (0, typeorm_1.Entity)('refunds')
 ], RefundEntity);
-//# sourceMappingURL=refund.entity.js.map

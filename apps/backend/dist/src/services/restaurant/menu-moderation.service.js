@@ -21,12 +21,16 @@ const menu_moderation_entity_1 = require("../../db/entities/menu-moderation.enti
 const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let MenuModerationService = MenuModerationService_1 = class MenuModerationService {
+    moderationRepo;
+    itemRepo;
+    restaurantRepo;
+    dataSource;
+    logger = new common_1.Logger(MenuModerationService_1.name);
     constructor(moderationRepo, itemRepo, restaurantRepo, dataSource) {
         this.moderationRepo = moderationRepo;
         this.itemRepo = itemRepo;
         this.restaurantRepo = restaurantRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(MenuModerationService_1.name);
     }
     async submitForModeration(menuItemId, restaurantId, action, data, originalData) {
         const menuItem = await this.itemRepo.findOne({ where: { id: menuItemId } });
@@ -74,7 +78,7 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
         }
         return this.moderationRepo.find({
             where,
-            relations: ['menuItem', 'restaurant'],
+            relations: { menuItem: true, restaurant: true },
             order: { createdAt: 'DESC' },
         });
     }
@@ -95,11 +99,11 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
         else if (status === menu_moderation_entity_1.ModerationStatus.REJECTED || status === menu_moderation_entity_1.ModerationStatus.CHANGES_REQUESTED) {
             await this.itemRepo.update(moderation.menuItemId, { status: 'rejected' });
         }
-        return this.moderationRepo.findOne({ where: { id: moderationId } });
+        return (await this.moderationRepo.findOne({ where: { id: moderationId } }));
     }
     async bulkApprove(moderationIds, moderatorId) {
         await this.moderationRepo.update({ id: (0, typeorm_2.In)(moderationIds) }, { status: menu_moderation_entity_1.ModerationStatus.APPROVED, moderatorId, reviewedAt: new Date() });
-        const moderations = await this.moderationRepo.findByIds(moderationIds);
+        const moderations = await this.moderationRepo.findBy({ id: (0, typeorm_2.In)(moderationIds) });
         for (const m of moderations) {
             await this.itemRepo.update(m.menuItemId, { status: 'available' });
         }
@@ -137,9 +141,9 @@ exports.MenuModerationService = MenuModerationService = MenuModerationService_1 
     __param(0, (0, typeorm_1.InjectRepository)(menu_moderation_entity_1.MenuModerationEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
+    __param(3, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], MenuModerationService);
-//# sourceMappingURL=menu-moderation.service.js.map

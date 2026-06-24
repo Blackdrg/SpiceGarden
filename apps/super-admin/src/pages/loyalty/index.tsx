@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function LoyaltyIndex() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
@@ -16,7 +18,7 @@ export default function LoyaltyIndex() {
           </a>
         ))}
       </div>
-      <a href="/" style={{ color: '#f97316', textDecoration: 'none' }}>← Back to Dashboard</a>
+      <Link href="/" style={{ color: '#f97316', textDecoration: 'none' }}>← Back to Dashboard</Link>
     </div>
   );
 }

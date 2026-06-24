@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, FindOptionsWhere } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -13,6 +13,7 @@ export class BranchManagementService {
     private branchRepo: Repository<RestaurantBranchEntity>,
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -58,7 +59,7 @@ export class BranchManagementService {
 
     await this.branchRepo.update(branchId, updatePayload);
     const updated = await this.branchRepo.findOne({ where: { id: branchId } });
-    return updated;
+    return (await this.branchRepo.findOne({ where: { id: branchId } }))!;
   }
 
   async toggleBranchStatus(branchId: string, isOnline: boolean): Promise<RestaurantBranchEntity> {
@@ -70,20 +71,20 @@ export class BranchManagementService {
     await this.branchRepo.update(branchId, { isOnline });
     this.logger.log(`Branch ${branchId} status updated to ${isOnline ? 'online' : 'offline'}`);
 
-    return this.branchRepo.findOne({ where: { id: branchId } });
+    return (await this.branchRepo.findOne({ where: { id: branchId } }))!;
   }
 
   async getBranchDetails(branchId: string): Promise<RestaurantBranchEntity> {
-    return this.branchRepo.findOne({
+    return (await this.branchRepo.findOne({
       where: { id: branchId },
-      relations: ['restaurant'],
-    });
+      relations: { restaurant: true },
+    }))!;
   }
 
   async getBranchesByRestaurant(restaurantId: string): Promise<RestaurantBranchEntity[]> {
     return this.branchRepo.find({
       where: { restaurant: { id: restaurantId } } as any,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { branchName: 'ASC' },
     });
   }
@@ -99,7 +100,7 @@ export class BranchManagementService {
 
     return this.branchRepo.find({
       where,
-      relations: ['restaurant'],
+      relations: { restaurant: true },
       order: { branchName: 'ASC' },
     });
   }

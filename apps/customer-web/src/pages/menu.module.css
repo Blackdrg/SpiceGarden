@@ -1,0 +1,182 @@
+/* menu.module.css */
+
+.pageContainer {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.subtitle {
+  color: #666;
+}
+
+.categoryList {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.skeletonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skeletonTitle {
+  margin-bottom: 4px !important;
+}
+
+.skeletonMarginTop {
+  margin-top: 8px !important;
+}
+
+.emptyContainer {
+  text-align: center;
+  padding: 24px;
+}
+
+.emptyIcon {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.emptyText {
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.emptyHelpText {
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.itemImage {
+  font-size: 24px;
+}
+
+.priceText {
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.itemDesc {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.cartContainer {
+  margin-top: 24px;
+}
+
+.cartItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cartItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cartItemName {
+  margin: 0;
+}
+
+.cartItemQty {
+  margin: 4px 0 0 0;
+  color: #666;
+}
+
+.cartItemRight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cartItemPrice {
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.cartTotalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.cartTotalText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF5A1F;
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 10;
+}
+
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  background: none;
+  border: none;
+  color: #999;
+}
+
+.navButtonActive {
+  color: #FF5A1F !important;
+}
+
+.navIcon {
+  font-size: 22px;
+}
+

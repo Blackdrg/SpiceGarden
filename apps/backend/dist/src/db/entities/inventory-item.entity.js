@@ -14,6 +14,23 @@ const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 const supplier_entity_1 = require("./supplier.entity");
 let InventoryItemEntity = class InventoryItemEntity {
+    id;
+    name;
+    currentStock;
+    unit;
+    lowStockThreshold;
+    expiryDate;
+    reorderPoint;
+    reorderQuantity;
+    unitCost;
+    totalCost;
+    wastage;
+    wastageCost;
+    branch;
+    supplier;
+    isActive;
+    createdAt;
+    updatedAt;
 };
 exports.InventoryItemEntity = InventoryItemEntity;
 __decorate([
@@ -87,4 +104,3 @@ __decorate([
 exports.InventoryItemEntity = InventoryItemEntity = __decorate([
     (0, typeorm_1.Entity)('inventory_items')
 ], InventoryItemEntity);
-//# sourceMappingURL=inventory-item.entity.js.map

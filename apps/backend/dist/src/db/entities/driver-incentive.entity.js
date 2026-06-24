@@ -28,6 +28,19 @@ var IncentiveStatus;
     IncentiveStatus["REJECTED"] = "rejected";
 })(IncentiveStatus || (exports.IncentiveStatus = IncentiveStatus = {}));
 let DriverIncentiveEntity = class DriverIncentiveEntity {
+    id;
+    driverId;
+    driver;
+    type;
+    amount;
+    status;
+    description;
+    referenceId;
+    approvedBy;
+    approvedAt;
+    payoutReference;
+    paidAt;
+    createdAt;
 };
 exports.DriverIncentiveEntity = DriverIncentiveEntity;
 __decorate([
@@ -85,4 +98,3 @@ __decorate([
 exports.DriverIncentiveEntity = DriverIncentiveEntity = __decorate([
     (0, typeorm_1.Entity)('driver_incentives')
 ], DriverIncentiveEntity);
-//# sourceMappingURL=driver-incentive.entity.js.map

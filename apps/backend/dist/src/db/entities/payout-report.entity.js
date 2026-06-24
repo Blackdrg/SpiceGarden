@@ -21,6 +21,24 @@ var PayoutStatus;
     PayoutStatus["CANCELLED"] = "cancelled";
 })(PayoutStatus || (exports.PayoutStatus = PayoutStatus = {}));
 let PayoutReportEntity = class PayoutReportEntity {
+    id;
+    restaurantId;
+    restaurant;
+    periodStart;
+    periodEnd;
+    grossSales;
+    platformCommission;
+    gstAmount;
+    cancellationFees;
+    incentives;
+    penalties;
+    netPayout;
+    status;
+    payoutReference;
+    payoutDate;
+    orderBreakdown;
+    paymentBreakdown;
+    createdAt;
 };
 exports.PayoutReportEntity = PayoutReportEntity;
 __decorate([
@@ -98,4 +116,3 @@ __decorate([
 exports.PayoutReportEntity = PayoutReportEntity = __decorate([
     (0, typeorm_1.Entity)('payout_reports')
 ], PayoutReportEntity);
-//# sourceMappingURL=payout-report.entity.js.map

@@ -9,21 +9,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RolesGuard = void 0;
+exports.RolesGuard = exports.rolePermissions = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
+const user_interface_1 = require("../shared/domain/user.interface");
+const permissions_1 = require("./permissions");
+Object.defineProperty(exports, "rolePermissions", { enumerable: true, get: function () { return permissions_1.rolePermissions; } });
 let RolesGuard = class RolesGuard {
+    reflector;
     constructor(reflector) {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const roles = this.reflector.get('roles', context.getHandler());
-        if (!roles) {
+        const requiredRoles = this.reflector.get('roles', context.getHandler());
+        if (!requiredRoles || requiredRoles.length === 0) {
             return true;
         }
         const request = context.switchToHttp().getRequest();
         const user = request.user;
-        return roles.includes(user?.role);
+        if (!user) {
+            throw new common_1.ForbiddenException('Authentication is required');
+        }
+        if (user.status !== user_interface_1.UserStatus.ACTIVE) {
+            throw new common_1.ForbiddenException('User account is not active');
+        }
+        if (!user.role) {
+            throw new common_1.ForbiddenException('User role is required');
+        }
+        const role = (0, permissions_1.normalizeUserRole)(user.role);
+        if (!role) {
+            throw new common_1.ForbiddenException('Invalid user role');
+        }
+        const hasRequiredRole = requiredRoles.map(permissions_1.normalizeUserRole).includes(role);
+        if (!hasRequiredRole) {
+            throw new common_1.ForbiddenException('Insufficient role permissions');
+        }
+        return true;
+    }
+    hasPermission(role, permission, userPermissions = []) {
+        return (0, permissions_1.hasRolePermission)(role, permission, userPermissions);
     }
 };
 exports.RolesGuard = RolesGuard;
@@ -31,4 +55,3 @@ exports.RolesGuard = RolesGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [core_1.Reflector])
 ], RolesGuard);
-//# sourceMappingURL=roles.guard.js.map

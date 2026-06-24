@@ -24,4 +24,3 @@ exports.LoyaltyModule = LoyaltyModule = __decorate([
         exports: [loyalty_service_1.LoyaltyService],
     })
 ], LoyaltyModule);
-//# sourceMappingURL=loyalty.module.js.map

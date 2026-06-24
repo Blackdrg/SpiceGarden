@@ -1,5 +1,11 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { KitchenService } from './kitchen.service';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { RolesGuard } from '../../security/roles.guard';
+import { PermissionGuard } from '../../security/permission.guard';
+import { Roles } from '../../security/roles.decorator';
+import { Permissions } from '../../security/permissions.decorator';
+import { UserRole } from '../../shared/domain/user.interface';
 import { InventoryItemEntity } from '../../db/entities/inventory-item.entity';
 import { RecipeEntity } from '../../db/entities/recipe.entity';
 import { BatchEntity } from '../../db/entities/batch.entity';
@@ -8,6 +14,9 @@ import { KitchenSLAEntity } from '../../db/entities/kitchen-sla.entity';
 import { SupplierEntity } from '../../db/entities/supplier.entity';
 
 @Controller('kitchen')
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+@Roles(UserRole.KITCHEN_STAFF, UserRole.RESTAURANT, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Permissions('kitchen:manage_own')
 export class KitchenController {
   constructor(private readonly kitchenService: KitchenService) {}
 

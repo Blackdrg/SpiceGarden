@@ -13,6 +13,16 @@ exports.SupplierEntity = void 0;
 const typeorm_1 = require("typeorm");
 const inventory_item_entity_1 = require("./inventory-item.entity");
 let SupplierEntity = class SupplierEntity {
+    id;
+    name;
+    contactPerson;
+    email;
+    phone;
+    address;
+    isActive;
+    inventoryItems;
+    createdAt;
+    updatedAt;
 };
 exports.SupplierEntity = SupplierEntity;
 __decorate([
@@ -58,4 +68,3 @@ __decorate([
 exports.SupplierEntity = SupplierEntity = __decorate([
     (0, typeorm_1.Entity)('suppliers')
 ], SupplierEntity);
-//# sourceMappingURL=supplier.entity.js.map

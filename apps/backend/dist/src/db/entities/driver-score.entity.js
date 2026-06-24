@@ -14,6 +14,20 @@ const typeorm_1 = require("typeorm");
 const driver_entity_1 = require("./driver.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let DriverScoreEntity = class DriverScoreEntity {
+    id;
+    driver;
+    branch;
+    overallScore;
+    onTimeDeliveryRate;
+    acceptanceRate;
+    cancellationRate;
+    customerRating;
+    totalDeliveries;
+    totalDistance;
+    averageSpeed;
+    lastCalculatedAt;
+    createdAt;
+    updatedAt;
 };
 exports.DriverScoreEntity = DriverScoreEntity;
 __decorate([
@@ -75,4 +89,3 @@ __decorate([
 exports.DriverScoreEntity = DriverScoreEntity = __decorate([
     (0, typeorm_1.Entity)('driver_scores')
 ], DriverScoreEntity);
-//# sourceMappingURL=driver-score.entity.js.map

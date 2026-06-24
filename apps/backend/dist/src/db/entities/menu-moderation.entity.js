@@ -27,6 +27,23 @@ var ModerationAction;
     ModerationAction["DELETE"] = "delete";
 })(ModerationAction || (exports.ModerationAction = ModerationAction = {}));
 let MenuModerationEntity = class MenuModerationEntity {
+    id;
+    menuItemId;
+    menuItem;
+    restaurantId;
+    restaurant;
+    action;
+    status;
+    originalData;
+    updatedData;
+    rejectionReason;
+    moderatorId;
+    moderatorNotes;
+    reviewedAt;
+    flaggedForReview;
+    aiFlags;
+    createdAt;
+    updatedAt;
 };
 exports.MenuModerationEntity = MenuModerationEntity;
 __decorate([
@@ -100,4 +117,3 @@ __decorate([
 exports.MenuModerationEntity = MenuModerationEntity = __decorate([
     (0, typeorm_1.Entity)('menu_moderation')
 ], MenuModerationEntity);
-//# sourceMappingURL=menu-moderation.entity.js.map

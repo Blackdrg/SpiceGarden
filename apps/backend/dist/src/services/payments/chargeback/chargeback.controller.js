@@ -16,7 +16,12 @@ exports.ChargebackController = void 0;
 const common_1 = require("@nestjs/common");
 const chargeback_service_1 = require("./chargeback.service");
 const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../../../security/jwt-auth.guard");
+const roles_guard_1 = require("../../../security/roles.guard");
+const roles_decorator_1 = require("../../../security/roles.decorator");
+const user_interface_1 = require("../../../shared/domain/user.interface");
 let ChargebackController = class ChargebackController {
+    chargebackService;
     constructor(chargebackService) {
         this.chargebackService = chargebackService;
     }
@@ -50,6 +55,7 @@ let ChargebackController = class ChargebackController {
 exports.ChargebackController = ChargebackController;
 __decorate([
     (0, common_1.Get)(':disputeId'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF, user_interface_1.UserRole.CUSTOMER),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get chargeback dispute by ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Chargeback dispute retrieved successfully' }),
@@ -62,6 +68,7 @@ __decorate([
 ], ChargebackController.prototype, "getDisputeById", null);
 __decorate([
     (0, common_1.Get)('order/:orderId'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF, user_interface_1.UserRole.CUSTOMER),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get chargeback disputes for an order' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Chargeback disputes retrieved successfully' }),
@@ -73,6 +80,7 @@ __decorate([
 ], ChargebackController.prototype, "getDisputesForOrder", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('status')),
     __param(1, (0, common_1.Query)('startDate')),
@@ -100,6 +108,7 @@ __decorate([
         }
     }),
     (0, common_1.Get)('stats/overview'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get chargeback statistics overview' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Chargeback statistics retrieved successfully' }),
@@ -114,6 +123,6 @@ __decorate([
 exports.ChargebackController = ChargebackController = __decorate([
     (0, swagger_1.ApiTags)('chargebacks'),
     (0, common_1.Controller)('chargebacks'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [chargeback_service_1.ChargebackService])
 ], ChargebackController);
-//# sourceMappingURL=chargeback.controller.js.map

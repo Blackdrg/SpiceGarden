@@ -1,0 +1,409 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m75[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m75[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m  [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m76[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m76[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m  [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m77[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m77[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m  [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m91[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m91[0m       orderRepo.findOne.mockResolvedValue(null);
+    [7m  [0m [91m                                          ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m92[0m:[93m96[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m92[0m       await expect(service.createRefundRequest('missing', 'user-1', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                               
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m97[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m97[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m  [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m98[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m98[0m       userRepo.findOne.mockResolvedValue(null);
+    [7m  [0m [91m                                         ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m99[0m:[93m100[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m99[0m       await expect(service.createRefundRequest('ord-1', 'missing-user', 500, 
+'r')).rejects.toThrow(NotFoundException);
+    [7m  [0m [91m                                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m104[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m104[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m   [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m105[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m105[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m107[0m:[93m49[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m107[0m       refundApprovalRepo.save.mockResolvedValue({ id: 'appr-sys', approvalStatus: 'pending' } as 
+RefundApprovalEntity);
+    [7m   [0m [91m                                                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m116[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m116[0m       orderRepo.findOne.mockResolvedValue({ ...baseOrder, status: OrderStatus.CANCELLED } as 
+OrderEntity);
+    [7m   [0m [91m                                          
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m117[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m117[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m118[0m:[93m94[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m118[0m       await expect(service.createRefundRequest('ord-1', 'user-1', 500, 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                             
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m123[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m123[0m       orderRepo.findOne.mockResolvedValue({ ...baseOrder, paymentStatus: PaymentStatus.REFUNDED } as 
+OrderEntity);
+    [7m   [0m [91m                                          
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m124[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m124[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m130[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m130[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m   [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m131[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m131[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m132[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m132[0m       refundApprovalRepo.findOne.mockResolvedValue({ id: 'existing', approvalStatus: 'pending' } as 
+RefundApprovalEntity);
+    [7m   [0m [91m                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m139[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m139[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m   [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m140[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m140[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m141[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m141[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m152[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m152[0m       orderRepo.findOne.mockResolvedValue(baseOrder);
+    [7m   [0m [91m                                          ~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m153[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m153[0m       userRepo.findOne.mockResolvedValue(baseUser);
+    [7m   [0m [91m                                         ~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m154[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m154[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m168[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m168[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApproval);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m169[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m169[0m       userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m182[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m182[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m183[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m183[0m       await expect(service.approveRefundRequest('missing', 'ap-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m188[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m188[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApproval);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m189[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m189[0m       userRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                         ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m190[0m:[93m87[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m190[0m       await expect(service.approveRefundRequest('appr-1', 
+'missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                      
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m195[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m195[0m       refundApprovalRepo.findOne.mockResolvedValue({ ...baseApproval, approvalStatus: 'approved' } as 
+RefundApprovalEntity);
+    [7m   [0m [91m                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m196[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m196[0m       await expect(service.approveRefundRequest('appr-1', 
+'ap-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m205[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m205[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApproval);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m206[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m206[0m       userRepo.findOne.mockResolvedValue({ id: 'ap-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m217[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m217[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m218[0m:[93m89[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m218[0m       await expect(service.rejectRefundRequest('missing', 'ap-1', 
+'r')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                        
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m223[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m223[0m       refundApprovalRepo.findOne.mockResolvedValue({ ...baseApproval, approvalStatus: 'approved' } as 
+RefundApprovalEntity);
+    [7m   [0m [91m                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m224[0m:[93m88[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m224[0m       await expect(service.rejectRefundRequest('appr-1', 'ap-1', 
+'r')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                       
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m236[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m236[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApprovalForProcess);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m237[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m237[0m       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m238[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m238[0m       orderRepo.findOne.mockResolvedValue(baseOrderForProcess);
+    [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m239[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m239[0m       userRepo.findOne.mockResolvedValue({ id: 'user-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m259[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m259[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m260[0m:[93m85[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m260[0m       await expect(service.processRefund('missing', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                    
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m266[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m266[0m       refundApprovalRepo.findOne.mockResolvedValue(procApproval);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m267[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m267[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m272[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m272[0m       refundApprovalRepo.findOne.mockResolvedValue({ ...baseApprovalForProcess, approvalStatus: 
+'rejected' } as RefundApprovalEntity);
+    [7m   [0m [91m                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m273[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'BadRequestException'.
+
+    [7m273[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(BadRequestException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m278[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m278[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApprovalForProcess);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m279[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m279[0m       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m280[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m280[0m       orderRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                          ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m281[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m281[0m       await expect(service.processRefund('appr-1', 'processor-1')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m286[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m286[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApprovalForProcess);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m287[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m287[0m       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m288[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m288[0m       orderRepo.findOne.mockResolvedValue({ ...baseOrderForProcess, paymentStatus: 
+PaymentStatus.REFUNDED } as OrderEntity);
+    [7m   [0m [91m                                          
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m294[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m294[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApprovalForProcess);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m295[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m295[0m       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m296[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m296[0m       orderRepo.findOne.mockResolvedValue(baseOrderForProcess);
+    [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m297[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m297[0m       userRepo.findOne.mockResolvedValue({ id: 'user-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m300[0m:[93m84[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'InternalServerErrorException'.
+
+    [7m300[0m       await expect(service.processRefund('appr-1', 
+'processor-1')).rejects.toThrow(InternalServerErrorException);
+    [7m   [0m [91m                                                                                   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m306[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m306[0m       refundApprovalRepo.findOne.mockResolvedValue(baseApprovalForProcess);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m307[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m307[0m       userRepo.findOne.mockResolvedValue({ id: 'processor-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m308[0m:[93m42[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'UserEntity' is not assignable to parameter of type 'never'.
+
+    [7m308[0m       userRepo.findOne.mockResolvedValue({ id: 'user-1' } as UserEntity);
+    [7m   [0m [91m                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m309[0m:[93m43[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'OrderEntity' is not assignable to parameter of type 'never'.
+
+    [7m309[0m       orderRepo.findOne.mockResolvedValue(baseOrderForProcess);
+    [7m   [0m [91m                                          ~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m326[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'RefundApprovalEntity' is not assignable to parameter of type 'never'.
+
+    [7m326[0m       refundApprovalRepo.findOne.mockResolvedValue({ id: 'appr-1' } as RefundApprovalEntity);
+    [7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m332[0m:[93m52[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'null' is not assignable to parameter of type 'never'.
+
+    [7m332[0m       refundApprovalRepo.findOne.mockResolvedValue(null);
+    [7m   [0m [91m                                                   ~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m333[0m:[93m73[0m - [91merror[0m[90m TS2304: [0mCannot find name 
+'NotFoundException'.
+
+    [7m333[0m       await expect(service.getRefundRequest('missing')).rejects.toThrow(NotFoundException);
+    [7m   [0m [91m                                                                        ~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m340[0m:[93m62[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'{ id: string; }[]' is not assignable to parameter of type 'never'.
+
+    [7m340[0m     (refundApprovalRepo.find as jest.Mock).mockResolvedValue([{ id: 'a1' }, { id: 'a2' }]);
+    [7m   [0m [91m                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96mtest/refund.service.spec.ts[0m:[93m349[0m:[93m62[0m - [91merror[0m[90m TS2345: [0mArgument of type 
+'{ id: string; }[]' is not assignable to parameter of type 'never'.
+
+    [7m349[0m     (refundApprovalRepo.find as jest.Mock).mockResolvedValue([{ id: 'a1' }]);
+    [7m   [0m [91m                                                             ~~~~~~~~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        13.959 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

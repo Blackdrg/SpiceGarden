@@ -12,6 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditLogEntity = void 0;
 const typeorm_1 = require("typeorm");
 let AuditLogEntity = class AuditLogEntity {
+    id;
+    action;
+    performedBy;
+    entityType;
+    entityId;
+    metadata;
+    ipAddress;
+    timestamp;
 };
 exports.AuditLogEntity = AuditLogEntity;
 __decorate([
@@ -51,4 +59,3 @@ __decorate([
 exports.AuditLogEntity = AuditLogEntity = __decorate([
     (0, typeorm_1.Entity)('audit_logs')
 ], AuditLogEntity);
-//# sourceMappingURL=audit-log.entity.js.map

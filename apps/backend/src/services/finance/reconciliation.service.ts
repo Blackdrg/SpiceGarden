@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -22,6 +22,7 @@ export class ReconciliationService {
     private incentiveRepo: Repository<DriverIncentiveEntity>,
     @InjectRepository(GSTDetailEntity)
     private gstRepo: Repository<GSTDetailEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -128,15 +129,15 @@ export class ReconciliationService {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
-    const orders = await this.orderRepo.find({
-      where: {
-        restaurantId: restaurantId as any,
-        createdAt: Between(startDate, endDate),
-      },
-      relations: ['gstDetail'],
-    });
+const orders = await this.orderRepo.find({
+       where: {
+         restaurantId: restaurantId as any,
+         createdAt: Between(startDate, endDate),
+       },
+       relations: { gstDetail: true },
+     });
 
-    const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail);
+    const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail!);
 
     return {
       restaurantId,

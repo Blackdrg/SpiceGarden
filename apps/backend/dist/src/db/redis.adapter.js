@@ -17,9 +17,10 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const ioredis_1 = __importDefault(require("ioredis"));
 let RedisAdapter = class RedisAdapter {
+    configService;
+    client = null;
     constructor(configService) {
         this.configService = configService;
-        this.client = null;
     }
     async onModuleInit() {
         await this.connect();
@@ -118,4 +119,3 @@ exports.RedisAdapter = RedisAdapter = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], RedisAdapter);
-//# sourceMappingURL=redis.adapter.js.map

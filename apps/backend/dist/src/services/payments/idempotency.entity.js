@@ -12,6 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IdempotencyEntity = void 0;
 const typeorm_1 = require("typeorm");
 let IdempotencyEntity = class IdempotencyEntity {
+    id;
+    key;
+    operation;
+    userId;
+    requestPayload;
+    responsePayload;
+    statusCode;
+    isCompleted;
+    createdAt;
+    completedAt;
 };
 exports.IdempotencyEntity = IdempotencyEntity;
 __decorate([
@@ -58,4 +68,3 @@ exports.IdempotencyEntity = IdempotencyEntity = __decorate([
     (0, typeorm_1.Entity)('idempotency_keys'),
     (0, typeorm_1.Index)(['key', 'operation'], { unique: true })
 ], IdempotencyEntity);
-//# sourceMappingURL=idempotency.entity.js.map

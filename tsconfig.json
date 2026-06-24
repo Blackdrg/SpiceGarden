@@ -2,25 +2,29 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ]
+    "noEmit": true,
+    "incremental": true,
+    "composite": true
   },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "include": [],
+  "references": [
+    { "path": "./apps/backend" },
+    { "path": "./apps/customer-web" },
+    { "path": "./apps/restaurant-dashboard" },
+    { "path": "./apps/super-admin" },
+    { "path": "./apps/delivery-partner" },
+    { "path": "./apps/customer-mobile" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/api-types" },
+    { "path": "./packages/proto" },
+    { "path": "./packages/grpc-transport" }
   ]
 }

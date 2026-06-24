@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 
 function safeParse<T = any>(json: string): T | undefined {
   try {
@@ -19,8 +20,8 @@ export class RazorpayGateway implements PaymentGateway {
   private keySecret: string;
 
   constructor(private configService: ConfigService) {
-    this.keyId = this.configService.get<string>('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
-    this.keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET') || 'test_placeholder';
+    this.keyId = getRequiredSecret(this.configService, 'RAZORPAY_KEY_ID');
+    this.keySecret = getRequiredSecret(this.configService, 'RAZORPAY_KEY_SECRET');
   }
 
   private async razorpayRequest(
@@ -56,7 +57,7 @@ export class RazorpayGateway implements PaymentGateway {
   async createPaymentIntent(
     amount: number,
     currency: string = 'inr',
-    userId: string = null,
+    userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
     try {

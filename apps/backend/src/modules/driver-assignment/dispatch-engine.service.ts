@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -27,6 +27,7 @@ export class DispatchEngineService {
     private readonly slaRepo: Repository<DeliverySLAEntity>,
     @InjectRepository(DriverFraudEntity)
     private readonly fraudRepo: Repository<DriverFraudEntity>,
+    @InjectDataSource()
     private readonly dataSource: DataSource
   ) {}
 
@@ -37,10 +38,10 @@ export class DispatchEngineService {
     // Start transaction for consistency
     return this.dataSource.transaction(async (manager) => {
       // 1. Get the order details
-      const order = await manager.findOne(OrderEntity, {
-        where: { id: orderId },
-        relations: ['restaurantId'] // Assuming we have restaurant relation
-      });
+const order = await manager.findOne(OrderEntity, {
+         where: { id: orderId },
+         relations: { branch: true }
+       });
 
       if (!order) {
         throw new Error('Order not found');
@@ -213,9 +214,9 @@ export class DispatchEngineService {
       }
 
       // Get branch from first order (assuming all orders are from same restaurant)
-      const branch = await manager.findOne(RestaurantBranchEntity, {
+      const branch = (await manager.findOne(RestaurantBranchEntity, {
         where: { restaurant: { id: orders[0].restaurantId } }
-      });
+      }))!;
 
       const assignments = [];
 
@@ -256,10 +257,10 @@ export class DispatchEngineService {
   ): Promise<DriverAssignmentEntity> {
     return this.dataSource.transaction(async (manager) => {
       // Get current assignment
-      const currentAssignment = await manager.findOne(DriverAssignmentEntity, {
-        where: { id: assignmentId },
-        relations: ['driver', 'order', 'branch']
-      });
+const currentAssignment = await manager.findOne(DriverAssignmentEntity, {
+         where: { id: assignmentId },
+         relations: { driver: true, order: true, branch: true }
+       });
 
       if (!currentAssignment) {
         throw new Error('Assignment not found');

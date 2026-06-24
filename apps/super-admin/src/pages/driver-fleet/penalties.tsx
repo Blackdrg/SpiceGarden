@@ -1,6 +1,28 @@
+import React from 'react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
+
+const inputStyle: React.CSSProperties = {
+  padding: '8px 12px',
+  background: '#0a0a0a',
+  border: '1px solid #333',
+  borderRadius: 6,
+  color: '#fff',
+  fontSize: 14,
+};
+
+const primaryButtonStyle: React.CSSProperties = {
+  padding: '10px 20px',
+  background: '#f04e31',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 6,
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: 14,
+};
 
 export default function DriverFleetPenalties() {
   const [form, setForm] = useState({ driverId: '', type: 'late_pickup', amount: '', description: '' });
@@ -29,13 +51,13 @@ export default function DriverFleetPenalties() {
             value={form.driverId}
             onChange={(e) => setForm({ ...form, driverId: e.target.value })}
             placeholder="Driver ID"
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <select
             aria-label="Penalty type"
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           >
             <option value="late_pickup">Late Pickup</option>
             <option value="late_delivery">Late Delivery</option>
@@ -48,7 +70,7 @@ export default function DriverFleetPenalties() {
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
             placeholder="Amount (₹)"
             type="number"
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <textarea
             aria-label="Description"
@@ -56,11 +78,12 @@ export default function DriverFleetPenalties() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="Reason for penalty"
             rows={3}
-            style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+            style={inputStyle}
           />
           <button
+            type="button"
             onClick={issuePenalty}
-            style={{ padding: '10px 20px', background: '#f04e31', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
+            style={primaryButtonStyle}
           >
             Issue Penalty
           </button>
@@ -68,7 +91,7 @@ export default function DriverFleetPenalties() {
         </div>
       </div>
 
-      <a href="/driver-fleet" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Fleet</a>
+      <Link href="/driver-fleet" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back to Fleet</Link>
     </div>
   );
 }

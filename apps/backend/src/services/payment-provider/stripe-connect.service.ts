@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
+import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 export interface StripeConnectAccountData {
   legalBusinessName: string;
@@ -49,8 +50,8 @@ export class StripeConnectService {
     @InjectRepository(PayoutReportEntity)
     private readonly payoutRepo: Repository<PayoutReportEntity>,
   ) {
-    const secretKey = this.configService.get<string>('STRIPE_CONNECT_SECRET_KEY') || this.configService.get<string>('STRIPE_SECRET_KEY');
-    this.stripe = new Stripe(secretKey || 'sk_test_placeholder', {
+    const secretKey = this.configService.get<string>('STRIPE_CONNECT_SECRET_KEY') || getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY');
+    this.stripe = new Stripe(secretKey, {
       apiVersion: '2024-04-10',
     });
   }

@@ -16,11 +16,17 @@ const config_1 = require("@nestjs/config");
 const stripe_gateway_service_1 = require("./gateways/stripe-gateway.service");
 const razorpay_gateway_service_1 = require("./gateways/razorpay-gateway.service");
 let PaymentGatewayFactory = PaymentGatewayFactory_1 = class PaymentGatewayFactory {
+    configService;
+    stripeGatewayInstance;
+    razorpayGatewayInstance;
+    logger = new common_1.Logger(PaymentGatewayFactory_1.name);
+    stripeGateway;
+    razorpayGateway;
+    defaultGateway;
     constructor(configService, stripeGatewayInstance, razorpayGatewayInstance) {
         this.configService = configService;
         this.stripeGatewayInstance = stripeGatewayInstance;
         this.razorpayGatewayInstance = razorpayGatewayInstance;
-        this.logger = new common_1.Logger(PaymentGatewayFactory_1.name);
         this.stripeGateway = this.stripeGatewayInstance;
         this.razorpayGateway = this.razorpayGatewayInstance;
         const primaryGateway = this.configService.get('PAYMENT_PRIMARY_GATEWAY', 'stripe');
@@ -52,4 +58,3 @@ exports.PaymentGatewayFactory = PaymentGatewayFactory = PaymentGatewayFactory_1 
         stripe_gateway_service_1.StripeGateway,
         razorpay_gateway_service_1.RazorpayGateway])
 ], PaymentGatewayFactory);
-//# sourceMappingURL=gateway-factory.service.js.map

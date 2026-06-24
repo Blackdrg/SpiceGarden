@@ -54,10 +54,12 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_device_entity_1 = require("../../db/entities/user-device.entity");
 let NotificationService = NotificationService_1 = class NotificationService {
+    configService;
+    userDeviceRepo;
+    logger = new common_1.Logger(NotificationService_1.name);
     constructor(configService, userDeviceRepo) {
         this.configService = configService;
         this.userDeviceRepo = userDeviceRepo;
-        this.logger = new common_1.Logger(NotificationService_1.name);
     }
     async registerDevice(userId, fcmToken, deviceInfo) {
         const existing = await this.userDeviceRepo.findOne({ where: { userId, fcmToken } });
@@ -101,7 +103,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     data: data || {},
                 }),
             });
-            const result = await response.json();
+            const result = (await response.json());
             this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
             return { success: true, result };
         }
@@ -111,7 +113,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
         }
     }
     async sendSMS(phone, message) {
-        const accountSid = this.configService.get('TWILIO_SID');
+        const accountSid = this.configService.get('TWILIO_ACCOUNT_SID');
         const authToken = this.configService.get('TWILIO_AUTH_TOKEN');
         const fromPhone = this.configService.get('TWILIO_PHONE');
         if (!accountSid || !authToken || !fromPhone) {
@@ -131,7 +133,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     Body: message,
                 }),
             });
-            const result = await response.json();
+            const result = (await response.json());
             if (!response.ok) {
                 throw new Error(result.message || 'Twilio API error');
             }
@@ -291,4 +293,3 @@ exports.NotificationService = NotificationService = NotificationService_1 = __de
     __metadata("design:paramtypes", [config_1.ConfigService,
         typeorm_2.Repository])
 ], NotificationService);
-//# sourceMappingURL=notification.service.js.map

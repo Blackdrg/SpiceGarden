@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { LocalDevModule } from "./local-dev.module";
 import { ConfigService } from "@nestjs/config";
@@ -8,37 +9,174 @@ import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
+import { getAllowedOrigins } from "./security/cors-origin";
+import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
+import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
+import { csrfProtection } from "./security/csrf.middleware";
+import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
+import * as Sentry from "@sentry/node";
+
+const metricsRegistry = new Registry();
+collectDefaultMetrics({ register: metricsRegistry });
+
+type SentryRuntime = typeof Sentry & {
+  init: (options: { dsn: string; tracesSampleRate: number }) => void;
+  Handlers?: {
+    requestHandler?: express.RequestHandler;
+    tracingHandler?: express.RequestHandler;
+  };
+  setupExpressErrorHandler?: () => express.ErrorRequestHandler;
+};
+
+const sentry = Sentry as SentryRuntime;
+
+const httpRequestCounter = new Counter({
+  name: "http_requests_total",
+  help: "Total HTTP requests by method, route, and status code.",
+  labelNames: ["method", "route", "status_code"] as const,
+  registers: [metricsRegistry],
+});
+
+const httpRequestDuration = new Histogram({
+  name: "http_request_duration_seconds",
+  help: "HTTP request duration in seconds.",
+  labelNames: ["method", "route", "status_code"] as const,
+  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [metricsRegistry],
+});
+
+function getTrustProxySetting(configService: ConfigService): boolean {
+  const value = configService.get<string>('TRUST_PROXY');
+  if (value === undefined) {
+    return false;
+  }
+
+  return !['0', 'false', 'no', 'off'].includes(value.toLowerCase());
+}
+
+function validateProductionEnvironment(configService: ConfigService): void {
+  if (configService.get<string>('NODE_ENV') !== 'production') {
+    return;
+  }
+
+  requireSecrets([
+    'JWT_SECRET',
+    'ENCRYPTION_SECRET',
+    'DB_HOST',
+    'DB_USER',
+    'DB_PASS',
+    'DB_NAME',
+    'MONGO_URI',
+    'REDIS_HOST',
+    'REDIS_PORT',
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'RAZORPAY_KEY_ID',
+    'RAZORPAY_KEY_SECRET',
+    'RAZORPAY_WEBHOOK_SECRET',
+    'CORS_ALLOWED_ORIGINS',
+  ], configService);
+
+  const corsOrigins = configService.get<string>('CORS_ALLOWED_ORIGINS', '') || '';
+  if (!corsOrigins.trim() || corsOrigins.split(',').some((origin) => origin.trim() === '*' || origin.trim().includes('*'))) {
+    throw new MissingEnvError(
+      'CORS_ALLOWED_ORIGINS',
+      'Set a comma-separated list of explicit production origins. Wildcards are not allowed.'
+    );
+  }
+}
+
+function getRedisRateLimitUrl(configService: ConfigService): string {
+  return configService.get<string>('REDIS_RATE_LIMIT_URL')
+    || configService.get<string>('REDIS_URL')
+    || `redis://${configService.get<string>('REDIS_HOST', 'localhost')}:${configService.get<number>('REDIS_PORT', 6379)}`;
+}
+
+function getRateLimitWindow(configService: ConfigService, name: string, fallbackMs: number): number {
+  return Number(configService.get<number>(`RATE_LIMIT_${name}_WINDOW_MS`, fallbackMs));
+}
+
+function getRateLimitMax(configService: ConfigService, name: string, fallbackMax: number): number {
+  return Number(configService.get<number>(`RATE_LIMIT_${name}_MAX`, fallbackMax));
+}
+
+function createRateLimitStore(configService: ConfigService, namespace: string): RedisRateLimitStore {
+  const requiredInProduction = configService.get<string>('RATE_LIMIT_REDIS_REQUIRED', 'true') !== 'false';
+  const fallbackToMemory = process.env.NODE_ENV !== 'production' || !requiredInProduction;
+
+  return new RedisRateLimitStore({
+    redisUrl: getRedisRateLimitUrl(configService),
+    prefix: `spicegarden:${namespace}`,
+    fallbackToMemory,
+  });
+}
+
+function createRateLimiter(configService: ConfigService, namespace: string, fallbackMax: number, fallbackWindowMs: number, skipSuccessfulRequests = false) {
+  return rateLimit({
+    windowMs: getRateLimitWindow(configService, namespace, fallbackWindowMs),
+    max: getRateLimitMax(configService, namespace, fallbackMax),
+    store: createRateLimitStore(configService, namespace),
+    keyGenerator: getRateLimitKey,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skipSuccessfulRequests,
+    message: {
+      error: 'Too many requests',
+      message: 'Rate limit exceeded. Please retry after the reset window.',
+    },
+  });
+}
+
+function getRateLimitKey(req: express.Request): string {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const route = req.path.split('/').filter(Boolean).slice(0, 3).join(':') || 'root';
+  return `${req.method}:${route}:${ip}`;
+}
+
+function installRateLimiters(app: NestExpressApplication, configService: ConfigService): void {
+  if (process.env.LOAD_TEST_MODE === 'true' && configService.get<string>('NODE_ENV') !== 'production') {
+    return;
+  }
+  app.use('/auth/otp', createRateLimiter(configService, 'AUTH_OTP', 3, 10 * 60 * 1000));
+  app.use('/auth/', createRateLimiter(configService, 'AUTH', 5, 15 * 60 * 1000, true));
+  app.use(/\/orders/, createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
+  app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
+}
 
 async function bootstrap() {
   const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-  const app = await NestFactory.create(localMode ? LocalDevModule : AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(localMode ? LocalDevModule : AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
-  // Initialize Sentry if available
-  try {
-    const Sentry = (await import("@sentry/node")) as any;
-    const dsn = configService.get<string>("SENTRY_DSN");
-    if (Sentry && dsn) {
-      Sentry.init({
-        dsn,
-        tracesSampleRate: 1.0,
-      });
-      Sentry.Handlers && app.use(Sentry.Handlers.requestHandler());
-      Sentry.Handlers && app.use(Sentry.Handlers.tracingHandler());
-    }
-  } catch (e) {
-    // Sentry not installed - continue without error tracking
+  validateProductionEnvironment(configService);
+
+  if (configService.get<string>('NODE_ENV') === 'production') {
+    const server = app.getHttpAdapter().getInstance();
+    server.set('trust proxy', 1);
   }
+
+  const dsn = configService.get<string>("SENTRY_DSN");
+  if (dsn) {
+    sentry.init({
+      dsn,
+      tracesSampleRate: 1.0,
+    });
+    sentry.Handlers?.requestHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.requestHandler!(req, res, next));
+    sentry.Handlers?.tracingHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.tracingHandler!(req, res, next));
+    sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
+  }
+
 
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   const sanitizeMiddleware = mongoSanitize();
-  const safeMongoSanitize = (req, res, next) => {
+  const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       sanitizeMiddleware(req, res, next);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       // If we get a "Cannot set property" error, fall back to sanitizing individually
-      if (error.message.includes('Cannot set property') && error.message.includes('which has only a getter')) {
+      if (errorMessage.includes('Cannot set property') && errorMessage.includes('which has only a getter')) {
         // Sanitize each property individually to avoid setting getters
         if (req.body) {
           req.body = mongoSanitize.sanitize(req.body);
@@ -65,52 +203,70 @@ async function bootstrap() {
     }
   };
 
-  // Security middleware
-  app.use(helmet());
-  
-  // Prevent NoSQL injection
-  app.use(safeMongoSanitize);
-  
-  // Prevent HTTP parameter pollution
-  app.use(hpp());
-  
-  // Rate limiting to prevent abuse
-  const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  app.set('trust proxy', getTrustProxySetting(configService));
+  app.disable('x-powered-by');
+  app.enableCors({
+    origin: getAllowedOrigins(),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id', 'Idempotency-Key', 'x-csrf-token'],
   });
-  app.use("/api/", apiLimiter);
-  
-  // Stricter rate limiting for auth endpoints
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // limit each IP to 10 requests per windowMs
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-  app.use("/auth/", authLimiter);
 
-  // Body size limiting to prevent DoS
-  app.use(express.json({ limit: "10kb" }));
-  app.use(express.urlencoded({ limit: "10kb", extended: true }));
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'https:'],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  }));
+  app.use(csrfProtection());
+  app.use(safeMongoSanitize);
+  app.use(hpp());
+  installRateLimiters(app, configService);
+
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const dangerousMethods = ['TRACE', 'TRACK', 'DEBUG', 'CONNECT'];
+    if (dangerousMethods.includes(req.method)) {
+      return res.status(405).json({ message: `Method ${req.method} not allowed`, error: 'Method Not Allowed' });
+    }
+    next();
+  });
+
+  app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
+  app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
 
   // Prometheus metrics endpoint
-  app.use("/metrics", async (_req, res) => {
-    res.set("Content-Type", "text/plain");
-    res.send("spicegarden_backend_local_mode=true\n");
+  app.use("/metrics", async (_req: express.Request, res: express.Response) => {
+    res.set("Content-Type", metricsRegistry.contentType);
+    res.send(await metricsRegistry.metrics());
   });
 
   // Metrics middleware
-  app.use((req, res, next) => {
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     const start = Date.now();
     res.on("finish", () => {
-      const duration = Date.now() - start;
-      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
+      const duration = (Date.now() - start) / 1000;
+      const route = req.route?.path ? req.path : req.baseUrl || req.path;
+      httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
+      httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
+      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
     });
     next();
   });
+
 
   // Global validation pipe
   app.useGlobalPipes(

@@ -25,6 +25,14 @@ const delivery_sla_entity_1 = require("../../db/entities/delivery-sla.entity");
 const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 const order_interface_1 = require("../../shared/domain/order.interface");
 let DispatchEngineService = class DispatchEngineService {
+    driverRepo;
+    orderRepo;
+    assignmentRepo;
+    branchRepo;
+    scoreRepo;
+    slaRepo;
+    fraudRepo;
+    dataSource;
     constructor(driverRepo, orderRepo, assignmentRepo, branchRepo, scoreRepo, slaRepo, fraudRepo, dataSource) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
@@ -39,7 +47,7 @@ let DispatchEngineService = class DispatchEngineService {
         return this.dataSource.transaction(async (manager) => {
             const order = await manager.findOne(order_entity_1.OrderEntity, {
                 where: { id: orderId },
-                relations: ['restaurantId']
+                relations: { branch: true }
             });
             if (!order) {
                 throw new Error('Order not found');
@@ -117,9 +125,9 @@ let DispatchEngineService = class DispatchEngineService {
             if (orders.length !== orderIds.length) {
                 throw new Error('Some orders not found');
             }
-            const branch = await manager.findOne(restaurant_branch_entity_1.RestaurantBranchEntity, {
+            const branch = (await manager.findOne(restaurant_branch_entity_1.RestaurantBranchEntity, {
                 where: { restaurant: { id: orders[0].restaurantId } }
-            });
+            }));
             const assignments = [];
             for (const order of orders) {
                 const assignment = manager.create(driver_assignment_entity_1.DriverAssignmentEntity, {
@@ -147,7 +155,7 @@ let DispatchEngineService = class DispatchEngineService {
         return this.dataSource.transaction(async (manager) => {
             const currentAssignment = await manager.findOne(driver_assignment_entity_1.DriverAssignmentEntity, {
                 where: { id: assignmentId },
-                relations: ['driver', 'order', 'branch']
+                relations: { driver: true, order: true, branch: true }
             });
             if (!currentAssignment) {
                 throw new Error('Assignment not found');
@@ -191,6 +199,7 @@ exports.DispatchEngineService = DispatchEngineService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(driver_score_entity_1.DriverScoreEntity)),
     __param(5, (0, typeorm_1.InjectRepository)(delivery_sla_entity_1.DeliverySLAEntity)),
     __param(6, (0, typeorm_1.InjectRepository)(driver_fraud_entity_1.DriverFraudEntity)),
+    __param(7, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -200,4 +209,3 @@ exports.DispatchEngineService = DispatchEngineService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], DispatchEngineService);
-//# sourceMappingURL=dispatch-engine.service.js.map

@@ -12,6 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SurgeZoneEntity = void 0;
 const typeorm_1 = require("typeorm");
 let SurgeZoneEntity = class SurgeZoneEntity {
+    id;
+    name;
+    polygon;
+    multiplier;
+    isActive;
+    startTime;
+    endTime;
+    createdAt;
+    updatedAt;
 };
 exports.SurgeZoneEntity = SurgeZoneEntity;
 __decorate([
@@ -53,4 +62,3 @@ __decorate([
 exports.SurgeZoneEntity = SurgeZoneEntity = __decorate([
     (0, typeorm_1.Entity)('surge_zones')
 ], SurgeZoneEntity);
-//# sourceMappingURL=surge-zone.entity.js.map

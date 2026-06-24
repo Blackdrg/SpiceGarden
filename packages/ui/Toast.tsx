@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 

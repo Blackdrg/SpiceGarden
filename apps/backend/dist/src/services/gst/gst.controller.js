@@ -20,6 +20,7 @@ const roles_decorator_1 = require("../../security/roles.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 const gst_service_1 = require("./gst.service");
 let GSTController = class GSTController {
+    gstService;
     constructor(gstService) {
         this.gstService = gstService;
     }
@@ -77,4 +78,3 @@ exports.GSTController = GSTController = __decorate([
     (0, common_1.Controller)('gst'),
     __metadata("design:paramtypes", [gst_service_1.GSTService])
 ], GSTController);
-//# sourceMappingURL=gst.controller.js.map

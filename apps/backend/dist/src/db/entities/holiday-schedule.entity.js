@@ -13,6 +13,22 @@ exports.HolidayScheduleEntity = void 0;
 const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let HolidayScheduleEntity = class HolidayScheduleEntity {
+    id;
+    branch;
+    holidayName;
+    startDate;
+    endDate;
+    scheduleType;
+    openingTime;
+    closingTime;
+    isDeliveryAvailable;
+    isDineInAvailable;
+    isTakeawayAvailable;
+    specialInstructions;
+    isRecurring;
+    recurrenceRule;
+    createdAt;
+    updatedAt;
 };
 exports.HolidayScheduleEntity = HolidayScheduleEntity;
 __decorate([
@@ -82,4 +98,3 @@ __decorate([
 exports.HolidayScheduleEntity = HolidayScheduleEntity = __decorate([
     (0, typeorm_1.Entity)('holiday_schedules')
 ], HolidayScheduleEntity);
-//# sourceMappingURL=holiday-schedule.entity.js.map

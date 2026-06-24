@@ -14,6 +14,21 @@ const typeorm_1 = require("typeorm");
 const batch_entity_1 = require("./batch.entity");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let FoodPrepEntity = class FoodPrepEntity {
+    id;
+    batch;
+    staffId;
+    status;
+    startedAt;
+    completedAt;
+    actualPrepTimeMinutes;
+    estimatedPrepTimeMinutes;
+    delayMinutes;
+    qualityCheck;
+    issues;
+    delayReasons;
+    branch;
+    createdAt;
+    updatedAt;
 };
 exports.FoodPrepEntity = FoodPrepEntity;
 __decorate([
@@ -79,4 +94,3 @@ __decorate([
 exports.FoodPrepEntity = FoodPrepEntity = __decorate([
     (0, typeorm_1.Entity)('food_prep')
 ], FoodPrepEntity);
-//# sourceMappingURL=food-prep.entity.js.map

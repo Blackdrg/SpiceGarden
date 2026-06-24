@@ -1,0 +1,23 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m125[0m:[93m21[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ status: "unknown_status"; }' to type 'OrderEntity' may be a mistake because neither type sufficiently overlaps with 
+the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ status: "unknown_status"; }' is missing the following properties from type 'OrderEntity': id, items, 
+userId, restaurantId, and 18 more.
+
+    [7m125[0m       const order = { status: 'unknown_status' } as OrderEntity;
+    [7m   [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        11.978 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.

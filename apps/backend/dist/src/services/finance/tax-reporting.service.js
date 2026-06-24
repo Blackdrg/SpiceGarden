@@ -23,6 +23,13 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 const restaurant_gst_entity_1 = require("../../db/entities/restaurant-gst.entity");
 const order_item_entity_1 = require("../../db/entities/order-item.entity");
 let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
+    orderRepo;
+    gstDetailRepo;
+    restaurantRepo;
+    restaurantGstRepo;
+    orderItemRepo;
+    dataSource;
+    logger = new common_1.Logger(TaxReportingService_1.name);
     constructor(orderRepo, gstDetailRepo, restaurantRepo, restaurantGstRepo, orderItemRepo, dataSource) {
         this.orderRepo = orderRepo;
         this.gstDetailRepo = gstDetailRepo;
@@ -30,7 +37,6 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
         this.restaurantGstRepo = restaurantGstRepo;
         this.orderItemRepo = orderItemRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(TaxReportingService_1.name);
     }
     async generateGSTReport(restaurantId, month, year) {
         const startDate = new Date(year, month - 1, 1);
@@ -40,7 +46,12 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
                 restaurantId: restaurantId,
                 createdAt: (0, typeorm_2.Between)(startDate, endDate),
             },
-            relations: ['gstDetail', 'items', 'items.menuItem'],
+            relations: {
+                gstDetail: true,
+                items: {
+                    menuItem: true
+                }
+            },
         });
         const gstDetails = orders
             .filter(o => o.gstDetail)
@@ -118,7 +129,7 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
         const year = reportingMonth.getFullYear();
         const orders = await this.orderRepo.find({
             where: { createdAt: (0, typeorm_2.Between)(new Date(year, month - 1, 1), new Date(year, month, 0)) },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const totalGST = orders.reduce((sum, o) => sum + Number(o.tax || 0), 0);
         const taxReceivable = totalGST;
@@ -149,6 +160,7 @@ exports.TaxReportingService = TaxReportingService = TaxReportingService_1 = __de
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(restaurant_gst_entity_1.RestaurantGSTEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(order_item_entity_1.OrderItemEntity)),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -156,4 +168,3 @@ exports.TaxReportingService = TaxReportingService = TaxReportingService_1 = __de
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], TaxReportingService);
-//# sourceMappingURL=tax-reporting.service.js.map

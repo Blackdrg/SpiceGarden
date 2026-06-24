@@ -14,11 +14,14 @@ exports.StripeGateway = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const stripe_1 = require("stripe");
+const missing_env_error_1 = require("../../../common/errors/missing-env.error");
 let StripeGateway = StripeGateway_1 = class StripeGateway {
+    configService;
+    logger = new common_1.Logger(StripeGateway_1.name);
+    stripe;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(StripeGateway_1.name);
-        this.stripe = new stripe_1.Stripe(this.configService.get('STRIPE_SECRET_KEY') || 'sk_test_placeholder', {
+        this.stripe = new stripe_1.Stripe((0, missing_env_error_1.getRequiredSecret)(this.configService, 'STRIPE_SECRET_KEY'), {
             apiVersion: '2024-04-10',
         });
     }
@@ -96,7 +99,7 @@ let StripeGateway = StripeGateway_1 = class StripeGateway {
                 id: refund.id,
                 amount: refund.amount,
                 currency: paymentIntent.currency || 'usd',
-                status: refund.status,
+                status: refund.status || undefined,
             };
         }
         catch (error) {
@@ -127,4 +130,3 @@ exports.StripeGateway = StripeGateway = StripeGateway_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], StripeGateway);
-//# sourceMappingURL=stripe-gateway.service.js.map

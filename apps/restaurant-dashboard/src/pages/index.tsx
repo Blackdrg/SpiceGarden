@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useEffect, useReducer, useMemo } from 'react';
+import type { HTMLAttributes } from 'react';
 import { Button } from '@spicegarden/ui';
-import { io, Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import styles from './index.module.css';
 
-// ── Types ──────────────────────────────────────────────────────────────────
 type OrderItem = {
   id: string;
   name: string;
@@ -34,8 +34,37 @@ type Order = {
 
 type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed';
 type ServiceType = 'delivery' | 'dine-in' | 'dine_in' | 'takeaway';
+type Tab = 'kitchen' | 'inventory';
 
-// ── Pre-seeded demo data ────────────────────────────────────────────────────
+type DashboardState = {
+  orders: Order[];
+  batchMode: boolean;
+  inventory: InventoryItem[];
+  activeTab: Tab;
+  audioEnabled: boolean;
+  activeSounds: string[];
+  lastAction: string;
+};
+
+type DashboardAction =
+  | { type: 'order-received'; order: Order }
+  | { type: 'order-transitioned'; orderId: string; status: OrderStatus }
+  | { type: 'inventory-initialized'; inventory: InventoryItem[] }
+  | { type: 'inventory-alert'; item: InventoryItem }
+  | { type: 'inventory-stock-added'; amount: number }
+  | { type: 'low-stock-used'; amount: number }
+  | { type: 'active-tab-changed'; tab: Tab }
+  | { type: 'batch-mode-toggled' }
+  | { type: 'audio-toggled' }
+  | { type: 'active-sound-added'; id: string }
+  | { type: 'active-sound-dismissed'; id: string }
+  | { type: 'last-action-set'; message: string }
+  | { type: 'last-action-cleared' };
+
+const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
+const statusLabels = {
+  new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
+} as const satisfies Record<OrderStatus, string>;
 
 const DEMO_ITEMS: OrderItem[] = [
   { id: 'i1', name: 'Zinger Burger', qty: 1, modifiers: ['Extra Spicy'], note: 'Less onions' },
@@ -50,10 +79,82 @@ const seedInventory: InventoryItem[] = [
   { id: 'inv-4', name: 'Ice Cream', inStock: 1, threshold: 10 },
 ];
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+const tryPlay = (base64: string) => {
+  const el = new Audio(`data:audio/wav;base64,${base64}`);
+  el.play().catch(() => null);
+};
 
 const now = () => new Date();
-const elapsedMins = (startedAt: Date) => Math.max(0, Math.floor((+now() - +startedAt) / 60000));
+
+function createInitialState(): DashboardState {
+  return {
+    orders: [
+      demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
+      demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
+      demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
+      demoOrder('d4', { status: 'new', estPrepMins: 12 }),
+    ],
+    batchMode: false,
+    inventory: seedInventory.map((item) => ({ ...item })),
+    activeTab: 'kitchen',
+    audioEnabled: true,
+    activeSounds: [],
+    lastAction: '',
+  };
+}
+
+function dashboardReducer(state: DashboardState, action: DashboardAction): DashboardState {
+  switch (action.type) {
+    case 'order-received': {
+      const order = normalizeOrder(action.order);
+      return {
+        ...state,
+        orders: [order, ...state.orders],
+        lastAction: `New order #${order.orderNumber} received`,
+      };
+    }
+    case 'order-transitioned':
+      return {
+        ...state,
+        orders: updateOrderStatus(state.orders, action.orderId, action.status),
+        lastAction: `Order #${action.orderId.slice(-6)} → ${action.status.toUpperCase()}`,
+      };
+    case 'inventory-initialized':
+      return { ...state, inventory: action.inventory };
+    case 'inventory-alert':
+      return {
+        ...state,
+        inventory: state.inventory.map((item) => item.id === action.item.id ? { ...item, inStock: Math.max(0, item.inStock - 1) } : item),
+      };
+    case 'inventory-stock-added':
+      return { ...state, inventory: state.inventory.map((item) => ({ ...item, inStock: item.inStock + action.amount })) };
+    case 'low-stock-used':
+      return {
+        ...state,
+        inventory: state.inventory.map((item) => item.inStock <= item.threshold ? { ...item, inStock: Math.max(0, item.inStock - action.amount) } : item),
+      };
+    case 'active-tab-changed':
+      return { ...state, activeTab: action.tab };
+    case 'batch-mode-toggled':
+      return { ...state, batchMode: !state.batchMode };
+    case 'audio-toggled':
+      return { ...state, audioEnabled: !state.audioEnabled };
+    case 'active-sound-added':
+      return { ...state, activeSounds: [action.id, ...state.activeSounds] };
+    case 'active-sound-dismissed':
+      return { ...state, activeSounds: state.activeSounds.filter((x) => x !== action.id) };
+    case 'last-action-set':
+      return { ...state, lastAction: action.message };
+    case 'last-action-cleared':
+      return { ...state, lastAction: '' };
+    default:
+      return state;
+  }
+}
+
+function elapsedMins(startedAt: Date) {
+  return Math.max(0, Math.floor((+now() - +startedAt) / 60000));
+}
 
 function orderElapsed(order: Order) {
   return order.prepStartedAt ? elapsedMins(order.prepStartedAt) : 0;
@@ -78,79 +179,52 @@ function demoOrder(id: string, overrides: Partial<Order> = {}): Order {
   };
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+function normalizeOrder(order: Order): Order {
+  const createdAt = order.createdAt instanceof Date ? order.createdAt : new Date(order.createdAt as unknown as string | number);
+  return {
+    ...order,
+    createdAt: Number.isNaN(+createdAt) ? now() : createdAt,
+  };
+}
+
+function updateOrderStatus(orders: Order[], orderId: string, status: OrderStatus) {
+  return orders.map((order) => {
+    if (order.id !== orderId) return order;
+    const updated: Order = { ...order, status };
+    if (status === 'preparing') updated.prepStartedAt = now();
+    if (status === 'ready') updated.prepStartedAt = undefined;
+    return updated;
+  });
+}
 
 export default function KitchenDashboard() {
-   const [orders, setOrders] = useState<Order[]>(() =>
-      [
-        demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
-        demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
-        demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
-        demoOrder('d4', { status: 'new', estPrepMins: 12 }),
-      ]
-    );
-    const [batchMode, setBatchMode] = useState(false);
-    const [inventory, setInventory] = useState<InventoryItem[]>(seedInventory);
-    const [activeTab, setActiveTab] = useState<'kitchen' | 'inventory'>('kitchen');
-    const [audioEnabled, setAudioEnabled] = useState(true);
-    const [activeSounds, setActiveSounds] = useState<string[]>([]);
-    const [lastAction, setLastAction] = useState<string>('');
+  const [state, dispatch] = useReducer(dashboardReducer, undefined, createInitialState);
 
-  // ── Sound / new-order alert ────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    let socket: Socket | null = null;
 
-  const playNewOrderSound = useCallback(() => {
-    if (!audioEnabled) return;
-    // Browser cannot reliably auto-play without user interaction;
-    // store id so user can click "play" when browser allows.
-    const id = Date.now().toString();
-    setActiveSounds((prev) => [id, ...prev]);
-  }, [audioEnabled]);
-
-  function squashSound(id: string) {
-    setActiveSounds((prev) => prev.filter((x) => x !== id));
-  }
-
-   // ── Socket connection ─────────────────────────────────────────────────────
-
-    useEffect(() => {
-      const socket: Socket = io('http://localhost:3001', {
+    import('socket.io-client').then(({ io }) => {
+      if (cancelled) return;
+      socket = io('http://localhost:3001', {
         path: '/socket.io/',
         transports: ['websocket', 'polling'],
       });
 
-      socket.on('connect', () => console.log('[KDS] connected:', socket.id));
+      socket.on('connect', () => console.log('[KDS] connected:', socket?.id));
       socket.on('disconnect', () => console.log('[KDS] disconnected'));
-      socket.on('newOrder', (order: Order) => {
-        setOrders((prev) => [{ ...order, createdAt: new Date(order.createdAt || Date.now()) }, ...prev]);
-        setLastAction(`New order #${order.orderNumber} received`);
-        playNewOrderSound();
-      });
-      socket.on('inventoryAlert', (item: InventoryItem) => {
-        setInventory((prev) => {
-          const found = prev.find((i) => i.id === item.id);
-          if (found) found.inStock = Math.max(0, found.inStock - 1);
-          return [...prev];
-        });
-      });
+      socket.on('newOrder', (order: Order) => dispatch({ type: 'order-received', order }));
+      socket.on('inventoryAlert', (item: InventoryItem) => dispatch({ type: 'inventory-alert', item }));
+    });
 
-      return () => { socket.disconnect(); };
-    }, [playNewOrderSound]);
-
-    // Seed inventory on mount too
-
-  // ── Status transitions ─────────────────────────────────────────────────────
+    return () => {
+      cancelled = true;
+      socket?.disconnect();
+    };
+  }, []);
 
   const transition = (orderId: string, status: OrderStatus) => {
-    setOrders((prev) =>
-      prev.map((o) => {
-        if (o.id !== orderId) return o;
-        const updated: Order = { ...o, status };
-        if (status === 'preparing') updated.prepStartedAt = new Date();
-        if (status === 'ready') updated.prepStartedAt = undefined;
-        return updated;
-      })
-    );
-    setLastAction(`Order #${orderId.slice(-6)} → ${status.toUpperCase()}`);
+    dispatch({ type: 'order-transitioned', orderId, status });
   };
 
   const accept = (id: string) => transition(id, 'accepted');
@@ -159,254 +233,61 @@ export default function KitchenDashboard() {
   const markDelayed = (id: string) => transition(id, 'delayed');
   const served = (id: string) => transition(id, 'completed');
 
-  // ── Dedup undo / reorder helper ────────────────────────────────────────────
-
-  const undoLast = () => setLastAction('');
-
-  // ── Prep timer (side-effect: auto-flag delay) ──────────────────────────────
-
-  // ── Derived data ──────────────────────────────────────────────────────────
-
-  const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
-  const statusLabels = {
-    new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
-  } as const satisfies Record<OrderStatus, string>;
-  const statusColors = {
-    new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
-    ready: '#4caf50', delayed: '#ff4444', completed: '#999', pickedup: '#ff9800', delivered: '#4caf50',
-    cancelled: '#888',
-  } as const satisfies Record<OrderStatus, string>;
-
-  const counts = Object.fromEntries(statuses.map((s) => [s, orders.filter((o) => o.status === s).length])) as Record<OrderStatus, number>;
-
-  const groupedOrders = batchMode
-    ? statuses.reduce((acc, s) => { acc[s] = orders.filter((o) => o.status === s); return acc; }, {} as Record<OrderStatus, Order[]>)
-    : null;
-
-  // ── Alert sound player (for pre-played sounds) ──────────────────────────────
-
-  const tryPlay = (base64: string) => {
-    const el = new Audio(`data:audio/wav;base64,${base64}`);
-    el.play().catch(() => null);
-  };
-
-  // ── Render ────────────────────────────────────────────────────────────────
+  const counts = useMemo(() => Object.fromEntries(statuses.map((s) => [s, state.orders.filter((order) => order.status === s).length])) as Record<OrderStatus, number>, [state.orders]);
 
   return (
     <div className={styles.rootContainer}>
-{/* ── Header ────────────────────────────────────────────────────────── */}
-      <div className={styles.headerBar}>
-        <h1 className={styles.headerTitle}>&#x1F525; KITCHEN DISPLAY</h1>
-        <div className={styles.headerControls}>
-          <button
-            onClick={() => !audioEnabled ? setAudioEnabled(true) : squashSound('toggle')}
-            title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
-            className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
-          >
-            {audioEnabled ? '🔊' : '🔇'}</button>
-          <div className={styles.orderCountBadge}>
-            {orders.length} orders
-          </div>
-          <Button
-            label={batchMode ? '□ Batch' : '⊞ Batch'}
-            onClick={() => setBatchMode(!batchMode)}
-            className={styles.batchButton}
-          />
-          <Button
-            label="↩ Undo"
-            onClick={undoLast}
-            variant="secondary"
-            className={styles.undoButton}
-          />
-        </div>
-      </div>
+      <DashboardHeader
+        orderCount={state.orders.length}
+        batchMode={state.batchMode}
+        audioEnabled={state.audioEnabled}
+        activeSoundCount={state.activeSounds.length}
+        onToggleBatch={() => dispatch({ type: 'batch-mode-toggled' })}
+        onToggleAudio={() => dispatch({ type: 'audio-toggled' })}
+        onDismissSound={() => dispatch({ type: 'active-sound-dismissed', id: 'toggle' })}
+        onUndo={() => dispatch({ type: 'last-action-cleared' })}
+      />
 
-      {/* ── Status bar strip ───────────────────────────────────────────────── */}
-      <div className={styles.statusRibbon}>
-        {statuses.map((s) => (
-          <span
-            key={s}
-            style={{
-              backgroundColor: `${statusColors[s]}22`,
-              border: `1px solid ${statusColors[s]}66`,
-              color: statusColors[s],
-            }}
-            className={styles.statusBadge}
-          >
-            {statusLabels[s]} ({counts[s]})
-          </span>
-        ))}
-      </div>
+      <StatusRibbon counts={counts} />
 
-      {/* ── New-order sound overlay (fires immediately) ────────────────────── */}
-      {activeSounds.length > 0 && (
-        <div
-          className={styles.soundContainer}
-        >
-          {activeSounds.map((id) => (
-            <div
-              key={id}
-              role="button"
-              tabIndex={0}
-              onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); squashSound(id); }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { tryPlay(''); squashSound(id); } }}
-              className={styles.soundButton}
-            >
-              🚨 NEW ORDER — Tap to dismiss
-            </div>
-          ))}
-        </div>
-      )}
+      <SoundOverlay activeSounds={state.activeSounds} />
 
-      {/* ── Last action toast ───────────────────────────────────────────────── */}
-      {lastAction && (
+      {state.lastAction && (
         <div className={styles.lastActionToast}>
-          {lastAction}
+          {state.lastAction}
         </div>
       )}
 
-      {/* ── Tab bar ────────────────────────────────────────────────────────── */}
-      <div className={styles.tabBar}>
-        {(['kitchen', 'inventory'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setActiveTab(t)}
-            className={`${styles.tabButton} ${activeTab === t ? styles.tabActive : styles.tabInactive}`}
-          >
-            {t === 'kitchen' ? '🔥 Kitchen' : '📦 Inventory'}
-          </button>
-        ))}
-      </div>
+      <TabBar activeTab={state.activeTab} onTabChange={(tab) => dispatch({ type: 'active-tab-changed', tab })} />
 
-      {/* ── KITCHEN TAB ───────────────────────────────────────────────────── */}
-      {activeTab === 'kitchen' && (
-        <>
-          {/* Stats row */}
-          <div className={styles.statsGrid}>
-            {statuses.map((s) => (
-              <div key={s} className={styles.statsCard}>
-                <div style={{ color: statusColors[s] }} className={styles.statsCount}>{counts[s]}</div>
-                <div className={styles.statsLabel}>{statusLabels[s]}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Batch grouping or flat list */}
-          {groupedOrders ? (
-            <>
-              {statuses.map((s) => {
-                const group = groupedOrders[s];
-                if (!group?.length) return null;
-                const overdue = group.filter((o) => s === 'preparing' && isDelayed(o)).length;
-                return (
-                  <div key={s} className={styles.batchSectionPadding}>
-                    <div style={{ color: statusColors[s] }} className={styles.batchGroupHeader}>
-                      <span style={{ backgroundColor: statusColors[s] }} className={styles.statusIndicator} />
-                      {statusLabels[s]} — {group.length} orders
-                      {overdue > 0 && <span className={styles.delayedWarning}>&#9888; {overdue} DELAYED</span>}
-                    </div>
-                    <div className={styles.ordersGrid}>
-                      {group.map((order) => (
-                        <OrderCard
-                          key={order.id}
-                          order={order}
-                          onAccept={() => accept(order.id)}
-                          onStartPrep={() => startPrep(order.id)}
-                          onReady={() => markReady(order.id)}
-                          onDelay={() => markDelayed(order.id)}
-                          onServed={() => served(order.id)}
-                          onPark={() => setLastAction(`#${order.orderNumber} parked`)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </>
-          ) : (
-            <div className={styles.ordersGridPadded}>
-              {orders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  onAccept={() => accept(order.id)}
-                  onStartPrep={() => startPrep(order.id)}
-                  onReady={() => markReady(order.id)}
-                  onDelay={() => markDelayed(order.id)}
-                  onServed={() => served(order.id)}
-                  onPark={() => setLastAction(`#${order.orderNumber} parked`)}
-                />
-              ))}
-            </div>
-          )}
-        </>
+      {state.activeTab === 'kitchen' && (
+        <KitchenOrdersView
+          orders={state.orders}
+          batchMode={state.batchMode}
+          counts={counts}
+          onAccept={accept}
+          onStartPrep={startPrep}
+          onReady={markReady}
+          onDelay={markDelayed}
+          onServed={served}
+          onPark={(orderNumber) => dispatch({ type: 'last-action-set', message: `#${orderNumber} parked` })}
+        />
       )}
 
-      {/* ── INVENTORY TAB ──────────────────────────────────────────────────── */}
-      {activeTab === 'inventory' && (
-        <div className={styles.inventoryContainer}>
-          <div className={styles.inventoryHeader}>
-            <h3 className={styles.inventoryTitle}>&#x1F4E6; Stock Levels</h3>
-            <span className={styles.lowStockCount}>{inventory.filter((i) => i.inStock <= i.threshold).length} low</span>
-          </div>
-          <div className={styles.inventoryGrid}>
-            {inventory.map((item) => {
-              const pct = Math.min(100, (item.inStock / item.threshold) * 100);
-              const isLow = item.inStock <= item.threshold;
-              return (
-                <div key={item.id} style={{ border: isLow ? '2px solid #ff4444' : '2px solid #333' }} className={styles.inventoryItem}>
-                  <div className={styles.inventoryItemName}>{item.name}</div>
-                  <div style={{ color: isLow ? '#ff4444' : '#4caf50' }} className={styles.inventoryItemCount}>
-                    {item.inStock} <span className={styles.inventoryUnit}>units</span>
-                  </div>
-                  <div className={styles.inventoryThreshold}>
-                    Threshold: {item.threshold}
-                  </div>
-                  <div style={{ background: isLow ? '#ff4444' : '#4caf50', opacity: 0.3 }} className={styles.stockProgressBar} />
-                  <div style={{ width: `${pct}%`, background: isLow ? '#ff4444' : '#4caf50' }} className={styles.stockProgressFill} />
-                  {isLow && (
-                    <div className={styles.lowStockWarning}>
-                      &#9888; LOW STOCK — Restock urgently
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Add / deduct stock buttons */}
-          <div className={styles.inventoryControls}>
-            <Button
-              label="+ Add Stock"
-              onClick={() => setInventory((prev) => prev.map((i) => ({ ...i, inStock: i.inStock + 10 })))}
-            />
-            <Button
-              label="− Use Stock"
-              onClick={() => !confirm('Deduct 1 from all low-stock items?') || setInventory((prev) => prev.map((i) => ({ ...i, inStock: Math.max(0, i.inStock - 1) })))}
-              variant="secondary"
-            />
-          </div>
-        </div>
+      {state.activeTab === 'inventory' && (
+        <InventoryView
+          inventory={state.inventory}
+          onAddStock={() => dispatch({ type: 'inventory-stock-added', amount: 10 })}
+          onUseLowStock={() => {
+            if (confirm('Deduct 1 from all low-stock items?')) {
+              dispatch({ type: 'low-stock-used', amount: 1 });
+            }
+          }}
+        />
       )}
 
-      {/* ── Bottom nav ─────────────────────────────────────────────────── */}
-      <nav className={styles.navBar}>
-           {[
-              { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
-              { key: 'inventory', label: 'Inventory', emoji: '📦' },
-            ].map((t) => (
-                 <div
-                 key={t.key}
-                  onClick={() => setActiveTab(t.key as 'kitchen' | 'inventory')}
-                className={`${styles.navItem} ${activeTab === t.key ? styles.navItemActive : styles.navItemInactive}`}
-               >
-                <span className={styles.navIcon}>{t.emoji}</span>
-                <span>{t.label}</span>
-              </div>
-            ))}
-      </nav>
+      <BottomNav activeTab={state.activeTab} onTabChange={(tab) => dispatch({ type: 'active-tab-changed', tab })} />
 
-      {/* ── Pulse keyframes injected via style tag ── */}
       <style>{`
         @keyframes kdsPulse {
           0%, 100% { transform: scale(1); }
@@ -417,9 +298,310 @@ export default function KitchenDashboard() {
   );
 }
 
-// ── Order Card sub-component ─────────────────────────────────────────────────
+function DashboardHeader({
+  orderCount,
+  batchMode,
+  audioEnabled,
+  activeSoundCount,
+  onToggleBatch,
+  onToggleAudio,
+  onDismissSound,
+  onUndo,
+}: {
+  orderCount: number;
+  batchMode: boolean;
+  audioEnabled: boolean;
+  activeSoundCount: number;
+  onToggleBatch: () => void;
+  onToggleAudio: () => void;
+  onDismissSound: () => void;
+  onUndo: () => void;
+}) {
+  return (
+    <div className={styles.headerBar}>
+      <h1 className={styles.headerTitle}>🔥 KITCHEN DISPLAY</h1>
+      <div className={styles.headerControls}>
+        <button
+          type="button"
+          onClick={() => audioEnabled ? onDismissSound() : onToggleAudio()}
+          title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
+          className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
+        >
+          {audioEnabled ? '🔊' : '🔇'}
+        </button>
+        <div className={styles.orderCountBadge}>
+          {orderCount} orders{activeSoundCount > 0 ? ` · ${activeSoundCount} alert${activeSoundCount === 1 ? '' : 's'}` : ''}
+        </div>
+        <Button label={batchMode ? '□ Batch' : '⊞ Batch'} onClick={onToggleBatch} className={styles.batchButton} />
+        <Button label="↩ Undo" onClick={onUndo} variant="secondary" className={styles.undoButton} />
+      </div>
+    </div>
+  );
+}
 
-interface OrderCardProps extends React.HTMLAttributes<HTMLDivElement> {
+function StatusRibbon({ counts }: { counts: Record<OrderStatus, number> }) {
+  return (
+    <div className={styles.statusRibbon}>
+      {statuses.map((status) => (
+        <span key={status} className={`${styles.statusBadge} ${styles[`statusBadge${statusClassSuffix(status)}`]}`}>
+          {statusLabels[status]} ({counts[status]})
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function SoundOverlay({ activeSounds }: { activeSounds: string[] }) {
+  if (activeSounds.length === 0) return null;
+
+  return (
+    <div className={styles.soundContainer}>
+      {activeSounds.map((id) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); }}
+          className={styles.soundButton}
+        >
+          🚨 NEW ORDER — Tap to dismiss
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function TabBar({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab: Tab) => void }) {
+  return (
+    <div className={styles.tabBar}>
+      {(['kitchen', 'inventory'] as const).map((tab) => (
+        <button
+          type="button"
+          key={tab}
+          onClick={() => onTabChange(tab)}
+          className={`${styles.tabButton} ${activeTab === tab ? styles.tabActive : styles.tabInactive}`}
+        >
+          {tab === 'kitchen' ? '🔥 Kitchen' : '📦 Inventory'}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function KitchenOrdersView({
+  orders,
+  batchMode,
+  counts,
+  onAccept,
+  onStartPrep,
+  onReady,
+  onDelay,
+  onServed,
+  onPark,
+}: {
+  orders: Order[];
+  batchMode: boolean;
+  counts: Record<OrderStatus, number>;
+  onAccept: (id: string) => void;
+  onStartPrep: (id: string) => void;
+  onReady: (id: string) => void;
+  onDelay: (id: string) => void;
+  onServed: (id: string) => void;
+  onPark: (orderNumber: string) => void;
+}) {
+  return (
+    <>
+      <StatsRow counts={counts} />
+      {batchMode ? (
+        <BatchOrderSections
+          orders={orders}
+          onAccept={onAccept}
+          onStartPrep={onStartPrep}
+          onReady={onReady}
+          onDelay={onDelay}
+          onServed={onServed}
+          onPark={onPark}
+        />
+      ) : (
+        <FlatOrderGrid orders={orders} onAccept={onAccept} onStartPrep={onStartPrep} onReady={onReady} onDelay={onDelay} onServed={onServed} onPark={onPark} />
+      )}
+    </>
+  );
+}
+
+function StatsRow({ counts }: { counts: Record<OrderStatus, number> }) {
+  return (
+    <div className={styles.statsGrid}>
+      {statuses.map((status) => (
+        <div key={status} className={styles.statsCard}>
+          <div className={`${styles.statsCount} ${styles[`statsCount${statusClassSuffix(status)}`]}`}>{counts[status]}</div>
+          <div className={styles.statsLabel}>{statusLabels[status]}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BatchOrderSections({
+  orders,
+  onAccept,
+  onStartPrep,
+  onReady,
+  onDelay,
+  onServed,
+  onPark,
+}: {
+  orders: Order[];
+  onAccept: (id: string) => void;
+  onStartPrep: (id: string) => void;
+  onReady: (id: string) => void;
+  onDelay: (id: string) => void;
+  onServed: (id: string) => void;
+  onPark: (orderNumber: string) => void;
+}) {
+  return (
+    <>
+      {statuses.map((status) => {
+        const group = orders.filter((order) => order.status === status);
+        if (group.length === 0) return null;
+        const overdue = group.filter((order) => status === 'preparing' && isDelayed(order)).length;
+        return (
+          <div key={status} className={styles.batchSectionPadding}>
+            <div className={`${styles.batchGroupHeader} ${styles[`batchGroupHeader${statusClassSuffix(status)}`]}`}>
+              <span className={styles.statusIndicator} />
+              <span>
+                {statusLabels[status]} — {group.length} orders
+              </span>
+              {overdue > 0 && <span className={styles.delayedWarning}>&#9888; {overdue} DELAYED</span>}
+            </div>
+            <div className={styles.ordersGrid}>
+              {group.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  onAccept={() => onAccept(order.id)}
+                  onStartPrep={() => onStartPrep(order.id)}
+                  onReady={() => onReady(order.id)}
+                  onDelay={() => onDelay(order.id)}
+                  onServed={() => onServed(order.id)}
+                  onPark={() => onPark(order.orderNumber)}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function FlatOrderGrid({
+  orders,
+  onAccept,
+  onStartPrep,
+  onReady,
+  onDelay,
+  onServed,
+  onPark,
+}: {
+  orders: Order[];
+  onAccept: (id: string) => void;
+  onStartPrep: (id: string) => void;
+  onReady: (id: string) => void;
+  onDelay: (id: string) => void;
+  onServed: (id: string) => void;
+  onPark: (orderNumber: string) => void;
+}) {
+  return (
+    <div className={styles.ordersGridPadded}>
+      {orders.map((order) => (
+        <OrderCard
+          key={order.id}
+          order={order}
+          onAccept={() => onAccept(order.id)}
+          onStartPrep={() => onStartPrep(order.id)}
+          onReady={() => onReady(order.id)}
+          onDelay={() => onDelay(order.id)}
+          onServed={() => onServed(order.id)}
+          onPark={() => onPark(order.orderNumber)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function InventoryView({
+  inventory,
+  onAddStock,
+  onUseLowStock,
+}: {
+  inventory: InventoryItem[];
+  onAddStock: () => void;
+  onUseLowStock: () => void;
+}) {
+  return (
+    <div className={styles.inventoryContainer}>
+      <div className={styles.inventoryHeader}>
+        <h3 className={styles.inventoryTitle}>📦 Stock Levels</h3>
+        <span className={styles.lowStockCount}>{inventory.filter((item) => item.inStock <= item.threshold).length} low</span>
+      </div>
+      <div className={styles.inventoryGrid}>
+        {inventory.map((item) => {
+          const pct = Math.min(100, (item.inStock / item.threshold) * 100);
+          const isLow = item.inStock <= item.threshold;
+          const stockWidthClassName = stockWidthClass(pct);
+          return (
+            <div key={item.id} className={`${styles.inventoryItem} ${isLow ? styles.inventoryItemLow : styles.inventoryItemNormal}`}>
+              <div className={styles.inventoryItemName}>{item.name}</div>
+              <div className={`${styles.inventoryItemCount} ${isLow ? styles.inventoryItemCountLow : styles.inventoryItemCountNormal}`}>
+                {item.inStock} <span className={styles.inventoryUnit}>units</span>
+              </div>
+              <div className={styles.inventoryThreshold}>
+                Threshold: {item.threshold}
+              </div>
+              <div className={styles.stockProgressBar} />
+              <div className={`${styles.stockProgressFill} ${stockWidthClassName}`} />
+              {isLow && (
+                <div className={styles.lowStockWarning}>
+                  &#9888; LOW STOCK — Restock urgently
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={styles.inventoryControls}>
+        <Button label="+ Add Stock" onClick={onAddStock} />
+        <Button label="− Use Stock" onClick={onUseLowStock} variant="secondary" />
+      </div>
+    </div>
+  );
+}
+
+const bottomNavItems: { key: Tab; label: string; emoji: string }[] = [
+  { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
+  { key: 'inventory', label: 'Inventory', emoji: '📦' },
+];
+
+function BottomNav({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab: Tab) => void }) {
+  return (
+    <nav className={styles.navBar}>
+      {bottomNavItems.map((tab) => (
+        <button
+          key={tab.key}
+          type="button"
+          onClick={() => onTabChange(tab.key)}
+          className={`${styles.navItem} ${activeTab === tab.key ? styles.navItemActive : styles.navItemInactive}`}
+        >
+          <span className={styles.navIcon}>{tab.emoji}</span>
+          <span>{tab.label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+interface OrderCardProps extends HTMLAttributes<HTMLDivElement> {
   order: Order;
   onAccept: () => void;
   onStartPrep: () => void;
@@ -432,9 +614,25 @@ interface OrderCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const SERVICE_LABEL: Record<ServiceType, string> = {
   dine_in: 'DINE IN', 'dine-in': 'DINE IN', takeaway: 'TAKEAWAY', delivery: 'DELIVERY',
 };
-const SERVICE_COLOR: Record<ServiceType, string> = {
-  dine_in: '#9c27b0', 'dine-in': '#9c27b0', takeaway: '#ff9800', delivery: '#2196f3',
-};
+
+function statusClassSuffix(status: OrderStatus): string {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function serviceClassSuffix(serviceType: ServiceType): string {
+  if (serviceType === 'dine-in' || serviceType === 'dine_in') return 'DineIn';
+  return serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
+}
+
+function progressWidthClass(value: number): string {
+  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
+  return styles[`progressFill${bucket}`];
+}
+
+function stockWidthClass(value: number): string {
+  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
+  return styles[`stockProgressFill${bucket}`];
+}
 
 function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, onPark }: OrderCardProps) {
   const mins = orderElapsed(order);
@@ -442,12 +640,12 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
   const delay = !!(order.status === 'preparing' && mins > order.estPrepMins);
   const progress = Math.min(100, Math.round((mins / order.estPrepMins) * 100));
 
-  const serviceColor = SERVICE_COLOR[order.serviceType];
-  const statusColorValue = getStatusColor(order.status);
+  const orderCardClassName = `${styles.orderCard} ${delay ? styles.orderCardDelayed : styles[`orderCard${statusClassSuffix(order.status)}`]}`;
+  const serviceLabelClassName = `${styles.serviceLabel} ${styles[`serviceLabel${serviceClassSuffix(order.serviceType)}`]}`;
+  const progressWidthClassName = progressWidthClass(progress);
 
   return (
-    <div style={{ backgroundColor: delay ? '#3b1a1a' : '#2a2a4a', border: `2px solid ${delay ? '#ff4444' : statusColorValue}` }} className={styles.orderCard}>
-      {/* Header */}
+    <div className={orderCardClassName}>
       <div className={styles.orderCardHeader}>
         <div>
           <div className={styles.orderNumber}>#{order.orderNumber}</div>
@@ -455,17 +653,15 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
             {order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
-        <span style={{ background: `${serviceColor}33`, color: serviceColor, border: `1px solid ${serviceColor}66` }} className={styles.serviceLabel}>
+        <span className={serviceLabelClassName}>
           {SERVICE_LABEL[order.serviceType]}
         </span>
       </div>
 
-      {/* Diner / table */}
       {order.table && (
         <div className={styles.dinerInfo}>Guest: {order.diner} &middot; {order.table}</div>
       )}
 
-      {/* Items */}
       <div className={styles.itemsList}>
         {order.items.map((item) => (
           <div key={item.id} className={styles.itemRow}>
@@ -481,26 +677,21 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
         ))}
       </div>
 
-      {/* Timer + delay ──── only when preparing or delayed */}
       {(order.status === 'preparing' || order.status === 'delayed') && (
         <div>
           <div className={styles.timerSection}>
-            <span style={{ color: delay ? '#ff4444' : '#aaaaaa' }}>
+            <span className={delay ? styles.timerDelay : styles.timerNormal}>
               &#9200; {mins}m / ~{order.estPrepMins}m &nbsp;
               {delay && <span className={styles.delayBadge}>&#x26A0; DELAYED</span>}
               {!delay && <span>{ots > 0 ? `${Math.ceil(ots / 60000)}m left` : 'Nearing done'}</span>}
             </span>
           </div>
           <div className={styles.progressBar}>
-            <div
-              style={{ width: `${Math.min(progress, 100)}%` }}
-              className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal}`}
-            />
+            <div className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal} ${progressWidthClassName}`} />
           </div>
         </div>
       )}
 
-      {/* Action buttons ── transition through the workflow */}
       <div className={styles.actionButtons}>
         {order.status === 'new' && (
           <div className={styles.fullWidthButton}>
@@ -525,23 +716,10 @@ function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, o
         )}
         {(order.status === 'new' || order.status === 'accepted') && (
           <div className={styles.parkButton}>
-            <Button
-              label="✕ Park"
-              onClick={onPark}
-              variant="secondary"
-            />
+            <Button label="✕ Park" onClick={onPark} variant="secondary" />
           </div>
         )}
       </div>
     </div>
   );
-}
-
-function getStatusColor(s: OrderStatus): string {
-  const colors: Record<OrderStatus, string> = {
-    new: '#f04e31', accepted: '#ff9800', preparing: '#2196f3',
-    ready: '#4caf50', delayed: '#ff4444', completed: '#444', pickedup: '#ff9800', delivered: '#4caf50',
-    cancelled: '#888',
-  };
-  return colors[s];
 }

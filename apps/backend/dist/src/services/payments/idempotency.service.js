@@ -19,9 +19,10 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const idempotency_entity_1 = require("./idempotency.entity");
 let IdempotencyService = IdempotencyService_1 = class IdempotencyService {
+    idempotencyRepo;
+    logger = new common_1.Logger(IdempotencyService_1.name);
     constructor(idempotencyRepo) {
         this.idempotencyRepo = idempotencyRepo;
-        this.logger = new common_1.Logger(IdempotencyService_1.name);
     }
     async validateOrCreate(key, operation, userId, requestPayload) {
         if (!key) {
@@ -69,4 +70,3 @@ exports.IdempotencyService = IdempotencyService = IdempotencyService_1 = __decor
     __param(0, (0, typeorm_1.InjectRepository)(idempotency_entity_1.IdempotencyEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], IdempotencyService);
-//# sourceMappingURL=idempotency.service.js.map

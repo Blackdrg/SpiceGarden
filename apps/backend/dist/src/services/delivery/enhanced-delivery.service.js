@@ -24,6 +24,15 @@ const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.
 const geo_service_1 = require("../../services/geo/geo.service");
 const order_interface_1 = require("../../shared/domain/order.interface");
 let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDeliveryService {
+    driverRepo;
+    orderRepo;
+    batchRepo;
+    driverAssignmentRepo;
+    geoService;
+    dataSource;
+    logger = new common_1.Logger(EnhancedDeliveryService_1.name);
+    surgeZones = new Map();
+    incentiveRules = new Map();
     constructor(driverRepo, orderRepo, batchRepo, driverAssignmentRepo, geoService, dataSource) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
@@ -31,9 +40,6 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         this.driverAssignmentRepo = driverAssignmentRepo;
         this.geoService = geoService;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(EnhancedDeliveryService_1.name);
-        this.surgeZones = new Map();
-        this.incentiveRules = new Map();
         this.initializeSurgeZones();
         this.initializeIncentiveRules();
     }
@@ -100,7 +106,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
                 driverId,
                 status: order_interface_1.OrderStatus.DRIVER_ASSIGNED,
             });
-            await manager.increment(driver_entity_1.DriverEntity, driverId, 'totalDeliveries', 0);
+            await manager.increment(driver_entity_1.DriverEntity, { id: driverId }, 'totalDeliveries', 1);
             const assignment = manager.create(driver_assignment_entity_1.DriverAssignmentEntity, {
                 driverId: driverId,
                 orderId: orderId,
@@ -204,11 +210,11 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
             return { isFake: true, reason: 'Invalid GPS coordinates', driverId };
         }
-        if (speed !== undefined && speed > 200) {
+        if (speed !== undefined && speed >= 200) {
             return { isFake: true, reason: 'Unrealistic speed', driverId };
         }
         const timestamp = typeof location.timestamp === 'string' ? Number(location.timestamp) : location.timestamp;
-        if (timestamp && Date.now() - timestamp > 60 * 60 * 1000 && speed && speed > 30) {
+        if (timestamp && Date.now() - timestamp >= 60 * 1000 && speed && speed > 30) {
             return { isFake: true, reason: 'GPS staleness', driverId };
         }
         return { isFake: false, reason: 'GPS coordinates accepted', driverId };
@@ -254,7 +260,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
     }
     async autoReassignOnNoShow(orderId, previousDriverId) {
         const order = await this.orderRepo.findOne({ where: { id: orderId } });
-        if (!order)
+        if (!order || order.status !== order_interface_1.OrderStatus.CANCELLED)
             return false;
         const assignment = await this.driverAssignmentRepo.findOne({ where: { order: { id: orderId } } });
         if (!assignment)
@@ -320,6 +326,7 @@ exports.EnhancedDeliveryService = EnhancedDeliveryService = EnhancedDeliveryServ
     __param(1, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(batch_entity_1.BatchEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -327,4 +334,3 @@ exports.EnhancedDeliveryService = EnhancedDeliveryService = EnhancedDeliveryServ
         geo_service_1.GeoService,
         typeorm_2.DataSource])
 ], EnhancedDeliveryService);
-//# sourceMappingURL=enhanced-delivery.service.js.map

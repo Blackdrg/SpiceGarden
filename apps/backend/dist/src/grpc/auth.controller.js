@@ -31,4 +31,3 @@ __decorate([
 exports.AuthGrpcController = AuthGrpcController = __decorate([
     (0, common_1.Controller)()
 ], AuthGrpcController);
-//# sourceMappingURL=auth.controller.js.map

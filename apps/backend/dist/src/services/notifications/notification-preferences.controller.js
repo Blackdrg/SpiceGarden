@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const notification_preferences_service_1 = require("./notification-preferences.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 let NotificationPreferencesController = class NotificationPreferencesController {
+    prefsService;
     constructor(prefsService) {
         this.prefsService = prefsService;
     }
@@ -50,4 +51,3 @@ exports.NotificationPreferencesController = NotificationPreferencesController = 
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [notification_preferences_service_1.NotificationPreferencesService])
 ], NotificationPreferencesController);
-//# sourceMappingURL=notification-preferences.controller.js.map

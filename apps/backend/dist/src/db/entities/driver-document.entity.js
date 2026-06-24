@@ -28,6 +28,18 @@ var DocumentStatus;
     DocumentStatus["REJECTED"] = "rejected";
 })(DocumentStatus || (exports.DocumentStatus = DocumentStatus = {}));
 let DriverDocumentEntity = class DriverDocumentEntity {
+    id;
+    driverId;
+    driver;
+    documentType;
+    documentUrl;
+    status;
+    verificationNotes;
+    verifiedBy;
+    verifiedAt;
+    expiryDate;
+    uploadedAt;
+    updatedAt;
 };
 exports.DriverDocumentEntity = DriverDocumentEntity;
 __decorate([
@@ -81,4 +93,3 @@ __decorate([
 exports.DriverDocumentEntity = DriverDocumentEntity = __decorate([
     (0, typeorm_1.Entity)('driver_documents')
 ], DriverDocumentEntity);
-//# sourceMappingURL=driver-document.entity.js.map

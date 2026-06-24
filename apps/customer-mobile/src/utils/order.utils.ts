@@ -39,7 +39,7 @@ export const isTrackable = (status: string): boolean => {
  */
 import { Order } from '../services/order.service';
 
-export const groupOrdersByStatus = (orders: Order[]): Record<string, Order[]> => {
+const groupOrdersByStatus = (orders: Order[]): Record<string, Order[]> => {
   return orders.reduce((acc, order) => {
     const status = order.status || 'unknown';
     if (!acc[status]) {
@@ -54,7 +54,7 @@ export const groupOrdersByStatus = (orders: Order[]): Record<string, Order[]> =>
 /**
  * Sort orders by date (newest first)
  */
-export const sortOrdersByDate = (orders: Order[]): Order[] => {
+const sortOrdersByDate = (orders: Order[]): Order[] => {
   return [...orders].sort((a, b) => {
     const dateA = new Date(a.createdAt ?? a.date).getTime();
   const dateB = new Date(b.createdAt ?? b.date).getTime();

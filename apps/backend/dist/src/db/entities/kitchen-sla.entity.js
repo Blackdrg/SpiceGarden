@@ -13,6 +13,17 @@ exports.KitchenSLAEntity = void 0;
 const typeorm_1 = require("typeorm");
 const restaurant_branch_entity_1 = require("./restaurant-branch.entity");
 let KitchenSLAEntity = class KitchenSLAEntity {
+    id;
+    metricName;
+    value;
+    unit;
+    targetValue;
+    targetUnit;
+    measurementPeriod;
+    measuredAt;
+    branch;
+    createdAt;
+    updatedAt;
 };
 exports.KitchenSLAEntity = KitchenSLAEntity;
 __decorate([
@@ -62,4 +73,3 @@ __decorate([
 exports.KitchenSLAEntity = KitchenSLAEntity = __decorate([
     (0, typeorm_1.Entity)('kitchen_sla')
 ], KitchenSLAEntity);
-//# sourceMappingURL=kitchen-sla.entity.js.map

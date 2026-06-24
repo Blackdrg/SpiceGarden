@@ -20,30 +20,33 @@ const typeorm_2 = require("typeorm");
 const support_ticket_entity_1 = require("../../db/entities/support-ticket.entity");
 const user_entity_1 = require("../../db/entities/user.entity");
 let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
+    ticketRepo;
+    userRepo;
+    dataSource;
+    logger = new common_1.Logger(TicketRoutingService_1.name);
+    categoryRules = new Map([
+        [support_ticket_entity_1.TicketCategory.ORDER, ['support_agent', 'admin']],
+        [support_ticket_entity_1.TicketCategory.PAYMENT, ['finance_agent', 'admin']],
+        [support_ticket_entity_1.TicketCategory.DELIVERY, ['delivery_coordinator', 'admin']],
+        [support_ticket_entity_1.TicketCategory.QUALITY, ['quality_agent', 'admin']],
+        [support_ticket_entity_1.TicketCategory.ACCOUNT, ['support_agent', 'admin']],
+        [support_ticket_entity_1.TicketCategory.TECHNICAL, ['tech_support', 'admin']],
+    ]);
+    prioritySLA = new Map([
+        [support_ticket_entity_1.TicketPriority.LOW, 48],
+        [support_ticket_entity_1.TicketPriority.MEDIUM, 24],
+        [support_ticket_entity_1.TicketPriority.HIGH, 4],
+        [support_ticket_entity_1.TicketPriority.URGENT, 1],
+    ]);
     constructor(ticketRepo, userRepo, dataSource) {
         this.ticketRepo = ticketRepo;
         this.userRepo = userRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(TicketRoutingService_1.name);
-        this.categoryRules = new Map([
-            [support_ticket_entity_1.TicketCategory.ORDER, ['support_agent', 'admin']],
-            [support_ticket_entity_1.TicketCategory.PAYMENT, ['finance_agent', 'admin']],
-            [support_ticket_entity_1.TicketCategory.DELIVERY, ['delivery_coordinator', 'admin']],
-            [support_ticket_entity_1.TicketCategory.QUALITY, ['quality_agent', 'admin']],
-            [support_ticket_entity_1.TicketCategory.ACCOUNT, ['support_agent', 'admin']],
-            [support_ticket_entity_1.TicketCategory.TECHNICAL, ['tech_support', 'admin']],
-        ]);
-        this.prioritySLA = new Map([
-            [support_ticket_entity_1.TicketPriority.LOW, 48],
-            [support_ticket_entity_1.TicketPriority.MEDIUM, 24],
-            [support_ticket_entity_1.TicketPriority.HIGH, 4],
-            [support_ticket_entity_1.TicketPriority.URGENT, 1],
-        ]);
     }
     async routeTicket(ticketId) {
         const ticket = await this.ticketRepo.findOne({
             where: { id: ticketId },
-            relations: ['assignedTo'],
+            relations: { assignedTo: true },
         });
         if (!ticket) {
             throw new Error('Ticket not found');
@@ -64,7 +67,11 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
                 status: support_ticket_entity_1.TicketStatus.OPEN,
             });
         }
-        return this.ticketRepo.findOne({ where: { id: ticketId } });
+        const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
+        if (!result) {
+            throw new Error('Ticket not found');
+        }
+        return result;
     }
     async findAvailableAgent(roles, priority) {
         const agents = await this.userRepo.find({
@@ -87,7 +94,11 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
             escalatedAt: new Date(),
             priority: this.getEscalatedPriority(ticket.priority, newLevel),
         });
-        return this.ticketRepo.findOne({ where: { id: ticketId } });
+        const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
+        if (!result) {
+            throw new Error('Ticket not found');
+        }
+        return result;
     }
     getEscalationTarget(level) {
         const targets = ['senior_agent', 'team_lead', 'manager', 'admin'];
@@ -138,8 +149,8 @@ exports.TicketRoutingService = TicketRoutingService = TicketRoutingService_1 = _
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(support_ticket_entity_1.SupportTicketEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __param(2, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], TicketRoutingService);
-//# sourceMappingURL=ticket-routing.service.js.map

@@ -20,11 +20,14 @@ const typeorm_2 = require("typeorm");
 const commission_rule_entity_1 = require("../../db/entities/commission-rule.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let CommissionService = CommissionService_1 = class CommissionService {
+    commissionRepo;
+    restaurantRepo;
+    dataSource;
+    logger = new common_1.Logger(CommissionService_1.name);
     constructor(commissionRepo, restaurantRepo, dataSource) {
         this.commissionRepo = commissionRepo;
         this.restaurantRepo = restaurantRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(CommissionService_1.name);
     }
     async createCommissionRule(restaurantId, ruleData) {
         const restaurant = await this.restaurantRepo.findOne({ where: { id: restaurantId } });
@@ -82,7 +85,7 @@ let CommissionService = CommissionService_1 = class CommissionService {
             throw new common_1.NotFoundException('Commission rule not found');
         }
         await this.commissionRepo.update(ruleId, updateData);
-        return this.commissionRepo.findOne({ where: { id: ruleId } });
+        return (await this.commissionRepo.findOne({ where: { id: ruleId } }));
     }
     async deactivateRule(ruleId) {
         return this.updateCommissionRule(ruleId, { status: commission_rule_entity_1.CommissionStatus.CANCELLED });
@@ -110,4 +113,3 @@ exports.CommissionService = CommissionService = CommissionService_1 = __decorate
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], CommissionService);
-//# sourceMappingURL=commission.service.js.map

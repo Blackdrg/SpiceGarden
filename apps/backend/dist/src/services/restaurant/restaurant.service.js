@@ -19,6 +19,9 @@ const typeorm_2 = require("typeorm");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 let RestaurantService = class RestaurantService {
+    restaurantRepo;
+    branchRepo;
+    dataSource;
     constructor(restaurantRepo, branchRepo, dataSource) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
@@ -26,7 +29,7 @@ let RestaurantService = class RestaurantService {
     }
     async getAllRestaurants() {
         return this.restaurantRepo.find({
-            relations: ['branches'],
+            relations: { branches: true },
             where: { status: 'active' },
         });
     }
@@ -50,21 +53,27 @@ let RestaurantService = class RestaurantService {
             catch (e) {
                 return this.branchRepo.find({
                     where: { isOnline: true },
-                    relations: ['restaurant'],
+                    relations: { restaurant: true },
                     take: 20,
                 });
             }
         }
         return this.branchRepo.find({
             where: { isOnline: true },
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             take: 20,
         });
     }
     async getRestaurantDetails(slug) {
         return this.restaurantRepo.findOne({
             where: { slug },
-            relations: ['branches', 'branches.categories', 'branches.categories.items'],
+            relations: {
+                branches: {
+                    categories: {
+                        items: true
+                    }
+                }
+            },
         });
     }
     async searchRestaurants(query) {
@@ -73,7 +82,7 @@ let RestaurantService = class RestaurantService {
                 { name: (0, typeorm_2.Like)(`%${query}%`) },
                 { description: (0, typeorm_2.Like)(`%${query}%`) },
             ],
-            relations: ['branches'],
+            relations: { branches: true },
         });
     }
     async updateBranchStatus(branchId, isOnline) {
@@ -85,8 +94,8 @@ exports.RestaurantService = RestaurantService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
+    __param(2, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], RestaurantService);
-//# sourceMappingURL=restaurant.service.js.map

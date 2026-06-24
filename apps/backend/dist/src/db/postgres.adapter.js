@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 let PostgresAdapter = class PostgresAdapter {
+    dataSource;
     constructor(dataSource) {
         this.dataSource = dataSource;
     }
@@ -47,4 +48,3 @@ exports.PostgresAdapter = PostgresAdapter = __decorate([
     __param(0, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.DataSource])
 ], PostgresAdapter);
-//# sourceMappingURL=postgres.adapter.js.map

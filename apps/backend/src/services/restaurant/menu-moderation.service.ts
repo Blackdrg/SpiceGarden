@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, FindOptionsWhere } from 'typeorm';
 import { MenuModerationEntity, ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
@@ -16,6 +16,7 @@ export class MenuModerationService {
     private itemRepo: Repository<MenuItemEntity>,
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
@@ -84,7 +85,7 @@ export class MenuModerationService {
 
     return this.moderationRepo.find({
       where,
-      relations: ['menuItem', 'restaurant'],
+      relations: { menuItem: true, restaurant: true },
       order: { createdAt: 'DESC' },
     });
   }
@@ -113,7 +114,7 @@ export class MenuModerationService {
       await this.itemRepo.update(moderation.menuItemId, { status: 'rejected' });
     }
 
-    return this.moderationRepo.findOne({ where: { id: moderationId } });
+    return (await this.moderationRepo.findOne({ where: { id: moderationId } }))!;
   }
 
   async bulkApprove(moderationIds: string[], moderatorId: string): Promise<void> {
@@ -122,7 +123,7 @@ export class MenuModerationService {
       { status: ModerationStatus.APPROVED, moderatorId, reviewedAt: new Date() },
     );
 
-    const moderations = await this.moderationRepo.findByIds(moderationIds);
+    const moderations = await this.moderationRepo.findBy({ id: In(moderationIds) });
     for (const m of moderations) {
       await this.itemRepo.update(m.menuItemId, { status: 'available' });
     }

@@ -1,6 +1,6 @@
 import { CartItem, Order, OrderItem } from '../services/order.service';
 
-export function isValidCartItem(item: unknown): item is CartItem {
+function isValidCartItem(item: unknown): item is CartItem {
   if (typeof item !== 'object' || item === null) return false;
   const anyItem = item as Record<string, unknown>;
   return (
@@ -24,7 +24,7 @@ export function validateCart(cartData: unknown): CartItem[] {
   return (cartData as unknown[]).filter((item): item is CartItem => isValidCartItem(item));
 }
 
-export function isValidOrder(order: unknown): order is Order {
+function isValidOrder(order: unknown): order is Order {
   if (typeof order !== 'object' || order === null) return false;
   const anyOrder = order as Record<string, unknown>;
   return (
@@ -40,7 +40,7 @@ export function isValidOrder(order: unknown): order is Order {
   );
 }
 
-export function isValidOrderItem(item: unknown): item is OrderItem {
+function isValidOrderItem(item: unknown): item is OrderItem {
   if (typeof item !== 'object' || item === null) return false;
   const anyItem = item as Record<string, unknown>;
   return (
@@ -55,14 +55,12 @@ export function isValidOrderItem(item: unknown): item is OrderItem {
   );
 }
 
-export function sanitizeOrderItems(items: OrderItem[]): OrderItem[] {
-  return items
-    .map(item => ({
-      ...item,
-      quantity: Math.max(1, item.quantity),
-      price: Math.max(0, item.price),
-    }))
-    .filter(item => item.quantity > 0 && item.price >= 0);
+function sanitizeOrderItems(items: OrderItem[]): OrderItem[] {
+  return items.reduce<OrderItem[]>((acc, item) => {
+    const cleaned = { ...item, quantity: Math.max(1, item.quantity), price: Math.max(0, item.price) };
+    if (cleaned.quantity > 0 && cleaned.price >= 0) acc.push(cleaned);
+    return acc;
+  }, []);
 }
 
 export function isValidOrderId(orderId: unknown): orderId is string {
@@ -91,7 +89,7 @@ export function clampQuantity(quantity: number, max = 99): number {
   return Math.max(1, Math.min(quantity, max));
 }
 
-export function clampPrice(price: number): number {
+function clampPrice(price: number): number {
   if (!Number.isFinite(price)) return 0;
   return Math.max(0, Math.round(price * 100) / 100);
 }

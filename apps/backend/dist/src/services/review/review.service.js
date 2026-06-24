@@ -18,6 +18,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const review_schema_1 = require("../../db/schemas/review.schema");
 let ReviewService = class ReviewService {
+    reviewModel;
     constructor(reviewModel) {
         this.reviewModel = reviewModel;
     }
@@ -52,4 +53,3 @@ exports.ReviewService = ReviewService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)(review_schema_1.ReviewDocument.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], ReviewService);
-//# sourceMappingURL=review.service.js.map

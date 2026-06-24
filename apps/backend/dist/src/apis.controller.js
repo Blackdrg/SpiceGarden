@@ -16,6 +16,7 @@ exports.ApisController = void 0;
 const common_1 = require("@nestjs/common");
 const apis_service_1 = require("./apis.service");
 let ApisController = class ApisController {
+    apisService;
     constructor(apisService) {
         this.apisService = apisService;
     }
@@ -46,4 +47,3 @@ exports.ApisController = ApisController = __decorate([
     (0, common_1.Controller)('apis'),
     __metadata("design:paramtypes", [apis_service_1.ApisService])
 ], ApisController);
-//# sourceMappingURL=apis.controller.js.map

@@ -10,4 +10,3 @@ var NotificationStatus;
     NotificationStatus["RETRYING"] = "retrying";
     NotificationStatus["CANCELLED"] = "cancelled";
 })(NotificationStatus || (exports.NotificationStatus = NotificationStatus = {}));
-//# sourceMappingURL=notification-status.enum.js.map

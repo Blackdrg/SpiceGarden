@@ -24,6 +24,20 @@ var CommissionStatus;
     CommissionStatus["CANCELLED"] = "cancelled";
 })(CommissionStatus || (exports.CommissionStatus = CommissionStatus = {}));
 let CommissionRuleEntity = class CommissionRuleEntity {
+    id;
+    restaurantId;
+    restaurant;
+    type;
+    value;
+    minOrderValue;
+    maxOrderValue;
+    validFrom;
+    validTo;
+    status;
+    applicableCategories;
+    excludedItems;
+    createdAt;
+    updatedAt;
 };
 exports.CommissionRuleEntity = CommissionRuleEntity;
 __decorate([
@@ -85,4 +99,3 @@ __decorate([
 exports.CommissionRuleEntity = CommissionRuleEntity = __decorate([
     (0, typeorm_1.Entity)('commission_rules')
 ], CommissionRuleEntity);
-//# sourceMappingURL=commission-rule.entity.js.map

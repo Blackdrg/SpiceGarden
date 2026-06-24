@@ -13,6 +13,13 @@ exports.MenuAddonEntity = void 0;
 const typeorm_1 = require("typeorm");
 const menu_item_entity_1 = require("./menu-item.entity");
 let MenuAddonEntity = class MenuAddonEntity {
+    id;
+    menuItemId;
+    menuItem;
+    addonName;
+    price;
+    createdAt;
+    updatedAt;
 };
 exports.MenuAddonEntity = MenuAddonEntity;
 __decorate([
@@ -46,4 +53,3 @@ __decorate([
 exports.MenuAddonEntity = MenuAddonEntity = __decorate([
     (0, typeorm_1.Entity)('menu_addons')
 ], MenuAddonEntity);
-//# sourceMappingURL=menu-addon.entity.js.map

@@ -20,6 +20,9 @@ const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
 const menu_category_entity_1 = require("../../db/entities/menu-category.entity");
 const menu_addon_entity_1 = require("../../db/entities/menu-addon.entity");
 let MenuCustomizationService = class MenuCustomizationService {
+    menuItemRepo;
+    categoryRepo;
+    addonRepo;
     constructor(menuItemRepo, categoryRepo, addonRepo) {
         this.menuItemRepo = menuItemRepo;
         this.categoryRepo = categoryRepo;
@@ -29,7 +32,7 @@ let MenuCustomizationService = class MenuCustomizationService {
         const whereClause = { restaurantId };
         const items = await this.menuItemRepo.find({
             where: whereClause,
-            relations: ['addons', 'category'],
+            relations: { addons: true, category: true },
             order: { createdAt: 'DESC' },
         });
         return items.map(item => ({
@@ -51,7 +54,7 @@ let MenuCustomizationService = class MenuCustomizationService {
     async getItemDetails(itemId) {
         const item = await this.menuItemRepo.findOne({
             where: { id: itemId },
-            relations: ['addons', 'category'],
+            relations: { addons: true, category: true },
         });
         if (!item) {
             return null;
@@ -93,4 +96,3 @@ exports.MenuCustomizationService = MenuCustomizationService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], MenuCustomizationService);
-//# sourceMappingURL=menu-customization.service.js.map

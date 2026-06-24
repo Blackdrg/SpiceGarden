@@ -13,18 +13,19 @@ exports.DatabaseFailoverService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 let DatabaseFailoverService = class DatabaseFailoverService {
+    dataSource;
+    state = {
+        isPrimaryDown: false,
+        failoverStartedAt: null,
+        degradedMode: false,
+        reconnectionAttempts: 0,
+        lastSuccessfulConnection: new Date(),
+    };
+    maxReconnectionAttempts = 10;
+    reconnectionDelayMs = 5000;
+    healthCheckInterval = null;
     constructor(dataSource) {
         this.dataSource = dataSource;
-        this.state = {
-            isPrimaryDown: false,
-            failoverStartedAt: null,
-            degradedMode: false,
-            reconnectionAttempts: 0,
-            lastSuccessfulConnection: new Date(),
-        };
-        this.maxReconnectionAttempts = 10;
-        this.reconnectionDelayMs = 5000;
-        this.healthCheckInterval = null;
     }
     onModuleInit() {
         this.startHealthCheck();
@@ -131,4 +132,3 @@ exports.DatabaseFailoverService = DatabaseFailoverService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [typeorm_1.DataSource])
 ], DatabaseFailoverService);
-//# sourceMappingURL=database-failover.service.js.map

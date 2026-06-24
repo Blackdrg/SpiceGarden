@@ -24,6 +24,13 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 const commission_rule_entity_1 = require("../../db/entities/commission-rule.entity");
 const gst_detail_entity_1 = require("../../db/entities/gst-detail.entity");
 let PayoutService = PayoutService_1 = class PayoutService {
+    payoutRepo;
+    orderRepo;
+    restaurantRepo;
+    commissionRepo;
+    gstRepo;
+    dataSource;
+    logger = new common_1.Logger(PayoutService_1.name);
     constructor(payoutRepo, orderRepo, restaurantRepo, commissionRepo, gstRepo, dataSource) {
         this.payoutRepo = payoutRepo;
         this.orderRepo = orderRepo;
@@ -31,7 +38,6 @@ let PayoutService = PayoutService_1 = class PayoutService {
         this.commissionRepo = commissionRepo;
         this.gstRepo = gstRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(PayoutService_1.name);
     }
     async generatePayoutReport(restaurantId, periodStart, periodEnd) {
         const orders = await this.orderRepo.find({
@@ -40,7 +46,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
                 status: order_interface_1.OrderStatus.DELIVERED,
                 createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
             },
-            relations: ['gstDetail'],
+            relations: { gstDetail: true },
         });
         const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
         const commissionRules = await this.commissionRepo.find({
@@ -104,7 +110,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
             payoutReference: reference,
             payoutDate: new Date(),
         });
-        return this.payoutRepo.findOne({ where: { id: payoutId } });
+        return (await this.payoutRepo.findOne({ where: { id: payoutId } }));
     }
     async getPendingPayouts(restaurantId) {
         const where = { status: payout_report_entity_1.PayoutStatus.PENDING };
@@ -113,7 +119,7 @@ let PayoutService = PayoutService_1 = class PayoutService {
         }
         return this.payoutRepo.find({
             where,
-            relations: ['restaurant'],
+            relations: { restaurant: true },
             order: { createdAt: 'ASC' },
         });
     }
@@ -144,6 +150,7 @@ exports.PayoutService = PayoutService = PayoutService_1 = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(commission_rule_entity_1.CommissionRuleEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(gst_detail_entity_1.GSTDetailEntity)),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -151,4 +158,3 @@ exports.PayoutService = PayoutService = PayoutService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], PayoutService);
-//# sourceMappingURL=payout.service.js.map

@@ -21,6 +21,10 @@ const user_entity_1 = require("../../db/entities/user.entity");
 const driver_entity_1 = require("../../db/entities/driver.entity");
 const audit_log_entity_1 = require("../../db/entities/audit-log.entity");
 let AdminService = class AdminService {
+    orderRepo;
+    userRepo;
+    driverRepo;
+    auditRepo;
     constructor(orderRepo, userRepo, driverRepo, auditRepo) {
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
@@ -127,4 +131,3 @@ exports.AdminService = AdminService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], AdminService);
-//# sourceMappingURL=admin.service.js.map

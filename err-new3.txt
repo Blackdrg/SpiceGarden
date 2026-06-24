@@ -1,0 +1,72 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m125[0m:[93m21[0m - [91merror[0m[90m TS2352: [0mConversion of type 
+'{ status: "unknown_status"; }' to type 'OrderEntity' may be a mistake because neither type sufficiently overlaps with 
+the other. If this was intentional, convert the expression to 'unknown' first.
+      Type '{ status: "unknown_status"; }' is missing the following properties from type 'OrderEntity': id, items, 
+userId, restaurantId, and 18 more.
+
+    [7m125[0m       const order = { status: 'unknown_status' } as OrderEntity;
+    [7m   [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL test/payment-edge-cases.service.spec.ts
+  ● PaymentService › createPaymentIntent › should throw when amount exceeds max
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: "payment_intent_failed", "user-1", 10000, "usd", "any", "", false, undefined, "Payment amount exceeds maximum 
+allowed: 5000"
+
+    [0m [90m 110 |[39m       [36mawait[39m 
+expect(service[33m.[39mcreatePaymentIntent([35m10000[39m[33m,[39m [32m'usd'[39m[33m,[39m [32m'user-1'[39m))
+     [90m 111 |[39m         [33m.[39mrejects[33m.[39mtoThrow([33mBadRequestException[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 112 |[39m       
+expect(auditService[33m.[39mlogPaymentEvent)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m     |[39m                                                [31m[1m^[22m[39m
+     [90m 113 |[39m     })[33m;[39m
+     [90m 114 |[39m
+     [90m 115 |[39m     it([32m'should throw when amount is zero or negative'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (test/payment-edge-cases.service.spec.ts:112:48)
+
+  ● PaymentService › refundPayment › should process refund successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "payment_refunded", "user-1", 50, "usd", "stripe", "pi_1", true, undefined, "Reason: 
+requested_by_customer"
+    Received: "payment_refunded", "user-1", 500, "usd", "stripe", "pi_1", true, undefined, "Reason: 
+requested_by_customer"
+
+    Number of calls: 1
+
+    [0m [90m 229 |[39m
+     [90m 230 |[39m       expect(result[33m.[39mid)[33m.[39mtoBe([32m're_1'[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 231 |[39m       
+expect(auditService[33m.[39mlogPaymentEvent)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                            [31m[1m^[22m[39m
+     [90m 232 |[39m         [32m'payment_refunded'[39m[33m,[39m [32m'user-1'[39m[33m,[39m 
+[35m50[39m[33m,[39m [32m'usd'[39m[33m,[39m [32m'stripe'[39m[33m,[39m [32m'pi_1'[39m[33m,[39m 
+[36mtrue[39m[33m,[39m undefined[33m,[39m [32m'Reason: requested_by_customer'[39m
+     [90m 233 |[39m       )[33m;[39m
+     [90m 234 |[39m       
+expect(ledgerService[33m.[39mcreateTransaction)[33m.[39mtoHaveBeenCalled()[33m;[39m[0m
+
+      at Object.<anonymous> (test/payment-edge-cases.service.spec.ts:231:44)
+
+Test Suites: 2 failed, 2 total
+Tests:       2 failed, 22 passed, 24 total
+Snapshots:   0 total
+Time:        16.722 s
+Ran all test suites matching /test\\refund.service.spec.ts|test\\payment-edge-cases.service.spec.ts/i.

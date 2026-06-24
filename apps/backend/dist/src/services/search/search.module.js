@@ -22,4 +22,3 @@ exports.SearchServiceModule = SearchServiceModule = __decorate([
         exports: [search_service_1.SearchService],
     })
 ], SearchServiceModule);
-//# sourceMappingURL=search.module.js.map

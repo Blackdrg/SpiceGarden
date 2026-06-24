@@ -19,4 +19,3 @@ exports.MetricsModule = MetricsModule = __decorate([
         providers: [metrics_service_1.MetricsService],
     })
 ], MetricsModule);
-//# sourceMappingURL=metrics.module.js.map

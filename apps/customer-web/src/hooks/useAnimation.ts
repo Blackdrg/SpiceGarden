@@ -11,13 +11,9 @@ export const useEnterAnimation = (show: boolean, type = 'fade', duration = 300) 
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    if (show) {
-      // Trigger animation after a slight delay to ensure element is mounted
-      const timer = setTimeout(() => setAnimate(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setAnimate(false);
-    }
+    if (!show) return;
+    const timer = setTimeout(() => setAnimate(true), 50);
+    return () => clearTimeout(timer);
   }, [show]);
 
   const baseStyle = {
@@ -52,7 +48,7 @@ export const useEnterAnimation = (show: boolean, type = 'fade', duration = 300) 
  * @param {boolean} prefersReducedMotion - Whether user prefers reduced motion
  * @returns {Object} Hover style object
  */
-export const useHoverAnimation = (prefersReducedMotion: boolean) => {
+const useHoverAnimation = (prefersReducedMotion: boolean) => {
   if (prefersReducedMotion) {
     return {};
   }

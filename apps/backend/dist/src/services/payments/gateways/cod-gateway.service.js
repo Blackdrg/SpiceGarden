@@ -18,9 +18,7 @@ function safeParse(json) {
     }
 }
 let CashOnDeliveryGateway = CashOnDeliveryGateway_1 = class CashOnDeliveryGateway {
-    constructor() {
-        this.logger = new common_1.Logger(CashOnDeliveryGateway_1.name);
-    }
+    logger = new common_1.Logger(CashOnDeliveryGateway_1.name);
     async createPaymentIntent(amount, currency = 'inr', userId = null, metadata = {}) {
         const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const meta = metadata;
@@ -83,4 +81,3 @@ exports.CashOnDeliveryGateway = CashOnDeliveryGateway;
 exports.CashOnDeliveryGateway = CashOnDeliveryGateway = CashOnDeliveryGateway_1 = __decorate([
     (0, common_1.Injectable)()
 ], CashOnDeliveryGateway);
-//# sourceMappingURL=cod-gateway.service.js.map

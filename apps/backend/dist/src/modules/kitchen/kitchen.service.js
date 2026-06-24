@@ -30,6 +30,20 @@ const menu_item_availability_entity_1 = require("../../db/entities/menu-item-ava
 const order_entity_1 = require("../../db/entities/order.entity");
 const order_item_entity_1 = require("../../db/entities/order-item.entity");
 let KitchenService = KitchenService_1 = class KitchenService {
+    inventoryRepo;
+    recipeRepo;
+    batchRepo;
+    foodPrepRepo;
+    slaRepo;
+    supplierRepo;
+    branchRepo;
+    inventoryAlertRepo;
+    slaAlertRepo;
+    menuItemAvailabilityRepo;
+    orderRepo;
+    orderItemRepo;
+    dataSource;
+    logger = new common_1.Logger(KitchenService_1.name);
     constructor(inventoryRepo, recipeRepo, batchRepo, foodPrepRepo, slaRepo, supplierRepo, branchRepo, inventoryAlertRepo, slaAlertRepo, menuItemAvailabilityRepo, orderRepo, orderItemRepo, dataSource) {
         this.inventoryRepo = inventoryRepo;
         this.recipeRepo = recipeRepo;
@@ -44,42 +58,19 @@ let KitchenService = KitchenService_1 = class KitchenService {
         this.orderRepo = orderRepo;
         this.orderItemRepo = orderItemRepo;
         this.dataSource = dataSource;
-        this.logger = new common_1.Logger(KitchenService_1.name);
     }
     async checkAndCreateInventoryAlert(itemId) {
         try {
             const item = await this.inventoryRepo.findOne({
                 where: { id: itemId },
-                relations: ['branch']
-            });
-            if (!item)
-                return;
-            if (item.currentStock === 0) {
-                await this.createInventoryAlert(item.id, 'out_of_stock', item.currentStock, item.lowStockThreshold);
-            }
-            else if (item.currentStock <= item.lowStockThreshold) {
-                await this.createInventoryAlert(item.id, 'low_stock', item.currentStock, item.lowStockThreshold);
-            }
-            else {
-                await this.resolveInventoryAlerts(item.id, ['low_stock', 'out_of_stock']);
-            }
-        }
-        catch (error) {
-            this.logger.error(`Error checking inventory alerts for item ${itemId}`, error);
-        }
-    }
-    async createInventoryAlert(itemId, alertType, currentLevel, thresholdLevel) {
-        try {
-            const item = await this.inventoryRepo.findOne({
-                where: { id: itemId },
-                relations: ['branch']
+                relations: { branch: true }
             });
             if (!item || !item.branch)
                 return;
             const existingAlert = await this.inventoryAlertRepo.findOne({
                 where: {
                     inventoryItem: { id: itemId },
-                    alertType,
+                    alertType: (0, typeorm_2.In)(['out_of_stock', 'low_stock']),
                     isResolved: false
                 }
             });
@@ -87,12 +78,12 @@ let KitchenService = KitchenService_1 = class KitchenService {
                 const alert = this.inventoryAlertRepo.create({
                     inventoryItem: item,
                     branch: item.branch,
-                    alertType,
-                    currentLevel,
-                    thresholdLevel
+                    alertType: 'out_of_stock',
+                    currentLevel: item.currentStock,
+                    thresholdLevel: item.lowStockThreshold
                 });
                 await this.inventoryAlertRepo.save(alert);
-                this.logger.log(`Created ${alertType} alert for item ${item.name}`);
+                this.logger.log(`Created out_of_stock alert for item ${item.name}`);
             }
         }
         catch (error) {
@@ -118,7 +109,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const item = await this.inventoryRepo.findOne({
                 where: { id: itemId },
-                relations: ['branch']
+                relations: { branch: true }
             });
             if (!item)
                 return;
@@ -209,7 +200,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
         return this.recipeRepo.save(recipe);
     }
     async getRecipeById(id) {
-        return this.recipeRepo.findOne({ where: { id }, relations: ['branch'] });
+        return (await this.recipeRepo.findOne({ where: { id }, relations: { branch: true } }));
     }
     async createBatch(data) {
         const batch = this.batchRepo.create(data);
@@ -257,7 +248,12 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const foodPrep = await this.foodPrepRepo.findOne({
                 where: { id: prepId },
-                relations: ['batch', 'batch.recipe', 'branch']
+                relations: {
+                    batch: {
+                        recipe: true
+                    },
+                    branch: true
+                }
             });
             if (!foodPrep || !foodPrep.startedAt)
                 return;
@@ -295,7 +291,10 @@ let KitchenService = KitchenService_1 = class KitchenService {
         try {
             const batch = await this.batchRepo.findOne({
                 where: { id: batchId },
-                relations: ['recipe', 'branch']
+                relations: {
+                    recipe: true,
+                    branch: true
+                }
             });
             if (!batch || !batch.startedAt)
                 return;
@@ -371,7 +370,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
     async recordAvgPrepTime(branchId, prepTimeMinutes, period = 'hourly') {
         const branch = await this.branchRepo.findOne({ where: { id: branchId } });
         return this.recordKitchenSLA({
-            branch,
+            branch: branch,
             metricName: 'avg_prep_time',
             value: prepTimeMinutes,
             unit: 'minutes',
@@ -384,7 +383,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
     async recordLatePrepPercentage(branchId, latePercentage, period = 'hourly') {
         const branch = await this.branchRepo.findOne({ where: { id: branchId } });
         return this.recordKitchenSLA({
-            branch,
+            branch: branch,
             metricName: 'late_prep_percentage',
             value: latePercentage,
             unit: 'percentage',
@@ -397,7 +396,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
     async recordFoodRejectionRate(branchId, rejectionRate, period = 'hourly') {
         const branch = await this.branchRepo.findOne({ where: { id: branchId } });
         return this.recordKitchenSLA({
-            branch,
+            branch: branch,
             metricName: 'food_rejection_rate',
             value: rejectionRate,
             unit: 'percentage',
@@ -468,7 +467,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
     async recordKitchenThroughput(branchId, ordersPerHour, period = 'hourly') {
         const branch = await this.branchRepo.findOne({ where: { id: branchId } });
         return this.recordKitchenSLA({
-            branch,
+            branch: branch,
             metricName: 'kitchen_throughput',
             value: ordersPerHour,
             unit: 'orders_per_hour',
@@ -693,7 +692,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
         return {
             branchId,
             forecastDays: daysAhead,
-            predictions: consumption.consumptionData.map(item => ({
+            predictions: consumption.consumptionData.map((item) => ({
                 itemId: item.itemId,
                 itemName: item.itemName,
                 predictedConsumption: item.consumed * (daysAhead / consumption.periodDays) * 1.2,
@@ -764,6 +763,7 @@ exports.KitchenService = KitchenService = KitchenService_1 = __decorate([
     __param(9, (0, typeorm_1.InjectRepository)(menu_item_availability_entity_1.MenuItemAvailabilityEntity)),
     __param(10, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(11, (0, typeorm_1.InjectRepository)(order_item_entity_1.OrderItemEntity)),
+    __param(12, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -778,4 +778,3 @@ exports.KitchenService = KitchenService = KitchenService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource])
 ], KitchenService);
-//# sourceMappingURL=kitchen.service.js.map

@@ -196,9 +196,9 @@ async getNotificationById(id: string): Promise<NotificationEntity> {
   /**
    * Get notifications by status
    */
-  async getNotificationsByStatus(status: NotificationStatus): Promise<NotificationEntity[]> {
+  async getNotificationsByStatus(status: NotificationStatus | null): Promise<NotificationEntity[]> {
     return await this.notificationRepo.find({
-      where: { status },
+      where: status ? { status } : {},
       order: { createdAt: 'DESC' }
     });
   }

@@ -1,0 +1,117 @@
+.checkoutInline0 {
+display: 'flex';
+justify-content: 'space-between';
+align-items: 'center';
+}
+.checkoutInline1 {
+color: '#c62828';
+font-size: '14px';
+margin-top: 4;
+}
+.checkoutInline2 {
+color: '#2e7d32';
+font-size: '14px';
+margin-top: 4;
+}
+.checkoutInline3 {
+color: '#c62828';
+font-size: '14px';
+margin-top: 4;
+}
+
+.checkoutInline0 {
+padding: var(--spacing-md);
+}
+.checkoutInline1 {
+margin-bottom: var(--spacing-lg);
+}
+.checkoutInline2 {
+display: 'flex';
+flex-direction: 'column';
+gap: var(--spacing-lg);
+}
+.checkoutInline3 {
+display: 'flex';
+gap: var(--spacing-sm);
+flex-wrap: 'wrap';
+}
+.checkoutInline4 {
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline5 {
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline6 {
+display: 'flex';
+gap: var(--spacing-sm);
+}
+.checkoutInline7 {
+margin-right: var(--spacing-sm);
+}
+.checkoutInline8 {
+margin-right: var(--spacing-sm);
+}
+.checkoutInline9 {
+margin-right: var(--spacing-sm);
+}
+.checkoutInline10 {
+display: 'flex';
+gap: var(--spacing-sm);
+}
+.checkoutInline11 {
+flex: 1;
+margin-right: var(--spacing-sm);
+}
+.checkoutInline12 {
+margin: 0;
+}
+.checkoutInline13 {
+display: 'flex';
+gap: var(--spacing-sm);
+flex-wrap: 'wrap';
+}
+.checkoutInline14 {
+display: 'flex';
+gap: var(--spacing-sm);
+}
+.checkoutInline15 {
+display: 'flex';
+gap: var(--spacing-sm);
+}
+.checkoutInline16 {
+flex: 1;
+padding: var(--spacing-sm);
+border-radius: var(--radius-sm);
+border: '1px solid #ddd';
+}
+.checkoutInline17 {
+display: 'flex';
+justify-content: 'space-between';
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline18 {
+display: 'flex';
+justify-content: 'space-between';
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline19 {
+display: 'flex';
+justify-content: 'space-between';
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline20 {
+display: 'flex';
+justify-content: 'space-between';
+margin-bottom: var(--spacing-xs);
+}
+.checkoutInline21 {
+display: 'flex';
+justify-content: 'space-between';
+font-size: '18px';
+font-weight: 'bold';
+border-top: '1px solid #ddd';
+padding-top: var(--spacing-sm);
+}
+.checkoutInline22 {
+margin-top: var(--spacing-xl);
+}

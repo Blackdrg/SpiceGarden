@@ -49,44 +49,45 @@ const config_1 = require("@nestjs/config");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 let SecretLoaderService = SecretLoaderService_1 = class SecretLoaderService {
+    configService;
+    logger = new common_1.Logger(SecretLoaderService_1.name);
+    secretsDir = process.env.SECRETS_DIR || path.join(process.cwd(), 'secrets');
     constructor(configService) {
         this.configService = configService;
-        this.logger = new common_1.Logger(SecretLoaderService_1.name);
-        this.secretsDir = process.env.SECRETS_DIR || path.join(process.cwd(), 'secrets');
     }
     onModuleInit() {
         this.loadSecretsFromFile();
     }
     loadSecretsFromFile() {
-        const secretFiles = [
-            'jwt_secret',
-            'encryption_secret',
-            'stripe_secret',
-            'razorpay_key_id',
-            'razorpay_key_secret',
-            'fcm_server_key',
-            'apns_private_key',
-            'apns_key_id',
-            'apns_team_id',
-            'sendgrid_api_key',
-            'google_maps_api_key',
-            'twilio_account_sid',
-            'twilio_auth_token',
-            'db_password',
-            'redis_password',
-            'vault_token',
-            'stripe_webhook_secret',
-            'razorpay_webhook_secret',
-            'stripe_connect_secret',
-            'stripe_connect_webhook_secret',
-        ];
-        for (const secretName of secretFiles) {
+        const secretFiles = {
+            jwt_secret: 'JWT_SECRET',
+            encryption_secret: 'ENCRYPTION_SECRET',
+            stripe_secret: 'STRIPE_SECRET_KEY',
+            razorpay_key_id: 'RAZORPAY_KEY_ID',
+            razorpay_key_secret: 'RAZORPAY_KEY_SECRET',
+            fcm_server_key: 'FCM_SERVER_KEY',
+            apns_private_key: 'APNS_PRIVATE_KEY',
+            apns_key_id: 'APNS_KEY_ID',
+            apns_team_id: 'APNS_TEAM_ID',
+            sendgrid_api_key: 'SENDGRID_API_KEY',
+            google_maps_api_key: 'GOOGLE_MAPS_API_KEY',
+            twilio_account_sid: 'TWILIO_ACCOUNT_SID',
+            twilio_auth_token: 'TWILIO_AUTH_TOKEN',
+            db_password: 'DB_PASS',
+            redis_password: 'REDIS_PASSWORD',
+            vault_token: 'VAULT_TOKEN',
+            stripe_webhook_secret: 'STRIPE_WEBHOOK_SECRET',
+            razorpay_webhook_secret: 'RAZORPAY_WEBHOOK_SECRET',
+            stripe_connect_secret: 'STRIPE_CONNECT_SECRET_KEY',
+            stripe_connect_webhook_secret: 'STRIPE_CONNECT_WEBHOOK_SECRET',
+        };
+        for (const [secretName, envVarName] of Object.entries(secretFiles)) {
             const filePath = path.join(this.secretsDir, `${secretName}.txt`);
             if (fs.existsSync(filePath)) {
                 const value = fs.readFileSync(filePath, 'utf8').trim();
                 if (value && !value.includes('CHANGE_ME')) {
-                    process.env[secretName.toUpperCase()] = value;
-                    this.logger.debug(`Loaded secret: ${secretName}`);
+                    process.env[envVarName] = value;
+                    this.logger.debug(`Loaded secret: ${envVarName}`);
                 }
             }
         }
@@ -125,4 +126,3 @@ exports.SecretLoaderService = SecretLoaderService = SecretLoaderService_1 = __de
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService])
 ], SecretLoaderService);
-//# sourceMappingURL=secret-loader.service.js.map

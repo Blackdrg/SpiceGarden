@@ -1,0 +1,25 @@
+﻿node.exe : FAIL test/refund.service.spec.ts
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/refund.service.spec.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ● Test suite failed to run
+
+    [96mtest/refund.service.spec.ts[0m:[93m36[0m:[93m20[0m - [91merror[0m[90m TS2322: [0mType 'Jest' is not 
+assignable to type 'void | TestReturnValuePromise | TestReturnValueGenerator'.
+
+    [7m36[0m   beforeEach(() => jest.clearAllMocks());
+    [7m  [0m [91m                   ~~~~~~~~~~~~~~~~~~~~[0m
+
+      [96mtest/refund.service.spec.ts[0m:[93m36[0m:[93m14[0m
+        [7m36[0m   beforeEach(() => jest.clearAllMocks());
+        [7m  [0m [96m             ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+        Did you mean to mark this function as 'async'?
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        14.849 s, estimated 15 s
+Ran all test suites matching /test\\refund.service.spec.ts/i.
