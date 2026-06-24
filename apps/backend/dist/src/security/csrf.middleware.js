@@ -59,11 +59,26 @@ function csrfProtection() {
         const tokenFromHeader = req.headers[csrfTokenHeader];
         const tokenFromCookie = req.cookies?.[csrfTokenCookie];
         if (process.env.NODE_ENV === 'production') {
-            if (!tokenFromHeader && !tokenFromCookie) {
+            if (!tokenFromHeader || !tokenFromCookie) {
                 return res.status(403).json({ error: 'CSRF token missing' });
             }
+            if (tokenFromHeader !== tokenFromCookie) {
+                return res.status(403).json({ error: 'CSRF token mismatch' });
+            }
+            try {
+                const decoded = JSON.parse(Buffer.from(tokenFromHeader.split('.')[1], 'base64').toString());
+                const now = Math.floor(Date.now() / 1000);
+                if (decoded.exp && decoded.exp < now) {
+                    return res.status(403).json({ error: 'CSRF token expired' });
+                }
+            }
+            catch {
+                if (tokenFromHeader.length < 32 || !/^[a-zA-Z0-9+/=]+$/.test(tokenFromHeader)) {
+                    return res.status(403).json({ error: 'CSRF token invalid format' });
+                }
+            }
         }
-        res.header('X-CSRF-Token', tokenFromHeader || tokenFromCookie || generateCsrfToken());
+        res.header('X-CSRF-Token', tokenFromHeader || generateCsrfToken());
         next();
     };
 }
