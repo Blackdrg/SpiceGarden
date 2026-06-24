@@ -6,7 +6,18 @@ function createDeliveryService() {
 }
 
 describe('DeliveryService core delivery logic', () => {
-  const service = createDeliveryService();
+  let service: any;
+
+  beforeEach(() => {
+    service = createDeliveryService();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    try {
+      (jest as any).useRealTimers();
+    } catch {}
+  });
 
   it('calculates traffic-aware ETA and distance from the geo service', () => {
     service.geoService = {
@@ -39,6 +50,75 @@ describe('DeliveryService core delivery logic', () => {
     expect(normal.trafficFactor).toBeGreaterThanOrEqual(0.5);
     expect(normal.trafficFactor).toBeLessThanOrEqual(3);
     expect(rush.trafficFactor).toBeGreaterThanOrEqual(normal.trafficFactor);
+  });
+
+  it('uses default historical speed when not provided', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.distance).toBe(5);
+    expect(result.duration).toBeGreaterThan(0);
+    expect(result.trafficFactor).toBeGreaterThanOrEqual(0.5);
+  });
+
+  it('returns 1.5 traffic factor during morning rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T02:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.5);
+  });
+
+  it('returns 1.3 traffic factor during lunch rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T07:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.3);
+  });
+
+  it('returns 1.7 traffic factor during evening rush hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T12:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.7);
+  });
+
+  it('returns 1.0 traffic factor during normal hours', () => {
+    service.geoService = {
+      calculateDistance: jest.fn().mockReturnValue(5),
+      predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
+    };
+
+    (jest as any).useFakeTimers('modern');
+    (jest as any).setSystemTime(new Date('2026-06-24T05:30:00.000Z').getTime());
+
+    const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
+
+    expect(result.trafficFactor).toBe(1.0);
   });
 
   it('registers drivers with pending KYC and zero-balance wallet', async () => {
@@ -108,6 +188,19 @@ describe('DeliveryService core delivery logic', () => {
     expect(result.overallScore).toBe(4.2);
     expect(result.onTimeRate).toBe(0);
     expect(result.acceptanceRate).toBe(0);
+  });
+
+  it('calculates positive rates when driver has total deliveries', async () => {
+    const driverRepo = { findOne: jest.fn() } as any;
+    driverRepo.findOne.mockResolvedValue({ id: 'd1', rating: 4.5, totalDeliveries: 100 });
+    service.driverRepo = driverRepo;
+
+    const result = await service.calculateScoreComponents('d1');
+
+    expect(result.overallScore).toBe(4.5);
+    expect(result.onTimeRate).toBeCloseTo(0.95, 1);
+    expect(result.acceptanceRate).toBeCloseTo(0.90, 1);
+    expect(result.cancellationRate).toBeCloseTo(0.05, 1);
   });
 
   it('throws NotFoundException when driver does not exist', async () => {

@@ -256,4 +256,156 @@ describe('ProductionNotificationService', () => {
       expect(result).toBeUndefined();
     });
   });
+
+  describe('sendWebhookAlertForNotification - fetch branches', () => {
+    it('should log error when webhook response is not ok', async () => {
+      const mockFetch = jest.fn().mockResolvedValue({ ok: false, statusText: 'Bad Request' } as any);
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'ALERT_WEBHOOK_URL') return 'http://localhost:4000/webhook';
+        if (key === 'ALERT_WEBHOOK_SECRET') return 'secret123';
+        return defaultValue;
+      });
+
+      await (service as any).sendWebhookAlertForNotification({ type: 'test', severity: 'low', userId: 'u1', message: 'test' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+
+    it('should log error when webhook fetch throws', async () => {
+      const mockFetch = jest.fn().mockRejectedValue(new Error('Network error'));
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'ALERT_WEBHOOK_URL') return 'http://localhost:4000/webhook';
+        if (key === 'ALERT_WEBHOOK_SECRET') return 'secret123';
+        return defaultValue;
+      });
+
+      await (service as any).sendWebhookAlertForNotification({ type: 'test', severity: 'low', userId: 'u1', message: 'test' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+  });
+
+  describe('sendSlackAlert - fetch branches', () => {
+    it('should post to Slack webhook when configured', async () => {
+      const mockFetch = jest.fn().mockResolvedValue({ ok: true } as any);
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'SLACK_WEBHOOK_URL') return 'https://hooks.slack.com/services/TEST';
+        return defaultValue;
+      });
+
+      await (service as any).sendSlackAlert({ type: 'payment_failure', severity: 'high', userId: 'u1', message: 'Fail', orderId: 'ord-1', amount: 100 });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://hooks.slack.com/services/TEST',
+        expect.objectContaining({ method: 'POST' })
+      );
+      (global as any).fetch = undefined;
+    });
+
+    it('should log error when Slack fetch throws', async () => {
+      const mockFetch = jest.fn().mockRejectedValue(new Error('Slack down'));
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'SLACK_WEBHOOK_URL') return 'https://hooks.slack.com/services/TEST';
+        return defaultValue;
+      });
+
+      await (service as any).sendSlackAlert({ type: 'payment_failure', severity: 'high', userId: 'u1', message: 'Fail' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+  });
+
+  describe('sendEmailNotification - fetch branches', () => {
+    it('should post to SendGrid when configured', async () => {
+      const mockFetch = jest.fn().mockResolvedValue({ ok: true } as any);
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'SENDGRID_API_KEY') return 'SG.test-key';
+        if (key === 'ADMIN_ALERT_EMAIL') return 'admin@spicegarden.com';
+        return defaultValue;
+      });
+
+      await (service as any).sendEmailNotification({ type: 'payment_failure', severity: 'high', userId: 'u1', message: 'Payment failed' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.sendgrid.com/v3/mail/send',
+        expect.objectContaining({ method: 'POST' })
+      );
+      (global as any).fetch = undefined;
+    });
+
+    it('should log error when SendGrid returns not ok', async () => {
+      const mockFetch = jest.fn().mockResolvedValue({ ok: false, statusText: 'Unauthorized' } as any);
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'SENDGRID_API_KEY') return 'SG.test-key';
+        if (key === 'ADMIN_ALERT_EMAIL') return 'admin@spicegarden.com';
+        return defaultValue;
+      });
+
+      await (service as any).sendEmailNotification({ type: 'payment_failure', severity: 'high', userId: 'u1', message: 'Payment failed' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+
+    it('should log error when SendGrid fetch throws', async () => {
+      const mockFetch = jest.fn().mockRejectedValue(new Error('Network error'));
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'SENDGRID_API_KEY') return 'SG.test-key';
+        if (key === 'ADMIN_ALERT_EMAIL') return 'admin@spicegarden.com';
+        return defaultValue;
+      });
+
+      await (service as any).sendEmailNotification({ type: 'payment_failure', severity: 'high', userId: 'u1', message: 'Payment failed' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+  });
+
+  describe('sendSMSForAlert - fetch branches', () => {
+    it('should post to Twilio when configured', async () => {
+      const mockFetch = jest.fn().mockResolvedValue({ ok: true } as any);
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'TWILIO_ACCOUNT_SID') return 'AC-test';
+        if (key === 'TWILIO_AUTH_TOKEN') return 'auth-token';
+        if (key === 'ADMIN_ALERT_PHONE') return '+919876543210';
+        return defaultValue;
+      });
+
+      await (service as any).sendSMSForAlert({ type: 'payment_failure', severity: 'critical', userId: 'u1', message: 'Payment failed' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('api.twilio.com'),
+        expect.objectContaining({ method: 'POST' })
+      );
+      (global as any).fetch = undefined;
+    });
+
+    it('should log error when Twilio fetch throws', async () => {
+      const mockFetch = jest.fn().mockRejectedValue(new Error('Twilio down'));
+      (global as any).fetch = mockFetch;
+      configService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'TWILIO_ACCOUNT_SID') return 'AC-test';
+        if (key === 'TWILIO_AUTH_TOKEN') return 'auth-token';
+        if (key === 'ADMIN_ALERT_PHONE') return '+919876543210';
+        return defaultValue;
+      });
+
+      await (service as any).sendSMSForAlert({ type: 'payment_failure', severity: 'critical', userId: 'u1', message: 'Payment failed' });
+
+      expect(mockFetch).toHaveBeenCalled();
+      (global as any).fetch = undefined;
+    });
+  });
 });

@@ -383,4 +383,123 @@ describe('NotificationService', () => {
       }
     });
   });
+
+  describe('sendSMS - fetch branches', () => {
+    it('should return API error when Twilio returns not ok with message', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'TWILIO_ACCOUNT_SID') return 'sid-123';
+        if (key === 'TWILIO_AUTH_TOKEN') return 'token-123';
+        if (key === 'TWILIO_PHONE') return '+15550000000';
+        return 'test-key';
+      });
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        json: jest.fn().mockResolvedValue({ message: 'Invalid phone' }),
+        text: jest.fn().mockResolvedValue('Invalid phone'),
+      }) as any;
+
+      try {
+        const result = await service.sendSMS('+1234567890', 'message');
+        expect(result.success).toBe(false);
+        expect(result.error).toBe('Invalid phone');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
+
+  describe('sendEmail - success path', () => {
+    it('should return success when SendGrid accepts email', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'SENDGRID_API_KEY') return 'valid-sendgrid-key';
+        return 'test-key';
+      });
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+      }) as any;
+
+      try {
+        const result = await service.sendEmail('test@test.com', 'subject', 'template', {});
+        expect(result.success).toBe(true);
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
+
+  describe('sendAPNs - fetch error branches', () => {
+    it('should handle APNs response not ok for a device', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'APNS_PRIVATE_KEY') return 'valid-key';
+        if (key === 'APNS_KEY_ID') return 'key-id';
+        if (key === 'APNS_TEAM_ID') return 'team-id';
+        if (key === 'APNS_BUNDLE_ID') return 'bundle-id';
+        return 'test-key';
+      });
+      (userDeviceRepo.find as jest.Mock).mockResolvedValue([
+        { id: 'd1', fcmToken: 'fcm-1', isActive: true, apnsToken: 'apns-token-1' },
+      ]);
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        text: jest.fn().mockResolvedValue('Bad device token'),
+      }) as any;
+
+      try {
+        const result = await service.sendAPNs('user-1', 'Title', 'Body');
+        expect(result.success).toBe(false);
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it('should handle APNs fetch throwing', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'APNS_PRIVATE_KEY') return 'valid-key';
+        if (key === 'APNS_KEY_ID') return 'key-id';
+        if (key === 'APNS_TEAM_ID') return 'team-id';
+        if (key === 'APNS_BUNDLE_ID') return 'bundle-id';
+        return 'test-key';
+      });
+      (userDeviceRepo.find as jest.Mock).mockResolvedValue([
+        { id: 'd1', fcmToken: 'fcm-1', isActive: true, apnsToken: 'apns-token-1' },
+      ]);
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockRejectedValue(new Error('APNs server down')) as any;
+
+      try {
+        const result = await service.sendAPNs('user-1', 'Title', 'Body');
+        expect(result.success).toBe(false);
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
+
+  describe('notifyDeliveryLifecycle', () => {
+    it('should send push and SMS when phone is provided', async () => {
+      (service as any).configService.get.mockImplementation((key: string) => {
+        if (key === 'FCM_SERVER_KEY') return 'valid-fcm-key';
+        return 'test-key';
+      });
+      (userDeviceRepo.find as jest.Mock).mockResolvedValue([{ fcmToken: 'token-1', isActive: true }]);
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({}),
+      }) as any;
+
+      try {
+        await service.notifyDeliveryLifecycle('order-123', 'delivered', 'user-1', { name: 'John', phone: '+15551234567' });
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+        const calls = (global.fetch as jest.Mock).mock.calls;
+        expect(calls[0][0]).toContain('fcm.googleapis.com');
+        expect(calls[1][0]).toContain('twilio.com');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
 });

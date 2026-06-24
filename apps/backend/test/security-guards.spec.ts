@@ -3,6 +3,7 @@ import { ForbiddenException } from '@nestjs/common';
 import { RolesGuard } from '../src/security/roles.guard';
 import { PermissionGuard } from '../src/security/permission.guard';
 import { UserRole, UserStatus } from '../src/shared/domain/user.interface';
+import { hasRolePermission } from '../src/security/permissions';
 
 function createContext(handlerMetadata: Record<string, unknown>, requestUser?: any) {
   return {
@@ -48,5 +49,63 @@ describe('Security guards', () => {
       status: UserStatus.ACTIVE,
       permissions: ['finance:read'],
     }))).toThrow('Insufficient permissions');
+  });
+
+  it('allows access when no permissions required', () => {
+    const permissionGuard = new PermissionGuard({ getAllAndMerge: () => [] } as any);
+    expect(permissionGuard.canActivate(createContext({}) as any)).toBe(true);
+  });
+
+  it('throws when user is missing', () => {
+    const permissionGuard = new PermissionGuard({ getAllAndMerge: () => ['payments:manage'] } as any);
+    expect(() => permissionGuard.canActivate(createContext({}, undefined) as any)).toThrow('Authentication is required');
+  });
+
+  it('throws when user is not active', () => {
+    const permissionGuard = new PermissionGuard({ getAllAndMerge: () => ['payments:manage'] } as any);
+    expect(() => permissionGuard.canActivate(createContext({}, {
+      role: UserRole.CUSTOMER,
+      status: UserStatus.SUSPENDED,
+    }) as any)).toThrow('User account is not active');
+  });
+
+  it('throws when user role is missing', () => {
+    const permissionGuard = new PermissionGuard({ getAllAndMerge: () => ['payments:manage'] } as any);
+    expect(() => permissionGuard.canActivate(createContext({}, {
+      status: UserStatus.ACTIVE,
+    }) as any)).toThrow('User role is required');
+  });
+
+  it('throws when user role is invalid', () => {
+    const permissionGuard = new PermissionGuard({ getAllAndMerge: () => ['payments:manage'] } as any);
+    expect(() => permissionGuard.canActivate(createContext({}, {
+      role: 'unknown_role',
+      status: UserStatus.ACTIVE,
+    }) as any)).toThrow('Invalid user role');
+  });
+
+  it('throws for RolesGuard when user role is invalid', () => {
+    const roleGuard = new RolesGuard({ get: () => [UserRole.ADMIN] } as any);
+    expect(() => roleGuard.canActivate(createContext({}, {
+      role: 'unknown_role',
+      status: UserStatus.ACTIVE,
+    }) as any)).toThrow('Invalid user role');
+  });
+
+  it('delegates hasPermission to role permission check', () => {
+    const roleGuard = new RolesGuard({ get: () => [] } as any);
+    expect(roleGuard.hasPermission(UserRole.ADMIN, 'payments:manage')).toBe(true);
+    expect(roleGuard.hasPermission(UserRole.CUSTOMER, 'payments:manage')).toBe(false);
+  });
+
+  it('hasRolePermission returns false for completely invalid role string', () => {
+    expect(hasRolePermission('notarole' as any, 'payments:manage')).toBe(false);
+    expect(hasRolePermission('' as any, 'payments:manage')).toBe(false);
+  });
+
+  it('hasRolePermission uses userPermissions when provided', () => {
+    expect(hasRolePermission(UserRole.CUSTOMER, 'payment:manage', ['payment:manage'])).toBe(true);
+    expect(hasRolePermission(UserRole.CUSTOMER, 'users:manage', ['users:manage'])).toBe(true);
+    expect(hasRolePermission(UserRole.CUSTOMER, 'payments:manage', ['finance:read'])).toBe(false);
   });
 });

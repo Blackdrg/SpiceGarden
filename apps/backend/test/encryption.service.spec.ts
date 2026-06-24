@@ -2,6 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EncryptionService } from '../src/security/encryption.service';
 import { ConfigService } from '@nestjs/config';
+import * as CryptoJS from 'crypto-js';
 
 describe('EncryptionService', () => {
   let service: EncryptionService;
@@ -37,12 +38,20 @@ describe('EncryptionService', () => {
     });
   });
 
-describe('decrypt', () => {
+  describe('decrypt', () => {
     it('should decrypt an encrypted value', () => {
       const original = 'sensitive-data';
       const encrypted = service.encrypt(original);
       const decrypted = service.decrypt(encrypted);
       expect(decrypted).toBe(original);
+    });
+
+    it('should throw Decryption failed on corrupt ciphertext', () => {
+      jest.spyOn(CryptoJS.AES, 'decrypt').mockReturnValue({
+        toString: () => { throw new Error('UTF-8 decode failure'); },
+      } as any);
+      expect(() => service.decrypt('corrupted-ciphertext')).toThrow('Decryption failed');
+      (CryptoJS.AES.decrypt as jest.Mock).mockRestore();
     });
   });
 
@@ -67,7 +76,7 @@ describe('decrypt', () => {
     });
   });
 
-describe('decryptPiiFields', () => {
+  describe('decryptPiiFields', () => {
     it('should decrypt specified string fields in an object', () => {
       const obj = { name: 'John Doe', email: 'john@example.com', age: 30 };
       const encrypted = { name: service.encrypt('John Doe'), email: service.encrypt('john@example.com'), age: 30 };
@@ -76,6 +85,16 @@ describe('decryptPiiFields', () => {
       expect(result.name).toBe('John Doe');
       expect(result.email).toBe('john@example.com');
       expect(result.age).toBe(30);
+    });
+
+    it('should propagate decryption errors for individual PII fields', () => {
+      const obj = { name: 'John Doe', ssn: 'encrypted-ssn' };
+      jest.spyOn(service, 'decrypt').mockImplementation((value: string) => {
+        if (value === 'encrypted-ssn') throw new Error('field decrypt error');
+        return value;
+      });
+      expect(() => service.decryptPiiFields(obj, ['name', 'ssn'])).toThrow('Failed to decrypt field ssn');
+      (service.decrypt as jest.Mock).mockRestore();
     });
 
     it('should handle null input gracefully', () => {

@@ -374,4 +374,104 @@ describe('WalletService Edge Cases', () => {
       await expect(service.debitWalletWithLock('user1', 100, 'Test')).rejects.toThrow('Wallet not found');
     });
   });
+
+  describe('confirmCODCollection - error cases', () => {
+    it('should throw BadRequestException for invalid COD amount', async () => {
+      await expect(service.confirmCODCollection('order1', 'invalid', 'user1')).rejects.toThrow(BadRequestException);
+      await expect(service.confirmCODCollection('order1', 0, 'user1')).rejects.toThrow(BadRequestException);
+      await expect(service.confirmCODCollection('order1', -10, 'user1')).rejects.toThrow(BadRequestException);
+   });
+  });
+
+  describe('refundCOD - error cases', () => {
+    it('should throw BadRequestException for invalid COD amount', async () => {
+      await expect(service.refundCOD('order1', 'invalid', 'user1', 'test')).rejects.toThrow(BadRequestException);
+      await expect(service.refundCOD('order1', 0, 'user1', 'test')).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('getWalletTransactions', () => {
+    it('should return paginated transactions', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 100 } as WalletEntity;
+      const transactions = [
+        { id: 't1', amount: 50, createdAt: new Date('2026-06-01') },
+        { id: 't2', amount: 30, createdAt: new Date('2026-06-02') },
+      ] as WalletTransactionEntity[];
+
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.find.mockResolvedValue(transactions);
+
+      const result = await service.getWalletTransactions('user1', 10, 0);
+
+      expect(result).toBe(transactions);
+      expect(mockWalletTransactionRepo.find).toHaveBeenCalledWith({
+        where: { walletId: 'w1' },
+        order: { createdAt: 'DESC' },
+        take: 10,
+        skip: 0,
+      });
+    });
+  });
+
+  describe('getWalletBalance', () => {
+    it('should return balance and currency', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 250, currency: 'INR' } as WalletEntity;
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+
+      const result = await service.getWalletBalance('user1');
+
+      expect(result).toEqual({ balance: 250, currency: 'INR' });
+    });
+  });
+
+  describe('preventDoublePayment', () => {
+    it('should return true when no recent transaction exists', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 100 } as WalletEntity;
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.find.mockResolvedValue([]);
+
+      const result = await service.preventDoublePayment('user1', 'order1', 100);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when duplicate payment detected', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 100 } as WalletEntity;
+      const recentTx = [
+        { id: 't1', description: 'Payment confirmed for order order1', createdAt: new Date() },
+      ] as WalletTransactionEntity[];
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.find.mockResolvedValue(recentTx);
+
+      const result = await service.preventDoublePayment('user1', 'order1', 100);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when recent transactions are not successful', async () => {
+      const wallet = { id: 'w1', userId: 'user1', balance: 100 } as WalletEntity;
+      const recentTx = [
+        { id: 't1', description: 'Payment pending', createdAt: new Date() },
+      ] as WalletTransactionEntity[];
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
+      mockWalletTransactionRepo.find.mockResolvedValue(recentTx);
+
+      const result = await service.preventDoublePayment('user1', 'order1', 100);
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('reconcilePayments', () => {
+    it('should return reconciliation summary', async () => {
+      const result = await service.reconcilePayments();
+
+      expect(result).toEqual({
+        totalProcessed: 0,
+        successful: 0,
+        failed: 0,
+        discrepancies: [],
+      });
+    });
+  });
 });

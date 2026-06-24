@@ -509,4 +509,44 @@ describe('EnhancedDeliveryService Edge Cases', () => {
       expect(result.breakdown).toEqual({});
     });
   });
+
+  describe('getSurgeMultiplier - active zone', () => {
+    it('should return surge multiplier when in active surge zone', () => {
+      const zone = { active: true, center: { lat: 0, lng: 0 }, radiusKm: 5, surgeMultiplier: 2.5 };
+      (service as any).surgeZones = new Map([['zone1', zone]]);
+      mockGeoService.calculateDistance.mockReturnValue(3);
+
+      const result = service.getSurgeMultiplier({ lat: 0, lng: 0 });
+
+      expect(result).toBe(2.5);
+    });
+  });
+
+  describe('handleFailedDelivery - missing order', () => {
+    it('should throw when order not found', async () => {
+      mockOrderRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.handleFailedDelivery('missing', 'driver1', 'no_show')).rejects.toThrow('Order not found');
+    });
+  });
+
+  describe('detectFakeGPS - non-finite coordinates', () => {
+    it('should detect non-finite GPS coordinates', () => {
+      const result = service.detectFakeGPS('driver1', { lat: NaN, lng: 76.7 } as any, 50);
+      expect(result.isFake).toBe(true);
+      expect(result.reason).toContain('Invalid GPS coordinates');
+    });
+  });
+
+  describe('verifyDriverLocation - no current location', () => {
+    it('should return false when driver has no current location', async () => {
+      const driver = { id: 'd1', currentLocation: undefined } as DriverEntity;
+      mockDriverRepo.findOne.mockResolvedValue(driver);
+
+      const result = await service.verifyDriverLocation('d1', { lat: 30.7, lng: 76.8 });
+
+      expect(result.verified).toBe(false);
+      expect(result.reason).toBe('Driver location unavailable');
+    });
+  });
 });

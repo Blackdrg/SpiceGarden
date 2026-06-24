@@ -139,6 +139,32 @@ jest.mock('crypto', () => ({
   randomUUID: () => 'mock-uuid',
 }));
 
+// Mock ioredis to prevent real network connections in tests.
+// The mock simulates a connection failure so the RedisRateLimitStore
+// falls back to in-memory mode, matching the test expectations.
+jest.mock('ioredis', () => {
+  const mem = new Map<string, { hits: number; expiresAt: number }>();
+  return jest.fn().mockImplementation(() => ({
+    connect: jest.fn().mockRejectedValue(new Error('ECONNREFUSED')),
+    ping: jest.fn().mockRejectedValue(new Error('not connected')),
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue('OK'),
+    pexpire: jest.fn().mockResolvedValue(1),
+    incr: jest.fn().mockResolvedValue(1),
+    decr: jest.fn().mockResolvedValue(0),
+    del: jest.fn().mockResolvedValue(1),
+    keys: jest.fn().mockResolvedValue([]),
+    multi: jest.fn(() => ({
+      incr: jest.fn().mockReturnThis(),
+      pexpire: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([[null, 1]]),
+    })),
+    disconnect: jest.fn(),
+    on: jest.fn(),
+    quit: jest.fn().mockResolvedValue('OK'),
+  }));
+});
+
 // Mock jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(() => 'mock-jwt-token'),

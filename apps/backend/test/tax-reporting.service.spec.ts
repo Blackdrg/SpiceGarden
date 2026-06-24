@@ -112,6 +112,72 @@ describe('TaxReportingService', () => {
       expect(result.summary.hsnWise.length).toBe(1);
       expect(result.summary.hsnWise[0].hsnCode).toBe('NOT_SPECIFIED');
     });
+
+    it('should handle orders with zero gst amounts', async () => {
+      const orders = [
+        {
+          id: 'o1',
+          orderNumber: 'ORD-001',
+          createdAt: new Date('2026-06-15'),
+          gstDetail: { taxableValue: 0, cgstAmount: 0, sgstAmount: 0, igstAmount: 0, totalGstAmount: 0 },
+          items: [
+            { hsnSac: { hsnCode: '1001' }, totalPrice: 0, cgstAmount: 0, sgstAmount: 0, igstAmount: 0, totalTax: 0, quantity: 1 },
+          ],
+        },
+      ];
+      mockOrderRepo.find.mockResolvedValue(orders);
+      const result = await service.generateGSTReport('rest-1', 6, 2026);
+      expect(result.summary.totalTaxableValue).toBe(0);
+      expect(result.summary.totalCGST).toBe(0);
+      expect(result.summary.totalSGST).toBe(0);
+      expect(result.summary.totalIGST).toBe(0);
+      expect(result.summary.totalGST).toBe(0);
+    });
+
+    it('should handle mixed orders with and without gstDetail in HSN breakdown', async () => {
+      const orders = [
+        {
+          id: 'o1',
+          orderNumber: 'ORD-001',
+          createdAt: new Date('2026-06-15'),
+          gstDetail: { taxableValue: 500, cgstAmount: 45, sgstAmount: 45, igstAmount: 0, totalGstAmount: 90 },
+          items: [
+            { hsnSac: { hsnCode: '1001' }, totalPrice: 500, cgstAmount: 45, sgstAmount: 45, igstAmount: 0, totalTax: 90, quantity: 2 },
+          ],
+        },
+        {
+          id: 'o2',
+          orderNumber: 'ORD-002',
+          createdAt: new Date('2026-06-16'),
+          gstDetail: undefined,
+          items: [
+            { hsnSac: { hsnCode: '1002' }, totalPrice: 300, cgstAmount: 27, sgstAmount: 27, igstAmount: 0, totalTax: 54, quantity: 1 },
+          ],
+        },
+      ];
+      mockOrderRepo.find.mockResolvedValue(orders);
+      const result = await service.generateGSTReport('rest-1', 6, 2026);
+      expect(result.summary.hsnWise.length).toBe(1);
+      expect(result.summary.hsnWise[0].hsnCode).toBe('1001');
+    });
+
+    it('should handle items with missing cgstAmount and sgstAmount', async () => {
+      const orders = [
+        {
+          id: 'o1',
+          orderNumber: 'ORD-001',
+          createdAt: new Date('2026-06-15'),
+          gstDetail: { taxableValue: 1000, cgstAmount: 0, sgstAmount: 0, igstAmount: 0, totalGstAmount: 0 },
+          items: [
+            { hsnSac: { hsnCode: '1001' }, totalPrice: 500, quantity: 1 },
+          ],
+        },
+      ];
+      mockOrderRepo.find.mockResolvedValue(orders);
+      const result = await service.generateGSTReport('rest-1', 6, 2026);
+      expect(result.summary.totalTaxableValue).toBe(1000);
+      expect(result.summary.totalCGST).toBe(0);
+    });
   });
 
   describe('exportGSTR1', () => {

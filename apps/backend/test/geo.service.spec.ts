@@ -111,6 +111,112 @@ describe('GeoService', () => {
     });
   });
 
+  describe('findNearbyBranches', () => {
+    it('should return branches within radius', async () => {
+      mockBranchRepo.createQueryBuilder = jest.fn(() => ({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([
+          { branch: { id: 'b1' }, distance: 2000 },
+          { branch: { id: 'b2' }, distance: 5000 },
+        ]),
+      })) as any;
+
+      const result = await service.findNearbyBranches({ lat: 12.97, lng: 77.59 }, 5, 10);
+
+      expect(result.length).toBe(2);
+      expect(result[0].id).toBe('b1');
+      expect(result[0].distance).toBe(2);
+    });
+
+    it('should apply custom radius and limit', async () => {
+      const qb = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([]),
+      };
+      mockBranchRepo.createQueryBuilder = jest.fn(() => qb) as any;
+
+      await service.findNearbyBranches({ lat: 12.97, lng: 77.59 }, 10, 5);
+
+      expect(qb.limit).toHaveBeenCalledWith(5);
+    });
+
+    it('should return empty array when no branches match', async () => {
+      mockBranchRepo.createQueryBuilder = jest.fn(() => ({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([]),
+      })) as any;
+
+      const result = await service.findNearbyBranches({ lat: 12.97, lng: 77.59 });
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('findAvailableDrivers', () => {
+    it('should return drivers within radius', async () => {
+      mockDriverRepo.createQueryBuilder = jest.fn(() => ({
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([
+          { driver: { id: 'd1', driverId: 'DRV-1' } },
+          { driver: { id: 'd2', driverId: 'DRV-2' } },
+        ]),
+      })) as any;
+
+      const result = await service.findAvailableDrivers({ lat: 12.97, lng: 77.59 }, 5, 10);
+
+      expect(result.length).toBe(2);
+      expect(result[0].id).toBe('d1');
+    });
+
+    it('should return empty array when no drivers match', async () => {
+      mockDriverRepo.createQueryBuilder = jest.fn(() => ({
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([]),
+      })) as any;
+
+      const result = await service.findAvailableDrivers({ lat: 12.97, lng: 77.59 });
+      expect(result).toEqual([]);
+    });
+
+    it('should apply custom radius and limit', async () => {
+      const qb = {
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue([]),
+      };
+      mockDriverRepo.createQueryBuilder = jest.fn(() => qb) as any;
+
+      await service.findAvailableDrivers({ lat: 12.97, lng: 77.59 }, 8, 15);
+
+      expect(qb.limit).toHaveBeenCalledWith(15);
+    });
+  });
+
   describe('calculateDeliveryRoute', () => {
     it('should return ETA prediction', async () => {
       const result = await service.calculateDeliveryRoute(
