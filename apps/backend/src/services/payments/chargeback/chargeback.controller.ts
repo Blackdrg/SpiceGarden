@@ -85,8 +85,12 @@ export class ChargebackController {
       required: ['processedBy']
     }
   })
-  // TODO: Implement initiateRefundForWonDispute in ChargebackService
-  // async initiateRefundForWonDispute()
+  async initiateRefundForWonDispute(
+    @Param('disputeId') disputeId: string,
+    @Body() body: { processedBy: string; gateway?: string }
+  ) {
+    return await this.chargebackService.initiateRefundForWonDispute(disputeId, body.processedBy, body.gateway);
+  }
 
   @Get('stats/overview')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)

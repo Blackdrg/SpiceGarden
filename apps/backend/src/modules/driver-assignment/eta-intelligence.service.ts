@@ -102,22 +102,32 @@ export class ETAIntelligenceService {
   }
 
   /**
-   * Calculate distance between restaurant and delivery location
-   * (In reality, this would use a mapping service like Google Maps API)
-   */
-  private async calculateDistance(
-    order: OrderEntity,
-    driver: DriverEntity,
-    branch: RestaurantBranchEntity
-  ): Promise<number> {
-    // Placeholder implementation - in reality you'd:
-    // 1. Get restaurant coordinates from branch
-    // 2. Get delivery coordinates from order
-    // 3. Use a distance calculation service (Haversine formula or mapping API)
-    
-    // For now, return a reasonable placeholder
-    return 5.0; // 5 km average
-  }
+    * Calculate distance between restaurant and delivery location
+    */
+   private async calculateDistance(
+     order: OrderEntity,
+     driver: DriverEntity,
+     branch: RestaurantBranchEntity
+   ): Promise<number> {
+     const branchLoc = branch.location;
+     const driverLoc = driver.currentLocation;
+     
+     if (!branchLoc || !driverLoc) {
+       return 5.0;
+     }
+
+     const R = 6371;
+     const dLat = ((driverLoc.lat - branchLoc.lat) * Math.PI) / 180;
+     const dLon = ((driverLoc.lng - branchLoc.lng) * Math.PI) / 180;
+     const a =
+       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+       Math.cos((branchLoc.lat * Math.PI) / 180) *
+         Math.cos((driverLoc.lat * Math.PI) / 180) *
+         Math.sin(dLon / 2) *
+         Math.sin(dLon / 2);
+     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+     return R * c;
+   }
 
   /**
    * Get current traffic conditions

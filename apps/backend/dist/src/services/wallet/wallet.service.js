@@ -232,12 +232,23 @@ let WalletService = WalletService_1 = class WalletService {
         return true;
     }
     async reconcilePayments() {
-        return {
-            totalProcessed: 0,
-            successful: 0,
-            failed: 0,
-            discrepancies: [],
-        };
+        const wallets = await this.walletRepo.find();
+        let totalProcessed = 0;
+        const discrepancies = [];
+        for (const wallet of wallets) {
+            const transactions = await this.walletTransactionRepo.find({ where: { walletId: wallet.id } });
+            const expectedBalance = transactions.reduce((sum, tx) => sum + (tx.type === 'credit' ? tx.amount : -tx.amount), 0);
+            const actualBalance = Number(wallet.balance);
+            totalProcessed += transactions.length;
+            if (Math.abs(expectedBalance - actualBalance) > 0.01) {
+                discrepancies.push({
+                    orderId: wallet.id,
+                    expected: expectedBalance,
+                    actual: actualBalance,
+                });
+            }
+        }
+        return { totalProcessed, successful: totalProcessed, failed: 0, discrepancies };
     }
 };
 exports.WalletService = WalletService;

@@ -263,6 +263,14 @@ let DriverAssignmentService = class DriverAssignmentService {
             order: { createdAt: 'DESC' }
         });
     }
+    async getAllFraudIncidents(driverId, limit = 50) {
+        const where = driverId ? { driver: { id: driverId } } : {};
+        return this.fraudRepo.find({
+            where,
+            order: { createdAt: 'DESC' },
+            take: limit
+        });
+    }
     async getDeliverySLAMetrics(driverId, branchId, metricName, limit = 100) {
         const where = {};
         if (driverId) {

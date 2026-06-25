@@ -320,6 +320,7 @@ let KitchenService = KitchenService_1 = class KitchenService {
             batch.delayMinutes = delayMinutes;
             batch.delayReasons = delayReasons;
             await this.batchRepo.save(batch);
+            await this.recordPrepTimeSLA(batch.branch.id, actualTimeMinutes, estimatedTimeMinutes);
             this.logger.log(`Calculated timing for batch ${batchId}: ${actualTimeMinutes.toFixed(1)}m actual vs ${estimatedTimeMinutes.toFixed(1)}m estimated`);
         }
         catch (error) {

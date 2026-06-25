@@ -16,7 +16,7 @@ function createService() {
   };
   service.configService = configService;
   service.disputeRepo = { findOne: jest.fn(), create: jest.fn(), save: jest.fn(), find: jest.fn(), count: jest.fn(), createQueryBuilder: jest.fn() };
-  service.orderRepo = { findOne: jest.fn() };
+  service.orderRepo = { findOne: jest.fn(), update: jest.fn() };
   service.userRepo = { findOne: jest.fn() };
   service.productionNotification = { sendPaymentNotification: jest.fn() };
   service.logger = { log: jest.fn(), warn: jest.fn(), error: jest.fn() };
@@ -326,6 +326,54 @@ describe('ChargebackService', () => {
       const { service } = createService();
       const result = (service as any).mapStripeDisputeStatus('unknown_status');
       expect(result).toBe('under_review');
+    });
+  });
+
+  describe('initiateRefundForWonDispute', () => {
+    it('should initiate refund for a won dispute', async () => {
+      const { service } = createService();
+      const existingDispute = { id: 'disp-1', disputeId: 'dp_won_refund', orderId: 'ord-1', order: { id: 'ord-1', userId: 'u1' }, status: 'won', isRefundedToCustomer: false, disputedAmount: 500, currency: 'usd' } as any;
+      service.disputeRepo.findOne.mockResolvedValue(existingDispute);
+      service.disputeRepo.save.mockResolvedValue({ ...existingDispute, isRefundedToCustomer: true } as any);
+      service.orderRepo.findOne.mockResolvedValue({ id: 'ord-1', userId: 'u1' } as any);
+      service.orderRepo.update.mockResolvedValue(undefined);
+
+      const result = await service.initiateRefundForWonDispute('dp_won_refund', 'admin-1', 'stripe');
+
+      expect(result.isRefundedToCustomer).toBe(true);
+      expect(service.disputeRepo.save).toHaveBeenCalled();
+      expect(service.orderRepo.update).toHaveBeenCalledWith('ord-1', { paymentIntentId: '' });
+      expect(service.productionNotification.sendPaymentNotification).toHaveBeenCalledWith(
+        'u1',
+        'refund-dp_won_refund',
+        expect.objectContaining({ type: 'payment_success' })
+      );
+    });
+
+    it('should throw NotFoundException when dispute not found', async () => {
+      const { service } = createService();
+      service.disputeRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.initiateRefundForWonDispute('dp_missing', 'admin-1')).rejects.toThrow('Chargeback dispute dp_missing not found');
+    });
+
+    it('should throw BadRequestException when dispute is not won', async () => {
+      const { service } = createService();
+      const existingDispute = { id: 'disp-1', disputeId: 'dp_lost', status: 'lost', isRefundedToCustomer: false } as any;
+      service.disputeRepo.findOne.mockResolvedValue(existingDispute);
+
+      await expect(service.initiateRefundForWonDispute('dp_lost', 'admin-1')).rejects.toThrow('Only won disputes are eligible for refund');
+    });
+
+    it('should return dispute if already refunded', async () => {
+      const { service } = createService();
+      const existingDispute = { id: 'disp-1', disputeId: 'dp_done', status: 'won', isRefundedToCustomer: true } as any;
+      service.disputeRepo.findOne.mockResolvedValue(existingDispute);
+
+      const result = await service.initiateRefundForWonDispute('dp_done', 'admin-1');
+
+      expect(result.isRefundedToCustomer).toBe(true);
+      expect(service.disputeRepo.save).not.toHaveBeenCalled();
     });
   });
 });

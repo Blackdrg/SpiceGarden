@@ -47,5 +47,6 @@ export declare class DriverAssignmentService {
     recordFraudIncident(driverId: string, orderId: string, branchId: string, fraudType: 'gps_spoofing' | 'fake_delivery' | 'late_delivery_abuse' | 'route_deviation' | 'other', evidence: any, severity: 'low' | 'medium' | 'high'): Promise<DriverFraudEntity>;
     private updateDriverFraudScore;
     getDriverFraudHistory(driverId: string): Promise<DriverFraudEntity[]>;
+    getAllFraudIncidents(driverId?: string, limit?: number): Promise<DriverFraudEntity[]>;
     getDeliverySLAMetrics(driverId?: string, branchId?: string, metricName?: string, limit?: number): Promise<DeliverySLAEntity[]>;
 }

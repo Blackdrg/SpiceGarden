@@ -396,6 +396,15 @@ export class DriverAssignmentService {
     });
   }
 
+  async getAllFraudIncidents(driverId?: string, limit: number = 50): Promise<DriverFraudEntity[]> {
+    const where = driverId ? { driver: { id: driverId } as any } : {};
+    return this.fraudRepo.find({
+      where,
+      order: { createdAt: 'DESC' },
+      take: limit
+    });
+  }
+
   /**
    * Get delivery SLA metrics for a driver or branch
    */

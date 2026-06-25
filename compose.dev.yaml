@@ -83,7 +83,8 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
       - discovery.type=single-node
       - plugins.security.disabled=true
-      - OPENSEARCH_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-admin}
+      - OPENSEARCH_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-Opensearch#2026!}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-Opensearch#2026!}
     volumes:
       - opensearch_data:/usr/share/opensearch/data
     networks:

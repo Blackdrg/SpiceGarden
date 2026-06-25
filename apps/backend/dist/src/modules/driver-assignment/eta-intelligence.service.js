@@ -81,7 +81,21 @@ let ETAIntelligenceService = class ETAIntelligenceService {
         };
     }
     async calculateDistance(order, driver, branch) {
-        return 5.0;
+        const branchLoc = branch.location;
+        const driverLoc = driver.currentLocation;
+        if (!branchLoc || !driverLoc) {
+            return 5.0;
+        }
+        const R = 6371;
+        const dLat = ((driverLoc.lat - branchLoc.lat) * Math.PI) / 180;
+        const dLon = ((driverLoc.lng - branchLoc.lng) * Math.PI) / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((branchLoc.lat * Math.PI) / 180) *
+                Math.cos((driverLoc.lat * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
     async getTrafficConditions() {
         return {

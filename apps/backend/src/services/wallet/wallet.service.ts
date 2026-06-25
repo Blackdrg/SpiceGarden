@@ -332,22 +332,25 @@ export class WalletService {
     failed: number; 
     discrepancies: Array<{ orderId: string; expected: number; actual: number }> 
   }> {
-    // This would be run as a periodic job to reconcile payment records
-    // between our database, payment gateway, and wallet transactions
-    
-    // For now, returning a placeholder implementation
-    // In production, this would:
-    // 1. Fetch all payment records from Stripe/Payment gateway for a period
-    // 2. Compare with our order payment statuses
-    // 3. Compare with wallet transactions
-    // 4. Identify and flag discrepancies
-    // 5. Auto-correct where possible or alert for manual intervention
-    
-    return {
-      totalProcessed: 0,
-      successful: 0,
-      failed: 0,
-      discrepancies: [],
-    };
+    const wallets = await this.walletRepo.find();
+    let totalProcessed = 0;
+    const discrepancies: Array<{ orderId: string; expected: number; actual: number }> = [];
+
+    for (const wallet of wallets) {
+      const transactions = await this.walletTransactionRepo.find({ where: { walletId: wallet.id } });
+      const expectedBalance = transactions.reduce((sum, tx) => sum + (tx.type === 'credit' ? tx.amount : -tx.amount), 0);
+      const actualBalance = Number(wallet.balance);
+      totalProcessed += transactions.length;
+
+      if (Math.abs(expectedBalance - actualBalance) > 0.01) {
+        discrepancies.push({
+          orderId: wallet.id,
+          expected: expectedBalance,
+          actual: actualBalance,
+        });
+      }
+    }
+
+    return { totalProcessed, successful: totalProcessed, failed: 0, discrepancies };
   }
 }

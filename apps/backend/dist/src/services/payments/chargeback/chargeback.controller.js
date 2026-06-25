@@ -46,6 +46,9 @@ let ChargebackController = class ChargebackController {
         }
         return await this.chargebackService.getDisputesByStatus('under_review');
     }
+    async initiateRefundForWonDispute(disputeId, body) {
+        return await this.chargebackService.initiateRefundForWonDispute(disputeId, body.processedBy, body.gateway);
+    }
     async getDisputeStatsOverview(startDate, endDate) {
         const start = startDate ? new Date(startDate) : undefined;
         const end = endDate ? new Date(endDate) : undefined;
@@ -107,6 +110,13 @@ __decorate([
             required: ['processedBy']
         }
     }),
+    __param(0, (0, common_1.Param)('disputeId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], ChargebackController.prototype, "initiateRefundForWonDispute", null);
+__decorate([
     (0, common_1.Get)('stats/overview'),
     (0, roles_decorator_1.Roles)(user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.FINANCE_STAFF),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

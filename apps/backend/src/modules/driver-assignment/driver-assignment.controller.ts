@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards, Inject } from '@nestjs/common';
 import { DriverAssignmentService } from './driver-assignment.service';
+import { ETAIntelligenceService } from './eta-intelligence.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { PermissionGuard } from '../../security/permission.guard';
@@ -18,7 +19,10 @@ import { OrderEntity } from '../../db/entities/order.entity';
 @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
 @Permissions('deliveries:manage_assigned')
 export class DriverAssignmentController {
-  constructor(private readonly driverAssignmentService: DriverAssignmentService) {}
+  constructor(
+    private readonly driverAssignmentService: DriverAssignmentService,
+    private readonly etaIntelligence: ETAIntelligenceService
+  ) {}
 
   // Driver Assignment Endpoints
   @Post('assign/:orderId')
@@ -102,20 +106,7 @@ export class DriverAssignmentController {
     @Param('orderId') orderId: string,
     @Param('driverId') driverId: string
   ) {
-    // This would call the ETA service - for now returning placeholder
-    // In a full implementation, you'd inject ETAIntelligenceService
-    return {
-      etaMinutes: 25,
-      confidence: 0.85,
-      factors: {
-        distance: 4.2,
-        trafficConditions: { multiplier: 1.1, level: 'moderate' },
-        kitchenDelay: { delayMinutes: 3, confidence: 0.8 },
-        driverExperience: 150,
-        timeOfDay: 14,
-        weatherImpact: { multiplier: 1.0, condition: 'clear' }
-      }
-    };
+    return this.etaIntelligence.calculateETA(orderId, driverId);
   }
 
   // SLA Monitoring Endpoints
@@ -191,8 +182,6 @@ export class DriverAssignmentController {
     @Query('driverId') driverId?: string,
     @Query('limit') limit: number = 50
   ) {
-    // This would need to be implemented in the service
-    // For now returning placeholder
-    return [];
+    return this.driverAssignmentService.getAllFraudIncidents(driverId, limit);
   }
 }

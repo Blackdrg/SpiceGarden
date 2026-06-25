@@ -17,6 +17,7 @@ describe('WalletService Edge Cases', () => {
 
   const mockWalletRepo = {
     findOne: jest.fn(),
+    find: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
   };
@@ -464,13 +465,35 @@ describe('WalletService Edge Cases', () => {
 
   describe('reconcilePayments', () => {
     it('should return reconciliation summary', async () => {
+      mockWalletRepo.find.mockResolvedValue([{ id: 'w1', userId: 'u1', balance: 100 }]);
+      mockWalletTransactionRepo.find.mockResolvedValue([
+        { id: 't1', walletId: 'w1', type: 'credit', amount: 150 },
+        { id: 't2', walletId: 'w1', type: 'debit', amount: 50 },
+      ]);
+
       const result = await service.reconcilePayments();
 
-      expect(result).toEqual({
-        totalProcessed: 0,
-        successful: 0,
-        failed: 0,
-        discrepancies: [],
+      expect(result.totalProcessed).toBe(2);
+      expect(result.successful).toBe(2);
+      expect(result.failed).toBe(0);
+      expect(result.discrepancies).toHaveLength(0);
+    });
+
+    it('should detect balance discrepancies', async () => {
+      mockWalletRepo.find.mockResolvedValue([{ id: 'w1', userId: 'u1', balance: 50 }]);
+      mockWalletTransactionRepo.find.mockResolvedValue([
+        { id: 't1', walletId: 'w1', type: 'credit', amount: 150 },
+        { id: 't2', walletId: 'w1', type: 'debit', amount: 50 },
+      ]);
+
+      const result = await service.reconcilePayments();
+
+      expect(result.totalProcessed).toBe(2);
+      expect(result.discrepancies).toHaveLength(1);
+      expect(result.discrepancies[0]).toEqual({
+        orderId: 'w1',
+        expected: 100,
+        actual: 50,
       });
     });
   });

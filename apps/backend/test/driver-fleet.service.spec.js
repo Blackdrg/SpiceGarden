@@ -224,7 +224,9 @@ describe('Driver Fleet Service', () => {
       startDate.setDate(startDate.getDate() - 1);
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 14);
-      expect(endDate.getDate() - startDate.getDate()).toBe(15);
+      const diffMs = endDate.getTime() - startDate.getTime();
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+      expect(diffDays).toBe(15);
     });
   });
 

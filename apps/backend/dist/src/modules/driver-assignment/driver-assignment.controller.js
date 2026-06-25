@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriverAssignmentController = void 0;
 const common_1 = require("@nestjs/common");
 const driver_assignment_service_1 = require("./driver-assignment.service");
+const eta_intelligence_service_1 = require("./eta-intelligence.service");
 const jwt_auth_guard_1 = require("../../security/jwt-auth.guard");
 const roles_guard_1 = require("../../security/roles.guard");
 const permission_guard_1 = require("../../security/permission.guard");
@@ -23,8 +24,10 @@ const permissions_decorator_1 = require("../../security/permissions.decorator");
 const user_interface_1 = require("../../shared/domain/user.interface");
 let DriverAssignmentController = class DriverAssignmentController {
     driverAssignmentService;
-    constructor(driverAssignmentService) {
+    etaIntelligence;
+    constructor(driverAssignmentService, etaIntelligence) {
         this.driverAssignmentService = driverAssignmentService;
+        this.etaIntelligence = etaIntelligence;
     }
     async assignDriverToOrder(orderId) {
         return this.driverAssignmentService.assignDriverToOrder(orderId);
@@ -54,18 +57,7 @@ let DriverAssignmentController = class DriverAssignmentController {
         return this.driverAssignmentService.updateDriverScore(driverId);
     }
     async calculateETA(orderId, driverId) {
-        return {
-            etaMinutes: 25,
-            confidence: 0.85,
-            factors: {
-                distance: 4.2,
-                trafficConditions: { multiplier: 1.1, level: 'moderate' },
-                kitchenDelay: { delayMinutes: 3, confidence: 0.8 },
-                driverExperience: 150,
-                timeOfDay: 14,
-                weatherImpact: { multiplier: 1.0, condition: 'clear' }
-            }
-        };
+        return this.etaIntelligence.calculateETA(orderId, driverId);
     }
     async recordDeliverySLA(data) {
         return this.driverAssignmentService.recordDeliverySLA(data.driverId, data.branchId, data.metricName, data.value, data.unit, data.targetValue, data.targetUnit, data.measurementPeriod);
@@ -80,7 +72,7 @@ let DriverAssignmentController = class DriverAssignmentController {
         return this.driverAssignmentService.getDriverFraudHistory(driverId);
     }
     async getAllFraudIncidents(driverId, limit = 50) {
-        return [];
+        return this.driverAssignmentService.getAllFraudIncidents(driverId, limit);
     }
 };
 exports.DriverAssignmentController = DriverAssignmentController;
@@ -208,5 +200,6 @@ exports.DriverAssignmentController = DriverAssignmentController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
     (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
-    __metadata("design:paramtypes", [driver_assignment_service_1.DriverAssignmentService])
+    __metadata("design:paramtypes", [driver_assignment_service_1.DriverAssignmentService,
+        eta_intelligence_service_1.ETAIntelligenceService])
 ], DriverAssignmentController);

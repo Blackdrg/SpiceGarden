@@ -22,4 +22,5 @@ export declare class ChargebackService {
     getDisputesByStatus(status: 'warning' | 'needs_response' | 'under_review' | 'won' | 'lost'): Promise<PaymentDisputeEntity[]>;
     private mapStripeDisputeStatus;
     getDisputeStats(startDate?: Date, endDate?: Date): Promise<any>;
+    initiateRefundForWonDispute(disputeId: string, processedBy: string, gateway?: string): Promise<PaymentDisputeEntity>;
 }

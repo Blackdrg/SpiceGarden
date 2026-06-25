@@ -24,6 +24,16 @@ const driver_score_entity_1 = require("../../db/entities/driver-score.entity");
 const delivery_sla_entity_1 = require("../../db/entities/delivery-sla.entity");
 const driver_fraud_entity_1 = require("../../db/entities/driver-fraud.entity");
 const order_interface_1 = require("../../shared/domain/order.interface");
+const EARTH_RADIUS_KM = 6371;
+function haversineKm(a, b) {
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const sinLat = Math.sin(dLat / 2);
+    const sinLng = Math.sin(dLng / 2);
+    const h = sinLat * sinLat + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sinLng * sinLng;
+    return EARTH_RADIUS_KM * 2 * Math.asin(Math.sqrt(h));
+}
 let DispatchEngineService = class DispatchEngineService {
     driverRepo;
     orderRepo;
@@ -96,18 +106,35 @@ let DispatchEngineService = class DispatchEngineService {
         score += experienceScore * 0.2;
         const speedScore = 1 - Math.abs(driver.averageSpeed - 30) / 50;
         score += Math.max(0, speedScore) * 0.15;
-        score += 0.15;
+        const branchLoc = branch.location;
+        const driverLoc = driver.currentLocation;
+        let proximityScore = 0;
+        if (branchLoc && driverLoc) {
+            const distanceKm = haversineKm(driverLoc, branchLoc);
+            const maxDistance = 10;
+            proximityScore = Math.max(0, 1 - distanceKm / maxDistance);
+        }
+        score += proximityScore * 0.15;
         return score;
     }
     async createAssignment(driver, order, branch, assignmentType, manager) {
+        const driverLoc = driver.currentLocation;
+        const branchLoc = branch.location;
+        let distanceKm = 5.0;
+        let estimatedMinutes = 30;
+        if (driverLoc && branchLoc) {
+            distanceKm = haversineKm(driverLoc, branchLoc);
+            const avgSpeedKmh = Math.max(driver.averageSpeed, 15);
+            estimatedMinutes = Math.round((distanceKm / avgSpeedKmh) * 60);
+        }
         const assignment = manager.create(driver_assignment_entity_1.DriverAssignmentEntity, {
             driver,
             order,
             branch,
             assignmentType,
             status: 'assigned',
-            distance: 5.0,
-            estimatedTimeMinutes: 30,
+            distance: Math.round(distanceKm * 100) / 100,
+            estimatedTimeMinutes: estimatedMinutes,
             isPriority: false,
             retryCount: 0
         });
@@ -130,6 +157,15 @@ let DispatchEngineService = class DispatchEngineService {
             }));
             const assignments = [];
             for (const order of orders) {
+                const driverLoc = driver.currentLocation;
+                const branchLoc = branch.location;
+                let distanceKm = 5.0;
+                let estimatedMinutes = 30;
+                if (driverLoc && branchLoc) {
+                    distanceKm = haversineKm(driverLoc, branchLoc);
+                    const avgSpeedKmh = Math.max(driver.averageSpeed, 15);
+                    estimatedMinutes = Math.round((distanceKm / avgSpeedKmh) * 60);
+                }
                 const assignment = manager.create(driver_assignment_entity_1.DriverAssignmentEntity, {
                     driver,
                     order,
@@ -137,8 +173,8 @@ let DispatchEngineService = class DispatchEngineService {
                     assignmentType: 'batch',
                     batchId: `batch_${Date.now()}`,
                     status: 'assigned',
-                    distance: 5.0,
-                    estimatedTimeMinutes: 30,
+                    distance: Math.round(distanceKm * 100) / 100,
+                    estimatedTimeMinutes: estimatedMinutes,
                     isPriority: false,
                     retryCount: 0
                 });
