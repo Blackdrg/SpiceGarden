@@ -65,10 +65,10 @@ metadata:
   labels:
     app: spicegarden-backend
 spec:
-  selector:
-    app: spicegarden-backend
-    environment: staging
-  ports:
+   selector:
+     app: spicegarden-backend
+     environment: staging
+   ports:
     - port: 80
       targetPort: 3001
   type: ClusterIP

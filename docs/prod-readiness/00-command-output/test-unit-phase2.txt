@@ -1,0 +1,21 @@
+
+> @spicegarden/backend@0.0.0 test:unit
+> jest --runInBand test/order.service.spec.ts test/kitchen.service.spec.ts test/delivery.service.spec.ts
+
+node.exe : PASS test/order.service.spec.ts (5.616 s)
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS test/order...ec.ts (5.616 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS test/delivery.service.spec.ts
+PASS test/kitchen.service.spec.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       32 passed, 32 total
+Snapshots:   0 total
+Time:        7.179 s, estimated 8 s
+Ran all test suites matching 
+/test\\order.service.spec.ts|test\\kitchen.service.spec.ts|test\\delivery.service.spec.ts/i.
+

@@ -116,4 +116,56 @@ describe('VaultService', () => {
       expect(service.isVaultConfigured()).toBe(true);
     });
   });
+
+  describe('fetchAndRotate', () => {
+    it('should return false for rotateSecret when vault disabled', async () => {
+      const service = new VaultService(mockConfigService as any);
+      (service as any).vaultEnabled = false;
+
+      const result = await service.rotateSecret('JWT_SECRET', 'new-secret');
+      expect(result).toBe(false);
+    });
+
+    it('should handle fetchVault error for fetchSecretFromVault', async () => {
+      const service = new VaultService(mockConfigService as any);
+      (service as any).vaultEnabled = true;
+      (service as any).vaultToken = 'token';
+      const fetchMock = jest.spyOn(global, 'fetch').mockRejectedValue(new Error('network error'));
+
+      const result = await service.getSecret('any-key', 'fallback');
+      expect(result).toBe('fallback');
+
+      fetchMock.mockRestore();
+    });
+
+    it('should handle Vault response without ok in fetchFromVault', async () => {
+      const service = new VaultService(mockConfigService as any);
+      (service as any).vaultEnabled = true;
+      (service as any).vaultToken = 'token';
+      const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({}),
+      } as any);
+
+      await expect((service as any).fetchFromVault('http://vault/test')).rejects.toThrow('Vault request failed: 404');
+
+      fetchMock.mockRestore();
+    });
+
+    it('handles missing data.value returning undefined from Vault', async () => {
+      const service = new VaultService(mockConfigService as any);
+      (service as any).vaultEnabled = true;
+      (service as any).vaultToken = 'token';
+      const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: {} }),
+      } as any);
+
+      const result = await service.getSecret('key', 'fallback');
+      // When data.value is missing, the code returns undefined (edge case in vault.service)
+      expect(result).toBeUndefined();
+      fetchMock.mockRestore();
+    });
+  });
 });

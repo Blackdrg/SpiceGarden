@@ -1,0 +1,13 @@
+=== SpiceGarden Stack Verification ===
+
+Checking Backend Health (http://localhost:3001/health) ... OK (184ms)
+Checking Backend Metrics (http://localhost:3001/metrics) ... OK (63ms)
+Checking Grafana (http://localhost:3000/api/health) ... OK (127ms)
+Checking Prometheus (http://localhost:9090/-/healthy) ... OK (65ms)
+Checking OpenSearch (http://localhost:9200/_cluster/health) ... OK (629ms)
+
+Smoke request:
+  Restaurant list smoke: OK
+
+============================
+RESULT: PASS — stack is reachable
