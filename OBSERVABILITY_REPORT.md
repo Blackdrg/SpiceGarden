@@ -1,46 +1,118 @@
-# OBSERVABILITY_REPORT.md
+# Observability Report
 
-**Generated:** 2026-06-18
+**Date:** 2026-06-26
+**Scope:** SpiceGarden Observability Stack
+**Classification:** Evidence-based
 
-## Observability Stack
+## Metrics Stack
 
-| Component | File | Status |
-| :--- | :--- | :--- |
-| Prometheus config | `infra/prometheus/prometheus.yml` | ✅ Present |
-| Alertmanager config | `infra/alertmanager/alertmanager.yml` | ✅ Present |
-| Filebeat config | `infra/filebeat/filebeat.yml` | ✅ Present |
-| Alert rules | `infra/prometheus/rules/alerts.yml` | ✅ Present |
+### Prometheus
 
-## Metrics Endpoints
+**File:** `infra/prometheus/prometheus.dev.yml`
+**Image:** prom/prometheus:v2.51.0
+**Port:** 9090
 
-| Metric Type | Implementation |
-| :--- | :--- |
-| Backend metrics | `/metrics` endpoint in main.ts |
-| Health checks | `/health` endpoint |
-| Rate limiting | Redis-backed with prometheus metrics |
+**Targets Configured:**
+- backend:3001 (backend service)
+- postgres:9187 (PostgreSQL exporter)
+- redis:9121 (Redis exporter)
+
+### Metrics Endpoint
+
+**Location:** `src/main.ts:250-253`
+**Endpoint:** `/metrics`
+**Format:** Prometheus text format
+
+**Custom Metrics:**
+```javascript
+httpRequestCounter: Counter
+  - Labels: method, route, status_code
+  - Purpose: Request counting
+
+httpRequestDuration: Histogram
+  - Labels: method, route, status_code
+  - Buckets: 5ms, 10ms, 25ms, 50ms, 100ms, 250ms, 500ms, 1s, 2.5s, 5s, 10s
+```
+
+## Dashboards
+
+### Grafana
+
+**File:** `infra/grafana/dashboards/spicegarden.json`
+**Image:** grafana/grafana-enterprise:10.4.0
+**Port:** 3000
+
+**Panels:** 8 configured panels
+
+**Data Sources:**
+- Prometheus (metrics)
+- OpenSearch (logs)
+
+**Provisioning:**
+- `infra/grafana/provisioning/datasources/datasources.yml`
+- `infra/grafana/provisioning/dashboards/provider.yml`
+
+## Alerting
+
+### Alertmanager
+
+**File:** `infra/alertmanager/alertmanager.yml`
+**Image:** prom/alertmanager:v0.27.0
+**Port:** 9093
+
+**Integrations:**
+- Slack webhook (optional)
+- PagerDuty routing key (optional)
+
+### Alert Rules
+
+**Files:**
+- `infra/prometheus/rules/alerts.yml`
+- `infra/prometheus/rules/slos.yml`
 
 ## Logging
 
-- Winston logger configured in `apps/backend/src/logger.ts`
-- Filebeat configured for log shipping
-- Log format: JSON with timestamps, levels, correlation IDs
+### OpenSearch
 
-## Alerting Rules
+**Image:** opensearchproject/opensearch:2.15.0
+**Ports:** 9200, 9300
+**Dashboards:** 5601
 
-| Alert | Severity | Condition |
-| :--- | :--- | :--- |
-| High error rate | warning | >5% error rate |
-| Low disk space | critical | <10% disk remaining |
-| High memory usage | warning | >85% memory |
-| Slow database queries | warning | >1s query time |
+**Index Template:** `infra/opensearch/index-templates/spicegarden-logs.json`
 
-## Validation Status
+### Filebeat
 
-| Check | Status |
-| :--- | :--- |
-| Prometheus config valid | ⚠️ Requires running stack |
-| Alertmanager config valid | ⚠️ Requires running stack |
-| Log aggregation configured | ✅ Config present |
-| Metrics endpoint implemented | ✅ Code complete |
+**File:** `infra/filebeat/filebeat.yml`
+**Purpose:** Log shipping to OpenSearch
 
-**Note:** Full observability validation requires running Docker stack (`docker-compose -f compose.dev.yaml up -d`).
+## Health Checks
+
+### Backend
+
+**Endpoint:** `/health` (HTTP GET)
+**Response:** 200 OK when service healthy
+
+**Checks Performed:**
+- Database connectivity (PostgreSQL)
+- Database connectivity (MongoDB)
+- Redis connectivity
+- Service status
+
+## Metrics Collection Points
+
+From `src/main.ts:256-266`:
+
+```javascript
+// Request duration tracking
+httpRequestDuration.observe({ method, route, status_code }, duration);
+
+// Request counter
+httpRequestCounter.inc({ method, route, status_code });
+```
+
+## NOT VERIFIED
+
+- Live metrics rendering in Grafana
+- Alert firing behavior
+- Log ingestion into OpenSearch
+- Dashboard panel functionality
