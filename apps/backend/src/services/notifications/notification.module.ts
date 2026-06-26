@@ -1,7 +1,8 @@
 ﻿
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { NotificationService } from './notification.service';
 import { ProductionNotificationService } from './production-notification.service';
 import { UserDeviceEntity } from '../../db/entities/user-device.entity';
@@ -12,7 +13,7 @@ import { DeviceController } from './device.controller';
 @Global()
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
     NotificationQueueModule,
   ],
   providers: [NotificationService, ProductionNotificationService],

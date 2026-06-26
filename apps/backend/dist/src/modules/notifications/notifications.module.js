@@ -8,14 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const notification_service_1 = require("../../services/notifications/notification.service");
 let NotificationsModule = class NotificationsModule {
 };
 exports.NotificationsModule = NotificationsModule;
 exports.NotificationsModule = NotificationsModule = __decorate([
     (0, common_1.Module)({
-        imports: [local_repository_module_1.LocalRepositoryModule],
+        imports: [db_repositories_module_1.DbRepositoriesModule],
         controllers: [],
         providers: [notification_service_1.NotificationService],
         exports: [notification_service_1.NotificationService],

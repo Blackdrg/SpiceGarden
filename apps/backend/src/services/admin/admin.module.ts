@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -10,7 +11,7 @@ import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
   ],
   providers: [AdminService],
   controllers: [AdminController],

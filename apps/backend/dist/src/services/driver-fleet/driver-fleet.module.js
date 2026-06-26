@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriverFleetModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const driver_fleet_service_1 = require("./driver-fleet.service");
 const driver_fleet_controller_1 = require("./driver-fleet.controller");
 let DriverFleetModule = class DriverFleetModule {
@@ -17,7 +17,7 @@ exports.DriverFleetModule = DriverFleetModule;
 exports.DriverFleetModule = DriverFleetModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
         ],
         providers: [driver_fleet_service_1.DriverFleetService],
         controllers: [driver_fleet_controller_1.DriverFleetController],

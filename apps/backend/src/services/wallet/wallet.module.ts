@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { WalletService } from './wallet.service';
@@ -9,7 +10,7 @@ import { PaymentServiceModule } from '../../services/payments/payments.module';
 import { NotificationModule } from '../../services/notifications/notification.module';
 
 @Module({
-  imports: [LocalRepositoryModule, PaymentServiceModule, NotificationModule],
+  imports: [DbRepositoriesModule, PaymentServiceModule, NotificationModule],
   providers: [WalletService],
   controllers: [WalletController],
   exports: [WalletService],

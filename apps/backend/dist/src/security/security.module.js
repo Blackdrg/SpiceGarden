@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const throttler_1 = require("@nestjs/throttler");
 const encryption_service_1 = require("./encryption.service");
 const secret_loader_service_1 = require("../infra/secret-loader.service");
-const local_repository_module_1 = require("../db/local-repository.module");
+const db_repositories_module_1 = require("../db/db-repositories.module");
 const permission_guard_1 = require("./permission.guard");
 const roles_guard_1 = require("./roles.guard");
 const loadTestLimit = parseInt(process.env.LOAD_TEST_LIMIT || '1000000', 10);
@@ -22,7 +22,7 @@ exports.SecurityModule = SecurityModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
             throttler_1.ThrottlerModule.forRoot([{
                     ttl: 60000,
                     limit: process.env.LOAD_TEST_MODE === 'true' && process.env.NODE_ENV !== 'production' ? loadTestLimit : 10,

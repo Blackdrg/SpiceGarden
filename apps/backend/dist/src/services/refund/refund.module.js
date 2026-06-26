@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RefundModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const refund_service_1 = require("./refund.service");
 const refund_controller_1 = require("./refund.controller");
 const payments_module_1 = require("../../services/payments/payments.module");
@@ -20,7 +20,7 @@ exports.RefundModule = RefundModule;
 exports.RefundModule = RefundModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
             payments_module_1.PaymentServiceModule,
             notification_module_1.NotificationModule,
             ledger_module_1.LedgerModule

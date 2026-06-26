@@ -90,7 +90,7 @@ const entities = [
   PaymentEventEntity,
 ];
 
-const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
+const localSqlite = process.env.LOCAL_DB === 'sqlite';
 
 function localReviewModelProvider() {
   const store: any[] = [];

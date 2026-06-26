@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeliveryServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const delivery_service_1 = require("./delivery.service");
 const geo_service_1 = require("../../services/geo/geo.service");
 let DeliveryServiceModule = class DeliveryServiceModule {
@@ -17,7 +17,7 @@ exports.DeliveryServiceModule = DeliveryServiceModule;
 exports.DeliveryServiceModule = DeliveryServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
         ],
         providers: [delivery_service_1.DeliveryService, geo_service_1.GeoService],
         exports: [delivery_service_1.DeliveryService],

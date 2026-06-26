@@ -5,7 +5,8 @@ import { RazorpaySettlementService } from './razorpay-settlement.service';
 import { DriverPayoutProviderService } from './driver-payout-provider.service';
 import { PaymentProviderController } from './payment-provider.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { PayoutReportEntity } from '../../db/entities/payout-report.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -15,7 +16,7 @@ import { OrderEntity } from '../../db/entities/order.entity';
 @Module({
   imports: [
     ConfigModule,
-    LocalRepositoryModule,
+    DbRepositoriesModule,
   ],
   providers: [
     StripeConnectService,

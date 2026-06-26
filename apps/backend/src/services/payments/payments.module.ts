@@ -1,7 +1,8 @@
 ﻿
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { PaymentService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { PaymentHardeningService } from './payment-hardening.service';
@@ -29,7 +30,7 @@ import { ChargebackService } from './chargeback/chargeback.service';
 
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
     AuditModule,
     LedgerModule,
     GSTModule,

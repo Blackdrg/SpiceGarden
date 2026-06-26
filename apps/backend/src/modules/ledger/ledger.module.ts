@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { LedgerEntryEntity } from '../../db/entities/ledger-entry.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { LedgerService } from './ledger.service';
 
 @Module({
-  imports: [LocalRepositoryModule],
+  imports: [DbRepositoriesModule],
   providers: [LedgerService],
   exports: [LedgerService],
 })

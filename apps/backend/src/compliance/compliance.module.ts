@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../db/local-repository.module';
+import { DbRepositoriesModule } from '../db/db-repositories.module';
+
 import { ComplianceService } from './compliance.service';
 import { UserEntity } from '../db/entities/user.entity';
 import { SessionEntity } from '../db/entities/session.entity';
@@ -10,7 +11,7 @@ import { DataExportRequestEntity } from '../db/entities/data-export-request.enti
 import { EncryptionService } from '../security/encryption.service';
 
 @Module({
-  imports: [LocalRepositoryModule],
+  imports: [DbRepositoriesModule],
   providers: [ComplianceService, EncryptionService],
   exports: [ComplianceService],
 })

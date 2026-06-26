@@ -31,6 +31,7 @@ import { LoyaltyModule } from './services/loyalty/loyalty.module';
 import { DriverFleetModule } from './services/driver-fleet/driver-fleet.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { ReviewServiceModule } from './services/review/review.module';
+import { UserProfileModule } from './services/user/user-profile.module';
 import { ApisModule } from './apis.module';
 
 @Module({
@@ -67,6 +68,7 @@ import { ApisModule } from './apis.module';
     DriverFleetModule,
     AnalyticsModule,
     ReviewServiceModule,
+    UserProfileModule,
     ApisModule,
   ],
   controllers: [AppController],

@@ -8,14 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookRetryModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../../db/local-repository.module");
+const db_repositories_module_1 = require("../../../db/db-repositories.module");
 const webhook_retry_service_1 = require("./webhook-retry.service");
 let WebhookRetryModule = class WebhookRetryModule {
 };
 exports.WebhookRetryModule = WebhookRetryModule;
 exports.WebhookRetryModule = WebhookRetryModule = __decorate([
     (0, common_1.Module)({
-        imports: [local_repository_module_1.LocalRepositoryModule],
+        imports: [db_repositories_module_1.DbRepositoriesModule],
         providers: [webhook_retry_service_1.WebhookRetryService],
         exports: [webhook_retry_service_1.WebhookRetryService],
     })

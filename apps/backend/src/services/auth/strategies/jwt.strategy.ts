@@ -14,6 +14,8 @@ interface JwtPayload {
 
 interface JwtUser {
   id: string;
+  sub: string;
+  userId: string;
   email: string;
   role: UserRole;
   status: UserStatus;
@@ -37,6 +39,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload): Promise<JwtUser> {
     return {
       id: payload.sub,
+      sub: payload.sub,
+      userId: payload.sub,
       email: payload.email,
       role: payload.role,
       status: payload.status,

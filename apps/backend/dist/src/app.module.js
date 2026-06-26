@@ -73,6 +73,7 @@ const loyalty_module_1 = require("./services/loyalty/loyalty.module");
 const driver_fleet_module_1 = require("./services/driver-fleet/driver-fleet.module");
 const analytics_module_1 = require("./modules/analytics/analytics.module");
 const review_module_1 = require("./services/review/review.module");
+const user_profile_module_1 = require("./services/user/user-profile.module");
 const apis_module_1 = require("./apis.module");
 let AppModule = class AppModule {
 };
@@ -112,6 +113,7 @@ exports.AppModule = AppModule = __decorate([
             driver_fleet_module_1.DriverFleetModule,
             analytics_module_1.AnalyticsModule,
             review_module_1.ReviewServiceModule,
+            user_profile_module_1.UserProfileModule,
             apis_module_1.ApisModule,
         ],
         controllers: [app_controller_1.AppController],

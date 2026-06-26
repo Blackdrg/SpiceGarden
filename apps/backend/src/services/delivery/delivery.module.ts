@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { DeliveryService } from './delivery.service';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
@@ -14,7 +15,7 @@ import { GeoService } from '../../services/geo/geo.service';
 
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
   ],
   providers: [DeliveryService, GeoService],
   exports: [DeliveryService],

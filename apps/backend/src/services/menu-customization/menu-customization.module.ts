@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { MenuCustomizationService } from './menu-customization.service';
 import { MenuCustomizationController } from './menu-customization.controller';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
@@ -8,7 +9,7 @@ import { MenuCategoryEntity } from '../../db/entities/menu-category.entity';
 import { MenuAddonEntity } from '../../db/entities/menu-addon.entity';
 
 @Module({
-  imports: [LocalRepositoryModule],
+  imports: [DbRepositoriesModule],
   providers: [MenuCustomizationService],
   controllers: [MenuCustomizationController],
   exports: [MenuCustomizationService],

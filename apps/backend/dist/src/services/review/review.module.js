@@ -13,13 +13,12 @@ const review_service_1 = require("./review.service");
 const review_controller_1 = require("./review.controller");
 const db_module_1 = require("../../db/db.module");
 const review_schema_1 = require("../../db/schemas/review.schema");
-const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
 let ReviewServiceModule = class ReviewServiceModule {
 };
 exports.ReviewServiceModule = ReviewServiceModule;
 exports.ReviewServiceModule = ReviewServiceModule = __decorate([
     (0, common_1.Module)({
-        imports: localSqlite ? [db_module_1.DbModule] : [db_module_1.DbModule, mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])],
+        imports: [db_module_1.DbModule, mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])],
         providers: [review_service_1.ReviewService],
         controllers: [review_controller_1.ReviewController],
         exports: [review_service_1.ReviewService],

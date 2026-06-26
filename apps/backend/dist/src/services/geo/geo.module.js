@@ -8,14 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeoModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const enhanced_geo_service_1 = require("./enhanced-geo.service");
 let GeoModule = class GeoModule {
 };
 exports.GeoModule = GeoModule;
 exports.GeoModule = GeoModule = __decorate([
     (0, common_1.Module)({
-        imports: [local_repository_module_1.LocalRepositoryModule],
+        imports: [db_repositories_module_1.DbRepositoriesModule],
         providers: [enhanced_geo_service_1.EnhancedGeoService],
         exports: [enhanced_geo_service_1.EnhancedGeoService],
     })

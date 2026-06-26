@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GSTModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const gst_service_1 = require("./gst.service");
 const gst_controller_1 = require("./gst.controller");
 let GSTModule = class GSTModule {
@@ -17,7 +17,7 @@ exports.GSTModule = GSTModule;
 exports.GSTModule = GSTModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
         ],
         providers: [gst_service_1.GSTService],
         controllers: [gst_controller_1.GSTController],

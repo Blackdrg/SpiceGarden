@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MenuCustomizationModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const menu_customization_service_1 = require("./menu-customization.service");
 const menu_customization_controller_1 = require("./menu-customization.controller");
 let MenuCustomizationModule = class MenuCustomizationModule {
@@ -16,7 +16,7 @@ let MenuCustomizationModule = class MenuCustomizationModule {
 exports.MenuCustomizationModule = MenuCustomizationModule;
 exports.MenuCustomizationModule = MenuCustomizationModule = __decorate([
     (0, common_1.Module)({
-        imports: [local_repository_module_1.LocalRepositoryModule],
+        imports: [db_repositories_module_1.DbRepositoriesModule],
         providers: [menu_customization_service_1.MenuCustomizationService],
         controllers: [menu_customization_controller_1.MenuCustomizationController],
         exports: [menu_customization_service_1.MenuCustomizationService],

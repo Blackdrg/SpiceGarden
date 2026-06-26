@@ -129,7 +129,7 @@ const entities = [
     payment_fraud_entity_1.PaymentFraudFlagEntity,
     payment_event_entity_1.PaymentEventEntity,
 ];
-const localSqlite = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
+const localSqlite = process.env.LOCAL_DB === 'sqlite';
 function localReviewModelProvider() {
     const store = [];
     return {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -12,7 +13,7 @@ import { GSTModule } from '../../services/gst/gst.module';
 import { LoggingModule } from '../../logging/logging.module';
 
 @Module({
-  imports: [LocalRepositoryModule, PaymentServiceModule, NotificationModule, GSTModule, LoggingModule],
+  imports: [DbRepositoriesModule, PaymentServiceModule, NotificationModule, GSTModule, LoggingModule],
   providers: [OrderService],
   controllers: [OrderController],
   exports: [OrderService],

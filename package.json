@@ -16,7 +16,17 @@
     "test:integration": "npm run --workspaces --if-present test:integration",
     "test:e2e": "npm run --workspaces --if-present test:e2e",
     "test:all": "npm run --workspaces --if-present test:all",
-    "verify:stack": "node infra/scripts/verify-stack.js"
+    "verify:stack": "node infra/scripts/verify-stack.js",
+    "dev:local": "run.cmd",
+    "dev:local:full": "run.cmd --full",
+    "dev:local:infra": "run.cmd --infra",
+    "dev:local:check": "run.cmd --check",
+    "dev:local:stop": "stop.cmd",
+    "local": "npm run dev:local",
+    "local:full": "npm run dev:local:full",
+    "local:infra": "npm run dev:local:infra",
+    "local:check": "npm run dev:local:check",
+    "local:stop": "npm run dev:local:stop"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

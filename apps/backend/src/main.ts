@@ -1,7 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { LocalDevModule } from "./local-dev.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
@@ -144,8 +143,7 @@ function installRateLimiters(app: NestExpressApplication, configService: ConfigS
 }
 
 async function bootstrap() {
-  const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-  const app = await NestFactory.create<NestExpressApplication>(localMode ? LocalDevModule : AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
   validateProductionEnvironment(configService);

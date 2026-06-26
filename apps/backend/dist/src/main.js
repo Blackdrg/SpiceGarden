@@ -38,7 +38,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
-const local_dev_module_1 = require("./local-dev.module");
 const config_1 = require("@nestjs/config");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
@@ -151,8 +150,7 @@ function installRateLimiters(app, configService) {
     app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
 }
 async function bootstrap() {
-    const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-    const app = await core_1.NestFactory.create(localMode ? local_dev_module_1.LocalDevModule : app_module_1.AppModule, { rawBody: true });
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
     const configService = app.get(config_1.ConfigService);
     validateProductionEnvironment(configService);
     if (configService.get('NODE_ENV') === 'production') {
