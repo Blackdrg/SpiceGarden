@@ -3,15 +3,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import type * as jwt from 'jsonwebtoken';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { AuthService } from './auth.service';
+import { PasswordResetService } from './password-reset.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { SessionEntity } from '../../db/entities/session.entity';
-import { UserEntity } from '../../db/entities/user.entity';
-import { SecurityModule } from '../../security/security.module';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { FacebookStrategy } from './strategies/facebook.strategy';
+import { NotificationModule } from '../notifications/notification.module';
 import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
 function requireJwtSecret(configService: ConfigService): string {
@@ -20,8 +20,8 @@ function requireJwtSecret(configService: ConfigService): string {
 
 @Module({
   imports: [
-    PassportModule,
-    SecurityModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    NotificationModule,
     DbRepositoriesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -36,8 +36,8 @@ function requireJwtSecret(configService: ConfigService): string {
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, PasswordResetService, JwtStrategy, GoogleStrategy, FacebookStrategy],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, PasswordResetService],
 })
 export class AuthServiceModule {}

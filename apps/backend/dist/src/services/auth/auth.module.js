@@ -13,9 +13,12 @@ const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
 const db_repositories_module_1 = require("../../db/db-repositories.module");
 const auth_service_1 = require("./auth.service");
+const password_reset_service_1 = require("./password-reset.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
-const security_module_1 = require("../../security/security.module");
+const google_strategy_1 = require("./strategies/google.strategy");
+const facebook_strategy_1 = require("./strategies/facebook.strategy");
+const notification_module_1 = require("../notifications/notification.module");
 const missing_env_error_1 = require("../../common/errors/missing-env.error");
 function requireJwtSecret(configService) {
     return (0, missing_env_error_1.getRequiredSecret)(configService, 'JWT_SECRET');
@@ -26,8 +29,8 @@ exports.AuthServiceModule = AuthServiceModule;
 exports.AuthServiceModule = AuthServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            passport_1.PassportModule,
-            security_module_1.SecurityModule,
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
+            notification_module_1.NotificationModule,
             db_repositories_module_1.DbRepositoriesModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
@@ -42,8 +45,8 @@ exports.AuthServiceModule = AuthServiceModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
         ],
-        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
+        providers: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy, facebook_strategy_1.FacebookStrategy],
         controllers: [auth_controller_1.AuthController],
-        exports: [auth_service_1.AuthService],
+        exports: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService],
     })
 ], AuthServiceModule);

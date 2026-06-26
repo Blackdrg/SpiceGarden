@@ -1,10 +1,13 @@
-import { Controller, Post, Body, ConflictException, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Post, Body, ConflictException, UnauthorizedException, Req, BadRequestException, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { PasswordResetService } from './password-reset.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request } from 'express';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
+import { NotificationService } from '../notifications/notification.service';
+import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 
 interface DeviceInfo {
   name: string;
@@ -34,8 +37,10 @@ interface RefreshBody {
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private passwordResetService: PasswordResetService,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
+    private notificationService: NotificationService,
   ) {}
 
   @Post('login')
@@ -44,7 +49,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    
+
     const deviceInfo = this.getDeviceInfo(body, req);
 
     return this.authService.login(user, deviceInfo);
@@ -84,6 +89,36 @@ export class AuthController {
     return { revoked: true };
   }
 
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    if (!body.email) {
+      return { message: 'If your email exists in our system, we have sent a reset code to it.' };
+    }
+    await this.passwordResetService.forgotPassword(body.email);
+    return { message: 'If your email exists in our system, we have sent a reset code to it.' };
+  }
+
+  @Post('verify-reset-code')
+  async verifyResetCode(@Body() body: { email: string; code: string }) {
+    if (!body.email || !body.code) {
+      throw new BadRequestException('Email and code are required');
+    }
+    await this.passwordResetService.verifyResetCode(body.email, body.code);
+    return { valid: true };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { email: string; code: string; password: string }) {
+    if (!body.email || !body.code || !body.password) {
+      throw new BadRequestException('Email, code, and password are required');
+    }
+    if (body.password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters');
+    }
+    await this.passwordResetService.resetPassword(body.email, body.code, body.password);
+    return { success: true, message: 'Password reset successful' };
+  }
+
   private getDeviceInfo(body: { deviceName?: string; deviceType?: string }, req: Request): DeviceInfo {
     return {
       name: body.deviceName || 'any Device',
@@ -92,4 +127,3 @@ export class AuthController {
     };
   }
 }
-

@@ -6,17 +6,21 @@ import { AuthController } from '../src/services/auth/auth.controller';
 import { AuthService } from '../src/services/auth/auth.service';
 import { UserEntity } from '../src/db/entities/user.entity';
 
-function createController(userRepo: any, authService: any) {
+function createController(userRepo: any, authService: any, passwordResetService: any, notificationService: any) {
   return {
-    controller: new AuthController(authService, userRepo),
+    controller: new AuthController(authService, passwordResetService, userRepo, notificationService),
     userRepo,
     authService,
+    passwordResetService,
+    notificationService,
   };
 }
 
 describe('AuthController account edge cases', () => {
   let userRepo: any;
   let authService: any;
+  let passwordResetService: any;
+  let notificationService: any;
   let controller: AuthController;
 
   beforeEach(() => {
@@ -28,7 +32,16 @@ describe('AuthController account edge cases', () => {
       refreshAccessToken: jest.fn(),
       revokeSession: jest.fn(),
     };
-    controller = createController(userRepo, authService).controller;
+    passwordResetService = {
+      forgotPassword: jest.fn(),
+      verifyResetCode: jest.fn(),
+      resetPassword: jest.fn(),
+    };
+    notificationService = {
+      sendEmail: jest.fn(),
+      sendSMS: jest.fn(),
+    };
+    controller = createController(userRepo, authService, passwordResetService, notificationService).controller;
   });
 
   it('rejects duplicate email registration with a conflict response', async () => {

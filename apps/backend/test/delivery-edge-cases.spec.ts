@@ -540,7 +540,7 @@ describe('EnhancedDeliveryService Edge Cases', () => {
 
   describe('verifyDriverLocation - no current location', () => {
     it('should return false when driver has no current location', async () => {
-      const driver = { id: 'd1', currentLocation: undefined } as DriverEntity;
+      const driver = { id: 'd1', currentLocation: undefined } as unknown as DriverEntity;
       mockDriverRepo.findOne.mockResolvedValue(driver);
 
       const result = await service.verifyDriverLocation('d1', { lat: 30.7, lng: 76.8 });
