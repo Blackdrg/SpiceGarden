@@ -56,6 +56,6 @@ const Button = ({ label, children, onClick, variant = 'primary', size = 'md', is
             padding: getSizeStyles().padding,
             boxShadow: variant === 'primary' ? tokens_1.DESIGN_TOKENS.shadows.small : 'none',
             ...style,
-        } }, isLoading ? 'Loading...' : label));
+        } }, isLoading ? 'Loading...' : (label || children)));
 };
 exports.Button = Button;

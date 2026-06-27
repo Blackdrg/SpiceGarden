@@ -12,6 +12,12 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import TrackingScreen from './src/screens/TrackingScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
 
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = 'html{text-size-adjust:100%;-webkit-text-size-adjust:100%;}';
+  document.head.appendChild(style);
+}
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 

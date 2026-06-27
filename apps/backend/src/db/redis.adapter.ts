@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -18,23 +18,26 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
     const password = this.configService.get<string>('REDIS_PASSWORD') || undefined;
 
     try {
-      this.client = new Redis({
+      const RedisClass = Redis as any;
+      const client = new RedisClass({
         host,
         port,
         password: password || undefined,
         maxRetriesPerRequest: 3,
-        retryStrategy: (times) => Math.min(times * 100, 2000),
+        retryStrategy: (times: number) => Math.min(times * 100, 2000),
       });
 
-      this.client.on('connect', () => {
+      this.client = client;
+      
+      client.on('connect', () => {
         console.log(`Redis connected successfully at ${host}:${port}`);
       });
 
-      this.client.on('error', (err) => {
+      client.on('error', (err: Error) => {
         console.error('Redis connection error:', err);
       });
 
-      await this.client.ping();
+      await client.ping();
       console.log('Redis ping successful');
     } catch (e) {
       console.warn('ioredis not installed or Redis unavailable, using fallback mode');

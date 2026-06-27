@@ -4,6 +4,7 @@ import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
+import * as Sentry from '@sentry/node';
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
@@ -13,21 +14,9 @@ import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
 import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
-import * as Sentry from "@sentry/node";
 
 const metricsRegistry = new Registry();
 collectDefaultMetrics({ register: metricsRegistry });
-
-type SentryRuntime = typeof Sentry & {
-  init: (options: { dsn: string; tracesSampleRate: number }) => void;
-  Handlers?: {
-    requestHandler?: express.RequestHandler;
-    tracingHandler?: express.RequestHandler;
-  };
-  setupExpressErrorHandler?: () => express.ErrorRequestHandler;
-};
-
-const sentry = Sentry as SentryRuntime;
 
 const httpRequestCounter = new Counter({
   name: "http_requests_total",
@@ -153,19 +142,17 @@ async function bootstrap() {
     server.set('trust proxy', 1);
   }
 
-  const dsn = configService.get<string>("SENTRY_DSN");
-  if (dsn) {
-    sentry.init({
-      dsn,
-      tracesSampleRate: 1.0,
-    });
-    sentry.Handlers?.requestHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.requestHandler!(req, res, next));
-    sentry.Handlers?.tracingHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.tracingHandler!(req, res, next));
-    sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
-  }
+const dsn = configService.get<string>("SENTRY_DSN");
+   if (dsn) {
+     // Dynamically import Sentry for newer API compatibility
+     const sentry = await import('@sentry/node');
+     (sentry as any).init({
+       dsn,
+       tracesSampleRate: 1.0,
+     });
+     app.use((sentry as any).setupExpressErrorHandler());
+   }
 
-
-  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   const sanitizeMiddleware = mongoSanitize();
   const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {

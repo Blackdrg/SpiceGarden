@@ -11,7 +11,7 @@ module.exports = {
     '!src/db/entities/**/*.ts'
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
+  coverageReporters: ['text', 'json', 'json-summary'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {

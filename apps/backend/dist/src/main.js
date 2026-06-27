@@ -50,10 +50,8 @@ const redis_rate_limit_store_1 = require("./security/redis-rate-limit.store");
 const missing_env_error_1 = require("./common/errors/missing-env.error");
 const csrf_middleware_1 = require("./security/csrf.middleware");
 const prom_client_1 = require("prom-client");
-const Sentry = __importStar(require("@sentry/node"));
 const metricsRegistry = new prom_client_1.Registry();
 (0, prom_client_1.collectDefaultMetrics)({ register: metricsRegistry });
-const sentry = Sentry;
 const httpRequestCounter = new prom_client_1.Counter({
     name: "http_requests_total",
     help: "Total HTTP requests by method, route, and status code.",
@@ -159,13 +157,12 @@ async function bootstrap() {
     }
     const dsn = configService.get("SENTRY_DSN");
     if (dsn) {
+        const sentry = await Promise.resolve().then(() => __importStar(require('@sentry/node')));
         sentry.init({
             dsn,
             tracesSampleRate: 1.0,
         });
-        sentry.Handlers?.requestHandler && app.use((req, res, next) => sentry.Handlers.requestHandler(req, res, next));
-        sentry.Handlers?.tracingHandler && app.use((req, res, next) => sentry.Handlers.tracingHandler(req, res, next));
-        sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
+        app.use(sentry.setupExpressErrorHandler());
     }
     const sanitizeMiddleware = (0, express_mongo_sanitize_1.default)();
     const safeMongoSanitize = (req, res, next) => {

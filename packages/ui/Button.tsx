@@ -90,7 +90,7 @@ export const Button = ({
         ...style,
       }}
     >
-      {isLoading ? 'Loading...' : label}
+      {isLoading ? 'Loading...' : (label || children)}
     </button>
   );
 };

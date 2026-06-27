@@ -1,0 +1,62 @@
+.container {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.formCard {
+  background: #171717;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+
+.formLabel {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.input {
+  padding: 8px 12px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+
+.button {
+  padding: 10px 20px;
+  background: #f04e31;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.activeBadge {
+  font-size: 12px;
+  color: #4ade80;
+}
+
+.backLink {
+  color: #f97316;
+  text-decoration: none;
+  margin-top: 16px;
+  display: inline-block;
+}

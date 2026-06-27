@@ -1,8 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 export const OrderDetailsScreen = () => (
-  <View style={{ padding: 20 }}>
+  <View style={styles.container}>
     <Text>Order Details placeholder</Text>
   </View>
 );
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+});

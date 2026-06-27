@@ -1,0 +1,23 @@
+.container {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.description {
+  color: #a1a1aa;
+}
+
+.backLink {
+  color: #f97316;
+  text-decoration: none;
+  margin-top: 16px;
+  display: inline-block;
+}

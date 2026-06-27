@@ -30,20 +30,22 @@ let RedisAdapter = class RedisAdapter {
         const port = this.configService.get('REDIS_PORT') || 6379;
         const password = this.configService.get('REDIS_PASSWORD') || undefined;
         try {
-            this.client = new ioredis_1.default({
+            const RedisClass = ioredis_1.default;
+            const client = new RedisClass({
                 host,
                 port,
                 password: password || undefined,
                 maxRetriesPerRequest: 3,
                 retryStrategy: (times) => Math.min(times * 100, 2000),
             });
-            this.client.on('connect', () => {
+            this.client = client;
+            client.on('connect', () => {
                 console.log(`Redis connected successfully at ${host}:${port}`);
             });
-            this.client.on('error', (err) => {
+            client.on('error', (err) => {
                 console.error('Redis connection error:', err);
             });
-            await this.client.ping();
+            await client.ping();
             console.log('Redis ping successful');
         }
         catch (e) {

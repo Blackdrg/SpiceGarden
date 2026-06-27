@@ -1,6 +1,7 @@
 import { useReducer } from 'react';
 import { Button } from '@spicegarden/ui';
 import Head from 'next/head';
+import styles from './menu.module.css';
 
 type MenuItem = {
   id: string;
@@ -94,11 +95,11 @@ export default function OnboardingMenu() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '24px' }}>
+    <div className={styles.container}>
       <Head><title>Menu Setup - Onboarding</title></Head>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Menu Setup</h1>
-        <p style={{ color: '#a1a1aa', marginBottom: 32 }}>Create your menu categories and add items.</p>
+      <div className={styles.wrapper}>
+        <h1 className={styles.title}>Menu Setup</h1>
+        <p className={styles.subtitle}>Create your menu categories and add items.</p>
 
         <CategoriesSection
           categories={state.categories}
@@ -116,15 +117,15 @@ export default function OnboardingMenu() {
 
         <ItemsList items={state.items} />
 
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div className={styles.buttonContainer}>
           <button
             type="button"
             onClick={() => window.location.href = '/onboarding/gst'}
-            style={{ ...buttonStyle.secondary, flex: 1 }}
+            className={styles.secondaryBtn}
           >
             Back
           </button>
-          <Button label={state.loading ? 'Saving...' : 'Save Menu'} onClick={submit} disabled={state.loading} style={{ flex: 1 }} />
+          <Button label={state.loading ? 'Saving...' : 'Save Menu'} onClick={submit} disabled={state.loading} className={styles.secondaryBtn} />
         </div>
       </div>
     </div>
@@ -143,21 +144,21 @@ function CategoriesSection({
   onAddCategory: () => void;
 }) {
   return (
-    <div style={{ marginBottom: 24 }}>
-      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Categories</h2>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+    <div className={styles.categoriesSection}>
+      <h2 className={styles.sectionHeader}>Categories</h2>
+      <div className={styles.flexGap}>
         <input
           aria-label="New category name"
           value={newCat}
           onChange={(e) => onCategoryChange(e.target.value)}
           placeholder="New category"
-          style={{ flex: 1, padding: '8px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+          className={styles.input}
         />
         <Button label="Add" onClick={onAddCategory} />
       </div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div className={styles.flexGap}>
         {categories.map((cat) => (
-          <span key={cat} style={{ background: '#f9731620', border: '1px solid #f97316', padding: '4px 12px', borderRadius: 20, fontSize: 13 }}>
+          <span key={cat} className={styles.badge}>
             {cat}
           </span>
         ))}
@@ -178,15 +179,15 @@ function AddItemForm({
   onAddItem: () => void;
 }) {
   return (
-    <div style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, marginBottom: 24 }}>
-      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Add Menu Item</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+    <div className={styles.addItemForm}>
+      <h2 className={styles.formHeader}>Add Menu Item</h2>
+      <div className={styles.grid}>
         <input
           aria-label="Item name"
           value={newItem.name}
           onChange={(e) => onItemChange('name', e.target.value)}
           placeholder="Item name"
-          style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+          className={styles.input}
         />
         <input
           aria-label="Item price"
@@ -194,18 +195,18 @@ function AddItemForm({
           onChange={(e) => onItemChange('price', e.target.value)}
           placeholder="Price (₹)"
           type="number"
-          style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+          className={styles.input}
         />
         <select
           aria-label="Item category"
           value={newItem.category}
           onChange={(e) => onItemChange('category', e.target.value)}
-          style={{ padding: '8px 12px', background: '#0a0a0a', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+          className={styles.input}
         >
           {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
         </select>
       </div>
-      <Button label="Add Item" onClick={onAddItem} style={{ marginTop: 12 }} />
+      <Button label="Add Item" onClick={onAddItem} className={styles.secondaryBtn} />
     </div>
   );
 }
@@ -214,14 +215,14 @@ function ItemsList({ items }: { items: MenuItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: 24 }}>
-      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Menu Items ({items.length})</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className={styles.categoriesSection}>
+      <h2 className={styles.sectionHeader}>Menu Items ({items.length})</h2>
+      <div className={styles.flexColumn}>
         {items.map((item) => (
-          <div key={item.id} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 6, padding: '10px 16px', display: 'flex', justifyContent: 'space-between' }}>
+          <div key={item.id} className={styles.itemCard}>
             <span>{item.name}</span>
-            <span style={{ color: '#a1a1aa' }}>{item.category}</span>
-            <span style={{ color: '#f97316', fontWeight: 600 }}>₹{item.price}</span>
+            <span className={styles.itemCategory}>{item.category}</span>
+            <span className={styles.itemPrice}>₹{item.price}</span>
           </div>
         ))}
       </div>
@@ -229,7 +230,3 @@ function ItemsList({ items }: { items: MenuItem[] }) {
   );
 }
 
-const buttonStyle = {
-  primary: { padding: '10px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 },
-  secondary: { padding: '10px 20px', background: 'transparent', color: '#fff', border: '1px solid #333', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 },
-};

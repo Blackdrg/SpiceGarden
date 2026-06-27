@@ -5,27 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
-
-const bottomNavStyle: React.CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const navButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-};
+import styles from './history.module.css';
 
 interface ApiOrder {
   id?: string;
@@ -59,9 +39,26 @@ const HistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getStatusBadgeClass = (status?: string) => {
+    switch (status) {
+      case 'delivered':
+        return styles.statusDelivered;
+      case 'cancelled':
+        return styles.statusCancelled;
+      case 'preparing':
+      case 'ready':
+      case 'pickedup':
+        return styles.statusActive;
+      default:
+        return styles.statusBadgeDefault;
+    }
+  };
+
+  const getNavColorClass = (key: string) =>
+    key === 'orders' ? styles.navActive : styles.navInactive;
+
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout> | null = null;
-
     const loadOrderHistory = async () => {
       if (!user?.token) {
         setLoading(false);
@@ -81,7 +78,7 @@ const HistoryPage = () => {
       try {
         const response = await ordersApi.list(user.token);
         const data = response.data;
-        const transformedOrders: Order[] = (data as ApiOrder[]).map((order) => ({
+        const transformedOrders: Order[] = (data as ApiOrder[]).map(order => ({
           id: order.id || '',
           date: order.date || new Date(order.createdAt || '').toISOString().split('T')[0],
           time: order.time || new Date(order.createdAt || '').toISOString().split('T')[1].substring(0, 5),
@@ -107,40 +104,30 @@ const HistoryPage = () => {
         setLoading(false);
       }
     };
-
     loadOrderHistory();
-
     return () => {
       if (timerId) clearTimeout(timerId);
     };
   }, [user?.token]);
 
-  const filteredOrders = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
+  const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
   const handleReorder = async (orderId: string) => {
     try {
       const response = await ordersApi.get(orderId, user?.token || '');
       const order = response.data as { id?: string; items?: { menuItemId?: string; id?: string; name?: string; price?: number; quantity?: number }[]; restaurantId?: string };
-      // Add items to cart
-      const cartItems: CartItem[] = order.items?.map((item) => ({
+      const cartItems: CartItem[] = order.items?.map(item => ({
         id: item.menuItemId || item.id || '',
         name: item.name || '',
         price: item.price || 0,
         quantity: item.quantity || 1,
       })) || [];
-      
+
       if (cartItems.length > 0) {
-        // Clear current cart and add reorder items
         dispatch(clearCart());
-        cartItems.forEach((item: CartItem) => {
-          dispatch(addToCart({ 
-            item, 
-            restaurantId: order.restaurantId || 'rest-001' 
-          }));
+        cartItems.forEach(item => {
+          dispatch(addToCart({ item, restaurantId: order.restaurantId || 'rest-001' }));
         });
-        
-        // Show success message and navigate to cart
-        // In a real app, we'd use a toast notification
         alert('Items added to cart! You can now proceed to checkout.');
         router.push('/cart');
       } else {
@@ -153,106 +140,76 @@ const HistoryPage = () => {
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Order History</h2>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Order History</h2>
 
       {error && (
-        <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
-          {error}
-        </div>
+        <div className={styles.errorBox}>{error}</div>
       )}
 
-      <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, overflowX: 'auto', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        {[
-          { key: 'all', label: 'All' },
-          { key: 'delivered', label: 'Delivered' },
-          { key: 'cancelled', label: 'Cancelled' },
-          { key: 'preparing', label: 'Preparing' },
-          { key: 'ready', label: 'Ready' },
-          { key: 'pickedup', label: 'Picked Up' }
-        ].map((f) => (
+      <div className={styles.filterBar}>
+        {[{ key: 'all', label: 'All' }, { key: 'delivered', label: 'Delivered' }, { key: 'cancelled', label: 'Cancelled' }, { key: 'preparing', label: 'Preparing' }, { key: 'ready', label: 'Ready' }, { key: 'pickedup', label: 'Picked Up' }].map(f => (
           <Button
             key={f.key}
             label={f.label}
-            onClick={() => setFilter(f.key as 'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup')}
+            onClick={() => setFilter(f.key as any)}
             variant={filter === f.key ? 'primary' : 'secondary'}
           />
         ))}
       </div>
 
-       {loading ? (
-         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40 }}>
-           <SkeletonCard count={3} />
-           <p style={{ color: '#666', marginTop: DESIGN_TOKENS.spacing.sm }}>Loading orders…</p>
-         </div>
-       ) : filteredOrders.length === 0 ? (
-         <div style={{ textAlign: 'center', padding: 40 }}>
-           <div style={{ fontSize: 48, marginBottom: 24 }}>📦</div>
-           <h3 style={{ color: DESIGN_TOKENS.colors.textSecondary, marginBottom: DESIGN_TOKENS.spacing.sm }}>No orders yet</h3>
-           <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: '14px', maxWidth: 300, margin: '0 auto' }}>
-             Your order history will appear here once you place your first order.
-           </p>
-           <Button 
-             label="Place First Order" 
-             onClick={() => router.push('/search')} 
-             variant="secondary"
-           />
-         </div>
-       ) : (
-         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
-           {filteredOrders.map((order) => (
-             <Card key={order.id} title={`#${order.id}`}>
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                 <div>
-                   <h4 style={{ margin: 0 }}>{order.restaurant}</h4>
-                   <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: '13px' }}>{order.items} items &middot; &#8377;{order.amount}</p>
-                 </div>
-<span style={{
-                    padding: '2px 10px', borderRadius: 12, fontSize: '12px', fontWeight: 'bold',
-                    backgroundColor: 
-                      order.status === 'delivered' ? '#e8f5e8' :
-                      order.status === 'cancelled' ? '#f8e8e8' :
-                      order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup' ? '#fff3e0' :
-                      '#f5f5f5',
-                    color: 
-                      order.status === 'delivered' ? DESIGN_TOKENS.colors.success :
-                      order.status === 'cancelled' ? '#999' :
-                      order.status && (order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup') ? DESIGN_TOKENS.colors.warning :
-                      '#666',
-                  }}>{order.status?.toUpperCase() || 'UNKNOWN'}</span>
-               </div>
-<p style={{ margin: 0, color: '#999', fontSize: 13 }}>{order.date} &middot; {order.time}</p>
-                <div style={{ marginTop: DESIGN_TOKENS.spacing.sm }}>
-                  {(order.rating || 0) > 0 && (
-                    <div style={{ display: 'flex', gap: 2 }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <span key={star} style={{ color: star <= (order.rating || 0) ? '#ffc107' : '#ddd' }}>&starf;</span>
-                      ))}
-                    </div>
-                  )}
-                  <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
+      {loading ? (
+        <div className={styles.loading}>
+          <SkeletonCard count={3} />
+          <p className={styles.loadingText}>Loading orders…</p>
+        </div>
+      ) : filteredOrders.length === 0 ? (
+        <div className={styles.noOrders}>
+          <div className={styles.noOrdersIcon}>📦</div>
+          <h3 className={styles.noOrdersTitle}>No orders yet</h3>
+          <p className={styles.noOrdersMsg}>Your order history will appear here once you place your first order.</p>
+          <Button label="Place First Order" onClick={() => router.push('/search')} variant="secondary" />
+        </div>
+      ) : (
+        <div className={styles.ordersList}>
+          {filteredOrders.map(order => (
+            <Card key={order.id} title={`#${order.id}`}>
+              <div className={styles.orderHeader}>
+                <div>
+                  <h4 className={styles.orderRestaurant}>{order.restaurant}</h4>
+                  <p className={styles.orderDetails}>{order.items} items · ₹{order.amount}</p>
                 </div>
-             </Card>
-           ))}
-         </div>
-       )}
+                <span className={`${styles.statusBadge} ${getStatusBadgeClass(order.status)}`}>
+                  {order.status?.toUpperCase() || 'UNKNOWN'}
+                </span>
+              </div>
+              <p className={styles.orderDateTime}>{order.date} · {order.time}</p>
+              <div className={styles.ratingContainer}>
+                {(order.rating || 0) > 0 && (
+                  <div className={styles.ratingFlex}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <span key={star} className={star <= (order.rating || 0) ? styles.ratingStarActive : styles.ratingStarInactive}>★</span>
+                    ))}
+                  </div>
+                )}
+                <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Bottom nav */}
-      <nav style={bottomNavStyle}>
-        {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'orders', label: 'Orders', icon: '📦' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
+      <nav className={styles.bottomNav}>
+        {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '�??', path: '/search' }, { key: 'orders', label: 'Orders', icon: '📦' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map(tab => (
           <button
             type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: tab.key === 'orders' ? DESIGN_TOKENS.colors.primary : '#999' }}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+            className={`${styles.navButton} ${getNavColorClass(tab.key)}`}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.navIcon}>{tab.icon}</span>
             <span>{tab.label}</span>
           </button>
         ))}

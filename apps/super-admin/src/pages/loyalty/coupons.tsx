@@ -1,29 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
+import styles from './coupons.module.css';
 import Head from 'next/head';
 import Link from 'next/link';
 
 const API = 'http://localhost:3001/api';
 
-const inputStyle: React.CSSProperties = {
-  padding: '8px 12px',
-  background: '#0a0a0a',
-  border: '1px solid #333',
-  borderRadius: 6,
-  color: '#fff',
-  fontSize: 14,
-};
 
-const primaryButtonStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  background: '#f97316',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontWeight: 600,
-  fontSize: 14,
-};
+
+
 
 interface Coupon {
   id: string;
@@ -62,27 +47,27 @@ export default function LoyaltyCoupons() {
   const activeCoupons = coupons.filter((c) => c.status === 'active');
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: 24 }}>
+    <div className={styles.container}>
       <Head><title>Coupon Management - SpiceGarden</title></Head>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Coupon Management</h1>
+      <h1 className={styles.title}>Coupon Management</h1>
 
-      <div style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, maxWidth: 600, marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Create New Coupon</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className={styles.formCard}>
+        <h2 className={styles.formLabel}>Create New Coupon</h2>
+        <div>
           <input
             id="coupon-code"
             aria-label="Coupon code"
             value={form.code}
             onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
             placeholder="Coupon code (e.g. SAVE20)"
-            style={inputStyle}
+            className={styles.input}
           />
           <select
             id="coupon-type"
             aria-label="Coupon type"
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            style={inputStyle}
+            className={styles.input}
           >
             <option value="percentage">Percentage</option>
             <option value="fixed_amount">Fixed Amount</option>
@@ -95,7 +80,7 @@ export default function LoyaltyCoupons() {
             onChange={(e) => setForm({ ...form, discountValue: e.target.value })}
             placeholder="Discount value"
             type="number"
-            style={inputStyle}
+            className={styles.input}
           />
           <input
             id="usage-limit"
@@ -104,39 +89,39 @@ export default function LoyaltyCoupons() {
             onChange={(e) => setForm({ ...form, usageLimit: e.target.value })}
             placeholder="Usage limit"
             type="number"
-            style={inputStyle}
+            className={styles.input}
           />
           <button
             type="button"
             onClick={createCoupon}
             disabled={creating}
-            style={primaryButtonStyle}
+            className={styles.button}
           >
             {creating ? 'Creating...' : 'Create Coupon'}
           </button>
         </div>
       </div>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Active Coupons ({coupons.length})</h2>
+      <h2 className={styles.sectionTitle}>Active Coupons ({coupons.length})</h2>
       {loading ? (
-        <p style={{ color: '#71717a' }}>Loading...</p>
+        <p className={styles.loadingText}>Loading...</p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className={styles.listContainer}>
           {activeCoupons.map((c) => (
-            <div key={c.id} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 6, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div key={c.id} className={styles.couponCard}>
               <div>
-                <span style={{ fontWeight: 600, color: '#f97316' }}>{c.code}</span>
-                <span style={{ color: '#a1a1aa', marginLeft: 12, fontSize: 13 }}>{c.type} · Used {c.usageCount || 0}/{c.usageLimit || 0}</span>
+                <span className={styles.couponCode}>{c.code}</span>
+                <span className={styles.couponInfo}>{c.type} · Used {c.usageCount || 0}/{c.usageLimit || 0}</span>
               </div>
-              <span style={{ fontSize: 12, color: '#4ade80' }}>Active</span>
+              <span className={styles.activeBadge}>Active</span>
             </div>
           ))}
           {coupons.filter((c) => c.status === 'active').length === 0 && (
-            <p style={{ color: '#71717a', fontSize: 13 }}>No active coupons</p>
+            <p className={styles.noActiveText}>No active coupons</p>
           )}
         </div>
       )}
-      <Link href="/loyalty" style={{ color: '#f97316', textDecoration: 'none', marginTop: 16, display: 'inline-block' }}>← Back</Link>
+      <Link href="/loyalty" className={styles.backLink}>← Back</Link>
     </div>
   );
 }
