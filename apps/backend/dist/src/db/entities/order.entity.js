@@ -144,5 +144,12 @@ __decorate([
     __metadata("design:type", Date)
 ], OrderEntity.prototype, "updatedAt", void 0);
 exports.OrderEntity = OrderEntity = __decorate([
-    (0, typeorm_1.Entity)('orders')
+    (0, typeorm_1.Entity)('orders'),
+    (0, typeorm_1.Index)('idx_orders_user_id', ['userId']),
+    (0, typeorm_1.Index)('idx_orders_restaurant_id', ['restaurantId']),
+    (0, typeorm_1.Index)('idx_orders_driver_id', ['driverId']),
+    (0, typeorm_1.Index)('idx_orders_status', ['status']),
+    (0, typeorm_1.Index)('idx_orders_user_status', ['userId', 'status']),
+    (0, typeorm_1.Index)('idx_orders_restaurant_status', ['restaurantId', 'status']),
+    (0, typeorm_1.Index)('idx_orders_created_at', ['createdAt'])
 ], OrderEntity);

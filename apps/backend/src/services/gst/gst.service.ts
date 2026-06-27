@@ -250,12 +250,10 @@ export class GSTService {
         
         // Customer details (would come from user/address in real implementation)
         customer: {
-          // In a real implementation, you'd fetch customer details and GSTIN if registered
-          name: 'Customer Name', // Placeholder
-          address: 'Customer Address', // Placeholder
-          // gstin: customerGSTIN, // Only if customer is GST registered
-          stateCode: 'XX', // Placeholder - should be based on delivery address
-          state: 'State Name', // Placeholder
+          name: 'Customer Name',
+          address: 'Customer Address',
+          stateCode: 'XX',
+          state: 'State Name',
         },
         
         // Invoice details

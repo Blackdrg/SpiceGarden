@@ -19,7 +19,7 @@ import { OverviewTab } from '../components/OverviewTab';
 import { SupportTab } from '../components/SupportTab';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const SOCKET_URL = 'http://localhost:3001';
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
 
 async function fetchStats(): Promise<{ stats?: Stats; revenueData?: Record<string, unknown>[]; branches?: BranchStatus[]; tickets?: DisputeTicket[] } | null> {
   try {

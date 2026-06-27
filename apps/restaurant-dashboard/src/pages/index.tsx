@@ -206,7 +206,8 @@ export default function KitchenDashboard() {
 
     import('socket.io-client').then(({ io }) => {
       if (cancelled) return;
-      socket = io('http://localhost:3001', {
+      const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+      socket = io(socketUrl, {
         path: '/socket.io/',
         transports: ['websocket', 'polling'],
       });

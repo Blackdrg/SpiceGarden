@@ -5,7 +5,7 @@ export declare class AdminController {
     constructor(adminService: AdminService);
     getStats(query: any): Promise<{
         stats: {
-            revenue: any;
+            revenue: number;
             orders: number;
             driversOnline: number;
             complaints: number;
@@ -20,17 +20,16 @@ export declare class AdminController {
             orders: number;
         }[];
         branches: {
-            name: string;
+            name: any;
             status: string;
             orderCount: number;
             avgPrepMins: number;
             driversAssigned: number;
         }[];
-        tickets: never[];
     }>;
     getFullStats(query: any): Promise<{
         stats: {
-            revenue: any;
+            revenue: number;
             orders: number;
             driversOnline: number;
             complaints: number;
@@ -45,13 +44,12 @@ export declare class AdminController {
             orders: number;
         }[];
         branches: {
-            name: string;
+            name: any;
             status: string;
             orderCount: number;
             avgPrepMins: number;
             driversAssigned: number;
         }[];
-        tickets: never[];
     }>;
     getOrders(page: string, limit: string): Promise<import("../../db/entities/order.entity").OrderEntity[]>;
     banUser(body: {

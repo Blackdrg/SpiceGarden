@@ -28,7 +28,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "*.d.ts",
-    "../lucide-react.d.ts"
+    "../lucide-react.d.ts",
+    "../packages/ui/*.d.ts"
   ],
   "exclude": [
     "node_modules",

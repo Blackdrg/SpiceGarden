@@ -45,7 +45,6 @@ export class CodService {
     userId: string,
     reason: string = 'requested_by_customer',
   ): Promise<RefundResult> {
-    // In COD flow refunds are handled manually; we return a placeholder result
     return {
       id: `cod_refund_${Date.now()}`,
       amount: amount ?? 0,

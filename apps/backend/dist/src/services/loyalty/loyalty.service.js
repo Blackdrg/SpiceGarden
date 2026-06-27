@@ -172,10 +172,12 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         const sent = await this.referralRepo.find({
             where: { referrerId: userId },
             order: { createdAt: 'DESC' },
+            take: 100,
         });
         const received = await this.referralRepo.find({
             where: { refereeId: userId },
             order: { createdAt: 'DESC' },
+            take: 100,
         });
         return {
             totalSent: sent.length,
@@ -202,6 +204,7 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         const usages = await this.couponUsageRepo.find({
             where: { couponId },
             order: { usedAt: 'DESC' },
+            take: 500,
         });
         const totalDiscount = usages.reduce((sum, u) => sum + (u.discountApplied || 0), 0);
         const totalOrders = usages.filter(u => u.orderId).length;

@@ -332,7 +332,7 @@ export class WalletService {
     failed: number; 
     discrepancies: Array<{ orderId: string; expected: number; actual: number }> 
   }> {
-    const wallets = await this.walletRepo.find();
+    const wallets = await this.walletRepo.find({ take: 1000, order: { createdAt: 'DESC' } });
     let totalProcessed = 0;
     const discrepancies: Array<{ orderId: string; expected: number; actual: number }> = [];
 

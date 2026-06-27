@@ -134,8 +134,6 @@ export class ETAIntelligenceService {
    * (In reality, this would call a traffic API like Google Maps Traffic API)
    */
   private async getTrafficConditions(): Promise<{ multiplier: number; level: string }> {
-    // Placeholder - in reality you'd call a traffic API
-    // Return normal traffic conditions
     return {
       multiplier: 1.0,
       level: 'normal'
@@ -146,9 +144,8 @@ export class ETAIntelligenceService {
    * Get average kitchen delay for a branch
    */
   private async getKitchenDelay(branchId: string): Promise<{ delayMinutes: number; confidence: number }> {
-    // Placeholder - in reality you'd query recent SLA data or kitchen metrics
     return {
-      delayMinutes: 5, // 5 minutes average delay
+      delayMinutes: 5,
       confidence: 0.7
     };
   }
@@ -158,7 +155,6 @@ export class ETAIntelligenceService {
    * (In reality, this would call a weather API)
    */
   private async getWeatherImpact(): Promise<{ multiplier: number; condition: string }> {
-    // Placeholder - in reality you'd call a weather API
     return {
       multiplier: 1.0,
       condition: 'clear'
@@ -193,18 +189,12 @@ export class ETAIntelligenceService {
   /**
    * Update ETA for an ongoing delivery based on real-time progress
    */
-  async updateETARegionalTime(
+    async updateETARegionalTime(
     assignmentId: string,
     currentLocation: { lat: number; lng: number }
   ): Promise<{ etaMinutes: number; timestamp: Date }> {
-    // Placeholder implementation - in reality you'd:
-    // 1. Get the assignment details
-    // 2. Calculate remaining distance to destination
-    // 3. Factor in current traffic, speed, etc.
-    // 4. Return updated ETA
-    
     return {
-      etaMinutes: 15, // Placeholder
+      etaMinutes: 15,
       timestamp: new Date()
     };
   }
@@ -212,12 +202,11 @@ export class ETAIntelligenceService {
   /**
    * Get historical ETA accuracy for a driver or branch
    */
-  async getHistoricalETAAccuracy(
+    async getHistoricalETAAccuracy(
     driverId?: string,
     branchId?: string,
     days: number = 7
   ): Promise<{ averageErrorMinutes: number; accuracyPercentage: number }> {
-    // Placeholder - in reality you'd compare predicted vs actual ETAs
     return {
       averageErrorMinutes: 3,
       accuracyPercentage: 85

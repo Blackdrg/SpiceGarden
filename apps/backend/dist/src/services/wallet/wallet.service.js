@@ -232,7 +232,7 @@ let WalletService = WalletService_1 = class WalletService {
         return true;
     }
     async reconcilePayments() {
-        const wallets = await this.walletRepo.find();
+        const wallets = await this.walletRepo.find({ take: 1000, order: { createdAt: 'DESC' } });
         let totalProcessed = 0;
         const discrepancies = [];
         for (const wallet of wallets) {

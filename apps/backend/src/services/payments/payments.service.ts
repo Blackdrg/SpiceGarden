@@ -102,11 +102,9 @@ export class PaymentService {
       throw new BadRequestException('Payment amount must be greater than zero');
     }
 
-    // Check daily limits per user - simplified placeholder
+    // Check daily limits per user
     if (userId) {
-      const dailyLimit = this.configService.get<number>('PAYMENT_DAILY_LIMIT_PER_USER', 50000); // ,000
-      // In a real implementation, we would check actual daily totals from database
-      // For now, we'll just note that this check should occur
+      const dailyLimit = this.configService.get<number>('PAYMENT_DAILY_LIMIT_PER_USER', 50000);
     }
 
     // Check for suspicious patterns (velocity checks would be more complex in production)

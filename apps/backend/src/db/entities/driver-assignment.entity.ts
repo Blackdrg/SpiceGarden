@@ -1,9 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { DriverEntity } from './driver.entity';
 import { OrderEntity } from './order.entity';
 import { RestaurantBranchEntity } from './restaurant-branch.entity';
 
 @Entity('driver_assignments')
+@Index('idx_driver_assignments_driver', ['driver'])
+@Index('idx_driver_assignments_order', ['order'])
+@Index('idx_driver_assignments_status', ['status'])
+@Index('idx_driver_assignments_driver_status', ['driver', 'status'])
+@Index('idx_driver_assignments_branch', ['branch'])
+@Index('idx_driver_assignments_created_at', ['createdAt'])
 export class DriverAssignmentEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

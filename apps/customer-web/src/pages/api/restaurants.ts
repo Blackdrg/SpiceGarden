@@ -1,32 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const mockRestaurants = [
-  {
-    id: '1',
-    name: 'Spice Garden Kitchen',
-    description: 'Authentic Indian spices & flavors',
-    rating: 4.8,
-    deliveryTime: 25,
-    isActive: true,
-  },
-  {
-    id: '2',
-    name: 'The Burger House',
-    description: 'Juicy burgers & crispy fries',
-    rating: 4.5,
-    deliveryTime: 30,
-    isActive: true,
-  },
-  {
-    id: '3',
-    name: 'Pizza Palace',
-    description: 'Wood-fired pizzas made fresh',
-    rating: 4.6,
-    deliveryTime: 35,
-    isActive: true,
-  },
-];
+const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json(mockRestaurants);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const response = await fetch(`${BACKEND_URL}/business/restaurants`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Backend returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(502).json({ error: 'Failed to fetch restaurants from backend service' });
+  }
 }

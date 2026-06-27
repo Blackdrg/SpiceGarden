@@ -214,7 +214,7 @@ async function bootstrap() {
                 fontSrc: ["'self'", 'https:', 'data:'],
                 objectSrc: ["'none'"],
                 frameAncestors: ["'none'"],
-                upgradeInsecureRequests: [],
+                upgradeInsecureRequests: [''],
             },
         },
         hsts: {
@@ -237,6 +237,13 @@ async function bootstrap() {
     });
     app.use(express.json({ limit: configService.get('BODY_SIZE_LIMIT', "10kb") }));
     app.use(express.urlencoded({ limit: configService.get('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+    const requestTimeout = configService.get('REQUEST_TIMEOUT_MS', 30000);
+    app.use((req, res, next) => {
+        res.setTimeout(requestTimeout, () => {
+            res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+        });
+        next();
+    });
     app.use("/metrics", async (_req, res) => {
         res.set("Content-Type", metricsRegistry.contentType);
         res.send(await metricsRegistry.metrics());

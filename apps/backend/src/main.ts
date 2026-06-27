@@ -9,7 +9,8 @@ import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
-import cookieParser from "cookie-parser";import { getAllowedOrigins } from "./security/cors-origin";
+import cookieParser from "cookie-parser";
+import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
@@ -208,7 +209,7 @@ const dsn = configService.get<string>("SENTRY_DSN");
         fontSrc: ["'self'", 'https:', 'data:'],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
-        upgradeInsecureRequests: [],
+        upgradeInsecureRequests: [''],
       },
     },
     hsts: {
@@ -233,6 +234,15 @@ const dsn = configService.get<string>("SENTRY_DSN");
 
   app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
   app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+
+  // Request timeout (30s) to prevent Slowloris and hung connections
+  const requestTimeout = configService.get<number>('REQUEST_TIMEOUT_MS', 30000);
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.setTimeout(requestTimeout, () => {
+      res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+    });
+    next();
+  });
 
   // Prometheus metrics endpoint
   app.use("/metrics", async (_req: express.Request, res: express.Response) => {

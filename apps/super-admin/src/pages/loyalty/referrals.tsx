@@ -3,7 +3,7 @@ import Head from 'next/head';
 import styles from './referrals.module.css';
 import Link from 'next/link';
 
-const API = 'http://localhost:3001/api';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 interface Referral {
   id: string;

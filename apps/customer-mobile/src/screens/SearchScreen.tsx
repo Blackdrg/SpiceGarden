@@ -5,23 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { STORAGE_KEYS } from '../constants/storage.keys';
+import { API_URL } from '../constants/api';
 import { safeParse } from '../utils/safe-parse';
 import SkeletonRect from '../components/SkeletonLoader';
-
-function renderSkeleton() {
-  return (
-    <View style={styles.resultCard}>
-      <SkeletonRect width={50} height={50} borderRadius={8} />
-      <View style={{ flex: 1, marginLeft: 12 }}>
-        <SkeletonRect width="70%" height={20} style={{ marginBottom: 6 }} />
-        <SkeletonRect width="50%" height={16} style={{ marginBottom: 4 }} />
-        <SkeletonRect width="90%" height={14} />
-      </View>
-    </View>
-  );
-}
-
-const API_URL = 'http://localhost:3001';
 
 interface SearchResult {
   id: string;

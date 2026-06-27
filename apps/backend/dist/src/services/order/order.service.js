@@ -476,21 +476,34 @@ let OrderService = class OrderService {
         return order;
     }
     async getOrderWithDetails(orderId) {
-        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        const order = await this.orderRepo.findOne({
+            where: { id: orderId },
+            relations: { branch: true },
+        });
         if (!order) {
             throw new common_1.NotFoundException(`Order ${orderId} not found`);
         }
         let driverPhone;
         let branchAddress;
         if (order.driverId) {
-            const driver = await this.driverRepo.findOne({ where: { id: order.driverId }, relations: { user: true } });
+            const driverPromise = this.driverRepo.findOne({
+                where: { id: order.driverId },
+                relations: { user: true },
+            });
+            const branchPromise = order.branchId
+                ? this.branchRepo.findOne({ where: { id: order.branchId } })
+                : Promise.resolve(null);
+            const [driver, branch] = await Promise.all([driverPromise, branchPromise]);
             if (driver?.user?.phone) {
                 driverPhone = driver.user.phone;
             }
+            if (branch?.address) {
+                branchAddress = branch.address;
+            }
         }
-        if (order.branchId) {
+        else if (order.branchId) {
             const branch = await this.branchRepo.findOne({ where: { id: order.branchId } });
-            if (branch) {
+            if (branch?.address) {
                 branchAddress = branch.address;
             }
         }

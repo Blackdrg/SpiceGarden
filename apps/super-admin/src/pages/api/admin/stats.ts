@@ -1,78 +1,49 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const mockStats = {
-  stats: {
-    revenue: 45200,
-    orders: 124,
-    driversOnline: 18,
-    complaints: 3,
-    refunds: 12,
-    fraudAlerts: 3,
-    activeBranches: 3,
-    pendingWithdrawals: 8,
-  },
-  revenueData: [
-    { t: '00:00', orders: 10, revenue: 1200 },
-    { t: '04:00', orders: 15, revenue: 1800 },
-    { t: '08:00', orders: 20, revenue: 2400 },
-    { t: '12:00', orders: 25, revenue: 3000 },
-    { t: '16:00', orders: 30, revenue: 3600 },
-    { t: '20:00', orders: 22, revenue: 2640 },
-    { t: '23:59', orders: 18, revenue: 2160 },
-  ],
-  branches: [
-    {
-      name: 'Sector 17 Kitchen',
-      status: 'operational',
-      orderCount: 45,
-      avgPrepMins: 15,
-      driversAssigned: 12,
-    },
-    {
-      name: 'Sector 22 Kitchen',
-      status: 'operational',
-      orderCount: 38,
-      avgPrepMins: 18,
-      driversAssigned: 8,
-    },
-    {
-      name: 'Sector 35 Kitchen',
-      status: 'delayed',
-      orderCount: 52,
-      avgPrepMins: 28,
-      driversAssigned: 5,
-    },
-  ],
-  tickets: [
-    {
-      id: 'TICK-001',
-      type: 'refund',
-      user: 'John D.',
-      amount: 450,
-      severity: 'high',
-      description: 'Order not delivered - driver marked delivered without delivery',
-      createdAt: '2026-06-12 10:23 AM',
-    },
-    {
-      id: 'TICK-002',
-      type: 'support',
-      user: 'Priya K.',
-      severity: 'medium',
-      description: 'App crash on restaurant page',
-      createdAt: '2026-06-12 09:45 AM',
-    },
-    {
-      id: 'TICK-003',
-      type: 'fraud',
-      user: 'Unknown',
-      amount: 299,
-      severity: 'critical',
-      description: 'Multiple failed payment attempts with different cards',
-      createdAt: '2026-06-12 11:12 AM',
-    },
-  ],
-};
+const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json(mockStats);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { branchId } = req.query;
+
+  try {
+    const url = new URL(`${BACKEND_URL}/admin/dashboard`);
+    if (branchId) url.searchParams.set('branchId', branchId as string);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Backend returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    // Transform to super-admin format
+    res.status(200).json({
+      stats: {
+        revenue: data.stats?.revenue || 0,
+        orders: data.stats?.totalOrders || 0,
+        driversOnline: data.stats?.onlineDrivers || 0,
+        complaints: data.stats?.complaints || 0,
+        refunds: data.stats?.refunds || 0,
+        fraudAlerts: data.stats?.fraudAlerts || 0,
+        activeBranches: data.stats?.activeRestaurants || 0,
+        pendingWithdrawals: 0,
+      },
+      revenueData: data.revenueData || generateDefaultRevenueData(),
+      branches: data.branches || [],
+      tickets: [],
+    });
+  } catch (error) {
+    res.status(502).json({ error: 'Failed to fetch stats from backend service' });
+  }
+}
+
+function generateDefaultRevenueData() {
+  return Array.from({ length: 24 }, (_, i) => ({
+    t: `${String(i).padStart(2, '0')}:00`,
+    orders: Math.floor(Math.random() * 20) + 5,
+    revenue: Math.floor(Math.random() * 2000) + 500,
+  }));
 }

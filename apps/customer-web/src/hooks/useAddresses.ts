@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-const API_URL = 'http://localhost:3001/api';
+import { API_URL } from '@spicegarden/shared/constants';
 
 export interface Address {
   id: string;

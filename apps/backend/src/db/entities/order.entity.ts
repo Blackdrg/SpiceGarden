@@ -1,10 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, ManyToOne, Index } from 'typeorm';
 import { OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { OrderItemEntity } from './order-item.entity';
 import { GSTDetailEntity } from './gst-detail.entity';
 import { RestaurantBranchEntity } from './restaurant-branch.entity';
 
 @Entity('orders')
+@Index('idx_orders_user_id', ['userId'])
+@Index('idx_orders_restaurant_id', ['restaurantId'])
+@Index('idx_orders_driver_id', ['driverId'])
+@Index('idx_orders_status', ['status'])
+@Index('idx_orders_user_status', ['userId', 'status'])
+@Index('idx_orders_restaurant_status', ['restaurantId', 'status'])
+@Index('idx_orders_created_at', ['createdAt'])
 export class OrderEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

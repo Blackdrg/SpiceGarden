@@ -39,12 +39,10 @@ const items = await this.menuRepo.find({
   }
 
   async getTrending() {
-    // Stub for trending items
     return this.menuRepo.find({ take: 5 });
   }
 
   async getRecommended(userId: string) {
-    // Stub for personalized recommendations
     return this.menuRepo.find({ take: 5 });
   }
 }

@@ -1,6 +1,5 @@
 import http from 'k6/http';
-import { check, group, sleep } from 'k6';
-import { Counter, Rate, Trend } from 'k6/metrics';
+import { check, group, sleep, Counter, Rate, Trend } from 'k6';
 import { b64decode } from 'k6/encoding';
 
 export const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
@@ -14,8 +13,16 @@ export const metrics = {
   addressSuccess: new Rate('address_success'),
   orderSuccess: new Rate('order_success'),
   paymentSuccess: new Rate('payment_success'),
+  searchSuccess: new Rate('search_success'),
+  trackingSuccess: new Rate('tracking_success'),
+  menuSuccess: new Rate('menu_success'),
+  notificationsSuccess: new Rate('notifications_success'),
+  profileSuccess: new Rate('profile_success'),
+  walletSuccess: new Rate('wallet_success'),
+  adminSuccess: new Rate('admin_success'),
   failedRequests: new Counter('failed_requests_total'),
   orderDuration: new Trend('order_duration_ms'),
+  apiLatency: new Trend('api_latency_ms'),
 };
 
 export function loadOptions(stages) {
@@ -51,7 +58,10 @@ export function loadOptions(stages) {
       browse_restaurants_success: ['rate>0.99'],
       address_success: ['rate>0.99'],
       order_success: ['rate>0.99'],
-      http_req_duration: [`p(95)<${p95}`],
+      payment_success: ['rate>0.99'],
+      search_success: ['rate>0.99'],
+      menu_success: ['rate>0.99'],
+      api_latency: ['p(95)<2000'],
     },
   };
 }
@@ -99,7 +109,19 @@ export function request(method, url, body, params, step, okStatuses, metric) {
     metric.add(ok);
   }
   metrics.loadSuccess.add(ok);
+  metrics.apiLatency.add(res.timings ? res.timings.duration : 0);
   return { res, ok, body: parseJson(res) };
+}
+
+export function userIdFromToken(token) {
+  if (!token) return null;
+  try {
+    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const normalized = payload.length % 4 === 0 ? payload : `${payload}${'='.repeat((4 - payload.length % 4) % 4)}`;
+    return JSON.parse(b64decode(normalized)).sub;
+  } catch (e) {
+    return null;
+  }
 }
 
 export function registerUser(prefix) {
@@ -144,9 +166,7 @@ export function loginUser(email, password) {
 
 export function ensureToken(prefix) {
   const registered = registerUser(prefix);
-  if (registered.token) {
-    return registered;
-  }
+  if (registered.token) return registered;
   const loggedIn = loginUser(registered.email, registered.password);
   return {
     ...registered,
@@ -167,10 +187,38 @@ export function browseRestaurants(token) {
     [200],
     metrics.browseSuccess,
   );
-  if (!ok || !Array.isArray(body)) {
-    return null;
-  }
+  if (!ok || !Array.isArray(body)) return null;
   return body;
+}
+
+export function searchRestaurants(token, query) {
+  const q = encodeURIComponent(query || 'biryani');
+  const { res, ok, body } = request(
+    'GET',
+    `${BASE_URL}/restaurants/search?q=${q}`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'search' } },
+    'search restaurants',
+    [200],
+    metrics.searchSuccess,
+  );
+  if (!ok || !Array.isArray(body)) return null;
+  return body;
+}
+
+export function getRestaurantMenu(token, restaurantId) {
+  return request(
+    'GET',
+    `${BASE_URL}/restaurants/${restaurantId}/menu`,
+    null,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      tags: { step: 'menu' },
+    },
+    'get restaurant menu',
+    [200],
+    metrics.menuSuccess,
+  );
 }
 
 export function createAddress(token, userId) {
@@ -192,28 +240,16 @@ export function createAddress(token, userId) {
     'POST',
     `${BASE_URL}/user/addresses`,
     payload,
-    { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, tags: { step: 'address' } },
+    {
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      tags: { step: 'address' },
+    },
     'create address',
     [200, 201],
     metrics.addressSuccess,
   );
-  if (!ok) {
-    return null;
-  }
+  if (!ok) return null;
   return body && (body.id || body.addressId) ? (body.id || body.addressId) : `addr-${userId}`;
-}
-
-export function userIdFromToken(token) {
-  if (!token) {
-    return null;
-  }
-  try {
-    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    const normalized = payload.length % 4 === 0 ? payload : `${payload}${'='.repeat((4 - payload.length % 4) % 4)}`;
-    return JSON.parse(b64decode(normalized)).sub;
-  } catch (e) {
-    return null;
-  }
 }
 
 export function createOrder(token, userId, restaurantId, addressId) {
@@ -249,7 +285,11 @@ export function createOrder(token, userId, restaurantId, addressId) {
     `${BASE_URL}/orders`,
     payload,
     {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'Idempotency-Key': `order-${__VU}-${__ITER}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Idempotency-Key': `order-${__VU}-${__ITER}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      },
       tags: { step: 'order' },
     },
     'create order',
@@ -270,42 +310,158 @@ export function createPaymentIntent(token, userId, amount) {
     'POST',
     `${BASE_URL}/payments/create-intent`,
     JSON.stringify({ userId, amount, currency: 'usd', orderId: `order-${__VU}-${__ITER}` }),
-    { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'Idempotency-Key': `payment-${__VU}-${__ITER}` }, tags: { step: 'payment' } },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Idempotency-Key': `payment-${__VU}-${__ITER}`,
+      },
+      tags: { step: 'payment' },
+    },
     'create payment intent',
     [200],
     metrics.paymentSuccess,
   );
 }
 
+export function getUserProfile(token) {
+  return request(
+    'GET',
+    `${BASE_URL}/user/profile`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'profile' } },
+    'get user profile',
+    [200],
+    metrics.profileSuccess,
+  );
+}
+
+export function getWallet(token) {
+  return request(
+    'GET',
+    `${BASE_URL}/wallet`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'wallet' } },
+    'get wallet',
+    [200],
+    metrics.walletSuccess,
+  );
+}
+
+export function getNotifications(token) {
+  return request(
+    'GET',
+    `${BASE_URL}/notifications`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'notifications' } },
+    'get notifications',
+    [200],
+    metrics.notificationsSuccess,
+  );
+}
+
+export function getAdminStats(token) {
+  return request(
+    'GET',
+    `${BASE_URL}/admin/dashboard`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'admin' } },
+    'get admin stats',
+    [200, 401, 403],
+    metrics.adminSuccess,
+  );
+}
+
+export function trackOrder(token, orderId) {
+  return request(
+    'GET',
+    `${BASE_URL}/orders/${orderId}/tracking`,
+    null,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'tracking' } },
+    'track order',
+    [200, 404],
+    metrics.trackingSuccess,
+  );
+}
+
 export function runUserFlow(label, includePayment = false) {
   group(`${label} - auth`, () => {
     const auth = ensureToken(label);
-    if (!auth.token) {
-      return;
-    }
+    if (!auth.token) return;
     const userId = auth.userId || userIdFromToken(auth.token);
+
     group(`${label} - browse`, () => {
-      const restaurants = browseRestaurants(auth.token);
-      if (!restaurants || restaurants.length === 0) {
-        return;
+      let restaurants = browseRestaurants(auth.token);
+      if (!restaurants || restaurants.length === 0) return;
+
+      const useSearch = Math.random() < 0.15;
+      if (useSearch) {
+        searchRestaurants(auth.token);
       }
+
       const restaurant = restaurants[__VU % restaurants.length];
       const restaurantId = restaurant.id || restaurant.slug;
+      getRestaurantMenu(auth.token, restaurantId);
+      getUserProfile(auth.token);
+
       group(`${label} - address`, () => {
         const addressId = createAddress(auth.token, userId);
-        if (!addressId) {
-          return;
-        }
+        if (!addressId) return;
+
         group(`${label} - order`, () => {
-          createOrder(auth.token, userId, restaurantId, addressId);
+          const orderResult = createOrder(auth.token, userId, restaurantId, addressId);
+          if (orderResult && orderResult.body && orderResult.body.id) {
+            trackOrder(auth.token, orderResult.body.id);
+            getNotifications(auth.token);
+            getWallet(auth.token);
+          }
         });
-        if (includePayment && __ENV.EXERCISE_PAYMENT === 'true') {
+
+        if (includePayment && __ENV.EXERCISE_PAYMENT === 'true' && Math.random() < 0.5) {
           group(`${label} - payment`, () => {
-            createPaymentIntent(auth.token, userId, 115);
+            createPaymentIntent(auth.token, userId, 100 + Math.floor(Math.random() * 200));
           });
         }
       });
     });
   });
   sleep(Number(__ENV.THINK_TIME_SECONDS || 1));
+}
+
+export function runDistributedFlow(label) {
+  const flowRoll = Math.random();
+  const auth = ensureToken(label);
+  if (!auth.token) return;
+  const userId = auth.userId || userIdFromToken(auth.token);
+
+  if (flowRoll < 0.60) {
+    browseRestaurants(auth.token);
+    const restaurants = searchRestaurants(auth.token);
+    if (restaurants && restaurants.length > 0) {
+      const rid = restaurants[__VU % restaurants.length].id;
+      getRestaurantMenu(auth.token, rid);
+    }
+    getUserProfile(auth.token);
+  } else if (flowRoll < 0.75) {
+    searchRestaurants(auth.token);
+    browseRestaurants(auth.token);
+  } else if (flowRoll < 0.85) {
+    createAddress(auth.token, userId);
+    const restaurants = browseRestaurants(auth.token);
+    if (restaurants && restaurants.length > 0) {
+      const rid = restaurants[__VU % restaurants.length].id;
+      const addressId = createAddress(auth.token, userId);
+      if (addressId) createOrder(auth.token, userId, rid, addressId);
+    }
+  } else if (flowRoll < 0.90) {
+    createPaymentIntent(auth.token, userId, 50 + Math.floor(Math.random() * 300));
+    getWallet(auth.token);
+  } else if (flowRoll < 0.95) {
+    getNotifications(auth.token);
+    getUserProfile(auth.token);
+  } else {
+    getAdminStats(auth.token);
+    browseRestaurants(auth.token);
+  }
+  sleep(0.5 + Math.random() * 2);
 }

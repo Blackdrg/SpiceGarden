@@ -196,6 +196,8 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub: st
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statSub}>{sub}</Text>
+    </View>
+  );
 }
 
 function DriverHeader({ isOnline, onToggleOnline }: { isOnline: boolean; onToggleOnline: (value: boolean) => void }) {
@@ -217,6 +219,7 @@ function DriverHeader({ isOnline, onToggleOnline }: { isOnline: boolean; onToggl
         thumbColor="white"
         accessibilityLabel="Toggle online status"
       />
+    </View>
     </View>
   );
 }

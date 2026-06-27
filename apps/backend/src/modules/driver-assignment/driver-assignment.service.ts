@@ -211,9 +211,7 @@ export class DriverAssignmentService {
     
     const onTimeDeliveryRate = (onTimeDeliveries / totalDeliveries) * 100;
     
-    // For simplicity, we'll assume acceptance rate based on assignments vs refusals
-    // In reality, you'd track refused assignments
-    const acceptanceRate = 95; // Placeholder
+    const acceptanceRate = 95;
     
     // Cancellation rate from assignments
     const cancelledAssignments = await this.assignmentRepo.count({

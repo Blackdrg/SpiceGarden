@@ -151,3 +151,8 @@ declare module '../components/SkeletonLoader' {
   const Skeleton: React.FC<unknown>;
   export default Skeleton;
 }
+
+declare module '*.module.css' {
+  const classes: { [key: string]: string };
+  export default classes;
+}
