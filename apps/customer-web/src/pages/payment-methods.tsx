@@ -3,7 +3,6 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { Plus, CreditCard, Trash2, Star } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
-import { getCachedToken } from '../utils/cachedLocalStorage';
 import styles from './payment-methods.module.css';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -17,36 +16,40 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
-const fetchPaymentMethods = async (token: string): Promise<PaymentMethod[]> => {
+const fetchPaymentMethods = async (): Promise<PaymentMethod[]> => {
   const res = await fetch(`${API_URL}/payment-methods`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to load payment methods');
   return res.json();
 };
 
-const addPaymentMethod = async (token: string, method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }): Promise<PaymentMethod> => {
+const addPaymentMethod = async (method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }): Promise<PaymentMethod> => {
   const res = await fetch(`${API_URL}/payment-methods`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(method),
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to add payment method');
   return res.json();
 };
 
-const setDefaultPaymentMethod = async (token: string, id: string): Promise<void> => {
+const setDefaultPaymentMethod = async (id: string): Promise<void> => {
   const res = await fetch(`${API_URL}/payment-methods/${id}/default`, {
     method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to set default');
 };
 
-const deletePaymentMethod = async (token: string, id: string): Promise<void> => {
+const deletePaymentMethod = async (id: string): Promise<void> => {
   const res = await fetch(`${API_URL}/payment-methods/${id}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to delete');
 };
@@ -84,49 +87,44 @@ function paymentMethodsReducer(state: PaymentMethodsState, action: { type: strin
 
 const PaymentMethodsPage = () => {
   const queryClient = useQueryClient();
-  const token = getCachedToken();
   const [uiState, dispatch] = useReducer(paymentMethodsReducer, initialPaymentMethodsState);
 
   const { data = [], isLoading, error } = useQuery({
-    queryKey: ['payment-methods', token],
-    queryFn: () => fetchPaymentMethods(token!),
-    enabled: Boolean(token && token !== 'demo-token'),
+    queryKey: ['payment-methods'],
+    queryFn: fetchPaymentMethods,
   });
 
   const addMutation = useMutation({
-    mutationFn: (method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }) => addPaymentMethod(token!, method),
+    mutationFn: (method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }) => addPaymentMethod(method),
     onSuccess: (added) => {
-      queryClient.setQueryData<PaymentMethod[]>(['payment-methods', token], prev => [...(prev || []), added]);
+      queryClient.setQueryData<PaymentMethod[]>(['payment-methods'], prev => [...(prev || []), added]);
     },
     onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
   });
 
   const setDefaultMutation = useMutation({
-    mutationFn: setDefaultPaymentMethod.bind(null, token!),
+    mutationFn: setDefaultPaymentMethod,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
     onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deletePaymentMethod.bind(null, token!),
+    mutationFn: deletePaymentMethod,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
     onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
   });
 
   const handleAddMethod = async () => {
-    if (!token || token === 'demo-token') return;
     addMutation.mutate(uiState.newMethod);
     dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false });
     dispatch({ type: 'SET_NEW_METHOD', payload: { type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' } });
   };
 
   const handleSetDefault = async (id: string) => {
-    if (!token) return;
     setDefaultMutation.mutate(id);
   };
 
   const handleDelete = async (id: string) => {
-    if (!token) return;
     deleteMutation.mutate(id);
   };
 
@@ -212,9 +210,9 @@ const PaymentMethodsPage = () => {
                     />
                   </div>
                   <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-last4" className={styles.label}>Last 4 digits</label>
+                    <label htmlFor="pm-last4" className={styles.label}>Last 4 digits</label>
                     <input
-                      id="pm-card-last4"
+                      id="pm-last4"
                       className={styles.input}
                       placeholder="Last 4 digits"
                       value={uiState.newMethod.cardLast4}
@@ -223,9 +221,9 @@ const PaymentMethodsPage = () => {
                     />
                   </div>
                   <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-expiry" className={styles.label}>Expiry (MM/YY)</label>
+                    <label htmlFor="pm-expiry" className={styles.label}>Expiry (MM/YY)</label>
                     <input
-                      id="pm-card-expiry"
+                      id="pm-expiry"
                       className={styles.input}
                       placeholder="Expiry (MM/YY)"
                       value={uiState.newMethod.cardExpiry}

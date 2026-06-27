@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,7 +14,7 @@ import HistoryScreen from './src/screens/HistoryScreen';
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
-  style.textContent = 'html{text-size-adjust:100%;-webkit-text-size-adjust:100%;}';
+  style.textContent = 'html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;}';
   document.head.appendChild(style);
 }
 

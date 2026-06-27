@@ -2,8 +2,10 @@ import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 import { NotificationService } from '../notifications/notification.service';
+import { ConfigService } from '@nestjs/config';
 interface LoginBody {
     email: string;
     password: string;
@@ -14,22 +16,45 @@ interface RegisterBody extends LoginBody {
     phone: string;
     fullName: string;
 }
-interface RefreshBody {
-    refresh_token: string;
-    deviceName?: string;
-    deviceType?: string;
-}
 export declare class AuthController {
     private authService;
     private passwordResetService;
     private readonly userRepo;
     private notificationService;
-    constructor(authService: AuthService, passwordResetService: PasswordResetService, userRepo: Repository<UserEntity>, notificationService: NotificationService);
-    login(body: LoginBody, req: Request): Promise<import("./auth.service").LoginTokenResponse>;
-    register(body: RegisterBody, req: Request): Promise<import("./auth.service").LoginTokenResponse>;
-    refreshToken(body: RefreshBody, req: Request): Promise<import("./auth.service").LoginTokenResponse>;
-    logout(body: RefreshBody): Promise<{
+    private configService;
+    constructor(authService: AuthService, passwordResetService: PasswordResetService, userRepo: Repository<UserEntity>, notificationService: NotificationService, configService: ConfigService);
+    login(body: LoginBody, req: Request, res: Response): Promise<{
+        user: {
+            id: string;
+            email: string;
+            fullName: string;
+            role: UserRole;
+            status: UserStatus;
+        };
+    }>;
+    register(body: RegisterBody, req: Request, res: Response): Promise<{
+        user: {
+            id: string;
+            email: string;
+            fullName: string;
+            role: UserRole;
+            status: UserStatus;
+        };
+    }>;
+    refreshToken(req: Request, res: Response): Promise<{
+        refresh_token: string;
+    }>;
+    logout(req: Request, res: Response): Promise<{
         revoked: boolean;
+    }>;
+    me(req: Request): Promise<{
+        user: {
+            id: string;
+            email: string;
+            fullName: string | undefined;
+            role: UserRole;
+            status: UserStatus;
+        };
     }>;
     forgotPassword(body: {
         email: string;
@@ -50,6 +75,10 @@ export declare class AuthController {
         success: boolean;
         message: string;
     }>;
+    googleAuth(): Promise<void>;
+    googleAuthCallback(req: Request, res: Response): Promise<void>;
+    facebookAuth(): Promise<void>;
+    facebookAuthCallback(req: Request, res: Response): Promise<void>;
     private getDeviceInfo;
 }
 export {};

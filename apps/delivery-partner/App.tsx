@@ -196,187 +196,103 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub: st
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statSub}>{sub}</Text>
-    </View>
-  );
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DriverHeader({ isOnline, onToggleOnline }: { isOnline: boolean; onToggleOnline: (value: boolean) => void }) {
   return (
-    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
-      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
+    <View style={styles.header}>
+      <View>
+        <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
+        <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
+        <Text style={styles.vehicleTag}>{VEHICLE}</Text>
+      </View>
+    <View style={styles.onlineToggle}>
+      <Text style={isOnline ? styles.onlineText : styles.offlineText}>
+        {isOnline ? '● ONLINE' : '● OFFLINE'}
+      </Text>
+      <Switch
+        value={isOnline}
+        onValueChange={onToggleOnline}
+        trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
+        thumbColor="white"
+        accessibilityLabel="Toggle online status"
+      />
     </View>
   );
 }
 
-function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
+function DriverStats({ earnings }: { earnings: DailyEarnings }) {
   return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
-        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
-      </View>
-      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
-        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
-      </View>
+    <View style={styles.statsRow}>
+      <StatCard label="Today" value={`₹${earnings.today}`} sub={`${earnings.ordersToday} orders`} />
+      <StatCard label="Pending" value={`₹${earnings.pending}`} sub="to be credited" />
+      <StatCard label="Bonus" value={`₹${earnings.bonus}`} sub="weekly" />
     </View>
   );
 }
 
-export default function DriverApp() {
-  const { width: SCREEN_W } = useWindowDimensions();
-  const [state, dispatch] = useReducer(appReducer, {
-    isOnline: false,
-    incomingOrder: null,
-    activeDelivery: null,
-    earnings: { today: 1450, pending: 350, bonus: 200, ordersToday: 8 },
-    shift: null,
-    deliveryOtp: '',
-    otpError: '',
-    log: [],
-    expandedIssue: false,
-    activeScreen: 'home' as const,
-    locationPermission: 'pending' as const,
-  });
-  const locationWatchId = useRef<number | null>(null);
-  const socketRef = useRef<Socket | null>(null);
+function DriverTabBar({ activeScreen, onChange }: { activeScreen: 'home' | 'earnings'; onChange: (screen: 'home' | 'earnings') => void }) {
+  return (
+    <View style={styles.tabRow}>
+      {(['home', 'earnings'] as const).map((t) => (
+        <Pressable
+          key={t}
+          onPress={() => onChange(t)}
+          style={[styles.tab, activeScreen === t && styles.tabActive]}
+          accessibilityLabel={`Switch to ${t} screen`}
+          accessibilityRole="tab"
+        >
+          <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
+            {t === 'home' ? '🏠 Active' : '💰 Earnings'}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
 
-  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    requestLocationPermission()
-      .then((status) => {
-        if (!cancelled) dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status });
-        if (status === 'granted') return getCurrentLocation({ accuracy: Location.Accuracy.Highest });
-        throw new Error('Location permission denied');
-      })
-      .then(() => {
-        if (!cancelled) dispatch({ type: 'ADD_LOG', payload: 'Current location initialized' });
-      })
-      .catch((error: Error) => {
-        if (!cancelled) {
-          dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
-          dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!state.isOnline || state.locationPermission !== 'granted') {
-      return;
-    }
-
-    let watcher: Awaited<ReturnType<typeof watchLocation>> | null = null;
-
-    watchLocation(
-      (location: LocationPoint) => {
-        socketRef.current?.emit('driverLocationUpdate', {
-          driverId: 'current',
-          location: {
-            lat: location.lat,
-            lng: location.lng,
-          },
-        });
-      },
-      (error) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
-      {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 10,
-      }
-    ).then((activeWatcher) => {
-      watcher = activeWatcher;
-    }).catch((error: Error) => {
-      dispatch({ type: 'ADD_LOG', payload: `Location watch setup error: ${error.message}` });
-    });
-
-    return () => {
-      watcher?.remove();
-    };
-  }, [state.isOnline, state.locationPermission]);
-
-  useEffect(() => {
-    const s: Socket = io('http://localhost:3001', {
-      path: '/socket.io/',
-      transports: ['websocket', 'polling'],
-    });
-    socketRef.current = s;
-
-    s.on('connect', () => dispatch({ type: 'ADD_LOG', payload: 'Connected to backend' }));
-    s.on('disconnect', () => dispatch({ type: 'ADD_LOG', payload: 'Disconnected' }));
-    s.on('orderAssigned', (order: Order) => {
-      if (state.isOnline) dispatch({ type: 'ACCEPT_ORDER', payload: order });
-    });
-    s.on('orderRerouted', (data: { orderId: string; reason: string }) => {
-      if (activeDelivery?.id === data.orderId) {
-        dispatch({ type: 'ADD_LOG', payload: `Re-routed: ${data.reason}` });
-        Alert.alert('🚗 Re-routing', `New destination: ${data.reason}`);
-      }
-    });
-    s.on('shiftReminder', (data: { shiftType: string; endTime: string }) => {
-      dispatch({ type: 'ADD_LOG', payload: `Shift reminder: ${data.shiftType} ends at ${data.endTime}` });
-      Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
-      dispatch({ type: 'SET_SHIFT', payload: { isActive: true, type: data.shiftType, endTime: data.endTime }});
-    });
-
-    return () => { s.disconnect(); };
-  }, [state.isOnline, activeDelivery?.id]);
-
-  useEffect(() => {
-    const appStateHandler = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && state.isOnline) {
-        BackgroundTimer.start();
-      } else if (nextAppState === 'active') {
-        BackgroundTimer.stopBackgroundTimer();
-      }
-    };
-
-    const subscription = RNAppState.addEventListener('change', appStateHandler);
-    return () => subscription.remove();
-  }, [state.isOnline]);
-
-  useEffect(() => {
-    if (!state.isOnline) return;
-    const socket = socketRef.current;
-    socket?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
-    dispatch({ type: 'ADD_LOG', payload: 'Went online — awaiting orders' });
-    return () => { socket?.emit('driverOffline'); };
-  }, [state.isOnline]);
-
-  const acceptOrder = useCallback(() => {
-    if (!incomingOrder) return;
-    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
-    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
-  }, [incomingOrder]);
-
-  const rejectOrder = useCallback(() => {
+function HomeScreen({ incomingOrder, activeDelivery, locationPermission, isOnline, deliveryOtp, otpError, log, expandedIssue, dispatch, socketRef, SCREEN_W }: {
+  incomingOrder: Order | null;
+  activeDelivery: Order | null;
+  locationPermission: 'granted' | 'denied' | 'pending';
+  isOnline: boolean;
+  deliveryOtp: string;
+  otpError: string;
+  log: string[];
+  expandedIssue: boolean;
+  dispatch: React.Dispatch<AppAction>;
+  socketRef: React.RefObject<Socket | null>;
+  SCREEN_W: number;
+}) {
+  const rejectOrder = () => {
     if (!incomingOrder) return;
     dispatch({ type: 'SET_INCOMING_ORDER', payload: null });
     dispatch({ type: 'ADD_LOG', payload: `Rejected #${incomingOrder.orderNumber}` });
     socketRef.current?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
-  }, [incomingOrder]);
+  };
 
-  const navigateTo = useCallback((destination: string, addr: string, location?: { lat: number; lng: number }) => {
+  const acceptOrder = () => {
+    if (!incomingOrder) return;
+    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
+    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
+  };
+
+  const navigateTo = (destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
       Alert.alert('🚗 Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
       dispatch({ type: 'ADD_LOG', payload: `Navigating → ${destination}` });
     } else {
       Alert.alert('📍 Navigation', `Opening maps to ${destination}: ${addr}`);
     }
-  }, []);
+  };
 
-  const confirmPickup = useCallback(() => {
+  const confirmPickup = () => {
     if (!activeDelivery) return;
     dispatch({ type: 'SET_DELIVERY_OTP', payload: DEFAULT_OTP });
     dispatch({ type: 'ADD_LOG', payload: `Arrived at pickup: ${activeDelivery.restaurant.name}` });
-  }, [activeDelivery]);
+  };
 
-  const verifyOtpAndPickup = useCallback(() => {
+  const verifyOtpAndPickup = () => {
     if (!activeDelivery) return;
     if (deliveryOtp !== activeDelivery.otp) {
       dispatch({ type: 'SET_OTP_ERROR', payload: 'Invalid OTP — ask the customer' });
@@ -387,362 +303,311 @@ export default function DriverApp() {
     dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() }});
     dispatch({ type: 'ADD_LOG', payload: `OTP verified — picked up #${activeDelivery.orderNumber}` });
     Alert.alert('✅ Pickup Confirmed', 'Navigate to customer now!');
-  }, [activeDelivery, deliveryOtp]);
+  };
 
-  const completeDelivery = useCallback(() => {
+  const completeDelivery = () => {
     if (!activeDelivery) return;
     dispatch({ type: 'COMPLETE_DELIVERY', payload: { amount: activeDelivery.amount, incentive: activeDelivery.incentiveAmount, orderNumber: activeDelivery.orderNumber }});
     Alert.alert('✅ Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
-  }, [activeDelivery]);
+  };
 
-  const handleFailedDelivery = useCallback((reason: string) => {
-    if (!activeDelivery) return;
+  const handleFailedDelivery = (reason: string) => {
     dispatch({ type: 'ADD_LOG', payload: `Delivery failed: ${reason}` });
     Alert.alert('❗ Delivery Failed', `Marked as ${reason}`, [
       { text: 'OK', onPress: () => dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: null }) }
     ]);
-  }, [activeDelivery]);
+  };
 
-  const reportIssue = useCallback((label: string) => {
+  const reportIssue = (label: string) => {
     dispatch({ type: 'ADD_LOG', payload: `Issue reported: ${label}` });
     socketRef.current?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
     Alert.alert('Issue Reported', `${label} — Support has been notified.`);
     dispatch({ type: 'SET_EXPANDED_ISSUE', payload: false });
-  }, [activeDelivery]);
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
-          <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
-          <Text style={styles.vehicleTag}>{VEHICLE}</Text>
-          {activeDelivery && (
-            <Text style={styles.STATUS_LABEL}>{STATUS_LABEL[activeDelivery.status]}</Text>
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {incomingOrder ? (
+        <View style={styles.incomingCard}>
+          <View style={styles.alertBanner}>
+            <Text style={styles.alertBannerText}>🚨 NEW ORDER ARRIVED</Text>
+          </View>
+
+          <View style={styles.cardTitleRow}>
+            <Text style={styles.cardTitle}>#{incomingOrder.orderNumber}</Text>
+            <Text style={styles.amountBadge}>+₹{incomingOrder.amount}</Text>
+            <Text style={styles.timeInfo}>{fmtTime(incomingOrder.createdAt)} ({timeAgo(incomingOrder.createdAt)})</Text>
+          </View>
+
+          <DetailRow label="Pick up from:" value={`${incomingOrder.restaurant.name} (${incomingOrder.restaurant.address})`} />
+          <DetailRow label="Deliver to:" value={`${incomingOrder.customer.address}`} />
+          <DetailRow label="Distance:" value={`${incomingOrder.distanceKm} km`} />
+          <DetailRow label="Order OTP:" value={`${incomingOrder.otp}`} />
+          {incomingOrder.surgeMultiplier && incomingOrder.surgeMultiplier > 1 && (
+            <DetailRow label="Surge:" value={`${incomingOrder.surgeMultiplier}x`} />
           )}
-          {shift && (
-            <Text style={styles.shiftTag}>📅 {shift.type} shift • Ends: {shift.endTime}</Text>
+
+          <View style={styles.actionRow}>
+            <Pressable
+              style={[styles.btnSecondary, styles.btnReject]}
+              onPress={rejectOrder}
+              accessibilityLabel="Reject order"
+              accessibilityRole="button"
+            >
+              <Text style={styles.btnText}>Reject</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btnSecondary, styles.btnAccept]}
+              onPress={acceptOrder}
+              accessibilityLabel="Accept order"
+              accessibilityRole="button"
+            >
+              <Text style={styles.btnText}>✅ Accept</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
+      {!incomingOrder && activeDelivery ? (
+        <View style={styles.activeCard}>
+          <Text style={styles.cardTitle}>🚚 Active Delivery</Text>
+
+          <View style={styles.progressContainer}>
+            {['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'].map((s, i) => {
+              const currentStatus = activeDelivery.status;
+              const steps = ['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'];
+              const activeIdx = steps.indexOf(currentStatus);
+              const past = i <= activeIdx;
+              return (
+                <React.Fragment key={s}>
+                  <View style={{ alignItems: 'center', flex: 1 }}>
+                    <View style={[styles.progressDot, past ? styles.progressDotActive : styles.progressDotInactive]}>
+                      {past ? <Text style={styles.progressDotText}>✓</Text> : <Text style={[styles.progressDotText, { color: '#666' }]}>{i + 1}</Text>}
+                    </View>
+                    <Text style={[styles.progressLabel, past && { color: '#fff', fontWeight: 'bold' }]}>
+                      {s === 'navigating_to_pickup' ? '→Pickup' : s === 'navigating_to_drop' ? '→Drop' : s.replace('_', ' ')}
+                    </Text>
+                  </View>
+                  {i < 4 && <View style={[styles.progressLine, activeIdx >= i && styles.progressLineActive]} />}
+                </React.Fragment>
+              );
+            })}
+          </View>
+
+          <View style={styles.contextCards}>
+            <View style={styles.contextCard}>
+              <Text style={styles.contextLabel}>🏪 PICKUP</Text>
+              <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
+              <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
+              <Pressable
+                style={styles.navInlineBtn}
+                onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+                accessibilityLabel="Navigate to pickup"
+              >
+                <Text style={styles.navInlineText}>📍</Text>
+              </Pressable>
+            </View>
+            <View style={styles.contextCard}>
+              <Text style={styles.contextLabel}>📍 DROP</Text>
+              <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
+              <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
+              <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
+              <Pressable
+                style={styles.navInlineBtn}
+                onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
+                accessibilityLabel="Navigate to customer"
+              >
+                <Text style={styles.navInlineText}>📍</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {activeDelivery.status === 'assigned' && (
+            <Pressable
+              style={styles.navBtn}
+              onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+              accessibilityLabel="Navigate to pickup location"
+              accessibilityRole="button"
+            >
+              <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
+            </Pressable>
           )}
-        </View>
-        <View style={styles.onlineToggle}>
-          <Text style={isOnline ? styles.onlineText : styles.offlineText}>
-            {isOnline ? '● ONLINE' : '● OFFLINE'}
-          </Text>
-<Switch 
-             value={state.isOnline} 
-             onValueChange={(value) => dispatch({ type: 'SET_ONLINE', payload: value })}
-             trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
-             thumbColor="white"
-             accessibilityLabel="Toggle online status"
-           />
-        </View>
-      </View>
 
-      <View style={styles.statsRow}>
-        <StatCard label="Today" value={`₹${earnings.today}`} sub={`${earnings.ordersToday} orders`} />
-        <StatCard label="Pending" value={`₹${earnings.pending}`} sub="to be credited" />
-        <StatCard label="Bonus" value={`₹${earnings.bonus}`} sub="weekly" />
-      </View>
+          {activeDelivery.status === 'navigating_to_pickup' && (
+            <>
+              <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
+                <Text style={styles.navBtnText}>🏪 I'm at Restaurant</Text>
+              </Pressable>
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+              >
+                <Text style={styles.navBtnText}>📍 Open Navigation</Text>
+              </Pressable>
+            </>
+          )}
 
-      <View style={styles.tabRow}>
-        {(['home', 'earnings'] as const).map((t) => (
-          <Pressable
-            key={t}
-            onPress={() => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: t })}
-            style={[styles.tab, activeScreen === t && styles.tabActive]}
-            accessibilityLabel={`Switch to ${t} screen`}
-            accessibilityRole="tab"
-          >
-            <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
-              {t === 'home' ? '🏠 Active' : '💰 Earnings'}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-
-      {activeScreen === 'home' && (
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {incomingOrder ? (
-            <View style={styles.incomingCard}>
-              <View style={styles.alertBanner}>
-                <Text style={styles.alertBannerText}>🚨 NEW ORDER ARRIVED</Text>
+          {activeDelivery.status === 'at_pickup' && (
+            <View style={{ gap: 10 }}>
+              <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center' }}>
+                Verify OTP with staff / customer before leaving
+              </Text>
+              <View style={styles.otpRow}>
+                {Array.from({ length: 6 }, (_, i) => (
+                  <View key={i} style={styles.otpSlot}>
+                    <Text style={styles.otpChar}>({deliveryOtp[i] || '—'})</Text>
+                  </View>
+                ))}
               </View>
-
-              <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>#{incomingOrder.orderNumber}</Text>
-                <Text style={styles.amountBadge}>+₹{incomingOrder.amount}</Text>
-                <Text style={styles.timeInfo}>{fmtTime(incomingOrder.createdAt)} ({timeAgo(incomingOrder.createdAt)})</Text>
-              </View>
-
-              <DetailRow label="Pick up from:" value={`${incomingOrder.restaurant.name} (${incomingOrder.restaurant.address})`} />
-              <DetailRow label="Deliver to:" value={`${incomingOrder.customer.address}`} />
-              <DetailRow label="Distance:" value={`${incomingOrder.distanceKm} km`} />
-              <DetailRow label="Order OTP:" value={`${incomingOrder.otp}`} />
-              {incomingOrder.surgeMultiplier && incomingOrder.surgeMultiplier > 1 && (
-                <DetailRow label="Surge:" value={`${incomingOrder.surgeMultiplier}x`} />
-              )}
+              <Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
+                <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
+              </Pressable>
+              {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
               <View style={styles.actionRow}>
-                <Pressable 
-                  style={[styles.btnSecondary, styles.btnReject]} 
-                  onPress={rejectOrder}
-                  accessibilityLabel="Reject order"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.btnText}>Reject</Text>
+                <Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
+                  <Text style={styles.btnText}>Clear</Text>
                 </Pressable>
-                <Pressable 
-                  style={[styles.btnSecondary, styles.btnAccept]} 
-                  onPress={acceptOrder}
-                  accessibilityLabel="Accept order"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.btnText}>✅ Accept</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
-
-          {!incomingOrder && activeDelivery ? (
-            <View style={styles.activeCard}>
-              <Text style={styles.cardTitle}>🚚 Active Delivery</Text>
-
-              <View style={styles.progressContainer}>
-                {['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'].map((s, i) => {
-                  const currentStatus = activeDelivery.status;
-                  const steps = ['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'];
-                  const activeIdx = steps.indexOf(currentStatus);
-                  const past = i <= activeIdx;
-                  return (
-                    <React.Fragment key={s}>
-                      <View style={{ alignItems: 'center', flex: 1 }}>
-                        <View style={[styles.progressDot, past ? styles.progressDotActive : styles.progressDotInactive]}>
-                          {past ? <Text style={styles.progressDotText}>✓</Text> : <Text style={[styles.progressDotText, { color: '#666' }]}>{i + 1}</Text>}
-                        </View>
-                        <Text style={[styles.progressLabel, past && { color: '#fff', fontWeight: 'bold' }]}>
-                          {s === 'navigating_to_pickup' ? '→Pickup' : s === 'navigating_to_drop' ? '→Drop' : s.replace('_', ' ')}
-                        </Text>
-                      </View>
-                      {i < 4 && <View style={[styles.progressLine, activeIdx >= i && styles.progressLineActive]} />}
-                    </React.Fragment>
-                  );
-                })}
-              </View>
-
-              <View style={styles.contextCards}>
-                <View style={styles.contextCard}>
-                  <Text style={styles.contextLabel}>🏪 PICKUP</Text>
-                  <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
-                  <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
-                  <Pressable
-                    style={styles.navInlineBtn}
-                    onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                    accessibilityLabel="Navigate to pickup"
-                  >
-                    <Text style={styles.navInlineText}>📍</Text>
-                  </Pressable>
-                </View>
-                <View style={styles.contextCard}>
-                  <Text style={styles.contextLabel}>📍 DROP</Text>
-                  <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
-                  <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
-                  <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
-                  <Pressable
-                    style={styles.navInlineBtn}
-                    onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
-                    accessibilityLabel="Navigate to customer"
-                  >
-                    <Text style={styles.navInlineText}>📍</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {activeDelivery.status === 'assigned' && (
-                <Pressable
-                  style={styles.navBtn}
-                  onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                  accessibilityLabel="Navigate to pickup location"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
-                </Pressable>
-              )}
-
-              {activeDelivery.status === 'navigating_to_pickup' && (
-                <>
-                  <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
-                    <Text style={styles.navBtnText}>🏪 I&#39;m at Restaurant</Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.navBtn}
-                    onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                  >
-                    <Text style={styles.navBtnText}>📍 Open Navigation</Text>
-                  </Pressable>
-                </>
-              )}
-
-              {activeDelivery.status === 'at_pickup' && (
-                <View style={{ gap: 10 }}>
-                  <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center' }}>
-                    Verify OTP with staff / customer before leaving
-                  </Text>
-                  <View style={styles.otpRow}>
-                    {Array.from({ length: 6 }, (_, i) => (
-                      <View key={i} style={styles.otpSlot}>
-                        <Text style={styles.otpChar}>({deliveryOtp[i] || '—'})</Text>
-                      </View>
-                    ))}
-                  </View>
-<Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
-                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
-                   </Pressable>
-                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
-
-                  <View style={styles.actionRow}>
-<Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
-                       <Text style={styles.btnText}>Clear</Text>
-                     </Pressable>
-                    <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
-                      <Text style={styles.btnText}>✅ Confirm OTP</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              )}
-
-              {activeDelivery.status === 'navigating_to_drop' && (
-                <View style={{ gap: 10 }}>
-                  <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
-                  <Pressable
-                    style={styles.navBtn}
-                    onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
-                  >
-                    <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
-                  </Pressable>
-                  <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
-                  <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
-                  <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
-                  <Pressable style={styles.completeBtn} onPress={completeDelivery}>
-                    <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
-                  </Pressable>
-                  <Pressable 
-                    style={styles.failBtn} 
-                    onPress={() => handleFailedDelivery('customer_unavailable')}
-                  >
-                    <Text style={styles.failBtnText}>❗ Mark Failed</Text>
-                  </Pressable>
-                </View>
-              )}
-            </View>
-          ) : null}
-
-{!state.incomingOrder && !activeDelivery && (
-             <View style={styles.idleCard}>
-               <Text style={styles.idleIcon}>⏳</Text>
-               <Text style={styles.idleText}>
-                 {state.isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
-               </Text>
-               {state.isOnline && locationPermission === 'denied' && (
-                 <Text style={styles.locationWarning}>Location permission required for delivery</Text>
-               )}
-               {state.isOnline && (
-                 <Pressable
-                   style={styles.btnAccept}
-                   onPress={() => {
-                     const demo = demoIncoming();
-                     dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
-                     dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
-                   }}
-                 >
-                   <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
-                 </Pressable>
-               )}
-             </View>
-           )}
-
-           {activeDelivery && (
-             <View style={styles.issueSection}>
-               <Pressable
-                 onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !state.expandedIssue })}
-                 style={styles.issueToggle}
-                 accessibilityLabel="Report an issue"
-                 accessibilityRole="button"
-               >
-                 <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
-                 <Text style={styles.issueChevron}>{state.expandedIssue ? '▲' : '▼'}</Text>
-               </Pressable>
-               {state.expandedIssue && (
-                 <View style={styles.issueGrid}>
-                   {issueTypes.map((issue) => (
-                     <Pressable
-                       key={issue.label}
-                        style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
-                       onPress={() => reportIssue(issue.label)}
-                     >
-                       <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
-                       <Text style={styles.issueLabel}>{issue.label}</Text>
-                     </Pressable>
-                   ))}
-                 </View>
-               )}
-            </View>
-          )}
-
-{state.log.length > 0 && (
-             <View style={styles.logCard}>
-               <Text style={styles.logTitle}>📋 Recent Activity</Text>
-               {state.log.map((entry, i) => (
-                 <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
-                   {entry}
-                 </Text>
-               ))}
-             </View>
-           )}
-         </ScrollView>
-       )}
-
-       {state.activeScreen === 'earnings' && (
-         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-           <View style={styles.earnBigCard}>
-             <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
-             <Text style={styles.earnAmount}>₹{state.earnings.today}</Text>
-             <Text style={styles.earnSub}>{state.earnings.ordersToday} deliveries completed</Text>
-           </View>
-
-           <View style={styles.earnGrid}>
-             <StatCard label="Pending" value={`₹${state.earnings.pending}`} sub="yet to credit" />
-             <StatCard label="Weekly Bonus" value={`₹${state.earnings.bonus}`} sub="on-time reward" />
-             <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
-             <StatCard label="Acceptance" value="97%" sub="this month" />
-           </View>
-
-           <View style={styles.card}>
-             <Text style={styles.cardTitle}>🏆 Performance</Text>
-             <Text style={styles.cardSubtitle}>This week</Text>
-             <View style={{ gap: 8 }}>
-               <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
-               <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
-               <EarnRow label="Acceptance rate" value="97%" pct={97} />
-               <EarnRow label="Completed orders" value="42 / week" pct={88} />
-             </View>
-           </View>
-
-           {state.shift && (
-             <View style={styles.card}>
-               <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
-              <Text style={styles.cardSubtitle}>Current shift</Text>
-              <View style={styles.shiftInfo}>
-                <Text style={styles.shiftInfoText}>Type: {state.shift!.type}</Text>
-                <Text style={styles.shiftInfoText}>Ends: {state.shift!.endTime}</Text>
-                <Pressable style={styles.shiftEndBtn}>
-                  <Text style={styles.shiftEndText}>End Shift Early</Text>
+                <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
+                  <Text style={styles.btnText}>✅ Confirm OTP</Text>
                 </Pressable>
               </View>
             </View>
           )}
-        </ScrollView>
+
+          {activeDelivery.status === 'navigating_to_drop' && (
+            <View style={{ gap: 10 }}>
+              <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
+              >
+                <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
+              </Pressable>
+              <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
+              <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
+              <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
+              <Pressable style={styles.completeBtn} onPress={completeDelivery}>
+                <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
+              </Pressable>
+              <Pressable
+                style={styles.failBtn}
+                onPress={() => handleFailedDelivery('customer_unavailable')}
+              >
+                <Text style={styles.failBtnText}>❗ Mark Failed</Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      ) : null}
+
+      {!incomingOrder && !activeDelivery && (
+        <View style={styles.idleCard}>
+          <Text style={styles.idleIcon}>⏳</Text>
+          <Text style={styles.idleText}>
+            {isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
+          </Text>
+          {isOnline && locationPermission === 'denied' && (
+            <Text style={styles.locationWarning}>Location permission required for delivery</Text>
+          )}
+          {isOnline && (
+            <Pressable
+              style={styles.btnAccept}
+              onPress={() => {
+                const demo = demoIncoming();
+                dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
+                dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
+              }}
+            >
+              <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
+            </Pressable>
+          )}
+        </View>
       )}
-    </View>
+
+      {activeDelivery && (
+        <View style={styles.issueSection}>
+          <Pressable
+            onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !expandedIssue })}
+            style={styles.issueToggle}
+            accessibilityLabel="Report an issue"
+            accessibilityRole="button"
+          >
+            <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
+            <Text style={styles.issueChevron}>{expandedIssue ? '▲' : '▼'}</Text>
+          </Pressable>
+          {expandedIssue && (
+            <View style={styles.issueGrid}>
+              {issueTypes.map((issue) => (
+                <Pressable
+                  key={issue.label}
+                  style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
+                  onPress={() => reportIssue(issue.label)}
+                >
+                  <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
+                  <Text style={styles.issueLabel}>{issue.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
+
+      {log.length > 0 && (
+        <View style={styles.logCard}>
+          <Text style={styles.logTitle}>📋 Recent Activity</Text>
+          {log.map((entry, i) => (
+            <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+              {entry}
+            </Text>
+          ))}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
+function EarningsScreen({ earnings, shift }: { earnings: DailyEarnings; shift: ShiftInfo | null }) {
+  return (
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.earnBigCard}>
+        <Text style={styles.earnLabel}>Today's Earnings</Text>
+        <Text style={styles.earnAmount}>₹{earnings.today}</Text>
+        <Text style={styles.earnSub}>{earnings.ordersToday} deliveries completed</Text>
+      </View>
+
+      <View style={styles.earnGrid}>
+        <StatCard label="Pending" value={`₹${earnings.pending}`} sub="yet to credit" />
+        <StatCard label="Weekly Bonus" value={`₹${earnings.bonus}`} sub="on-time reward" />
+        <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
+        <StatCard label="Acceptance" value="97%" sub="this month" />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>🏆 Performance</Text>
+        <Text style={styles.cardSubtitle}>This week</Text>
+        <View style={{ gap: 8 }}>
+          <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
+          <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
+          <EarnRow label="Acceptance rate" value="97%" pct={97} />
+          <EarnRow label="Completed orders" value="42 / week" pct={88} />
+        </View>
+      </View>
+
+      {shift && (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
+          <Text style={styles.cardSubtitle}>Current shift</Text>
+          <View style={styles.shiftInfo}>
+            <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
+            <Text style={styles.shiftInfoText}>Ends: {shift.endTime}</Text>
+            <Pressable style={styles.shiftEndBtn}>
+              <Text style={styles.shiftEndText}>End Shift Early</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi } from '@spicegarden/shared/api';
-import { getCachedToken } from '../utils/cachedLocalStorage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 interface OrderResponse {
@@ -124,7 +123,7 @@ const CheckoutPage = () => {
       };
 
       try {
-        const response = await ordersApi.create(orderData, user?.token || getCachedToken() || '');
+        const response = await ordersApi.create(orderData);
         router.push(`/tracking?order=${(response.data as OrderResponse).id}`);
       } catch (apiError: unknown) {
         const errorMessage = apiError instanceof Error ? apiError.message : '';
@@ -132,20 +131,12 @@ const CheckoutPage = () => {
         if (errorMessage.includes('payment') || errorMessage.includes('card') || errorMessage.includes('insufficient')) {
           dispatch({ type: 'SET_ORDER_ERROR', payload: 'Payment failed: ' + errorMessage });
         } else if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
-          const refreshToken = getCachedToken();
-          if (refreshToken) {
-            try {
-              const refreshResponse = await authApi.refreshToken(refreshToken);
-              localStorage.setItem('sg_token:v1', (refreshResponse.data as { access_token: string }).access_token);
-              const retryResponse = await ordersApi.create(orderData, (refreshResponse.data as { access_token: string }).access_token);
-              router.push(`/tracking?order=${(retryResponse.data as OrderResponse).id}`);
-              return;
-            } catch {
-              dispatch({ type: 'SET_ORDER_ERROR', payload: 'Session expired. Please sign in again.' });
-              setTimeout(() => router.push('/auth'), 2000);
-              return;
-            }
-          } else {
+          try {
+            const refreshResponse = await authApi.refreshToken();
+            const retryResponse = await ordersApi.create(orderData);
+            router.push(`/tracking?order=${(retryResponse.data as OrderResponse).id}`);
+            return;
+          } catch {
             dispatch({ type: 'SET_ORDER_ERROR', payload: 'Session expired. Please sign in again.' });
             setTimeout(() => router.push('/auth'), 2000);
             return;

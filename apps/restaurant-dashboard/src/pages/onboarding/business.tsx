@@ -119,7 +119,7 @@ export default function OnboardingBusiness() {
             label={loading ? 'Submitting...' : 'Continue'}
             onClick={submit}
             disabled={loading}
-            style={{ flex: 1 }}
+            className={styles.backButton}
           />
         </div>
       </div>

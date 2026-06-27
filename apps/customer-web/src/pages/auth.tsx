@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/slices/authSlice';
 import { API_URL } from '@spicegarden/shared/constants';
+import { api } from '@spicegarden/shared/api';
 import styles from './auth.module.css';
 
 const AuthPage = () => {
@@ -17,7 +18,6 @@ const AuthPage = () => {
     const handleSubmit = async () => {
         setError('');
         
-        // Basic validation
         if (!formData.email || !formData.password) {
             setError('Please enter email and password');
             return;
@@ -31,9 +31,8 @@ const AuthPage = () => {
         setLoading(true);
         try {
             const endpoint = isLogin ? '/auth/login' : '/auth/register';
-            const res = await fetch(`${API_URL}${endpoint}`, {
+            const res = await api<{ user: { id: string; email: string; role?: string; fullName?: string; status?: string } }>(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password,
@@ -44,20 +43,18 @@ const AuthPage = () => {
                 }),
             });
 
-            if (res.ok) {
-                const data = await res.json();
-                const userData = { email: formData.email, role: 'customer' };
+                const userData = {
+                    id: (res.data as any).user?.id,
+                    email: (res.data as any).user?.email || formData.email,
+                    fullName: (res.data as any).user?.fullName,
+                    role: (res.data as any).user?.role || 'customer',
+                    status: (res.data as any).user?.status,
+                };
                 
-                // Update Redux store
-                dispatch(setCredentials({ user: userData, token: data.access_token }));
-                
+                dispatch(setCredentials({ user: userData }));
                 router.push('/');
-            } else {
-                const errorData = await res.json();
-                setError(errorData.message || (isLogin ? 'Login failed' : 'Registration failed'));
-            }
-        } catch (err) {
-            setError('Network error. Please check your connection and try again.');
+        } catch (err: any) {
+            setError(err.message || (isLogin ? 'Login failed' : 'Registration failed'));
         } finally {
             setLoading(false);
         }
@@ -147,14 +144,14 @@ const AuthPage = () => {
                 <div className={styles.socialButtonsRow}>
                     <button
                         type="button"
-                        onClick={() => {/* TODO: Implement Google login */}}
+                        onClick={() => { window.location.href = `${API_URL}/auth/google`; }}
                         className={styles.googleButton}
                     >
                         🔵 Google
                     </button>
                     <button
                         type="button"
-                        onClick={() => {/* TODO: Implement Facebook login */}}
+                        onClick={() => { window.location.href = `${API_URL}/auth/facebook`; }}
                         className={styles.facebookButton}
                     >
                         𝔽 Facebook

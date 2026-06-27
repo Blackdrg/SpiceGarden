@@ -4,6 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { OrderEntity } from '../src/db/entities/order.entity';
 import { DriverAssignmentEntity } from '../src/db/entities/driver-assignment.entity';
+import { DriverEntity } from '../src/db/entities/driver.entity';
+import { UserEntity } from '../src/db/entities/user.entity';
+import { RestaurantBranchEntity } from '../src/db/entities/restaurant-branch.entity';
 import { PaymentService } from '../src/services/payments/payments.service';
 import { NotificationService } from '../src/services/notifications/notification.service';
 import { RetryService } from '../src/services/payments/retry.service';
@@ -28,6 +31,27 @@ describe('OrderService Edge Cases', () => {
   };
 
   const mockDriverAssignmentRepo = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const mockDriverRepo = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const mockUserRepo = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const mockBranchRepo = {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
@@ -69,6 +93,9 @@ describe('OrderService Edge Cases', () => {
         OrderService,
         { provide: getRepositoryToken(OrderEntity), useValue: mockOrderRepo },
         { provide: getRepositoryToken(DriverAssignmentEntity), useValue: mockDriverAssignmentRepo },
+        { provide: getRepositoryToken(DriverEntity), useValue: mockDriverRepo },
+        { provide: getRepositoryToken(UserEntity), useValue: mockUserRepo },
+        { provide: getRepositoryToken(RestaurantBranchEntity), useValue: mockBranchRepo },
         { provide: PaymentService, useValue: mockPaymentService },
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: RetryService, useValue: mockServices.retryService },

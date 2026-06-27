@@ -12,6 +12,7 @@ import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 export interface AuthenticatedUser {
   id: string;
   email: string;
+  fullName: string;
   role: UserRole;
   status: UserStatus;
   passwordHash?: string;
@@ -73,7 +74,7 @@ export class AuthService {
   }
 
   async login(user: AuthenticatedUser, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
-    const payload = { email: user.email, sub: user.id, role: user.role, status: user.status };
+    const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
     
@@ -125,5 +126,36 @@ export class AuthService {
     session.isActive = false;
     session.lastActiveAt = new Date();
     await this.sessionRepo.save(session);
+  }
+
+  async loginWithSocial(profile: {
+    email: string;
+    fullName: string;
+    socialId: string;
+    socialProvider: string;
+  }): Promise<LoginTokenResponse> {
+    const normalizedEmail = profile.email.toLowerCase();
+    let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
+
+    if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+      const passwordHash = await this.hashPassword(randomPassword);
+      user = this.userRepo.create({
+        email: normalizedEmail,
+        fullName: profile.fullName,
+        phone: `social-${profile.socialId}`,
+        passwordHash,
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+      });
+      await this.userRepo.save(user);
+    }
+
+    const { passwordHash, ...authenticatedUser } = user;
+    return this.login(authenticatedUser as AuthenticatedUser, {
+      name: 'social',
+      type: profile.socialProvider,
+      ip: '0.0.0.0',
+    });
   }
 }

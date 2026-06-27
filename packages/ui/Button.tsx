@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
+import styles from './Button.module.css';
 
 interface ButtonProps {
   label?: string;
@@ -16,79 +17,29 @@ interface ButtonProps {
   className?: string;
 }
 
-export const Button = ({ 
-  label, 
+export const Button = ({
+  label,
   children,
-  onClick, 
-  variant = 'primary', 
+  onClick,
+  variant = 'primary',
   size = 'md',
-  isLoading = false, 
+  isLoading = false,
   disabled = false,
   style,
   ariaLabel,
   className,
 }: ButtonProps) => {
-  const getBgColor = () => {
-    switch (variant) {
-      case 'primary': return DESIGN_TOKENS.colors.primary;
-      case 'secondary': return DESIGN_TOKENS.colors.surface;
-      case 'ghost': return 'transparent';
-      case 'outline': return 'transparent';
-      case 'destructive': return DESIGN_TOKENS.colors.danger;
-      case 'loading': return DESIGN_TOKENS.colors.textSecondary;
-      default: return DESIGN_TOKENS.colors.primary;
-    }
-  };
-
-  const getTextColor = () => {
-    if (variant === 'primary' || variant === 'destructive' || variant === 'loading') {
-      return DESIGN_TOKENS.colors.textInverse;
-    }
-    if (variant === 'outline') {
-      return DESIGN_TOKENS.colors.primary;
-    }
-    return DESIGN_TOKENS.colors.textPrimary;
-  };
-
-  const getBorder = () => {
-    if (variant === 'outline' || variant === 'ghost') {
-      return `1px solid ${DESIGN_TOKENS.colors.border}`;
-    }
-    return 'none';
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm': return { padding: '6px 12px', fontSize: 14 };
-      case 'lg': return { padding: '16px 24px', fontSize: 18 };
-      default: return { padding: '10px 20px', fontSize: 16 };
-    }
-  };
-
-  const isDisabled = disabled || isLoading;
+  const baseClass = `${styles.button} ${styles[variant]} ${styles[size]}`;
+  const mergedClassName = className ? `${baseClass} ${className}` : baseClass;
 
   return (
     <button
       onClick={onClick}
-      disabled={isDisabled}
+      disabled={disabled || isLoading}
       aria-label={ariaLabel || label}
-      aria-disabled={isDisabled}
-      className={className}
-      style={{
-        backgroundColor: getBgColor(),
-        color: getTextColor(),
-        border: getBorder(),
-        borderRadius: `${DESIGN_TOKENS.radius.button}px`,
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
-        transition: `all ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}`,
-        opacity: isDisabled ? 0.6 : 1,
-        fontFamily: DESIGN_TOKENS.typography.fontFamily,
-        fontWeight: 600,
-        fontSize: getSizeStyles().fontSize,
-        padding: getSizeStyles().padding,
-        boxShadow: variant === 'primary' ? DESIGN_TOKENS.shadows.small : 'none',
-        ...style,
-      }}
+      aria-disabled={disabled || isLoading}
+      className={mergedClassName}
+      style={style}
     >
       {isLoading ? 'Loading...' : (label || children)}
     </button>

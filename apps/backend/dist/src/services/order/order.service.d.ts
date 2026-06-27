@@ -2,6 +2,9 @@ import { Repository } from 'typeorm';
 import { Order, OrderStatus } from '../../shared/domain/order.interface';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
+import { DriverEntity } from '../../db/entities/driver.entity';
+import { UserEntity } from '../../db/entities/user.entity';
+import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { PaymentService } from '../../services/payments/payments.service';
 import { NotificationService } from '../../services/notifications/notification.service';
 import { RetryService } from '../../services/payments/retry.service';
@@ -31,13 +34,16 @@ type OrderDataInput = {
 export declare class OrderService {
     private readonly orderRepo;
     private readonly driverAssignmentRepo;
+    private readonly driverRepo;
+    private readonly userRepo;
+    private readonly branchRepo;
     private readonly paymentService;
     private readonly notificationService;
     private readonly retryService;
     private readonly idempotency;
     private readonly productionNotification;
     private readonly loggingService;
-    constructor(orderRepo: Repository<OrderEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, paymentService: PaymentService, notificationService: NotificationService, retryService: RetryService, idempotency: IdempotencyService, productionNotification: ProductionNotificationService, loggingService: LoggingService);
+    constructor(orderRepo: Repository<OrderEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverRepo: Repository<DriverEntity>, userRepo: Repository<UserEntity>, branchRepo: Repository<RestaurantBranchEntity>, paymentService: PaymentService, notificationService: NotificationService, retryService: RetryService, idempotency: IdempotencyService, productionNotification: ProductionNotificationService, loggingService: LoggingService);
     validateOrderItems(items: any): void;
     validateOrderTotals(orderData: OrderDataInput): boolean;
     canTransitionOrderStatus(from: OrderStatus, to: OrderStatus): boolean;
@@ -58,5 +64,9 @@ export declare class OrderService {
     handleKitchenDelay(orderId: string, delayMinutes: number): Promise<void>;
     reassignOrder(orderId: string, driverId: string, reason: string): Promise<boolean>;
     getOrderWithLock(orderId: string): Promise<Order>;
+    getOrderWithDetails(orderId: string): Promise<Order & {
+        driverPhone?: string;
+        branchAddress?: string;
+    }>;
 }
 export {};

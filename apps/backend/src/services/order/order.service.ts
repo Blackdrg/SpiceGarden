@@ -4,6 +4,9 @@ import { Repository, LessThan, MoreThanOrEqual } from 'typeorm';
 import { Order, OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
+import { DriverEntity } from '../../db/entities/driver.entity';
+import { UserEntity } from '../../db/entities/user.entity';
+import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { PaymentService } from '../../services/payments/payments.service';
 import { NotificationService } from '../../services/notifications/notification.service';
 import { RetryService } from '../../services/payments/retry.service';
@@ -37,6 +40,12 @@ export class OrderService {
     private readonly orderRepo: Repository<OrderEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private readonly driverAssignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectRepository(DriverEntity)
+    private readonly driverRepo: Repository<DriverEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepo: Repository<UserEntity>,
+    @InjectRepository(RestaurantBranchEntity)
+    private readonly branchRepo: Repository<RestaurantBranchEntity>,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
     private readonly retryService: RetryService,
@@ -555,5 +564,35 @@ export class OrderService {
     }
 
     return order;
+  }
+
+  async getOrderWithDetails(orderId: string): Promise<Order & { driverPhone?: string; branchAddress?: string }> {
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    let driverPhone: string | undefined;
+    let branchAddress: string | undefined;
+
+    if (order.driverId) {
+      const driver = await this.driverRepo.findOne({ where: { id: order.driverId }, relations: { user: true } });
+      if (driver?.user?.phone) {
+        driverPhone = driver.user.phone;
+      }
+    }
+
+    if (order.branchId) {
+      const branch = await this.branchRepo.findOne({ where: { id: order.branchId } });
+      if (branch) {
+        branchAddress = branch.address;
+      }
+    }
+
+    return {
+      ...order,
+      driverPhone,
+      branchAddress,
+    };
   }
 }

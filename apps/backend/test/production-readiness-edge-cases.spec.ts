@@ -354,11 +354,17 @@ describe('Production-readiness backend edge coverage', () => {
       manager: { transaction: jest.fn(async (cb: any) => cb(orderEntity({ id: 'order-1' }))) },
     } as any;
     const driverAssignmentRepo = { findOne: jest.fn(), save: jest.fn() } as unknown as Repository<DriverAssignmentEntity>;
+    const driverRepo = { findOne: jest.fn() } as any;
+    const userRepo = { findOne: jest.fn() } as any;
+    const branchRepo = { findOne: jest.fn() } as any;
 
     it('rejects invalid order totals before placement', async () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -374,6 +380,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -390,6 +399,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -406,6 +418,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,

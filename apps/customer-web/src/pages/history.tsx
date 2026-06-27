@@ -30,6 +30,25 @@ interface Order {
   rating?: number;
 }
 
+function getStatusBadgeClass(status?: string) {
+  switch (status) {
+    case 'delivered':
+      return styles.statusDelivered;
+    case 'cancelled':
+      return styles.statusCancelled;
+    case 'preparing':
+    case 'ready':
+    case 'pickedup':
+      return styles.statusActive;
+    default:
+      return styles.statusBadgeDefault;
+  }
+}
+
+function getNavColorClass(key: string) {
+  return key === 'orders' ? styles.navActive : styles.navInactive;
+}
+
 const HistoryPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -39,49 +58,18 @@ const HistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getStatusBadgeClass = (status?: string) => {
-    switch (status) {
-      case 'delivered':
-        return styles.statusDelivered;
-      case 'cancelled':
-        return styles.statusCancelled;
-      case 'preparing':
-      case 'ready':
-      case 'pickedup':
-        return styles.statusActive;
-      default:
-        return styles.statusBadgeDefault;
-    }
-  };
-
-  const getNavColorClass = (key: string) =>
-    key === 'orders' ? styles.navActive : styles.navInactive;
-
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout> | null = null;
     const loadOrderHistory = async () => {
-      if (!user?.token) {
-        setLoading(false);
-        timerId = setTimeout(() => {
-          setOrders([
-            { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
-            { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
-            { id: 'SG12343', date: '2026-05-15', time: '20:45', restaurant: 'Subway', items: 3, amount: 420, status: 'delivered', rating: 5 },
-            { id: 'SG12342', date: '2026-05-10', time: '14:20', restaurant: "Domino's", items: 2, amount: 380, status: 'cancelled', rating: 0 },
-          ]);
-        }, 600);
-        return;
-      }
-
       setLoading(true);
       setError(null);
       try {
-        const response = await ordersApi.list(user.token);
+        const response = await ordersApi.list();
         const data = response.data;
         const transformedOrders: Order[] = (data as ApiOrder[]).map(order => ({
           id: order.id || '',
           date: order.date || new Date(order.createdAt || '').toISOString().split('T')[0],
-          time: order.time || new Date(order.createdAt || '').toISOString().split('T')[1].substring(0, 5),
+          time: order.time || new Date(order.createdAt || '').toISOString().split('T')[1]?.substring(0, 5) || '',
           restaurant: order.restaurant || 'Unknown Restaurant',
           items: order.items || 0,
           amount: order.amount || 0,
@@ -108,13 +96,13 @@ const HistoryPage = () => {
     return () => {
       if (timerId) clearTimeout(timerId);
     };
-  }, [user?.token]);
+  }, []);
 
   const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
   const handleReorder = async (orderId: string) => {
     try {
-      const response = await ordersApi.get(orderId, user?.token || '');
+      const response = await ordersApi.get(orderId);
       const order = response.data as { id?: string; items?: { menuItemId?: string; id?: string; name?: string; price?: number; quantity?: number }[]; restaurantId?: string };
       const cartItems: CartItem[] = order.items?.map(item => ({
         id: item.menuItemId || item.id || '',

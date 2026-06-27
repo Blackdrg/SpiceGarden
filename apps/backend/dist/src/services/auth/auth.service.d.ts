@@ -7,6 +7,7 @@ import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 export interface AuthenticatedUser {
     id: string;
     email: string;
+    fullName: string;
     role: UserRole;
     status: UserStatus;
     passwordHash?: string;
@@ -40,4 +41,10 @@ export declare class AuthService {
         ip: string;
     }): Promise<LoginTokenResponse>;
     revokeSession(refreshToken: string): Promise<void>;
+    loginWithSocial(profile: {
+        email: string;
+        fullName: string;
+        socialId: string;
+        socialProvider: string;
+    }): Promise<LoginTokenResponse>;
 }

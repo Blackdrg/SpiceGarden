@@ -9,92 +9,114 @@ interface ApiResponse<T> {
   refreshToken?: string;
 }
 
-// Enhanced API function with automatic token refresh
-export async function api<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
-  const { token, ...rest } = options;
-  
-  // Try the request
-  try {
-    return await makeRequest<T>(endpoint, { token, ...rest });
-  } catch (error: unknown) {
-    const err = error as Error & { message?: string };
-    // If we get a 401 (Unauthorized) and we have a token, try to refresh
-    if (err.message && err.message.includes('401') && token) {
-      try {
-        // Attempt to refresh token
-        const refreshResponse = await api<{ access_token: string }>('/auth/refresh-token', {
-          method: 'POST',
-          body: JSON.stringify({ token }),
-        });
-        
-        const newToken = refreshResponse.data.access_token;
-        
-        // Retry the original request with the new token
-        return await makeRequest<T>(endpoint, { token: newToken, ...rest });
-      } catch (refreshError: unknown) {
-        // If refresh fails, throw the original error
-        throw error;
-      }
-    }
-    
-    // If not a 401 or no token to refresh, throw the original error
-    throw error;
-  }
+function getCsrfToken(): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|; )_csrf=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
-// Helper function to make the actual request
-async function makeRequest<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+export async function api<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
   const { token, ...rest } = options;
-  
+
   const headers = new Headers(rest.headers);
   headers.set('Content-Type', 'application/json');
-  
+
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
-  
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...rest,
-    headers,
-  });
-  
+
+  const response = await makeRequest<T>(endpoint, { ...rest, headers });
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Unknown error' }));
-    throw new Error(error.message || `HTTP ${response.status}`);
+    const errorMessage = error.message || `HTTP ${response.status}`;
+
+    if (response.status === 401 && !endpoint.includes('/auth/refresh-token')) {
+      try {
+        const csrfToken = getCsrfToken();
+        const refreshHeaders = new Headers();
+        refreshHeaders.set('Content-Type', 'application/json');
+        if (csrfToken) {
+          refreshHeaders.set('x-csrf-token', csrfToken);
+        }
+
+        const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+          method: 'POST',
+          headers: refreshHeaders,
+          credentials: 'include',
+        });
+
+        if (refreshResponse.ok) {
+          const retryHeaders = new Headers(rest.headers);
+          retryHeaders.set('Content-Type', 'application/json');
+          if (token) {
+            retryHeaders.set('Authorization', `Bearer ${token}`);
+          }
+          const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...rest,
+            headers: retryHeaders,
+            credentials: 'include',
+          });
+          if (retryResponse.ok) {
+            const retryData = await retryResponse.json();
+            return { data: retryData };
+          }
+        }
+      } catch {
+        // Refresh failed, fall through to throw original error
+      }
+    }
+
+    throw new Error(errorMessage);
   }
-  
+
   const data = await response.json();
-  
-  // Check if the response contains a new token (some APIs return refresh token in response)
-  // This is optional and depends on your API implementation
   return { data };
 }
 
+async function makeRequest<T>(endpoint: string, options: RequestOptions = {}): Promise<Response> {
+  const { token, ...rest } = options;
+  const headers = new Headers(options.headers);
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  const csrfToken = getCsrfToken();
+  if (csrfToken && rest.method && rest.method !== 'GET' && rest.method !== 'HEAD' && rest.method !== 'OPTIONS') {
+    headers.set('x-csrf-token', csrfToken);
+  }
+
+  return fetch(`${API_BASE_URL}${endpoint}`, {
+    ...rest,
+    headers,
+    credentials: 'include',
+  });
+}
+
 export const authApi = {
-  login: (email: string, password: string) => 
-    api<{ access_token: string; refresh_token: string; user: unknown }>('/auth/login', {
+  login: (email: string, password: string) =>
+    api<{ user?: unknown }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
-  
+
   register: (data: { fullName: string; email: string; phone: string; password: string }) =>
-    api<{ access_token: string; refresh_token: string; user: unknown }>('/auth/register', {
+    api<{ user?: unknown }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  
-  // Add refresh token endpoint
-  refreshToken: (token: string) =>
-    api<{ access_token: string }>('/auth/refresh-token', {
+
+  refreshToken: () =>
+    api<{ refresh_token: string }>('/auth/refresh-token', {
       method: 'POST',
-      body: JSON.stringify({ token }),
     }),
 };
 
 export const restaurantsApi = {
   list: async (lat?: number, lng?: number) => {
     try {
-      return await api<unknown[]>('/restaurants', { 
+      return await api<unknown[]>('/restaurants', {
         method: 'GET',
         headers: lat && lng ? { 'x-location': `${lat},${lng}` } : undefined,
       });
@@ -107,30 +129,29 @@ export const restaurantsApi = {
       ];
     }
   },
-  
+
   get: (id: string) => api<unknown>(`/restaurants/${id}`),
-  
+
   search: (query: string) => api<unknown[]>(`/restaurants/search?q=${encodeURIComponent(query)}`),
 };
 
 export const ordersApi = {
-  list: (token: string) => api<unknown[]>('/orders', { token }),
-  
-  get: (id: string, token: string) => api<unknown>(`/orders/${id}`, { token }),
-  
-  create: (data: unknown, token: string) =>
+  list: () => api<unknown[]>('/orders'),
+
+  get: (id: string) => api<unknown>(`/orders/${id}`),
+
+  create: (data: unknown) =>
     api<unknown>('/orders', {
       method: 'POST',
       body: JSON.stringify(data),
-      token,
     }),
-  
+
   track: (id: string) => api<unknown>(`/orders/${id}/track`),
 };
 
 export const menuApi = {
   list: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/menu`),
-  
+
   categories: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/categories`),
 };
 

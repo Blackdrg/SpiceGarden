@@ -78,7 +78,7 @@ export default function OnboardingGST() {
             label={loading ? 'Saving...' : 'Continue'}
             onClick={submit}
             disabled={loading}
-            style={{ flex: 1 }}
+            className={styles.flexGrow}
           />
         </div>
       </div>

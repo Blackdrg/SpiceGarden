@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { getCachedToken } from '../utils/cachedLocalStorage';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,9 +7,8 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const user = useSelector((state: RootState) => state.auth.user);
-  const token = user?.token || getCachedToken();
 
-  if (!token) {
+  if (!user) {
     return null;
   }
 

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Headers, UseGuards, Request, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Headers, UseGuards, Request, Get, Query, Param } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
@@ -22,5 +22,11 @@ export class OrderController {
   @Get('health')
   async healthCheck() {
     return { status: 'ok', timestamp: new Date().toISOString() };
+  }
+
+  @Get(':id')
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DELIVERY_PARTNER)
+  async getOrder(@Param('id') orderId: string) {
+    return this.orderService.getOrderWithDetails(orderId);
   }
 }

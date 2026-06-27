@@ -40,7 +40,7 @@ exports.DESIGN_TOKENS = {
         xxl: 48,
     },
     typography: {
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: 'var(--spicegarden-font-family)',
         headingXL: { fontSize: 48, fontWeight: 700, lineHeight: 1.2 },
         headingL: { fontSize: 36, fontWeight: 600, lineHeight: 1.3 },
         headingM: { fontSize: 28, fontWeight: 600, lineHeight: 1.4 },

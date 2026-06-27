@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { useQuery } from '@tanstack/react-query';
@@ -78,8 +78,8 @@ interface OrderDetailsPageProps {
   orderId: string;
 }
 
-const fetchOrder = async (orderId: string, token: string | null): Promise<Order> => {
-  const data = await ordersApi.get(orderId, token || '').then(res => res.data);
+const fetchOrder = async (orderId: string): Promise<Order> => {
+  const data = await ordersApi.get(orderId).then(res => res.data);
   return data as Order;
 };
 
@@ -88,8 +88,8 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const { data: order, isLoading: loading, error: fetchError } = useQuery({
-    queryKey: ['order', orderId, user?.token],
-    queryFn: () => fetchOrder(orderId, user?.token || null),
+    queryKey: ['order', orderId],
+    queryFn: () => fetchOrder(orderId),
   });
 
   const error = fetchError instanceof Error ? 'Failed to load order details. Please try again later.' : null;

@@ -9,7 +9,7 @@ import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
-import { getAllowedOrigins } from "./security/cors-origin";
+import cookieParser from "cookie-parser";import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
@@ -217,6 +217,7 @@ const dsn = configService.get<string>("SENTRY_DSN");
       preload: true,
     },
   }));
+  app.use(cookieParser());
   app.use(csrfProtection());
   app.use(safeMongoSanitize);
   app.use(hpp());

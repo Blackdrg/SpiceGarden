@@ -1,11 +1,12 @@
-import React, { useReducer, useEffect, useMemo, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import { Button, Card } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
-import { logout } from '../redux/slices/authSlice';
+import { logout, setUser } from '../redux/slices/authSlice';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { api } from '@spicegarden/shared/api';
 import styles from './profile.module.css';
 
 interface ProfileData {
@@ -58,45 +59,33 @@ function profileReducer(state: ProfileState, action: { type: string; payload?: u
 const ProfilePage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const [state, dispatchState] = useReducer(profileReducer, initialProfileState);
 
   const loadProfile = useCallback(async () => {
-    if (!token || token === 'demo-token') {
-      dispatchState({ type: 'SET_PROFILE_DATA', payload: {
-        fullName: 'Rahul Sharma',
-        email: 'rahul@example.com',
-        phone: '+91 98765 43210',
-        profileImage: null,
-        emailVerified: true,
-        phoneVerified: true,
-        createdAt: '2026-05-01T10:00:00Z',
-      } });
-      dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
-        fullName: 'Rahul Sharma',
-        email: 'rahul@example.com',
-        phone: '+91 98765 43210',
-      } });
-      dispatchState({ type: 'SET_LOADING', payload: false });
-      return;
-    }
-
     try {
       dispatchState({ type: 'SET_LOADING', payload: true });
       dispatchState({ type: 'SET_ERROR', payload: null });
+      
+      if (!user) {
+        dispatchState({ type: 'SET_PROFILE_DATA', payload: null });
+        dispatchState({ type: 'SET_LOADING', payload: false });
+        return;
+      }
+
       dispatchState({ type: 'SET_PROFILE_DATA', payload: {
-        fullName: user?.fullName || '',
-        email: user?.email || '',
-        phone: user?.phone || '',
-        profileImage: user?.profileImage || null,
-        emailVerified: user?.emailVerified || false,
-        phoneVerified: user?.phoneVerified || false,
-        createdAt: user?.createdAt || new Date().toISOString(),
+        fullName: user.fullName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        profileImage: user.profileImage || null,
+        emailVerified: user.emailVerified || false,
+        phoneVerified: user.phoneVerified || false,
+        createdAt: user.createdAt || new Date().toISOString(),
       } });
       dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
-        fullName: user?.fullName || '',
-        email: user?.email || '',
-        phone: user?.phone || '',
+        fullName: user.fullName || '',
+        email: user.email || '',
+        phone: user.phone || '',
       } });
     } catch (err) {
       console.error('Failed to load profile:', err);
@@ -104,7 +93,7 @@ const ProfilePage = () => {
     } finally {
       dispatchState({ type: 'SET_LOADING', payload: false });
     }
-  }, [token, user]);
+  }, [user]);
 
   useEffect(() => {
     loadProfile();
@@ -124,7 +113,12 @@ const ProfilePage = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api('/auth/logout', { method: 'POST' });
+    } catch {
+      // proceed with logout even if API call fails
+    }
     dispatch(logout());
     router.push('/auth');
   };
@@ -205,7 +199,7 @@ const ProfilePage = () => {
 
               <div className={styles.field}>
                 <label htmlFor="phone" className={styles.label}>
-                  Phone Number
+                  Phone
                 </label>
                 <input
                   id="phone"
@@ -234,7 +228,7 @@ const ProfilePage = () => {
                 <span>{state.profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
               <div className={styles.infoRow}>
-                <span>Phone Verified</span>
+                <span>PhoneVerified</span>
                 <span>{state.profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
               </div>
               <div className={styles.infoRow}>

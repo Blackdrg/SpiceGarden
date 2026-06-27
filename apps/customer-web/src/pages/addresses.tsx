@@ -3,7 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { Plus, Trash2, Star, AlertCircle } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
-import { getCachedToken } from '../utils/cachedLocalStorage';
 import { useAddresses } from '../hooks/useAddresses';
 import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './addresses.module.css';
@@ -20,9 +19,7 @@ interface Address {
 
 const AddressesPage = () => {
   const queryClient = useQueryClient();
-  const token = getCachedToken();
-  const safeToken = token && token !== 'demo-token' ? token : null;
-  const { addresses, isLoading, error } = useAddresses(safeToken);
+  const { addresses, isLoading, error } = useAddresses();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: '',
@@ -36,18 +33,16 @@ const AddressesPage = () => {
   const [actionError, setActionError] = useState<string | null>(null);
 
   const handleAddAddress = async () => {
-    const token = getCachedToken();
-    if (!token || token === 'demo-token') return;
-    
     try {
       const res = await fetch(`${API_URL}/addresses`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAddress),
+        credentials: 'include',
       });
-      
+
       if (!res.ok) throw new Error('Failed to add address');
-      
+
       const added = await res.json();
       queryClient.setQueryData<Address[]>(['addresses'], prev => [...(prev || []), added]);
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
@@ -59,15 +54,13 @@ const AddressesPage = () => {
   };
 
   const handleSetDefault = async (id: string) => {
-    const token = getCachedToken();
-    if (!token) return;
-    
     try {
       const res = await fetch(`${API_URL}/addresses/${id}/default`, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {},
+        credentials: 'include',
       });
-      
+
       if (!res.ok) throw new Error('Failed to set default');
       queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).map(a => ({ ...a, isDefault: a.id === id })));
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
@@ -77,15 +70,13 @@ const AddressesPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const token = getCachedToken();
-    if (!token) return;
-    
     try {
       const res = await fetch(`${API_URL}/addresses/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {},
+        credentials: 'include',
       });
-      
+
       if (!res.ok) throw new Error('Failed to delete');
       queryClient.setQueryData<Address[]>(['addresses'], prev => (prev || []).filter(a => a.id !== id));
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
@@ -116,7 +107,7 @@ const AddressesPage = () => {
           <span>{actionError}</span>
         </div>
       )}
-      
+
       <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>Saved Addresses</h2>
         <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add new address">

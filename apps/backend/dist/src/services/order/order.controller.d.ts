@@ -7,4 +7,8 @@ export declare class OrderController {
         status: string;
         timestamp: string;
     }>;
+    getOrder(orderId: string): Promise<import("../../shared/domain/order.interface").Order & {
+        driverPhone?: string;
+        branchAddress?: string;
+    }>;
 }

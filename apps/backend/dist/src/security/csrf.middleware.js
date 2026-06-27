@@ -50,7 +50,7 @@ function csrfProtection() {
         if (ignoredMethods.includes(req.method)) {
             return next();
         }
-        const ignoredPaths = ['/api/webhook', '/payments/webhook'];
+        const ignoredPaths = ['/api/webhook', '/payments/webhook', '/auth/login', '/auth/register'];
         if (ignoredPaths.some(path => req.path.startsWith(path))) {
             return next();
         }
@@ -78,7 +78,13 @@ function csrfProtection() {
                 }
             }
         }
-        res.header('X-CSRF-Token', tokenFromHeader || generateCsrfToken());
+        const csrfToken = tokenFromHeader || generateCsrfToken();
+        res.cookie(csrfTokenCookie, csrfToken, {
+            httpOnly: false,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+        });
+        res.header('X-CSRF-Token', csrfToken);
         next();
     };
 }

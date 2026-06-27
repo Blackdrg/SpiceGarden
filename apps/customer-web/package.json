@@ -11,7 +11,8 @@
     "test:integration": "jest --config jest.config.js --testPathPatterns=\"integration\" --runInBand",
     "test:e2e": "jest --config jest.config.js --testPathPatterns=\"e2e\" --runInBand",
     "test:smoke": "jest --config jest.config.js --testPathPatterns=\"cart-slice\" --runInBand",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:smoke"
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:smoke",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.0",
@@ -38,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
+    "react-doctor": "^0.5.8",
     "typescript": "^5.0.0"
   }
 }

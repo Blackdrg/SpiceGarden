@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@spicegarden/ui';
 import Head from 'next/head';
+import styles from './payout.module.css';
 
 export default function OnboardingPayout() {
   const [form, setForm] = useState({
@@ -42,30 +43,30 @@ export default function OnboardingPayout() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '24px' }}>
+    <div className={styles.container}>
       <Head><title>Payout Settings - Onboarding</title></Head>
-      <div style={{ maxWidth: 640, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Payout Settings</h1>
-        <p style={{ color: '#a1a1aa', marginBottom: 32 }}>Add your bank details to receive payouts.</p>
+      <div className={styles.maxWidth}>
+        <h1 className={styles.heading}>Payout Settings</h1>
+        <p className={styles.subtitle}>Add your bank details to receive payouts.</p>
 
-        <div style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          <p style={{ fontSize: 13, color: '#a1a1aa', marginBottom: 8 }}>Your payouts will be sent to this account on a weekly basis.</p>
+        <div className={styles.infoBox}>
+          <p className={styles.infoText}>Your payouts will be sent to this account on a weekly basis.</p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className={styles.formGroup}>
           <div>
-            <label htmlFor="payout-holder" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Holder Name</label>
+            <label htmlFor="payout-holder" className={styles.label}>Account Holder Name</label>
             <input
               id="payout-holder"
               aria-label="Account Holder Name"
               value={form.accountHolderName}
               onChange={(e) => setForm({ ...form, accountHolderName: e.target.value })}
               placeholder="As per bank records"
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
           <div>
-            <label htmlFor="payout-acct-num" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Account Number</label>
+            <label htmlFor="payout-acct-num" className={styles.label}>Account Number</label>
             <input
               id="payout-acct-num"
               aria-label="Account Number"
@@ -73,11 +74,11 @@ export default function OnboardingPayout() {
               onChange={(e) => setForm({ ...form, accountNumber: e.target.value })}
               placeholder="Enter account number"
               type="password"
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
           <div>
-            <label htmlFor="payout-confirm-acct" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Confirm Account Number</label>
+            <label htmlFor="payout-confirm-acct" className={styles.label}>Confirm Account Number</label>
             <input
               id="payout-confirm-acct"
               aria-label="Confirm Account Number"
@@ -85,11 +86,11 @@ export default function OnboardingPayout() {
               onChange={(e) => setForm({ ...form, confirmAccountNumber: e.target.value })}
               placeholder="Re-enter account number"
               type="password"
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
           <div>
-            <label htmlFor="payout-ifsc" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>IFSC Code</label>
+            <label htmlFor="payout-ifsc" className={styles.label}>IFSC Code</label>
             <input
               id="payout-ifsc"
               aria-label="IFSC Code"
@@ -97,38 +98,38 @@ export default function OnboardingPayout() {
               onChange={(e) => setForm({ ...form, ifscCode: e.target.value.toUpperCase() })}
               placeholder="SBIN0001234"
               maxLength={11}
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
           <div>
-            <label htmlFor="payout-bank" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Bank Name</label>
+            <label htmlFor="payout-bank" className={styles.label}>Bank Name</label>
             <input
               id="payout-bank"
               aria-label="Bank Name"
               value={form.bankName}
               onChange={(e) => setForm({ ...form, bankName: e.target.value })}
               placeholder="State Bank of India"
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
           <div>
-            <label htmlFor="payout-branch" style={{ display: 'block', fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>Branch Name</label>
+            <label htmlFor="payout-branch" className={styles.label}>Branch Name</label>
             <input
               id="payout-branch"
               aria-label="Branch Name"
               value={form.branchName}
               onChange={(e) => setForm({ ...form, branchName: e.target.value })}
               placeholder="Main Branch"
-              style={{ width: '100%', padding: '10px 12px', background: '#171717', border: '1px solid #333', borderRadius: 6, color: '#fff', fontSize: 14 }}
+              className={styles.input}
             />
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+        <div className={styles.actions}>
           <button
             type="button"
             onClick={() => window.location.href = '/onboarding/menu'}
-            style={{ ...buttonStyle.secondary, flex: 1 }}
+            className={styles.backButton}
           >
             Back
           </button>
@@ -136,15 +137,10 @@ export default function OnboardingPayout() {
             label={loading ? 'Submitting...' : 'Complete Onboarding'}
             onClick={submit}
             disabled={loading}
-            style={{ flex: 1 }}
+            className={styles.primaryButton}
           />
         </div>
       </div>
     </div>
   );
 }
-
-const buttonStyle = {
-  primary: { padding: '10px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 },
-  secondary: { padding: '10px 20px', background: 'transparent', color: '#fff', border: '1px solid #333', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14 },
-};

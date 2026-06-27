@@ -1,0 +1,53 @@
+.button {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  font-family: var(--spicegarden-font-family);
+  font-weight: 600;
+  opacity: 1;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.primary {
+  background-color: #FF5A1F;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.secondary {
+  background-color: #FFFFFF;
+  color: #111827;
+}
+.ghost {
+  background-color: transparent;
+  color: #111827;
+  border: 1px solid #E5E7EB;
+}
+.outline {
+  background-color: transparent;
+  color: #FF5A1F;
+  border: 1px solid #E5E7EB;
+}
+.destructive {
+  background-color: #EF4444;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.loading {
+  background-color: #6B7280;
+  color: #FFFFFF;
+}
+.sm {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+.md {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+.lg {
+  padding: 16px 24px;
+  font-size: 18px;
+}

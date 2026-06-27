@@ -55,6 +55,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
 const session_entity_1 = require("../../db/entities/session.entity");
+const user_interface_1 = require("../../shared/domain/user.interface");
 let AuthService = class AuthService {
     jwtService;
     configService;
@@ -99,7 +100,7 @@ let AuthService = class AuthService {
         throw new common_1.UnauthorizedException('Invalid email or password');
     }
     async login(user, deviceInfo) {
-        const payload = { email: user.email, sub: user.id, role: user.role, status: user.status };
+        const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status };
         const accessToken = this.jwtService.sign(payload);
         const refreshToken = crypto.randomBytes(Number(this.configService.get('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
         await this.createSession(user.id, deviceInfo, refreshToken);
@@ -142,6 +143,29 @@ let AuthService = class AuthService {
         session.isActive = false;
         session.lastActiveAt = new Date();
         await this.sessionRepo.save(session);
+    }
+    async loginWithSocial(profile) {
+        const normalizedEmail = profile.email.toLowerCase();
+        let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
+        if (!user) {
+            const randomPassword = crypto.randomBytes(32).toString('hex');
+            const passwordHash = await this.hashPassword(randomPassword);
+            user = this.userRepo.create({
+                email: normalizedEmail,
+                fullName: profile.fullName,
+                phone: `social-${profile.socialId}`,
+                passwordHash,
+                role: user_interface_1.UserRole.CUSTOMER,
+                status: user_interface_1.UserStatus.ACTIVE,
+            });
+            await this.userRepo.save(user);
+        }
+        const { passwordHash, ...authenticatedUser } = user;
+        return this.login(authenticatedUser, {
+            name: 'social',
+            type: profile.socialProvider,
+            ip: '0.0.0.0',
+        });
     }
 };
 exports.AuthService = AuthService;

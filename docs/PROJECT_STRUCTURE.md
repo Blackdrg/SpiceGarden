@@ -1,344 +1,482 @@
-# Project Structure
+# SpiceGarden Project Structure
 
-## Repository Root Layout
+**Version:** 0.0.0  
+**Last Updated:** 2026-06-27
 
-```
-spicegarden/
-├─ apps/                         # Application workspaces (6 apps)
-│  ├─ backend/                   # NestJS API server
-│  ├─ customer-web/              # Next.js storefront
-│  ├─ restaurant-dashboard/      # Next.js kitchen dashboard
-│  ├─ super-admin/               # Next.js admin console
-│  ├─ customer-mobile/           # Expo React Native mobile app
-│  ├─ delivery-partner/          # Expo React Native driver app
-│  └─ launcher/                  # Electron Windows desktop launcher
-├─ packages/                     # Shared library workspaces (5 packages)
-│  ├─ ui/                        # React component library (@spicegarden/ui)
-│  ├─ shared/                    # Shared TypeScript utilities (@spicegarden/shared)
-│  ├─ api-types/                 # Shared API contracts (@spicegarden/api-types)
-│  ├─ proto/                     # Protobuf type definitions (@spicegarden/proto)
-│  └─ grpc-transport/            # Quarantined gRPC placeholder
-├─ infra/                        # Infrastructure as code
-│  ├─ backend/Dockerfile
-│  ├─ customer-web/Dockerfile
-│  ├─ restaurant-dashboard/Dockerfile
-│  ├─ super-admin/Dockerfile
-│  ├─ delivery-partner/Dockerfile
-│  ├─ k8s/                       # Kubernetes manifests (8 files)
-│  ├─ prometheus/                # Metrics config + alert rules + SLOs
-│  ├─ grafana/                   # Dashboards + provisioning
-│  ├─ alertmanager/              # Alert routing
-│  ├─ opensearch/                # Index templates
-│  ├─ filebeat/                  # Log shipping config
-│  ├─ envoy/                     # Service mesh config
-│  ├─ postgres/                  # init.sql + migrations + seed data
-│  └─ scripts/                   # 36 operational scripts
-├─ docs/                         # Documentation (81+ files)
-├─ scripts/                      # Development utilities
-├─ .github/workflows/            # CI/CD pipelines (3 files)
-├─ compose.dev.yaml              # Docker Compose (13 services)
-├─ tsconfig.json                 # TypeScript project references
-└─ package.json                  # Root workspace config
-```
+---
 
-## Workspace Inventory
-
-### Applications
-
-| Workspace | Name | Technology | Port | Status |
-|-----------|------|-----------|------|--------|
-| `apps/backend` | @spicegarden/backend | NestJS 11 + TypeORM + Socket.IO | 3001 | Active |
-| `apps/customer-web` | @spicegarden/customer-web | Next.js 15 + React 19 + Redux Toolkit | 3002 | Active |
-| `apps/restaurant-dashboard` | @spicegarden/restaurant-dashboard | Next.js 15 + React 19 + Socket.IO | 3003 | Active |
-| `apps/super-admin` | @spicegarden/super-admin | Next.js 15 + React 19 + Recharts | 3004 | Active |
-| `apps/customer-mobile` | @spicegarden/customer-mobile | Expo 56 + React Native 0.85 | Expo | Active |
-| `apps/delivery-partner` | @spicegarden/delivery-partner | Expo 56 + React Native 0.85 | Expo | Active |
-| `apps/launcher` | spicegarden-launcher | Electron 39 + TypeScript | N/A | Active |
-
-### Packages
-
-| Workspace | Name | Purpose |
-|-----------|------|---------|
-| `packages/ui` | @spicegarden/ui | Shared React component library (20+ components, 19 icons) |
-| `packages/shared` | @spicegarden/shared | Shared TypeScript utilities (API client, types, constants) |
-| `packages/api-types` | @spicegarden/api-types | Shared API contracts (4 interfaces) |
-| `packages/proto` | @spicegarden/proto | TypeScript-based proto definitions (no .proto files) |
-| `packages/grpc-transport` | @spicegarden/grpc-transport | **QUARANTINED** - throws GrpcTransportUnavailableError |
-
-## Backend Module Structure
-
-### NestJS Modules (27 total)
-
-| Module | Location | Controllers | Services |
-|--------|----------|-------------|----------|
-| AppModule | `src/app.module.ts` | 1 | 1 |
-| ApisModule | `src/apis.module.ts` | — | — |
-| AuthServiceModule | `src/services/auth/` | 1 | 2 |
-| OrderServiceModule | `src/services/order/` | 1 | 1 |
-| PaymentServiceModule | `src/services/payments/` | 3 | 5+ |
-| RestaurantServiceModule | `src/services/restaurant/` | 4 | 4+ |
-| SearchServiceModule | `src/services/search/` | 1 | 1 |
-| DeliveryServiceModule | `src/services/delivery/` | 2 | 3+ |
-| DriverOpsModule | `src/services/delivery/` | 1 | 1 |
-| AdminServiceModule | `src/services/admin/` | 1 | 1 |
-| NotificationModule | `src/services/notifications/` | 3 | 3+ |
-| KitchenModule | `src/modules/kitchen/` | 1 | 1 |
-| DriverAssignmentModule | `src/modules/driver-assignment/` | 1 | 1 |
-| MetricsModule | `src/metrics/` | 1 | 1 |
-| ComplianceModule | `src/compliance/` | — | — |
-| AuditModule | `src/audit/` | — | — |
-| WalletModule | `src/services/wallet/` | 1 | 1 |
-| GSTModule | `src/services/gst/` | 1 | 1 |
-| FinanceModule | `src/services/finance/` | 1 | 2+ |
-| SupportModule | `src/services/support/` | 1 | 1 |
-| RefundModule | `src/services/refund/` | 1 | 1 |
-| LoyaltyModule | `src/services/loyalty/` | 1 | 1 |
-| DriverFleetModule | `src/services/driver-fleet/` | 1 | 1 |
-| AnalyticsModule | `src/modules/analytics/` | 1 | 1 |
-| ReviewServiceModule | `src/services/review/` | 1 | 1 |
-| UserProfileModule | `src/services/user/` | 1 | 1 |
-| SecurityModule | `src/security/` | — | 4 |
-| QueueModule | `src/infra/queue/` | — | 1 |
-| TrackingModule | `src/infra/tracking/` | — | 1 |
-| DbModule | `src/db/` | — | — |
-| LoggingModule | `src/logging/` | — | 1 |
-| GrpcModule | `src/grpc/` | 2 | — |
-
-### Controller Inventory (31 files)
-
-| Controller | Module | Route Prefix | Purpose |
-|------------|--------|--------------|---------|
-| auth.controller.ts | auth | `auth` | Login, register, refresh, logout |
-| order.controller.ts | order | `orders` | Order CRUD, status transitions |
-| payments.controller.ts | payments | `payments` | Payment intents, capture, confirm |
-| chargeback.controller.ts | payments/chargeback | `payments/chargebacks` | Chargeback management |
-| webhook.controller.ts | payments/webhook | `payments/webhooks` | Stripe/Razorpay webhooks |
-| restaurant.controller.ts | restaurant | `restaurants` | Restaurant CRUD, menus |
-| business-engine.controller.ts | restaurant | `restaurants/business` | Business metrics |
-| onboarding.controller.ts | restaurant | `restaurants/onboarding` | Restaurant onboarding |
-| restaurant-ops.controller.ts | restaurant | `restaurants/ops` | Restaurant operations |
-| review.controller.ts | review | `reviews` | Review CRUD |
-| search.controller.ts | search | `search` | Menu/restaurant search |
-| delivery.controller.ts | delivery | `delivery` | Delivery assignment, tracking |
-| driver-ops.controller.ts | delivery | `drivers` | Driver operations |
-| driver-fleet.controller.ts | driver-fleet | `drivers/fleet` | Fleet management |
-| admin.controller.ts | admin | `admin` | Admin operations |
-| ai.controller.ts | ai | `ai` | AI features (trace in code) |
-| finance.controller.ts | finance | `finance` | Financial reports |
-| gst.controller.ts | gst | `gst` | GST management |
-| loyalty.controller.ts | loyalty | `loyalty` | Coupons, referrals |
-| maps.controller.ts | maps | `maps` | Geocoding, distance matrix |
-| menu-customization.controller.ts | menu-customization | `menu` | Menu customization |
-| notification-preferences.controller.ts | notifications | `notifications/preferences` | Notification settings |
-| device.controller.ts | notifications | `devices` | Device registration |
-| notification-queue.controller.ts | notifications/queue | `notifications/queue` | Notification queue |
-| support.controller.ts | support | `support` | Support tickets |
-| user-profile.controller.ts | user | `profile` | User profile CRUD |
-| address.controller.ts | users | `addresses` | Address CRUD |
-| payment-methods.controller.ts | users | `payment-methods` | Payment methods CRUD |
-| wallet.controller.ts | wallet | `wallet` | Wallet operations |
-| refund.controller.ts | refund | `refunds` | Refund processing |
-| kitchen.controller.ts | kitchen | `kitchen` | Kitchen operations |
-| analytics.controller.ts | analytics | `analytics` | Analytics APIs |
-
-### Entity Inventory (64 entities)
-
-**Core Business:**
-- `user` (8 roles, 3 statuses)
-- `restaurant`, `restaurant-branch`, `restaurant-gst`, `restaurant-onboarding`
-- `order`, `order-item`, `gst-detail`
-- `menu-item`, `menu-category`, `menu-addon`, `menu-variant`, `menu-item-availability`, `menu-moderation`
-
-**Delivery Ecosystem:**
-- `driver`, `driver-document`, `driver-assignment`, `driver-shift`, `driver-score`, `driver-fraud`, `driver-incentive`, `driver-penalty`
-- `delivery-sla`, `sla-alert`
-
-**Payments & Finance:**
-- `wallet`, `wallet-transaction`
-- `payment-method`, `payment-webhook`, `payment-dispute`, `stripe-webhook`
-- `ledger-entry`, `payout-report`, `refund`, `refund-approval`
-
-**Customer Engagement:**
-- `coupon`, `coupon-usage`, `subscription`, `referral`
-- `review`, `support-ticket`, `notification`, `notification-preference`, `notification-analytics`
-- `address`, `session`, `user-device`, `device-fingerprint`, `otp`
-
-**Kitchen & Inventory:**
-- `inventory-item`, `inventory-alert`, `batch`, `food-prep`, `recipe`, `kitchen-sla`, `supplier`, `branch-control`
-
-**Compliance & Audit:**
-- `audit-log`, `data-export-request`, `deletion-request`
-
-**Infrastructure:**
-- `webhook-retry-queue`, `payment-event`, `payment-fraud`, `payment-validation`, `idempotency`, `commission-rule`, `holiday-schedule`, `hsn-sac`, `surge-zone`
-
-## Frontend Application Structure
-
-### Customer Web (Next.js 15 - Port 3002)
-- **Pages:** 21 routes (home, auth, menu, cart, checkout, history, tracking, search, addresses, profile, notifications, offers, subscriptions, wallet, payment-methods, legal/privacy, legal/terms, reset-password, auth/callback)
-- **State:** Redux Toolkit (authSlice, cartSlice) + TanStack React Query
-- **Realtime:** Socket.IO client for order tracking
-- **API:** @spicegarden/shared/api (authApi, ordersApi, restaurantsApi, menuApi)
-- **Offline:** OfflineQueue hook for resilience
-
-### Restaurant Dashboard (Next.js 15 - Port 3003)
-- **Pages:** KDS (index), onboarding flow (6 steps)
-- **State:** useReducer (local) - Redux placeholder only
-- **Realtime:** Socket.IO for KDS updates
-- **Key Feature:** Kitchen Display System with batch mode, delay tracking, audio alerts, park orders
-
-### Super Admin (Next.js 15 - Port 3004)
-- **Pages:** Admin dashboard with Overview, Orders, Branches, Support tabs
-- **State:** useReducer (local) - Redux placeholder only
-- **Visualization:** Recharts (AreaChart, etc.)
-- **Realtime:** Socket.IO for stats/live updates
-
-### Customer Mobile (Expo - No fixed port)
-- **Screens:** 15 screens (Auth, Home, Search, Restaurant, MenuItem, Cart, Checkout, Addresses, PaymentMethods, Profile, History, OrderDetails, Tracking, Notifications, Onboarding)
-- **Navigation:** React Navigation (Native Stack + Bottom Tabs)
-- **State:** Local useState/useReducer + AsyncStorage
-- **Realtime:** Custom Socket.IO service with reconnection backoff
-- **i18n:** 7 locales (en-IN, hi, pa, mr, gu, ta, te)
-
-### Delivery Partner (Expo - No fixed port)
-- **Services:** 3 service files (delivery-api, location, storage)
-- **State:** Service-layer AsyncStorage only
-- **Realtime:** Socket.IO for order assignment/cancellation
-- **Location:** expo-location for GPS tracking + dual-write (Socket.IO + HTTP)
-
-### Launcher (Electron - Desktop)
-- **Main Process:** Docker lifecycle management, Node.js process management, environment generation
-- **Renderer:** React dashboard with service status, system monitor
-- **Auto-update:** electron-updater via GitHub Releases
-- **IPC:** 15+ channels exposed via context bridge
-
-## Package Inventory
-
-### @spicegarden/ui (v0.1.0)
-**Components:**
-- `Button` (6 variants, 3 sizes)
-- `Card` (3 variants)
-- `Input` (labeled, error states)
-- `Dropdown` (custom select)
-- `Modal` + `BottomSheet`
-- `Toast` (context-based notification system)
-- `Stepper`, `OTPInput`, `SearchInput`
-- `Skeleton`, `SkeletonTemplates` (domain-specific)
-- `LoadingStates` (EmptyState, NetworkError)
-- `LottieSuccessAnimation` (SVG-based)
-- `FlowManager` (multi-step orchestration)
-- `ErrorBoundary`
-- `Cards`: `FoodCard`, `MenuCard`, `MapCard`, `TrackingCard`, `ReviewCard`
-- `useFlow` hook
-- `DESIGN_TOKENS`, `DARK_MODE_TOKENS`, `MOTION_EASING`
-- `trackEvent`, `useAnalytics`, `useWebVitals`
-- `icons/`: 19 domain icons (system, navigation, kitchen, delivery, commerce, admin)
-
-### @spicegarden/shared (v0.0.0)
-**Zero runtime dependencies.**
-- `constants.ts`: API_URL, SOCKET_URL (hardcoded localhost)
-- `types.ts`: User, Order, Restaurant, MenuItem, AuthResponse, ApiError
-- `api.ts`: Central API client with auto token refresh (401 handling), authApi, restaurantsApi, ordersApi, menuApi
-- `analytics.ts`: Analytics event types
-
-### @spicegarden/api-types (v1.0.0)
-**Zero dependencies.**
-- `DriverProfile` interface
-- `DeliveryOrder` interface
-- `EarningsSummary` interface
-- `Location` interface
-
-### @spicegarden/proto (v1.0.0)
-**Zero dependencies. No .proto files - hand-written TS interfaces.**
-- `GRPCMetadata`, `ProtoDriver`, `ProtoOrder`
-- gRPC connection constants (port 50051)
-
-### @spicegarden/grpc-transport (v1.0.0)
-- **QUARANTINED.** `createGrpcTransport()` throws `GrpcTransportUnavailableError`.
-
-## Infrastructure Components
-
-### Docker Compose (compose.dev.yaml - 13 services)
-| Service | Image | Port | Purpose |
-|---------|-------|------|---------|
-| postgres | postgres:16-alpine | 5432 | Primary relational DB |
-| redis | redis:7-alpine | 6379 | Cache, sessions, BullMQ queue |
-| mongo | mongo:7 | 27017 | Document DB (reviews, audit logs) |
-| prometheus | prom/prometheus:v2.51.0 | 9090 | Metrics collection |
-| grafana | grafana/grafana-enterprise:10.4.0 | 3000 | Metrics visualization |
-| opensearch | opensearchproject/opensearch:2.15.0 | 9200 | Log aggregation |
-| opensearch-dashboards | opensearchproject/opensearch-dashboards:2.15.0 | 5601 | Log visualization |
-| alertmanager | prom/alertmanager:v0.27.0 | 9093 | Alert routing |
-| backend | Multi-stage Dockerfile | 3001 | NestJS API |
-| customer-web | Multi-stage Dockerfile | 3002 | Next.js storefront |
-| restaurant-dashboard | Multi-stage Dockerfile | 3003 | Kitchen dashboard |
-| super-admin | Multi-stage Dockerfile | 3004 | Admin console |
-| delivery-partner | Multi-stage Dockerfile | 3005 | Driver app smoke |
-
-### Kubernetes Manifests (8 files)
-- `production-hardened.yaml` - Production deployment with hardening
-- `staging.yaml` - Staging environment
-- `postgres-ha.yaml` - PostgreSQL HA setup
-- `redis-cluster.yaml` - Redis cluster
-- `backend-deployment.yaml` - Backend deployment spec
-- `cdn-ingress.yaml` - CDN/Ingress configuration
-- `configmap.yaml` - ConfigMap
-- `secrets.yaml` - Secrets template
-
-### CI/CD workflows (.github/workflows/)
-- `ci-cd.yml` - Main CI/CD pipeline (security audit, build-test, deploy-staging, deploy-production)
-- `react-doctor.yml` - React Doctor quality checks
-- `rollback.yml` - Rollback workflow
-
-### Observability Stack
-- **Prometheus** (9090) - Metrics via prom-client, custom http_requests_total, http_request_duration_seconds
-- **Grafana** (3000) - Dashboards provisioned in infra/grafana/
-- **Alertmanager** (9093) - Slack + PagerDuty routing
-- **Sentry** - Error tracking with traces
-- **OpenSearch** (9200) - Log aggregation via Filebeat
-- **Filebeat** - Log shipping config
-
-## Documentation Inventory
-
-81 existing documentation files across `docs/`:
+## Root Directory
 
 ```
-docs/
-├─ architecture/          # 8 flow diagrams
-├─ AUDIT/                 # 4 audit reports
-├─ diagnostics/           # 10 diagnostic reports
-├─ prod-readiness/        # 12 phase reports + command output
-├─ production-readiness/  # 10 phase reports
-├─ security/              # compliance + threat model
-└─ 40+ individual reports (various statuses)
+C:\Users\mehta\Desktop\SpiceGarden\
+├── .env.example                  # Environment template
+├── .env                          # Local environment overrides
+├── .env.staging.example          # Staging template
+├── .env.production.example       # Production template
+├── .dockerignore                 # Docker ignore
+├── .eslintrc.cjs                 # ESLint root config
+├── .gitignore                    # Git ignore
+├── .npmrc                        # npm config
+├── .markdownlint.json            # Markdown linting
+├── .webhintrc.json              # Webhint config
+├── Dockerfile                    # Root Dockerfile
+├── compose.dev.yaml              # Development compose (13 services)
+├── compose.debug.yaml            # Debug compose
+├── compose.infra.yaml            # Infrastructure compose
+├── compose.yaml                  # Base compose
+├── package.json                  # Root workspace config
+├── tsconfig.json                 # TypeScript project references
+├── playwright.config.ts          # Playwright E2E config
+├── AGENTS.md                     # Development commands
+├── README.md                     # Project documentation
+├── CONTRIBUTING.md               # Contribution guide
+├── LICENSE                       # MIT License
 ```
 
-Many existing docs are historical/progress reports. This unified documentation set replaces them with current, evidence-based documentation.
+---
 
-## Version Inventory
+## Applications (`apps/`)
 
-| Component | Version | Source |
-|-----------|---------|--------|
-| Node.js | 20.x | tsconfig, CI workflow |
-| TypeScript | 5.0-5.9 | tsconfig.json, app package.json files |
-| NestJS | 11.1.27 | apps/backend/package.json |
-| TypeORM | 1.0.0 | apps/backend/package.json |
-| Mongoose | 9.7.0 | apps/backend/package.json |
-| MongoDB | 7.3.0 | apps/backend/package.json |
-| Redis (ioredis) | 5.10.1 | apps/backend/package.json |
-| BullMQ | 5.78.1 | apps/backend/package.json |
-| Socket.IO | 4.7.0 | apps/backend/package.json |
-| Next.js | 15.5.18 | customer-web/package.json, overrides |
-| React | 19.2.7 | customer-web/package.json |
-| Expo | 56.0.12 | customer-mobile/package.json |
-| React Native | 0.85.3 | customer-mobile/package.json |
-| Electron | 39-42 | launcher/package.json, root package.json |
-| Stripe | ^15.0.0 | apps/backend/package.json |
-| Razorpay | (via payment provider) | apps/backend/package.json |
-| Sentry | ^10.58.0 | apps/backend/package.json |
-| Jest | ^29.7.0 | apps/backend/package.json |
-| ESLint | 8.x | Multiple package.json files |
-| Prometheus | v2.51.0 | compose.dev.yaml |
-| Grafana | 10.4.0 | compose.dev.yaml |
-| OpenSearch | 2.15.0 | compose.dev.yaml |
-| PostgreSQL | 16-alpine | compose.dev.yaml |
+```
+apps/
+├── backend/                      # NestJS API (port 3001)
+│   ├── src/
+│   │   ├── main.ts               # Entry point (269 lines)
+│   │   ├── app.module.ts         # Root module (28 imports)
+│   │   ├── apis.module.ts        # APIs module
+│   │   ├── apis.controller.ts    # APIs controller
+│   │   ├── apis.service.ts       # APIs service
+│   │   ├── audit/                # Audit logging module
+│   │   ├── common/errors/        # MissingEnvError
+│   │   ├── compliance/           # SOC2, PCI-DSS, GDPR/DPDP
+│   │   │   ├── compliance.module.ts
+│   │   │   ├── compliance.controller.ts
+│   │   │   ├── compliance.service.ts
+│   │   │   ├── pci-dss-validation.service.ts
+│   │   │   ├── secrets-rotation.service.ts
+│   │   │   └── soc2-readiness.service.ts
+│   │   ├── controllers/          # Legacy/plus controllers
+│   │   │   └── driver.controller.ts
+│   │   ├── db/
+│   │   │   ├── db.module.ts      # TypeORM + Mongoose config
+│   │   │   ├── db-repositories.module.ts
+│   │   │   ├── local-repository.module.ts
+│   │   │   ├── postgres.adapter.ts
+│   │   │   ├── mongo.adapter.ts
+│   │   │   ├── redis.adapter.ts
+│   │   │   ├── database-failover.service.ts
+│   │   │   ├── interfaces/       # Database adapter interface
+│   │   │   ├── entities/         # 66 TypeORM entities
+│   │   │   └── schemas/           # Mongoose schema (reviews)
+│   │   ├── grpc/                  # gRPC stubs (quarantined)
+│   │   ├── infra/
+│   │   │   ├── queue/             # BullMQ queue service
+│   │   │   │   ├── queue.module.ts
+│   │   │   │   ├── queue.service.ts
+│   │   │   │   └── order.processor.ts
+│   │   │   ├── tracking/          # WebSocket tracking gateway
+│   │   │   ├── logging/           # Structured logging
+│   │   │   └── metrics/           # Prometheus metrics
+│   │   ├── jobs/                  # Background jobs
+│   │   │   └── retention-job.ts
+│   │   ├── legal/                 # Legal document APIs
+│   │   │   ├── legal.module.ts
+│   │   │   └── legal.controller.ts
+│   │   ├── logging/               # Logging module
+│   │   ├── metrics/               # Metrics module
+│   │   │   ├── metrics.module.ts
+│   │   │   ├── metrics.service.ts
+│   │   │   └── latency-metrics.interceptor.ts
+│   │   ├── modules/
+│   │   │   ├── analytics/         # Business analytics
+│   │   │   ├── driver-assignment/ # Dispatch, ETA, fraud, SLA
+│   │   │   └── kitchen/            # Kitchen operations
+│   │   ├── security/              # Auth, RBAC, encryption, rate limiting
+│   │   │   ├── security.module.ts
+│   │   │   ├── jwt-auth.guard.ts
+│   │   │   ├── roles.guard.ts
+│   │   │   ├── permission.guard.ts
+│   │   │   ├── permissions.ts
+│   │   │   ├── roles.decorator.ts
+│   │   │   ├── permissions.decorator.ts
+│   │   │   ├── csrf.middleware.ts
+│   │   │   ├── cors-origin.ts
+│   │   │   ├── redis-rate-limit.store.ts
+│   │   │   ├── encryption.service.ts
+│   │   │   └── vault.service.ts
+│   │   ├── services/               # Business logic services
+│   │   │   ├── admin/
+│   │   │   ├── ai/
+│   │   │   ├── auth/               # Auth service + strategies
+│   │   │   ├── delivery/           # Delivery ops
+│   │   │   ├── driver-fleet/       # Fleet management
+│   │   │   ├── finance/            # Reconciliation, tax
+│   │   │   ├── geo/                # Maps, ETA
+│   │   │   ├── gst/                # GST calculation
+│   │   │   ├── loyalty/            # Coupons, referrals
+│   │   │   ├── maps/
+│   │   │   ├── menu-customization/
+│   │   │   ├── notifications/      # Push, SMS, Email
+│   │   │   ├── order/              # Order lifecycle
+│   │   │   ├── payments/           # Stripe, Razorpay, fraud, webhooks
+│   │   │   ├── payment-provider/   # Stripe Connect, Razorpay settlements
+│   │   │   ├── restaurant/         # CRUD, onboarding, KDS, business
+│   │   │   ├── refund/             # Refund workflow
+│   │   │   ├── review/             # Reviews (MongoDB)
+│   │   │   ├── search/
+│   │   │   ├── support/            # Tickets, disputes
+│   │   │   ├── user/               # Profile, addresses
+│   │   │   └── users/              # Payment methods
+│   │   ├── shared/                 # Domain interfaces + contracts
+│   │   └── types/                  # TypeScript declarations
+│   │   ├── test/                   # 68+ test files + load + chaos
+│   │   └── test/chaos/             # 6 chaos YAML + playbook
+│   ├── tests/                      # Additional test utilities
+│   ├── scripts/                    # Seed scripts
+│   │   ├── seed.ts
+│   │   └── seed-local.ts
+│   ├── coverage/                   # Coverage reports
+│   ├── dist/                       # Build output
+│   └── package.json
+│
+├── customer-web/                   # Next.js storefront (port 3002)
+│   ├── src/
+│   │   ├── _app.tsx                # Root app (Redux + Query + ErrorBoundary)
+│   │   ├── analytics.ts            # useAnalytics hook
+│   │   ├── middleware.ts           # Request ID injection
+│   │   ├── components/
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── OfflineIndicator.tsx
+│   │   │   └── ProtectedRoute.tsx
+│   │   ├── contexts/
+│   │   │   └── NetworkStatusContext.tsx
+│   │   ├── hooks/
+│   │   │   ├── useAddresses.ts
+│   │   │   ├── useMotion.ts
+│   │   │   ├── useNetworkStatus.ts
+│   │   │   ├── useOfflineQueue.ts
+│   │   │   └── useTracking.ts
+│   │   ├── pages/
+│   │   │   ├── index.tsx           # Home
+│   │   │   ├── auth.tsx            # Login/Register
+│   │   │   ├── auth/callback.tsx
+│   │   │   ├── reset-password.tsx
+│   │   │   ├── menu.tsx
+│   │   │   ├── cart.tsx
+│   │   │   ├── checkout.tsx
+│   │   │   ├── tracking.tsx
+│   │   │   ├── history.tsx
+│   │   │   ├── order-details.tsx
+│   │   │   ├── restaurant.tsx
+│   │   │   ├── search.tsx
+│   │   │   ├── profile.tsx
+│   │   │   ├── addresses.tsx
+│   │   │   ├── payment-methods.tsx
+│   │   │   ├── wallet.tsx
+│   │   │   ├── subscriptions.tsx
+│   │   │   ├── offers.tsx
+│   │   │   ├── notifications.tsx
+│   │   │   ├── legal/terms.tsx
+│   │   │   ├── legal/privacy.tsx
+│   │   │   └── api/                # API routes (mock)
+│   │   ├── redux/
+│   │   │   ├── store.ts
+│   │   │   └── slices/ (authSlice, cartSlice)
+│   │   └── styles/
+│   │       └── designTokens.module.css
+│   ├── public/
+│   ├── .github/workflows/
+│   ├── next.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── restaurant-dashboard/            # Next.js KDS (port 3003)
+│   ├── src/
+│   │   ├── _app.tsx
+│   │   ├── pages/
+│   │   │   ├── index.tsx           # KDS
+│   │   │   ├── onboarding/         # 6-step wizard
+│   │   │   └── api/                # API routes (mock)
+│   │   └── redux/
+│   │       └── store.ts
+│   ├── next.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── super-admin/                     # Next.js admin (port 3004)
+│   ├── src/
+│   │   ├── _app.tsx
+│   │   ├── pages/
+│   │   │   ├── index.tsx           # Dashboard
+│   │   │   ├── api/admin/stats.ts
+│   │   │   ├── api/orders.ts
+│   │   │   ├── analytics/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── customers.tsx
+│   │   │   │   └── top-dishes.tsx
+│   │   │   ├── driver-fleet/       # Overview, incentives, penalties, earnings, shifts
+│   │   │   └── loyalty/            # Dashboard, coupons, referrals
+│   │   └── components/             # Dashboard components (20+)
+│   │       ├── types.ts            # Types + reducer
+│   │       ├── OverviewTab.tsx
+│   │       ├── OrdersTab.tsx
+│   │       ├── BranchesTab.tsx
+│   │       ├── SupportTab.tsx
+│   │       ├── KPICard.tsx
+│   │       ├── RevenueChart.tsx
+│   │       ├── OrdersCharts.tsx
+│   │       ├── FraudDetection.tsx
+│   │       ├── RefundManagement.tsx
+│   │       └── ...
+│   ├── instrumentation.ts          # OpenTelemetry + Sentry
+│   ├── next.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── customer-mobile/                 # Expo React Native
+│   ├── src/
+│   │   ├── @types/
+│   │   ├── components/             # OrderCard, OrderTabs, etc.
+│   │   ├── constants/              # API, i18n, storage keys
+│   │   ├── hooks/                  # useHaptics, useOrderHistory
+│   │   ├── navigation/
+│   │   │   └── types.ts
+│   │   ├── screens/                # 14 mobile screens
+│   │   │   ├── AuthScreen.tsx
+│   │   │   ├── HomeScreen.tsx
+│   │   │   ├── CartScreen.tsx
+│   │   │   ├── ProfileScreen.tsx
+│   │   │   ├── TrackingScreen.tsx  # Stub
+│   │   │   ├── HistoryScreen.tsx
+│   │   │   ├── SearchScreen.tsx
+│   │   │   ├── RestaurantScreen.tsx # Incomplete
+│   │   │   ├── CheckoutScreen.tsx
+│   │   │   ├── AddressesScreen.tsx
+│   │   │   ├── PaymentMethodsScreen.tsx
+│   │   │   ├── NotificationsScreen.tsx
+│   │   │   ├── OnboardingScreen.tsx
+│   │   │   └── MenuItemCustomizationScreen.tsx
+│   │   ├── services/               # Location, WebSocket, Order, Push
+│   │   ├── storage/                # AsyncStorage keys
+│   │   ├── types/                  # TypeScript types
+│   │   └── utils/                  # Currency, validation, navigation
+│   ├── web/                        # Web variant build
+│   ├── dist-web/                   # Compiled web
+│   ├── jest.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── delivery-partner/                # Expo React Native
+│   ├── src/
+│   │   ├── @types/
+│   │   ├── services/               # Location, Delivery API, Storage
+│   │   └── App.tsx                 # ALL in one (769 lines)
+│   ├── android/                    # Android native
+│   ├── jest.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+└── launcher/                        # Electron Windows
+    ├── src/
+    │   ├── main/                   # TypeScript main process
+    │   ├── renderer/               # React renderer
+    │   └── assets/
+    ├── webpack.renderer.config.js
+    ├── jest.config.js
+    ├── tsconfig.json
+    └── package.json
+```
+
+---
+
+## Shared Packages (`packages/`)
+
+```
+packages/
+├── ui/                    # @spicegarden/ui — React component library
+│   ├── src/
+│   │   ├── index.ts          # Barrel export
+│   │   ├── tokens.ts         # Design tokens
+│   │   ├── analytics.ts      # Analytics hook, useWebVitals
+│   │   ├── useFlow.ts        # Multi-step flow hook
+│   │   ├── Button.tsx, Card.tsx, Input.tsx, Modal.tsx, Toast.tsx
+│   │   ├── Skeleton.tsx, LoadingStates.tsx
+│   │   ├── OTPInput.tsx, SearchInput.tsx, Stepper.tsx
+│   │   ├── ErrorBoundary.tsx, FlowManager.tsx, Dropdown.tsx
+│   │   └── icons/            # 50+ SVG icons
+│   ├── __tests__/            # 5 test files
+│   ├── jest.config.js
+│   ├── jest.setup.ts
+│   └── package.json
+│
+├── shared/                # @spicegarden/shared — Utilities + API client
+│   ├── index.ts             # Re-exports
+│   ├── types.ts             # Core domain types
+│   ├── constants.ts         # API_URL, SOCKET_URL (localhost!)
+│   ├── api.ts               # API client factory
+│   ├── analytics.ts         # Event types
+│   ├── __tests__/           # 2 test files
+│   ├── jest.config.js
+│   └── package.json
+│
+├── api-types/             # @spicegarden/api-types — Type contracts
+│   ├── src/index.ts        # DriverProfile, DeliveryOrder, EarningsSummary
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── proto/                 # @spicegarden/proto — Protobuf definitions
+│   ├── src/index.ts        # GRPC_PORT, GRPC_HOST, GRPC_URL
+│   ├── src/types.ts
+│   ├── src/constants.ts    # GRPCMetadata, ProtoDriver, ProtoOrder
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── grpc-transport/        # @spicegarden/grpc-transport — QUARANTINED
+│   ├── src/index.ts        # Always throws GrpcTransportUnavailableError
+│   ├── package.json
+│   └── tsconfig.json
+│
+└── ux/                    # @spicegarden/ux — Design docs only
+    └── phase-1/            # 13 markdown UX specs, Figma workspace structure
+```
+
+---
+
+## Infrastructure (`infra/`)
+
+```
+infra/
+├── backend/Dockerfile          # Backend Docker build
+├── customer-web/Dockerfile
+├── restaurant-dashboard/Dockerfile
+├── super-admin/Dockerfile
+├── delivery-partner/Dockerfile
+├── k8s/                        # Kubernetes manifests
+│   ├── backend-deployment.yaml
+│   ├── production-hardened.yaml
+│   ├── postgres-ha.yaml
+│   ├── redis-cluster.yaml
+│   ├── cdn-ingress.yaml
+│   ├── configmap.yaml
+│   └── secrets.yaml
+├── prometheus/
+│   ├── prometheus.yml           # Production config
+│   ├── prometheus.dev.yml       # Dev config
+│   └── rules/
+│       └── alerts.yml           # 5 alert rules
+├── grafana/
+│   ├── dashboards/
+│   │   └── spicegarden.json     # Main dashboard
+│   └── provisioning/             # Empty
+├── alertmanager/
+│   └── alertmanager.yml          # Slack + PagerDuty
+├── opensearch/
+│   └── index-templates/          # Index templates
+├── filebeat/                     # Log shipping config
+├── envoy/                         # Service mesh config
+├── postgres/
+│   ├── migrations/               # InitialSchema20240101000001 (up + down)
+│   ├── seed/                     # 002 SQL seed files
+│   └── init.sql                  # Container init
+├── scripts/                      # 36 operational scripts
+│   ├── backup.sh                 # Linux backup
+│   ├── backup.ps1                # Windows backup
+│   ├── backup-verification.sh
+│   ├── breaking-point.js
+│   ├── chaos-runner.js
+│   ├── compose-protos.js
+│   ├── deployment-check.js
+│   ├── disaster-recovery.sh
+│   ├── docker-stability-check.sh
+│   ├── e2e-seed-fixtures.js
+│   ├── fake-orders.js
+│   ├── generate-secrets.ps1
+│   ├── law-check.js
+│   ├── load-secrets.sh
+│   ├── load-secrets.ps1
+│   ├── live-driver-simulation.js
+│   ├── penetration-tests.js
+│   ├── production-validation.sh
+│   ├── quick-start.sh
+│   ├── restore.sh
+│   ├── security-tests.js
+│   ├── setup-secrets.sh
+│   ├── validate-env-consistency.js
+│   ├── validate-secrets.js
+│   └── verify-stack.js
+└── src/                          # Infra source (if any)
+```
+
+---
+
+## CI/CD
+
+```
+.github/
+└── workflows/
+    ├── ci-cd.yml                 # CI/CD pipeline (security, build, test, deploy)
+    ├── react-doctor.yml          # React Doctor checks
+    └── rollback.yml              # Rollback procedures
+```
+
+---
+
+## Other Directories
+
+```
+docs/              # Documentation
+├── architecture/
+├── audIT/
+├── diagnostics/
+├── prod-readiness/
+├── production-readiness/
+└── security/
+
+k8s/               # Root K8s manifests
+├── backend-deployment.yaml
+└── production-hardened.yaml
+
+backup/            # SQL backups
+├── spicegarden_backup_2026-06-13T14-03-51_postgres.sql
+├── spicegarden_backup_2026-06-15T02-02-00_postgres.sql
+└── spicegarden_backup_2026-06-15T02-10-02_postgres.sql
+
+logs/              # Log output
+secrets/           # Runtime secrets (gitignored)
+reports/           # Test and security reports
+scripts/           # Root scripts
+├── dev/
+├── architecture/
+├── audIT/
+├── diagnostics/
+└── prod-readiness/
+
+legal/             # Trademark search
+.vscode/           # VSCode settings
+__tests__/         # Root test utilities
+├── auth-security.test.ts
+└── test-utils.ts
+
+.storybook/        # Storybook config
+.kilo/             # Kilo config
+.kilocode/         # KiloCode config
+```
+
+---
+
+## Workspace Names
+
+| Name | Path |
+|------|------|
+| `@spicegarden/backend` | `apps/backend` |
+| `@spicegarden/customer-web` | `apps/customer-web` |
+| `@spicegarden/restaurant-dashboard` | `apps/restaurant-dashboard` |
+| `@spicegarden/super-admin` | `apps/super-admin` |
+| `@spicegarden/customer-mobile` | `apps/customer-mobile` |
+| `@spicegarden/delivery-partner` | `apps/delivery-partner` |
+| `spicegarden-launcher` | `apps/launcher` |
+| `@spicegarden/ui` | `packages/ui` |
+| `@spicegarden/shared` | `packages/shared` |
+| `@spicegarden/api-types` | `packages/api-types` |
+| `@spicegarden/proto` | `packages/proto` |
+| `@spicegarden/grpc-transport` | `packages/grpc-transport` |

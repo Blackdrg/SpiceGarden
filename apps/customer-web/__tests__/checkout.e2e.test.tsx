@@ -10,7 +10,7 @@ jest.mock('next/router', () => ({
 
 jest.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) => selector({
-    auth: { user: { token: 'test-token' } },
+    auth: { user: { id: 'user-1', email: 'test@example.com', role: 'customer' } },
     cart: {
       restaurantId: 'rest-1',
       items: [
@@ -25,13 +25,8 @@ jest.mock('@spicegarden/shared/api', () => ({
     create: jest.fn(async () => ({ data: { id: 'ORD-123' } })),
   },
   authApi: {
-    refreshToken: jest.fn(async () => ({ data: { access_token: 'refreshed-token' } })),
+    refreshToken: jest.fn(async () => ({ data: { refresh_token: 'refreshed-token' } })),
   },
-}));
-
-jest.mock('../src/utils/cachedLocalStorage', () => ({
-  getCachedToken: jest.fn(() => ''),
-  clearCachedToken: jest.fn(),
 }));
 
 const { ordersApi } = jest.requireMock('@spicegarden/shared/api') as {
@@ -72,7 +67,6 @@ describe('Customer Web checkout e2e flow', () => {
           tip: 0,
           grandTotal: 424,
         }),
-        'test-token',
       );
       expect(useRouter().push).toHaveBeenCalledWith('/tracking?order=ORD-123');
     });

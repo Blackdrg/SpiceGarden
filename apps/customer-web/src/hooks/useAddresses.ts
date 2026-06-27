@@ -12,54 +12,55 @@ export interface Address {
   isDefault: boolean;
 }
 
-async function fetchAddresses(token: string): Promise<Address[]> {
+async function fetchAddresses(): Promise<Address[]> {
   const res = await fetch(`${API_URL}/addresses`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to load addresses');
   const json = await res.json();
   return json.data ?? json;
 }
 
-async function addAddress(token: string, address: Omit<Address, 'id'>): Promise<Address> {
+async function addAddress(address: Omit<Address, 'id'>): Promise<Address> {
   const res = await fetch(`${API_URL}/addresses`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(address),
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to add address');
   const json = await res.json();
   return json.data ?? json;
 }
 
-async function deleteAddress(token: string, id: string): Promise<void> {
+async function deleteAddress(id: string): Promise<void> {
   const res = await fetch(`${API_URL}/addresses/${id}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to delete address');
 }
 
-export function useAddresses(token: string | null) {
+export function useAddresses() {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['addresses'],
-    queryFn: () => fetchAddresses(token!),
-    enabled: !!token,
+    queryFn: fetchAddresses,
     staleTime: 30_000,
   });
 
   const addMutation = useMutation({
-    mutationFn: (address: Omit<Address, 'id'>) => addAddress(token!, address),
+    mutationFn: (address: Omit<Address, 'id'>) => addAddress(address),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['addresses'] }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteAddress(token!, id),
+    mutationFn: (id: string) => deleteAddress(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['addresses'] }),
   });
 

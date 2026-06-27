@@ -52,6 +52,9 @@ const typeorm_2 = require("typeorm");
 const order_interface_1 = require("../../shared/domain/order.interface");
 const order_entity_1 = require("../../db/entities/order.entity");
 const driver_assignment_entity_1 = require("../../db/entities/driver-assignment.entity");
+const driver_entity_1 = require("../../db/entities/driver.entity");
+const user_entity_1 = require("../../db/entities/user.entity");
+const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 const payments_service_1 = require("../../services/payments/payments.service");
 const notification_service_1 = require("../../services/notifications/notification.service");
 const retry_service_1 = require("../../services/payments/retry.service");
@@ -62,15 +65,21 @@ const crypto = __importStar(require("crypto"));
 let OrderService = class OrderService {
     orderRepo;
     driverAssignmentRepo;
+    driverRepo;
+    userRepo;
+    branchRepo;
     paymentService;
     notificationService;
     retryService;
     idempotency;
     productionNotification;
     loggingService;
-    constructor(orderRepo, driverAssignmentRepo, paymentService, notificationService, retryService, idempotency, productionNotification, loggingService) {
+    constructor(orderRepo, driverAssignmentRepo, driverRepo, userRepo, branchRepo, paymentService, notificationService, retryService, idempotency, productionNotification, loggingService) {
         this.orderRepo = orderRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
+        this.driverRepo = driverRepo;
+        this.userRepo = userRepo;
+        this.branchRepo = branchRepo;
         this.paymentService = paymentService;
         this.notificationService = notificationService;
         this.retryService = retryService;
@@ -466,13 +475,44 @@ let OrderService = class OrderService {
         }
         return order;
     }
+    async getOrderWithDetails(orderId) {
+        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        let driverPhone;
+        let branchAddress;
+        if (order.driverId) {
+            const driver = await this.driverRepo.findOne({ where: { id: order.driverId }, relations: { user: true } });
+            if (driver?.user?.phone) {
+                driverPhone = driver.user.phone;
+            }
+        }
+        if (order.branchId) {
+            const branch = await this.branchRepo.findOne({ where: { id: order.branchId } });
+            if (branch) {
+                branchAddress = branch.address;
+            }
+        }
+        return {
+            ...order,
+            driverPhone,
+            branchAddress,
+        };
+    }
 };
 exports.OrderService = OrderService;
 exports.OrderService = OrderService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
+    __param(2, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
+    __param(3, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __param(4, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         payments_service_1.PaymentService,
         notification_service_1.NotificationService,

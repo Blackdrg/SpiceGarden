@@ -3,7 +3,6 @@ import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { Bell, BellOff } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
-import { getCachedToken } from '../utils/cachedLocalStorage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './notifications.module.css';
 
@@ -16,26 +15,27 @@ interface NotificationPreferences {
   smsDeliveryUpdates: boolean;
 }
 
-const fetchPreferences = async (token: string): Promise<NotificationPreferences> => {
+const fetchPreferences = async (): Promise<NotificationPreferences> => {
   const res = await fetch(`${API_URL}/notification-preferences`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {},
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to load preferences');
   return res.json();
 };
 
-const savePreferences = async (token: string, prefs: NotificationPreferences): Promise<void> => {
+const savePreferences = async (prefs: NotificationPreferences): Promise<void> => {
   const res = await fetch(`${API_URL}/notification-preferences`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(prefs),
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Failed to save preferences');
 };
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
-  const token = getCachedToken();
 
   const { data: prefs = {
     pushOrders: true,
@@ -45,21 +45,18 @@ const NotificationsPage = () => {
     emailPromotions: false,
     smsDeliveryUpdates: true,
   }, isLoading, error } = useQuery({
-    queryKey: ['notification-preferences', token],
-    queryFn: () => fetchPreferences(token!),
-    enabled: Boolean(token && token !== 'demo-token'),
+    queryKey: ['notification-preferences'],
+    queryFn: fetchPreferences,
   });
 
   const mutation = useMutation({
-    mutationFn: (newPrefs: NotificationPreferences) => savePreferences(token!, newPrefs),
+    mutationFn: (newPrefs: NotificationPreferences) => savePreferences(newPrefs),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notification-preferences'] }),
   });
 
   const togglePref = (key: keyof NotificationPreferences) => {
-    if (token && token !== 'demo-token') {
-      const newPrefs = { ...prefs, [key]: !prefs[key] };
-      mutation.mutate(newPrefs);
-    }
+    const newPrefs = { ...prefs, [key]: !prefs[key] };
+    mutation.mutate(newPrefs);
   };
 
   if (isLoading) {

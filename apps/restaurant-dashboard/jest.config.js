@@ -5,6 +5,9 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
+  moduleNameMapper: {
+    '\\.module\\.css$': 'identity-obj-proxy',
+  },
   transformIgnorePatterns: [
     '/node_modules/(?!(@spicegarden/ui|lucide-react)/)',
   ],

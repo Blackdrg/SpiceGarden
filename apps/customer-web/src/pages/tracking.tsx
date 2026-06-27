@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
+import { API_URL } from '@spicegarden/shared/constants';
 import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './tracking.module.css';
 
@@ -20,12 +21,15 @@ interface TrackingOrder {
   status?: string;
   items?: TrackingItem[];
   total?: number;
+  driverId?: string;
+  driverPhone?: string;
+  restaurantId?: string;
+  branchAddress?: string;
 }
 
 const TrackingPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { location } = useTracking('driver-123');
   const [orderDetails, setOrderDetails] = useState<TrackingOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const orderIdRef = useRef<string | null>(null);
@@ -34,20 +38,21 @@ const TrackingPage = () => {
   const [displayOrderStatus, setDisplayOrderStatus] = useState('preparing');
   const [displayEstimatedTime, setDisplayEstimatedTime] = useState(15);
 
+  const { location } = useTracking(orderDetails?.driverId || null);
+
   useEffect(() => {
     const queryOrderId = router.query.order as string | undefined;
     if (queryOrderId) {
       orderIdRef.current = queryOrderId;
     } else {
-      const storedOrderId = localStorage.getItem('lastOrderId');
+      const storedOrderId = sessionStorage.getItem('lastOrderId');
       if (storedOrderId) orderIdRef.current = storedOrderId;
     }
   }, [router.query]);
 
   useEffect(() => {
     const orderId = orderIdRef.current;
-    const token = user?.token;
-    if (!orderId || !token) return;
+    if (!orderId) return;
 
     let cancelled = false;
     let timerId: ReturnType<typeof setTimeout> | null = null;
@@ -58,7 +63,7 @@ const TrackingPage = () => {
 
       setLoading(true);
       try {
-        const response = await ordersApi.get(currentOrderId!, token);
+        const response = await ordersApi.get(currentOrderId!);
         if (cancelled) return;
         const order = response.data as TrackingOrder;
         setOrderDetails(order);
@@ -90,10 +95,23 @@ const TrackingPage = () => {
       cancelled = true;
       if (timerId) clearTimeout(timerId);
     };
-  }, [user?.token]);
+  }, []);
 
-  const handleCallDriver = useCallback(() => {}, []);
-  const handleContactSupport = useCallback(() => {}, []);
+  const handleCallDriver = useCallback(() => {
+    if (orderDetails?.driverPhone) {
+      window.location.href = `tel:${orderDetails.driverPhone}`;
+    }
+  }, [orderDetails]);
+
+  const handleContactSupport = useCallback(() => {
+    window.location.href = 'mailto:support@spicegarden.com';
+  }, []);
+
+  const handleContactRestaurant = useCallback(() => {
+    if (orderDetails?.restaurantId) {
+      router.push(`/restaurant?id=${orderDetails.restaurantId}`);
+    }
+  }, [orderDetails, router]);
 
   const statusSteps = [
     { id: 'placed', label: 'Order Placed', done: true },
@@ -138,8 +156,8 @@ const TrackingPage = () => {
             <span>{location.lat.toFixed(4)}, {location.lng.toFixed(4)}</span>
           </div>
           <div className={styles.buttonGroup}>
-            <Button label="Call Driver" onClick={() => {/* TODO: Implement dialer */}} className={styles.fullWidthButton} />
-            <Button label="Contact Support" onClick={() => {/* TODO: Implement support contact */}} variant="secondary" className={styles.secondaryButton} />
+            <Button label="Call Driver" onClick={handleCallDriver} disabled={!orderDetails?.driverPhone} className={styles.fullWidthButton} />
+            <Button label="Contact Support" onClick={handleContactSupport} variant="secondary" className={styles.secondaryButton} />
           </div>
         </Card>
       )}
@@ -167,7 +185,7 @@ const TrackingPage = () => {
 
       {displayOrderStatus !== 'delivered' && (
         <div className={styles.contactRestaurantDiv}>
-          <Button label="Contact Restaurant" onClick={() => {/* TODO: Implement restaurant contact */}} variant="secondary" />
+          <Button label="Contact Restaurant" onClick={handleContactRestaurant} variant="secondary" />
         </div>
       )}
     </div>

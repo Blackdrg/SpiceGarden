@@ -17,6 +17,8 @@ describe('CSRF Protection', () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
       header: jest.fn().mockReturnThis(),
+      cookie: jest.fn().mockReturnThis(),
+      clearCookie: jest.fn().mockReturnThis(),
     };
     mockNext = jest.fn();
   });

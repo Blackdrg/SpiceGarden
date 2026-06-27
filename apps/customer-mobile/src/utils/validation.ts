@@ -68,12 +68,15 @@ export function isValidOrderId(orderId: unknown): orderId is string {
 }
 
 export function validateTotals(items: CartItem[], taxRate = 0.05): { subtotal: number; tax: number; total: number } | null {
-  const validItems = items.filter(isValidCartItem);
-  if (validItems.length === 0) {
-    return null;
+  let subtotal = 0;
+  let hasValidItems = false;
+  for (const item of items) {
+    if (isValidCartItem(item)) {
+      subtotal += item.price * item.quantity;
+      hasValidItems = true;
+    }
   }
-  const subtotal = validItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  if (subtotal <= 0) {
+  if (!hasValidItems || subtotal <= 0) {
     return null;
   }
   const tax = subtotal * taxRate;
