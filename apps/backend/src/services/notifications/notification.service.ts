@@ -189,7 +189,8 @@ export class NotificationService {
 
       const results = await Promise.allSettled(
         apnsTokens.map(async (deviceToken) => {
-          const response = await fetch(`https://${apnsHost}/3/device/${deviceToken}`, {
+          const host = apnsEnv === 'development' ? 'api.development.push.apple.com' : 'api.push.apple.com';
+          const response = await fetch(`https://${host}/3/device/${deviceToken}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,

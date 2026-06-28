@@ -17,10 +17,12 @@ const passport_google_oauth20_1 = require("passport-google-oauth20");
 let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrategy)(passport_google_oauth20_1.Strategy, 'google') {
     configService;
     constructor(configService) {
+        const clientId = configService.get('GOOGLE_CLIENT_ID') || 'development-client-id';
+        const clientSecret = configService.get('GOOGLE_CLIENT_SECRET') || 'development-client-secret';
         super({
-            clientID: configService.get('GOOGLE_CLIENT_ID'),
-            clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-            callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
+            clientID: clientId,
+            clientSecret: clientSecret,
+            callbackURL: configService.get('GOOGLE_CALLBACK_URL') || 'http://localhost:3001/auth/google/callback',
             scope: ['email', 'profile'],
         });
         this.configService = configService;

@@ -209,7 +209,7 @@ export function searchRestaurants(token, query) {
 export function getRestaurantMenu(token, restaurantId) {
   return request(
     'GET',
-    `${BASE_URL}/restaurants/${restaurantId}/menu`,
+    `${BASE_URL}/menus/${restaurantId}/items`,
     null,
     {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -327,7 +327,7 @@ export function createPaymentIntent(token, userId, amount) {
 export function getUserProfile(token) {
   return request(
     'GET',
-    `${BASE_URL}/user/profile`,
+    `${BASE_URL}/auth/me`,
     null,
     { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'profile' } },
     'get user profile',
@@ -351,11 +351,11 @@ export function getWallet(token) {
 export function getNotifications(token) {
   return request(
     'GET',
-    `${BASE_URL}/notifications`,
+    `${BASE_URL}/notification-queue/stats/overview`,
     null,
     { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'notifications' } },
     'get notifications',
-    [200],
+    [200, 401, 403],
     metrics.notificationsSuccess,
   );
 }
@@ -375,7 +375,7 @@ export function getAdminStats(token) {
 export function trackOrder(token, orderId) {
   return request(
     'GET',
-    `${BASE_URL}/orders/${orderId}/tracking`,
+    `${BASE_URL}/orders/${orderId}`,
     null,
     { headers: token ? { Authorization: `Bearer ${token}` } : {}, tags: { step: 'tracking' } },
     'track order',

@@ -115,7 +115,7 @@ async function runBreakingTest(scenarioName, config) {
         `${u}-${o}`
       );
 
-      const task = makeRequest('/api/orders', 'POST', order)
+      const task = makeRequest('/orders', 'POST', order)
         .then((result) => {
           if (result.status >= 500) serverErrors++;
           if (result.error || result.status >= 400) errors++;

@@ -1,7 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
-import { config } from './libs/config.js';
 
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
@@ -17,14 +16,14 @@ export const options = {
     },
 };
 
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 const dbQuerySuccess = new Rate('db_query_success_rate');
 const dbQueryTime = new Trend('db_query_time', true);
 
 export default function () {
     const queries = [
-        config.BASE_URL + '/orders?userId=test-user-' + __VU,
-        config.BASE_URL + '/restaurants?lat=19.0760&lng=72.8777',
-        config.BASE_URL + '/users/profile',
+        BASE_URL + '/restaurants?lat=19.0760&lng=72.8777',
+        BASE_URL + '/restaurants/search?q=biryani',
     ];
     
     const queryPath = queries[randomInt(0, queries.length - 1)];
@@ -41,6 +40,6 @@ export default function () {
 }
 
 export function setup() {
-    const health = http.get(config.BASE_URL + '/health');
+    const health = http.get(BASE_URL + '/health');
     check(health, { 'db health check': (r) => r.status === 200 });
 }

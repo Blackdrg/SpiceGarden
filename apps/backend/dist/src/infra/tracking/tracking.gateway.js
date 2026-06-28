@@ -128,16 +128,13 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         if (!conn)
             return { error: 'Not connected' };
         data.timestamp = new Date();
-        const conn = this.connectedClients.get(client.id);
-        if (conn) {
-            if (conn.acknowledgedMessages.size >= MAX_ACK_MESSAGES_PER_CLIENT) {
-                const oldestKey = conn.acknowledgedMessages.keys().next().value;
-                if (oldestKey) {
-                    conn.acknowledgedMessages.delete(oldestKey);
-                }
+        if (conn.acknowledgedMessages.size >= MAX_ACK_MESSAGES_PER_CLIENT) {
+            const oldestKey = conn.acknowledgedMessages.keys().next().value;
+            if (oldestKey) {
+                conn.acknowledgedMessages.delete(oldestKey);
             }
-            conn.acknowledgedMessages.set(data.id, data);
         }
+        conn.acknowledgedMessages.set(data.id, data);
         if (data.ack) {
             const ackResult = await new Promise((resolve, reject) => {
                 this.pendingAcks.set(data.id, {

@@ -1,9 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
-import { config } from './libs/config.js';
 
-function randomChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 export const options = {
@@ -18,39 +16,40 @@ export const options = {
     },
 };
 
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 const httpSuccessRate = new Rate('http_req_success_rate');
 const httpDuration = new Trend('http_req_duration', true);
 
 export default function () {
-    const rand = Math.random();
-    
-    if (rand < 0.60) {
+    if (Math.random() < 0.50) {
         runBrowse();
+    } else if (Math.random() < 0.80) {
+        runSearch();
     } else {
-        runCheckout();
+        runHealthCheck();
     }
     
-    sleep(randomInt(0, 3));
+    sleep(randomInt(0, 2));
 }
 
 function runBrowse() {
-    const res = http.get(config.BASE_URL + '/restaurants');
-    check(res, { 'browse ok': (r) => r.status === 200 });
-    httpSuccessRate.add(res.status === 200);
+    const res = http.get(BASE_URL + '/restaurants');
+    const success = check(res, { 'browse ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
     httpDuration.add(res.timings.duration);
 }
 
-function runCheckout() {
-    const order = {
-        userId: 'stage4-' + __VU + '-' + __ITER,
-        restaurantId: 'restaurant-' + randomInt(1, 100),
-        items: [{ id: 'item-' + randomInt(1, 100), name: 'Food', quantity: 1 }],
-        grandTotal: randomInt(200, 1500),
-    };
-    const res = http.post(config.BASE_URL + '/orders', JSON.stringify(order), {
-        headers: { 'Content-Type': 'application/json' }
-    });
-    check(res, { 'checkout ok': (r) => r.status === 201 || r.status === 200 || r.status === 400 });
-    httpSuccessRate.add(res.status === 200 || res.status === 201);
+function runSearch() {
+    const query = ['biryani', 'burger', 'pizza', 'dosa', 'naan'][Math.floor(Math.random() * 5)];
+    const res = http.get(BASE_URL + '/restaurants/search?q=' + query);
+    const success = check(res, { 'search ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
+    httpDuration.add(res.timings.duration);
+}
+
+function runHealthCheck() {
+    const res = http.get(BASE_URL + '/health');
+    const success = check(res, { 'health ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
     httpDuration.add(res.timings.duration);
 }

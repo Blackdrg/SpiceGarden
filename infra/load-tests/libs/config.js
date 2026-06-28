@@ -19,12 +19,12 @@ export const endpoints = {
     metrics: '/metrics',
     auth: {
         login: '/auth/login',
-        signup: '/auth/signup',
-        refresh: '/auth/refresh',
+        register: '/auth/register',
+        refresh: '/auth/refresh-token',
     },
     restaurants: {
         list: '/restaurants',
-        search: '/search/restaurants',
+        search: '/restaurants/search',
     },
     orders: {
         create: '/orders',
@@ -35,35 +35,15 @@ export const endpoints = {
         transactions: '/wallet/transactions',
     },
     payments: {
-        intent: '/payments/intent',
+        intent: '/payments/create-intent',
         confirm: '/payments/confirm',
         refund: '/payments/refund',
     },
     users: {
-        profile: '/users/profile',
-        addresses: '/users/addresses',
+        profile: '/auth/me',
+        addresses: '/user/addresses',
     },
-    notifications: '/notifications',
-    reviews: {
-        create: '/reviews',
-        list: '/reviews',
-    },
-    driver: {
-        location: '/driver/location',
-        availability: '/driver/availability',
-        orders: '/driver/orders',
-    },
-    restaurant: {
-        orders: '/restaurant/orders',
-        menu: '/restaurant/menu',
-        inventory: '/restaurant/inventory',
-    },
-    admin: {
-        dashboard: '/admin/dashboard',
-        users: '/admin/users',
-        restaurants: '/admin/restaurants',
-    },
-    tracking: '/tracking',
+    notifications: '/notification-queue/stats/overview',
 };
 
 export const thresholds = {

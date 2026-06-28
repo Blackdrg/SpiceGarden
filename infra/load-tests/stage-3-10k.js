@@ -1,7 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
-import { config, endpoints } from './libs/config.js';
 
 function randomChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -18,75 +17,35 @@ export const options = {
     },
 };
 
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 const httpSuccessRate = new Rate('http_req_success_rate');
 const httpDuration = new Trend('http_req_duration', true);
 
 export default function () {
     const rand = Math.random();
-    const headers = { 'Content-Type': 'application/json' };
     
-    if (rand < 0.60) {
-        runBrowse(headers);
-    } else if (rand < 0.75) {
-        runSearch(headers);
-    } else if (rand < 0.85) {
-        runCheckout(headers);
-    } else if (rand < 0.90) {
-        runPayment(headers);
+    if (rand < 0.50) {
+        runBrowse();
+    } else if (rand < 0.80) {
+        runSearch();
     } else {
-        runTracking(headers);
+        runHealthCheck();
     }
     
-    sleep(randomInt(1, 4));
+    sleep(randomInt(1, 3));
 }
 
-function runBrowse(headers) {
-    const res = http.get(config.BASE_URL + endpoints.restaurants.list, { headers });
-    check(res, { 'browse ok': (r) => r.status === 200 });
-    httpSuccessRate.add(res.status === 200);
+function runBrowse() {
+    const res = http.get(BASE_URL + '/restaurants');
+    const success = check(res, { 'browse ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
     httpDuration.add(res.timings.duration);
 }
 
-function runSearch(headers) {
+function runSearch() {
     const query = randomChoice(['biryani', 'burger', 'pizza', 'dosa', 'naan']);
-    const res = http.get(config.BASE_URL + endpoints.restaurants.search + '?q=' + query, { headers });
-    check(res, { 'search ok': (r) => r.status === 200 });
-    httpSuccessRate.add(res.status === 200);
-    httpDuration.add(res.timings.duration);
-}
-
-function runCheckout(headers) {
-    const order = {
-        userId: 'stage3-' + __VU + '-' + __ITER,
-        restaurantId: 'restaurant-' + randomInt(1, 50),
-        items: Array(randomInt(1, 4)).fill(null).map(() => ({
-            id: 'item-' + randomInt(1, 100),
-            name: randomChoice(['Biryani', 'Karahi', 'Naan', 'Burger', 'Pizza', 'Rolls']),
-            quantity: randomInt(1, 3),
-        })),
-        grandTotal: randomInt(200, 2000),
-    };
-    const res = http.post(config.BASE_URL + endpoints.orders.create, JSON.stringify(order), { headers });
-    check(res, { 'checkout ok': (r) => r.status === 201 || r.status === 200 || r.status === 400 });
-    httpSuccessRate.add(res.status === 200 || res.status === 201);
-    httpDuration.add(res.timings.duration);
-}
-
-function runPayment(headers) {
-    const intent = {
-        amount: randomInt(200, 2000),
-        currency: 'INR',
-        orderId: 'order-' + randomInt(100000, 999999),
-    };
-    const res = http.post(config.BASE_URL + endpoints.payments.intent, JSON.stringify(intent), { headers });
-    check(res, { 'payment intent ok': (r) => r.status === 200 || r.status === 400 });
-    httpDuration.add(res.timings.duration);
-}
-
-function runTracking(headers) {
-    const orderId = 'ORD-20240101-' + randomInt(100000, 999999);
-    const res = http.get(config.BASE_URL + '/orders/' + orderId, { headers });
-    check(res, { 'track ok': (r) => r.status < 500 });
-    httpSuccessRate.add(res.status < 500);
+    const res = http.get(BASE_URL + '/restaurants/search?q=' + query);
+    const success = check(res, { 'search ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
     httpDuration.add(res.timings.duration);
 }

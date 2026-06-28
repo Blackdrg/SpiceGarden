@@ -6,10 +6,13 @@ import { Strategy } from 'passport-facebook';
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(private configService: ConfigService) {
+    const appId = configService.get<string>('FACEBOOK_APP_ID') || 'development-app-id';
+    const appSecret = configService.get<string>('FACEBOOK_APP_SECRET') || 'development-app-secret';
+    
     super({
-      clientID: configService.get<string>('FACEBOOK_APP_ID'),
-      clientSecret: configService.get<string>('FACEBOOK_APP_SECRET'),
-      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL'),
+      clientID: appId,
+      clientSecret: appSecret,
+      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL') || 'http://localhost:3001/auth/facebook/callback',
       profileFields: ['email', 'name', 'picture.type(large)'],
     });
   }

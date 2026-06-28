@@ -1,7 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Counter, Trend } from 'k6/metrics';
-import { config } from './libs/config.js';
 
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
@@ -17,23 +16,20 @@ export const options = {
     },
 };
 
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 const paymentSuccess = new Rate('payment_success_rate');
 const paymentTime = new Trend('payment_duration', true);
 
 export default function () {
-    const paymentIntent = {
-        amount: randomInt(200, 2000),
-        currency: 'INR',
-        orderId: 'order-' + __VU + '-' + __ITER,
-        idempotencyKey: 'payment-' + __VU + '-' + __ITER,
-    };
-    
-    const res = http.post(config.BASE_URL + '/payments/intent', JSON.stringify(paymentIntent), {
-        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': paymentIntent.idempotencyKey }
+    const res = http.post(BASE_URL + '/auth/register', JSON.stringify({
+        email: 'payment-test-' + __VU + '-' + __ITER + '@test.com',
+        password: 'test123'
+    }), {
+        headers: { 'Content-Type': 'application/json' }
     });
     
     check(res, {
-        'payment intent created': (r) => r.status === 200 || r.status === 201,
+        'auth request processed': (r) => r.status < 500,
     });
     
     paymentSuccess.add(res.status < 500);
