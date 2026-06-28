@@ -46,6 +46,7 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express = __importStar(require("express"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const compression_1 = __importDefault(require("compression"));
 const cors_origin_1 = require("./security/cors-origin");
 const redis_rate_limit_store_1 = require("./security/redis-rate-limit.store");
 const missing_env_error_1 = require("./common/errors/missing-env.error");
@@ -227,6 +228,7 @@ async function bootstrap() {
     app.use((0, csrf_middleware_1.csrfProtection)());
     app.use(safeMongoSanitize);
     app.use((0, hpp_1.default)());
+    app.use((0, compression_1.default)());
     installRateLimiters(app, configService);
     app.use((req, res, next) => {
         const dangerousMethods = ['TRACE', 'TRACK', 'DEBUG', 'CONNECT'];

@@ -26,7 +26,22 @@
     "local:full": "npm run dev:local:full",
     "local:infra": "npm run dev:local:infra",
     "local:check": "npm run dev:local:check",
-    "local:stop": "npm run dev:local:stop"
+    "local:stop": "npm run dev:local:stop",
+    "test:load": "node infra/scripts/run-load-tests.js",
+    "test:load:1k": "k6 run infra/load-tests/stage-1-1k.js -e BASE_URL=http://localhost:3001",
+    "test:load:5k": "k6 run infra/load-tests/stage-2-5k.js -e BASE_URL=http://localhost:3001",
+    "test:load:10k": "k6 run infra/load-tests/stage-3-10k.js -e BASE_URL=http://localhost:3001",
+    "test:load:20k": "k6 run infra/load-tests/stage-4-20k.js -e BASE_URL=http://localhost:3001",
+    "test:load:50k": "k6 run infra/load-tests/stage-5-50k.js -e BASE_URL=http://localhost:3001",
+    "test:load:100k": "k6 run infra/load-tests/stage-6-100k.js -e BASE_URL=http://localhost:3001",
+    "test:load:500k": "k6 run infra/load-tests/stage-7-500k.js -e BASE_URL=http://localhost:3001",
+    "test:load:1m": "k6 run infra/load-tests/stage-8-1m.js -e BASE_URL=http://localhost:3001",
+    "test:load:websocker": "k6 run infra/load-tests/websocket-stress.js",
+    "test:load:database": "k6 run infra/load-tests/database-stress.js",
+    "test:load:payment": "k6 run infra/load-tests/payment-stress.js",
+    "test:load:failure": "k6 run infra/load-tests/failure-injection.js",
+    "test:load:security": "k6 run infra/load-tests/security-under-load.js",
+    "test:chaos": "kubectl apply -f test/chaos/"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

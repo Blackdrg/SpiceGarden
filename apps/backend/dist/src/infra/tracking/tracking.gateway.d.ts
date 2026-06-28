@@ -103,6 +103,8 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     private checkOfflineTimeout;
     private waitForAcknowledgement;
     private cleanupPendingAcks;
+    private cleanupStaleConnectionAttempts;
+    private cleanupStaleMessageQueue;
     getQueuedMessages(driverId: string): Promise<AcknowledgedMessage[]>;
     requeueUndeliveredMessages(driverId: string, messageIds: string[]): Promise<void>;
 }

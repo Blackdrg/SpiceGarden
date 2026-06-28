@@ -27,6 +27,8 @@ const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
 const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
 const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
 const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+const MAX_ACK_MESSAGES_PER_CLIENT = 500;
+const MSG_QUEUE_TTL_MS = Number(process.env.WS_MSG_QUEUE_TTL_MS || 60000);
 var SocketNamespace;
 (function (SocketNamespace) {
     SocketNamespace["TRACKING"] = "/tracking";
@@ -48,6 +50,8 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         this.configService = configService;
         this.notificationRepo = notificationRepo;
         this.ackTimeoutMs = this.configService.get('WS_ACK_TIMEOUT_MS', 5000);
+        setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+        setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
     }
     handleConnection(client) {
         if (!this.isConnectionAllowed(client)) {
@@ -124,7 +128,16 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         if (!conn)
             return { error: 'Not connected' };
         data.timestamp = new Date();
-        conn.acknowledgedMessages.set(data.id, data);
+        const conn = this.connectedClients.get(client.id);
+        if (conn) {
+            if (conn.acknowledgedMessages.size >= MAX_ACK_MESSAGES_PER_CLIENT) {
+                const oldestKey = conn.acknowledgedMessages.keys().next().value;
+                if (oldestKey) {
+                    conn.acknowledgedMessages.delete(oldestKey);
+                }
+            }
+            conn.acknowledgedMessages.set(data.id, data);
+        }
         if (data.ack) {
             const ackResult = await new Promise((resolve, reject) => {
                 this.pendingAcks.set(data.id, {
@@ -234,11 +247,34 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         });
     }
     cleanupPendingAcks(clientId) {
-        for (const [messageId, pending] of this.pendingAcks.entries()) {
-            clearTimeout(pending.timeout);
-            pending.reject(new Error('Client disconnected'));
+        const conn = this.connectedClients.get(clientId);
+        if (!conn)
+            return;
+        for (const [messageId, message] of conn.acknowledgedMessages.entries()) {
+            if (!message.ack) {
+                conn.acknowledgedMessages.delete(messageId);
+            }
         }
-        this.pendingAcks.clear();
+    }
+    cleanupStaleConnectionAttempts() {
+        const now = Date.now();
+        for (const [key, entry] of this.connectionAttempts.entries()) {
+            if (now >= entry.resetAt) {
+                this.connectionAttempts.delete(key);
+            }
+        }
+    }
+    cleanupStaleMessageQueue() {
+        const now = Date.now();
+        for (const [driverId, queue] of this.messageQueue.entries()) {
+            const filtered = queue.filter((msg) => now - msg.timestamp.getTime() < MSG_QUEUE_TTL_MS);
+            if (filtered.length === 0) {
+                this.messageQueue.delete(driverId);
+            }
+            else {
+                this.messageQueue.set(driverId, filtered);
+            }
+        }
     }
     async getQueuedMessages(driverId) {
         return this.messageQueue.get(driverId) || [];

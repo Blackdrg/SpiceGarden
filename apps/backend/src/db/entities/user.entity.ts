@@ -1,7 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Index } from 'typeorm';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
 @Entity('users')
+@Index('idx_users_role', ['role'])
+@Index('idx_users_status', ['status'])
+@Index('idx_users_email_verified', ['emailVerified'])
+@Index('idx_users_created_at', ['createdAt'])
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

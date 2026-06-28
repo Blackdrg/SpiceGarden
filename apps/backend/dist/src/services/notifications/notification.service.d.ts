@@ -95,6 +95,9 @@ export declare class NotificationService {
             token: string;
             success: boolean;
             error?: undefined;
+        } | {
+            success: boolean;
+            error: any;
         })[];
         reason?: undefined;
         error?: undefined;

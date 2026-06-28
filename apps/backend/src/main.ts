@@ -10,6 +10,7 @@ import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
@@ -222,6 +223,7 @@ const dsn = configService.get<string>("SENTRY_DSN");
   app.use(csrfProtection());
   app.use(safeMongoSanitize);
   app.use(hpp());
+  app.use(compression());
   installRateLimiters(app, configService);
 
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {

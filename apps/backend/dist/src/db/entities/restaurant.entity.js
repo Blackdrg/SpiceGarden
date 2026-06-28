@@ -87,5 +87,8 @@ __decorate([
     __metadata("design:type", Date)
 ], RestaurantEntity.prototype, "updatedAt", void 0);
 exports.RestaurantEntity = RestaurantEntity = __decorate([
-    (0, typeorm_1.Entity)('restaurants')
+    (0, typeorm_1.Entity)('restaurants'),
+    (0, typeorm_1.Index)('idx_restaurants_slug', ['slug']),
+    (0, typeorm_1.Index)('idx_restaurants_status', ['status']),
+    (0, typeorm_1.Index)('idx_restaurants_created_at', ['createdAt'])
 ], RestaurantEntity);

@@ -206,18 +206,14 @@ let NotificationService = NotificationService_1 = class NotificationService {
         }
         try {
             const token = this.generateJWT(apnsKeyId, apnsTeamId, apnsKey);
-            const results = [];
-            const apnsHost = apnsEnv === 'development'
-                ? 'api.development.push.apple.com'
-                : 'api.push.apple.com';
-            for (const deviceToken of apnsTokens) {
-                const payload = {
-                    aps: {
-                        alert: { title, body },
-                        sound: 'default',
-                    },
-                    ...(data || {}),
-                };
+            const payload = {
+                aps: {
+                    alert: { title, body },
+                    sound: 'default',
+                },
+                ...(data || {}),
+            };
+            const results = await Promise.allSettled(apnsTokens.map(async (deviceToken) => {
                 const response = await fetch(`https://${apnsHost}/3/device/${deviceToken}`, {
                     method: 'POST',
                     headers: {
@@ -230,15 +226,14 @@ let NotificationService = NotificationService_1 = class NotificationService {
                 if (!response.ok) {
                     const error = await response.text();
                     this.logger.error(`APNs failed for token ${deviceToken.substring(0, 8)}...: ${response.status} ${error}`);
-                    results.push({ token: deviceToken.substring(0, 8), success: false, error });
+                    return { token: deviceToken.substring(0, 8), success: false, error };
                 }
-                else {
-                    results.push({ token: deviceToken.substring(0, 8), success: true });
-                }
-            }
-            const successCount = results.filter(r => r.success).length;
+                return { token: deviceToken.substring(0, 8), success: true };
+            }));
+            const settledResults = results.map((r) => (r.status === 'fulfilled' ? r.value : { success: false, error: r.reason }));
+            const successCount = settledResults.filter((r) => r.success).length;
             this.logger.log(`APNs: ${successCount}/${apnsTokens.length} notifications sent to user ${userId}`);
-            return { success: successCount > 0, sent: successCount, results };
+            return { success: successCount > 0, sent: successCount, results: settledResults };
         }
         catch (error) {
             this.logger.error(`APNs send failed for user ${userId}:`, error);

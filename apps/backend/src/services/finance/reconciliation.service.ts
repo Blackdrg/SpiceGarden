@@ -33,18 +33,26 @@ export class ReconciliationService {
 
     const transactions = await this.transactionRepo.find({
       where: { createdAt: Between(startDate, endDate) },
+      order: { createdAt: 'ASC' },
     });
 
     const ordersTotal = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
     const transactionsTotal = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
+    const txnsByOrderId = new Map<string, typeof transactions>();
+    for (const txn of transactions) {
+      const matches = txnsByOrderId.get(txn.referenceId || '');
+      if (matches) {
+        matches.push(txn);
+      } else if (txn.referenceId) {
+        txnsByOrderId.set(txn.referenceId, [txn]);
+      }
+    }
+
     const discrepancies: any[] = [];
 
     for (const order of orders) {
-      const relatedTxns = transactions.filter(t => 
-        t.referenceId === order.id || t.description.includes(order.id)
-      );
-
+      const relatedTxns = txnsByOrderId.get(order.id) || [];
       const orderTotal = Number(order.grandTotal);
       const txnTotal = relatedTxns.reduce((sum, t) => sum + Number(t.amount), 0);
 
