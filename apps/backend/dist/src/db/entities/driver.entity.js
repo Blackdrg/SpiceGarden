@@ -42,6 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], DriverEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_drivers_user_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], DriverEntity.prototype, "userId", void 0);
@@ -63,14 +64,17 @@ __decorate([
     __metadata("design:type", String)
 ], DriverEntity.prototype, "vehicleType", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_drivers_kyc_status'),
     (0, typeorm_1.Column)({ default: 'pending' }),
     __metadata("design:type", String)
 ], DriverEntity.prototype, "kycStatus", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_drivers_is_online'),
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], DriverEntity.prototype, "isOnline", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_drivers_is_available'),
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], DriverEntity.prototype, "isAvailable", void 0);

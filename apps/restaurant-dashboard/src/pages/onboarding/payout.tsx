@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './payout.module.css';
 
 export default function OnboardingPayout() {
+  const toast = useToast();
   const [form, setForm] = useState({
     accountHolderName: '',
     accountNumber: '',
@@ -17,7 +18,7 @@ export default function OnboardingPayout() {
 
   const submit = async () => {
     if (form.accountNumber !== form.confirmAccountNumber) {
-      alert('Account numbers do not match');
+      toast.showToast({ message: 'Account numbers do not match', type: 'error', duration: 0 });
       return;
     }
     setLoading(true);
@@ -34,9 +35,9 @@ export default function OnboardingPayout() {
         }),
       });
       if (!res.ok) throw new Error('Failed');
-      alert('Payout settings saved. Onboarding complete!');
+      toast.showToast({ message: 'Payout settings saved. Onboarding complete!', type: 'success', duration: 0 });
     } catch (e) {
-      alert('Failed to save payout details');
+      toast.showToast({ message: 'Failed to save payout details', type: 'error', duration: 0 });
     } finally {
       setLoading(false);
     }

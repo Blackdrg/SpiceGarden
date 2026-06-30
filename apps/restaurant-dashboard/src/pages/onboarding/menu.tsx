@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './menu.module.css';
 
@@ -58,6 +58,7 @@ function createInitialState(): MenuState {
 }
 
 export default function OnboardingMenu() {
+  const toast = useToast();
   const [state, dispatch] = useReducer(menuReducer, undefined, createInitialState);
 
   const addCategory = () => {
@@ -86,9 +87,9 @@ export default function OnboardingMenu() {
         }),
       });
       if (!res.ok) throw new Error('Failed');
-      alert('Menu saved');
+      toast.showToast({ message: 'Menu saved', type: 'success', duration: 0 });
     } catch (e) {
-      alert('Failed to save menu');
+      toast.showToast({ message: 'Failed to save menu', type: 'error', duration: 0 });
     } finally {
       dispatch({ type: 'loading-changed', loading: false });
     }

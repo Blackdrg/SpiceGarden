@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';

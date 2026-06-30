@@ -8,25 +8,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var PaymentService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 const audit_service_1 = require("../../audit/audit.service");
 const ledger_service_1 = require("../../modules/ledger/ledger.service");
 const gateway_factory_service_1 = require("./gateway-factory.service");
+const wallet_entity_1 = require("../../db/entities/wallet.entity");
+const wallet_transaction_entity_1 = require("../../db/entities/wallet-transaction.entity");
 let PaymentService = PaymentService_1 = class PaymentService {
     configService;
     auditService;
     ledgerService;
     gatewayFactory;
+    walletRepo;
+    transactionRepo;
     logger = new common_1.Logger(PaymentService_1.name);
-    constructor(configService, auditService, ledgerService, gatewayFactory) {
+    constructor(configService, auditService, ledgerService, gatewayFactory, walletRepo, transactionRepo) {
         this.configService = configService;
         this.auditService = auditService;
         this.ledgerService = ledgerService;
         this.gatewayFactory = gatewayFactory;
+        this.walletRepo = walletRepo;
+        this.transactionRepo = transactionRepo;
     }
     async createPaymentIntent(amount, currency = 'usd', userId = null, metadata = {}, request, gatewayName) {
         try {
@@ -52,6 +63,21 @@ let PaymentService = PaymentService_1 = class PaymentService {
         }
         if (userId) {
             const dailyLimit = this.configService.get('PAYMENT_DAILY_LIMIT_PER_USER', 50000);
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            const wallet = await this.walletRepo.findOne({ where: { userId } });
+            if (wallet) {
+                const dailyTotal = await this.transactionRepo
+                    .createQueryBuilder('t')
+                    .where('t.walletId = :walletId', { walletId: wallet.id })
+                    .andWhere('t.createdAt >= :start', { start: oneDayAgo })
+                    .andWhere('t.type = :type', { type: 'debit' })
+                    .select('SUM(t.amount)', 'total')
+                    .getRawOne();
+                const spent = parseFloat(dailyTotal?.total || '0');
+                if (spent + amount > dailyLimit) {
+                    throw new common_1.BadRequestException(`Daily payment limit exceeded. Spent: ${spent}, Limit: ${dailyLimit}`);
+                }
+            }
         }
         await this.checkSuspiciousPatterns(userId, amount, request);
     }
@@ -124,8 +150,12 @@ let PaymentService = PaymentService_1 = class PaymentService {
 exports.PaymentService = PaymentService;
 exports.PaymentService = PaymentService = PaymentService_1 = __decorate([
     (0, common_1.Injectable)(),
+    __param(4, (0, typeorm_1.InjectRepository)(wallet_entity_1.WalletEntity)),
+    __param(5, (0, typeorm_1.InjectRepository)(wallet_transaction_entity_1.WalletTransactionEntity)),
     __metadata("design:paramtypes", [config_1.ConfigService,
         audit_service_1.AuditService,
         ledger_service_1.LedgerService,
-        gateway_factory_service_1.PaymentGatewayFactory])
+        gateway_factory_service_1.PaymentGatewayFactory,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], PaymentService);

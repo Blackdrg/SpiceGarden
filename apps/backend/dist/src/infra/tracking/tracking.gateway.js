@@ -251,6 +251,11 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
             if (!message.ack) {
                 conn.acknowledgedMessages.delete(messageId);
             }
+            const pending = this.pendingAcks.get(messageId);
+            if (pending) {
+                clearTimeout(pending.timeout);
+                this.pendingAcks.delete(messageId);
+            }
         }
     }
     cleanupStaleConnectionAttempts() {
@@ -264,7 +269,11 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
     cleanupStaleMessageQueue() {
         const now = Date.now();
         for (const [driverId, queue] of this.messageQueue.entries()) {
-            const filtered = queue.filter((msg) => now - msg.timestamp.getTime() < MSG_QUEUE_TTL_MS);
+            const filtered = queue.filter((msg) => {
+                if (!msg.timestamp)
+                    return false;
+                return now - msg.timestamp.getTime() < MSG_QUEUE_TTL_MS;
+            });
             if (filtered.length === 0) {
                 this.messageQueue.delete(driverId);
             }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 export enum ReferralStatus {
@@ -16,6 +16,8 @@ export enum ReferralRewardType {
 }
 
 @Entity('referrals')
+@Index('idx_referrals_referrer_id', ['referrerId'])
+@Index('idx_referrals_referee_id', ['refereeId'])
 export class ReferralEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

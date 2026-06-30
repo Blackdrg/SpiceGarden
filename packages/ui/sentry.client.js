@@ -43,7 +43,7 @@ Sentry.init({
     environment: process.env.NODE_ENV,
     integrations: [
         new Sentry.BrowserTracing({
-            tracePropagationTargets: ['localhost', process.env.NEXT_PUBLIC_API_URL],
+            tracePropagationTargets: [process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'],
         }),
     ],
 });

@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { branchId, lowStock } = req.query;
+  const { branchId, lowStock } = req.query || {};
 
   if (!branchId) {
     return res.status(400).json({ error: 'branchId query parameter required' });

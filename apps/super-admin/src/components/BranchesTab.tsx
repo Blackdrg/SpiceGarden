@@ -1,6 +1,7 @@
 import type { BranchStatus } from './types';
 import { AdminButton } from './AdminButton';
 import { DashboardCard } from './DashboardCard';
+import { useToast } from '@spicegarden/ui';
 
 const BRANCH_STATUS_COLORS: Record<BranchStatus['status'], string> = {
   operational: '#4caf50',
@@ -9,6 +10,7 @@ const BRANCH_STATUS_COLORS: Record<BranchStatus['status'], string> = {
 };
 
 export function BranchesTab({ branches }: { branches: BranchStatus[] }) {
+  const toast = useToast();
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
       {branches.map((branch) => (
@@ -42,8 +44,8 @@ export function BranchesTab({ branches }: { branches: BranchStatus[] }) {
           />
 
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <AdminButton label="View KDS" onClick={() => alert(`Opening KDS for ${branch.name}`)} style={{ flex: 1 }} />
-            <AdminButton label="Dispatch Driver" onClick={() => alert(`Dispatching driver to ${branch.name}`)} variant="secondary" style={{ flex: 1 }} />
+            <AdminButton label="View KDS" onClick={() => toast.showToast({ message: `Opening KDS for ${branch.name}`, type: 'info', duration: 0 })} style={{ flex: 1 }} />
+            <AdminButton label="Dispatch Driver" onClick={() => toast.showToast({ message: `Dispatching driver to ${branch.name}`, type: 'success', duration: 0 })} variant="secondary" style={{ flex: 1 }} />
           </div>
         </DashboardCard>
       ))}

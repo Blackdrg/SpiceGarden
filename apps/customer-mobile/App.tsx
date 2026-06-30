@@ -14,7 +14,7 @@ import HistoryScreen from './src/screens/HistoryScreen';
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
-  style.textContent = 'html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;}';
+  style.textContent = 'html{text-size-adjust:100%;}';
   document.head.appendChild(style);
 }
 

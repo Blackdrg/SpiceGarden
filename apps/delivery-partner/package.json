@@ -17,11 +17,14 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@spicegarden/ui": "*",
     "expo": "^56.0.12",
     "expo-location": "~56.0.17",
     "expo-status-bar": "~1.12.1",
-    "jest": "^29.7.0",
-    "react-native": "^0.85.3"
+    "react": "^19.2.7",
+    "react-native": "^0.85.3",
+    "socket.io-client": "^4.7.0",
+    "jest": "^29.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -32,8 +32,11 @@ function getAllowedOrigins() {
         .filter(Boolean);
 }
 function isAllowedOrigin(origin) {
-    if (!origin) {
+    if (origin === 'null') {
         return true;
+    }
+    if (!origin) {
+        return false;
     }
     const normalizedOrigin = normalizeOrigin(origin);
     if (!normalizedOrigin) {

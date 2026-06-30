@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, RelationId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, RelationId, Index } from 'typeorm';
 import { RestaurantEntity } from './restaurant.entity';
 
 @Entity('restaurant_gst')
@@ -6,6 +6,7 @@ export class RestaurantGSTEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_restaurant_gst_restaurant_id')
   @ManyToOne(() => RestaurantEntity, restaurant => restaurant.gstDetail)
   restaurant!: RestaurantEntity;
 

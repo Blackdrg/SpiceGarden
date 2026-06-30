@@ -1,12 +1,16 @@
 
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { AuditService } from '../../audit/audit.service';
 import { LedgerService } from '../../modules/ledger/ledger.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
 import { Request } from 'express';
 import { PaymentGateway } from './gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from './payment.types';
+import { WalletEntity } from '../../db/entities/wallet.entity';
+import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 
 @Injectable()
 export class PaymentService {
@@ -18,9 +22,12 @@ export class PaymentService {
     private configService: ConfigService,
     private auditService: AuditService,
     private ledgerService: LedgerService,
-    private gatewayFactory: PaymentGatewayFactory
+    private gatewayFactory: PaymentGatewayFactory,
+    @InjectRepository(WalletEntity)
+    private readonly walletRepo: Repository<WalletEntity>,
+    @InjectRepository(WalletTransactionEntity)
+    private readonly transactionRepo: Repository<WalletTransactionEntity>,
   ) {
-
   }
 
   /**
@@ -92,8 +99,7 @@ export class PaymentService {
     amount: number,
     request?: Request
   ): Promise<void> {
-    // Check amount limits
-    const maxSingleAmount = this.configService.get<number>('PAYMENT_MAX_SINGLE_AMOUNT', 10000); // ,000
+    const maxSingleAmount = this.configService.get<number>('PAYMENT_MAX_SINGLE_AMOUNT', 10000);
     if (amount > maxSingleAmount) {
       throw new BadRequestException(`Payment amount exceeds maximum allowed: ${maxSingleAmount}`);
     }
@@ -102,13 +108,25 @@ export class PaymentService {
       throw new BadRequestException('Payment amount must be greater than zero');
     }
 
-    // Check daily limits per user
     if (userId) {
       const dailyLimit = this.configService.get<number>('PAYMENT_DAILY_LIMIT_PER_USER', 50000);
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const wallet = await this.walletRepo.findOne({ where: { userId } });
+      if (wallet) {
+      const dailyTotal = await this.transactionRepo
+        .createQueryBuilder('t')
+        .where('t.walletId = :walletId', { walletId: wallet.id })
+        .andWhere('t.createdAt >= :start', { start: oneDayAgo })
+        .andWhere('t.type = :type', { type: 'debit' })
+        .select('SUM(t.amount)', 'total')
+        .getRawOne<{ total: string }>();
+      const spent = parseFloat(dailyTotal?.total || '0');
+        if (spent + amount > dailyLimit) {
+          throw new BadRequestException(`Daily payment limit exceeded. Spent: ${spent}, Limit: ${dailyLimit}`);
+        }
+      }
     }
 
-    // Check for suspicious patterns (velocity checks would be more complex in production)
-    // For now, we'll implement basic checks
     await this.checkSuspiciousPatterns(userId, amount, request);
   }
 

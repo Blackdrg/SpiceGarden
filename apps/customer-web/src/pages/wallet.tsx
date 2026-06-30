@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { useState, CSSProperties } from 'react';
+import { Button, Card, DESIGN_TOKENS, useToast } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 
-const bottomNavStyle: React.CSSProperties = {
+const bottomNavStyle: CSSProperties = {
   position: 'fixed',
   bottom: 0,
   left: 0,
@@ -15,21 +15,27 @@ const bottomNavStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-const navButtonStyle: React.CSSProperties = {
+const navButtonStyle: CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: 'white',
+  borderTop: '1px solid #eee',
   display: 'flex',
-  flexDirection: 'column',
+  justifyContent: 'space-around',
   alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-};
-
-const handleWithdraw = () => {
-  alert('Withdrawal feature coming soon');
 };
 
 const WalletPage = () => {
   const router = useRouter();
+  const toast = useToast();
   const [balance, setBalance] = useState(500);
+
+  const handleWithdraw = () => {
+    toast.showToast({ message: 'Withdrawal feature coming soon', type: 'info', duration: 0 });
+  };
   const [transactionHistory] = useState([
     { id: 1, type: 'credit' as const, amount: 500, description: 'Welcome Bonus', date: '2026-05-20' },
     { id: 2, type: 'debit' as const, amount: 347, description: 'Order #SG12345', date: '2026-05-21' },

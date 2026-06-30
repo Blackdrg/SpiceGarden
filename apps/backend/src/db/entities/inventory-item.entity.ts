@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { RestaurantBranchEntity } from './restaurant-branch.entity';
 import { SupplierEntity } from './supplier.entity';
 
 @Entity('inventory_items')
+@Index('idx_inventory_items_low_stock_threshold', ['lowStockThreshold'])
 export class InventoryItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from '../redux/store';
 import { NetworkStatusProvider } from '../contexts/NetworkStatusContext';
+import { ToastProvider } from '@spicegarden/ui';
 import OfflineIndicator from '../components/OfflineIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
 import '../analytics';
@@ -28,12 +29,14 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <NetworkStatusProvider>
-          <ErrorBoundary>
-            <div className={`${styles.entryAnimation} ${animated ? styles.animated : ''} ${prefersReducedMotion ? styles.reducedMotion : ''}`}>
-              <Component {...pageProps} />
-              <OfflineIndicator />
-            </div>
-          </ErrorBoundary>
+          <ToastProvider>
+            <ErrorBoundary>
+              <div className={`${styles.entryAnimation} ${animated ? styles.animated : ''} ${prefersReducedMotion ? styles.reducedMotion : ''}`}>
+                <Component {...pageProps} />
+                <OfflineIndicator />
+              </div>
+            </ErrorBoundary>
+          </ToastProvider>
         </NetworkStatusProvider>
       </QueryClientProvider>
     </Provider>

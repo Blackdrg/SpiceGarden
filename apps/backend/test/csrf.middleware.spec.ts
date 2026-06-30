@@ -129,10 +129,12 @@ describe('CSRF Protection', () => {
       const token1 = generateCsrfToken();
       const token2 = generateCsrfToken();
 
-      expect(token1).toHaveLength(44);
-      expect(token2).toHaveLength(44);
+      expect(token1).toHaveLength(69);
+      expect(token2).toHaveLength(69);
       expect(token1).not.toBe(token2);
-      expect(/^[a-zA-Z0-9+/=]+$/.test(token1)).toBe(true);
+      expect(token1).toMatch(/^[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=]+$/);
+      const payload = JSON.parse(Buffer.from(token1.split('.')[1], 'base64').toString());
+      expect(payload.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
     });
   });
 });

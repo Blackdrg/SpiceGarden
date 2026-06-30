@@ -61,5 +61,7 @@ __decorate([
     __metadata("design:type", Date)
 ], SubscriptionEntity.prototype, "updatedAt", void 0);
 exports.SubscriptionEntity = SubscriptionEntity = __decorate([
-    (0, typeorm_1.Entity)('subscriptions')
+    (0, typeorm_1.Entity)('subscriptions'),
+    (0, typeorm_1.Index)('idx_subscriptions_user_id', ['userId']),
+    (0, typeorm_1.Index)('idx_subscriptions_status', ['status'])
 ], SubscriptionEntity);

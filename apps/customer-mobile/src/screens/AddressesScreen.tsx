@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-root-toast';
 import { STORAGE_KEYS } from '../constants/storage.keys';
 import { getCurrentMobileLocation, requestMobileLocationPermission, type MobileLocationPermissionStatus } from '../services/location.service';
 
@@ -65,7 +66,7 @@ export const AddressesScreen = () => {
 
   const getCurrentLocation = useCallback(async () => {
     if (locationPermission !== 'granted') {
-      Alert.alert('Permission Required', 'Location permission is needed to add your current address');
+      Toast.show('Location permission is needed to add your current address', { duration: Toast.durations.SHORT });
       return;
     }
 
@@ -83,26 +84,14 @@ export const AddressesScreen = () => {
       
       saveAddresses([...addresses, newAddress]);
     } catch (e) {
-      Alert.alert('Error', 'Could not get your current location');
+      Toast.show('Could not get your current location', { duration: Toast.durations.SHORT });
     }
   }, [addresses, locationPermission, saveAddresses]);
 
   const deleteAddress = useCallback((id: string) => {
-    Alert.alert(
-      'Delete Address',
-      'Are you sure you want to delete this address?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => {
-            const newAddresses = addresses.filter(a => a.id !== id);
-            saveAddresses(newAddresses);
-          }
-        },
-      ]
-    );
+    const newAddresses = addresses.filter(a => a.id !== id);
+    saveAddresses(newAddresses);
+    Toast.show('Address deleted', { duration: Toast.durations.SHORT });
   }, [addresses, saveAddresses]);
 
   const setDefaultAddress = useCallback((id: string) => {
@@ -197,7 +186,7 @@ export const AddressesScreen = () => {
 
         <Pressable 
           style={styles.addButton}
-          onPress={() => Alert.alert('Add Address', 'Address form would go here')}
+          onPress={() => Toast.show('Address form would go here', { duration: Toast.durations.SHORT })}
         >
           <Ionicons name="add" size={24} color="white" />
           <Text style={styles.addButtonText}>Add Address</Text>

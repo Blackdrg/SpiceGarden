@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
+import { useToast } from '@spicegarden/ui';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
@@ -51,6 +52,7 @@ function getNavColorClass(key: string) {
 
 const HistoryPage = () => {
   const router = useRouter();
+  const toast = useToast();
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -116,7 +118,7 @@ const HistoryPage = () => {
         cartItems.forEach(item => {
           dispatch(addToCart({ item, restaurantId: order.restaurantId || 'rest-001' }));
         });
-        alert('Items added to cart! You can now proceed to checkout.');
+        toast.showToast({ message: 'Items added to cart! You can now proceed to checkout.', type: 'success', duration: 4000 });
         router.push('/cart');
       } else {
         throw new Error('No items found in order');

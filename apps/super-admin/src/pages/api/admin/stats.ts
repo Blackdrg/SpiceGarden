@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { branchId } = req.query;
+  const { branchId } = req.query || {};
 
   try {
     const url = new URL(`${BACKEND_URL}/admin/dashboard`);

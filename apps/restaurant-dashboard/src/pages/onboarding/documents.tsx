@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './documents.module.css';
 
@@ -14,6 +14,7 @@ const DOCUMENTS = [
 type DocKey = typeof DOCUMENTS[number]['key'];
 
 export default function OnboardingDocuments() {
+  const toast = useToast();
   const [docs, setDocs] = useState<Record<DocKey, { uploaded: boolean; verified: boolean; file?: File }>>({
     fssai: { uploaded: false, verified: false },
     gstCertificate: { uploaded: false, verified: false },
@@ -40,9 +41,9 @@ export default function OnboardingDocuments() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (res.ok) alert('Documents saved');
+      if (res.ok) toast.showToast({ message: 'Documents saved', type: 'success', duration: 0 });
     } catch (e) {
-      alert('Failed to save documents');
+      toast.showToast({ message: 'Failed to save documents', type: 'error', duration: 0 });
     } finally {
       setLoading(false);
     }

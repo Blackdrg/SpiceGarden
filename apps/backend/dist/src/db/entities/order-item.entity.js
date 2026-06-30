@@ -45,6 +45,7 @@ __decorate([
     __metadata("design:type", String)
 ], OrderItemEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_order_items_order_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], OrderItemEntity.prototype, "orderId", void 0);

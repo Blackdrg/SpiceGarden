@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { MenuCategoryEntity } from './menu-category.entity';
 import { HSNSACEntity } from './hsn-sac.entity';
 import { MenuAddonEntity } from './menu-addon.entity';
@@ -8,6 +8,7 @@ export class MenuItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_menu_items_name')
   @Column()
   name!: string;
 
@@ -26,9 +27,11 @@ export class MenuItemEntity {
   @Column({ default: 0 })
   spiceLevel!: number;
 
+  @Index('idx_menu_items_status')
   @Column({ default: 'available' })
   status!: string;
 
+  @Index('idx_menu_items_category_id')
   @ManyToOne(() => MenuCategoryEntity, (category) => category.items)
   category!: MenuCategoryEntity;
 

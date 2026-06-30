@@ -37,7 +37,7 @@ __decorate([
     __metadata("design:type", String)
 ], NotificationAnalyticsEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_notification_analytics_notification_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], NotificationAnalyticsEntity.prototype, "notificationId", void 0);

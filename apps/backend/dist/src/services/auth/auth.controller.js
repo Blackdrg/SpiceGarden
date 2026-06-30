@@ -70,6 +70,8 @@ let AuthController = class AuthController {
         const tokens = await this.authService.login(user, deviceInfo);
         setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
         return {
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
             user: {
                 id: user.id,
                 email: user.email,
@@ -98,12 +100,14 @@ let AuthController = class AuthController {
         const tokens = await this.authService.login(savedUser, deviceInfo);
         setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
         return {
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
             user: {
                 id: savedUser.id,
                 email: savedUser.email,
                 fullName: savedUser.fullName,
-                role: user_interface_1.UserRole.CUSTOMER,
-                status: user_interface_1.UserStatus.ACTIVE,
+                role: savedUser.role,
+                status: savedUser.status,
             },
         };
     }

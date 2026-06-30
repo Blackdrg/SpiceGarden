@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { OrderEntity } from './order.entity';
 
 @Entity('payment_disputes')
@@ -6,6 +6,7 @@ export class PaymentDisputeEntity {
    @PrimaryGeneratedColumn('uuid')
    id!: string;
 
+   @Index('idx_payment_disputes_order_id')
    @ManyToOne(() => OrderEntity)
    order!: OrderEntity;
 
@@ -30,6 +31,7 @@ export class PaymentDisputeEntity {
    @Column('simple-json', { nullable: true })
    evidence?: any; // Evidence submitted for dispute resolution
 
+   @Index('idx_payment_disputes_status')
    @Column()
    status!: 'warning' | 'needs_response' | 'under_review' | 'won' | 'lost'; // Dispute status
 

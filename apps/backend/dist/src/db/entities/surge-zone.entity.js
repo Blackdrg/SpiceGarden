@@ -60,5 +60,7 @@ __decorate([
     __metadata("design:type", Date)
 ], SurgeZoneEntity.prototype, "updatedAt", void 0);
 exports.SurgeZoneEntity = SurgeZoneEntity = __decorate([
-    (0, typeorm_1.Entity)('surge_zones')
+    (0, typeorm_1.Entity)('surge_zones'),
+    (0, typeorm_1.Index)('idx_surge_zones_is_active', ['isActive']),
+    (0, typeorm_1.Index)('idx_surge_zones_created_at', ['createdAt'])
 ], SurgeZoneEntity);

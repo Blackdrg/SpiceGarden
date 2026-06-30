@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './pricing.module.css';
 
 export default function OnboardingPricing() {
+  const toast = useToast();
   const [form, setForm] = useState({
     deliveryFee: 40,
     packagingFee: 10,
@@ -24,7 +25,7 @@ export default function OnboardingPricing() {
       if (!res.ok) throw new Error('Failed');
       window.location.href = '/onboarding/payout';
     } catch (e) {
-      alert('Failed to save pricing');
+      toast.showToast({ message: 'Failed to save pricing', type: 'error', duration: 0 });
     } finally {
       setLoading(false);
     }

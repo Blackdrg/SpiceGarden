@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.menuApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
 exports.api = api;
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
 function getCsrfToken() {
     if (typeof document === 'undefined')
         return null;
@@ -90,20 +90,10 @@ exports.authApi = {
 };
 exports.restaurantsApi = {
     list: async (lat, lng) => {
-        try {
-            return await api('/restaurants', {
-                method: 'GET',
-                headers: lat && lng ? { 'x-location': `${lat},${lng}` } : undefined,
-            });
-        }
-        catch (error) {
-            console.warn('Backend unavailable, returning mock data');
-            return [
-                { id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', name: 'Spice Garden - Downtown', description: 'Biryani, Karahi, Naan', rating: 4.5, deliveryTime: 30, isActive: true },
-                { id: 'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', name: 'Spice Garden - Mall Road', description: 'Burger, Fries, Shake', rating: 4.3, deliveryTime: 25, isActive: true },
-                { id: 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', name: 'Spice Garden - Gulshan', description: 'Pizza, Pasta, Salad', rating: 4.7, deliveryTime: 35, isActive: true },
-            ];
-        }
+        return await api('/restaurants', {
+            method: 'GET',
+            headers: lat && lng ? { 'x-location': `${lat},${lng}` } : undefined,
+        });
     },
     get: (id) => api(`/restaurants/${id}`),
     search: (query) => api(`/restaurants/search?q=${encodeURIComponent(query)}`),

@@ -54,6 +54,7 @@ __decorate([
     __metadata("design:type", String)
 ], RefundEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_refunds_order_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], RefundEntity.prototype, "orderId", void 0);
@@ -62,6 +63,7 @@ __decorate([
     __metadata("design:type", order_entity_1.OrderEntity)
 ], RefundEntity.prototype, "order", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_refunds_user_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], RefundEntity.prototype, "requestedBy", void 0);
@@ -78,6 +80,7 @@ __decorate([
     __metadata("design:type", Number)
 ], RefundEntity.prototype, "amount", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_refunds_status'),
     (0, typeorm_1.Column)({ type: 'enum', enum: RefundStatus, default: RefundStatus.REQUESTED }),
     __metadata("design:type", String)
 ], RefundEntity.prototype, "status", void 0);

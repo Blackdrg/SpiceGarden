@@ -24,6 +24,8 @@ export declare class AuthController {
     private configService;
     constructor(authService: AuthService, passwordResetService: PasswordResetService, userRepo: Repository<UserEntity>, notificationService: NotificationService, configService: ConfigService);
     login(body: LoginBody, req: Request, res: Response): Promise<{
+        access_token: string;
+        refresh_token: string;
         user: {
             id: string;
             email: string;
@@ -33,6 +35,8 @@ export declare class AuthController {
         };
     }>;
     register(body: RegisterBody, req: Request, res: Response): Promise<{
+        access_token: string;
+        refresh_token: string;
         user: {
             id: string;
             email: string;

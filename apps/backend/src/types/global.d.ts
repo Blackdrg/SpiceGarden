@@ -16,22 +16,3 @@ declare module 'compression' {
   function compression(options?: CompressionOptions): any;
   export default compression;
 }
-
-declare module 'crypto-js' {
-  export interface CryptoJS {
-    AES: {
-      encrypt: (text: string, key: any) => any;
-      decrypt: (ciphertext: string, key: any) => any;
-    };
-    enc: {
-      Utf8: any;
-    };
-  }
-  export const AES: {
-    encrypt: (text: string, key: any) => any;
-    decrypt: (ciphertext: string, key: any) => any;
-  };
-  export const enc: { Utf8: any };
-  const CryptoJS: CryptoJS;
-  export default CryptoJS;
-}

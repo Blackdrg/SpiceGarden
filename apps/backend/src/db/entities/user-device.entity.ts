@@ -7,7 +7,6 @@ export class UserDeviceEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
   @Column()
   userId!: string;
 

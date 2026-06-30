@@ -87,6 +87,8 @@ export class AuthController {
     setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
 
     return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
       user: {
         id: user.id,
         email: user.email,
@@ -119,12 +121,14 @@ export class AuthController {
     setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
 
     return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
       user: {
         id: savedUser.id,
         email: savedUser.email,
         fullName: savedUser.fullName,
-        role: UserRole.CUSTOMER,
-        status: UserStatus.ACTIVE,
+        role: savedUser.role,
+        status: savedUser.status,
       },
     };
   }

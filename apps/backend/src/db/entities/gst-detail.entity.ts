@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, RelationId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, RelationId, Index } from 'typeorm';
 import { OrderEntity } from './order.entity';
 
 @Entity('gst_details')
@@ -6,6 +6,7 @@ export class GSTDetailEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_gst_details_order_id')
   @ManyToOne(() => OrderEntity, order => order.gstDetail)
   order!: OrderEntity;
 

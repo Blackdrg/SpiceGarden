@@ -33,7 +33,7 @@ __decorate([
     __metadata("design:type", String)
 ], PaymentMethodEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_payment_methods_user_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], PaymentMethodEntity.prototype, "userId", void 0);

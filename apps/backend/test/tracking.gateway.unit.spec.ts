@@ -295,7 +295,7 @@ describe('TrackingGateway unit tests', () => {
       (gateway as any).connectedClients.set('c1', {
         id: 'c1',
         namespace: '/tracking',
-        acknowledgedMessages: new Map(),
+        acknowledgedMessages: new Map([['msg-1', { id: 'msg-1', event: 'test', ack: false, timestamp: new Date() }]]),
       });
       (gateway as any).pendingAcks.set('msg-1', { resolve: jest.fn(), reject: jest.fn(), timeout: 1 });
 

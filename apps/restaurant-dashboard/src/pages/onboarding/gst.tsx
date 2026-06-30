@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import styles from './gst.module.css';
 
 export default function OnboardingGST() {
+  const toast = useToast();
   const [form, setForm] = useState({
     gstin: '',
     legalName: '',
@@ -24,9 +25,9 @@ export default function OnboardingGST() {
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error('Failed');
-      alert('GST configuration saved');
+      toast.showToast({ message: 'GST configuration saved', type: 'success', duration: 0 });
     } catch (e) {
-      alert('Failed to save GST details');
+      toast.showToast({ message: 'Failed to save GST details', type: 'error', duration: 0 });
     } finally {
       setLoading(false);
     }

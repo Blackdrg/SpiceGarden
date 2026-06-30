@@ -7,7 +7,6 @@ export class DeviceFingerprintEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
   @Column()
   userId!: string;
 

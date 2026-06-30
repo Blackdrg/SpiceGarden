@@ -1,25 +1,42 @@
 **/.classpath
 **/.dockerignore
 **/.env
+**/.env.*
 **/.git
 **/.gitignore
+**/.github
+**/.next
 **/.project
 **/.settings
 **/.toolstarget
 **/.vs
 **/.vscode
-**/*.*proj.user
-**/*.dbmdl
-**/*.jfm
+**/__tests__
+**/backup
 **/bin
 **/charts
+**/coverage
+**/dist
 **/docker-compose*
 **/compose*
 **/Dockerfile*
+**/docs
+# Infrastructure (top-level only, allow backend Dockerfiles)
+infra/*
+!infra/backend/Dockerfile
+!infra/customer-web/Dockerfile
+!infra/restaurant-dashboard/Dockerfile
+!infra/super-admin/Dockerfile
+!infra/delivery-partner/Dockerfile
+**/k8s
+**/legal
+**/logs
 **/node_modules
 **/npm-debug.log
 **/obj
+**/reports
 **/secrets.dev.yaml
-**/values.dev.yaml
-LICENSE
-README.md
+ **/storybook-static
+ **/values.dev.yaml
+ LICENSE
+ README.md

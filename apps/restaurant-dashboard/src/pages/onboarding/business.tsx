@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './business.module.css';
 
 export default function OnboardingBusiness() {
+  const toast = useToast();
   const [form, setForm] = useState({
     legalName: '',
     tradeName: '',
@@ -28,7 +29,7 @@ export default function OnboardingBusiness() {
         }),
       });
       if (!res.ok) throw new Error('Failed');
-      alert('Business info submitted');
+      toast.showToast({ message: 'Business info submitted', type: 'success', duration: 0 });
     } catch (e) {
       setError('Failed to submit. Please try again.');
     } finally {

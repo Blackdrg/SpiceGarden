@@ -12,9 +12,18 @@ function createPaymentService(gateway: PaymentGateway) {
   const auditService: any = { logPaymentEvent: jest.fn().mockReturnValue(Promise.resolve(undefined)) };
   const ledgerService: any = { createTransaction: jest.fn().mockReturnValue(Promise.resolve(undefined)) };
   const gatewayFactory: any = { getGateway: jest.fn().mockReturnValue(gateway) };
+  const walletRepo: any = { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) };
+  const transactionRepo: any = {
+    createQueryBuilder: jest.fn().mockReturnValue({
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })),
+    }),
+  };
 
   return {
-    service: new PaymentService(configService, auditService, ledgerService, gatewayFactory) as any,
+    service: new PaymentService(configService, auditService, ledgerService, gatewayFactory, walletRepo, transactionRepo) as any,
     auditService,
     ledgerService,
     gatewayFactory,

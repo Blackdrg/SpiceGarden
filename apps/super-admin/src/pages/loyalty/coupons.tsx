@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useToast } from '@spicegarden/ui';
 import styles from './coupons.module.css';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -24,13 +24,14 @@ export default function LoyaltyCoupons() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
   const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
-  useState(() => {
+  useEffect(() => {
     fetch(`${API}/loyalty/coupons`)
       .then((r) => r.json())
       .then((data) => { setCoupons(data); setLoading(false); })
       .catch(() => setLoading(false));
-  });
+  }, []);
 
   const createCoupon = async () => {
     setCreating(true);
@@ -41,7 +42,7 @@ export default function LoyaltyCoupons() {
     });
     setForm({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
     setCreating(false);
-    alert('Coupon created');
+    toast.showToast({ message: 'Coupon created successfully', type: 'success', duration: 0 });
   };
 
   const activeCoupons = coupons.filter((c) => c.status === 'active');

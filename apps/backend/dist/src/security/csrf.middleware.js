@@ -46,10 +46,6 @@ const common_1 = require("@nestjs/common");
 const crypto = __importStar(require("crypto"));
 function csrfProtection() {
     return (req, res, next) => {
-        const ignoredMethods = ['GET', 'HEAD', 'OPTIONS'];
-        if (ignoredMethods.includes(req.method)) {
-            return next();
-        }
         const ignoredPaths = ['/api/webhook', '/payments/webhook', '/auth/login', '/auth/register'];
         if (ignoredPaths.some(path => req.path.startsWith(path))) {
             return next();
@@ -79,17 +75,21 @@ function csrfProtection() {
             }
         }
         const csrfToken = tokenFromHeader || generateCsrfToken();
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie(csrfTokenCookie, csrfToken, {
             httpOnly: false,
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            secure: isProduction,
+            path: '/',
         });
         res.header('X-CSRF-Token', csrfToken);
         next();
     };
 }
 function generateCsrfToken() {
-    return crypto.randomBytes(32).toString('base64');
+    const token = crypto.randomBytes(32).toString('base64');
+    const payload = Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64');
+    return `${token}.${payload}`;
 }
 let CsrfMiddleware = class CsrfMiddleware {
     use(req, res, next) {

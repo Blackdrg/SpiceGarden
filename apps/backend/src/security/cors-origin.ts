@@ -36,8 +36,11 @@ export function getAllowedOrigins(): string[] {
 }
 
 export function isAllowedOrigin(origin?: string): boolean {
-  if (!origin) {
+  if (origin === 'null') {
     return true;
+  }
+  if (!origin) {
+    return false;
   }
 
   const normalizedOrigin = normalizeOrigin(origin);

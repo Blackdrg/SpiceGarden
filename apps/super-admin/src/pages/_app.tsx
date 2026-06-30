@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from '../redux/store';
-import { trackEvent } from '@spicegarden/ui';
+import { trackEvent, ToastProvider } from '@spicegarden/ui';
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
@@ -22,9 +22,11 @@ export default function AdminApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Sentry.ErrorBoundary fallback={<p>An error occurred</p>}>
-          <Component {...pageProps} />
-        </Sentry.ErrorBoundary>
+        <ToastProvider>
+          <Sentry.ErrorBoundary fallback={<p>An error occurred</p>}>
+            <Component {...pageProps} />
+          </Sentry.ErrorBoundary>
+        </ToastProvider>
       </QueryClientProvider>
     </Provider>
   );

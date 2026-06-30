@@ -1,4 +1,3 @@
-import React from 'react';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 const AuthCallbackPage = () => {

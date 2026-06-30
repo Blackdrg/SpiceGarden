@@ -6,7 +6,7 @@ export class SessionEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_user_sessions_user_id')
   @Column()
   userId!: string;
 

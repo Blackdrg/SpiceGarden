@@ -29,10 +29,9 @@ RUN adduser -S nextjs -u 1001
 # Set working directory
 WORKDIR /app
 
-# Copy only necessary files from builder
-COPY --from=builder /app/apps/backend/dist ./dist
-COPY --from=builder /app/apps/backend/package*.json ./
+# Copy only backend dependencies and dist from builder
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/backend/dist ./dist
 
 # Change ownership to non-root user
 RUN chown -R nextjs:nodejs /app

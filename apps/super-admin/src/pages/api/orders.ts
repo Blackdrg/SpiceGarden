@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { page = '1', limit = '10', status } = req.query;
+  const { page = '1', limit = '10', status } = req.query || {};
 
   try {
     const url = new URL(`${BACKEND_URL}/admin/orders`);

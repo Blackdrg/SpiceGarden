@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useEffect, CSSProperties } from 'react';
 import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useOfflineQueue } from '../hooks/useOfflineQueue';
@@ -47,7 +47,7 @@ function searchReducer(state: SearchState, action: { type: string; payload?: unk
   }
 }
 
-const offlineBannerStyle: React.CSSProperties = {
+const offlineBannerStyle:   CSSProperties = {
   backgroundColor: '#fff3e0',
   color: '#f57c00',
   padding: '4px 16px',
@@ -59,7 +59,7 @@ const offlineBannerStyle: React.CSSProperties = {
   fontSize: '14px',
 };
 
-const bottomNavStyle: React.CSSProperties = {
+const bottomNavStyle:   CSSProperties = {
   position: 'fixed',
   bottom: 0,
   left: 0,
@@ -72,7 +72,7 @@ const bottomNavStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-const navButtonStyle = (isActive: boolean): React.CSSProperties => ({
+const navButtonStyle = (isActive: boolean):   CSSProperties => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -106,7 +106,7 @@ const SearchPage = () => {
     }
   }, [enqueueRequest, state.query]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const debounceTimer = setTimeout(searchRestaurants, 300);
     return () => clearTimeout(debounceTimer);
   }, [searchRestaurants]);

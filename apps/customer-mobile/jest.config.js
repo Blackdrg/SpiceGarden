@@ -11,6 +11,8 @@ module.exports = {
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
     '^expo-haptics$': '<rootDir>/__mocks__/expo-haptics.js',
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
+    '\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
+    '^.+\\.module\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
   },
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',

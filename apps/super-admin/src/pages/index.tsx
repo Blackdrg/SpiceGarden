@@ -230,7 +230,7 @@ function DeliveryHeatmap({ data }: { data: HeatmapPoint[] }) {
         const bv = Math.round(30);
         return (
           <div
-            key={i}
+            key={key}
             title={avg > 0.4 ? `High demand zone (intensity: ${avg.toFixed(2)})` : ''}
             style={{ backgroundColor: `rgba(${r},${g},${bv},${Math.max(0.06, avg)})`, borderRadius: 1 }}
           />

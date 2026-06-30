@@ -91,5 +91,6 @@ __decorate([
     __metadata("design:type", Date)
 ], GSTDetailEntity.prototype, "createdAt", void 0);
 exports.GSTDetailEntity = GSTDetailEntity = __decorate([
-    (0, typeorm_1.Entity)('gst_details')
+    (0, typeorm_1.Entity)('gst_details'),
+    (0, typeorm_1.Index)('idx_gst_details_order_id', ['orderId'])
 ], GSTDetailEntity);

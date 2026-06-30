@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, Pressable, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-root-toast';
 import { STORAGE_KEYS } from '../constants/storage.keys';
 import { API_URL } from '../constants/api';
 
@@ -88,36 +89,25 @@ const PaymentMethodsScreen = () => {
   }, [fetchPaymentMethods, fadeAnim]);
 
   const handleDeletePaymentMethod = useCallback(async (id: string) => {
-    Alert.alert(
-      'Delete Payment Method',
-      'Are you sure you want to delete this payment method?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setActionLoading(id);
-              const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-              const response = await fetch(`${API_URL}/user/payment-methods/${id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${token}` },
-              });
+    try {
+      setActionLoading(id);
+      const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+      const response = await fetch(`${API_URL}/user/payment-methods/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-              if (response.ok) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                fetchPaymentMethods();
-              }
-            } catch (error) {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            } finally {
-              setActionLoading(null);
-            }
-          },
-        },
-      ]
-    );
+      if (response.ok) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        Toast.show('Payment method deleted', { duration: Toast.durations.SHORT });
+        fetchPaymentMethods();
+      }
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Toast.show('Failed to delete payment method', { duration: Toast.durations.SHORT });
+    } finally {
+      setActionLoading(null);
+    }
   }, [fetchPaymentMethods]);
 
   const handleSetDefault = useCallback(async (id: string) => {

@@ -10,5 +10,5 @@ export const getApiBaseUrl = (): string => {
 };
 
 export const API_BASE_URL = getApiBaseUrl();
-export const API_URL = `${API_BASE_URL}/api`;
+export const API_URL = API_BASE_URL;
 export const SOCKET_URL = API_BASE_URL;

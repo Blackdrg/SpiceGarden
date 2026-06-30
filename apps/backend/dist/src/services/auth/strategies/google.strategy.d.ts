@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
-declare const GoogleStrategy_base: new (...args: [options: Record<string, any>] | []) => Strategy & {
+declare const GoogleStrategy_base: new (...args: [] | [options: Record<string, any>]) => Strategy & {
     validate(...args: any[]): unknown;
 };
 export declare class GoogleStrategy extends GoogleStrategy_base {

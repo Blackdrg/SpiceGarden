@@ -33,7 +33,7 @@ __decorate([
 ], WebhookRetryQueueEntity.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_webhook_retry_queue_webhook_id'),
     __metadata("design:type", String)
 ], WebhookRetryQueueEntity.prototype, "webhookId", void 0);
 __decorate([

@@ -19,7 +19,7 @@ export class OtpEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_otp_verifications_user_id')
   @Column()
   userId!: string;
 

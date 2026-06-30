@@ -13,7 +13,7 @@ export class NotificationAnalyticsEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_notification_analytics_notification_id')
   @Column()
   notificationId!: string;
 

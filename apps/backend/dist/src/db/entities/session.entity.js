@@ -31,7 +31,7 @@ __decorate([
     __metadata("design:type", String)
 ], SessionEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_sessions_user_id'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], SessionEntity.prototype, "userId", void 0);

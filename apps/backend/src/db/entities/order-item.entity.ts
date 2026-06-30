@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { OrderEntity } from './order.entity';
 import { MenuItemEntity } from './menu-item.entity';
 import { HSNSACEntity } from './hsn-sac.entity';
@@ -8,6 +8,7 @@ export class OrderItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_order_items_order_id')
   @Column()
   orderId!: string;
 

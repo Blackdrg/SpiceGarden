@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { RestaurantBranchEntity } from './restaurant-branch.entity';
 import { MenuItemEntity } from './menu-item.entity';
 
@@ -13,6 +13,7 @@ export class MenuCategoryEntity {
   @Column({ default: 0 })
   sortOrder!: number;
 
+  @Index('idx_menu_categories_branch_id')
   @ManyToOne(() => RestaurantBranchEntity, (branch) => branch.categories)
   branch!: RestaurantBranchEntity;
 
