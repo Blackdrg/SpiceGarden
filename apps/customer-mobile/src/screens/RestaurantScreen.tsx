@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Animated, Easing } from 'react-native';
-// import { DESIGN_TOKENS } from '@spicegarden/ui';
-// import { STRINGS } from '../constants/strings';
-// import { formatCurrency } from '../utils/currency';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { getCartSafe } from '../utils/storage';
 
 interface RestaurantInfo {
   id: string;
@@ -80,9 +75,75 @@ const RestaurantScreen = () => {
        }
      };
      loadData();
-   }, [restaurantId, fadeAnim]);
+}, [restaurantId, fadeAnim]);
 
-   // Rest of the component remains the same...
- };
+    const addToCart = (itemId: string) => {
+      setAddingItem(itemId);
+      setCartCount(c => c + 1);
+      setTimeout(() => setAddingItem(null), 500);
+    };
+
+    if (loading) {
+      return (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="#f97316" />
+          <Text style={styles.loadingText}>Loading menu...</Text>
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.center}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.container}>
+        {restaurant && (
+          <>
+            <View style={styles.header}>
+              <Text style={styles.title}>{restaurant.name}</Text>
+              <Text style={styles.subtitle}>{restaurant.deliveryTime} • {restaurant.address}</Text>
+            </View>
+            <Animated.View style={[styles.menuContainer, { opacity: fadeAnim }]}>
+              {menuItems.map(item => (
+                <Pressable
+                  key={item.id}
+                  style={styles.menuItem}
+                  onPress={() => addToCart(item.id)}
+                >
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemDescription}>{item.description}</Text>
+                  <Text style={styles.itemPrice}>₹{item.price}</Text>
+                  {addingItem === item.id && (
+                    <Text style={styles.addedIndicator}>✓ Added</Text>
+                  )}
+                </Pressable>
+              ))}
+            </Animated.View>
+          </>
+        )}
+      </View>
+    );
+};
 
 export default RestaurantScreen;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#121212' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  loadingText: { color: '#888', marginTop: 12 },
+  errorText: { color: '#ff4444' },
+  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#333' },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  subtitle: { color: '#888', marginTop: 4 },
+  menuContainer: { padding: 16 },
+  menuItem: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#333' },
+  itemName: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
+  itemDescription: { color: '#888', marginTop: 4 },
+  itemPrice: { color: '#f97316', marginTop: 8, fontWeight: 'bold' },
+  addedIndicator: { color: '#4caf50', marginTop: 8 },
+});

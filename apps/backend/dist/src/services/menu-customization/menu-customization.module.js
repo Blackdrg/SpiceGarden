@@ -8,15 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MenuCustomizationModule = void 0;
 const common_1 = require("@nestjs/common");
-const db_repositories_module_1 = require("../../db/db-repositories.module");
+const typeorm_1 = require("@nestjs/typeorm");
 const menu_customization_service_1 = require("./menu-customization.service");
 const menu_customization_controller_1 = require("./menu-customization.controller");
+const menu_item_entity_1 = require("../../db/entities/menu-item.entity");
+const menu_category_entity_1 = require("../../db/entities/menu-category.entity");
+const menu_addon_entity_1 = require("../../db/entities/menu-addon.entity");
 let MenuCustomizationModule = class MenuCustomizationModule {
 };
 exports.MenuCustomizationModule = MenuCustomizationModule;
 exports.MenuCustomizationModule = MenuCustomizationModule = __decorate([
     (0, common_1.Module)({
-        imports: [db_repositories_module_1.DbRepositoriesModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([menu_item_entity_1.MenuItemEntity, menu_category_entity_1.MenuCategoryEntity, menu_addon_entity_1.MenuAddonEntity])],
         providers: [menu_customization_service_1.MenuCustomizationService],
         controllers: [menu_customization_controller_1.MenuCustomizationController],
         exports: [menu_customization_service_1.MenuCustomizationService],

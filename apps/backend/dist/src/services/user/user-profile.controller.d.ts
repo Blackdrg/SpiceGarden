@@ -24,17 +24,17 @@ interface PaymentMethodCreateBody {
 export declare class UserProfileController {
     private readonly profileService;
     constructor(profileService: UserProfileService);
-    getAddresses(req: any): Promise<import("../../db/entities/address.entity").AddressEntity[]>;
+    getAddresses(req: any): Promise<any>;
     createAddress(req: any, body: AddressCreateBody): Promise<any>;
-    updateAddress(req: any, id: string, body: Partial<AddressCreateBody>): Promise<import("../../db/entities/address.entity").AddressEntity>;
+    updateAddress(req: any, id: string, body: Partial<AddressCreateBody>): Promise<any>;
     deleteAddress(req: any, id: string): Promise<{
         success: boolean;
     }>;
-    getPaymentMethods(req: any): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity[]>;
-    createPaymentMethod(req: any, body: PaymentMethodCreateBody): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity>;
+    getPaymentMethods(req: any): Promise<any>;
+    createPaymentMethod(req: any, body: PaymentMethodCreateBody): Promise<any>;
     deletePaymentMethod(req: any, id: string): Promise<{
         success: boolean;
     }>;
-    setDefaultPaymentMethod(req: any, id: string): Promise<import("../../db/entities/payment-method.entity").PaymentMethodEntity>;
+    setDefaultPaymentMethod(req: any, id: string): Promise<any>;
 }
 export {};

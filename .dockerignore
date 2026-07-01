@@ -17,6 +17,7 @@
 **/charts
 **/coverage
 **/dist
+!packages/shared/dist
 **/docker-compose*
 **/compose*
 **/Dockerfile*

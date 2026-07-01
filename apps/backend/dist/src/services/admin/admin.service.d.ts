@@ -17,33 +17,23 @@ export declare class AdminService {
     getDashboardStats(branchId?: string): Promise<{
         stats: {
             revenue: number;
-            orders: number;
-            driversOnline: number;
+            orders: any;
+            driversOnline: any;
             complaints: number;
             refunds: number;
             fraudAlerts: number;
-            activeBranches: number;
+            activeBranches: any;
             pendingWithdrawals: number;
         };
-        revenueData: {
-            t: string;
-            revenue: number;
-            orders: number;
-        }[];
-        branches: {
-            name: any;
-            status: string;
-            orderCount: number;
-            avgPrepMins: number;
-            driversAssigned: number;
-        }[];
+        revenueData: any;
+        branches: any;
     }>;
     private getDisputeCount;
     private getRefundCount;
     private getBranchStats;
     private getRevenueData;
-    logAction(action: string, userId: string, entityType: string, entityId: string, metadata: any): Promise<AuditLogEntity>;
-    getAllOrders(page?: number, limit?: number): Promise<OrderEntity[]>;
+    logAction(action: string, userId: string, entityType: string, entityId: string, metadata: any): Promise<any>;
+    getAllOrders(page?: number, limit?: number): Promise<any>;
     banUser(userId: string, reason: string): Promise<{
         success: boolean;
     }>;

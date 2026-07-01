@@ -35,6 +35,7 @@ __decorate([
     __metadata("design:type", String)
 ], GSTDetailEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_gst_details_order_id'),
     (0, typeorm_1.ManyToOne)(() => order_entity_1.OrderEntity, order => order.gstDetail),
     __metadata("design:type", order_entity_1.OrderEntity)
 ], GSTDetailEntity.prototype, "order", void 0);
@@ -91,6 +92,5 @@ __decorate([
     __metadata("design:type", Date)
 ], GSTDetailEntity.prototype, "createdAt", void 0);
 exports.GSTDetailEntity = GSTDetailEntity = __decorate([
-    (0, typeorm_1.Entity)('gst_details'),
-    (0, typeorm_1.Index)('idx_gst_details_order_id', ['orderId'])
+    (0, typeorm_1.Entity)('gst_details')
 ], GSTDetailEntity);

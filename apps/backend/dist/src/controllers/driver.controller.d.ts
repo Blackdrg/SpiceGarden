@@ -16,13 +16,13 @@ export declare class DriverController {
         user: {
             id: string;
         };
-    }): Promise<DriverEntity | null>;
+    }): Promise<any>;
     getDriver(id: string, req: {
         user: {
             id: string;
             role: UserRole;
         };
-    }): Promise<DriverEntity | null>;
+    }): Promise<any>;
     getEarnings(id: string, req: {
         user: {
             id: string;
@@ -31,9 +31,9 @@ export declare class DriverController {
     }): Promise<{
         availableBalance: number;
         pendingBalance: number;
-        lifetimeEarnings: number;
-        weeklyEarnings: number;
-        todayEarnings: number;
+        lifetimeEarnings: any;
+        weeklyEarnings: any;
+        todayEarnings: any;
     }>;
     updateLocation(id: string, body: {
         lat: number;
@@ -59,7 +59,7 @@ export declare class DriverController {
         driverId: string;
         isAvailable: boolean;
     }>;
-    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<DriverEntity[]>;
+    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<any>;
 }
 export declare class OrderDriverController {
     private orderRepo;

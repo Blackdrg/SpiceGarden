@@ -42,7 +42,6 @@ __decorate([
 ], RestaurantGSTEntity.prototype, "restaurant", void 0);
 __decorate([
     (0, typeorm_1.RelationId)((restaurantGst) => restaurantGst.restaurant),
-    (0, typeorm_1.Index)('idx_restaurant_gst_restaurant_id'),
     __metadata("design:type", String)
 ], RestaurantGSTEntity.prototype, "restaurantId", void 0);
 __decorate([

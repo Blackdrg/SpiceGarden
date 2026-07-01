@@ -173,7 +173,7 @@ export class RazorpayGateway implements PaymentGateway {
   }
 
   async constructEvent(
-    payload: Buffer,
+    payload: any,
     signature: string,
     secret: string
   ): Promise<GatewayEvent> {

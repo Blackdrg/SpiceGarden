@@ -97,6 +97,40 @@ type AppAction =
   | { type: 'COMPLETE_DELIVERY'; payload: { amount: number; incentive?: number; orderNumber: string } }
   | { type: 'ACCEPT_ORDER'; payload: Order };
 
+interface DetailRowProps {
+  label: string;
+  value: string;
+}
+
+function DetailRow({ label, value }: DetailRowProps) {
+  return (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomColor: '#333', borderBottomWidth: 1 }}>
+      <Text style={{ color: '#888', fontSize: 13, flex: 1 }}>{label}</Text>
+      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '500', flex: 2, textAlign: 'right' }}>{value}</Text>
+    </View>
+  );
+}
+
+interface EarnRowProps {
+  label: string;
+  value: string;
+  pct: number;
+}
+
+function EarnRow({ label, value, pct }: EarnRowProps) {
+  return (
+    <View style={{ marginBottom: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+        <Text style={{ color: '#888', fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '500' }}>{value}</Text>
+      </View>
+      <View style={{ height: 6, backgroundColor: '#333', borderRadius: 3, overflow: 'hidden' }}>
+        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 3 }} />
+      </View>
+    </View>
+  );
+}
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_ONLINE':
@@ -770,3 +804,68 @@ const styles = StyleSheet.create({
   timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },
 
 });
+
+export default function App() {
+  const initial: AppState = {
+    isOnline: false,
+    incomingOrder: null,
+    activeDelivery: null,
+    earnings: { today: 0, pending: 0, bonus: 0, ordersToday: 0 },
+    shift: null,
+    deliveryOtp: '',
+    otpError: '',
+    log: [],
+    expandedIssue: false,
+    activeScreen: 'home',
+    locationPermission: 'pending',
+  };
+  const SCREEN_W = useWindowDimensions().width;
+  const [state, dispatch] = useReducer(appReducer, initial);
+  const socketRef = useRef<Socket | null>(null);
+
+  useEffect(() => {
+    async function initLocation() {
+      const { status } = await requestLocationPermission();
+      dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status === 'granted' ? 'granted' : 'denied' });
+    }
+    initLocation();
+  }, []);
+
+  useEffect(() => {
+    const appState = RNAppState.getStatus();
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState.match(/inactive|background/) && socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+    const subscription = RNAppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, []);
+
+  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
+
+  return (
+    <View style={styles.container}>
+      <DriverHeader isOnline={isOnline} onToggleOnline={(v) => dispatch({ type: 'SET_ONLINE', payload: v })} />
+      <DriverStats earnings={earnings} />
+      <DriverTabBar activeScreen={activeScreen} onChange={(s) => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: s })} />
+      {activeScreen === 'home' ? (
+        <HomeScreen
+          incomingOrder={incomingOrder}
+          activeDelivery={activeDelivery}
+          locationPermission={locationPermission}
+          isOnline={isOnline}
+          deliveryOtp={deliveryOtp}
+          otpError={otpError}
+          log={log}
+          expandedIssue={expandedIssue}
+          dispatch={dispatch}
+          socketRef={socketRef}
+          SCREEN_W={SCREEN_W}
+        />
+      ) : (
+        <EarningsScreen earnings={earnings} shift={shift} />
+      )}
+    </View>
+  );
+}

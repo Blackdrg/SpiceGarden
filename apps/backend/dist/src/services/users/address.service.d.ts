@@ -3,11 +3,11 @@ import { AddressEntity } from '../../db/entities/address.entity';
 export declare class AddressService {
     private readonly addressRepo;
     constructor(addressRepo: Repository<AddressEntity>);
-    getUserAddresses(userId: string): Promise<AddressEntity[]>;
+    getUserAddresses(userId: string): Promise<any>;
     addAddress(userId: string, data: Partial<AddressEntity> & {
         isDefault?: boolean;
-    }): Promise<AddressEntity>;
-    setDefault(userId: string, addressId: string): Promise<import("typeorm").UpdateResult>;
+    }): Promise<any>;
+    setDefault(userId: string, addressId: string): Promise<any>;
     deleteAddress(userId: string, addressId: string): Promise<{
         deleted: boolean;
     }>;

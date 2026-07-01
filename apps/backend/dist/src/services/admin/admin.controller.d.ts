@@ -6,52 +6,32 @@ export declare class AdminController {
     getStats(query: any): Promise<{
         stats: {
             revenue: number;
-            orders: number;
-            driversOnline: number;
+            orders: any;
+            driversOnline: any;
             complaints: number;
             refunds: number;
             fraudAlerts: number;
-            activeBranches: number;
+            activeBranches: any;
             pendingWithdrawals: number;
         };
-        revenueData: {
-            t: string;
-            revenue: number;
-            orders: number;
-        }[];
-        branches: {
-            name: any;
-            status: string;
-            orderCount: number;
-            avgPrepMins: number;
-            driversAssigned: number;
-        }[];
+        revenueData: any;
+        branches: any;
     }>;
     getFullStats(query: any): Promise<{
         stats: {
             revenue: number;
-            orders: number;
-            driversOnline: number;
+            orders: any;
+            driversOnline: any;
             complaints: number;
             refunds: number;
             fraudAlerts: number;
-            activeBranches: number;
+            activeBranches: any;
             pendingWithdrawals: number;
         };
-        revenueData: {
-            t: string;
-            revenue: number;
-            orders: number;
-        }[];
-        branches: {
-            name: any;
-            status: string;
-            orderCount: number;
-            avgPrepMins: number;
-            driversAssigned: number;
-        }[];
+        revenueData: any;
+        branches: any;
     }>;
-    getOrders(page: string, limit: string): Promise<import("../../db/entities/order.entity").OrderEntity[]>;
+    getOrders(page: string, limit: string): Promise<any>;
     banUser(body: {
         userId: string;
         reason: string;
