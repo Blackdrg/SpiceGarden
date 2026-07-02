@@ -11,9 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentsController = void 0;
 const common_1 = require("@nestjs/common");
+const express_1 = require("express");
 const payments_service_1 = require("./payments.service");
 const payment_hardening_service_1 = require("./payment-hardening.service");
 const retry_service_1 = require("./retry.service");
@@ -119,7 +121,7 @@ __decorate([
     __param(2, (0, common_1.Headers)('x-idempotency-key')),
     __param(3, (0, common_1.Query)('gateway')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, String, String]),
+    __metadata("design:paramtypes", [Object, typeof (_b = typeof express_1.Request !== "undefined" && express_1.Request) === "function" ? _b : Object, String, String]),
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "createPaymentIntent", null);
 __decorate([
@@ -163,6 +165,5 @@ exports.PaymentsController = PaymentsController = __decorate([
         payment_hardening_service_1.PaymentHardeningService,
         retry_service_1.RetryService,
         fraud_hardening_service_1.FraudHardeningService,
-        idempotency_service_1.IdempotencyService,
-        config_1.ConfigService])
+        idempotency_service_1.IdempotencyService, typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object])
 ], PaymentsController);

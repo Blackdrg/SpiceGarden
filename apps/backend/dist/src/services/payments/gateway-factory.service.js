@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var PaymentGatewayFactory_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentGatewayFactory = void 0;
 const common_1 = require("@nestjs/common");
@@ -54,7 +55,6 @@ let PaymentGatewayFactory = PaymentGatewayFactory_1 = class PaymentGatewayFactor
 exports.PaymentGatewayFactory = PaymentGatewayFactory;
 exports.PaymentGatewayFactory = PaymentGatewayFactory = PaymentGatewayFactory_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        stripe_gateway_service_1.StripeGateway,
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, stripe_gateway_service_1.StripeGateway,
         razorpay_gateway_service_1.RazorpayGateway])
 ], PaymentGatewayFactory);

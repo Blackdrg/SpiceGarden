@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var ChargebackService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChargebackService = void 0;
 const common_1 = require("@nestjs/common");
@@ -269,8 +270,7 @@ exports.ChargebackService = ChargebackService = ChargebackService_1 = __decorate
     __param(1, (0, typeorm_1.InjectRepository)(payment_dispute_entity_1.PaymentDisputeEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        typeorm_2.Repository,
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         notification_service_1.NotificationService,

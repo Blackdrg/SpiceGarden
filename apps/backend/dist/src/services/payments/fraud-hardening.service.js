@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var FraudHardeningService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FraudHardeningService = void 0;
 const common_1 = require("@nestjs/common");
@@ -208,7 +209,6 @@ exports.FraudHardeningService = FraudHardeningService;
 exports.FraudHardeningService = FraudHardeningService = FraudHardeningService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(payment_fraud_entity_1.PaymentFraudFlagEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        audit_service_1.AuditService,
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, audit_service_1.AuditService,
         typeorm_2.Repository])
 ], FraudHardeningService);

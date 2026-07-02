@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var StripeConnectService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripeConnectService = void 0;
 const common_1 = require("@nestjs/common");
@@ -269,7 +270,6 @@ exports.StripeConnectService = StripeConnectService = StripeConnectService_1 = _
     (0, common_1.Injectable)(),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(payout_report_entity_1.PayoutReportEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        typeorm_2.Repository,
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, typeorm_2.Repository,
         typeorm_2.Repository])
 ], StripeConnectService);

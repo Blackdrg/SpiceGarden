@@ -21,7 +21,7 @@ export declare class PaymentsController {
         gateway?: undefined;
     } | {
         clientSecret: any;
-        gateway: string;
+        gateway: any;
         error?: undefined;
         reasons?: undefined;
         riskScore?: undefined;
@@ -29,7 +29,7 @@ export declare class PaymentsController {
     refund(body: any, idempotencyKey?: string, gateway?: string): Promise<any>;
     getAvailableGateways(): string[];
     getGatewayConfig(): {
-        primaryGateway: string;
+        primaryGateway: any;
         availableGateways: string[];
         stripeEnabled: boolean;
         razorpayEnabled: boolean;

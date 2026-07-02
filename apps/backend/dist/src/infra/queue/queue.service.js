@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var QueueService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueService = void 0;
 const common_1 = require("@nestjs/common");
@@ -126,7 +127,6 @@ exports.QueueService = QueueService;
 exports.QueueService = QueueService = QueueService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        order_processor_1.OrderProcessor,
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, order_processor_1.OrderProcessor,
         typeorm_2.Repository])
 ], QueueService);

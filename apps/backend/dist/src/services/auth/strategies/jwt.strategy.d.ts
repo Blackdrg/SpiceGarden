@@ -14,7 +14,7 @@ interface JwtUser {
     role: UserRole;
     status: UserStatus;
 }
-declare const JwtStrategy_base: new (...args: unknown[]) => any;
+declare const JwtStrategy_base: any;
 export declare class JwtStrategy extends JwtStrategy_base {
     private configService;
     constructor(configService: ConfigService);
