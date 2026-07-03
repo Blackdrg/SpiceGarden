@@ -1,4 +1,4 @@
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +12,7 @@ export declare class WalletService {
     private readonly logger;
     private readonly walletRepo;
     private readonly walletTransactionRepo;
-    constructor(connection: Connection, configService: ConfigService, paymentService: PaymentService, notificationService: NotificationService);
+    constructor(connection: DataSource, configService: ConfigService, paymentService: PaymentService, notificationService: NotificationService);
     getWallet(userId: string): Promise<WalletEntity>;
     creditWallet(userId: string, amount: number, description: string, referenceId?: string): Promise<WalletTransactionEntity>;
     debitWallet(userId: string, amount: number, description: string, referenceId?: string): Promise<WalletTransactionEntity>;

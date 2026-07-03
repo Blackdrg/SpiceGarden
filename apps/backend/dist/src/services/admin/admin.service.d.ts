@@ -1,4 +1,4 @@
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 export declare class AdminService {
@@ -9,7 +9,7 @@ export declare class AdminService {
     private readonly auditRepo;
     private readonly branchRepo;
     private readonly restaurantRepo;
-    constructor(connection: Connection);
+    constructor(connection: DataSource);
     getDashboardStats(branchId?: string): Promise<{
         stats: {
             revenue: number;

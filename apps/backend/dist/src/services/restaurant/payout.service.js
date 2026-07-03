@@ -150,11 +150,11 @@ exports.PayoutService = PayoutService = PayoutService_1 = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(commission_rule_entity_1.CommissionRuleEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(gst_detail_entity_1.GSTDetailEntity)),
-    __param(5, (0, typeorm_1.InjectConnection)()),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Connection])
+        typeorm_2.DataSource])
 ], PayoutService);

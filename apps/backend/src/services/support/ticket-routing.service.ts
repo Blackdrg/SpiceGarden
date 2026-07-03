@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
-import { Repository, Connection, Between } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource, Between } from 'typeorm';
 import { SupportTicketEntity, TicketCategory, TicketStatus, TicketPriority } from '../../db/entities/support-ticket.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 
@@ -29,8 +29,8 @@ export class TicketRoutingService {
     private ticketRepo: Repository<SupportTicketEntity>,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
-    @InjectConnection()
-    private connection: Connection,
+    @InjectDataSource()
+    private connection: DataSource,
   ) {}
 
   async routeTicket(ticketId: string): Promise<SupportTicketEntity> {

@@ -266,8 +266,8 @@ let WalletService = WalletService_1 = class WalletService {
 exports.WalletService = WalletService;
 exports.WalletService = WalletService = WalletService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectConnection)()),
-    __metadata("design:paramtypes", [typeorm_2.Connection,
+    __param(0, (0, typeorm_1.InjectDataSource)()),
+    __metadata("design:paramtypes", [typeorm_2.DataSource,
         config_1.ConfigService,
         payments_service_1.PaymentService,
         notification_service_1.NotificationService])

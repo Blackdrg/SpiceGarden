@@ -1,4 +1,4 @@
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -19,7 +19,7 @@ export declare class DeliveryService {
     private driverFraudRepo;
     private geoService;
     private connection;
-    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, connection: Connection);
+    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, connection: DataSource);
     registerDriver(userId: string, data: any): Promise<DriverEntity[]>;
     updateLocation(driverId: string, lat: number, lng: number): Promise<import("typeorm").UpdateResult>;
     findAvailableDrivers(lat: number, lng: number, radiusInKm?: number): Promise<DriverEntity[]>;

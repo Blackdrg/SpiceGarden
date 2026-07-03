@@ -1,4 +1,4 @@
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 export declare class BranchManagementService {
@@ -6,7 +6,7 @@ export declare class BranchManagementService {
     private restaurantRepo;
     private connection;
     private readonly logger;
-    constructor(branchRepo: Repository<RestaurantBranchEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: Connection);
+    constructor(branchRepo: Repository<RestaurantBranchEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: DataSource);
     createBranch(restaurantId: string, branchData: {
         branchName: string;
         address: string;

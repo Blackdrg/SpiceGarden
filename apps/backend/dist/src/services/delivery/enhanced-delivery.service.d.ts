@@ -1,4 +1,4 @@
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { BatchEntity } from '../../db/entities/batch.entity';
@@ -14,11 +14,11 @@ export declare class EnhancedDeliveryService {
     private batchRepo;
     private driverAssignmentRepo;
     private geoService;
-    private connection;
+    private dataSource;
     private readonly logger;
     private surgeZones;
     private incentiveRules;
-    constructor(driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, geoService: GeoService, connection: Connection);
+    constructor(driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, geoService: GeoService, dataSource: DataSource);
     private initializeSurgeZones;
     private initializeIncentiveRules;
     registerDriver(userId: string, data: any): Promise<DriverEntity[]>;

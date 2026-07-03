@@ -1,4 +1,4 @@
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { SupportTicketEntity } from '../../db/entities/support-ticket.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 export declare class TicketRoutingService {
@@ -8,7 +8,7 @@ export declare class TicketRoutingService {
     private readonly logger;
     private categoryRules;
     private prioritySLA;
-    constructor(ticketRepo: Repository<SupportTicketEntity>, userRepo: Repository<UserEntity>, connection: Connection);
+    constructor(ticketRepo: Repository<SupportTicketEntity>, userRepo: Repository<UserEntity>, connection: DataSource);
     routeTicket(ticketId: string): Promise<SupportTicketEntity>;
     private findAvailableAgent;
     escalateTicket(ticketId: string, escalationLevel?: number): Promise<SupportTicketEntity>;

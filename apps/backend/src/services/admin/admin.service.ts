@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Repository, Connection, Between } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource, Between } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -18,8 +18,8 @@ export class AdminService {
   private readonly restaurantRepo: Repository<RestaurantEntity>;
 
   constructor(
-    @InjectConnection()
-    private readonly connection: Connection,
+    @InjectDataSource()
+    private readonly connection: DataSource,
   ) {
     this.orderRepo = this.connection.getRepository(OrderEntity);
     this.userRepo = this.connection.getRepository(UserEntity);

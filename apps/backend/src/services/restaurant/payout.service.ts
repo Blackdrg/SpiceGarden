@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
-import { Repository, Connection, Between, FindOptionsWhere } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
@@ -23,8 +23,8 @@ export class PayoutService {
     private commissionRepo: Repository<CommissionRuleEntity>,
     @InjectRepository(GSTDetailEntity)
     private gstRepo: Repository<GSTDetailEntity>,
-    @InjectConnection()
-    private readonly connection: Connection,
+    @InjectDataSource()
+    private readonly connection: DataSource,
   ) {}
 
   async generatePayoutReport(

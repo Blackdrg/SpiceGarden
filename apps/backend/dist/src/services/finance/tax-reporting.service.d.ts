@@ -1,4 +1,4 @@
-import { Repository, Connection } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { GSTDetailEntity } from '../../db/entities/gst-detail.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -12,7 +12,7 @@ export declare class TaxReportingService {
     private orderItemRepo;
     private connection;
     private readonly logger;
-    constructor(orderRepo: Repository<OrderEntity>, gstDetailRepo: Repository<GSTDetailEntity>, restaurantRepo: Repository<RestaurantEntity>, restaurantGstRepo: Repository<RestaurantGSTEntity>, orderItemRepo: Repository<OrderItemEntity>, connection: Connection);
+    constructor(orderRepo: Repository<OrderEntity>, gstDetailRepo: Repository<GSTDetailEntity>, restaurantRepo: Repository<RestaurantEntity>, restaurantGstRepo: Repository<RestaurantGSTEntity>, orderItemRepo: Repository<OrderItemEntity>, connection: DataSource);
     generateGSTReport(restaurantId: string, month: number, year: number): Promise<any>;
     private getHSNBreakdown;
     exportGSTR1(restaurantId: string, month: number, year: number): Promise<any[]>;

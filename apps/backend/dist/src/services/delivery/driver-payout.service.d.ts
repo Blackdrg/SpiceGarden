@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { DriverIncentiveEntity } from '../../db/entities/driver-incentive.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -8,7 +8,7 @@ export declare class DriverPayoutService {
     private orderRepo;
     private dataSource;
     private readonly logger;
-    constructor(incentiveRepo: Repository<DriverIncentiveEntity>, driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, dataSource: Connection);
+    constructor(incentiveRepo: Repository<DriverIncentiveEntity>, driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, dataSource: DataSource);
     calculateWeeklyIncentives(driverId: string, weekStart: Date): Promise<any>;
     generateIncentive(driverId: string, type: string, amount: number, description: string, referenceId?: string): Promise<DriverIncentiveEntity>;
     approveIncentive(incentiveId: string, approverId: string): Promise<DriverIncentiveEntity>;

@@ -29,17 +29,17 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
     batchRepo;
     driverAssignmentRepo;
     geoService;
-    connection;
+    dataSource;
     logger = new common_1.Logger(EnhancedDeliveryService_1.name);
     surgeZones = new Map();
     incentiveRules = new Map();
-    constructor(driverRepo, orderRepo, batchRepo, driverAssignmentRepo, geoService, connection) {
+    constructor(driverRepo, orderRepo, batchRepo, driverAssignmentRepo, geoService, dataSource) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.batchRepo = batchRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
         this.geoService = geoService;
-        this.connection = connection;
+        this.dataSource = dataSource;
         this.initializeSurgeZones();
         this.initializeIncentiveRules();
     }
@@ -326,11 +326,11 @@ exports.EnhancedDeliveryService = EnhancedDeliveryService = EnhancedDeliveryServ
     __param(1, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(batch_entity_1.BatchEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
-    __param(5, (0, typeorm_1.InjectConnection)()),
+    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         geo_service_1.GeoService,
-        typeorm_2.Connection])
+        typeorm_2.DataSource])
 ], EnhancedDeliveryService);

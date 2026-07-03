@@ -30,7 +30,7 @@ let MenuCustomizationService = class MenuCustomizationService {
     }
     async getMenuItems(restaurantId, category) {
         const whereClause = category
-            ? { category: { branch: { restaurant: { id: restaurantId } } }, category: { name: category } }
+            ? { category: { branch: { restaurant: { id: restaurantId } }, name: category } }
             : { category: { branch: { restaurant: { id: restaurantId } } } };
         const items = await this.menuItemRepo.find({
             where: whereClause,

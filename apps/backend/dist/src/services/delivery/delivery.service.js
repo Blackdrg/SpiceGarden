@@ -143,7 +143,7 @@ exports.DeliveryService = DeliveryService = __decorate([
     __param(5, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __param(6, (0, typeorm_1.InjectRepository)(driver_score_entity_1.DriverScoreEntity)),
     __param(7, (0, typeorm_1.InjectRepository)(driver_fraud_entity_1.DriverFraudEntity)),
-    __param(9, (0, typeorm_1.InjectConnection)()),
+    __param(9, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
@@ -153,5 +153,5 @@ exports.DeliveryService = DeliveryService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         geo_service_1.GeoService,
-        typeorm_2.Connection])
+        typeorm_2.DataSource])
 ], DeliveryService);

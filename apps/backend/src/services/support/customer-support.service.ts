@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
-import { Repository, Connection, Between, FindOptionsWhere } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource, Between, FindOptionsWhere } from 'typeorm';
 import { DisputeEntity, DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
 import { RefundEntity, RefundStatus, RefundType } from '../../db/entities/refund.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -20,8 +20,8 @@ export class CustomerSupportService {
     private orderRepo: Repository<OrderEntity>,
     private walletService: WalletService,
     private paymentService: PaymentService,
-    @InjectConnection()
-    private connection: Connection,
+    @InjectDataSource()
+    private connection: DataSource,
   ) {}
 
   async raiseDispute(

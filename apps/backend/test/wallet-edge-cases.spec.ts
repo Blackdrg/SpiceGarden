@@ -38,6 +38,17 @@ describe('WalletService Edge Cases', () => {
         create: jest.fn(),
       })),
     },
+    transaction: jest.fn((cb) => cb({
+      findOne: jest.fn(),
+      update: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    })),
+    getRepository: jest.fn((entity: any) => {
+      if (entity === WalletEntity) return mockWalletRepo;
+      if (entity === WalletTransactionEntity) return mockWalletTransactionRepo;
+      return {};
+    }),
   };
 
   const mockPaymentService = {
@@ -169,7 +180,7 @@ describe('WalletService Edge Cases', () => {
     it('should throw Insufficient balance error when balance too low', async () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 10 } as WalletEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -184,7 +195,7 @@ describe('WalletService Edge Cases', () => {
     it('should prevent negative balance after debit', async () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 50 } as WalletEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -200,7 +211,7 @@ describe('WalletService Edge Cases', () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 200 } as WalletEntity;
       const transaction = { id: 't1', amount: 50 } as WalletTransactionEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -364,7 +375,7 @@ describe('WalletService Edge Cases', () => {
 
   describe('debitWalletWithLock - error cases', () => {
     it('should throw BadRequestException when wallet not found in transaction', async () => {
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(null),
           save: jest.fn(),
