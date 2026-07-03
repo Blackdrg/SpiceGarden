@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var DriverPayoutService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriverPayoutService = void 0;
 const common_1 = require("@nestjs/common");
@@ -140,9 +141,8 @@ exports.DriverPayoutService = DriverPayoutService = DriverPayoutService_1 = __de
     __param(0, (0, typeorm_1.InjectRepository)(driver_incentive_entity_1.DriverIncentiveEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __param(3, (0, typeorm_1.InjectDataSource)()),
+    __param(3, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository, typeof (_a = typeof Connection !== "undefined" && Connection) === "function" ? _a : Object])
 ], DriverPayoutService);

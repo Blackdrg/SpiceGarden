@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -33,8 +33,8 @@ export class DeliveryService {
     @InjectRepository(DriverFraudEntity)
     private driverFraudRepo: Repository<DriverFraudEntity>,
     private geoService: GeoService,
-    @InjectDataSource()
-    private dataSource: DataSource
+    @InjectConnection()
+    private connection: Connection
   ) {}
 
   async registerDriver(userId: string, data: any) {

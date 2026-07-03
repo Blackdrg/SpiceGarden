@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var KdsGateway_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KdsGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
@@ -85,7 +84,7 @@ let KdsGateway = KdsGateway_1 = class KdsGateway {
 exports.KdsGateway = KdsGateway;
 __decorate([
     (0, websockets_1.WebSocketServer)(),
-    __metadata("design:type", typeof (_a = typeof socket_io_1.Server !== "undefined" && socket_io_1.Server) === "function" ? _a : Object)
+    __metadata("design:type", socket_io_1.Server)
 ], KdsGateway.prototype, "server", void 0);
 __decorate([
     (0, websockets_1.SubscribeMessage)('updatePrepStatus'),

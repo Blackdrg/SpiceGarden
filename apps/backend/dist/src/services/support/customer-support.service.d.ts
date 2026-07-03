@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { DisputeEntity, DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
 import { RefundEntity, RefundStatus, RefundType } from '../../db/entities/refund.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -10,9 +10,9 @@ export declare class CustomerSupportService {
     private orderRepo;
     private walletService;
     private paymentService;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(disputeRepo: Repository<DisputeEntity>, refundRepo: Repository<RefundEntity>, orderRepo: Repository<OrderEntity>, walletService: WalletService, paymentService: PaymentService, dataSource: DataSource);
+    constructor(disputeRepo: Repository<DisputeEntity>, refundRepo: Repository<RefundEntity>, orderRepo: Repository<OrderEntity>, walletService: WalletService, paymentService: PaymentService, connection: Connection);
     raiseDispute(orderId: string, customerId: string, type: DisputeType, description: string, evidence?: any): Promise<DisputeEntity>;
     getDisputes(filter?: {
         status?: DisputeStatus;

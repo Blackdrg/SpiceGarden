@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, Between } from 'typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection, Between } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -10,22 +10,25 @@ import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 
 @Injectable()
 export class AdminService {
+  private readonly orderRepo: Repository<OrderEntity>;
+  private readonly userRepo: Repository<UserEntity>;
+  private readonly driverRepo: Repository<DriverEntity>;
+  private readonly auditRepo: Repository<AuditLogEntity>;
+  private readonly branchRepo: Repository<RestaurantBranchEntity>;
+  private readonly restaurantRepo: Repository<RestaurantEntity>;
+
   constructor(
-    @InjectRepository(OrderEntity)
-    private readonly orderRepo: Repository<OrderEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepo: Repository<UserEntity>,
-    @InjectRepository(DriverEntity)
-    private readonly driverRepo: Repository<DriverEntity>,
-    @InjectRepository(AuditLogEntity)
-    private readonly auditRepo: Repository<AuditLogEntity>,
-    @InjectRepository(RestaurantBranchEntity)
-    private readonly branchRepo: Repository<RestaurantBranchEntity>,
-    @InjectRepository(RestaurantEntity)
-    private readonly restaurantRepo: Repository<RestaurantEntity>,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-  ) {}
+    @InjectConnection()
+    private readonly connection: Connection,
+  ) {
+    this.orderRepo = this.connection.getRepository(OrderEntity);
+    this.userRepo = this.connection.getRepository(UserEntity);
+    this.driverRepo = this.connection.getRepository(DriverEntity);
+    this.auditRepo = this.connection.getRepository(AuditLogEntity);
+    this.branchRepo = this.connection.getRepository(RestaurantBranchEntity);
+    this.restaurantRepo = this.connection.getRepository(RestaurantEntity);
+  }
+
 
   async getDashboardStats(branchId?: string) {
     const today = new Date();
@@ -87,7 +90,7 @@ export class AdminService {
   }
 
   private async getDisputeCount(since: Date): Promise<number> {
-    return this.dataSource
+    return this.connection
       .createQueryBuilder()
       .select('COUNT(*)', 'count')
       .from('disputes', 'd')
@@ -97,7 +100,7 @@ export class AdminService {
   }
 
   private async getRefundCount(since: Date): Promise<number> {
-    return this.dataSource
+    return this.connection
       .createQueryBuilder()
       .select('COUNT(*)', 'count')
       .from('refunds', 'r')

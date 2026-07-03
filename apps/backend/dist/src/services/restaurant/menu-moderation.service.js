@@ -24,13 +24,13 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
     moderationRepo;
     itemRepo;
     restaurantRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(MenuModerationService_1.name);
-    constructor(moderationRepo, itemRepo, restaurantRepo, dataSource) {
+    constructor(moderationRepo, itemRepo, restaurantRepo, connection) {
         this.moderationRepo = moderationRepo;
         this.itemRepo = itemRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async submitForModeration(menuItemId, restaurantId, action, data, originalData) {
         const menuItem = await this.itemRepo.findOne({ where: { id: menuItemId } });
@@ -141,9 +141,9 @@ exports.MenuModerationService = MenuModerationService = MenuModerationService_1 
     __param(0, (0, typeorm_1.InjectRepository)(menu_moderation_entity_1.MenuModerationEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
-    __param(3, (0, typeorm_1.InjectDataSource)()),
+    __param(3, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], MenuModerationService);

@@ -22,7 +22,7 @@ const user_entity_1 = require("../../db/entities/user.entity");
 let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
     ticketRepo;
     userRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(TicketRoutingService_1.name);
     categoryRules = new Map([
         [support_ticket_entity_1.TicketCategory.ORDER, ['support_agent', 'admin']],
@@ -38,10 +38,10 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
         [support_ticket_entity_1.TicketPriority.HIGH, 4],
         [support_ticket_entity_1.TicketPriority.URGENT, 1],
     ]);
-    constructor(ticketRepo, userRepo, dataSource) {
+    constructor(ticketRepo, userRepo, connection) {
         this.ticketRepo = ticketRepo;
         this.userRepo = userRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async routeTicket(ticketId) {
         const ticket = await this.ticketRepo.findOne({
@@ -149,8 +149,8 @@ exports.TicketRoutingService = TicketRoutingService = TicketRoutingService_1 = _
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(support_ticket_entity_1.SupportTicketEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __param(2, (0, typeorm_1.InjectDataSource)()),
+    __param(2, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], TicketRoutingService);

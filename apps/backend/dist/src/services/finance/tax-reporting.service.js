@@ -28,15 +28,15 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
     restaurantRepo;
     restaurantGstRepo;
     orderItemRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(TaxReportingService_1.name);
-    constructor(orderRepo, gstDetailRepo, restaurantRepo, restaurantGstRepo, orderItemRepo, dataSource) {
+    constructor(orderRepo, gstDetailRepo, restaurantRepo, restaurantGstRepo, orderItemRepo, connection) {
         this.orderRepo = orderRepo;
         this.gstDetailRepo = gstDetailRepo;
         this.restaurantRepo = restaurantRepo;
         this.restaurantGstRepo = restaurantGstRepo;
         this.orderItemRepo = orderItemRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async generateGSTReport(restaurantId, month, year) {
         const startDate = new Date(year, month - 1, 1);
@@ -160,11 +160,11 @@ exports.TaxReportingService = TaxReportingService = TaxReportingService_1 = __de
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(restaurant_gst_entity_1.RestaurantGSTEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(order_item_entity_1.OrderItemEntity)),
-    __param(5, (0, typeorm_1.InjectDataSource)()),
+    __param(5, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], TaxReportingService);

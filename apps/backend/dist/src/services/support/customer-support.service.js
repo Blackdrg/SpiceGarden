@@ -28,15 +28,15 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
     orderRepo;
     walletService;
     paymentService;
-    dataSource;
+    connection;
     logger = new common_1.Logger(CustomerSupportService_1.name);
-    constructor(disputeRepo, refundRepo, orderRepo, walletService, paymentService, dataSource) {
+    constructor(disputeRepo, refundRepo, orderRepo, walletService, paymentService, connection) {
         this.disputeRepo = disputeRepo;
         this.refundRepo = refundRepo;
         this.orderRepo = orderRepo;
         this.walletService = walletService;
         this.paymentService = paymentService;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async raiseDispute(orderId, customerId, type, description, evidence) {
         const order = await this.orderRepo.findOne({ where: { id: orderId } });
@@ -181,11 +181,11 @@ exports.CustomerSupportService = CustomerSupportService = CustomerSupportService
     __param(0, (0, typeorm_1.InjectRepository)(dispute_entity_1.DisputeEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(refund_entity_1.RefundEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __param(5, (0, typeorm_1.InjectDataSource)()),
+    __param(5, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         wallet_service_1.WalletService,
         payments_service_1.PaymentService,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], CustomerSupportService);

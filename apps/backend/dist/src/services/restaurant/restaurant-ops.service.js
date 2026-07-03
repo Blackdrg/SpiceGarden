@@ -30,16 +30,16 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
     itemRepo;
     categoryRepo;
     userRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(RestaurantOpsService_1.name);
-    constructor(onboardingRepo, restaurantRepo, branchRepo, itemRepo, categoryRepo, userRepo, dataSource) {
+    constructor(onboardingRepo, restaurantRepo, branchRepo, itemRepo, categoryRepo, userRepo, connection) {
         this.onboardingRepo = onboardingRepo;
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
         this.itemRepo = itemRepo;
         this.categoryRepo = categoryRepo;
         this.userRepo = userRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async startOnboarding(userId, restaurantData) {
         const existing = await this.restaurantRepo.findOne({ where: { slug: restaurantData.slug } });
@@ -120,12 +120,12 @@ exports.RestaurantOpsService = RestaurantOpsService = RestaurantOpsService_1 = _
     __param(3, (0, typeorm_1.InjectRepository)(menu_item_entity_1.MenuItemEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(menu_category_entity_1.MenuCategoryEntity)),
     __param(5, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __param(6, (0, typeorm_1.InjectDataSource)()),
+    __param(6, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], RestaurantOpsService);

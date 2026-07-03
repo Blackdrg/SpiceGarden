@@ -5,7 +5,7 @@ export declare class AiService {
     private readonly orderRepo;
     private readonly menuRepo;
     constructor(orderRepo: Repository<OrderEntity>, menuRepo: Repository<MenuItemEntity>);
-    getRecommendations(userId: string): Promise<any>;
+    getRecommendations(userId: string): Promise<MenuItemEntity[]>;
     predictDemand(branchId: string, date: Date): Promise<{
         predictedOrders: number;
         busyHours: string[];

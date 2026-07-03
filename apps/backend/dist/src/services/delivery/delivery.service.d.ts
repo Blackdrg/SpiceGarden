@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -18,12 +18,12 @@ export declare class DeliveryService {
     private driverScoreRepo;
     private driverFraudRepo;
     private geoService;
-    private dataSource;
-    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, dataSource: DataSource);
-    registerDriver(userId: string, data: any): Promise<any>;
-    updateLocation(driverId: string, lat: number, lng: number): Promise<any>;
-    findAvailableDrivers(lat: number, lng: number, radiusInKm?: number): Promise<any>;
-    assignOrderToDriver(orderId: string, driverId: string): Promise<any>;
+    private connection;
+    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, connection: Connection);
+    registerDriver(userId: string, data: any): Promise<DriverEntity[]>;
+    updateLocation(driverId: string, lat: number, lng: number): Promise<import("typeorm").UpdateResult>;
+    findAvailableDrivers(lat: number, lng: number, radiusInKm?: number): Promise<DriverEntity[]>;
+    assignOrderToDriver(orderId: string, driverId: string): Promise<import("typeorm").UpdateResult>;
     calculateTrafficAwareRoute(restaurantLocation: {
         lat: number;
         lng: number;
@@ -37,7 +37,7 @@ export declare class DeliveryService {
         trafficFactor: number;
     };
     getTimeOfDayTrafficFactor(): number;
-    updateActualDeliveryTime(assignmentId: string, actualTimeMinutes: number): Promise<any>;
+    updateActualDeliveryTime(assignmentId: string, actualTimeMinutes: number): Promise<import("typeorm").UpdateResult>;
     calculateScoreComponents(driverId: string, restaurantId?: string): Promise<{
         overallScore: number;
         onTimeRate: number;

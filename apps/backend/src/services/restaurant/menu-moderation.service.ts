@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, In, FindOptionsWhere } from 'typeorm';
+import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection, In, FindOptionsWhere } from 'typeorm';
 import { MenuModerationEntity, ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -16,8 +16,8 @@ export class MenuModerationService {
     private itemRepo: Repository<MenuItemEntity>,
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
+    @InjectConnection()
+    private connection: Connection,
   ) {}
 
   async submitForModeration(

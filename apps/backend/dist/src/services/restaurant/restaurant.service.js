@@ -21,11 +21,11 @@ const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.
 let RestaurantService = class RestaurantService {
     restaurantRepo;
     branchRepo;
-    dataSource;
-    constructor(restaurantRepo, branchRepo, dataSource) {
+    connection;
+    constructor(restaurantRepo, branchRepo, connection) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async getAllRestaurants() {
         return this.restaurantRepo.find({
@@ -94,8 +94,8 @@ exports.RestaurantService = RestaurantService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
-    __param(2, (0, typeorm_1.InjectDataSource)()),
+    __param(2, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], RestaurantService);

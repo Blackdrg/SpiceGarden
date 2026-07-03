@@ -48,7 +48,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var WebhookService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookService = void 0;
 const common_1 = require("@nestjs/common");
@@ -458,7 +457,8 @@ exports.WebhookService = WebhookService = WebhookService_1 = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(payment_event_entity_1.PaymentEventEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(payment_fraud_entity_1.PaymentFraudFlagEntity)),
-    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, typeorm_2.Repository,
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -59,6 +59,8 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.1.0",
     "ajv": "^6.15.0",
+    "eslint-plugin-react": "^7.37.5",
+    "acorn-jsx": "^5.3.2",
     "eslint-scope": "^5.1.1",
     "glob": "^10.5.0",
     "lucide-react": "^1.20.0",
@@ -84,6 +86,6 @@
     }
   },
   "allowScripts": {
-    "sqlite3@6.0.1": true
+    "@scarf/scarf@1.4.0": true
   }
 }

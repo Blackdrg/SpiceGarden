@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { DriverIncentiveEntity, IncentiveStatus } from '../../db/entities/driver-incentive.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -17,8 +17,8 @@ export class DriverPayoutService {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(OrderEntity)
     private orderRepo: Repository<OrderEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
+    @InjectConnection()
+    private dataSource: Connection,
   ) {}
 
   async calculateWeeklyIncentives(driverId: string, weekStart: Date): Promise<any> {

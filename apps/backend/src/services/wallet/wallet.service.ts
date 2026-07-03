@@ -1,28 +1,30 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection, In, Like } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
 import { PaymentService } from '../payments/payments.service';
 import { NotificationService } from '../notifications/notification.service';
-import { Like } from 'typeorm';
+// Like imported above
 
 @Injectable()
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
 
+  private readonly walletRepo: Repository<WalletEntity>;
+  private readonly walletTransactionRepo: Repository<WalletTransactionEntity>;
+
   constructor(
-    @InjectRepository(WalletEntity)
-    private readonly walletRepo: Repository<WalletEntity>,
-    @InjectRepository(WalletTransactionEntity)
-    private readonly walletTransactionRepo: Repository<WalletTransactionEntity>,
+    @InjectConnection()
+    private readonly connection: Connection,
     private readonly configService: ConfigService,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) {
+    this.walletRepo = this.connection.getRepository(WalletEntity);
+    this.walletTransactionRepo = this.connection.getRepository(WalletTransactionEntity);
+  }
 
   async getWallet(userId: string): Promise<WalletEntity> {
     let wallet = await this.walletRepo.findOne({ where: { userId } });
@@ -121,7 +123,7 @@ export class WalletService {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
-    return this.dataSource.manager.transaction(async (manager) => {
+    return this.connection.transaction(async (manager) => {
       const wallet = await manager.findOne(WalletEntity, { where: { userId } });
       if (!wallet) {
         throw new BadRequestException('Wallet not found');
@@ -342,7 +344,7 @@ export class WalletService {
 
     const walletIds = wallets.map(w => w.id);
     const transactions = await this.walletTransactionRepo.find({
-      where: { walletId: { $in: walletIds } as any },
+      where: { walletId: In(walletIds) },
     });
 
     const transactionsByWallet = new Map<string, typeof transactions>();

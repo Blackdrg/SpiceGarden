@@ -44,6 +44,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const hpp_1 = __importDefault(require("hpp"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express = __importStar(require("express"));
+require("./reflect-metadata");
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const compression_1 = __importDefault(require("compression"));

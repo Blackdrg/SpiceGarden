@@ -8,6 +8,7 @@ import * as Sentry from '@sentry/node';
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
+import './reflect-metadata';
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
 import compression from "compression";

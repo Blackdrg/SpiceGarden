@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { PayoutReportEntity } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -10,9 +10,9 @@ export declare class PayoutService {
     private restaurantRepo;
     private commissionRepo;
     private gstRepo;
-    private dataSource;
+    private readonly connection;
     private readonly logger;
-    constructor(payoutRepo: Repository<PayoutReportEntity>, orderRepo: Repository<OrderEntity>, restaurantRepo: Repository<RestaurantEntity>, commissionRepo: Repository<CommissionRuleEntity>, gstRepo: Repository<GSTDetailEntity>, dataSource: DataSource);
+    constructor(payoutRepo: Repository<PayoutReportEntity>, orderRepo: Repository<OrderEntity>, restaurantRepo: Repository<RestaurantEntity>, commissionRepo: Repository<CommissionRuleEntity>, gstRepo: Repository<GSTDetailEntity>, connection: Connection);
     generatePayoutReport(restaurantId: string, periodStart: Date, periodEnd: Date): Promise<PayoutReportEntity>;
     getPayoutHistory(restaurantId: string, limit?: number): Promise<PayoutReportEntity[]>;
     processPayout(payoutId: string, reference: string): Promise<PayoutReportEntity>;

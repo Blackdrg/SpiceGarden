@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { MenuModerationEntity, ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -6,9 +6,9 @@ export declare class MenuModerationService {
     private moderationRepo;
     private itemRepo;
     private restaurantRepo;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(moderationRepo: Repository<MenuModerationEntity>, itemRepo: Repository<MenuItemEntity>, restaurantRepo: Repository<RestaurantEntity>, dataSource: DataSource);
+    constructor(moderationRepo: Repository<MenuModerationEntity>, itemRepo: Repository<MenuItemEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: Connection);
     submitForModeration(menuItemId: string, restaurantId: string, action: ModerationAction, data: Record<string, any>, originalData?: Record<string, any>): Promise<MenuModerationEntity>;
     private detectAIFlags;
     private shouldFlagForReview;

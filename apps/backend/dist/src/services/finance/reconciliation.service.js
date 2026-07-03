@@ -28,15 +28,15 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
     payoutRepo;
     incentiveRepo;
     gstRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(ReconciliationService_1.name);
-    constructor(orderRepo, transactionRepo, payoutRepo, incentiveRepo, gstRepo, dataSource) {
+    constructor(orderRepo, transactionRepo, payoutRepo, incentiveRepo, gstRepo, connection) {
         this.orderRepo = orderRepo;
         this.transactionRepo = transactionRepo;
         this.payoutRepo = payoutRepo;
         this.incentiveRepo = incentiveRepo;
         this.gstRepo = gstRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async reconcilePayments(startDate, endDate) {
         const orders = await this.orderRepo.find({
@@ -180,11 +180,11 @@ exports.ReconciliationService = ReconciliationService = ReconciliationService_1 
     __param(2, (0, typeorm_1.InjectRepository)(payout_report_entity_1.PayoutReportEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_incentive_entity_1.DriverIncentiveEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(gst_detail_entity_1.GSTDetailEntity)),
-    __param(5, (0, typeorm_1.InjectDataSource)()),
+    __param(5, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], ReconciliationService);

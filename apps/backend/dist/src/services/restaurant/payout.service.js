@@ -29,15 +29,15 @@ let PayoutService = PayoutService_1 = class PayoutService {
     restaurantRepo;
     commissionRepo;
     gstRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(PayoutService_1.name);
-    constructor(payoutRepo, orderRepo, restaurantRepo, commissionRepo, gstRepo, dataSource) {
+    constructor(payoutRepo, orderRepo, restaurantRepo, commissionRepo, gstRepo, connection) {
         this.payoutRepo = payoutRepo;
         this.orderRepo = orderRepo;
         this.restaurantRepo = restaurantRepo;
         this.commissionRepo = commissionRepo;
         this.gstRepo = gstRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async generatePayoutReport(restaurantId, periodStart, periodEnd) {
         const orders = await this.orderRepo.find({
@@ -150,11 +150,11 @@ exports.PayoutService = PayoutService = PayoutService_1 = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(commission_rule_entity_1.CommissionRuleEntity)),
     __param(4, (0, typeorm_1.InjectRepository)(gst_detail_entity_1.GSTDetailEntity)),
-    __param(5, (0, typeorm_1.InjectDataSource)()),
+    __param(5, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], PayoutService);

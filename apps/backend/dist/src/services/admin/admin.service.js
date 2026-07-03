@@ -23,21 +23,21 @@ const audit_log_entity_1 = require("../../db/entities/audit-log.entity");
 const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
 const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let AdminService = class AdminService {
+    connection;
     orderRepo;
     userRepo;
     driverRepo;
     auditRepo;
     branchRepo;
     restaurantRepo;
-    dataSource;
-    constructor(orderRepo, userRepo, driverRepo, auditRepo, branchRepo, restaurantRepo, dataSource) {
-        this.orderRepo = orderRepo;
-        this.userRepo = userRepo;
-        this.driverRepo = driverRepo;
-        this.auditRepo = auditRepo;
-        this.branchRepo = branchRepo;
-        this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+    constructor(connection) {
+        this.connection = connection;
+        this.orderRepo = this.connection.getRepository(order_entity_1.OrderEntity);
+        this.userRepo = this.connection.getRepository(user_entity_1.UserEntity);
+        this.driverRepo = this.connection.getRepository(driver_entity_1.DriverEntity);
+        this.auditRepo = this.connection.getRepository(audit_log_entity_1.AuditLogEntity);
+        this.branchRepo = this.connection.getRepository(restaurant_branch_entity_1.RestaurantBranchEntity);
+        this.restaurantRepo = this.connection.getRepository(restaurant_entity_1.RestaurantEntity);
     }
     async getDashboardStats(branchId) {
         const today = new Date();
@@ -95,7 +95,7 @@ let AdminService = class AdminService {
         }
     }
     async getDisputeCount(since) {
-        return this.dataSource
+        return this.connection
             .createQueryBuilder()
             .select('COUNT(*)', 'count')
             .from('disputes', 'd')
@@ -104,7 +104,7 @@ let AdminService = class AdminService {
             .then((result) => Number(result?.count) || 0);
     }
     async getRefundCount(since) {
-        return this.dataSource
+        return this.connection
             .createQueryBuilder()
             .select('COUNT(*)', 'count')
             .from('refunds', 'r')
@@ -166,18 +166,6 @@ let AdminService = class AdminService {
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __param(2, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLogEntity)),
-    __param(4, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
-    __param(5, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
-    __param(6, (0, typeorm_1.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+    __param(0, (0, typeorm_1.InjectConnection)()),
+    __metadata("design:paramtypes", [typeorm_2.Connection])
 ], AdminService);

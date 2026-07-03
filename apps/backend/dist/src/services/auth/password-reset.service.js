@@ -44,7 +44,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PasswordResetService = void 0;
 const common_1 = require("@nestjs/common");
@@ -176,7 +175,8 @@ exports.PasswordResetService = PasswordResetService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(otp_entity_1.OtpEntity)),
-    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, typeorm_2.Repository,
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         auth_service_1.AuthService,
         notification_service_1.NotificationService])

@@ -22,12 +22,12 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let BranchManagementService = BranchManagementService_1 = class BranchManagementService {
     branchRepo;
     restaurantRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(BranchManagementService_1.name);
-    constructor(branchRepo, restaurantRepo, dataSource) {
+    constructor(branchRepo, restaurantRepo, connection) {
         this.branchRepo = branchRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async createBranch(restaurantId, branchData) {
         const restaurant = await this.restaurantRepo.findOne({ where: { id: restaurantId } });
@@ -109,8 +109,8 @@ exports.BranchManagementService = BranchManagementService = BranchManagementServ
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(restaurant_branch_entity_1.RestaurantBranchEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
-    __param(2, (0, typeorm_1.InjectDataSource)()),
+    __param(2, (0, typeorm_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Connection])
 ], BranchManagementService);

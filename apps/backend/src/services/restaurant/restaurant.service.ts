@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, Like } from 'typeorm';
+import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection, Like } from 'typeorm';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 
@@ -11,8 +11,8 @@ export class RestaurantService {
     private readonly restaurantRepo: Repository<RestaurantEntity>,
     @InjectRepository(RestaurantBranchEntity)
     private readonly branchRepo: Repository<RestaurantBranchEntity>,
-    @InjectDataSource()
-    private readonly dataSource: DataSource
+    @InjectConnection()
+    private readonly connection: Connection
   ) {}
 
   async getAllRestaurants() {

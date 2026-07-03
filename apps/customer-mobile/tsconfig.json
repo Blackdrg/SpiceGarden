@@ -35,5 +35,5 @@
     "node_modules",
     "dist"
   ],
-  "extends": "../../node_modules/expo/tsconfig.base.json"
+  "extends": "../../tsconfig.base.json"
 }

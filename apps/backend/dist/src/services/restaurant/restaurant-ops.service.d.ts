@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { RestaurantOnboardingEntity, OnboardingStep } from '../../db/entities/restaurant-onboarding.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
@@ -12,9 +12,9 @@ export declare class RestaurantOpsService {
     private itemRepo;
     private categoryRepo;
     private userRepo;
-    private dataSource;
+    private readonly connection;
     private readonly logger;
-    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, itemRepo: Repository<MenuItemEntity>, categoryRepo: Repository<MenuCategoryEntity>, userRepo: Repository<UserEntity>, dataSource: DataSource);
+    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, itemRepo: Repository<MenuItemEntity>, categoryRepo: Repository<MenuCategoryEntity>, userRepo: Repository<UserEntity>, connection: Connection);
     startOnboarding(userId: string, restaurantData: {
         name: string;
         slug: string;

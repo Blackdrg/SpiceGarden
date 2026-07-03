@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var RefundService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RefundService = exports.RefundRequestType = void 0;
 const common_1 = require("@nestjs/common");
@@ -344,5 +343,6 @@ exports.RefundService = RefundService = RefundService_1 = __decorate([
         payments_service_1.PaymentService,
         notification_service_1.NotificationService,
         ledger_service_1.LedgerService,
-        production_notification_service_1.ProductionNotificationService, typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object])
+        production_notification_service_1.ProductionNotificationService,
+        config_1.ConfigService])
 ], RefundService);

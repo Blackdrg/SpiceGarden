@@ -1,6 +1,6 @@
-﻿import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { Repository, Connection } from 'typeorm';
 import { RestaurantOnboardingEntity, OnboardingStep, OnboardingStatus } from '../../db/entities/restaurant-onboarding.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 
@@ -13,8 +13,8 @@ export class RestaurantOnboardingService {
     private readonly onboardingRepo: Repository<RestaurantOnboardingEntity>,
 @InjectRepository(RestaurantEntity)
     private readonly restaurantRepo: Repository<RestaurantEntity>,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    @InjectConnection()
+    private readonly connection: Connection,
   ) {}
 
   private async getOnboardingByRestaurantId(restaurantId: string): Promise<RestaurantOnboardingEntity> {

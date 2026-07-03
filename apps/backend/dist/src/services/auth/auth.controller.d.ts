@@ -38,11 +38,11 @@ export declare class AuthController {
         access_token: string;
         refresh_token: string;
         user: {
-            id: any;
-            email: any;
-            fullName: any;
-            role: any;
-            status: any;
+            id: string;
+            email: string;
+            fullName: string;
+            role: UserRole;
+            status: UserStatus;
         };
     }>;
     refreshToken(req: Request, res: Response): Promise<{
@@ -53,11 +53,11 @@ export declare class AuthController {
     }>;
     me(req: Request): Promise<{
         user: {
-            id: any;
-            email: any;
-            fullName: any;
-            role: any;
-            status: any;
+            id: string;
+            email: string;
+            fullName: string | undefined;
+            role: UserRole;
+            status: UserStatus;
         };
     }>;
     forgotPassword(body: {
@@ -80,9 +80,9 @@ export declare class AuthController {
         message: string;
     }>;
     googleAuth(): Promise<void>;
-    googleAuthCallback(req: Request, res: Response): Promise<any>;
+    googleAuthCallback(req: Request, res: Response): Promise<void>;
     facebookAuth(): Promise<void>;
-    facebookAuthCallback(req: Request, res: Response): Promise<any>;
+    facebookAuthCallback(req: Request, res: Response): Promise<void>;
     private getDeviceInfo;
 }
 export {};
