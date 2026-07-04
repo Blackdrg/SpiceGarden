@@ -7,4 +7,4 @@ export declare class ReviewDocument extends Document {
     comment: string;
     images: string[];
 }
-export declare const ReviewSchema: mongoose.Schema<TClass>;
+export declare const ReviewSchema: any;

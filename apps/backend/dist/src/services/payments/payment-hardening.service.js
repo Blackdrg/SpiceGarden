@@ -15,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var PaymentHardeningService_1;
-var _a, _b;
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentHardeningService = void 0;
 const common_1 = require("@nestjs/common");
@@ -312,6 +312,5 @@ exports.PaymentHardeningService = PaymentHardeningService = PaymentHardeningServ
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(idempotency_entity_1.IdempotencyEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(payment_validation_entity_1.PaymentValidationEventEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        audit_service_1.AuditService, typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, typeof (_b = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object, audit_service_1.AuditService, typeof (_b = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _b : Object, typeof (_c = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _c : Object])
 ], PaymentHardeningService);

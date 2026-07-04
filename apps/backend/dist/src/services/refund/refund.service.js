@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var RefundService_1;
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RefundService = exports.RefundRequestType = void 0;
 const common_1 = require("@nestjs/common");
@@ -340,6 +340,5 @@ exports.RefundService = RefundService = RefundService_1 = __decorate([
     __metadata("design:paramtypes", [typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, typeof (_b = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _b : Object, typeof (_c = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _c : Object, typeof (_d = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _d : Object, payments_service_1.PaymentService,
         notification_service_1.NotificationService,
         ledger_service_1.LedgerService,
-        production_notification_service_1.ProductionNotificationService,
-        config_1.ConfigService])
+        production_notification_service_1.ProductionNotificationService, typeof (_e = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _e : Object])
 ], RefundService);

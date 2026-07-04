@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentsController = void 0;
 const common_1 = require("@nestjs/common");
@@ -163,6 +164,5 @@ exports.PaymentsController = PaymentsController = __decorate([
         payment_hardening_service_1.PaymentHardeningService,
         retry_service_1.RetryService,
         fraud_hardening_service_1.FraudHardeningService,
-        idempotency_service_1.IdempotencyService,
-        config_1.ConfigService])
+        idempotency_service_1.IdempotencyService, typeof (_a = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _a : Object])
 ], PaymentsController);

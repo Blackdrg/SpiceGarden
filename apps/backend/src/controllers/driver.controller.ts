@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
-import { OrderStatus } from '../shared/domain/order.interface';
+import { OrderStatus } from '@/shared/domain/order.interface';
 import { NotificationService } from '../services/notifications/notification.service';
 
 @Controller('drivers')

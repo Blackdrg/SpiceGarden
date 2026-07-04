@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var NotificationQueueService_1;
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationQueueService = void 0;
 const common_1 = require("@nestjs/common");
@@ -195,7 +195,6 @@ exports.NotificationQueueService = NotificationQueueService;
 exports.NotificationQueueService = NotificationQueueService = NotificationQueueService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(notification_entity_1.NotificationEntity)),
-    __metadata("design:paramtypes", [typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, config_1.ConfigService,
-        notification_service_1.NotificationService,
+    __metadata("design:paramtypes", [typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, typeof (_b = typeof config_1.ConfigService !== "undefined" && config_1.ConfigService) === "function" ? _b : Object, notification_service_1.NotificationService,
         queue_service_1.QueueService])
 ], NotificationQueueService);
