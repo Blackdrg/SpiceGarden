@@ -13,7 +13,7 @@ export class NotificationService {
     private configService: ConfigService,
     @InjectRepository(UserDeviceEntity)
     private readonly userDeviceRepo: Repository<UserDeviceEntity>,
-  ) {}
+  ) { }
 
   async registerDevice(userId: string, fcmToken: string, deviceInfo: { name?: string; type?: string; userAgent?: string; ip?: string }) {
     const existing = await this.userDeviceRepo.findOne({ where: { userId, fcmToken } });
@@ -56,7 +56,7 @@ export class NotificationService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          registration_ids: devices.map(d => d.fcmToken).filter(Boolean),
+          registration_ids: devices.map((d: UserDeviceEntity) => d.fcmToken).filter(Boolean),
           notification: { title, body },
           data: data || {},
         }),
@@ -171,7 +171,7 @@ export class NotificationService {
     const devices = await this.userDeviceRepo.find({
       where: { userId, isActive: true },
     });
-    const apnsTokens = devices.filter(d => d.apnsToken).map(d => d.apnsToken!);
+    const apnsTokens = devices.filter((d: UserDeviceEntity) => d.apnsToken).map((d: UserDeviceEntity) => d.apnsToken!);
 
     if (apnsTokens.length === 0) {
       return { success: false, reason: 'No active iOS devices' };
@@ -188,7 +188,7 @@ export class NotificationService {
       };
 
       const results = await Promise.allSettled(
-        apnsTokens.map(async (deviceToken) => {
+        apnsTokens.map(async (deviceToken: string) => {
           const host = apnsEnv === 'development' ? 'api.development.push.apple.com' : 'api.push.apple.com';
           const response = await fetch(`https://${host}/3/device/${deviceToken}`, {
             method: 'POST',
@@ -210,8 +210,8 @@ export class NotificationService {
         })
       );
 
-      const settledResults = results.map((r) => (r.status === 'fulfilled' ? r.value : { success: false, error: r.reason }));
-      const successCount = settledResults.filter((r) => r.success).length;
+      const settledResults = results.map((r: PromiseSettledResult<any>) => (r.status === 'fulfilled' ? r.value : { success: false, error: r.reason }));
+      const successCount = settledResults.filter((r: any) => r.success).length;
       this.logger.log(`APNs: ${successCount}/${apnsTokens.length} notifications sent to user ${userId}`);
       return { success: successCount > 0, sent: successCount, results: settledResults };
     } catch (error) {

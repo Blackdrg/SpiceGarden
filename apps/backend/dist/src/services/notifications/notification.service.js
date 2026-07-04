@@ -99,7 +99,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    registration_ids: devices.map(d => d.fcmToken).filter(Boolean),
+                    registration_ids: devices.map((d) => d.fcmToken).filter(Boolean),
                     notification: { title, body },
                     data: data || {},
                 }),
@@ -201,7 +201,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
         const devices = await this.userDeviceRepo.find({
             where: { userId, isActive: true },
         });
-        const apnsTokens = devices.filter(d => d.apnsToken).map(d => d.apnsToken);
+        const apnsTokens = devices.filter((d) => d.apnsToken).map((d) => d.apnsToken);
         if (apnsTokens.length === 0) {
             return { success: false, reason: 'No active iOS devices' };
         }

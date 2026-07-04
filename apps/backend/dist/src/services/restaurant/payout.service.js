@@ -82,12 +82,12 @@ let PayoutService = PayoutService_1 = class PayoutService {
             status: payout_report_entity_1.PayoutStatus.PENDING,
             orderBreakdown: {
                 totalOrders: orders.length,
-                completedOrders: orders.filter(o => o.status === order_interface_1.OrderStatus.DELIVERED).length,
-                cancelledOrders: orders.filter(o => o.status === order_interface_1.OrderStatus.CANCELLED).length,
-                refundedOrders: orders.filter(o => o.paymentStatus === order_interface_1.PaymentStatus.REFUNDED).length,
+                completedOrders: orders.filter((o) => o.status === order_interface_1.OrderStatus.DELIVERED).length,
+                cancelledOrders: orders.filter((o) => o.status === order_interface_1.OrderStatus.CANCELLED).length,
+                refundedOrders: orders.filter((o) => o.paymentStatus === order_interface_1.PaymentStatus.REFUNDED).length,
             },
             paymentBreakdown: {
-                onlinePayments: orders.filter(o => o.paymentStatus === order_interface_1.PaymentStatus.COMPLETED).length,
+                onlinePayments: orders.filter((o) => o.paymentStatus === order_interface_1.PaymentStatus.COMPLETED).length,
                 codPayments: 0,
                 walletPayments: 0,
             },
@@ -138,8 +138,8 @@ let PayoutService = PayoutService_1 = class PayoutService {
             totalCommission: payouts.reduce((sum, p) => sum + Number(p.platformCommission), 0),
             totalGST: payouts.reduce((sum, p) => sum + Number(p.gstAmount), 0),
             totalNetPayout: payouts.reduce((sum, p) => sum + Number(p.netPayout), 0),
-            pendingPayouts: payouts.filter(p => p.status === payout_report_entity_1.PayoutStatus.PENDING).length,
-            paidPayouts: payouts.filter(p => p.status === payout_report_entity_1.PayoutStatus.PAID).length,
+            pendingPayouts: payouts.filter((p) => p.status === payout_report_entity_1.PayoutStatus.PENDING).length,
+            paidPayouts: payouts.filter((p) => p.status === payout_report_entity_1.PayoutStatus.PAID).length,
         };
     }
 };

@@ -226,7 +226,7 @@ export class MapsService {
       .andWhere('ST_X(branch.location) BETWEEN :west AND :east', { west: bounds.west, east: bounds.east })
       .getMany();
 
-    return branches.map(branch => ({
+    return branches.map((branch: RestaurantBranchEntity) => ({
       lat: branch.location.lat,
       lng: branch.location.lng,
       weight: Math.floor(Math.random() * 100) + 1,

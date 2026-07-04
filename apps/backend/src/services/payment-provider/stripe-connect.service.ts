@@ -265,7 +265,7 @@ export class StripeConnectService {
         { stripeAccount: restaurant.stripeAccountId } as any,
       );
 
-      return payouts.data.map((payout) => ({
+      return payouts.data.map((payout: any) => ({
         id: payout.id,
         amount: payout.amount / 100,
         currency: payout.currency,
@@ -292,8 +292,8 @@ export class StripeConnectService {
         stripeAccount: restaurant.stripeAccountId,
       });
 
-      const availableInr = balance.available.find((b) => b.currency === 'inr');
-      const pendingInr = balance.pending.find((b) => b.currency === 'inr');
+      const availableInr = balance.available.find((b: any) => b.currency === 'inr');
+      const pendingInr = balance.pending.find((b: any) => b.currency === 'inr');
 
       return {
         available: (availableInr?.amount || 0) / 100,

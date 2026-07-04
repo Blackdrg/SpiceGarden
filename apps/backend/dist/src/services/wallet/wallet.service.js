@@ -222,7 +222,7 @@ let WalletService = WalletService_1 = class WalletService {
             },
         });
         if (recentTransactions.length > 0) {
-            const successfulTransactions = recentTransactions.filter(t => t.description.toLowerCase().includes('confirmed') ||
+            const successfulTransactions = recentTransactions.filter((t) => t.description.toLowerCase().includes('confirmed') ||
                 t.description.toLowerCase().includes('completed'));
             if (successfulTransactions.length > 0) {
                 this.logger.warn(`Potential duplicate payment detected for user ${userId}, order ${orderId}`);
@@ -238,7 +238,7 @@ let WalletService = WalletService_1 = class WalletService {
         if (wallets.length === 0) {
             return { totalProcessed: 0, successful: 0, failed: 0, discrepancies: [] };
         }
-        const walletIds = wallets.map(w => w.id);
+        const walletIds = wallets.map((w) => w.id);
         const transactions = await this.walletTransactionRepo.find({
             where: { walletId: (0, typeorm_2.In)(walletIds) },
         });

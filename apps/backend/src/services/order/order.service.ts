@@ -52,7 +52,7 @@ export class OrderService {
     private readonly idempotency: IdempotencyService,
     private readonly productionNotification: ProductionNotificationService,
     private readonly loggingService: LoggingService,
-  ) {}
+  ) { }
 
   validateOrderItems(items: any): void {
     if (!Array.isArray(items) || items.length === 0) {
@@ -176,7 +176,7 @@ export class OrderService {
       userId: data.userId,
       restaurantId: data.restaurantId,
       driverId: data.driverId,
-      orderNumber: `ORD-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${orderId.slice(0,6).toUpperCase()}`,
+      orderNumber: `ORD-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${orderId.slice(0, 6).toUpperCase()}`,
       status: OrderStatus.PLACED,
       paymentStatus: PaymentStatus.PENDING,
       subtotal: Number(data.subtotal) || 0,
@@ -449,7 +449,7 @@ export class OrderService {
           { orderId: order.id }
         );
       } catch (error) {
-        this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', {id: order.id, error}, 'OrderService');
+        this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', { id: order.id, error }, 'OrderService');
       }
     }
 
@@ -471,7 +471,7 @@ export class OrderService {
   }
 
   async cancelOrderAtomic(orderId: string, actor: string, reason: string): Promise<Order> {
-    return this.orderRepo.manager.transaction(async (manager) => {
+    return this.orderRepo.manager.transaction(async (manager: any) => {
       const order = await manager.findOne(OrderEntity, { where: { id: orderId } });
       if (!order) {
         throw new NotFoundException(`Order ${orderId} not found`);

@@ -16,7 +16,7 @@ async function runSeed() {
   });
 
   try {
-    await dataSource.initialize();
+    await dataSource.initialize(); 12
     const seeder = new BusinessSeederService(dataSource);
     await seeder.seedAll();
     console.log('Seed completed successfully');

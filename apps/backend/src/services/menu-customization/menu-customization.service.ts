@@ -14,7 +14,7 @@ export class MenuCustomizationService {
     private readonly categoryRepo: Repository<MenuCategoryEntity>,
     @InjectRepository(MenuAddonEntity)
     private readonly addonRepo: Repository<MenuAddonEntity>,
-  ) {}
+  ) { }
 
   async getMenuItems(restaurantId: string, category?: string) {
     const whereClause: any = category
@@ -27,7 +27,7 @@ export class MenuCustomizationService {
       order: { createdAt: 'DESC' },
     });
 
-    return items.map(item => ({
+    return items.map((item: MenuItemEntity) => ({
       id: item.id,
       name: item.name,
       description: item.description,
@@ -36,7 +36,7 @@ export class MenuCustomizationService {
       category: item.category?.name,
       isVeg: item.isVeg,
       spiceLevel: item.spiceLevel,
-      addons: item.addons?.map(addon => ({
+      addons: item.addons?.map((addon: MenuAddonEntity) => ({
         id: addon.id,
         name: addon.addonName,
         price: Number(addon.price),
@@ -64,7 +64,7 @@ export class MenuCustomizationService {
       isVeg: item.isVeg,
       spiceLevel: item.spiceLevel,
       status: item.status,
-      addons: item.addons?.map(addon => ({
+      addons: item.addons?.map((addon: MenuAddonEntity) => ({
         id: addon.id,
         name: addon.addonName,
         price: Number(addon.price),
@@ -77,7 +77,7 @@ export class MenuCustomizationService {
   }
 
   async getCategories(restaurantId: string) {
-    return this.categoryRepo.find({ 
+    return this.categoryRepo.find({
       where: { branch: { restaurant: { id: restaurantId } } } as any,
       order: { sortOrder: 'ASC' }
     });

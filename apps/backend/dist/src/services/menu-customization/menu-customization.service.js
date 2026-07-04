@@ -38,7 +38,7 @@ let MenuCustomizationService = class MenuCustomizationService {
             relations: { addons: true, category: true },
             order: { createdAt: 'DESC' },
         });
-        return items.map(item => ({
+        return items.map((item) => ({
             id: item.id,
             name: item.name,
             description: item.description,
@@ -47,7 +47,7 @@ let MenuCustomizationService = class MenuCustomizationService {
             category: item.category?.name,
             isVeg: item.isVeg,
             spiceLevel: item.spiceLevel,
-            addons: item.addons?.map(addon => ({
+            addons: item.addons?.map((addon) => ({
                 id: addon.id,
                 name: addon.addonName,
                 price: Number(addon.price),
@@ -72,7 +72,7 @@ let MenuCustomizationService = class MenuCustomizationService {
             isVeg: item.isVeg,
             spiceLevel: item.spiceLevel,
             status: item.status,
-            addons: item.addons?.map(addon => ({
+            addons: item.addons?.map((addon) => ({
                 id: addon.id,
                 name: addon.addonName,
                 price: Number(addon.price),

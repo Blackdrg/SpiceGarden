@@ -208,7 +208,7 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
             take: 500,
         });
         const totalDiscount = usages.reduce((sum, u) => sum + (u.discountApplied || 0), 0);
-        const totalOrders = usages.filter(u => u.orderId).length;
+        const totalOrders = usages.filter((u) => u.orderId).length;
         return {
             coupon,
             totalUsages: usages.length,
@@ -231,7 +231,7 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
             order: { createdAt: 'DESC' },
             take: 10,
         });
-        const recentCount = recentReferrals.filter(r => {
+        const recentCount = recentReferrals.filter((r) => {
             const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : 0;
             return createdAt >= Date.now() - 24 * 60 * 60 * 1000;
         }).length;

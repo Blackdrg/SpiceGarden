@@ -20,7 +20,7 @@ export class LoyaltyService {
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(OrderEntity) private orderRepo: Repository<OrderEntity>,
     private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async createCoupon(data: any): Promise<CouponEntity> {
     const coupon = this.couponRepo.create();
@@ -197,8 +197,8 @@ export class LoyaltyService {
       take: 500,
     });
 
-    const totalDiscount = usages.reduce((sum, u) => sum + (u.discountApplied || 0), 0);
-    const totalOrders = usages.filter(u => u.orderId).length;
+    const totalDiscount = usages.reduce((sum: number, u: CouponUsageEntity) => sum + (u.discountApplied || 0), 0);
+    const totalOrders = usages.filter((u: CouponUsageEntity) => u.orderId).length;
 
     return {
       coupon,
@@ -225,7 +225,7 @@ export class LoyaltyService {
       order: { createdAt: 'DESC' },
       take: 10,
     });
-    const recentCount = recentReferrals.filter(r => {
+    const recentCount = recentReferrals.filter((r: ReferralEntity) => {
       const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : 0;
       return createdAt >= Date.now() - 24 * 60 * 60 * 1000;
     }).length;

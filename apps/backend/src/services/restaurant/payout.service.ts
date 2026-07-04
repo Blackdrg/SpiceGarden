@@ -25,7 +25,7 @@ export class PayoutService {
     private gstRepo: Repository<GSTDetailEntity>,
     @InjectDataSource()
     private readonly connection: DataSource,
-  ) {}
+  ) { }
 
   async generatePayoutReport(
     restaurantId: string,
@@ -41,7 +41,7 @@ export class PayoutService {
       relations: { gstDetail: true },
     });
 
-    const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
+    const grossSales = orders.reduce((sum: number, o: OrderEntity) => sum + Number(o.grandTotal), 0);
 
     const commissionRules = await this.commissionRepo.find({
       where: {
@@ -60,7 +60,7 @@ export class PayoutService {
       }
     }
 
-    const gstAmount = orders.reduce((sum, o) => sum + Number(o.gstDetail?.totalGstAmount || 0), 0);
+    const gstAmount = orders.reduce((sum: number, o: OrderEntity) => sum + Number(o.gstDetail?.totalGstAmount || 0), 0);
 
     const netPayout = grossSales - platformCommission - gstAmount;
 
@@ -78,12 +78,12 @@ export class PayoutService {
       status: PayoutStatus.PENDING,
       orderBreakdown: {
         totalOrders: orders.length,
-        completedOrders: orders.filter(o => o.status === OrderStatus.DELIVERED).length,
-        cancelledOrders: orders.filter(o => o.status === OrderStatus.CANCELLED).length,
-        refundedOrders: orders.filter(o => o.paymentStatus === PaymentStatus.REFUNDED).length,
+        completedOrders: orders.filter((o: OrderEntity) => o.status === OrderStatus.DELIVERED).length,
+        cancelledOrders: orders.filter((o: OrderEntity) => o.status === OrderStatus.CANCELLED).length,
+        refundedOrders: orders.filter((o: OrderEntity) => o.paymentStatus === PaymentStatus.REFUNDED).length,
       },
       paymentBreakdown: {
-        onlinePayments: orders.filter(o => o.paymentStatus === PaymentStatus.COMPLETED).length,
+        onlinePayments: orders.filter((o: OrderEntity) => o.paymentStatus === PaymentStatus.COMPLETED).length,
         codPayments: 0,
         walletPayments: 0,
       },
@@ -140,12 +140,12 @@ export class PayoutService {
     });
 
     return {
-      totalGrossSales: payouts.reduce((sum, p) => sum + Number(p.grossSales), 0),
-      totalCommission: payouts.reduce((sum, p) => sum + Number(p.platformCommission), 0),
-      totalGST: payouts.reduce((sum, p) => sum + Number(p.gstAmount), 0),
-      totalNetPayout: payouts.reduce((sum, p) => sum + Number(p.netPayout), 0),
-      pendingPayouts: payouts.filter(p => p.status === PayoutStatus.PENDING).length,
-      paidPayouts: payouts.filter(p => p.status === PayoutStatus.PAID).length,
+      totalGrossSales: payouts.reduce((sum: number, p: PayoutReportEntity) => sum + Number(p.grossSales), 0),
+      totalCommission: payouts.reduce((sum: number, p: PayoutReportEntity) => sum + Number(p.platformCommission), 0),
+      totalGST: payouts.reduce((sum: number, p: PayoutReportEntity) => sum + Number(p.gstAmount), 0),
+      totalNetPayout: payouts.reduce((sum: number, p: PayoutReportEntity) => sum + Number(p.netPayout), 0),
+      pendingPayouts: payouts.filter((p: PayoutReportEntity) => p.status === PayoutStatus.PENDING).length,
+      paidPayouts: payouts.filter((p: PayoutReportEntity) => p.status === PayoutStatus.PAID).length,
     };
   }
 }

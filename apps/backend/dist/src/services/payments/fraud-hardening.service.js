@@ -189,7 +189,7 @@ let FraudHardeningService = FraudHardeningService_1 = class FraudHardeningServic
                 .where('f.isBlocked = :blocked', { blocked: true })
                 .andWhere('f.blockedAt >= :since', { since: twentyFourHoursAgo })
                 .getRawOne()
-                .then(r => Number(r?.count || 0)),
+                .then((r) => Number(r?.count || 0)),
             this.fraudFlagRepo.count({
                 where: { createdAt: (0, typeorm_2.MoreThanOrEqual)(twentyFourHoursAgo) }
             }),

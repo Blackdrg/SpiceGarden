@@ -164,7 +164,7 @@ let MapsService = MapsService_1 = class MapsService {
             .where('ST_Y(branch.location) BETWEEN :south AND :north', { south: bounds.south, north: bounds.north })
             .andWhere('ST_X(branch.location) BETWEEN :west AND :east', { west: bounds.west, east: bounds.east })
             .getMany();
-        return branches.map(branch => ({
+        return branches.map((branch) => ({
             lat: branch.location.lat,
             lng: branch.location.lng,
             weight: Math.floor(Math.random() * 100) + 1,
