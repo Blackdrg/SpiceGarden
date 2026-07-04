@@ -6,9 +6,9 @@ export declare class SearchService {
     private readonly restaurantRepo;
     constructor(menuRepo: Repository<MenuItemEntity>, restaurantRepo: Repository<RestaurantEntity>);
     search(query: string): Promise<{
-        restaurants: RestaurantEntity[];
-        items: MenuItemEntity[];
+        restaurants: any;
+        items: any;
     }>;
-    getTrending(): Promise<MenuItemEntity[]>;
-    getRecommended(userId: string): Promise<MenuItemEntity[]>;
+    getTrending(): Promise<any>;
+    getRecommended(userId: string): Promise<any>;
 }

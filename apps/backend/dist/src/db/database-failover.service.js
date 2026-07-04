@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseFailoverService = void 0;
 const common_1 = require("@nestjs/common");
@@ -130,5 +131,5 @@ let DatabaseFailoverService = class DatabaseFailoverService {
 exports.DatabaseFailoverService = DatabaseFailoverService;
 exports.DatabaseFailoverService = DatabaseFailoverService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeorm_1.DataSource])
+    __metadata("design:paramtypes", [typeof (_a = typeof typeorm_1.DataSource !== "undefined" && typeorm_1.DataSource) === "function" ? _a : Object])
 ], DatabaseFailoverService);

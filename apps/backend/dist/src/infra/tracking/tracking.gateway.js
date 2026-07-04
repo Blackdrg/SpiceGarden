@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var TrackingGateway_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrackingGateway = exports.SocketNamespace = void 0;
 const websockets_1 = require("@nestjs/websockets");
@@ -368,6 +369,5 @@ exports.TrackingGateway = TrackingGateway = TrackingGateway_1 = __decorate([
         pingTimeout: 20000,
     }),
     __param(1, (0, typeorm_2.InjectRepository)(notification_entity_1.NotificationEntity)),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        typeorm_1.Repository])
+    __metadata("design:paramtypes", [config_1.ConfigService, typeof (_a = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _a : Object])
 ], TrackingGateway);

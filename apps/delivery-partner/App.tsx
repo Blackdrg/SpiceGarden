@@ -805,22 +805,23 @@ const styles = StyleSheet.create({
 
 });
 
+const INITIAL_STATE: AppState = {
+  isOnline: false,
+  incomingOrder: null,
+  activeDelivery: null,
+  earnings: { today: 0, pending: 0, bonus: 0, ordersToday: 0 },
+  shift: null,
+  deliveryOtp: '',
+  otpError: '',
+  log: [],
+  expandedIssue: false,
+  activeScreen: 'home',
+  locationPermission: 'pending',
+};
+
 export default function App() {
-  const initial: AppState = {
-    isOnline: false,
-    incomingOrder: null,
-    activeDelivery: null,
-    earnings: { today: 0, pending: 0, bonus: 0, ordersToday: 0 },
-    shift: null,
-    deliveryOtp: '',
-    otpError: '',
-    log: [],
-    expandedIssue: false,
-    activeScreen: 'home',
-    locationPermission: 'pending',
-  };
   const SCREEN_W = useWindowDimensions().width;
-  const [state, dispatch] = useReducer(appReducer, initial);
+  const [state, dispatch] = useReducer(appReducer, INITIAL_STATE);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {

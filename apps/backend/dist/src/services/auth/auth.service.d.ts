@@ -28,7 +28,7 @@ export declare class AuthService {
         name: string;
         type: string;
         ip: string;
-    }, refreshToken?: string): Promise<SessionEntity>;
+    }, refreshToken?: string): Promise<any>;
     validateUser(email: string, pass: string): Promise<AuthenticatedUser>;
     login(user: AuthenticatedUser, deviceInfo: {
         name: string;

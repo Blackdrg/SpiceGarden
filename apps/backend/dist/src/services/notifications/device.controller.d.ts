@@ -1,3 +1,4 @@
+import { Request } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 export declare class DeviceController {
     private readonly notificationService;

@@ -38,11 +38,11 @@ export declare class AuthController {
         access_token: string;
         refresh_token: string;
         user: {
-            id: string;
-            email: string;
-            fullName: string;
-            role: UserRole;
-            status: UserStatus;
+            id: any;
+            email: any;
+            fullName: any;
+            role: any;
+            status: any;
         };
     }>;
     refreshToken(req: Request, res: Response): Promise<{

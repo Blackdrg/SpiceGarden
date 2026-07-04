@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderDriverController = exports.DriverController = void 0;
 const common_1 = require("@nestjs/common");
@@ -186,10 +187,7 @@ exports.DriverController = DriverController = __decorate([
     __param(0, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __param(2, (0, typeorm_2.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeorm_1.Repository,
-        typeorm_1.Repository,
-        typeorm_3.DataSource,
-        tracking_gateway_1.TrackingGateway])
+    __metadata("design:paramtypes", [typeof (_a = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _a : Object, typeof (_b = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _b : Object, typeof (_c = typeof typeorm_3.DataSource !== "undefined" && typeorm_3.DataSource) === "function" ? _c : Object, tracking_gateway_1.TrackingGateway])
 ], DriverController);
 let OrderDriverController = class OrderDriverController {
     orderRepo;
@@ -354,10 +352,6 @@ exports.OrderDriverController = OrderDriverController = __decorate([
     __param(1, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __param(3, (0, typeorm_2.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeorm_1.Repository,
-        typeorm_1.Repository,
-        typeorm_1.Repository,
-        typeorm_3.DataSource,
-        tracking_gateway_1.TrackingGateway,
+    __metadata("design:paramtypes", [typeof (_d = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _d : Object, typeof (_e = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _e : Object, typeof (_f = typeof typeorm_1.Repository !== "undefined" && typeorm_1.Repository) === "function" ? _f : Object, typeof (_g = typeof typeorm_3.DataSource !== "undefined" && typeorm_3.DataSource) === "function" ? _g : Object, tracking_gateway_1.TrackingGateway,
         notification_service_1.NotificationService])
 ], OrderDriverController);

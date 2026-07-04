@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var PaymentService_1;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const common_1 = require("@nestjs/common");
@@ -155,7 +156,5 @@ exports.PaymentService = PaymentService = PaymentService_1 = __decorate([
     __metadata("design:paramtypes", [config_1.ConfigService,
         audit_service_1.AuditService,
         ledger_service_1.LedgerService,
-        gateway_factory_service_1.PaymentGatewayFactory,
-        typeorm_2.Repository,
-        typeorm_2.Repository])
+        gateway_factory_service_1.PaymentGatewayFactory, typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, typeof (_b = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _b : Object])
 ], PaymentService);

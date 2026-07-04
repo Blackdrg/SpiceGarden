@@ -5,7 +5,7 @@ export declare class UserProfileService {
     private readonly addressRepo;
     private readonly paymentMethodRepo;
     constructor(addressRepo: Repository<AddressEntity>, paymentMethodRepo: Repository<PaymentMethodEntity>);
-    getAddresses(userId: string): Promise<AddressEntity[]>;
+    getAddresses(userId: string): Promise<any>;
     createAddress(userId: string, data: {
         label: string;
         addressLine: string;
@@ -29,11 +29,11 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault: boolean;
-    }>): Promise<AddressEntity>;
+    }>): Promise<any>;
     deleteAddress(userId: string, id: string): Promise<{
         success: boolean;
     }>;
-    getPaymentMethods(userId: string): Promise<PaymentMethodEntity[]>;
+    getPaymentMethods(userId: string): Promise<any>;
     createPaymentMethod(userId: string, data: {
         type: 'card' | 'upi' | 'wallet';
         cardLast4?: string;
@@ -43,10 +43,10 @@ export declare class UserProfileService {
         walletProvider?: string;
         externalPaymentMethodId?: string;
         isDefault?: boolean;
-    }): Promise<PaymentMethodEntity>;
+    }): Promise<any>;
     deletePaymentMethod(userId: string, id: string): Promise<{
         success: boolean;
     }>;
-    setDefaultPaymentMethod(userId: string, id: string): Promise<PaymentMethodEntity>;
-    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): Promise<PaymentMethodEntity>;
+    setDefaultPaymentMethod(userId: string, id: string): Promise<any>;
+    validatePaymentMethodOwnership(userId: string, paymentMethodId: string): Promise<any>;
 }

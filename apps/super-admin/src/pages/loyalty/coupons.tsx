@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@spicegarden/ui';
 import styles from './coupons.module.css';
 import Head from 'next/head';
 import Link from 'next/link';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-
-
-
 
 interface Coupon {
   id: string;
@@ -20,25 +17,43 @@ interface Coupon {
 }
 
 export default function LoyaltyCoupons() {
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
-  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const toast = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetch(`${API}/loyalty/coupons`)
-      .then((r) => r.json())
-      .then((data) => { setCoupons(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const { data: coupons = [], isLoading: loading } = useQuery<Coupon[]>({
+    queryKey: ['loyalty-coupons'],
+    queryFn: async () => {
+      const response = await fetch(`${API}/loyalty/coupons`);
+      if (!response.ok) throw new Error('Failed to load coupons');
+      return response.json() as Promise<Coupon[]>;
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (payload: unknown) => {
+      const response = await fetch(`${API}/loyalty/coupons`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error('Failed to create coupon');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loyalty-coupons'] });
+    },
+  });
 
   const createCoupon = async () => {
     setCreating(true);
-    await fetch(`${API}/loyalty/coupons`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, discountValue: parseFloat(form.discountValue), usageLimit: parseInt(form.usageLimit), validFrom: new Date(), validUntil: new Date(Date.now() + 30 * 86400000) }),
+    await createMutation.mutateAsync({
+      ...form,
+      discountValue: parseFloat(form.discountValue),
+      usageLimit: parseInt(form.usageLimit),
+      validFrom: new Date(),
+      validUntil: new Date(Date.now() + 30 * 86400000),
     });
     setForm({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
     setCreating(false);
