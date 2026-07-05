@@ -3,5 +3,5 @@ import { MetricsService } from './metrics.service';
 export declare class LatencyMetricsInterceptor implements NestInterceptor {
     private metricsService;
     constructor(metricsService: MetricsService);
-    intercept(context: ExecutionContext, next: CallHandler): any;
+    intercept(context: ExecutionContext, next: CallHandler): Observable<T>;
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
-require("reflect-metadata");
+require("../../../../../../../../../reflect-metadata");
 const typeorm_1 = require("typeorm");
 const entities_index_1 = require("./entities.index");
 exports.AppDataSource = new typeorm_1.DataSource({

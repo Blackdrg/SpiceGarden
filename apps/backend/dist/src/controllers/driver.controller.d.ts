@@ -87,7 +87,7 @@ export declare class OrderDriverController {
         failureReason?: string;
     }): Promise<{
         orderId: string;
-        status: "delivered" | "pickedUp" | "onTheWay" | "failed";
+        status: "delivered" | "failed" | "pickedUp" | "onTheWay";
     }>;
     verifyOTP(id: string, body: {
         otp: string;

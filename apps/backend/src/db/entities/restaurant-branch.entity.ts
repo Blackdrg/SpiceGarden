@@ -43,10 +43,10 @@ export class RestaurantBranchEntity {
   @Column({ default: true })
   isOnline!: boolean;
 
-  @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.branches)
+  @ManyToOne(() => RestaurantEntity, (restaurant: RestaurantEntity) => restaurant.branches)
   restaurant!: RestaurantEntity;
 
-  @OneToMany(() => MenuCategoryEntity, (category) => category.branch)
+  @OneToMany(() => MenuCategoryEntity, (category: MenuCategoryEntity) => category.branch)
   categories!: MenuCategoryEntity[];
 
   @CreateDateColumn()
