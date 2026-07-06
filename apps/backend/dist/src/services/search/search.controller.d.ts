@@ -8,10 +8,10 @@ export declare class SearchController {
     private searchService;
     constructor(searchService: SearchService);
     search(query: string): Promise<{
-        restaurants: any;
-        items: any;
+        restaurants: import("../../db/entities").RestaurantEntity[];
+        items: import("../../db/entities").MenuItemEntity[];
     }>;
-    getTrending(): Promise<any>;
-    getRecommended(req: AuthenticatedRequest): Promise<any>;
+    getTrending(): Promise<import("../../db/entities").MenuItemEntity[]>;
+    getRecommended(req: AuthenticatedRequest): Promise<import("../../db/entities").MenuItemEntity[]>;
 }
 export {};

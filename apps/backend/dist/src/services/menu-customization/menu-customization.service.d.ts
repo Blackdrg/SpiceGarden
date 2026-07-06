@@ -7,19 +7,37 @@ export declare class MenuCustomizationService {
     private readonly categoryRepo;
     private readonly addonRepo;
     constructor(menuItemRepo: Repository<MenuItemEntity>, categoryRepo: Repository<MenuCategoryEntity>, addonRepo: Repository<MenuAddonEntity>);
-    getMenuItems(restaurantId: string, category?: string): Promise<any>;
-    getItemDetails(itemId: string): Promise<{
-        id: any;
-        name: any;
-        description: any;
+    getMenuItems(restaurantId: string, category?: string): Promise<{
+        id: string;
+        name: string;
+        description: string;
         price: number;
-        image: any;
-        category: any;
-        isVeg: any;
-        spiceLevel: any;
-        status: any;
-        addons: any;
+        image: string;
+        category: string;
+        isVeg: boolean;
+        spiceLevel: number;
+        addons: {
+            id: string;
+            name: string;
+            price: number;
+        }[];
+    }[]>;
+    getItemDetails(itemId: string): Promise<{
+        id: string;
+        name: string;
+        description: string;
+        price: number;
+        image: string;
+        category: string;
+        isVeg: boolean;
+        spiceLevel: number;
+        status: string;
+        addons: {
+            id: string;
+            name: string;
+            price: number;
+        }[];
     } | null>;
-    getItemAddons(itemId: string): Promise<any>;
-    getCategories(restaurantId: string): Promise<any>;
+    getItemAddons(itemId: string): Promise<MenuAddonEntity[]>;
+    getCategories(restaurantId: string): Promise<MenuCategoryEntity[]>;
 }

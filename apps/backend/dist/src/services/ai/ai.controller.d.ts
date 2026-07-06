@@ -2,7 +2,7 @@ import { AiService } from './ai.service';
 export declare class AiController {
     private aiService;
     constructor(aiService: AiService);
-    getRecs(req: any): Promise<any>;
+    getRecs(req: any): Promise<import("../../db/entities").MenuItemEntity[]>;
     askChatbot(message: string): Promise<{
         reply: string;
     }>;

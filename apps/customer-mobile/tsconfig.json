@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
@@ -21,7 +21,8 @@
     "types": [
       "react",
       "jest",
-      "node"
+      "node",
+      "react-native"
     ]
   },
   "include": [
@@ -34,6 +35,5 @@
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "extends": "../../tsconfig.base.json"
+  ]
 }

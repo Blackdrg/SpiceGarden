@@ -11,7 +11,7 @@ export declare class NotificationService {
         type?: string;
         userAgent?: string;
         ip?: string;
-    }): Promise<any>;
+    }): Promise<UserDeviceEntity>;
     unregisterDevice(userId: string, fcmToken: string): Promise<void>;
     sendPush(userId: string, title: string, body: string, data?: any): Promise<{
         success: boolean;
@@ -86,8 +86,8 @@ export declare class NotificationService {
         error?: undefined;
     } | {
         success: boolean;
-        sent: any;
-        results: any;
+        sent: number;
+        results: any[];
         reason?: undefined;
         error?: undefined;
     } | {

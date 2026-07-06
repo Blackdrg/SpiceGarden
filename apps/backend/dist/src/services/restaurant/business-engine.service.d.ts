@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { OrderStatus } from '../../shared/domain/order.interface';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
@@ -69,9 +70,15 @@ export declare class BusinessEngineService {
         lastCheck: string;
     }>;
     getRealtimeDashboard(): Promise<{
-        metrics: any;
-        liveDrivers: any;
-        recentOrders: any;
+        metrics: BusinessMetrics;
+        liveDrivers: DriverLocation[];
+        recentOrders: {
+            id: string;
+            restaurant: string;
+            amount: number;
+            status: OrderStatus;
+            createdAt: Date;
+        }[];
         timestamp: string;
     }>;
 }

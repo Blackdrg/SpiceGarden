@@ -21,8 +21,8 @@ export declare class EnhancedDeliveryService {
     constructor(driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, geoService: GeoService, dataSource: DataSource);
     private initializeSurgeZones;
     private initializeIncentiveRules;
-    registerDriver(userId: string, data: any): Promise<any>;
-    updateLocation(driverId: string, lat: number, lng: number): Promise<any>;
+    registerDriver(userId: string, data: any): Promise<DriverEntity[]>;
+    updateLocation(driverId: string, lat: number, lng: number): Promise<import("typeorm").UpdateResult>;
     findAvailableDrivers(lat: number, lng: number, radiusInKm?: number): Promise<DriverEntity[]>;
     assignOrderToDriver(orderId: string, driverId: string): Promise<void>;
     calculateTrafficAwareRoute(restaurantLocation: GeoPoint, customerLocation: GeoPoint, historicalSpeed?: number): {

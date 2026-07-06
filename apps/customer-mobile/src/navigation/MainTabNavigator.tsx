@@ -13,25 +13,25 @@ function MainTabNavigator() {
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen} options={{
         tabBarLabel: 'Home',
-        tabBarIcon: ({ color, size }) => (
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => (
           <Text style={{ color, fontSize: size }}>H</Text>
         )
       }} />
       <Tab.Screen name="Search" component={HomeScreen} options={{
         tabBarLabel: 'Search',
-        tabBarIcon: ({ color, size }) => (
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => (
           <Text style={{ color, fontSize: size }}>S</Text>
         )
       }} />
       <Tab.Screen name="Cart" component={CartScreen} options={{
         tabBarLabel: 'Cart',
-        tabBarIcon: ({ color, size }) => (
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => (
           <Text style={{ color, fontSize: size }}>C</Text>
         )
       }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{
         tabBarLabel: 'Profile',
-        tabBarIcon: ({ color, size }) => (
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => (
           <Text style={{ color, fontSize: size }}>P</Text>
         )
       }} />

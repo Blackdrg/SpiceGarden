@@ -28,9 +28,15 @@ export declare class BusinessEngineController {
         isAvailable: boolean;
     }>;
     getDashboard(): Promise<{
-        metrics: any;
-        liveDrivers: any;
-        recentOrders: any;
+        metrics: BusinessMetrics;
+        liveDrivers: import("./business-engine.service").DriverLocation[];
+        recentOrders: {
+            id: string;
+            restaurant: string;
+            amount: number;
+            status: import("../../shared/domain/order.interface").OrderStatus;
+            createdAt: Date;
+        }[];
         timestamp: string;
     }>;
     getUptime(): Promise<{

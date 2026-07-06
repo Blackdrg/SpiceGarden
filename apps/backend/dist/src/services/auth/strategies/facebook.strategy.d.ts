@@ -1,5 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-declare const FacebookStrategy_base: any;
+import { Strategy } from 'passport-facebook';
+declare const FacebookStrategy_base: new (...args: [] | [options: Record<string, any>]) => Strategy & {
+    validate(...args: any[]): unknown;
+};
 export declare class FacebookStrategy extends FacebookStrategy_base {
     private configService;
     constructor(configService: ConfigService);

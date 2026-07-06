@@ -76,7 +76,7 @@ describe('Customer Web API integration', () => {
       json: () => Promise.resolve(mockMenu),
     } as Response);
 
-    await categoriesHandler({ query: { restaurantId: '1' } } as NextApiRequest, res as unknown as NextApiResponse);
+    await categoriesHandler({ query: { restaurantId: '1' } } as unknown as NextApiRequest, res as unknown as NextApiResponse);
 
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);

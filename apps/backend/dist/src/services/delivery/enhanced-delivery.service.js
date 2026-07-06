@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var EnhancedDeliveryService_1;
-var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnhancedDeliveryService = void 0;
 const common_1 = require("@nestjs/common");
@@ -328,5 +327,10 @@ exports.EnhancedDeliveryService = EnhancedDeliveryService = EnhancedDeliveryServ
     __param(2, (0, typeorm_1.InjectRepository)(batch_entity_1.BatchEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
     __param(5, (0, typeorm_1.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeof (_a = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _a : Object, typeof (_b = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _b : Object, typeof (_c = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _c : Object, typeof (_d = typeof typeorm_2.Repository !== "undefined" && typeorm_2.Repository) === "function" ? _d : Object, geo_service_1.GeoService, typeof (_e = typeof typeorm_2.DataSource !== "undefined" && typeorm_2.DataSource) === "function" ? _e : Object])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        geo_service_1.GeoService,
+        typeorm_2.DataSource])
 ], EnhancedDeliveryService);
