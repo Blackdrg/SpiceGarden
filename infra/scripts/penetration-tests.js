@@ -90,7 +90,9 @@ async function checkSecurityHeaders() {
   let missing = [];
 
   for (const header of PEN_TESTS.headers.required) {
-    if (!headers[header]) {
+    const headerLower = header.toLowerCase();
+    const headerPresent = Object.keys(headers).some(key => key.toLowerCase() === headerLower);
+    if (!headerPresent) {
       missing.push(header);
     }
   }
