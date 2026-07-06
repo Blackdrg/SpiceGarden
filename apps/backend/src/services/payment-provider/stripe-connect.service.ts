@@ -261,7 +261,7 @@ export class StripeConnectService {
 
     try {
       const payouts = await this.stripe.payouts.list(
-        { limit },
+        { limit } as any,
         { stripeAccount: restaurant.stripeAccountId } as any,
       );
 
