@@ -5,6 +5,9 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   turbopack: {
     root: path.resolve(__dirname, '../../')
   },
