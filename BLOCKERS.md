@@ -14,7 +14,7 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | React Doctor scores < 70 (most workspaces) | UI quality issues | Install react-doctor in all workspaces and run Phase 2 fixes |
+| 1 | React Doctor not installed in most workspaces | Cannot assess/improve UI quality scores | Installation fails due to corrupted yarn cache (`oxlint-plugin-react-doctor` integrity errors). Must resolve cache/network issues first. Customer-web: 82/100. |
 | 2 | gRPC transport quarantined | Inter-service communication via gRPC unavailable | Intentional - production flows use REST/WebSocket. Remove quarantine if gRPC is needed. |
 
 ## P2 - Medium Priority (Should resolve)

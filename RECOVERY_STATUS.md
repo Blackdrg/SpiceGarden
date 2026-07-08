@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-08T15:55 IST_
+_Last updated: 2026-07-08T19:50 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -73,15 +73,16 @@ _Last updated: 2026-07-08T15:55 IST_
   manually start Docker Desktop and ensure the daemon is running.
 - **Docker images not pulled** → Network-dependent; requires manual
   `docker compose -f compose.dev.yaml up -d` after Docker is running.
+- **React Doctor not installed in all workspaces** → Installation fails due to
+  corrupted yarn cache (`oxlint-plugin-react-doctor` integrity errors). Customer-web
+  has react-doctor installed (score 82/100). Other workspaces need tool installation
+  after cache/network issues are resolved.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
-  gracefully" in backend integration tests. Tests pass but worker cleanup is
-  imperfect. Root cause likely in mock lifecycle (Redis/ioredis mocks). P2.
-- **React Doctor**: Only customer-web has react-doctor installed (score 82/100).
-  Other workspaces lack the tool. Scores from previous baseline:
-  customer-mobile: 65/100, delivery-partner: 59/100, super-admin: 62/100,
-  restaurant-dashboard: 74/100. Requires Phase 2 fixes with tool installation.
+  gracefully" in backend integration tests (1085 passed, 1 skipped). Tests pass but
+  worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
+  mocks). `--detectOpenHandles` causes test hang. P2.
 - **gRPC transport**: Intentionally quarantined. `@spicegarden/grpc-transport`
   exports `GrpcTransportUnavailableError` and `createGrpcTransport()` which throws.
   Production flows use REST/WebSocket. Not a bug.
