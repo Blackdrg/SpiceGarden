@@ -66,6 +66,12 @@ _Last updated: 2026-07-08T19:50 IST_
 - **UI unit**: 28 passed ✅
 - **TypeScript typecheck**: backend, customer-web, restaurant-dashboard, super-admin all pass ✅
 - **npm audit**: 0 vulnerabilities (previously 31 moderate) ✅
+- **React Doctor**:
+  - super-admin: 100/100 (Great) ✅
+  - restaurant-dashboard: 95/100 (Great) ✅
+  - customer-web: 95/100 (Great) ✅
+  - delivery-partner: 84/100 (Needs work) ⚠️
+  - customer-mobile: 51/100 (Critical) ⚠️
 
 ### Remaining Blockers
 - **Docker Desktop Service stopped** → Cannot start Docker daemon. Service status:
@@ -73,16 +79,19 @@ _Last updated: 2026-07-08T19:50 IST_
   manually start Docker Desktop and ensure the daemon is running.
 - **Docker images not pulled** → Network-dependent; requires manual
   `docker compose -f compose.dev.yaml up -d` after Docker is running.
-- **React Doctor not installed in all workspaces** → Installation fails due to
-  corrupted yarn cache (`oxlint-plugin-react-doctor` integrity errors). Customer-web
-  has react-doctor installed (score 82/100). Other workspaces need tool installation
-  after cache/network issues are resolved.
+- **customer-mobile React Doctor score 51/100** → 69 issues (1 security, 24 bugs,
+  3 performance, 40 maintainability, 1 correctness). Most are pre-existing code
+  quality issues. Requires Phase 2 frontend refactoring work. Under current feature
+  freeze, extensive React refactoring requires explicit approval.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
   gracefully" in backend integration tests (1085 passed, 1 skipped). Tests pass but
   worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
   mocks). `--detectOpenHandles` causes test hang. P2.
+- **customer-mobile React Doctor 51/100**: 69 issues (1 security, 24 bugs, 3
+  performance, 40 maintainability, 1 correctness). Most are pre-existing code quality
+  issues. Requires Phase 2 frontend refactoring under feature freeze approval.
 - **gRPC transport**: Intentionally quarantined. `@spicegarden/grpc-transport`
   exports `GrpcTransportUnavailableError` and `createGrpcTransport()` which throws.
   Production flows use REST/WebSocket. Not a bug.
