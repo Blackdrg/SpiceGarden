@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-09T00:20 IST_
+_Last updated: 2026-07-09T00:25 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -82,26 +82,21 @@ _Last updated: 2026-07-09T00:20 IST_
   - opensearch-dashboards: running
 
 ### Remaining Blockers
-- **customer-mobile React Doctor score 52/100** → 55 issues remain (1 security,
-   23 bugs, 3 performance, 30 maintainability, 1 correctness). Fixed 14 issues
-   this session (unused exports, state→useRef, dead state removal, component
-   extraction, useMemo stabilization). Most remaining issues require Phase 2
-   frontend refactoring work (Reanimated migration, expo-image migration,
-   useReducer refactoring, large component splitting). Under current feature
-   freeze, extensive React refactoring requires explicit approval.
+- **customer-mobile React Doctor score 52/100** → 53 issues remain after fixing 16
+   issues (14 code fixes + 2 unused mock file removals). Most remaining issues
+   require Phase 2 frontend refactoring work (Reanimated migration, expo-image
+   migration, useReducer refactoring, large component splitting). Under current
+   feature freeze, extensive React refactoring requires explicit approval.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
   gracefully" in backend integration tests (1085 passed, 1 skipped). Tests pass but
   worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
   mocks). `--detectOpenHandles` causes test hang. P2.
-- **customer-mobile React Doctor 52/100**: 55 issues remain after fixing 14
+- **customer-mobile React Doctor 52/100**: 53 issues remain after fixing 16
   issues. Most remaining issues require Phase 2 frontend refactoring under feature
   freeze approval (Reanimated migration, expo-image, useReducer, component
   extraction, large component splitting).
-- **gRPC transport**: Intentionally quarantined. `@spicegarden/grpc-transport`
-  exports `GrpcTransportUnavailableError` and `createGrpcTransport()` which throws.
-  Production flows use REST/WebSocket. Not a bug.
 - **MongoDB unhealthy**: Container running but health check failing. May affect
   features relying on MongoDB. Separate investigation needed.
 
@@ -117,4 +112,6 @@ _Last updated: 2026-07-09T00:20 IST_
 - apps/customer-mobile/src/screens/RestaurantScreen.tsx (removed unused cartCount)
 - apps/customer-mobile/src/screens/SearchScreen.tsx (useMemo for skeleton data, moved renderSkeleton outside component)
 - apps/customer-mobile/src/screens/NotificationsScreen.tsx (extracted ToggleRow component)
+- apps/customer-mobile/__mocks__/expo-image.js (removed unused mock)
+- apps/customer-mobile/__mocks__/react-native-root-toast.js (removed unused mock)
 - RECOVERY_STATUS.md (this file)
