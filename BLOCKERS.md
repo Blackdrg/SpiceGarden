@@ -8,7 +8,7 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | Docker Desktop Service stopped | Cannot run postgres/redis/mongo locally | User must start Docker Desktop and ensure com.docker.service is running |
+| None | Docker services are running | - | All 7 services up (postgres healthy, redis healthy, mongo unhealthy) |
 
 ## P1 - High Priority Blockers (Must resolve before prod)
 
@@ -21,8 +21,9 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | Test teardown warning | Jest worker process may leak | Investigate open handles in integration tests |
-| 2 | Outdated JSX transform warning | Console noise in e2e tests | Update React JSX transform configuration |
+| 1 | MongoDB container unhealthy | May affect MongoDB-dependent features | Investigate MongoDB health check / config |
+| 2 | Test teardown warning | Jest worker process may leak | Investigate open handles in integration tests |
+| 3 | Outdated JSX transform warning | Console noise in e2e tests | Update React JSX transform configuration |
 
 ## RESOLVED
 
@@ -39,6 +40,7 @@
 | Backend e2e tests | Verified: 35 passed |
 | Frontend integration/e2e tests | Verified: all pass across customer-web, restaurant-dashboard, super-admin, delivery-partner |
 | React Doctor installation | Verified: runnable via root binary for all workspaces |
+| Docker Desktop services | All 7 services running (postgres healthy, redis healthy, mongo unhealthy) |
 | React Doctor scores (4 of 5 workspaces > 84) | super-admin: 100, restaurant-dashboard: 95, customer-web: 95, delivery-partner: 84 |
 | customer-mobile React Doctor issues (14 fixed) | Removed unused exports, changed state→useRef, removed dead state, extracted ToggleRow component, moved renderSkeleton outside component, wrapped skeleton data in useMemo |
 

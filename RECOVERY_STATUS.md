@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-08T23:30 IST_
+_Last updated: 2026-07-09T00:20 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -72,13 +72,16 @@ _Last updated: 2026-07-08T23:30 IST_
   - customer-web: 95/100 (Great) ✅
   - delivery-partner: 84/100 (Needs work) ⚠️
   - customer-mobile: 52/100 (Critical) ⚠️
+- **Docker Compose**: All 7 services running ✅
+  - postgres: healthy
+  - redis: healthy
+  - mongo: running (unhealthy - separate investigation needed)
+  - opensearch: running
+  - grafana: running
+  - prometheus: running
+  - opensearch-dashboards: running
 
 ### Remaining Blockers
-- **Docker Desktop Service stopped** → Cannot start Docker daemon. Service status:
-  `com.docker.service Stopped`. Cannot start service due to permissions. User must
-  manually start Docker Desktop and ensure the daemon is running.
-- **Docker images not pulled** → Network-dependent; requires manual
-  `docker compose -f compose.dev.yaml up -d` after Docker is running.
 - **customer-mobile React Doctor score 52/100** → 55 issues remain (1 security,
    23 bugs, 3 performance, 30 maintainability, 1 correctness). Fixed 14 issues
    this session (unused exports, state→useRef, dead state removal, component
@@ -99,6 +102,8 @@ _Last updated: 2026-07-08T23:30 IST_
 - **gRPC transport**: Intentionally quarantined. `@spicegarden/grpc-transport`
   exports `GrpcTransportUnavailableError` and `createGrpcTransport()` which throws.
   Production flows use REST/WebSocket. Not a bug.
+- **MongoDB unhealthy**: Container running but health check failing. May affect
+  features relying on MongoDB. Separate investigation needed.
 
 ### Files Changed
 - package.json (allowScripts for native packages)
