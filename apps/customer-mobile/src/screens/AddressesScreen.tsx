@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -22,13 +22,13 @@ export const AddressesScreen = () => {
   const navigation = useNavigation();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
-  const [locationPermission, setLocationPermission] = useState<MobileLocationPermissionStatus | null>(null);
+  const locationPermission = useRef<MobileLocationPermissionStatus | null>(null);
   
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
 
   const requestLocationPermission = async () => {
     try {
-      setLocationPermission(await requestMobileLocationPermission());
+      locationPermission.current = await requestMobileLocationPermission();
     } catch (e) {
       console.error('Location permission error:', e);
     }
@@ -65,7 +65,7 @@ export const AddressesScreen = () => {
   }, [loadAddresses]);
 
   const getCurrentLocation = useCallback(async () => {
-    if (locationPermission !== 'granted') {
+    if (locationPermission.current !== 'granted') {
       Toast.show('Location permission is needed to add your current address', { duration: Toast.durations.SHORT });
       return;
     }
@@ -86,7 +86,7 @@ export const AddressesScreen = () => {
     } catch (e) {
       Toast.show('Could not get your current location', { duration: Toast.durations.SHORT });
     }
-  }, [addresses, locationPermission, saveAddresses]);
+  }, [addresses, saveAddresses]);
 
   const deleteAddress = useCallback((id: string) => {
     const newAddresses = addresses.filter(a => a.id !== id);

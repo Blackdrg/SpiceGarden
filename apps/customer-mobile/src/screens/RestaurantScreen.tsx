@@ -23,7 +23,6 @@ const RestaurantScreen = () => {
    const [restaurantId, setRestaurantId] = useState<string | null>(null);
    const [restaurant, setRestaurant] = useState<RestaurantInfo | null>(null);
    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-   const [cartCount, setCartCount] = useState(0);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
    const [addingItem, setAddingItem] = useState<string | null>(null);
@@ -79,7 +78,6 @@ const RestaurantScreen = () => {
 
     const addToCart = (itemId: string) => {
       setAddingItem(itemId);
-      setCartCount(c => c + 1);
       setTimeout(() => setAddingItem(null), 500);
     };
 

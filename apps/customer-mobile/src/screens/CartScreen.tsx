@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -32,7 +32,7 @@ const CartScreen = () => {
   const navigation = useNavigation();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
+  const user = useRef<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
@@ -44,7 +44,7 @@ const CartScreen = () => {
         if (userJson) {
           const parsedUser = safeParse(userJson);
           if (parsedUser) {
-            setUser(parsedUser as User);
+            user.current = parsedUser as User;
           } else {
             await AsyncStorage.removeItem(STORAGE_KEYS.USER);
           }
@@ -131,10 +131,9 @@ const CartScreen = () => {
       return;
     }
 
-    if (!user) {
+    if (!user.current) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Toast.show(STRINGS.cart.loginRequired, {
-
         duration: Toast.durations.LONG,
         position: Toast.positions.BOTTOM,
         backgroundColor: DESIGN_TOKENS.colors.warning,
@@ -146,7 +145,7 @@ const CartScreen = () => {
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     navigation.navigate('Checkout', { cartItems: validCart });
-  }, [cartItems, user, navigation]);
+  }, [cartItems, navigation]);
 
   const renderCartItem = useCallback(({ item }: { item: CartItem }) => {
     const validPrice = Math.max(0, item.price || 0);

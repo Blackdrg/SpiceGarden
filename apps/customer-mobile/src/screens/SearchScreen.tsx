@@ -33,6 +33,7 @@ const SearchScreen = () => {
 
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
   const slideAnim = useMemo(() => new Animated.Value(20), []);
+  const skeletonData = useMemo(() => [1, 2, 3, 4, 5], []);
 
   useEffect(() => {
     Animated.parallel([
@@ -163,17 +164,6 @@ const SearchScreen = () => {
     );
   };
 
-  const renderSkeleton = () => (
-    <View style={styles.resultCard}>
-      <SkeletonRect width={50} height={50} borderRadius={8} />
-      <View style={{ flex: 1, marginLeft: 12 }}>
-        <SkeletonRect width="70%" height={20} style={{ marginBottom: 6 }} />
-        <SkeletonRect width="50%" height={16} style={{ marginBottom: 4 }} />
-        <SkeletonRect width="90%" height={14} />
-      </View>
-    </View>
-  );
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -266,7 +256,7 @@ const SearchScreen = () => {
       >
         {loading ? (
           <FlatList
-            data={[1, 2, 3, 4, 5]}
+            data={skeletonData}
             keyExtractor={(item) => item.toString()}
             renderItem={renderSkeleton}
             ListFooterComponent={<View style={{ height: 80 }} />}
@@ -328,6 +318,17 @@ const SearchScreen = () => {
     </View>
   );
 };
+
+const renderSkeleton = () => (
+  <View style={styles.resultCard}>
+    <SkeletonRect width={50} height={50} borderRadius={8} />
+    <View style={{ flex: 1, marginLeft: 12 }}>
+      <SkeletonRect width="70%" height={20} style={{ marginBottom: 6 }} />
+      <SkeletonRect width="50%" height={16} style={{ marginBottom: 4 }} />
+      <SkeletonRect width="90%" height={14} />
+    </View>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {

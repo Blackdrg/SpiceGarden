@@ -1,4 +1,4 @@
-export const getApiBaseUrl = (): string => {
+const getApiBaseUrl = (): string => {
   const apiUrl = globalThis.process?.env?.NEXT_PUBLIC_API_URL;
   if (!apiUrl) {
     if (globalThis.process?.env?.NODE_ENV === 'production') {
@@ -11,4 +11,3 @@ export const getApiBaseUrl = (): string => {
 
 export const API_BASE_URL = getApiBaseUrl();
 export const API_URL = API_BASE_URL;
-export const SOCKET_URL = API_BASE_URL;

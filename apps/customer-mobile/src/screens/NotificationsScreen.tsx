@@ -18,6 +18,19 @@ interface NotificationPrefs {
   smsDeliveryUpdates: boolean;
 }
 
+const ToggleRow = ({ label, value, onToggle, disabled }: { label: string; value: boolean; onToggle: () => void; disabled: boolean }) => (
+  <View style={styles.toggleRow}>
+    <Text style={styles.toggleLabel}>{label}</Text>
+    <Switch
+      value={value}
+      onValueChange={onToggle}
+      trackColor={{ false: DESIGN_TOKENS.colors.border, true: DESIGN_TOKENS.colors.primary }}
+      thumbColor={value ? DESIGN_TOKENS.colors.primary : '#ccc'}
+      disabled={disabled}
+    />
+  </View>
+);
+
 const NotificationsScreen = () => {
   const navigation = useNavigation();
   const [prefs, setPrefs] = useState<NotificationPrefs>({
@@ -95,19 +108,6 @@ const NotificationsScreen = () => {
     Haptics.selectionAsync();
   }, [prefs, savePrefs]);
 
-  const renderToggleRow = useCallback((label: string, value: boolean, key: keyof NotificationPrefs) => (
-    <View style={styles.toggleRow}>
-      <Text style={styles.toggleLabel}>{label}</Text>
-      <Switch
-        value={value}
-        onValueChange={() => togglePref(key)}
-        trackColor={{ false: DESIGN_TOKENS.colors.border, true: DESIGN_TOKENS.colors.primary }}
-        thumbColor={value ? DESIGN_TOKENS.colors.primary : '#ccc'}
-        disabled={loading || saving}
-      />
-    </View>
-  ), [loading, saving, togglePref]);
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -128,20 +128,20 @@ const NotificationsScreen = () => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Push Notifications</Text>
-          {renderToggleRow('Order Updates', prefs.pushOrders, 'pushOrders')}
-          {renderToggleRow('Promotions', prefs.pushPromotions, 'pushPromotions')}
-          {renderToggleRow('Delivery Updates', prefs.pushDeliveryUpdates, 'pushDeliveryUpdates')}
+          <ToggleRow label="Order Updates" value={prefs.pushOrders} onToggle={() => togglePref('pushOrders')} disabled={loading || saving} />
+          <ToggleRow label="Promotions" value={prefs.pushPromotions} onToggle={() => togglePref('pushPromotions')} disabled={loading || saving} />
+          <ToggleRow label="Delivery Updates" value={prefs.pushDeliveryUpdates} onToggle={() => togglePref('pushDeliveryUpdates')} disabled={loading || saving} />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Email</Text>
-          {renderToggleRow('Order Confirmations', prefs.emailOrders, 'emailOrders')}
-          {renderToggleRow('Promotional Emails', prefs.emailPromotions, 'emailPromotions')}
+          <ToggleRow label="Order Confirmations" value={prefs.emailOrders} onToggle={() => togglePref('emailOrders')} disabled={loading || saving} />
+          <ToggleRow label="Promotional Emails" value={prefs.emailPromotions} onToggle={() => togglePref('emailPromotions')} disabled={loading || saving} />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>SMS</Text>
-          {renderToggleRow('Delivery Updates', prefs.smsDeliveryUpdates, 'smsDeliveryUpdates')}
+          <ToggleRow label="Delivery Updates" value={prefs.smsDeliveryUpdates} onToggle={() => togglePref('smsDeliveryUpdates')} disabled={loading || saving} />
         </View>
       </View>
     </Animated.View>
