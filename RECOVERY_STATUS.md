@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-08T19:50 IST_
+_Last updated: 2026-07-08T23:30 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -71,7 +71,7 @@ _Last updated: 2026-07-08T19:50 IST_
   - restaurant-dashboard: 95/100 (Great) ✅
   - customer-web: 95/100 (Great) ✅
   - delivery-partner: 84/100 (Needs work) ⚠️
-  - customer-mobile: 51/100 (Critical) ⚠️
+  - customer-mobile: 52/100 (Critical) ⚠️
 
 ### Remaining Blockers
 - **Docker Desktop Service stopped** → Cannot start Docker daemon. Service status:
@@ -79,19 +79,23 @@ _Last updated: 2026-07-08T19:50 IST_
   manually start Docker Desktop and ensure the daemon is running.
 - **Docker images not pulled** → Network-dependent; requires manual
   `docker compose -f compose.dev.yaml up -d` after Docker is running.
-- **customer-mobile React Doctor score 51/100** → 69 issues (1 security, 24 bugs,
-  3 performance, 40 maintainability, 1 correctness). Most are pre-existing code
-  quality issues. Requires Phase 2 frontend refactoring work. Under current feature
-  freeze, extensive React refactoring requires explicit approval.
+- **customer-mobile React Doctor score 52/100** → 55 issues remain (1 security,
+   23 bugs, 3 performance, 30 maintainability, 1 correctness). Fixed 14 issues
+   this session (unused exports, state→useRef, dead state removal, component
+   extraction, useMemo stabilization). Most remaining issues require Phase 2
+   frontend refactoring work (Reanimated migration, expo-image migration,
+   useReducer refactoring, large component splitting). Under current feature
+   freeze, extensive React refactoring requires explicit approval.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
   gracefully" in backend integration tests (1085 passed, 1 skipped). Tests pass but
   worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
   mocks). `--detectOpenHandles` causes test hang. P2.
-- **customer-mobile React Doctor 51/100**: 69 issues (1 security, 24 bugs, 3
-  performance, 40 maintainability, 1 correctness). Most are pre-existing code quality
-  issues. Requires Phase 2 frontend refactoring under feature freeze approval.
+- **customer-mobile React Doctor 52/100**: 55 issues remain after fixing 14
+  issues. Most remaining issues require Phase 2 frontend refactoring under feature
+  freeze approval (Reanimated migration, expo-image, useReducer, component
+  extraction, large component splitting).
 - **gRPC transport**: Intentionally quarantined. `@spicegarden/grpc-transport`
   exports `GrpcTransportUnavailableError` and `createGrpcTransport()` which throws.
   Production flows use REST/WebSocket. Not a bug.
@@ -102,4 +106,10 @@ _Last updated: 2026-07-08T19:50 IST_
 - packages/shared/__tests__/api.test.ts (tests now compile and pass)
 - infra/restaurant-dashboard/Dockerfile (npm workspace build fix)
 - yarn.lock (regenerated with yarn 1.22.22)
+- apps/customer-mobile/src/constants/api.ts (removed unused exports)
+- apps/customer-mobile/src/screens/AddressesScreen.tsx (useRef for locationPermission)
+- apps/customer-mobile/src/screens/CartScreen.tsx (useRef for user, added useRef import)
+- apps/customer-mobile/src/screens/RestaurantScreen.tsx (removed unused cartCount)
+- apps/customer-mobile/src/screens/SearchScreen.tsx (useMemo for skeleton data, moved renderSkeleton outside component)
+- apps/customer-mobile/src/screens/NotificationsScreen.tsx (extracted ToggleRow component)
 - RECOVERY_STATUS.md (this file)
