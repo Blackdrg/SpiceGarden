@@ -11,8 +11,9 @@
     "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "jsx": "react-jsx",
-    "declaration": true
+    "jsx": "preserve",
+    "declaration": true,
+    "types": ["node", "jest"]
   },
   "include": ["index.ts", "analytics.ts", "api.ts", "constants.ts", "types.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
