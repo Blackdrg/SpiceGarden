@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-09T13:00 IST_
+_Last updated: 2026-07-09T14:00 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -83,11 +83,24 @@ _Last updated: 2026-07-09T13:00 IST_
 
 ### Remaining Blockers
 - **customer-mobile React Doctor score 53/100** → 51 issues remain after fixing 17
-   issues (14 code fixes + 2 unused mock file removals + 1 component extraction).
-   Most remaining issues require Phase 2 frontend refactoring work (Reanimated
-   migration, expo-image migration, useReducer refactoring, large component
-   splitting). Under current feature freeze, extensive React refactoring requires
-   explicit approval.
+   issues. Remaining issues breakdown:
+   - **23 unused files**: Many are false positives (barrel exports, dynamic imports,
+     test infrastructure). Risky mass-deletion blocked by feature freeze.
+   - **11 JS-thread animations → Reanimated**: Requires new dependency and
+     architectural migration. Blocked by feature freeze.
+   - **3 derived state warnings**: False positives - data-fetching via AsyncStorage
+     flagged as derived state. Code pattern is correct.
+   - **1 event handler in effect**: Animation trigger on loading state change.
+     Common React Native pattern; changing could affect UX.
+   - **2 non-native navigators**: Architecture change requiring bottom-tabs
+     replacement. Blocked by feature freeze.
+   - **5 many useState → useReducer**: Architectural refactor of AuthScreen,
+     MenuItemCustomizationScreen, ProfileScreen, RestaurantScreen, SearchScreen.
+     Blocked by feature freeze.
+   - **1 Image → expo-image**: Requires new dependency installation. Blocked.
+   - **1 React 19 API**: Future version upgrade.
+   - **4 multiple components in one file**: File restructuring. Blocked by feature freeze.
+   - **1 security (weak crypto)**: False positive in bundled dist-web output.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
@@ -95,9 +108,12 @@ _Last updated: 2026-07-09T13:00 IST_
   worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
   mocks). `--detectOpenHandles` causes test hang. P2.
 - **customer-mobile React Doctor 53/100**: 51 issues remain after fixing 17
-  issues. Most remaining issues require Phase 2 frontend refactoring under feature
-  freeze approval (Reanimated migration, expo-image, useReducer, component
-  extraction, large component splitting).
+  issues. Breakdown: 23 unused files (false positives/risky deletions), 11 Reanimated
+  migration (new dependency), 3 derived state false positives, 1 event handler
+  pattern, 2 non-native navigators, 5 useReducer refactors, 1 expo-image migration,
+  1 React 19 API, 4 multi-component files, 1 security false positive. All require
+  either new dependencies, architectural changes, or carry regression risk. Blocked
+  by feature freeze.
 
 ### Files Changed
 - package.json (allowScripts for native packages)
