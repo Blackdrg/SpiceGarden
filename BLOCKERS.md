@@ -14,7 +14,7 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | customer-mobile React Doctor 52/100 | UI quality below threshold | 55 issues remain (was 69). Fixed 14 issues (unused exports, state→useRef, dead state removal, component extraction, useMemo). Remaining issues require Phase 2 refactoring (Reanimated, expo-image, useReducer, component splitting) under feature freeze approval. |
+| 1 | customer-mobile React Doctor 53/100 | UI quality below threshold | 51 issues remain (was 69). Fixed 17 issues (unused exports, state→useRef, dead state removal, component extraction, useMemo, component conversion from inline functions). Remaining issues require Phase 2 refactoring (Reanimated, expo-image, useReducer, component splitting) under feature freeze approval. |
 | 2 | gRPC transport quarantined | Inter-service communication via gRPC unavailable | Intentional - production flows use REST/WebSocket. Remove quarantine if gRPC is needed. |
 
 ## P2 - Medium Priority (Should resolve)
@@ -41,7 +41,7 @@
 | React Doctor installation | Verified: runnable via root binary for all workspaces |
 | Docker Desktop services | All services running (postgres healthy, redis healthy, mongo healthy) |
 | React Doctor scores (4 of 5 workspaces > 84) | super-admin: 100, restaurant-dashboard: 95, customer-web: 95, delivery-partner: 84 |
-| customer-mobile React Doctor issues (14 fixed) | Removed unused exports, changed state→useRef, removed dead state, extracted ToggleRow component, moved renderSkeleton outside component, wrapped skeleton data in useMemo |
+| customer-mobile React Doctor issues (17 fixed) | Removed unused exports, changed state→useRef, removed dead state, extracted ToggleRow component, moved renderSkeleton outside component, wrapped skeleton data in useMemo, converted inline render functions to named components |
 
 ## NOT VERIFIED (Requires Docker)
 
@@ -59,6 +59,6 @@ These items cannot be verified without a running Docker daemon:
 
 1. **Phase 1 (COMPLETE):** Build, lint, unit tests, coverage - ✅ Done
 2. **Phase 2 (PARTIAL):** React Doctor - 4/5 workspaces > 84/100. customer-mobile
-   at 52/100 requires Phase 2 refactoring under feature freeze approval.
+   at 53/100 requires Phase 2 refactoring under feature freeze approval.
 3. **Phase 3 (PENDING):** Runtime validation in containerized environment (Docker services running)
 4. **Phase 4 (PENDING):** Production deployment with live services

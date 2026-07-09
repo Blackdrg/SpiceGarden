@@ -1,6 +1,6 @@
 # RECOVERY_STATUS.md — SpiceGarden Phase 2 Recovery
 
-_Last updated: 2026-07-09T00:25 IST_
+_Last updated: 2026-07-09T13:00 IST_
 
 ## Current Production Readiness: ~99%
 
@@ -71,7 +71,7 @@ _Last updated: 2026-07-09T00:25 IST_
   - restaurant-dashboard: 95/100 (Great) ✅
   - customer-web: 95/100 (Great) ✅
   - delivery-partner: 84/100 (Needs work) ⚠️
-  - customer-mobile: 52/100 (Critical) ⚠️
+  - customer-mobile: 53/100 (Critical) ⚠️
 - **Docker Compose**: Infrastructure services running ✅
   - postgres: healthy
   - redis: healthy
@@ -82,18 +82,19 @@ _Last updated: 2026-07-09T00:25 IST_
   - opensearch-dashboards: running
 
 ### Remaining Blockers
-- **customer-mobile React Doctor score 52/100** → 53 issues remain after fixing 16
-   issues (14 code fixes + 2 unused mock file removals). Most remaining issues
-   require Phase 2 frontend refactoring work (Reanimated migration, expo-image
-   migration, useReducer refactoring, large component splitting). Under current
-   feature freeze, extensive React refactoring requires explicit approval.
+- **customer-mobile React Doctor score 53/100** → 51 issues remain after fixing 17
+   issues (14 code fixes + 2 unused mock file removals + 1 component extraction).
+   Most remaining issues require Phase 2 frontend refactoring work (Reanimated
+   migration, expo-image migration, useReducer refactoring, large component
+   splitting). Under current feature freeze, extensive React refactoring requires
+   explicit approval.
 
 ### Known Issues (Non-blocking)
 - **Test teardown warning**: Jest reports "A worker process has failed to exit
   gracefully" in backend integration tests (1085 passed, 1 skipped). Tests pass but
   worker cleanup is imperfect. Root cause likely in mock lifecycle (Redis/ioredis
   mocks). `--detectOpenHandles` causes test hang. P2.
-- **customer-mobile React Doctor 52/100**: 53 issues remain after fixing 16
+- **customer-mobile React Doctor 53/100**: 51 issues remain after fixing 17
   issues. Most remaining issues require Phase 2 frontend refactoring under feature
   freeze approval (Reanimated migration, expo-image, useReducer, component
   extraction, large component splitting).
@@ -110,6 +111,7 @@ _Last updated: 2026-07-09T00:25 IST_
 - apps/customer-mobile/src/screens/RestaurantScreen.tsx (removed unused cartCount)
 - apps/customer-mobile/src/screens/SearchScreen.tsx (useMemo for skeleton data, moved renderSkeleton outside component)
 - apps/customer-mobile/src/screens/NotificationsScreen.tsx (extracted ToggleRow component)
-- apps/customer-mobile/__mocks__/expo-image.js (removed unused mock)
-- apps/customer-mobile/__mocks__/react-native-root-toast.js (removed unused mock)
+- apps/customer-mobile/src/screens/PaymentMethodsScreen.tsx (extracted PaymentMethodIcon/PaymentMethodDetails components)
+- apps/customer-mobile/__mocks__/expo-image.js (restored required jest mock)
+- apps/customer-mobile/__mocks__/react-native-root-toast.js (restored required jest mock)
 - RECOVERY_STATUS.md (this file)
