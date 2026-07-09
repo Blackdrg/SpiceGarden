@@ -21,7 +21,7 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
-function renderPaymentMethodIcon(type: string) {
+const PaymentMethodIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'card':
       return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
@@ -32,9 +32,9 @@ function renderPaymentMethodIcon(type: string) {
     default:
       return <Ionicons name="card" size={24} color={DESIGN_TOKENS.colors.primary} />;
   }
-}
+};
 
-function renderPaymentMethodDetails(method: PaymentMethod) {
+const PaymentMethodDetails = ({ method }: { method: PaymentMethod }) => {
   switch (method.type) {
     case 'card':
       return `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || 'XXXX'}`;
@@ -45,7 +45,7 @@ function renderPaymentMethodDetails(method: PaymentMethod) {
     default:
       return method.type;
   }
-}
+};
 
 const PaymentMethodsScreen = () => {
   const navigation = useNavigation();
@@ -163,14 +163,14 @@ const PaymentMethodsScreen = () => {
           ) : (
             paymentMethods.map((method) => (
               <View key={method.id} style={styles.paymentMethodCard}>
-                <View style={styles.paymentMethodInfo}>
-                  {renderPaymentMethodIcon(method.type)}
-                  <View style={styles.paymentMethodDetails}>
-                    <Text style={styles.paymentMethodTitle}>
-                      {method.type === 'card' ? 'Card' : method.type === 'upi' ? 'UPI' : 'Wallet'}
-                    </Text>
-                    <Text style={styles.paymentMethodSubtitle}>{renderPaymentMethodDetails(method)}</Text>
-                  </View>
+              <View style={styles.paymentMethodInfo}>
+                <PaymentMethodIcon type={method.type} />
+                <View style={styles.paymentMethodDetails}>
+                  <Text style={styles.paymentMethodTitle}>
+                    {method.type === 'card' ? 'Card' : method.type === 'upi' ? 'UPI' : 'Wallet'}
+                  </Text>
+                  <Text style={styles.paymentMethodSubtitle}><PaymentMethodDetails method={method} /></Text>
+                </View>
                   {method.isDefault && (
                     <View style={styles.defaultBadge}>
                       <Text style={styles.defaultBadgeText}>Default</Text>
