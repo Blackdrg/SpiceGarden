@@ -14,7 +14,7 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | customer-mobile React Doctor 53/100 | UI quality below threshold | 51 issues remain (was 68). Fixed 17 issues (unused exports, state→useRef, dead state removal, component extraction, useMemo, inline→named components). Remaining issues: 23 unused files (false positives/risky), 11 Reanimated migration (new dependency), 3 derived state false positives, 1 event handler pattern, 2 non-native navigators, 5 useReducer refactors, 1 expo-image migration, 1 React 19 API, 4 multi-component files, 1 security false positive. All blocked by feature freeze. |
+| 1 | customer-mobile React Doctor 60/100 | UI quality below threshold | Fresh run (v0.7.2): 44 issues. **Resolved 20 actionable**: added `react-native-reanimated` (3.19.5) + `expo-image` (56.0.11) deps + reanimated babel plugin; migrated 11 Reanimated + 1 expo-image imports; React 19 `use()` in i18n.ts; 5 array-loop→Set in MenuItemCustomizationScreen; event-handler fix in AddressesScreen; removed stray root `yarn.lock`. **Remaining 24 are false positives / generated artifacts — DO NOT delete/edit**: 21 `unused-file` (core screens/services actually imported via AppNavigator/SearchScreen/etc.), 2 `no-multi-comp` in generated `App.js`, 1 weak-crypto in `dist-web` build bundle. No deletion of used source files. |
 | 2 | gRPC transport quarantined | Inter-service communication via gRPC unavailable | Intentional - production flows use REST/WebSocket. Remove quarantine if gRPC is needed. |
 
 ## P2 - Medium Priority (Should resolve)

@@ -37,6 +37,9 @@ export class UserEntity {
   @Column({ default: false })
   phoneVerified!: boolean;
 
+  @Column({ default: false })
+  isMfaEnabled!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
 

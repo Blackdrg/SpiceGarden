@@ -7,10 +7,12 @@ import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
+import { MfaService } from './mfa.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { FacebookStrategy } from './strategies/facebook.strategy';
+import { MfaController } from './mfa.controller';
 import { NotificationModule } from '../notifications/notification.module';
 import { getRequiredSecret } from '../../common/errors/missing-env.error';
 
@@ -36,8 +38,8 @@ function requireJwtSecret(configService: ConfigService): string {
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, PasswordResetService, JwtStrategy, GoogleStrategy, FacebookStrategy],
-  controllers: [AuthController],
-  exports: [AuthService, PasswordResetService],
+  providers: [AuthService, PasswordResetService, MfaService, JwtStrategy, GoogleStrategy, FacebookStrategy],
+  controllers: [AuthController, MfaController],
+  exports: [AuthService, PasswordResetService, MfaService],
 })
-export class AuthServiceModule {}
+export class AuthServiceModule { }

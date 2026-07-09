@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
-import { Animated, Easing } from 'react-native';
+import { Easing } from 'react-native';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';

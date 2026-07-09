@@ -1,293 +1,191 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Button, Card } from '@spicegarden/ui';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
-import { logout, setUser } from '../redux/slices/authSlice';
-import ProtectedRoute from '../components/ProtectedRoute';
 import { api } from '@spicegarden/shared/api';
-import styles from './profile.module.css';
+import { useMfaManagement } from '../hooks/useMfaManagement';
 
-interface ProfileData {
-  fullName?: string;
-  email?: string;
-  phone?: string;
-  profileImage?: string | null;
-  emailVerified?: boolean;
-  phoneVerified?: boolean;
-  createdAt?: string;
+interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+  isMfaEnabled: boolean;
 }
 
-interface ProfileState {
-  profileData: ProfileData | null;
-  loading: boolean;
-  error: string | null;
-  isEditing: boolean;
-  editFormData: {
-    fullName: string;
-    email: string;
-    phone: string;
-  };
-}
+const ProfilePage: React.FC = () => {
+  const reduxUser = useSelector((state: any) => state.auth.user);
+  const [user, setUser] = useState<UserProfile | null>(reduxUser);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
+  const [mfaCode, setMfaCode] = useState('');
 
-const initialProfileState: ProfileState = {
-  profileData: null,
-  loading: true,
-  error: null,
-  isEditing: false,
-  editFormData: { fullName: '', email: '', phone: '' },
-};
+  const {
+    isMfaEnabled,
+    qrCodeDataUrl,
+    isLoading: isMfaLoading,
+    error: mfaError,
+    message: mfaMessage,
+    generateQrCode,
+    enableMfa,
+    disableMfa,
+    setIsMfaEnabled,
+  } = useMfaManagement();
 
-function profileReducer(state: ProfileState, action: { type: string; payload?: unknown }): ProfileState {
-  switch (action.type) {
-    case 'SET_PROFILE_DATA':
-      return { ...state, profileData: action.payload as ProfileData | null };
-    case 'SET_LOADING':
-      return { ...state, loading: action.payload as boolean };
-    case 'SET_ERROR':
-      return { ...state, error: action.payload as string | null };
-    case 'SET_IS_EDITING':
-      return { ...state, isEditing: action.payload as boolean };
-    case 'SET_EDIT_FORM_DATA':
-      return { ...state, editFormData: action.payload as { fullName: string; email: string; phone: string } };
-    default:
-      return state;
-  }
-}
-
-const ProfilePage = () => {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const [state, dispatchState] = useReducer(profileReducer, initialProfileState);
-
-  const loadProfile = useCallback(async () => {
+  const fetchUserProfile = useCallback(async () => {
+    setLoading(true);
     try {
-      dispatchState({ type: 'SET_LOADING', payload: true });
-      dispatchState({ type: 'SET_ERROR', payload: null });
-      
-      if (!user) {
-        dispatchState({ type: 'SET_PROFILE_DATA', payload: null });
-        dispatchState({ type: 'SET_LOADING', payload: false });
-        return;
-      }
-
-      dispatchState({ type: 'SET_PROFILE_DATA', payload: {
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        profileImage: user.profileImage || null,
-        emailVerified: user.emailVerified || false,
-        phoneVerified: user.phoneVerified || false,
-        createdAt: user.createdAt || new Date().toISOString(),
-      } });
-      dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-      } });
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-      dispatchState({ type: 'SET_ERROR', payload: 'Failed to load profile. Please try again later.' });
+      const response = await api<{ user: UserProfile }>('/auth/me');
+      setUser(response.data.user);
+    } catch (err: any) {
+      setFetchError('Failed to fetch user profile. Please try again.');
+      console.error(err);
     } finally {
-      dispatchState({ type: 'SET_LOADING', payload: false });
+      setLoading(false);
     }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+    if (user) {
+      setIsMfaEnabled(user.isMfaEnabled);
+    }
+  }, [user, setIsMfaEnabled]);
 
-  const handleSaveProfile = async () => {
-    try {
-      dispatchState({ type: 'SET_LOADING', payload: true });
-      dispatchState({ type: 'SET_ERROR', payload: null });
-      dispatchState({ type: 'SET_PROFILE_DATA', payload: state.editFormData });
-      dispatchState({ type: 'SET_IS_EDITING', payload: false });
-    } catch (err) {
-      console.error('Failed to save profile:', err);
-      dispatchState({ type: 'SET_ERROR', payload: 'Failed to save profile. Please try again later.' });
-    } finally {
-      dispatchState({ type: 'SET_LOADING', payload: false });
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  const handleEnable = async () => {
+    const success = await enableMfa(mfaCode);
+    if (success) {
+      setMfaCode('');
+      fetchUserProfile(); // Refetch user to update JWT and profile status
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api('/auth/logout', { method: 'POST' });
-    } catch {
-      // proceed with logout even if API call fails
+  const handleDisable = async () => {
+    const success = await disableMfa(mfaCode);
+    if (success) {
+      setMfaCode('');
+      fetchUserProfile(); // Refetch user to update JWT and profile status
     }
-    dispatch(logout());
-    router.push('/auth');
   };
 
-  if (state.loading && !state.profileData) {
+  if (loading) {
     return (
-      <div className={styles.loadingState}>
-        <p>Loading profile...</p>
+      <div style={styles.container}>
+        <h1>My Profile</h1>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div style={styles.container}>
+        <h1>My Profile</h1>
+        <p style={styles.errorText}>{fetchError}</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={styles.container}>
+        <h1>My Profile</h1>
+        <p>Could not load user data.</p>
       </div>
     );
   }
 
   return (
-    <div className={styles.pageContainer}>
-      {state.error && (
-        <div className={styles.errorBanner}>
-          {state.error}
-        </div>
-      )}
-      <div className={styles.profileHeader}>
-        <div className={styles.avatar}>
-          {state.profileData?.profileImage ? (
-            <Image
-              src={state.profileData.profileImage}
-              alt="Profile"
-              width={80}
-              height={80}
-              className={styles.avatarImage}
-            />
-          ) : (
-            '👤'
-          )}
-        </div>
-        <h2 className={styles.profileName}>{state.isEditing ? state.editFormData.fullName : state.profileData?.fullName || 'User'}</h2>
-        <p className={styles.profileEmail}>{state.isEditing ? state.editFormData.email : state.profileData?.email || ''}</p>
-        <p className={styles.profilePhone}>{state.isEditing ? state.editFormData.phone : state.profileData?.phone || ''}</p>
+    <div style={styles.container}>
+      <h1>Welcome, {user.fullName}</h1>
+      <p>Email: {user.email}</p>
 
-        {!state.isEditing && (
-          <div className={styles.editButtonWrapper}>
-            <Button
-              label="Edit Profile"
-              onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: true })}
-              variant="secondary"
-            />
+      <Card title="Security Settings" style={styles.card}>
+        {mfaError && <p style={styles.errorText}>{mfaError}</p>}
+        {mfaMessage && <p style={styles.messageText}>{mfaMessage}</p>}
+
+        {isMfaEnabled ? (
+          <div>
+            <p style={styles.mfaStatusText}>
+              <span style={styles.mfaEnabledIndicator}>●</span>
+              Two-Factor Authentication is <strong>Enabled</strong>.
+            </p>
+            <div style={styles.formGroup}>
+              <label htmlFor="mfa-disable-code" style={styles.label}>Enter code to disable</label>
+              <input
+                id="mfa-disable-code"
+                type="text"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                placeholder="6-digit code"
+                maxLength={6}
+                style={styles.codeInput}
+                disabled={isMfaLoading}
+              />
+            </div>
+            <Button label={isMfaLoading ? 'Disabling...' : 'Disable 2FA'} onClick={handleDisable} disabled={isMfaLoading} variant="destructive" />
+          </div>
+        ) : (
+          <div>
+            <p style={styles.mfaStatusText}>
+              <span style={styles.mfaDisabledIndicator}>●</span>
+              Two-Factor Authentication is <strong>Disabled</strong>.
+            </p>
+            {!qrCodeDataUrl ? (
+              <Button label="Setup MFA" onClick={generateQrCode} disabled={isMfaLoading} />
+            ) : (
+              <div style={styles.qrContainer}>
+                <img src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} />
+                <p>Enter the 6-digit code from your authenticator app:</p>
+                <input
+                  type="text"
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                  maxLength={6}
+                  style={styles.codeInput}
+                  disabled={isMfaLoading}
+                />
+                <Button label={isMfaLoading ? 'Enabling...' : 'Enable MFA'} onClick={handleEnable} disabled={isMfaLoading} />
+              </div>
+            )}
           </div>
         )}
-      </div>
-
-      {state.isEditing && (
-        <>
-          <Card title="Edit Profile">
-            <div className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="fullName" className={styles.label}>
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  className={styles.input}
-                  type="text"
-                  value={state.editFormData.fullName}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, fullName: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="email" className={styles.label}>
-                  Email
-                </label>
-                <input
-                  id="email"
-                  className={styles.input}
-                  type="email"
-                  value={state.editFormData.email}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, email: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="phone" className={styles.label}>
-                  Phone
-                </label>
-                <input
-                  id="phone"
-                  className={styles.input}
-                  type="tel"
-                  value={state.editFormData.phone}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, phone: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: false })} variant="secondary" />
-                <Button label="Save Changes" onClick={handleSaveProfile} />
-              </div>
-            </div>
-          </Card>
-        </>
-      )}
-
-      {!state.isEditing && (
-        <>
-          <Card title="Account Information">
-            <div className={styles.infoList}>
-              <div className={styles.infoRow}>
-                <span>Email Verified</span>
-                <span>{state.profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span>PhoneVerified</span>
-                <span>{state.profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span>Member Since</span>
-                <span>{state.profileData?.createdAt ? new Date(state.profileData.createdAt).toLocaleDateString() : 'Not available'}</span>
-              </div>
-            </div>
-          </Card>
-
-          <Card title="Security">
-            <div className={styles.infoList}>
-              <Button
-                label="Change Password"
-                onClick={() => {}}
-                variant="secondary"
-              />
-              <Button
-                label="Manage Devices"
-                onClick={() => {}}
-                variant="secondary"
-              />
-            </div>
-          </Card>
-
-          <Card title="Address Management">
-            <div className={styles.infoList}>
-              <Button
-                label="Manage Addresses"
-                onClick={() => router.push('/addresses')}
-                variant="secondary"
-              />
-              <p className={styles.helperText}>
-                Saved addresses will appear here
-              </p>
-            </div>
-          </Card>
-
-          <Card title="Payment Methods">
-            <div className={styles.infoList}>
-              <Button
-                label="Manage Payment Methods"
-                onClick={() => router.push('/payment-methods')}
-                variant="secondary"
-              />
-              <p className={styles.helperText}>
-                Saved payment methods will appear here
-              </p>
-            </div>
-          </Card>
-
-          <div className={styles.logoutWrapper}>
-            <Button label="Sign Out" onClick={handleLogout} variant="secondary" style={{ width: '100%' }} />
-          </div>
-        </>
-      )}
+      </Card>
     </div>
   );
 };
 
-export default function Wrapped(props: any) {
-  return <ProtectedRoute><ProfilePage {...props} /></ProtectedRoute>;
-}
+const styles = {
+  container: { padding: '20px', fontFamily: 'Arial, sans-serif' },
+  card: { marginTop: '20px' },
+  qrContainer: { display: 'flex', flexDirection: 'column' as 'column', alignItems: 'center', marginTop: '20px', border: '1px solid #ccc', padding: '20px', borderRadius: '8px', backgroundColor: '#f9f9f9' },
+  qrCode: { width: '200px', height: '200px', marginBottom: '20px', border: '1px solid #eee' },
+  formGroup: { marginBottom: '15px' },
+  label: { display: 'block', marginBottom: '5px', fontWeight: 'bold' },
+  codeInput: {
+    padding: '10px',
+    margin: '10px 0',
+    fontSize: '18px',
+    textAlign: 'center' as 'center',
+    width: '150px',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
+  },
+  errorText: { color: 'red' },
+  messageText: { color: 'green' },
+  mfaStatusText: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '16px',
+  },
+  mfaEnabledIndicator: {
+    color: 'green',
+  },
+  mfaDisabledIndicator: {
+    color: 'red',
+  },
+};
+
+export default ProfilePage;

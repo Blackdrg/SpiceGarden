@@ -85,7 +85,7 @@ Feature growth is completely frozen. No exceptions require explicit approval.
 - ⚠️ npm audit: 31 moderate vulnerabilities (dev toolchain only, 0 high/critical)
 
 ### React Doctor Status (requires Phase 2 fixes)
-- customer-mobile: 65/100 (126 warnings)
+- customer-mobile: 60/100 (24 warnings; 21 unused-file + 2 no-multi-comp + 1 weak-crypto are false positives / generated artifacts — not actionable)
 - customer-web: 63/100 (32 warnings)
 - delivery-partner: 59/100 (51 warnings)
 - restaurant-dashboard: 74/100 (5 warnings)

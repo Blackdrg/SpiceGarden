@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { Animated, Easing } from 'react-native';
+import { Easing } from 'react-native';
+import Animated, { useSharedValue, withSequence } from 'react-native-reanimated';
 
 // Navigation persistence hook
 export const useNavigationPersistence = (key: string, value: string) => {

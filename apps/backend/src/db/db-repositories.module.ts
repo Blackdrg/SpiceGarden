@@ -67,6 +67,7 @@ import { RestaurantOnboardingEntity } from './entities/restaurant-onboarding.ent
 import { DisputeEntity } from './entities/dispute.entity';
 import { SupportTicketEntity } from './entities/support-ticket.entity';
 import { PaymentMethodEntity } from './entities/payment-method.entity';
+import { MfaSecretEntity } from './entities/mfa.entity';
 
 const entities = [
   UserEntity,
@@ -134,6 +135,7 @@ const entities = [
   DisputeEntity,
   SupportTicketEntity,
   PaymentMethodEntity,
+  MfaSecretEntity,
 ];
 
 @Global()
@@ -141,4 +143,4 @@ const entities = [
   imports: [TypeOrmModule.forFeature(entities), MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])],
   exports: [TypeOrmModule, MongooseModule],
 })
-export class DbRepositoriesModule {}
+export class DbRepositoriesModule { }

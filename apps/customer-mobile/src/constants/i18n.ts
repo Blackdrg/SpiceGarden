@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useCallback, use, ReactNode } from 'react';
 
 const SUPPORTED_LOCALES = ['en-IN', 'hi', 'pa', 'mr', 'gu', 'ta', 'te'] as const;
 
@@ -33,7 +33,7 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = function LocaleProv
 };
 
 export function useLocale() {
-  return useContext(LocaleContext);
+  return use(LocaleContext);
 }
 
 const INTL_OPTIONS = {

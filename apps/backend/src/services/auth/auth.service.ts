@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { MfaService } from './mfa.service';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,11 +15,17 @@ export interface AuthenticatedUser {
   email: string;
   fullName: string;
   role: UserRole;
+  isMfaEnabled: boolean;
   status: UserStatus;
   passwordHash?: string;
 }
 
 export interface LoginTokenResponse {
+  mfaRequired?: boolean;
+  access_token?: string;
+  refresh_token?: string;
+}
+export interface MfaLoginTokenResponse {
   access_token: string;
   refresh_token: string;
 }
@@ -30,9 +37,10 @@ export class AuthService {
     private readonly configService: ConfigService,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
+    private readonly mfaService: MfaService,
     @InjectRepository(SessionEntity)
     private readonly sessionRepo: Repository<SessionEntity>,
-  ) {}
+  ) { }
 
   async hashPassword(password: string): Promise<string> {
     return argon2.hash(password);
@@ -69,15 +77,15 @@ export class AuthService {
       const { passwordHash, ...result } = user;
       return result as AuthenticatedUser;
     }
-    
+
     throw new UnauthorizedException('Invalid email or password');
   }
 
-  async login(user: AuthenticatedUser, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
-    const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status };
+  async login(user: AuthenticatedUser, deviceInfo: { name: string; type: string; ip: string }): Promise<MfaLoginTokenResponse> {
+    const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status, isMfaEnabled: user.isMfaEnabled };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
-    
+
     await this.createSession(user.id, deviceInfo, refreshToken);
 
     return {
@@ -86,7 +94,29 @@ export class AuthService {
     };
   }
 
-  async refreshAccessToken(refreshToken: string, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
+  async loginWithMfa(user: AuthenticatedUser, code: string, deviceInfo: { name: string; type: string; ip: string }): Promise<MfaLoginTokenResponse> {
+    const isCodeValid = await this.mfaService.verifyCode(user, code);
+
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Invalid MFA code.');
+    }
+
+    const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status, isMfaEnabled: true };
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
+
+    await this.createSession(user.id, deviceInfo, refreshToken);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
+  }
+
+  async refreshAccessToken(
+    refreshToken: string,
+    deviceInfo: { name: string; type: string; ip: string },
+  ): Promise<MfaLoginTokenResponse> {
     const session = await this.sessionRepo.findOne({
       where: { refreshToken, isActive: true },
       relations: { user: true },
@@ -109,6 +139,7 @@ export class AuthService {
       sub: session.user.id,
       role: session.user.role,
       status: session.user.status,
+      isMfaEnabled: session.user.isMfaEnabled,
     };
 
     return {
@@ -133,7 +164,7 @@ export class AuthService {
     fullName: string;
     socialId: string;
     socialProvider: string;
-  }): Promise<LoginTokenResponse> {
+  }): Promise<MfaLoginTokenResponse> {
     const normalizedEmail = profile.email.toLowerCase();
     let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
 

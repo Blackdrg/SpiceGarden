@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
-import { Animated, Easing } from 'react-native';
+import { Easing } from 'react-native';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/core';
 import * as Haptics from 'expo-haptics';
@@ -32,6 +33,7 @@ const MenuItemCustomizationScreen = () => {
   const [item, setItem] = useState<MenuItemDetail | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const selectedAddonSet = useMemo(() => new Set(selectedAddons), [selectedAddons]);
   const [instructions, setInstructions] = useState('');
   const [loading, setLoading] = useState(true);
   
@@ -72,10 +74,10 @@ const MenuItemCustomizationScreen = () => {
   const calculateTotalPrice = useCallback(() => {
     if (!item) return 0;
     const addonPrice = item.addons
-      .filter(a => selectedAddons.includes(a.id))
+      .filter(a => selectedAddonSet.has(a.id))
       .reduce((sum, a) => sum + a.price, 0);
     return (item.price + addonPrice) * quantity;
-  }, [item, selectedAddons, quantity]);
+  }, [item, selectedAddonSet, quantity]);
 
   const handleAddToCart = useCallback(() => {
     if (!item) return;
@@ -87,12 +89,12 @@ const MenuItemCustomizationScreen = () => {
       price: item.price,
       totalPrice: calculateTotalPrice(),
       instructions: instructions.trim() || undefined,
-      addons: item.addons.filter(a => selectedAddons.includes(a.id)),
+      addons: item.addons.filter(a => selectedAddonSet.has(a.id)),
     };
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     navigation.navigate('Cart' as never);
-  }, [item, quantity, selectedAddons, instructions, calculateTotalPrice, navigation]);
+  }, [item, quantity, selectedAddonSet, instructions, calculateTotalPrice, navigation]);
 
   if (loading || !item) {
     return (
@@ -147,15 +149,15 @@ const MenuItemCustomizationScreen = () => {
                 <Pressable
                   key={addon.id}
                   onPress={() => toggleAddon(addon.id)}
-                  style={[styles.addonItem, selectedAddons.includes(addon.id) && styles.addonItemSelected]}
+                  style={[styles.addonItem, selectedAddonSet.has(addon.id) && styles.addonItemSelected]}
                   accessibilityLabel={`Add ${addon.name}`}
                 >
                   <View style={styles.addonInfo}>
                     <Text style={styles.addonName}>{addon.name}</Text>
                     <Text style={styles.addonPrice}>+₹{addon.price}</Text>
                   </View>
-                  <View style={[styles.checkbox, selectedAddons.includes(addon.id) && styles.checkboxSelected]}>
-                    {selectedAddons.includes(addon.id) && (
+                  <View style={[styles.checkbox, selectedAddonSet.has(addon.id) && styles.checkboxSelected]}>
+                    {selectedAddonSet.has(addon.id) && (
                       <Ionicons name="checkmark" size={16} color="white" />
                     )}
                   </View>

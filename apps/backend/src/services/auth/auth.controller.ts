@@ -1,7 +1,7 @@
 import { Controller, Post, Body, ConflictException, UnauthorizedException, Req, BadRequestException, Get, UseGuards, Res, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request, Response } from 'express';
@@ -24,6 +24,12 @@ interface LoginBody {
   deviceType?: string;
 }
 
+interface MfaLoginBody {
+  email: string;
+  code: string;
+  deviceName?: string;
+  deviceType?: string;
+}
 interface RegisterBody extends LoginBody {
   phone: string;
   fullName: string;
@@ -41,7 +47,7 @@ const REFRESH_TOKEN_COOKIE = 'refresh_token';
 function setAuthCookies(res: Response, accessToken: string, refreshToken: string, configService: ConfigService): void {
   const sessionDurationDays = Number(configService.get<number>('SESSION_DURATION_DAYS', 30));
   const isProduction = configService.get<string>('NODE_ENV') === 'production';
-  
+
   res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
     httpOnly: true,
     secure: isProduction,
@@ -49,7 +55,7 @@ function setAuthCookies(res: Response, accessToken: string, refreshToken: string
     maxAge: 60 * 60 * 1000,
     path: '/',
   });
-  
+
   res.cookie(REFRESH_TOKEN_COOKIE, refreshToken, {
     httpOnly: true,
     secure: isProduction,
@@ -73,7 +79,7 @@ export class AuthController {
     private readonly userRepo: Repository<UserEntity>,
     private notificationService: NotificationService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   @Post('login')
   async login(@Body() body: LoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -82,8 +88,37 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
+    // If MFA is required, return a challenge instead of tokens
+    if (user.isMfaEnabled) {
+      return { mfaRequired: true, email: user.email };
+    }
+
     const deviceInfo = this.getDeviceInfo(body, req);
     const tokens = await this.authService.login(user, deviceInfo);
+    setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
+
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+        status: user.status,
+      },
+    };
+  }
+
+  @Post('login/verify-mfa')
+  async verifyMfaLogin(@Body() body: MfaLoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const user = await this.userRepo.findOneBy({ email: body.email });
+    if (!user) {
+      throw new UnauthorizedException('User not found.');
+    }
+
+    const deviceInfo = this.getDeviceInfo(body, req);
+    const tokens = await this.authService.loginWithMfa(user, body.code, deviceInfo);
     setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
 
     return {
@@ -160,7 +195,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async me(@Req() req: Request) {
-    const user = (req as Request & { user?: { id: string; email: string; fullName?: string; role: UserRole; status: UserStatus } }).user;
+    const user = (req as Request & { user?: { id: string; email: string; fullName?: string; role: UserRole; status: UserStatus; isMfaEnabled: boolean } }).user;
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -171,6 +206,7 @@ export class AuthController {
         fullName: user.fullName,
         role: user.role,
         status: user.status,
+        isMfaEnabled: user.isMfaEnabled,
       },
     };
   }
