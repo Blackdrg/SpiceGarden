@@ -72,10 +72,10 @@ _Last updated: 2026-07-09T00:25 IST_
   - customer-web: 95/100 (Great) ✅
   - delivery-partner: 84/100 (Needs work) ⚠️
   - customer-mobile: 52/100 (Critical) ⚠️
-- **Docker Compose**: All 7 services running ✅
+- **Docker Compose**: Infrastructure services running ✅
   - postgres: healthy
   - redis: healthy
-  - mongo: running (unhealthy - separate investigation needed)
+  - mongo: healthy
   - opensearch: running
   - grafana: running
   - prometheus: running
@@ -97,8 +97,6 @@ _Last updated: 2026-07-09T00:25 IST_
   issues. Most remaining issues require Phase 2 frontend refactoring under feature
   freeze approval (Reanimated migration, expo-image, useReducer, component
   extraction, large component splitting).
-- **MongoDB unhealthy**: Container running but health check failing. May affect
-  features relying on MongoDB. Separate investigation needed.
 
 ### Files Changed
 - package.json (allowScripts for native packages)

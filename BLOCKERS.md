@@ -21,9 +21,8 @@
 
 | # | Blocker | Impact | Resolution Required |
 |---|---------|--------|---------------------|
-| 1 | MongoDB container unhealthy | May affect MongoDB-dependent features | Investigate MongoDB health check / config |
-| 2 | Test teardown warning | Jest worker process may leak | Investigate open handles in integration tests |
-| 3 | Outdated JSX transform warning | Console noise in e2e tests | Update React JSX transform configuration |
+| 1 | Test teardown warning | Jest worker process may leak | Investigate open handles in integration tests |
+| 2 | Outdated JSX transform warning | Console noise in e2e tests | Update React JSX transform configuration |
 
 ## RESOLVED
 
@@ -40,7 +39,7 @@
 | Backend e2e tests | Verified: 35 passed |
 | Frontend integration/e2e tests | Verified: all pass across customer-web, restaurant-dashboard, super-admin, delivery-partner |
 | React Doctor installation | Verified: runnable via root binary for all workspaces |
-| Docker Desktop services | All 7 services running (postgres healthy, redis healthy, mongo unhealthy) |
+| Docker Desktop services | All services running (postgres healthy, redis healthy, mongo healthy) |
 | React Doctor scores (4 of 5 workspaces > 84) | super-admin: 100, restaurant-dashboard: 95, customer-web: 95, delivery-partner: 84 |
 | customer-mobile React Doctor issues (14 fixed) | Removed unused exports, changed state→useRef, removed dead state, extracted ToggleRow component, moved renderSkeleton outside component, wrapped skeleton data in useMemo |
 
@@ -60,6 +59,6 @@ These items cannot be verified without a running Docker daemon:
 
 1. **Phase 1 (COMPLETE):** Build, lint, unit tests, coverage - ✅ Done
 2. **Phase 2 (PARTIAL):** React Doctor - 4/5 workspaces > 84/100. customer-mobile
-   at 51/100 requires Phase 2 refactoring under feature freeze approval.
-3. **Phase 3 (PENDING):** Runtime validation in containerized environment (blocked by Docker daemon)
+   at 52/100 requires Phase 2 refactoring under feature freeze approval.
+3. **Phase 3 (PENDING):** Runtime validation in containerized environment (Docker services running)
 4. **Phase 4 (PENDING):** Production deployment with live services
