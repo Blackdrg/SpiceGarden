@@ -4,6 +4,11 @@ metadata:
   name: spicegarden-backend
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: spicegarden-backend
@@ -12,26 +17,58 @@ spec:
       labels:
         app: spicegarden-backend
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: backend
           image: spicegarden/backend:latest
           ports:
             - containerPort: 3001
+              protocol: TCP
           envFrom:
             - secretRef:
                 name: spicegarden-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            capabilities:
+              drop:
+                - ALL
           readinessProbe:
             httpGet:
               path: /health
               port: 3001
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: 3001
+              scheme: HTTP
             initialDelaySeconds: 30
-            periodSeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
           resources:
             requests:
               memory: "256Mi"
@@ -39,6 +76,12 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

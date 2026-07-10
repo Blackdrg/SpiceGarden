@@ -89,6 +89,7 @@ function validateProductionEnvironment(configService) {
         'MONGO_URI',
         'REDIS_HOST',
         'REDIS_PORT',
+        'REDIS_PASSWORD',
         'STRIPE_SECRET_KEY',
         'STRIPE_WEBHOOK_SECRET',
         'RAZORPAY_KEY_ID',
@@ -150,9 +151,25 @@ function installRateLimiters(app, configService) {
     app.use(/\/orders/, createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
     app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
 }
+function loadFileSecretsIntoEnv() {
+    for (const [key, value] of Object.entries(process.env)) {
+        if (key.endsWith('_FILE') && value) {
+            try {
+                const fs = require('fs');
+                if (fs.existsSync(value)) {
+                    const envVarName = key.replace('_FILE', '');
+                    process.env[envVarName] = fs.readFileSync(value, 'utf8').trim();
+                }
+            }
+            catch {
+            }
+        }
+    }
+}
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
     const configService = app.get(config_1.ConfigService);
+    loadFileSecretsIntoEnv();
     validateProductionEnvironment(configService);
     if (configService.get('NODE_ENV') === 'production') {
         const server = app.getHttpAdapter().getInstance();

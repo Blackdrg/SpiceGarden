@@ -260,20 +260,14 @@ spec:
             runAsUser: 1001
           containers:
             - name: backup
-              image: ghcr.io/spicegarden/backend:latest
-              imagePullPolicy: Always
-              command: ["/bin/bash", "-c"]
+              image: alpine:3.19
+              command: ["/bin/sh", "-c"]
               args:
                 - |
                   set -euo pipefail
                   BACKUP_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
                   BACKUP_FILE="/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz"
-                  
-                  pg_dump -U $POSTGRES_USER -d $POSTGRES_DB -h postgres > /tmp/postgres.sql
-                  mongodump --host mongodb -d spicegarden --out /tmp/mongo
-                  redis-cli -h redis SAVE && redis-cli -h redis --rdb /tmp/redis.rdb
-                  
-                  tar -czf "$BACKUP_FILE" -C /tmp postgres.sql mongo redis.rdb
+                  tar -czf "$BACKUP_FILE" -C /backup/dumps postgres.sql mongo redis.rdb
                   echo "Backup created: $BACKUP_FILE"
               env:
                 - name: POSTGRES_USER
@@ -299,14 +293,67 @@ spec:
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backup
-                - name: tmp-storage
-                  mountPath: /tmp
+                - name: dumps
+                  mountPath: /backup/dumps
           restartPolicy: OnFailure
+          initContainers:
+            - name: postgres-dump
+              image: postgres:16-alpine
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  pg_dump -U $POSTGRES_USER -d $POSTGRES_DB -h postgres > /dumps/postgres.sql
+              env:
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: postgres-user
+                - name: POSTGRES_DB
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: postgres-db
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: postgres-password
+              volumeMounts:
+                - name: dumps
+                  mountPath: /dumps
+            - name: mongo-dump
+              image: mongo:7
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  mongodump --host mongodb -d spicegarden --out /dumps/mongo
+                  mv /dumps/mongo/spicegarden/* /dumps/mongo/
+                  rmdir /dumps/mongo/spicegarden
+              volumeMounts:
+                - name: dumps
+                  mountPath: /dumps
+            - name: redis-dump
+              image: redis:7-alpine
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  redis-cli -h redis -a "$REDIS_PASSWORD" SAVE
+                  redis-cli -h redis -a "$REDIS_PASSWORD" --rdb /dumps/redis.rdb
+              env:
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: redis-password
+              volumeMounts:
+                - name: dumps
+                  mountPath: /dumps
           volumes:
             - name: backup-storage
               persistentVolumeClaim:
                 claimName: spicegarden-backup-pvc
-            - name: tmp-storage
+            - name: dumps
               emptyDir: {}
           affinity:
             nodeAffinity:

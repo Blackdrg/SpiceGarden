@@ -73,7 +73,8 @@ jobs:
     
     - name: Run load test (quick check)
       run: |
-        npm run test:load -- --vus 10 --duration 30s || echo "Load test skipped - no script needed for quick check"
+        npm run test:load -- --vus 10 --duration 30s
+      continue-on-error: true
     
     - name: Docker build and push
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
@@ -87,6 +88,19 @@ jobs:
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref == 'refs/heads/develop' && 'develop' || 'main' }}
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+      env:
+        DOCKER_USERNAME: ${{ github.actor }}
+        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Scan image for vulnerabilities
+      if: github.ref == 'refs/heads/main'
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '1'
 
   deploy-staging:
     needs: build-test
@@ -124,7 +138,9 @@ jobs:
     needs: build-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    environment: production
+    environment:
+      name: production
+      url: https://api.spicegarden.com
     steps:
       - uses: actions/checkout@v4
       

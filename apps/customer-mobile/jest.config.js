@@ -12,6 +12,7 @@ module.exports = {
     '^expo-haptics$': '<rootDir>/__mocks__/expo-haptics.js',
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
+    '^react-native-reanimated$': '<rootDir>/__mocks__/react-native-reanimated.js',
     '^.+\\.module\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
   },
   transform: {

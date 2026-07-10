@@ -8,6 +8,8 @@ const PLACEHOLDER_MARKERS = [
   'test_placeholder',
   '<fill',
   '<must replace',
+  '[key]',
+  '[host]',
 ];
 
 interface EnvConfigService {

@@ -140,19 +140,9 @@
     "eslint": "^8.57.0",
     "tough-cookie": "^4.1.4",
     "@types/react": "^19.2.0",
-    "jest-runtime": "29.7.0",
-    "jest-mock": "29.7.0",
-    "jest-config": "29.7.0",
-    "babel-jest": "29.7.0"
-  },
-  "allowScripts": {
-    "@scarf/scarf@1.4.0": true,
-    "argon2@0.40.3": true,
-    "bcrypt@6.0.0": true,
-    "electron@39.8.10": true,
-    "electron-winstaller@5.4.0": true,
-    "sharp@0.34.5": true,
-    "sqlite3@6.0.1": true,
-    "unrs-resolver@1.12.2": true
-  }
+  "jest-runtime": "29.7.0",
+  "jest-mock": "29.7.0",
+  "jest-config": "29.7.0",
+  "babel-jest": "29.7.0"
+}
 }

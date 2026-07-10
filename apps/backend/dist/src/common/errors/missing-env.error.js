@@ -16,6 +16,8 @@ const PLACEHOLDER_MARKERS = [
     'test_placeholder',
     '<fill',
     '<must replace',
+    '[key]',
+    '[host]',
 ];
 class MissingEnvError extends Error {
     key;

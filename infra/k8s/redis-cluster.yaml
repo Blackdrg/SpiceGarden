@@ -98,6 +98,24 @@ spec:
           - "300"
           - "--timeout"
           - "600"
+          - "--requirepass"
+          - "$(REDIS_PASSWORD)"
+          - "--masterauth"
+          - "$(REDIS_PASSWORD)"
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: spicegarden-secrets
+              key: redis-password
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+              - ALL
         ports:
         - containerPort: 6379
           name: clients
