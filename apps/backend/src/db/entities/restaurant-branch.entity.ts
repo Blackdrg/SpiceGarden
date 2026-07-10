@@ -15,7 +15,7 @@ export class RestaurantBranchEntity {
 
   @Index({ spatial: true })
   @Column({
-    type: 'point',
+    type: 'text',
     transformer: {
       from: (v: string | { x: number; y: number }) => {
         if (typeof v === 'string') {

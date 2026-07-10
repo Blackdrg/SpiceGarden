@@ -53,7 +53,7 @@ __decorate([
     __metadata("design:type", restaurant_entity_1.RestaurantEntity)
 ], CommissionRuleEntity.prototype, "restaurant", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CommissionType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CommissionType }),
     __metadata("design:type", String)
 ], CommissionRuleEntity.prototype, "type", void 0);
 __decorate([
@@ -77,7 +77,7 @@ __decorate([
     __metadata("design:type", Date)
 ], CommissionRuleEntity.prototype, "validTo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CommissionStatus, default: CommissionStatus.ACTIVE }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CommissionStatus, default: CommissionStatus.ACTIVE }),
     __metadata("design:type", String)
 ], CommissionRuleEntity.prototype, "status", void 0);
 __decorate([

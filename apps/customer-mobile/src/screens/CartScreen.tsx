@@ -3,6 +3,7 @@ import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator } from '
 import { Image } from 'expo-image';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -37,7 +38,7 @@ const CartScreen = () => {
   const user = useRef<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
   useEffect(() => {
     const loadCart = async () => {
@@ -57,7 +58,7 @@ const CartScreen = () => {
         setError(STRINGS.cart.loading);
       } finally {
         setLoading(false);
-        Animated.timing(fadeAnim, {
+        AnimatedCompat.timing(fadeAnim, {
           toValue: 1,
           duration: DESIGN_TOKENS.motion.page,
           easing: Easing.out(Easing.quad),

@@ -30,13 +30,13 @@ export class CouponEntity {
   @Column({ unique: true })
   code!: string;
 
-  @Column({ type: 'enum', enum: CouponType })
+  @Column({ type: 'varchar', enum: CouponType })
   type!: CouponType;
 
-  @Column({ type: 'enum', enum: CouponStatus, default: CouponStatus.ACTIVE })
+  @Column({ type: 'varchar', enum: CouponStatus, default: CouponStatus.ACTIVE })
   status!: CouponStatus;
 
-  @Column({ type: 'enum', enum: CouponScope, default: CouponScope.GLOBAL })
+  @Column({ type: 'varchar', enum: CouponScope, default: CouponScope.GLOBAL })
   scope!: CouponScope;
 
   @Column({ nullable: true })

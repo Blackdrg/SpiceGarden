@@ -15,7 +15,7 @@ export class WebhookRetryQueueEntity {
   @Column()
   eventType!: string;
 
-  @Column('jsonb')
+  @Column('simple-json')
   payload!: Record<string, any>;
 
   @Column()

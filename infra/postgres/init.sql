@@ -50,7 +50,5 @@ INSERT INTO restaurants (id, name, slug, address, phone) VALUES
     ('c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 'Spice Garden - Gulshan', 'gulshan', 'Gulshan Branch', '+1234567892')
 ON CONFLICT DO NOTHING;
 
--- Create Sentry database and user
-CREATE DATABASE sentry OWNER spicegarden;
-CREATE USER sentry WITH PASSWORD 'sentry';
-GRANT ALL PRIVILEGES ON DATABASE sentry TO sentry;
+-- Sentry database and user (credentials injected via compose secrets)
+CREATE DATABASE sentry;

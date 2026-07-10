@@ -56,7 +56,7 @@ __decorate([
     __metadata("design:type", driver_entity_1.DriverEntity)
 ], DriverIncentiveEntity.prototype, "driver", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: IncentiveType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: IncentiveType }),
     __metadata("design:type", String)
 ], DriverIncentiveEntity.prototype, "type", void 0);
 __decorate([
@@ -64,7 +64,7 @@ __decorate([
     __metadata("design:type", Number)
 ], DriverIncentiveEntity.prototype, "amount", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: IncentiveStatus, default: IncentiveStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: IncentiveStatus, default: IncentiveStatus.PENDING }),
     __metadata("design:type", String)
 ], DriverIncentiveEntity.prototype, "status", void 0);
 __decorate([

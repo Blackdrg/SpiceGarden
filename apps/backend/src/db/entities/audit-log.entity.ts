@@ -19,7 +19,7 @@ export class AuditLogEntity {
   @Column({ nullable: true })
   entityId!: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   metadata!: any;
 
   @Column({ nullable: true })

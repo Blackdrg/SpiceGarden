@@ -44,10 +44,10 @@ export class DisputeEntity {
   @Column()
   driverId!: string;
 
-  @Column({ type: 'enum', enum: DisputeType })
+  @Column({ type: 'varchar', enum: DisputeType })
   type!: DisputeType;
 
-  @Column({ type: 'enum', enum: DisputeStatus, default: DisputeStatus.RAISED })
+  @Column({ type: 'varchar', enum: DisputeStatus, default: DisputeStatus.RAISED })
   status!: DisputeStatus;
 
   @Column()

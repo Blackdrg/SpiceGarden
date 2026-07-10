@@ -66,8 +66,31 @@ let AuthController = class AuthController {
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
+        if (user.isMfaEnabled) {
+            return { mfaRequired: true, email: user.email };
+        }
         const deviceInfo = this.getDeviceInfo(body, req);
         const tokens = await this.authService.login(user, deviceInfo);
+        setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
+        return {
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+            user: {
+                id: user.id,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role,
+                status: user.status,
+            },
+        };
+    }
+    async verifyMfaLogin(body, req, res) {
+        const user = await this.userRepo.findOneBy({ email: body.email });
+        if (!user) {
+            throw new common_1.UnauthorizedException('User not found.');
+        }
+        const deviceInfo = this.getDeviceInfo(body, req);
+        const tokens = await this.authService.loginWithMfa(user, body.code, deviceInfo);
         setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
         return {
             access_token: tokens.access_token,
@@ -141,6 +164,7 @@ let AuthController = class AuthController {
                 fullName: user.fullName,
                 role: user.role,
                 status: user.status,
+                isMfaEnabled: user.isMfaEnabled,
             },
         };
     }
@@ -219,6 +243,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('login/verify-mfa'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyMfaLogin", null);
 __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),

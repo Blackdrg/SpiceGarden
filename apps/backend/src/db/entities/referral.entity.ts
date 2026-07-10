@@ -37,10 +37,10 @@ export class ReferralEntity {
   @ManyToOne(() => UserEntity)
   referee!: UserEntity;
 
-  @Column({ type: 'enum', enum: ReferralStatus, default: ReferralStatus.PENDING })
+  @Column({ type: 'varchar', enum: ReferralStatus, default: ReferralStatus.PENDING })
   status!: ReferralStatus;
 
-  @Column({ type: 'enum', enum: ReferralRewardType, default: ReferralRewardType.WALLET_CASHBACK })
+  @Column({ type: 'varchar', enum: ReferralRewardType, default: ReferralRewardType.WALLET_CASHBACK })
   rewardType!: ReferralRewardType;
 
   @Column('decimal', { precision: 10, scale: 2 })

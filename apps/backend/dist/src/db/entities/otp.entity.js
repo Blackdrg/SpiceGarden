@@ -52,7 +52,7 @@ __decorate([
     __metadata("design:type", user_entity_1.UserEntity)
 ], OtpEntity.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: OtpType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: OtpType }),
     __metadata("design:type", String)
 ], OtpEntity.prototype, "type", void 0);
 __decorate([
@@ -60,7 +60,7 @@ __decorate([
     __metadata("design:type", String)
 ], OtpEntity.prototype, "code", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: OtpStatus, default: OtpStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: OtpStatus, default: OtpStatus.PENDING }),
     __metadata("design:type", String)
 ], OtpEntity.prototype, "status", void 0);
 __decorate([

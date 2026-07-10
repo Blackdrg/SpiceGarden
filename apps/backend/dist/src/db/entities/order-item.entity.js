@@ -86,11 +86,11 @@ __decorate([
     __metadata("design:type", String)
 ], OrderItemEntity.prototype, "instructions", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
     __metadata("design:type", Object)
 ], OrderItemEntity.prototype, "variants", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
     __metadata("design:type", Object)
 ], OrderItemEntity.prototype, "addons", void 0);
 __decorate([

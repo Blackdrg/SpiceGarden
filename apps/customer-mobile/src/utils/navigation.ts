@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withSequence } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 
 // Navigation persistence hook
 export const useNavigationPersistence = (key: string, value: string) => {
@@ -41,12 +42,12 @@ export const linking = {
 
 // Accessibility focus manager
 export const useAccessibilityFocus = () => {
-  const focusAnim = useMemo(() => new Animated.Value(0), []);
+  const focusAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
   const focusElement = (callback?: () => void) => {
-    Animated.sequence([
-      Animated.timing(focusAnim, { toValue: 1, duration: 150, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-      Animated.timing(focusAnim, { toValue: 0, duration: 150, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+    AnimatedCompat.sequence([
+      AnimatedCompat.timing(focusAnim, { toValue: 1, duration: 150, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+      AnimatedCompat.timing(focusAnim, { toValue: 0, duration: 150, easing: Easing.in(Easing.quad), useNativeDriver: true }),
     ]).start();
     callback?.();
   };

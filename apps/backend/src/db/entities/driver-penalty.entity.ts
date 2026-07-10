@@ -31,7 +31,7 @@ export class DriverPenaltyEntity {
   @ManyToOne(() => DriverEntity)
   driver!: DriverEntity;
 
-  @Column({ type: 'enum', enum: DriverPenaltyType })
+  @Column({ type: 'varchar', enum: DriverPenaltyType })
   type!: DriverPenaltyType;
 
   @Column('decimal', { precision: 10, scale: 2 })
@@ -43,7 +43,7 @@ export class DriverPenaltyEntity {
   @Column()
   description!: string;
 
-  @Column({ type: 'enum', enum: DriverPenaltyStatus, default: DriverPenaltyStatus.ISSUED })
+  @Column({ type: 'varchar', enum: DriverPenaltyStatus, default: DriverPenaltyStatus.ISSUED })
   status!: DriverPenaltyStatus;
 
   @Column({ nullable: true })

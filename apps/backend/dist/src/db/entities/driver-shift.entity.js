@@ -50,7 +50,7 @@ __decorate([
     __metadata("design:type", Date)
 ], DriverShiftEntity.prototype, "endTime", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: DriverShiftStatus, default: DriverShiftStatus.SCHEDULED }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: DriverShiftStatus, default: DriverShiftStatus.SCHEDULED }),
     __metadata("design:type", String)
 ], DriverShiftEntity.prototype, "status", void 0);
 __decorate([

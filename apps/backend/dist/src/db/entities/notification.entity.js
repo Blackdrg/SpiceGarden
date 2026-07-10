@@ -57,7 +57,7 @@ __decorate([
     __metadata("design:type", String)
 ], NotificationEntity.prototype, "provider", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: notification_status_enum_1.NotificationStatus, default: notification_status_enum_1.NotificationStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: notification_status_enum_1.NotificationStatus, default: notification_status_enum_1.NotificationStatus.PENDING }),
     __metadata("design:type", String)
 ], NotificationEntity.prototype, "status", void 0);
 __decorate([

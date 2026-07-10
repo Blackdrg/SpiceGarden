@@ -90,7 +90,7 @@ __decorate([
     __metadata("design:type", Number)
 ], PayoutReportEntity.prototype, "netPayout", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: PayoutStatus, default: PayoutStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: PayoutStatus, default: PayoutStatus.PENDING }),
     __metadata("design:type", String)
 ], PayoutReportEntity.prototype, "status", void 0);
 __decorate([

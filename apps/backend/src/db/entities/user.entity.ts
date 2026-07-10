@@ -25,10 +25,10 @@ export class UserEntity {
   @Column({ nullable: true })
   profileImage!: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
+  @Column({ type: 'varchar', enum: UserRole, default: UserRole.CUSTOMER })
   role!: UserRole;
 
-  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
+  @Column({ type: 'varchar', enum: UserStatus, default: UserStatus.ACTIVE })
   status!: UserStatus;
 
   @Column({ default: false })

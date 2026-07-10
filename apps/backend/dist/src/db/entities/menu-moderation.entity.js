@@ -67,11 +67,11 @@ __decorate([
     __metadata("design:type", restaurant_entity_1.RestaurantEntity)
 ], MenuModerationEntity.prototype, "restaurant", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: ModerationAction }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: ModerationAction }),
     __metadata("design:type", String)
 ], MenuModerationEntity.prototype, "action", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: ModerationStatus, default: ModerationStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: ModerationStatus, default: ModerationStatus.PENDING }),
     __metadata("design:type", String)
 ], MenuModerationEntity.prototype, "status", void 0);
 __decorate([

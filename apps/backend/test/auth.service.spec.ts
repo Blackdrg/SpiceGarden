@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../src/db/entities/user.entity';
 import { SessionEntity } from '../src/db/entities/session.entity';
+import { MfaService } from '../src/services/auth/mfa.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 
@@ -31,6 +32,10 @@ describe('AuthService', () => {
           useValue: {
             get: jest.fn().mockReturnValue(30),
           },
+        },
+        {
+          provide: MfaService,
+          useValue: {},
         },
         {
           provide: getRepositoryToken(UserEntity),

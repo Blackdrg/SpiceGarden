@@ -20,7 +20,7 @@ export class NotificationAnalyticsEntity {
   @Column()
   deviceToken!: string;
 
-  @Column({ type: 'enum', enum: PushTrackingEvent })
+  @Column({ type: 'varchar', enum: PushTrackingEvent })
   event!: PushTrackingEvent;
 
   @Column({ nullable: true })
@@ -35,7 +35,7 @@ export class NotificationAnalyticsEntity {
   @Column({ nullable: true })
   openedAt!: Date;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   metadata!: {
     platform?: 'ios' | 'android' | 'web';
     appVersion?: string;

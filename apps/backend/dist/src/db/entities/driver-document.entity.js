@@ -55,7 +55,7 @@ __decorate([
     __metadata("design:type", driver_entity_1.DriverEntity)
 ], DriverDocumentEntity.prototype, "driver", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: DocumentType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: DocumentType }),
     __metadata("design:type", String)
 ], DriverDocumentEntity.prototype, "documentType", void 0);
 __decorate([
@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:type", String)
 ], DriverDocumentEntity.prototype, "documentUrl", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: DocumentStatus, default: DocumentStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: DocumentStatus, default: DocumentStatus.PENDING }),
     __metadata("design:type", String)
 ], DriverDocumentEntity.prototype, "status", void 0);
 __decorate([

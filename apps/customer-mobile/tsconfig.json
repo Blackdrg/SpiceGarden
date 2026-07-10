@@ -27,6 +27,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "src/**/*.d.ts",
     "*.d.ts",
     "../lucide-react.d.ts",
     "../packages/ui/*.d.ts"

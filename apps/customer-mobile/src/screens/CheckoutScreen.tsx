@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
-import { Animated, Easing } from 'react-native';
+import { Easing } from 'react-native';
+import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -34,8 +36,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
   const [promoMessage, setPromoMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
-  const scaleAnim = useMemo(() => new Animated.Value(1), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const scaleAnim = useMemo(() => new AnimatedCompat.Value(1), []);
 
   useEffect(() => {
     const loadAddress = async () => {
@@ -52,7 +54,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
       }
     };
     loadAddress();
-    Animated.timing(fadeAnim, {
+    AnimatedCompat.timing(fadeAnim, {
       toValue: 1,
       duration: 300,
       useNativeDriver: true,
@@ -61,14 +63,14 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
 
   const handlePlaceOrder = async () => {
     setLoading(true);
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
+    AnimatedCompat.sequence([
+      AnimatedCompat.timing(scaleAnim, {
         toValue: 1.05,
         duration: 150,
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
-      Animated.timing(scaleAnim, {
+      AnimatedCompat.timing(scaleAnim, {
         toValue: 1,
         duration: 150,
         easing: Easing.out(Easing.quad),

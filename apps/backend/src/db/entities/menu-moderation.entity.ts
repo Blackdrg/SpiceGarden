@@ -32,10 +32,10 @@ export class MenuModerationEntity {
   @ManyToOne(() => RestaurantEntity)
   restaurant!: RestaurantEntity;
 
-  @Column({ type: 'enum', enum: ModerationAction })
+  @Column({ type: 'varchar', enum: ModerationAction })
   action!: ModerationAction;
 
-  @Column({ type: 'enum', enum: ModerationStatus, default: ModerationStatus.PENDING })
+  @Column({ type: 'varchar', enum: ModerationStatus, default: ModerationStatus.PENDING })
   status!: ModerationStatus;
 
   @Column('simple-json', { nullable: true })

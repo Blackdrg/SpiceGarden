@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
@@ -51,34 +52,34 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   
-  const fadeAnim = useMemo(() => new Animated.Value(1), []);
-  const slideAnim = useMemo(() => new Animated.Value(0), []);
-  const scaleAnim = useMemo(() => new Animated.Value(1), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(1), []);
+  const slideAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const scaleAnim = useMemo(() => new AnimatedCompat.Value(1), []);
 
   const animateTransition = useCallback((toIndex: number) => {
-    Animated.sequence([
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
+    AnimatedCompat.sequence([
+      AnimatedCompat.parallel([
+        AnimatedCompat.timing(fadeAnim, {
           toValue: 0,
           duration: 150,
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.timing(slideAnim, {
+        AnimatedCompat.timing(slideAnim, {
           toValue: toIndex > currentIndex ? 20 : -20,
           duration: 150,
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
       ]),
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
+      AnimatedCompat.parallel([
+        AnimatedCompat.timing(fadeAnim, {
           toValue: 1,
           duration: 200,
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.timing(slideAnim, {
+        AnimatedCompat.timing(slideAnim, {
           toValue: 0,
           duration: 200,
           easing: Easing.out(Easing.quad),

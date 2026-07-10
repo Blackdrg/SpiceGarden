@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:type", driver_entity_1.DriverEntity)
 ], DriverPenaltyEntity.prototype, "driver", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: DriverPenaltyType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: DriverPenaltyType }),
     __metadata("design:type", String)
 ], DriverPenaltyEntity.prototype, "type", void 0);
 __decorate([
@@ -79,7 +79,7 @@ __decorate([
     __metadata("design:type", String)
 ], DriverPenaltyEntity.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: DriverPenaltyStatus, default: DriverPenaltyStatus.ISSUED }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: DriverPenaltyStatus, default: DriverPenaltyStatus.ISSUED }),
     __metadata("design:type", String)
 ], DriverPenaltyEntity.prototype, "status", void 0);
 __decorate([

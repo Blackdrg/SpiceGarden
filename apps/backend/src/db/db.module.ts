@@ -46,6 +46,8 @@ import { PaymentValidationEventEntity } from "../services/payments/payment-valid
 import { PaymentFraudFlagEntity } from "../services/payments/payment-fraud.entity";
 import { PaymentEventEntity } from "../services/payments/payment-event.entity";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
+import { AppLocalDataSource } from "./data-source.local";
+import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
 
 const entities = [
   UserEntity,
@@ -90,7 +92,8 @@ const entities = [
   PaymentEventEntity,
 ];
 
-const localSqlite = process.env.LOCAL_DB === 'sqlite';
+const localSqlite = process.env.LOCAL_DB === "sqlite";
+const localSqliteFile = process.env.LOCAL_DB === "sqlite-file";
 
 function localReviewModelProvider() {
   const store: any[] = [];
@@ -106,7 +109,39 @@ function localReviewModelProvider() {
   };
 }
 
-const imports: any[] = localSqlite
+function createSqliteImports() {
+  return [
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: "sqlite",
+        database: configService.get<string>("LOCAL_DB_PATH") || "./local-dev.sqlite",
+        entities,
+        synchronize: true,
+        logging: configService.get<string>("DB_LOGGING", "false") === "true",
+      }),
+      inject: [ConfigService],
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: () => ({
+        uri: "mongodb://localhost:27017/spicegarden",
+        connectionFactory: () => ({
+          connection: { close: async () => {} },
+          on: () => ({}),
+          once: () => ({}),
+          removeListener: () => ({}),
+        }),
+      }),
+    }),
+    MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]),
+    LocalSqliteRepositoryModule,
+  ];
+}
+
+const imports: any[] = localSqliteFile
+  ? createSqliteImports()
+  : localSqlite
   ? [LocalRepositoryModule]
   : [
       TypeOrmModule.forRootAsync({
@@ -137,11 +172,11 @@ const imports: any[] = localSqlite
         useFactory: (configService: ConfigService) => ({
           uri: configService.get<string>("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
           connectionFactory: (connection: any) => {
-            connection.on('error', (err: unknown) => {
-              console.error('MongoDB connection error:', err);
+            connection.on("error", (err: unknown) => {
+              console.error("MongoDB connection error:", err);
             });
-            connection.on('connected', () => {
-              console.log('MongoDB connected successfully');
+            connection.on("connected", () => {
+              console.log("MongoDB connected successfully");
             });
             return connection;
           },
@@ -154,7 +189,14 @@ const imports: any[] = localSqlite
 @Global()
 @Module({
   imports,
-  providers: [...(localSqlite ? [localReviewModelProvider()] : [])],
-  exports: localSqlite ? [LocalRepositoryModule, getModelToken(ReviewDocument.name)] : [TypeOrmModule, MongooseModule],
+  providers: [
+    ...(localSqlite || localSqliteFile ? [localReviewModelProvider()] : []),
+  ],
+  exports: localSqliteFile
+    ? [TypeOrmModule, MongooseModule, LocalSqliteRepositoryModule, getModelToken(ReviewDocument.name)]
+    : localSqlite
+    ? [LocalRepositoryModule, getModelToken(ReviewDocument.name)]
+    : [TypeOrmModule, MongooseModule],
 })
 export class DbModule {}
+

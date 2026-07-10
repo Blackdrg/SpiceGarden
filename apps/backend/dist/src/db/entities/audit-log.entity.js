@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:type", String)
 ], AuditLogEntity.prototype, "entityId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
     __metadata("design:type", Object)
 ], AuditLogEntity.prototype, "metadata", void 0);
 __decorate([

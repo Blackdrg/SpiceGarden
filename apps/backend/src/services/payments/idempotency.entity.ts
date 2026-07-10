@@ -15,10 +15,10 @@ export class IdempotencyEntity {
   @Column()
   userId!: string;
 
-  @Column('jsonb')
+  @Column('simple-json')
   requestPayload!: any;
 
-  @Column('jsonb', { nullable: true })
+  @Column('simple-json', { nullable: true })
   responsePayload!: any;
 
   @Column({ nullable: true })

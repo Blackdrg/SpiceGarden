@@ -67,15 +67,15 @@ __decorate([
     __metadata("design:type", String)
 ], CouponEntity.prototype, "code", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CouponType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CouponType }),
     __metadata("design:type", String)
 ], CouponEntity.prototype, "type", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CouponStatus, default: CouponStatus.ACTIVE }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CouponStatus, default: CouponStatus.ACTIVE }),
     __metadata("design:type", String)
 ], CouponEntity.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CouponScope, default: CouponScope.GLOBAL }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CouponScope, default: CouponScope.GLOBAL }),
     __metadata("design:type", String)
 ], CouponEntity.prototype, "scope", void 0);
 __decorate([

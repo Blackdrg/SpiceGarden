@@ -26,13 +26,13 @@ export class OtpEntity {
   @ManyToOne(() => UserEntity)
   user!: UserEntity;
 
-  @Column({ type: 'enum', enum: OtpType })
+  @Column({ type: 'varchar', enum: OtpType })
   type!: OtpType;
 
   @Column({ length: 6 })
   code!: string;
 
-  @Column({ type: 'enum', enum: OtpStatus, default: OtpStatus.PENDING })
+  @Column({ type: 'varchar', enum: OtpStatus, default: OtpStatus.PENDING })
   status!: OtpStatus;
 
   @Column()

@@ -12,6 +12,12 @@ interface LoginBody {
     deviceName?: string;
     deviceType?: string;
 }
+interface MfaLoginBody {
+    email: string;
+    code: string;
+    deviceName?: string;
+    deviceType?: string;
+}
 interface RegisterBody extends LoginBody {
     phone: string;
     fullName: string;
@@ -24,6 +30,25 @@ export declare class AuthController {
     private configService;
     constructor(authService: AuthService, passwordResetService: PasswordResetService, userRepo: Repository<UserEntity>, notificationService: NotificationService, configService: ConfigService);
     login(body: LoginBody, req: Request, res: Response): Promise<{
+        mfaRequired: boolean;
+        email: string;
+        access_token?: undefined;
+        refresh_token?: undefined;
+        user?: undefined;
+    } | {
+        access_token: string;
+        refresh_token: string;
+        user: {
+            id: string;
+            email: string;
+            fullName: string;
+            role: UserRole;
+            status: UserStatus;
+        };
+        mfaRequired?: undefined;
+        email?: undefined;
+    }>;
+    verifyMfaLogin(body: MfaLoginBody, req: Request, res: Response): Promise<{
         access_token: string;
         refresh_token: string;
         user: {
@@ -58,6 +83,7 @@ export declare class AuthController {
             fullName: string | undefined;
             role: UserRole;
             status: UserStatus;
+            isMfaEnabled: boolean;
         };
     }>;
     forgotPassword(body: {

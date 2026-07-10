@@ -15,7 +15,7 @@ export class PaymentValidationEventEntity {
   @Column('decimal', { precision: 12, scale: 2, nullable: true })
   amount!: number;
 
-  @Column('jsonb', { nullable: true })
+  @Column('simple-json', { nullable: true })
   validationData!: any;
 
   @Column({ default: false })

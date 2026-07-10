@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", String)
 ], NotificationAnalyticsEntity.prototype, "deviceToken", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: PushTrackingEvent }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: PushTrackingEvent }),
     __metadata("design:type", String)
 ], NotificationAnalyticsEntity.prototype, "event", void 0);
 __decorate([
@@ -66,7 +66,7 @@ __decorate([
     __metadata("design:type", Date)
 ], NotificationAnalyticsEntity.prototype, "openedAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
     __metadata("design:type", Object)
 ], NotificationAnalyticsEntity.prototype, "metadata", void 0);
 __decorate([

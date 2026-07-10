@@ -10,7 +10,7 @@ export class SurgeZoneEntity {
   @Column()
   name!: string;
 
-  @Column('jsonb')
+  @Column('simple-json')
   polygon!: { lat: number; lng: number }[];
 
   @Column('decimal', { precision: 5, scale: 2, default: 1.0 })

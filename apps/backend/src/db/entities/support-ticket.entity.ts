@@ -36,13 +36,13 @@ export class SupportTicketEntity {
   @Column()
   subject!: string;
 
-  @Column({ type: 'enum', enum: TicketCategory })
+  @Column({ type: 'varchar', enum: TicketCategory })
   category!: TicketCategory;
 
-  @Column({ type: 'enum', enum: TicketPriority, default: TicketPriority.MEDIUM })
+  @Column({ type: 'varchar', enum: TicketPriority, default: TicketPriority.MEDIUM })
   priority!: TicketPriority;
 
-  @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.OPEN })
+  @Column({ type: 'varchar', enum: TicketStatus, default: TicketStatus.OPEN })
   status!: TicketStatus;
 
   @Column()

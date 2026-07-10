@@ -23,7 +23,7 @@ export class CommissionRuleEntity {
   @ManyToOne(() => RestaurantEntity)
   restaurant!: RestaurantEntity;
 
-  @Column({ type: 'enum', enum: CommissionType })
+  @Column({ type: 'varchar', enum: CommissionType })
   type!: CommissionType;
 
   @Column('decimal', { precision: 5, scale: 2 })
@@ -41,7 +41,7 @@ export class CommissionRuleEntity {
   @Column({ type: 'date', nullable: true })
   validTo!: Date;
 
-  @Column({ type: 'enum', enum: CommissionStatus, default: CommissionStatus.ACTIVE })
+  @Column({ type: 'varchar', enum: CommissionStatus, default: CommissionStatus.ACTIVE })
   status!: CommissionStatus;
 
   @Column('simple-json', { nullable: true })

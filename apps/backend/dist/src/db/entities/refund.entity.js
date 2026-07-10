@@ -72,7 +72,7 @@ __decorate([
     __metadata("design:type", user_entity_1.UserEntity)
 ], RefundEntity.prototype, "requester", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: RefundType }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: RefundType }),
     __metadata("design:type", String)
 ], RefundEntity.prototype, "type", void 0);
 __decorate([
@@ -81,7 +81,7 @@ __decorate([
 ], RefundEntity.prototype, "amount", void 0);
 __decorate([
     (0, typeorm_1.Index)('idx_refunds_status'),
-    (0, typeorm_1.Column)({ type: 'enum', enum: RefundStatus, default: RefundStatus.REQUESTED }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: RefundStatus, default: RefundStatus.REQUESTED }),
     __metadata("design:type", String)
 ], RefundEntity.prototype, "status", void 0);
 __decorate([

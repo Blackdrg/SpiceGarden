@@ -40,10 +40,10 @@ export class OrderEntity {
   @Column()
   orderNumber!: string;
 
-  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PLACED })
+  @Column({ type: 'varchar', enum: OrderStatus, default: OrderStatus.PLACED })
   status!: OrderStatus;
 
-  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  @Column({ type: 'varchar', enum: PaymentStatus, default: PaymentStatus.PENDING })
   paymentStatus!: PaymentStatus;
 
   @Column({ nullable: true })

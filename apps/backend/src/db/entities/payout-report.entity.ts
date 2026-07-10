@@ -47,7 +47,7 @@ export class PayoutReportEntity {
   @Column('decimal', { precision: 10, scale: 2 })
   netPayout!: number;
 
-  @Column({ type: 'enum', enum: PayoutStatus, default: PayoutStatus.PENDING })
+  @Column({ type: 'varchar', enum: PayoutStatus, default: PayoutStatus.PENDING })
   status!: PayoutStatus;
 
   @Column({ nullable: true })

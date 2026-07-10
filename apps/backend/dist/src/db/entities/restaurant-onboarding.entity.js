@@ -62,11 +62,11 @@ __decorate([
     __metadata("design:type", restaurant_entity_1.RestaurantEntity)
 ], RestaurantOnboardingEntity.prototype, "restaurant", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: OnboardingStep, default: OnboardingStep.BUSINESS_REGISTRATION }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: OnboardingStep, default: OnboardingStep.BUSINESS_REGISTRATION }),
     __metadata("design:type", String)
 ], RestaurantOnboardingEntity.prototype, "currentStep", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: OnboardingStatus, default: OnboardingStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: OnboardingStatus, default: OnboardingStatus.PENDING }),
     __metadata("design:type", String)
 ], RestaurantOnboardingEntity.prototype, "status", void 0);
 __decorate([

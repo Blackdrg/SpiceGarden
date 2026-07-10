@@ -76,6 +76,7 @@ const restaurant_onboarding_entity_1 = require("./entities/restaurant-onboarding
 const dispute_entity_1 = require("./entities/dispute.entity");
 const support_ticket_entity_1 = require("./entities/support-ticket.entity");
 const payment_method_entity_1 = require("./entities/payment-method.entity");
+const mfa_entity_1 = require("./entities/mfa.entity");
 const entities = [
     user_entity_1.UserEntity,
     order_entity_1.OrderEntity,
@@ -142,6 +143,7 @@ const entities = [
     dispute_entity_1.DisputeEntity,
     support_ticket_entity_1.SupportTicketEntity,
     payment_method_entity_1.PaymentMethodEntity,
+    mfa_entity_1.MfaSecretEntity,
 ];
 let DbRepositoriesModule = class DbRepositoriesModule {
 };

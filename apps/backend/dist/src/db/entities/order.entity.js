@@ -80,11 +80,11 @@ __decorate([
     __metadata("design:type", String)
 ], OrderEntity.prototype, "orderNumber", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: order_interface_1.OrderStatus, default: order_interface_1.OrderStatus.PLACED }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: order_interface_1.OrderStatus, default: order_interface_1.OrderStatus.PLACED }),
     __metadata("design:type", String)
 ], OrderEntity.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: order_interface_1.PaymentStatus, default: order_interface_1.PaymentStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: order_interface_1.PaymentStatus, default: order_interface_1.PaymentStatus.PENDING }),
     __metadata("design:type", String)
 ], OrderEntity.prototype, "paymentStatus", void 0);
 __decorate([

@@ -32,7 +32,7 @@ __decorate([
     __metadata("design:type", String)
 ], SurgeZoneEntity.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb'),
+    (0, typeorm_1.Column)('simple-json'),
     __metadata("design:type", Array)
 ], SurgeZoneEntity.prototype, "polygon", void 0);
 __decorate([

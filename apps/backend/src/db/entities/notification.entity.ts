@@ -1,4 +1,4 @@
-﻿
+
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { NotificationStatus } from './notification-status.enum';
 
@@ -27,7 +27,7 @@ export class NotificationEntity {
   @Column()
   provider!: 'fcm' | 'twilio' | 'sendgrid' | 'apns'; // Service provider
 
-  @Column({ type: 'enum', enum: NotificationStatus, default: NotificationStatus.PENDING })
+  @Column({ type: 'varchar', enum: NotificationStatus, default: NotificationStatus.PENDING })
   status!: NotificationStatus;
 
   @Column({ default: 0 })

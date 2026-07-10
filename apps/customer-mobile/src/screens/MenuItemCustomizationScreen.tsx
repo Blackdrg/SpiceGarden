@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/core';
 import * as Haptics from 'expo-haptics';
@@ -37,7 +38,7 @@ const MenuItemCustomizationScreen = () => {
   const [instructions, setInstructions] = useState('');
   const [loading, setLoading] = useState(true);
   
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
   const fetchItemDetails = useCallback(async () => {
     try {
@@ -54,7 +55,7 @@ const MenuItemCustomizationScreen = () => {
 
   useEffect(() => {
     fetchItemDetails();
-    Animated.timing(fadeAnim, {
+    AnimatedCompat.timing(fadeAnim, {
       toValue: 1,
       duration: DESIGN_TOKENS.motion.page,
       easing: Easing.out(Easing.quad),

@@ -127,16 +127,6 @@ spec:
       protocol: TCP
   type: ClusterIP
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: spicegarden-config
-  labels:
-    app: spicegarden-backend
-data:
-  LOG_LEVEL: "info"
-  ENABLE_SWAGGER: "false"
----
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:

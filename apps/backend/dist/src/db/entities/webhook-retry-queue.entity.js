@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:type", String)
 ], WebhookRetryQueueEntity.prototype, "eventType", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb'),
+    (0, typeorm_1.Column)('simple-json'),
     __metadata("design:type", Object)
 ], WebhookRetryQueueEntity.prototype, "payload", void 0);
 __decorate([

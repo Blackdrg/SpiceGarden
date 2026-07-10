@@ -27,13 +27,13 @@ export class DriverIncentiveEntity {
   @ManyToOne(() => DriverEntity)
   driver!: DriverEntity;
 
-  @Column({ type: 'enum', enum: IncentiveType })
+  @Column({ type: 'varchar', enum: IncentiveType })
   type!: IncentiveType;
 
   @Column('decimal', { precision: 10, scale: 2 })
   amount!: number;
 
-  @Column({ type: 'enum', enum: IncentiveStatus, default: IncentiveStatus.PENDING })
+  @Column({ type: 'varchar', enum: IncentiveStatus, default: IncentiveStatus.PENDING })
   status!: IncentiveStatus;
 
   @Column({ nullable: true })

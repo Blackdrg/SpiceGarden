@@ -87,6 +87,7 @@ const payment_validation_entity_1 = require("../services/payments/payment-valida
 const payment_fraud_entity_1 = require("../services/payments/payment-fraud.entity");
 const payment_event_entity_1 = require("../services/payments/payment-event.entity");
 const review_schema_1 = require("./schemas/review.schema");
+const local_sqlite_repository_module_1 = require("./local-sqlite-repository.module");
 const entities = [
     user_entity_1.UserEntity,
     order_entity_1.OrderEntity,
@@ -129,7 +130,8 @@ const entities = [
     payment_fraud_entity_1.PaymentFraudFlagEntity,
     payment_event_entity_1.PaymentEventEntity,
 ];
-const localSqlite = process.env.LOCAL_DB === 'sqlite';
+const localSqlite = process.env.LOCAL_DB === "sqlite";
+const localSqliteFile = process.env.LOCAL_DB === "sqlite-file";
 function localReviewModelProvider() {
     const store = [];
     return {
@@ -143,50 +145,81 @@ function localReviewModelProvider() {
         },
     };
 }
-const imports = localSqlite
-    ? [local_repository_module_1.LocalRepositoryModule]
-    : [
+function createSqliteImports() {
+    return [
         typeorm_1.TypeOrmModule.forRootAsync({
             imports: [config_1.ConfigModule],
             useFactory: (configService) => ({
-                type: "postgres",
-                host: configService.get("DB_HOST") || "localhost",
-                port: configService.get("DB_PORT", 5432),
-                username: configService.get("DB_USER") || "spicegarden",
-                password: configService.get("DB_PASS") || "spicegarden_dev",
-                database: configService.get("DB_NAME") || "spicegarden",
+                type: "sqlite",
+                database: configService.get("LOCAL_DB_PATH") || "./local-dev.sqlite",
                 entities,
-                synchronize: false,
-                migrations: ["dist/db/migrations/*.js"],
-                migrationsRun: true,
-                poolSize: configService.get("DB_POOL_SIZE", 20),
-                connectionTimeoutMillis: 5000,
-                idleTimeoutMillis: 30000,
-                maxQueryExecutionTime: 1000,
-                keepAlive: true,
-                statementTimeout: 30000,
+                synchronize: true,
                 logging: configService.get("DB_LOGGING", "false") === "true",
             }),
             inject: [config_1.ConfigService],
         }),
         mongoose_1.MongooseModule.forRootAsync({
             imports: [config_1.ConfigModule],
-            useFactory: (configService) => ({
-                uri: configService.get("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
-                connectionFactory: (connection) => {
-                    connection.on('error', (err) => {
-                        console.error('MongoDB connection error:', err);
-                    });
-                    connection.on('connected', () => {
-                        console.log('MongoDB connected successfully');
-                    });
-                    return connection;
-                },
+            useFactory: () => ({
+                uri: "mongodb://localhost:27017/spicegarden",
+                connectionFactory: () => ({
+                    connection: { close: async () => { } },
+                    on: () => ({}),
+                    once: () => ({}),
+                    removeListener: () => ({}),
+                }),
             }),
-            inject: [config_1.ConfigService],
         }),
         mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }]),
+        local_sqlite_repository_module_1.LocalSqliteRepositoryModule,
     ];
+}
+const imports = localSqliteFile
+    ? createSqliteImports()
+    : localSqlite
+        ? [local_repository_module_1.LocalRepositoryModule]
+        : [
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (configService) => ({
+                    type: "postgres",
+                    host: configService.get("DB_HOST") || "localhost",
+                    port: configService.get("DB_PORT", 5432),
+                    username: configService.get("DB_USER") || "spicegarden",
+                    password: configService.get("DB_PASS") || "spicegarden_dev",
+                    database: configService.get("DB_NAME") || "spicegarden",
+                    entities,
+                    synchronize: false,
+                    migrations: ["dist/db/migrations/*.js"],
+                    migrationsRun: true,
+                    poolSize: configService.get("DB_POOL_SIZE", 20),
+                    connectionTimeoutMillis: 5000,
+                    idleTimeoutMillis: 30000,
+                    maxQueryExecutionTime: 1000,
+                    keepAlive: true,
+                    statementTimeout: 30000,
+                    logging: configService.get("DB_LOGGING", "false") === "true",
+                }),
+                inject: [config_1.ConfigService],
+            }),
+            mongoose_1.MongooseModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (configService) => ({
+                    uri: configService.get("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
+                    connectionFactory: (connection) => {
+                        connection.on("error", (err) => {
+                            console.error("MongoDB connection error:", err);
+                        });
+                        connection.on("connected", () => {
+                            console.log("MongoDB connected successfully");
+                        });
+                        return connection;
+                    },
+                }),
+                inject: [config_1.ConfigService],
+            }),
+            mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }]),
+        ];
 let DbModule = class DbModule {
 };
 exports.DbModule = DbModule;
@@ -194,7 +227,13 @@ exports.DbModule = DbModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports,
-        providers: [...(localSqlite ? [localReviewModelProvider()] : [])],
-        exports: localSqlite ? [local_repository_module_1.LocalRepositoryModule, (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)] : [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule],
+        providers: [
+            ...(localSqlite || localSqliteFile ? [localReviewModelProvider()] : []),
+        ],
+        exports: localSqliteFile
+            ? [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule, local_sqlite_repository_module_1.LocalSqliteRepositoryModule, (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)]
+            : localSqlite
+                ? [local_repository_module_1.LocalRepositoryModule, (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)]
+                : [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule],
     })
 ], DbModule);

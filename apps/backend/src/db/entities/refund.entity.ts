@@ -35,14 +35,14 @@ export class RefundEntity {
   @ManyToOne(() => UserEntity)
   requester!: UserEntity;
 
-  @Column({ type: 'enum', enum: RefundType })
+  @Column({ type: 'varchar', enum: RefundType })
   type!: RefundType;
 
   @Column('decimal', { precision: 10, scale: 2 })
   amount!: number;
 
   @Index('idx_refunds_status')
-  @Column({ type: 'enum', enum: RefundStatus, default: RefundStatus.REQUESTED })
+  @Column({ type: 'varchar', enum: RefundStatus, default: RefundStatus.REQUESTED })
   status!: RefundStatus;
 
   @Column()

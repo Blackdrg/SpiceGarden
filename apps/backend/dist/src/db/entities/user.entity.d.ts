@@ -10,6 +10,7 @@ export declare class UserEntity {
     status: UserStatus;
     emailVerified: boolean;
     phoneVerified: boolean;
+    isMfaEnabled: boolean;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;

@@ -14,10 +14,12 @@ const config_1 = require("@nestjs/config");
 const db_repositories_module_1 = require("../../db/db-repositories.module");
 const auth_service_1 = require("./auth.service");
 const password_reset_service_1 = require("./password-reset.service");
+const mfa_service_1 = require("./mfa.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
 const google_strategy_1 = require("./strategies/google.strategy");
 const facebook_strategy_1 = require("./strategies/facebook.strategy");
+const mfa_controller_1 = require("./mfa.controller");
 const notification_module_1 = require("../notifications/notification.module");
 const missing_env_error_1 = require("../../common/errors/missing-env.error");
 function requireJwtSecret(configService) {
@@ -45,8 +47,8 @@ exports.AuthServiceModule = AuthServiceModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
         ],
-        providers: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy, facebook_strategy_1.FacebookStrategy],
-        controllers: [auth_controller_1.AuthController],
-        exports: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService],
+        providers: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, mfa_service_1.MfaService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy, facebook_strategy_1.FacebookStrategy],
+        controllers: [auth_controller_1.AuthController, mfa_controller_1.MfaController],
+        exports: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, mfa_service_1.MfaService],
     })
 ], AuthServiceModule);

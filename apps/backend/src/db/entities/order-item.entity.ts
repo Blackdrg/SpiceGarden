@@ -39,10 +39,10 @@ export class OrderItemEntity {
   @Column({ nullable: true })
   instructions!: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   variants!: any;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   addons!: any;
 
   // Tax breakdown for this item

@@ -83,7 +83,7 @@ __decorate([
     __metadata("design:type", Number)
 ], DriverEntity.prototype, "rating", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'point', nullable: true, transformer: {
+    (0, typeorm_1.Column)({ type: 'text', nullable: true, transformer: {
             from: (v) => v,
             to: (v) => `(${v.lng} ${v.lat})`,
         } }),

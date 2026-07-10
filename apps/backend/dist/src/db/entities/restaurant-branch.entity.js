@@ -42,7 +42,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Index)({ spatial: true }),
     (0, typeorm_1.Column)({
-        type: 'point',
+        type: 'text',
         transformer: {
             from: (v) => {
                 if (typeof v === 'string') {

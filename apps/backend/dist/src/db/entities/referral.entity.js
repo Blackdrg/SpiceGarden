@@ -70,11 +70,11 @@ __decorate([
     __metadata("design:type", user_entity_1.UserEntity)
 ], ReferralEntity.prototype, "referee", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: ReferralStatus, default: ReferralStatus.PENDING }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: ReferralStatus, default: ReferralStatus.PENDING }),
     __metadata("design:type", String)
 ], ReferralEntity.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: ReferralRewardType, default: ReferralRewardType.WALLET_CASHBACK }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: ReferralRewardType, default: ReferralRewardType.WALLET_CASHBACK }),
     __metadata("design:type", String)
 ], ReferralEntity.prototype, "rewardType", void 0);
 __decorate([

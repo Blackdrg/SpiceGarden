@@ -18,7 +18,7 @@ export class DeletionRequestEntity {
   @Column({ type: 'date' })
   scheduledDeletionDate!: Date;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   cancellationReason!: string;
 
   @CreateDateColumn()

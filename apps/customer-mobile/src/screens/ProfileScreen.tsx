@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -50,7 +51,7 @@ const ProfileScreen = () => {
     phone: '',
   });
 
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -74,7 +75,7 @@ const ProfileScreen = () => {
       } finally {
         setLoading(false);
         
-        Animated.timing(fadeAnim, {
+        AnimatedCompat.timing(fadeAnim, {
           toValue: 1,
           duration: DESIGN_TOKENS.motion.page,
           easing: Easing.out(Easing.quad),

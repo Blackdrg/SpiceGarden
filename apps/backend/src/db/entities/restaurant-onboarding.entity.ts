@@ -32,10 +32,10 @@ export class RestaurantOnboardingEntity {
   @ManyToOne(() => RestaurantEntity)
   restaurant!: RestaurantEntity;
 
-  @Column({ type: 'enum', enum: OnboardingStep, default: OnboardingStep.BUSINESS_REGISTRATION })
+  @Column({ type: 'varchar', enum: OnboardingStep, default: OnboardingStep.BUSINESS_REGISTRATION })
   currentStep!: OnboardingStep;
 
-  @Column({ type: 'enum', enum: OnboardingStatus, default: OnboardingStatus.PENDING })
+  @Column({ type: 'varchar', enum: OnboardingStatus, default: OnboardingStatus.PENDING })
   status!: OnboardingStatus;
 
    @Column('simple-json', { nullable: true })

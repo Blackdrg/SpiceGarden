@@ -60,7 +60,7 @@ __decorate([
     __metadata("design:type", String)
 ], AddressEntity.prototype, "postalCode", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'point', transformer: {
+    (0, typeorm_1.Column)({ type: 'text', transformer: {
             from: (v) => v,
             to: (v) => `(${v.lng},${v.lat})`,
         } }),

@@ -27,7 +27,7 @@ export class AddressEntity {
   @Column()
   postalCode!: string;
 
-  @Column({ type: 'point', transformer: {
+  @Column({ type: 'text', transformer: {
     from: (v: any) => v as { lat: number; lng: number },
     to: (v: { lat: number; lng: number }) => `(${v.lng},${v.lat})`,
   }})

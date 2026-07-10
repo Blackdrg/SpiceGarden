@@ -38,7 +38,7 @@ export class DriverEntity {
   @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
   rating!: number;
 
-  @Column({ type: 'point', nullable: true, transformer: {
+  @Column({ type: 'text', nullable: true, transformer: {
     from: (v: any) => v as any,
     to: (v: { lat: number; lng: number }) => `(${v.lng} ${v.lat})`,
   }})

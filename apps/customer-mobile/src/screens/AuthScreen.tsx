@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -18,11 +19,11 @@ const AuthScreen = () => {
   const [passwordError, setPasswordError] = useState('');
 
    const navigation = useNavigation();
-  const fadeAnim = useMemo(() => new Animated.Value(0), []);
-  const shakeAnim = useMemo(() => new Animated.Value(0), []);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const shakeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
+    AnimatedCompat.timing(fadeAnim, {
       toValue: 1,
       duration: DESIGN_TOKENS.motion.page,
       easing: Easing.out(Easing.quad),
@@ -109,11 +110,11 @@ const AuthScreen = () => {
   };
 
   const shakeAnimation = () => {
-    Animated.sequence([
-      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+    AnimatedCompat.sequence([
+      AnimatedCompat.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+      AnimatedCompat.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+      AnimatedCompat.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+      AnimatedCompat.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
     ]).start();
   };
 

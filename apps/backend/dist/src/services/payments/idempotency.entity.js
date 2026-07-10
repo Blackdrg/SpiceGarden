@@ -41,11 +41,11 @@ __decorate([
     __metadata("design:type", String)
 ], IdempotencyEntity.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb'),
+    (0, typeorm_1.Column)('simple-json'),
     __metadata("design:type", Object)
 ], IdempotencyEntity.prototype, "requestPayload", void 0);
 __decorate([
-    (0, typeorm_1.Column)('jsonb', { nullable: true }),
+    (0, typeorm_1.Column)('simple-json', { nullable: true }),
     __metadata("design:type", Object)
 ], IdempotencyEntity.prototype, "responsePayload", void 0);
 __decorate([

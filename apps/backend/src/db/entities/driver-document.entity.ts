@@ -27,13 +27,13 @@ export class DriverDocumentEntity extends BaseEntity {
   @ManyToOne(() => DriverEntity)
   driver!: DriverEntity;
 
-  @Column({ type: 'enum', enum: DocumentType })
+  @Column({ type: 'varchar', enum: DocumentType })
   documentType!: DocumentType;
 
   @Column()
   documentUrl!: string;
 
-  @Column({ type: 'enum', enum: DocumentStatus, default: DocumentStatus.PENDING })
+  @Column({ type: 'varchar', enum: DocumentStatus, default: DocumentStatus.PENDING })
   status!: DocumentStatus;
 
   @Column({ nullable: true })

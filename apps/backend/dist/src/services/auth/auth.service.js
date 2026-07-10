@@ -49,6 +49,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
+const mfa_service_1 = require("./mfa.service");
 const argon2 = __importStar(require("argon2"));
 const crypto = __importStar(require("crypto"));
 const typeorm_1 = require("@nestjs/typeorm");
@@ -60,11 +61,13 @@ let AuthService = class AuthService {
     jwtService;
     configService;
     userRepo;
+    mfaService;
     sessionRepo;
-    constructor(jwtService, configService, userRepo, sessionRepo) {
+    constructor(jwtService, configService, userRepo, mfaService, sessionRepo) {
         this.jwtService = jwtService;
         this.configService = configService;
         this.userRepo = userRepo;
+        this.mfaService = mfaService;
         this.sessionRepo = sessionRepo;
     }
     async hashPassword(password) {
@@ -100,7 +103,21 @@ let AuthService = class AuthService {
         throw new common_1.UnauthorizedException('Invalid email or password');
     }
     async login(user, deviceInfo) {
-        const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status };
+        const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status, isMfaEnabled: user.isMfaEnabled };
+        const accessToken = this.jwtService.sign(payload);
+        const refreshToken = crypto.randomBytes(Number(this.configService.get('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
+        await this.createSession(user.id, deviceInfo, refreshToken);
+        return {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+        };
+    }
+    async loginWithMfa(user, code, deviceInfo) {
+        const isCodeValid = await this.mfaService.verifyCode(user, code);
+        if (!isCodeValid) {
+            throw new common_1.UnauthorizedException('Invalid MFA code.');
+        }
+        const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status, isMfaEnabled: true };
         const accessToken = this.jwtService.sign(payload);
         const refreshToken = crypto.randomBytes(Number(this.configService.get('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
         await this.createSession(user.id, deviceInfo, refreshToken);
@@ -129,6 +146,7 @@ let AuthService = class AuthService {
             sub: session.user.id,
             role: session.user.role,
             status: session.user.status,
+            isMfaEnabled: session.user.isMfaEnabled,
         };
         return {
             access_token: this.jwtService.sign(payload),
@@ -172,9 +190,10 @@ exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(session_entity_1.SessionEntity)),
+    __param(4, (0, typeorm_1.InjectRepository)(session_entity_1.SessionEntity)),
     __metadata("design:paramtypes", [jwt_1.JwtService,
         config_1.ConfigService,
         typeorm_2.Repository,
+        mfa_service_1.MfaService,
         typeorm_2.Repository])
 ], AuthService);

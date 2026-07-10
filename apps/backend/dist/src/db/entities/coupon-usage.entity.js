@@ -42,7 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], CouponUsageEntity.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: CouponUsageStatus, default: CouponUsageStatus.ACTIVE }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: CouponUsageStatus, default: CouponUsageStatus.ACTIVE }),
     __metadata("design:type", String)
 ], CouponUsageEntity.prototype, "status", void 0);
 __decorate([

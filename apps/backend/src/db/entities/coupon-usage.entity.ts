@@ -18,7 +18,7 @@ export class CouponUsageEntity {
   @Column()
   userId!: string;
 
-  @Column({ type: 'enum', enum: CouponUsageStatus, default: CouponUsageStatus.ACTIVE })
+  @Column({ type: 'varchar', enum: CouponUsageStatus, default: CouponUsageStatus.ACTIVE })
   status!: CouponUsageStatus;
 
   @Column({ nullable: true })

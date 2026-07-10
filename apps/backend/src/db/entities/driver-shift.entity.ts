@@ -22,7 +22,7 @@ export class DriverShiftEntity {
   @Column({ nullable: true })
   endTime!: Date;
 
-  @Column({ type: 'enum', enum: DriverShiftStatus, default: DriverShiftStatus.SCHEDULED })
+  @Column({ type: 'varchar', enum: DriverShiftStatus, default: DriverShiftStatus.SCHEDULED })
   status!: DriverShiftStatus;
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })

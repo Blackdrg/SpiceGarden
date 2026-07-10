@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
+const AnimatedCompat = Animated as any;
 
 interface RestaurantInfo {
   id: string;
@@ -28,8 +29,8 @@ const RestaurantScreen = () => {
    const [error, setError] = useState<string | null>(null);
    const [addingItem, setAddingItem] = useState<string | null>(null);
    
-   const fadeAnim = useMemo(() => new Animated.Value(0), []);
-   const scaleAnims = useMemo(() => new Map<string, Animated.Value>(), []);
+   const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+   const scaleAnims = useMemo(() => new Map<string, any>(), []);
 
    useEffect(() => {
      const loadData = async () => {
@@ -63,7 +64,7 @@ const RestaurantScreen = () => {
          setMenuItems(items);
          setLoading(false);
          
-         Animated.timing(fadeAnim, {
+          AnimatedCompat.timing(fadeAnim, {
            toValue: 1,
            duration: 300,
            easing: Easing.out(Easing.quad),

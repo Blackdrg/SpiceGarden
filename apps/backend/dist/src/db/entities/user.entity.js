@@ -23,6 +23,7 @@ let UserEntity = class UserEntity {
     status;
     emailVerified;
     phoneVerified;
+    isMfaEnabled;
     createdAt;
     updatedAt;
     deletedAt;
@@ -53,11 +54,11 @@ __decorate([
     __metadata("design:type", String)
 ], UserEntity.prototype, "profileImage", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: user_interface_1.UserRole, default: user_interface_1.UserRole.CUSTOMER }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: user_interface_1.UserRole, default: user_interface_1.UserRole.CUSTOMER }),
     __metadata("design:type", String)
 ], UserEntity.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: user_interface_1.UserStatus, default: user_interface_1.UserStatus.ACTIVE }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: user_interface_1.UserStatus, default: user_interface_1.UserStatus.ACTIVE }),
     __metadata("design:type", String)
 ], UserEntity.prototype, "status", void 0);
 __decorate([
@@ -68,6 +69,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], UserEntity.prototype, "phoneVerified", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], UserEntity.prototype, "isMfaEnabled", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

@@ -75,15 +75,15 @@ __decorate([
     __metadata("design:type", String)
 ], SupportTicketEntity.prototype, "subject", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: TicketCategory }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: TicketCategory }),
     __metadata("design:type", String)
 ], SupportTicketEntity.prototype, "category", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: TicketPriority, default: TicketPriority.MEDIUM }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: TicketPriority, default: TicketPriority.MEDIUM }),
     __metadata("design:type", String)
 ], SupportTicketEntity.prototype, "priority", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: TicketStatus, default: TicketStatus.OPEN }),
+    (0, typeorm_1.Column)({ type: 'varchar', enum: TicketStatus, default: TicketStatus.OPEN }),
     __metadata("design:type", String)
 ], SupportTicketEntity.prototype, "status", void 0);
 __decorate([
