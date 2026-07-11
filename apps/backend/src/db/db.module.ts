@@ -122,27 +122,14 @@ function createSqliteImports() {
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: () => ({
-        uri: "mongodb://localhost:27017/spicegarden",
-        connectionFactory: () => ({
-          connection: { close: async () => {} },
-          on: () => ({}),
-          once: () => ({}),
-          removeListener: () => ({}),
-        }),
-      }),
-    }),
-    MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }]),
     LocalSqliteRepositoryModule,
   ];
 }
 
-const imports: any[] = localSqliteFile
+const useLocalSqlite = localSqliteFile || localSqlite;
+
+const imports: any[] = useLocalSqlite
   ? createSqliteImports()
-  : localSqlite
-  ? [LocalRepositoryModule]
   : [
       TypeOrmModule.forRootAsync({
         imports: [ConfigModule],
@@ -190,12 +177,10 @@ const imports: any[] = localSqliteFile
 @Module({
   imports,
   providers: [
-    ...(localSqlite || localSqliteFile ? [localReviewModelProvider()] : []),
+    ...(useLocalSqlite ? [localReviewModelProvider()] : []),
   ],
-  exports: localSqliteFile
-    ? [TypeOrmModule, MongooseModule, LocalSqliteRepositoryModule, getModelToken(ReviewDocument.name)]
-    : localSqlite
-    ? [LocalRepositoryModule, getModelToken(ReviewDocument.name)]
+  exports: useLocalSqlite
+    ? [TypeOrmModule, LocalSqliteRepositoryModule, getModelToken(ReviewDocument.name)]
     : [TypeOrmModule, MongooseModule],
 })
 export class DbModule {}

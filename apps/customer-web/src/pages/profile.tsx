@@ -139,12 +139,14 @@ const ProfilePage: React.FC = () => {
                 <img src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} />
                 <p>Enter the 6-digit code from your authenticator app:</p>
                 <input
+                  id="mfa-enable-code"
                   type="text"
                   value={mfaCode}
                   onChange={(e) => setMfaCode(e.target.value)}
                   maxLength={6}
                   style={styles.codeInput}
                   disabled={isMfaLoading}
+                  aria-label="Enter the 6-digit code from your authenticator app"
                 />
                 <Button label={isMfaLoading ? 'Enabling...' : 'Enable MFA'} onClick={handleEnable} disabled={isMfaLoading} />
               </div>

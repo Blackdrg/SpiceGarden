@@ -30,6 +30,7 @@ export declare class QueueService implements OnModuleDestroy {
     private readonly connection;
     private readonly queues;
     private readonly workers;
+    private redisAvailable;
     constructor(configService: ConfigService, orderProcessor: OrderProcessor, orderRepo: Repository<OrderEntity>);
     enqueue<TData extends Record<string, unknown> = Record<string, unknown>>(queueName: QueueName, data: TData, options?: QueueEnqueueOptions): Promise<Job<TData>>;
     enqueueOrderLifecycle(data: {

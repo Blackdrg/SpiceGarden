@@ -191,7 +191,7 @@ const HistoryPage = () => {
 
       {/* Bottom nav */}
       <nav className={styles.bottomNav}>
-        {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '�??', path: '/search' }, { key: 'orders', label: 'Orders', icon: '📦' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map(tab => (
+        {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '🔍', path: '/search' }, { key: 'orders', label: 'Orders', icon: '📦' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map(tab => (
           <button
             type="button"
             key={tab.key}

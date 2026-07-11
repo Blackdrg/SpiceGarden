@@ -214,11 +214,11 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
           </div>
           <div className={styles.summaryRow}>
             <span>Order Date</span>
-            <span>{new Date(order.createdAt || '').toLocaleString()}</span>
+            <span><FormattedDateTime value={order.createdAt} /></span>
           </div>
           <div className={styles.summaryRow}>
             <span>Last Updated</span>
-            <span>{new Date(order.updatedAt || '').toLocaleString()}</span>
+            <span><FormattedDateTime value={order.updatedAt} /></span>
           </div>
         </div>
       </Card>
@@ -259,6 +259,11 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
       )}
     </div>
   );
+};
+
+const FormattedDateTime = ({ value }: { value?: string }) => {
+  if (!value) return null;
+  return <>{new Date(value).toLocaleString()}</>;
 };
 
 export default function Wrapped(props: any) {

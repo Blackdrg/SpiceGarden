@@ -40,7 +40,7 @@ __decorate([
     __metadata("design:type", String)
 ], RestaurantBranchEntity.prototype, "address", void 0);
 __decorate([
-    (0, typeorm_1.Index)({ spatial: true }),
+    (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)({
         type: 'text',
         transformer: {

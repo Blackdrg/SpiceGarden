@@ -8,8 +8,10 @@ import { UserRole, UserStatus } from '../../../shared/domain/user.interface';
 interface JwtPayload {
   sub: string;
   email: string;
+  fullName: string;
   role: UserRole;
   status: UserStatus;
+  isMfaEnabled: boolean;
 }
 
 interface JwtUser {
@@ -17,8 +19,10 @@ interface JwtUser {
   sub: string;
   userId: string;
   email: string;
+  fullName: string;
   role: UserRole;
   status: UserStatus;
+  isMfaEnabled: boolean;
 }
 
 function requireJwtSecret(configService: ConfigService): string {
@@ -48,8 +52,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       sub: payload.sub,
       userId: payload.sub,
       email: payload.email,
+      fullName: payload.fullName,
       role: payload.role,
       status: payload.status,
+      isMfaEnabled: payload.isMfaEnabled,
     };
   }
 }

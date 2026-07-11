@@ -16,6 +16,8 @@ const encryption_service_1 = require("../../security/encryption.service");
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
 const order_entity_1 = require("../../db/entities/order.entity");
+const session_entity_1 = require("../../db/entities/session.entity");
+const audit_log_entity_1 = require("../../db/entities/audit-log.entity");
 const data_export_request_entity_1 = require("../../db/entities/data-export-request.entity");
 const deletion_request_entity_1 = require("../../db/entities/deletion-request.entity");
 let DataPrivacyService = DataPrivacyService_1 = class DataPrivacyService {
@@ -29,8 +31,8 @@ let DataPrivacyService = DataPrivacyService_1 = class DataPrivacyService {
     async getUserData(userId) {
         const user = this.dataSource.getRepository(user_entity_1.UserEntity).findOne({ where: { id: userId } });
         const orders = this.dataSource.getRepository(order_entity_1.OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
-        const sessions = this.dataSource.getRepository(order_entity_1.OrderEntity).find({ where: { userId } });
-        const auditLogs = this.dataSource.getRepository(order_entity_1.OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
+        const sessions = this.dataSource.getRepository(session_entity_1.SessionEntity).find({ where: { userId } });
+        const auditLogs = this.dataSource.getRepository(audit_log_entity_1.AuditLogEntity).find({ where: { performedBy: userId }, order: { timestamp: 'DESC' }, take: 1000 });
         const [u, o, s, a] = await Promise.all([user, orders, sessions, auditLogs]);
         return {
             user: {

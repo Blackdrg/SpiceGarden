@@ -29,6 +29,7 @@ const inventory_alert_entity_1 = require("./entities/inventory-alert.entity");
 const inventory_item_entity_1 = require("./entities/inventory-item.entity");
 const kitchen_sla_entity_1 = require("./entities/kitchen-sla.entity");
 const ledger_entry_entity_1 = require("./entities/ledger-entry.entity");
+const mfa_entity_1 = require("./entities/mfa.entity");
 const menu_addon_entity_1 = require("./entities/menu-addon.entity");
 const menu_category_entity_1 = require("./entities/menu-category.entity");
 const menu_item_entity_1 = require("./entities/menu-item.entity");
@@ -65,6 +66,10 @@ const user_entity_1 = require("./entities/user.entity");
 const wallet_entity_1 = require("./entities/wallet.entity");
 const wallet_transaction_entity_1 = require("./entities/wallet-transaction.entity");
 const webhook_retry_queue_entity_1 = require("./entities/webhook-retry-queue.entity");
+const idempotency_entity_1 = require("../services/payments/idempotency.entity");
+const payment_event_entity_1 = require("../services/payments/payment-event.entity");
+const payment_fraud_entity_1 = require("../services/payments/payment-fraud.entity");
+const payment_validation_entity_1 = require("../services/payments/payment-validation.entity");
 exports.entities = [
     address_entity_1.AddressEntity,
     audit_log_entity_1.AuditLogEntity,
@@ -94,6 +99,7 @@ exports.entities = [
     inventory_item_entity_1.InventoryItemEntity,
     kitchen_sla_entity_1.KitchenSLAEntity,
     ledger_entry_entity_1.LedgerEntryEntity,
+    mfa_entity_1.MfaSecretEntity,
     menu_addon_entity_1.MenuAddonEntity,
     menu_category_entity_1.MenuCategoryEntity,
     menu_item_entity_1.MenuItemEntity,
@@ -124,10 +130,15 @@ exports.entities = [
     subscription_entity_1.SubscriptionEntity,
     supplier_entity_1.SupplierEntity,
     support_ticket_entity_1.SupportTicketEntity,
+    support_ticket_entity_1.TicketMessageEntity,
     surge_zone_entity_1.SurgeZoneEntity,
     user_device_entity_1.UserDeviceEntity,
     user_entity_1.UserEntity,
     wallet_entity_1.WalletEntity,
     wallet_transaction_entity_1.WalletTransactionEntity,
     webhook_retry_queue_entity_1.WebhookRetryQueueEntity,
+    idempotency_entity_1.IdempotencyEntity,
+    payment_event_entity_1.PaymentEventEntity,
+    payment_fraud_entity_1.PaymentFraudFlagEntity,
+    payment_validation_entity_1.PaymentValidationEventEntity,
 ];

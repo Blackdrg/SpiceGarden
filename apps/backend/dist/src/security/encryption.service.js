@@ -53,7 +53,7 @@ let EncryptionService = class EncryptionService {
     constructor(configService) {
         this.configService = configService;
         const secret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'ENCRYPTION_SECRET');
-        const salt = crypto.randomBytes(16);
+        const salt = crypto.createHash('sha256').update(secret).digest().slice(0, 16);
         this.key = crypto.scryptSync(secret, salt, 32);
     }
     encrypt(text) {

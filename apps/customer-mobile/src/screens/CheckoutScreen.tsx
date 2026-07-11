@@ -154,8 +154,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
               {cartItems.map(item => (
                 <View key={item.id} style={styles.itemRow}>
                   <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemText}>�{item.quantity}</Text>
-                  <Text style={styles.itemPrice}>?{item.price * item.quantity}</Text>
+                  <Text style={styles.itemText}>×{item.quantity}</Text>
+                  <Text style={styles.itemPrice}>₹{item.price * item.quantity}</Text>
                 </View>
               ))}
             </View>
@@ -256,7 +256,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
           accessibilityRole='button'
           accessibilityState={{ disabled: loading }}
         >
-          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order � ?${calculateTotal().toFixed(0)}`}</Text>
+          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order • ₹${calculateTotal().toFixed(0)}`}</Text>
         </Pressable>
       </View>
     </Animated.View>

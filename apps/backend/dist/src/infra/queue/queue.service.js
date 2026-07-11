@@ -32,19 +32,26 @@ let QueueService = QueueService_1 = class QueueService {
     orderProcessor;
     orderRepo;
     logger = new common_1.Logger(QueueService_1.name);
-    connection;
+    connection = null;
     queues = new Map();
     workers = new Map();
+    redisAvailable = false;
     constructor(configService, orderProcessor, orderRepo) {
         this.configService = configService;
         this.orderProcessor = orderProcessor;
         this.orderRepo = orderRepo;
-        const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
-        this.connection = new ioredis_1.default(redisUrl, {
-            maxRetriesPerRequest: null,
-            enableReadyCheck: false,
-        });
-        this.registerWorker(queues_1.QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+        try {
+            const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
+            this.connection = new ioredis_1.default(redisUrl, {
+                maxRetriesPerRequest: null,
+                enableReadyCheck: false,
+            });
+            this.registerWorker(queues_1.QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+            this.redisAvailable = true;
+        }
+        catch (error) {
+            this.logger.warn('Redis unavailable. Queue operations will fail until Redis is reachable.');
+        }
     }
     async enqueue(queueName, data, options = {}) {
         const queue = this.getQueue(queueName);
@@ -80,6 +87,9 @@ let QueueService = QueueService_1 = class QueueService {
         });
     }
     getQueue(queueName) {
+        if (!this.redisAvailable || !this.connection) {
+            throw new Error('Queue operations require Redis. Please start Redis and restart the application.');
+        }
         const existing = this.queues.get(queueName);
         if (existing) {
             return existing;
@@ -119,7 +129,9 @@ let QueueService = QueueService_1 = class QueueService {
     async onModuleDestroy() {
         await Promise.allSettled([...this.workers.values()].map((worker) => worker.close()));
         await Promise.allSettled([...this.queues.values()].map((queue) => queue.close()));
-        await this.connection.quit();
+        if (this.connection) {
+            await this.connection.quit();
+        }
     }
 };
 exports.QueueService = QueueService;

@@ -41,8 +41,10 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
             sub: payload.sub,
             userId: payload.sub,
             email: payload.email,
+            fullName: payload.fullName,
             role: payload.role,
             status: payload.status,
+            isMfaEnabled: payload.isMfaEnabled,
         };
     }
 };

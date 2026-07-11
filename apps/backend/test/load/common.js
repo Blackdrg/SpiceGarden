@@ -1,5 +1,6 @@
 import http from 'k6/http';
-import { check, group, sleep, Counter, Rate, Trend } from 'k6';
+import { check, group, sleep } from 'k6';
+import { Counter, Rate, Trend } from 'k6/metrics';
 import { b64decode } from 'k6/encoding';
 
 export const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
@@ -61,7 +62,7 @@ export function loadOptions(stages) {
       payment_success: ['rate>0.99'],
       search_success: ['rate>0.99'],
       menu_success: ['rate>0.99'],
-      api_latency: ['p(95)<2000'],
+      api_latency_ms: ['p(95)<2000'],
     },
   };
 }
@@ -71,6 +72,11 @@ export function setup() {
   const ok = check(res, { 'backend health is 200': (r) => r.status === 200 });
   if (!ok) {
     logFailure('backend health', res);
+    throw new Error(
+      `Backend health check FAILED (status=${res ? res.status : 'no-response'}) at ${BASE_URL}/health. ` +
+        `Aborting load test to avoid generating thousands of doomed requests. ` +
+        `Ensure the backend is running and reachable before executing k6.`,
+    );
   }
   return { startedAt: new Date().toISOString() };
 }

@@ -13,7 +13,7 @@ export class RestaurantBranchEntity {
   @Column()
   address!: string;
 
-  @Index({ spatial: true })
+  @Index()
   @Column({
     type: 'text',
     transformer: {

@@ -1,5 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import * as crypto from 'crypto';
 import { UserEntity } from './entities/user.entity';
 import { OrderEntity } from './entities/order.entity';
 import { SessionEntity } from './entities/session.entity';
@@ -41,7 +43,6 @@ import { PaymentValidationEventEntity } from '../services/payments/payment-valid
 import { PaymentFraudFlagEntity } from '../services/payments/payment-fraud.entity';
 import { PaymentEventEntity } from '../services/payments/payment-event.entity';
 import { ReviewDocument, ReviewSchema } from './schemas/review.schema';
-import { MongooseModule } from '@nestjs/mongoose';
 import { DeletionRequestEntity } from './entities/deletion-request.entity';
 import { DataExportRequestEntity } from './entities/data-export-request.entity';
 import { NotificationEntity } from './entities/notification.entity';
@@ -138,9 +139,36 @@ const entities = [
   MfaSecretEntity,
 ];
 
+const isLocalSqlite =
+  process.env.LOCAL_DB === 'sqlite' || process.env.LOCAL_DB === 'sqlite-file';
+
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature(entities), MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])],
-  exports: [TypeOrmModule, MongooseModule],
+  imports: [
+    TypeOrmModule.forFeature(entities),
+    ...(isLocalSqlite
+      ? []
+      : [MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])]),
+  ],
+  providers: [
+    ...(isLocalSqlite
+      ? [
+          {
+            provide: getModelToken(ReviewDocument.name),
+            useValue: {
+              create: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+              new: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+              findOne: async () => null,
+              find: async () => [],
+              aggregate: async () => [],
+            },
+          },
+        ]
+      : []),
+  ],
+  exports: [
+    TypeOrmModule,
+    ...(isLocalSqlite ? [getModelToken(ReviewDocument.name)] : [MongooseModule]),
+  ],
 })
-export class DbRepositoriesModule { }
+export class DbRepositoriesModule {}

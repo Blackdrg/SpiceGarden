@@ -44,12 +44,14 @@ const MfaSetupPage: React.FC = () => {
               <img src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} />
               <p>Enter the 6-digit code from your authenticator app:</p>
               <input
+                id="mfa-setup-code"
                 type="text"
                 value={mfaCode}
                 onChange={(e) => setMfaCode(e.target.value)}
                 maxLength={6}
                 style={styles.codeInput}
                 disabled={isLoading}
+                aria-label="Enter the 6-digit code from your authenticator app"
               />
               <Button label="Enable MFA" onClick={handleEnableMfa} disabled={isLoading} />
             </div>

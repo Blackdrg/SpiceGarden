@@ -1,14 +1,49 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DbRepositoriesModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const mongoose_1 = require("@nestjs/mongoose");
+const crypto = __importStar(require("crypto"));
 const user_entity_1 = require("./entities/user.entity");
 const order_entity_1 = require("./entities/order.entity");
 const session_entity_1 = require("./entities/session.entity");
@@ -50,7 +85,6 @@ const payment_validation_entity_1 = require("../services/payments/payment-valida
 const payment_fraud_entity_1 = require("../services/payments/payment-fraud.entity");
 const payment_event_entity_1 = require("../services/payments/payment-event.entity");
 const review_schema_1 = require("./schemas/review.schema");
-const mongoose_1 = require("@nestjs/mongoose");
 const deletion_request_entity_1 = require("./entities/deletion-request.entity");
 const data_export_request_entity_1 = require("./entities/data-export-request.entity");
 const notification_entity_1 = require("./entities/notification.entity");
@@ -145,13 +179,38 @@ const entities = [
     payment_method_entity_1.PaymentMethodEntity,
     mfa_entity_1.MfaSecretEntity,
 ];
+const isLocalSqlite = process.env.LOCAL_DB === 'sqlite' || process.env.LOCAL_DB === 'sqlite-file';
 let DbRepositoriesModule = class DbRepositoriesModule {
 };
 exports.DbRepositoriesModule = DbRepositoriesModule;
 exports.DbRepositoriesModule = DbRepositoriesModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature(entities), mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])],
-        exports: [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature(entities),
+            ...(isLocalSqlite
+                ? []
+                : [mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])]),
+        ],
+        providers: [
+            ...(isLocalSqlite
+                ? [
+                    {
+                        provide: (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name),
+                        useValue: {
+                            create: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+                            new: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+                            findOne: async () => null,
+                            find: async () => [],
+                            aggregate: async () => [],
+                        },
+                    },
+                ]
+                : []),
+        ],
+        exports: [
+            typeorm_1.TypeOrmModule,
+            ...(isLocalSqlite ? [(0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)] : [mongoose_1.MongooseModule]),
+        ],
     })
 ], DbRepositoriesModule);

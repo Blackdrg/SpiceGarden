@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
-export declare class AddProductionIndexes202406280001 implements MigrationInterface {
+export declare class InitialSchema1783778923544 implements MigrationInterface {
     name: string;
     up(queryRunner: QueryRunner): Promise<void>;
     down(queryRunner: QueryRunner): Promise<void>;

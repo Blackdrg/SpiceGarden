@@ -11,7 +11,7 @@ export class BranchControlEntity {
   @Column()
   controlType!: 'pause_orders' | 'restrict_payment_methods' | 'limit_order_value' | 'restrict_delivery_radius'; // Type of control
 
-  @Column({ nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   controlValue?: any; // Value for the control (e.g., true/false for pause, amount for limit, etc.)
 
   @Column({ default: true })

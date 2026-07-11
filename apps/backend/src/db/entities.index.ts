@@ -26,6 +26,7 @@ import { InventoryAlertEntity } from "./entities/inventory-alert.entity";
 import { InventoryItemEntity } from "./entities/inventory-item.entity";
 import { KitchenSLAEntity } from "./entities/kitchen-sla.entity";
 import { LedgerEntryEntity } from "./entities/ledger-entry.entity";
+import { MfaSecretEntity } from "./entities/mfa.entity";
 import { MenuAddonEntity } from "./entities/menu-addon.entity";
 import { MenuCategoryEntity } from "./entities/menu-category.entity";
 import { MenuItemEntity } from "./entities/menu-item.entity";
@@ -55,13 +56,17 @@ import { SLAAlertEntity } from "./entities/sla-alert.entity";
 import { StripeWebhookEntity } from "./entities/stripe-webhook.entity";
 import { SubscriptionEntity } from "./entities/subscription.entity";
 import { SupplierEntity } from "./entities/supplier.entity";
-import { SupportTicketEntity } from "./entities/support-ticket.entity";
+import { SupportTicketEntity, TicketMessageEntity } from "./entities/support-ticket.entity";
 import { SurgeZoneEntity } from "./entities/surge-zone.entity";
 import { UserDeviceEntity } from "./entities/user-device.entity";
 import { UserEntity } from "./entities/user.entity";
 import { WalletEntity } from "./entities/wallet.entity";
 import { WalletTransactionEntity } from "./entities/wallet-transaction.entity";
 import { WebhookRetryQueueEntity } from "./entities/webhook-retry-queue.entity";
+import { IdempotencyEntity } from "../services/payments/idempotency.entity";
+import { PaymentEventEntity } from "../services/payments/payment-event.entity";
+import { PaymentFraudFlagEntity } from "../services/payments/payment-fraud.entity";
+import { PaymentValidationEventEntity } from "../services/payments/payment-validation.entity";
 
 export const entities = [
   AddressEntity,
@@ -92,6 +97,7 @@ export const entities = [
   InventoryItemEntity,
   KitchenSLAEntity,
   LedgerEntryEntity,
+  MfaSecretEntity,
   MenuAddonEntity,
   MenuCategoryEntity,
   MenuItemEntity,
@@ -122,10 +128,15 @@ export const entities = [
   SubscriptionEntity,
   SupplierEntity,
   SupportTicketEntity,
+  TicketMessageEntity,
   SurgeZoneEntity,
   UserDeviceEntity,
   UserEntity,
   WalletEntity,
   WalletTransactionEntity,
   WebhookRetryQueueEntity,
+  IdempotencyEntity,
+  PaymentEventEntity,
+  PaymentFraudFlagEntity,
+  PaymentValidationEventEntity,
 ];

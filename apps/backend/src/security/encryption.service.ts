@@ -9,7 +9,7 @@ export class EncryptionService {
 
   constructor(private configService: ConfigService) {
     const secret = getRequiredSecret(this.configService, 'ENCRYPTION_SECRET');
-    const salt = crypto.randomBytes(16);
+    const salt = crypto.createHash('sha256').update(secret).digest().slice(0, 16);
     this.key = crypto.scryptSync(secret, salt, 32);
   }
 

@@ -16,6 +16,15 @@ export declare const ReviewSchema: import("mongoose").Schema<ReviewDocument, imp
 }, "id"> & {
     id: string;
 }, {
+    restaurantId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & {
+        id: string;
+    }> | undefined;
     orderId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
@@ -26,15 +35,6 @@ export declare const ReviewSchema: import("mongoose").Schema<ReviewDocument, imp
         id: string;
     }> | undefined;
     userId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
-        _id: import("mongoose").Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & {
-        id: string;
-    }> | undefined;
-    restaurantId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;

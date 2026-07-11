@@ -38,7 +38,7 @@ const AuthPage = () => {
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password,
-                    name: isLogin ? undefined : formData.name,
+                    fullName: isLogin ? undefined : formData.name,
                     phone: isLogin ? undefined : formData.phone,
                     deviceName: 'web',
                     deviceType: 'browser',

@@ -193,6 +193,7 @@ const PaymentMethodsPage = () => {
                 value={uiState.newMethod.type}
                 onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
                 title="Select Payment Method Type"
+                aria-label="Select payment method type"
               >
                 <option value="card">Credit/Debit Card</option>
                 <option value="upi">UPI</option>

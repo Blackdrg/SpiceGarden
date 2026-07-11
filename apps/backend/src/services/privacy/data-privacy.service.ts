@@ -3,6 +3,8 @@ import { EncryptionService } from '../../security/encryption.service';
 import { Repository, DataSource, LessThan } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { SessionEntity } from '../../db/entities/session.entity';
+import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 import { DataExportRequestEntity } from '../../db/entities/data-export-request.entity';
 import { DeletionRequestEntity } from '../../db/entities/deletion-request.entity';
 
@@ -41,8 +43,8 @@ export class DataPrivacyService {
   async getUserData(userId: string): Promise<any> {
     const user = this.dataSource.getRepository(UserEntity).findOne({ where: { id: userId } });
     const orders = this.dataSource.getRepository(OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
-    const sessions = this.dataSource.getRepository(OrderEntity).find({ where: { userId } });
-    const auditLogs = this.dataSource.getRepository(OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
+    const sessions = this.dataSource.getRepository(SessionEntity).find({ where: { userId } });
+    const auditLogs = this.dataSource.getRepository(AuditLogEntity).find({ where: { performedBy: userId }, order: { timestamp: 'DESC' }, take: 1000 });
 
     const [u, o, s, a] = await Promise.all([user, orders, sessions, auditLogs]);
 

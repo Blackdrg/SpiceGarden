@@ -31,9 +31,10 @@ interface QueueStats {
 @Injectable()
 export class QueueService implements OnModuleDestroy {
   private readonly logger = new Logger(QueueService.name);
-  private readonly connection: IORedis;
+  private readonly connection: IORedis | null = null;
   private readonly queues = new Map<QueueName, Queue>();
   private readonly workers = new Map<QueueName, Worker>();
+  private redisAvailable = false;
 
   constructor(
     private readonly configService: ConfigService,
@@ -41,12 +42,17 @@ export class QueueService implements OnModuleDestroy {
     @InjectRepository(OrderEntity)
     private readonly orderRepo: Repository<OrderEntity>,
   ) {
-    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
-    this.connection = new IORedis(redisUrl, {
-      maxRetriesPerRequest: null,
-      enableReadyCheck: false,
-    });
-    this.registerWorker(QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+    try {
+      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+      this.connection = new IORedis(redisUrl, {
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      });
+      this.registerWorker(QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+      this.redisAvailable = true;
+    } catch (error) {
+      this.logger.warn('Redis unavailable. Queue operations will fail until Redis is reachable.');
+    }
   }
 
   async enqueue<TData extends Record<string, unknown> = Record<string, unknown>>(
@@ -96,6 +102,9 @@ export class QueueService implements OnModuleDestroy {
   }
 
   getQueue(queueName: QueueName): Queue {
+    if (!this.redisAvailable || !this.connection) {
+      throw new Error('Queue operations require Redis. Please start Redis and restart the application.');
+    }
     const existing = this.queues.get(queueName);
     if (existing) {
       return existing;
@@ -144,6 +153,8 @@ export class QueueService implements OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     await Promise.allSettled([...this.workers.values()].map((worker) => worker.close()));
     await Promise.allSettled([...this.queues.values()].map((queue) => queue.close()));
-    await this.connection.quit();
+    if (this.connection) {
+      await this.connection.quit();
+    }
   }
 }
