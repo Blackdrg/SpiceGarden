@@ -141,7 +141,9 @@ class InitialSchema1783778923544 {
         await queryRunner.query(`CREATE INDEX "IDX_2062cca96675ed41698686a3cf" ON "payment_fraud_flags" ("userId") `);
         await queryRunner.query(`CREATE TABLE "payment_validation_events" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" character varying NOT NULL, "validationType" character varying NOT NULL, "amount" numeric(12,2), "validationData" text, "passed" boolean NOT NULL DEFAULT false, "failureReason" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_38b811e86436223569315393662" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_37f2db7d0b28e7d1d656309869" ON "payment_validation_events" ("userId") `);
+        await queryRunner.query(`CREATE TABLE "mfa_secrets" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" uuid NOT NULL, "secret" character varying NOT NULL, CONSTRAINT "PK_mfa_secrets_id" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "user_addresses" ADD CONSTRAINT "FK_781afdedafe920f331f6229cb62" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "mfa_secrets" ADD CONSTRAINT "FK_mfa_secrets_user_id" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "restaurant_gst" ADD CONSTRAINT "FK_8248a160587c66aa2cdbcbf57f6" FOREIGN KEY ("restaurantId") REFERENCES "restaurants"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "hsn_sac_codes" ADD CONSTRAINT "FK_8badc10461a998fafe320bf69a4" FOREIGN KEY ("menuItemId") REFERENCES "menu_items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "menu_addons" ADD CONSTRAINT "FK_df46463d45a660b92b3d63e30be" FOREIGN KEY ("menuItemId") REFERENCES "menu_items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -220,6 +222,8 @@ class InitialSchema1783778923544 {
         await queryRunner.query(`ALTER TABLE "user_devices" DROP CONSTRAINT "FK_e12ac4f8016243ac71fd2e415af"`);
         await queryRunner.query(`ALTER TABLE "ticket_messages" DROP CONSTRAINT "FK_ddea80824c24d270ef2cb4cb0ba"`);
         await queryRunner.query(`ALTER TABLE "ticket_messages" DROP CONSTRAINT "FK_b01e2a35417efbe04c10828266f"`);
+        await queryRunner.query(`ALTER TABLE "mfa_secrets" DROP CONSTRAINT "FK_mfa_secrets_user_id"`);
+        await queryRunner.query(`ALTER TABLE "user_addresses" DROP CONSTRAINT "FK_781afdedafe920f331f6229cb62"`);
         await queryRunner.query(`ALTER TABLE "support_tickets" DROP CONSTRAINT "FK_b3b52276a319208f08d25ec2b56"`);
         await queryRunner.query(`ALTER TABLE "support_tickets" DROP CONSTRAINT "FK_947e77544ab7d5fd9521c44e069"`);
         await queryRunner.query(`ALTER TABLE "support_tickets" DROP CONSTRAINT "FK_ea7348121f2348f83567bcb0696"`);

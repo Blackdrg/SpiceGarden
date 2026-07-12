@@ -1,5 +1,6 @@
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
+import { OtpService } from './otp.service';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { Request, Response } from 'express';
@@ -25,10 +26,11 @@ interface RegisterBody extends LoginBody {
 export declare class AuthController {
     private authService;
     private passwordResetService;
+    private otpService;
     private readonly userRepo;
     private notificationService;
     private configService;
-    constructor(authService: AuthService, passwordResetService: PasswordResetService, userRepo: Repository<UserEntity>, notificationService: NotificationService, configService: ConfigService);
+    constructor(authService: AuthService, passwordResetService: PasswordResetService, otpService: OtpService, userRepo: Repository<UserEntity>, notificationService: NotificationService, configService: ConfigService);
     login(body: LoginBody, req: Request, res: Response): Promise<{
         mfaRequired: boolean;
         email: string;
@@ -59,6 +61,10 @@ export declare class AuthController {
             status: UserStatus;
         };
     }>;
+    requestOtp(body: {
+        email: string;
+    }): Promise<import("./otp.service").OtpRequestResult>;
+    verifyOtp(body: MfaLoginBody, req: Request, res: Response): Promise<import("./otp.service").OtpVerifyResult>;
     register(body: RegisterBody, req: Request, res: Response): Promise<{
         access_token: string;
         refresh_token: string;

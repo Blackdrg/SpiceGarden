@@ -17,6 +17,7 @@ var OtpType;
     OtpType["EMAIL_VERIFICATION"] = "email_verification";
     OtpType["PHONE_VERIFICATION"] = "phone_verification";
     OtpType["LOGIN_2FA"] = "login_2fa";
+    OtpType["LOGIN"] = "login";
     OtpType["PASSWORD_RESET"] = "password_reset";
 })(OtpType || (exports.OtpType = OtpType = {}));
 var OtpStatus;

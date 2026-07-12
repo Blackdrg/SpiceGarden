@@ -14,6 +14,7 @@ const config_1 = require("@nestjs/config");
 const db_repositories_module_1 = require("../../db/db-repositories.module");
 const auth_service_1 = require("./auth.service");
 const password_reset_service_1 = require("./password-reset.service");
+const otp_service_1 = require("./otp.service");
 const mfa_service_1 = require("./mfa.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
@@ -47,8 +48,8 @@ exports.AuthServiceModule = AuthServiceModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
         ],
-        providers: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, mfa_service_1.MfaService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy, facebook_strategy_1.FacebookStrategy],
+        providers: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, otp_service_1.OtpService, mfa_service_1.MfaService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy, facebook_strategy_1.FacebookStrategy],
         controllers: [auth_controller_1.AuthController, mfa_controller_1.MfaController],
-        exports: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, mfa_service_1.MfaService],
+        exports: [auth_service_1.AuthService, password_reset_service_1.PasswordResetService, otp_service_1.OtpService, mfa_service_1.MfaService],
     })
 ], AuthServiceModule);

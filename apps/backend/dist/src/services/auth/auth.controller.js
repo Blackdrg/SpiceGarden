@@ -16,6 +16,7 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const password_reset_service_1 = require("./password-reset.service");
+const otp_service_1 = require("./otp.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../db/entities/user.entity");
@@ -51,12 +52,14 @@ function clearAuthCookies(res) {
 let AuthController = class AuthController {
     authService;
     passwordResetService;
+    otpService;
     userRepo;
     notificationService;
     configService;
-    constructor(authService, passwordResetService, userRepo, notificationService, configService) {
+    constructor(authService, passwordResetService, otpService, userRepo, notificationService, configService) {
         this.authService = authService;
         this.passwordResetService = passwordResetService;
+        this.otpService = otpService;
         this.userRepo = userRepo;
         this.notificationService = notificationService;
         this.configService = configService;
@@ -103,6 +106,17 @@ let AuthController = class AuthController {
                 status: user.status,
             },
         };
+    }
+    async requestOtp(body) {
+        return this.otpService.requestOtp(body?.email);
+    }
+    async verifyOtp(body, req, res) {
+        const deviceInfo = this.getDeviceInfo(body, req);
+        const result = await this.otpService.verifyOtp(body.email, body.code, deviceInfo);
+        if (result.access_token && result.refresh_token) {
+            setAuthCookies(res, result.access_token, result.refresh_token, this.configService);
+        }
+        return result;
     }
     async register(body, req, res) {
         const existing = await this.userRepo.findOne({ where: { email: body.email } });
@@ -253,6 +267,22 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyMfaLogin", null);
 __decorate([
+    (0, common_1.Post)('otp'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "requestOtp", null);
+__decorate([
+    (0, common_1.Post)('otp/verify'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyOtp", null);
+__decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
@@ -340,9 +370,10 @@ __decorate([
 ], AuthController.prototype, "facebookAuthCallback", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __param(3, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         password_reset_service_1.PasswordResetService,
+        otp_service_1.OtpService,
         typeorm_2.Repository,
         notification_service_1.NotificationService,
         config_1.ConfigService])

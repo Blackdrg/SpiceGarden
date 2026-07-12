@@ -121,7 +121,7 @@ let Soc2ReadinessService = Soc2ReadinessService_1 = class Soc2ReadinessService {
                 name: 'Input Validation',
                 description: 'Data input validation and sanitization',
                 status: 'implemented',
-                evidence: ['class-validator', 'ValidationPipe', 'mongo-sanitize'],
+                evidence: ['class-validator', 'ValidationPipe', 'express-mongo-sanitize'],
                 lastChecked: new Date(),
             },
             {

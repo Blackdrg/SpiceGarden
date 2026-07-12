@@ -3,6 +3,7 @@ export declare enum OtpType {
     EMAIL_VERIFICATION = "email_verification",
     PHONE_VERIFICATION = "phone_verification",
     LOGIN_2FA = "login_2fa",
+    LOGIN = "login",
     PASSWORD_RESET = "password_reset"
 }
 export declare enum OtpStatus {
