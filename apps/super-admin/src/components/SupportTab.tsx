@@ -1,8 +1,15 @@
 import type { DisputeTicket, Stats } from './types';
+import styles from './SupportTab.module.css';
 import { KPICard } from './KPICard';
 import { FraudDetection } from './FraudDetection';
 import { RefundManagement } from './RefundManagement';
 import { SupportTicketsPanel } from './SupportTicketsPanel';
+import {
+  IconAlertCircle,
+  IconReceipt,
+  IconBan,
+  IconClock,
+} from './icons/SGIcon';
 
 export function SupportTab({
   stats,
@@ -25,14 +32,14 @@ export function SupportTab({
 }) {
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-        <KPICard label="Total Tickets" value={String(filteredTickets.length)} upColor="#888" />
-        <KPICard label="Refunds (today)" value={String(pendingRefunds.length)} upColor="#ff9800" />
-        <KPICard label="Fraud Blocks" value={String(stats.fraudAlerts)} upColor="#9c27b0" />
-        <KPICard label="Avg Resolution" value="4m 12s" upColor="#4caf50" />
+      <div className={styles.filterGrid}>
+        <KPICard label="Total Tickets" value={String(filteredTickets.length)} upColor="#6B7280" delta="all types" icon={<IconAlertCircle size={20} color="#6B7280" />} />
+        <KPICard label="Refunds (today)" value={String(pendingRefunds.length)} upColor="#F59E0B" delta="pending" icon={<IconReceipt size={20} color="#F59E0B" />} />
+        <KPICard label="Fraud Blocks" value={String(stats.fraudAlerts)} upColor="#8B5CF6" delta="active" icon={<IconBan size={20} color="#8B5CF6" />} />
+        <KPICard label="Avg Resolution" value="4m 12s" upColor="#10B981" delta="target 5m" icon={<IconClock size={20} color="#10B981" />} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div className={styles.twoColLayout}>
         <SupportTicketsPanel
           tickets={filteredTickets}
           ticketFilter={ticketFilter}
@@ -40,7 +47,7 @@ export function SupportTab({
           onClose={onCloseTicket}
         />
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className={styles.rightCol}>
           <RefundManagement
             refunds={pendingRefunds}
             onApprove={onApproveRefund}

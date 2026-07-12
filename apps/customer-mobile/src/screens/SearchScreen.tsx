@@ -6,6 +6,7 @@ const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { STORAGE_KEYS } from '../constants/storage.keys';
 import { API_URL } from '../constants/api';
 import { safeParse } from '../utils/safe-parse';
@@ -132,7 +133,7 @@ const SearchScreen = () => {
           accessibilityRole="button"
         >
           <View style={styles.resultIcon}>
-            <Text style={{ fontSize: 24 }}>Menu</Text>
+            <Ionicons name="restaurant-outline" size={24} color={DESIGN_TOKENS.colors.primary} />
           </View>
           <View style={styles.resultInfo}>
             <Text style={styles.resultName}>{item.name}</Text>
@@ -145,6 +146,7 @@ const SearchScreen = () => {
               </Text>
             )}
           </View>
+          <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
         </Pressable>
       );
     }
@@ -155,13 +157,14 @@ const SearchScreen = () => {
         accessibilityLabel={`View ${item.name} dish`}
         accessibilityRole="button"
       >
-        <View style={styles.resultIcon}>
-          <Text style={{ fontSize: 24 }}>🍕</Text>
+        <View style={[styles.resultIcon, styles.dishResultIcon]}>
+          <Ionicons name="pizza-outline" size={24} color={DESIGN_TOKENS.colors.primary} />
         </View>
         <View style={styles.resultInfo}>
           <Text style={styles.resultName}>{item.name}</Text>
           <Text style={styles.resultPrice}>₹{item.price}</Text>
         </View>
+        <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
       </Pressable>
     );
   };
@@ -175,7 +178,7 @@ const SearchScreen = () => {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>Back</Text>
+          <Ionicons name="arrow-back" size={22} color={DESIGN_TOKENS.colors.textPrimary} />
         </Pressable>
         <Text style={styles.headerText}>Search</Text>
         <Pressable 
@@ -184,13 +187,13 @@ const SearchScreen = () => {
           accessibilityLabel="Toggle filters"
           accessibilityRole="button"
         >
-          <Text style={styles.filterButtonText}>Filters</Text>
+          <Ionicons name="options-outline" size={22} color={DESIGN_TOKENS.colors.textSecondary} />
         </Pressable>
       </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>Search</Text>
+          <Ionicons name="search" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
           <TextInput
             placeholder="Search restaurants, dishes..."
             value={query}
@@ -283,10 +286,10 @@ const SearchScreen = () => {
                      search(recentItem);
                    }}
                    accessibilityLabel={`Search for ${recentItem}`}
-                 >
-                   <Text style={styles.recentIcon}>🕒</Text>
-                   <Text style={styles.recentSearchText}>{recentItem}</Text>
-                 </Pressable>
+                  >
+                    <Ionicons name="time-outline" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
+                    <Text style={styles.recentSearchText}>{recentItem}</Text>
+                  </Pressable>
                ))
             ) : (
               <View style={styles.emptyState}>
@@ -312,8 +315,11 @@ const SearchScreen = () => {
 
         {isOffline && (
           <View style={styles.offlineBanner}>
-            <Text style={styles.offlineText}>📶 You appear to be offline</Text>
-            <Text style={styles.offlineSubtext}>Search results may be limited</Text>
+            <Ionicons name="wifi-outline" size={20} color={DESIGN_TOKENS.colors.danger} />
+            <View style={styles.offlineTextContainer}>
+              <Text style={styles.offlineText}>You appear to be offline</Text>
+              <Text style={styles.offlineSubtext}>Search results may be limited</Text>
+            </View>
           </View>
         )}
       </Animated.View>
@@ -342,48 +348,52 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
+    paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   backButton: {
-    padding: DESIGN_TOKENS.spacing.xs,
-  },
-  backButtonText: {
-    fontSize: 20,
-    color: DESIGN_TOKENS.colors.textPrimary,
+    width: 36,
+    height: 36,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   filterButton: {
-    padding: DESIGN_TOKENS.spacing.xs,
-  },
-  filterButtonText: {
-    fontSize: 20,
+    width: 36,
+    height: 36,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchContainer: {
     padding: DESIGN_TOKENS.spacing.md,
     backgroundColor: DESIGN_TOKENS.colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: DESIGN_TOKENS.colors.elevated,
     borderRadius: DESIGN_TOKENS.radius.md,
-    paddingHorizontal: DESIGN_TOKENS.spacing.sm,
-  },
-  searchIcon: {
-    fontSize: 18,
-    marginRight: DESIGN_TOKENS.spacing.xs,
+    paddingHorizontal: DESIGN_TOKENS.spacing.md,
+    height: 48,
+    gap: DESIGN_TOKENS.spacing.sm,
   },
   searchInput: {
     flex: 1,
-    height: 44,
-    fontSize: 16,
+    fontSize: 15,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
@@ -391,11 +401,13 @@ const styles = StyleSheet.create({
     marginTop: DESIGN_TOKENS.spacing.md,
   },
   filtersTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
-    color: DESIGN_TOKENS.colors.textPrimary,
+    color: DESIGN_TOKENS.colors.textSecondary,
     marginBottom: DESIGN_TOKENS.spacing.sm,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   filterRow: {
     flexDirection: 'row',
@@ -409,14 +421,15 @@ const styles = StyleSheet.create({
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   filterOption: {
-    backgroundColor: DESIGN_TOKENS.colors.primary + '20',
+    backgroundColor: DESIGN_TOKENS.colors.primaryLight,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: DESIGN_TOKENS.radius.sm,
+    borderRadius: DESIGN_TOKENS.radius.full,
   },
   filterOptionText: {
-    fontSize: 12,
+    fontSize: 13,
     color: DESIGN_TOKENS.colors.primary,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   dietaryFilters: {
@@ -425,12 +438,14 @@ const styles = StyleSheet.create({
   },
   dietaryTag: {
     backgroundColor: DESIGN_TOKENS.colors.elevated,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: DESIGN_TOKENS.radius.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: DESIGN_TOKENS.radius.full,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
   },
   dietaryTagText: {
-    fontSize: 12,
+    fontSize: 13,
     color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
@@ -445,21 +460,27 @@ const styles = StyleSheet.create({
     marginVertical: DESIGN_TOKENS.spacing.xs,
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.sm,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   resultIcon: {
-    width: 50,
-    height: 50,
-    backgroundColor: DESIGN_TOKENS.colors.elevated,
-    borderRadius: 8,
+    width: 48,
+    height: 48,
+    backgroundColor: DESIGN_TOKENS.colors.primaryLight,
+    borderRadius: DESIGN_TOKENS.radius.md,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dishResultIcon: {
+    backgroundColor: DESIGN_TOKENS.colors.successLight,
   },
   resultInfo: {
     flex: 1,
     marginLeft: DESIGN_TOKENS.spacing.sm,
   },
   resultName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -469,19 +490,20 @@ const styles = StyleSheet.create({
     color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: 2,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    lineHeight: 16,
   },
   resultDescription: {
     fontSize: 12,
     color: DESIGN_TOKENS.colors.textSecondary,
-    marginTop: 4,
+    marginTop: 2,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   resultPrice: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: DESIGN_TOKENS.colors.primary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
-    marginTop: 4,
+    marginTop: 2,
   },
   recentContainer: {
     flex: 1,
@@ -494,30 +516,32 @@ const styles = StyleSheet.create({
     paddingVertical: DESIGN_TOKENS.spacing.sm,
   },
   recentTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   clearText: {
-    fontSize: 14,
+    fontSize: 13,
     color: DESIGN_TOKENS.colors.primary,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   recentItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: DESIGN_TOKENS.spacing.sm,
     paddingHorizontal: DESIGN_TOKENS.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    gap: DESIGN_TOKENS.spacing.sm,
   },
   recentIcon: {
     fontSize: 16,
     marginRight: DESIGN_TOKENS.spacing.sm,
   },
   recentSearchText: {
-    fontSize: 16,
+    fontSize: 15,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
@@ -527,22 +551,29 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: DESIGN_TOKENS.colors.textSecondary,
-    marginBottom: 8,
+    fontWeight: '600',
+    color: DESIGN_TOKENS.colors.textPrimary,
+    marginBottom: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   emptySubtext: {
     fontSize: 14,
     color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textAlign: 'center',
   },
   offlineBanner: {
-    backgroundColor: DESIGN_TOKENS.colors.danger + '20',
-    padding: 12,
-    alignItems: 'center',
+    backgroundColor: DESIGN_TOKENS.colors.dangerLight,
+    padding: DESIGN_TOKENS.spacing.md,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: DESIGN_TOKENS.spacing.sm,
+  },
+  offlineTextContainer: {
+    flex: 1,
   },
   offlineText: {
-    color: DESIGN_TOKENS.colors.danger,
+    color: DESIGN_TOKENS.colors.dangerDark,
     fontSize: 14,
     fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,

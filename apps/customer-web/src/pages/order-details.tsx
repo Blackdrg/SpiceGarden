@@ -7,6 +7,7 @@ import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { useQuery } from '@tanstack/react-query';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { ArrowLeftIcon, StarIcon, MapPinIcon, CreditCardIcon } from 'lucide-react';
 import styles from './order-details.module.css';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -19,12 +20,12 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  placed: '#2196f3',
-  preparing: '#ff9800',
-  ready: '#ff9800',
-  pickedup: '#ff9800',
-  delivered: '#4caf50',
-  cancelled: '#f44336',
+  placed: DESIGN_TOKENS.colors.info,
+  preparing: DESIGN_TOKENS.colors.warning,
+  ready: DESIGN_TOKENS.colors.warning,
+  pickedup: DESIGN_TOKENS.colors.info,
+  delivered: DESIGN_TOKENS.colors.success,
+  cancelled: DESIGN_TOKENS.colors.danger,
 };
 
 interface OrderItem {
@@ -74,16 +75,12 @@ export const getServerSideProps = async (context: { query: { id?: string }; reso
   return { props: { orderId } };
 };
 
-interface OrderDetailsPageProps {
-  orderId: string;
-}
-
 const fetchOrder = async (orderId: string): Promise<Order> => {
   const data = await ordersApi.get(orderId).then(res => res.data);
   return data as Order;
 };
 
-const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
+const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -97,6 +94,7 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
   if (loading && !order) {
     return (
       <div className={styles.loadingState}>
+        <div style={{ width: 40, height: 40, border: '3px solid var(--color-border, #E5E7EB)', borderTopColor: 'var(--color-primary, #FF5A1F)', borderRadius: '50%', animation: 'sg-spin 0.8s linear infinite', margin: '0 auto 16px' }} />
         <p>Loading order details...</p>
       </div>
     );
@@ -116,7 +114,7 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
   if (!order) {
     return (
       <div className={styles.notFoundState}>
-        <p>Order not found</p>
+        <p style={{ color: DESIGN_TOKENS.colors.textSecondary }}>Order not found</p>
         <Button label="Back to Orders" onClick={() => router.push('/history')} variant="secondary" />
       </div>
     );
@@ -124,12 +122,19 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
 
   return (
     <div className={styles.pageContainer}>
-      <Button label="← Back" onClick={() => router.push('/history')} variant="secondary" className={styles.backButton} />
+      <div className={styles.pageHeader}>
+        <Button onClick={() => router.push('/history')} variant="secondary">
+          <ArrowLeftIcon size={18} />
+        </Button>
+      </div>
 
+      <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>Order #{order.id}</h2>
+        <p className={styles.pageSubtitle}>Order details and tracking</p>
+      </div>
 
       {order.restaurant && (
-        <Card title="Restaurant">
+        <Card title="Restaurant" variant="elevated">
           <div className={styles.restaurantContent}>
             {order.restaurant.image ? (
               <Image
@@ -150,20 +155,20 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
         </Card>
       )}
 
-      <Card title="Order Items">
+      <Card title="Order Items" variant="elevated">
         <div className={styles.itemsList}>
           {order.items && order.items.length > 0 ? (
             order.items.map((item, idx: number) => (
               <div key={item.id || idx} className={styles.itemRow}>
                 <div className={styles.itemImageWrap}>
                   {item.image ? (
-                     <Image
-                       src={item.image}
-                       alt={item.name || 'Order item'}
-                       width={40}
-                       height={40}
-                       className={styles.itemImage}
-                     />
+                    <Image
+                      src={item.image}
+                      alt={item.name || 'Order item'}
+                      width={40}
+                      height={40}
+                      className={styles.itemImage}
+                    />
                   ) : (
                     <div className={styles.itemPlaceholder}>🍔</div>
                   )}
@@ -181,36 +186,36 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
         </div>
       </Card>
 
-      <Card title="Order Summary">
+      <Card title="Order Summary" variant="elevated">
         <div className={styles.summaryList}>
           <div className={styles.summaryRow}>
             <span>Item Total</span>
-            <span>₹{order.subtotal}</span>
+            <span style={{ fontWeight: 600 }}>₹{order.subtotal}</span>
           </div>
           <div className={styles.summaryRow}>
             <span>Delivery Fee</span>
-            <span>₹{order.deliveryFee}</span>
+            <span style={{ fontWeight: 600 }}>₹{order.deliveryFee}</span>
           </div>
           <div className={styles.summaryRow}>
             <span>Taxes</span>
-            <span>₹{order.tax}</span>
+            <span style={{ fontWeight: 600 }}>₹{order.tax}</span>
           </div>
           <div className={styles.summaryRow}>
             <span>Tip</span>
-            <span>₹{order.tip}</span>
+            <span style={{ fontWeight: 600 }}>₹{order.tip}</span>
           </div>
           <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
             <span>Total</span>
-            <span>₹{order.grandTotal}</span>
+            <span style={{ color: DESIGN_TOKENS.colors.primary, fontWeight: 700 }}>₹{order.grandTotal}</span>
           </div>
         </div>
       </Card>
 
-      <Card title="Order Information">
+      <Card title="Order Information" variant="elevated">
         <div className={styles.infoList}>
           <div className={styles.summaryRow}>
             <span>Status</span>
-             <span className={`${styles.statusBadge} ${styles[order.status || 'delivered']}`}>{STATUS_LABELS[order.status || ''] || order.status || 'Unknown'}</span>
+            <span className={`${styles.statusBadge} ${styles[order.status || 'delivered']}`}>{STATUS_LABELS[order.status || ''] || order.status || 'Unknown'}</span>
           </div>
           <div className={styles.summaryRow}>
             <span>Order Date</span>
@@ -223,38 +228,44 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
         </div>
       </Card>
 
-      <Card title="Delivery Address">
-        <div className={styles.infoList}>
-          {order.deliveryAddress && (
-            <>
-              <div className={styles.addressLabel}>Delivery Address</div>
-              <div className={styles.addressText}>{order.deliveryAddress.street}</div>
-              <div className={styles.addressText}>{order.deliveryAddress.city}, {order.deliveryAddress.state} {order.deliveryAddress.pincode}</div>
-            </>
-          )}
-        </div>
-      </Card>
+      {order.deliveryAddress && (
+        <Card title="Delivery Address" variant="elevated">
+          <div className={styles.infoList}>
+            <div className={styles.addressLabel}>Delivery Address</div>
+            <div className={styles.addressText}>{order.deliveryAddress.street}</div>
+            <div className={styles.addressText}>{order.deliveryAddress.city}, {order.deliveryAddress.state} {order.deliveryAddress.pincode}</div>
+          </div>
+        </Card>
+      )}
 
-      <Card title="Payment Information">
+      <Card title="Payment Information" variant="elevated">
         <div className={styles.infoList}>
           <div className={styles.summaryRow}>
             <span>Payment Method</span>
-            <span>{order.paymentMethod?.toUpperCase() || 'Not specified'}</span>
+            <span style={{ fontWeight: 600, textTransform: 'uppercase' }}>{order.paymentMethod?.toUpperCase() || 'Not specified'}</span>
           </div>
         </div>
       </Card>
 
       {order.status !== 'delivered' && order.status !== 'cancelled' && (
         <div className={styles.actionWrapper}>
-          <Button label="Contact Restaurant" onClick={() => {}} variant="secondary" className={styles.mr16} />
-          <Button label="Reorder" onClick={() => {}} />
+          <Button onClick={() => {}} variant="secondary" className={styles.mr16}>
+            <MapPinIcon size={16} />
+          </Button>
+          <Button onClick={() => {}}>
+            <RefreshIcon size={16} />
+          </Button>
         </div>
       )}
 
       {order.status === 'delivered' && (
         <div className={styles.actionWrapper}>
-          <Button label="Reorder" onClick={() => {}} variant="secondary" className={styles.mr16} />
-          <Button label="Leave Review" onClick={() => {}} />
+          <Button onClick={() => {}} variant="secondary" className={styles.mr16}>
+            <RefreshIcon size={16} />
+          </Button>
+          <Button onClick={() => {}}>
+            <StarIcon size={16} />
+          </Button>
         </div>
       )}
     </div>
@@ -265,6 +276,13 @@ const FormattedDateTime = ({ value }: { value?: string }) => {
   if (!value) return null;
   return <>{new Date(value).toLocaleString()}</>;
 };
+
+const RefreshIcon = ({ size, color }: { size?: number; color?: string }) => (
+  <svg width={size || 16} height={size || 16} viewBox="0 0 24 24" fill="none" stroke={color || 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="23 4 23 10 17 10" />
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+  </svg>
+);
 
 export default function Wrapped(props: any) {
   return <ProtectedRoute><OrderDetailsPage {...props} /></ProtectedRoute>;

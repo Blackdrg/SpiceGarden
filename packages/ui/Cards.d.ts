@@ -40,3 +40,4 @@ export interface ReviewCardProps {
     onSubmit?: (rating: number, review: string) => void;
 }
 export declare const ReviewCard: ({ orderId, onSubmit }: ReviewCardProps) => React.JSX.Element;
+//# sourceMappingURL=Cards.d.ts.map

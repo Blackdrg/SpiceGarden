@@ -40,7 +40,7 @@ const HomeScreen = () => {
           rating: 4.2,
           deliveryTime: '25-30 min',
           distance: '3.2 km',
-          image: 'https://example.com/burger-king.jpg',
+          image: '',
         },
         {
           id: 'rest-002',
@@ -49,7 +49,7 @@ const HomeScreen = () => {
           rating: 4.5,
           deliveryTime: '30-35 min',
           distance: '2.1 km',
-          image: 'https://example.com/pizza-hut.jpg',
+          image: '',
         },
         {
           id: 'rest-003',
@@ -58,7 +58,7 @@ const HomeScreen = () => {
           rating: 4.0,
           deliveryTime: '15-20 min',
           distance: '1.8 km',
-          image: 'https://example.com/subway.jpg',
+          image: '',
         },
       ]);
       setLoading(false);
@@ -115,15 +115,30 @@ const HomeScreen = () => {
         onPress={() => navigation.navigate('Restaurant' as never)}
         accessibilityLabel={item.name}
         accessibilityRole="button"
+        android_ripple={{ color: DESIGN_TOKENS.colors.primaryLight }}
       >
+        <View style={styles.restaurantImagePlaceholder}>
+          <View style={styles.restaurantImageIcon}>
+            <Text style={styles.restaurantImageText}>🍽️</Text>
+          </View>
+        </View>
         <View style={styles.restaurantInfo}>
           <Text style={styles.restaurantName}>{item.name}</Text>
           <Text style={styles.restaurantDescription}>{item.description}</Text>
           <View style={styles.restaurantMeta}>
-            <Text style={styles.ratingText}>★ {item.rating}</Text>
-            <Text style={styles.metaText}>{item.deliveryTime}</Text>
-            <Text style={styles.metaText}>{item.distance}</Text>
+            <View style={styles.ratingBadge}>
+              <Text style={styles.ratingText}>★ {item.rating}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaText}>{item.deliveryTime}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaText}>{item.distance}</Text>
+            </View>
           </View>
+        </View>
+        <View style={styles.chevronContainer}>
+          <Text style={styles.chevron}>›</Text>
         </View>
       </Pressable>
     );
@@ -164,18 +179,125 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DESIGN_TOKENS.colors.background },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { padding: DESIGN_TOKENS.spacing.md, backgroundColor: DESIGN_TOKENS.colors.surface },
-  welcomeText: { fontSize: 20, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  headerSubtext: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  listContent: { paddingBottom: DESIGN_TOKENS.spacing.md },
-  restaurantCard: { backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, padding: DESIGN_TOKENS.spacing.md },
-  restaurantInfo: {},
-  restaurantName: { fontSize: 18, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  restaurantDescription: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  restaurantMeta: { flexDirection: 'row', marginTop: 8, alignItems: 'center' },
-  ratingText: { fontSize: 14, color: DESIGN_TOKENS.colors.warning, marginRight: DESIGN_TOKENS.spacing.sm, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  metaText: { fontSize: 12, color: DESIGN_TOKENS.colors.textSecondary, marginRight: DESIGN_TOKENS.spacing.sm, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  container: { 
+    flex: 1, 
+    backgroundColor: DESIGN_TOKENS.colors.background,
+  },
+  loadingContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: DESIGN_TOKENS.colors.background,
+  },
+  header: { 
+    padding: DESIGN_TOKENS.spacing.md, 
+    paddingTop: DESIGN_TOKENS.spacing.lg,
+    backgroundColor: DESIGN_TOKENS.colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+  },
+  welcomeText: { 
+    fontSize: 24, 
+    fontWeight: '700',
+    color: DESIGN_TOKENS.colors.textPrimary, 
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    letterSpacing: -0.01,
+  },
+  headerSubtext: { 
+    fontSize: 14, 
+    color: DESIGN_TOKENS.colors.textSecondary, 
+    marginTop: DESIGN_TOKENS.spacing.xs,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    lineHeight: 20,
+  },
+  listContent: { 
+    paddingBottom: DESIGN_TOKENS.spacing.xl,
+  },
+  restaurantCard: { 
+    backgroundColor: DESIGN_TOKENS.colors.surface, 
+    marginHorizontal: DESIGN_TOKENS.spacing.md, 
+    marginVertical: DESIGN_TOKENS.spacing.sm, 
+    borderRadius: DESIGN_TOKENS.radius.card, 
+    padding: DESIGN_TOKENS.spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...DESIGN_TOKENS.shadows.small,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
+  },
+  restaurantImagePlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: DESIGN_TOKENS.spacing.md,
+  },
+  restaurantImageIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    backgroundColor: DESIGN_TOKENS.colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  restaurantImageText: {
+    fontSize: 20,
+  },
+  restaurantInfo: {
+    flex: 1,
+  },
+  restaurantName: { 
+    fontSize: 16, 
+    fontWeight: '700',
+    color: DESIGN_TOKENS.colors.textPrimary, 
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    marginBottom: 2,
+  },
+  restaurantDescription: { 
+    fontSize: 13, 
+    color: DESIGN_TOKENS.colors.textSecondary, 
+    marginTop: 2,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    lineHeight: 18,
+    marginBottom: DESIGN_TOKENS.spacing.sm,
+  },
+  restaurantMeta: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: DESIGN_TOKENS.spacing.sm,
+  },
+  ratingBadge: {
+    backgroundColor: DESIGN_TOKENS.colors.warningLight,
+    paddingHorizontal: DESIGN_TOKENS.spacing.xs,
+    paddingVertical: 2,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+  },
+  ratingText: { 
+    fontSize: 13, 
+    color: DESIGN_TOKENS.colors.warningDark, 
+    fontWeight: '600',
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaText: { 
+    fontSize: 12, 
+    color: DESIGN_TOKENS.colors.textSecondary, 
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  chevronContainer: {
+    marginLeft: DESIGN_TOKENS.spacing.sm,
+  },
+  chevron: {
+    fontSize: 20,
+    color: DESIGN_TOKENS.colors.textTertiary,
+    fontWeight: '300',
+  },
 });
 

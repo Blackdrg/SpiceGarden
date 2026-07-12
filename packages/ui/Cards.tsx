@@ -26,7 +26,7 @@ export const FoodCard = ({
   onPress,
   style,
 }: FoodCardProps) => {
-  const spiceLabels = { 1: '🌶️ Mild', 2: '🌶️🌶️ Medium', 3: '🌶️🌶️🌶️ Hot' };
+  const spiceLabels = { 1: 'Mild', 2: 'Medium', 3: 'Hot' };
   
   return (
     <div
@@ -35,10 +35,10 @@ export const FoodCard = ({
       tabIndex={onPress ? 0 : undefined}
       style={{
         display: 'flex',
-        gap: DESIGN_TOKENS.spacing.md,
+        gap: DESIGN_TOKENS.spacing[3],
         backgroundColor: DESIGN_TOKENS.colors.surface,
-        borderRadius: DESIGN_TOKENS.radius.card,
-        padding: DESIGN_TOKENS.spacing.lg,
+        borderRadius: DESIGN_TOKENS.radius.xl,
+        padding: DESIGN_TOKENS.spacing[6],
         border: `1px solid ${DESIGN_TOKENS.colors.border}`,
         boxShadow: DESIGN_TOKENS.shadows.small,
         transition: `transform ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}`,
@@ -140,9 +140,9 @@ export const MenuCard = ({
   if (variant === 'section') {
     return (
       <div style={{
-        padding: DESIGN_TOKENS.spacing.lg,
+        padding: DESIGN_TOKENS.spacing[6],
         backgroundColor: DESIGN_TOKENS.colors.surface,
-        borderRadius: DESIGN_TOKENS.radius.card,
+        borderRadius: DESIGN_TOKENS.radius.xl,
         border: `1px solid ${DESIGN_TOKENS.colors.border}`,
       }}>
         <h3 style={{
@@ -172,10 +172,10 @@ export const MenuCard = ({
         role={onPress ? 'button' : undefined}
         style={{
           display: 'flex',
-          gap: DESIGN_TOKENS.spacing.md,
+          gap: DESIGN_TOKENS.spacing[3],
           backgroundColor: '#fff8f0',
-          borderRadius: DESIGN_TOKENS.radius.card,
-          padding: DESIGN_TOKENS.spacing.lg,
+          borderRadius: DESIGN_TOKENS.radius.xl,
+          padding: DESIGN_TOKENS.spacing[6],
           border: `2px dashed ${DESIGN_TOKENS.colors.primary}`,
           cursor: onPress ? 'pointer' : 'default',
         }}
@@ -218,9 +218,9 @@ export const MenuCard = ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: DESIGN_TOKENS.spacing.lg,
+        padding: DESIGN_TOKENS.spacing[6],
         backgroundColor: DESIGN_TOKENS.colors.surface,
-        borderRadius: DESIGN_TOKENS.radius.card,
+        borderRadius: DESIGN_TOKENS.radius.xl,
         border: `1px solid ${DESIGN_TOKENS.colors.border}`,
         cursor: onPress ? 'pointer' : 'default',
       }}
@@ -271,12 +271,12 @@ export const MapCard = ({ eta, riderName, riderAvatar, progress = 0 }: MapCardPr
   return (
     <div style={{
       backgroundColor: DESIGN_TOKENS.colors.surface,
-      borderRadius: DESIGN_TOKENS.radius.card,
-      padding: DESIGN_TOKENS.spacing.lg,
+      borderRadius: DESIGN_TOKENS.radius.xl,
+      padding: DESIGN_TOKENS.spacing[6],
       border: `1px solid ${DESIGN_TOKENS.colors.border}`,
       boxShadow: DESIGN_TOKENS.shadows.medium,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.md, marginBottom: DESIGN_TOKENS.spacing.md }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing[3], marginBottom: DESIGN_TOKENS.spacing[3] }}>
         {riderAvatar && (
           <img
             src={riderAvatar}
@@ -353,12 +353,12 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
   return (
     <div style={{
       backgroundColor: DESIGN_TOKENS.colors.surface,
-      borderRadius: DESIGN_TOKENS.radius.card,
-      padding: DESIGN_TOKENS.spacing.lg,
+      borderRadius: DESIGN_TOKENS.radius.xl,
+      padding: DESIGN_TOKENS.spacing[6],
       border: `1px solid ${DESIGN_TOKENS.colors.border}`,
       boxShadow: DESIGN_TOKENS.shadows.small,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.md }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing[3] }}>
         <div style={{
           width: 12,
           height: 12,
@@ -392,7 +392,7 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
         </p>
       )}
       {(onContact || onSupport) && (
-        <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, marginTop: DESIGN_TOKENS.spacing.md }}>
+        <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, marginTop: DESIGN_TOKENS.spacing[3] }}>
           {onContact && (
             <button
               onClick={onContact}
@@ -400,7 +400,7 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
                 flex: 1,
                 padding: '8px 16px',
                 border: `1px solid ${DESIGN_TOKENS.colors.primary}`,
-                borderRadius: DESIGN_TOKENS.radius.button,
+                borderRadius: DESIGN_TOKENS.radius.lg,
                 background: 'transparent',
                 color: DESIGN_TOKENS.colors.primary,
                 ...DESIGN_TOKENS.typography.bodyMedium,
@@ -417,7 +417,7 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
                 flex: 1,
                 padding: '8px 16px',
                 border: 'none',
-                borderRadius: DESIGN_TOKENS.radius.button,
+                borderRadius: DESIGN_TOKENS.radius.lg,
                 background: DESIGN_TOKENS.colors.elevated,
                 color: DESIGN_TOKENS.colors.textPrimary,
                 ...DESIGN_TOKENS.typography.bodyMedium,
@@ -445,8 +445,8 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
   return (
     <div style={{
       backgroundColor: DESIGN_TOKENS.colors.surface,
-      borderRadius: DESIGN_TOKENS.radius.card,
-      padding: DESIGN_TOKENS.spacing.lg,
+      borderRadius: DESIGN_TOKENS.radius.xl,
+      padding: DESIGN_TOKENS.spacing[6],
       border: `1px solid ${DESIGN_TOKENS.colors.border}`,
     }}>
       <h3 style={{
@@ -457,7 +457,7 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
         Rate Your Order
       </h3>
       
-      <div style={{ display: 'flex', gap: 8, marginBottom: DESIGN_TOKENS.spacing.lg }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: DESIGN_TOKENS.spacing[6] }}>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -483,13 +483,13 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
         style={{
           width: '100%',
           minHeight: 100,
-          padding: DESIGN_TOKENS.spacing.md,
-          borderRadius: DESIGN_TOKENS.radius.input,
+          padding: DESIGN_TOKENS.spacing[3],
+          borderRadius: DESIGN_TOKENS.radius.lg,
           border: `1px solid ${DESIGN_TOKENS.colors.border}`,
           ...DESIGN_TOKENS.typography.body,
           fontFamily: DESIGN_TOKENS.typography.fontFamily,
           resize: 'vertical',
-          marginBottom: DESIGN_TOKENS.spacing.md,
+          marginBottom: DESIGN_TOKENS.spacing[3],
         }}
       />
 
@@ -500,7 +500,7 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
           width: '100%',
           padding: '12px 24px',
           border: 'none',
-          borderRadius: DESIGN_TOKENS.radius.button,
+          borderRadius: DESIGN_TOKENS.radius.lg,
           background: rating > 0 ? DESIGN_TOKENS.colors.primary : DESIGN_TOKENS.colors.border,
           color: 'white',
           ...DESIGN_TOKENS.typography.bodyMedium,

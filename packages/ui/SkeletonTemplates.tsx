@@ -9,23 +9,23 @@ interface ProductListSkeletonProps {
 }
 
 export const ProductListSkeleton = ({ count = 3 }: ProductListSkeletonProps) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.lg }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[4] }}>
     {Array.from({ length: count }).map((_, i) => (
       <div key={i} style={{
         display: 'flex',
-        gap: DESIGN_TOKENS.spacing.md,
+        gap: DESIGN_TOKENS.spacing[4],
         backgroundColor: DESIGN_TOKENS.colors.surface,
-        borderRadius: DESIGN_TOKENS.radius.card,
-        padding: DESIGN_TOKENS.spacing.lg,
-        border: `1px solid ${DESIGN_TOKENS.colors.border}`,
+        borderRadius: DESIGN_TOKENS.radius.xl,
+        padding: DESIGN_TOKENS.spacing[4],
+        border: `1px solid ${DESIGN_TOKENS.colors.borderLight}`,
       }}>
-        <Skeleton variant="rectangular" width={80} height={80} borderRadius={12} />
+        <Skeleton variant="rectangular" width={80} height={80} borderRadius={DESIGN_TOKENS.radius.lg} />
         <div style={{ flex: 1 }}>
-          <Skeleton height={16} width="70%" style={{ marginBottom: DESIGN_TOKENS.spacing.sm }} />
-          <Skeleton height={14} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing.md }} />
+          <Skeleton height={16} width="70%" style={{ marginBottom: DESIGN_TOKENS.spacing[2] }} />
+          <Skeleton height={14} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing[3] }} />
           <Skeleton height={12} width="60%" />
         </div>
-        <Skeleton height={20} width={60} />
+        <Skeleton height={24} width={60} />
       </div>
     ))}
   </div>
@@ -36,17 +36,17 @@ interface MenuListSkeletonProps {
 }
 
 export const MenuListSkeleton = ({ count = 4 }: MenuListSkeletonProps) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.lg }}>
-    <Skeleton height={24} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing.md }} />
+  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[4] }}>
+    <Skeleton height={24} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing[3] }} />
     {Array.from({ length: count }).map((_, i) => (
       <div key={i} style={{
         display: 'flex',
-        gap: DESIGN_TOKENS.spacing.md,
+        gap: DESIGN_TOKENS.spacing[4],
         alignItems: 'flex-start',
       }}>
-        <Skeleton variant="rectangular" width={60} height={60} borderRadius={12} />
+        <Skeleton variant="rectangular" width={60} height={60} borderRadius={DESIGN_TOKENS.radius.lg} />
         <div style={{ flex: 1 }}>
-          <Skeleton height={16} width="80%" style={{ marginBottom: DESIGN_TOKENS.spacing.sm }} />
+          <Skeleton height={16} width="80%" style={{ marginBottom: DESIGN_TOKENS.spacing[2] }} />
           <Skeleton height={14} width="60%" />
         </div>
       </div>
@@ -59,12 +59,12 @@ interface CheckoutSkeletonProps {
 }
 
 export const CheckoutSkeleton = ({ itemCount = 2 }: CheckoutSkeletonProps) => (
-  <div style={{ padding: DESIGN_TOKENS.spacing.lg }}>
-    <Skeleton height={24} width="60%" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md, marginBottom: DESIGN_TOKENS.spacing.lg }}>
+  <div style={{ padding: DESIGN_TOKENS.spacing[5] }}>
+    <Skeleton height={28} width="60%" style={{ marginBottom: DESIGN_TOKENS.spacing[5] }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3], marginBottom: DESIGN_TOKENS.spacing[5] }}>
       {Array.from({ length: itemCount }).map((_, i) => (
-        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, alignItems: 'center' }}>
-          <Skeleton variant="rectangular" width={60} height={60} borderRadius={12} />
+        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[4], alignItems: 'center' }}>
+          <Skeleton variant="rectangular" width={60} height={60} borderRadius={DESIGN_TOKENS.radius.lg} />
           <div style={{ flex: 1 }}>
             <Skeleton height={14} width="60%" style={{ marginBottom: 4 }} />
             <Skeleton height={12} width="40%" />
@@ -73,11 +73,11 @@ export const CheckoutSkeleton = ({ itemCount = 2 }: CheckoutSkeletonProps) => (
         </div>
       ))}
     </div>
-    <Skeleton height={1} width="100%" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
-    <Skeleton height={16} width="100%" style={{ marginBottom: DESIGN_TOKENS.spacing.sm }} />
-    <Skeleton height={16} width="80%" style={{ marginBottom: DESIGN_TOKENS.spacing.sm }} />
-    <Skeleton height={16} width="60%" style={{ marginBottom: DESIGN_TOKENS.spacing.xl }} />
-    <Skeleton height={48} width="100%" borderRadius={12} />
+    <Skeleton height={1} width="100%" style={{ marginBottom: DESIGN_TOKENS.spacing[5] }} />
+    <Skeleton height={16} width="100%" style={{ marginBottom: DESIGN_TOKENS.spacing[2] }} />
+    <Skeleton height={16} width="80%" style={{ marginBottom: DESIGN_TOKENS.spacing[2] }} />
+    <Skeleton height={16} width="60%" style={{ marginBottom: DESIGN_TOKENS.spacing[6] }} />
+    <Skeleton height={48} width="100%" borderRadius={DESIGN_TOKENS.radius.lg} />
   </div>
 );
 
@@ -86,11 +86,11 @@ interface TrackingSkeletonProps {
 }
 
 export const TrackingSkeleton = ({ stages = 4 }: TrackingSkeletonProps) => (
-  <div style={{ padding: DESIGN_TOKENS.spacing.lg }}>
-    <Skeleton height={24} width="50%" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.lg, marginBottom: DESIGN_TOKENS.spacing.xl }}>
+  <div style={{ padding: DESIGN_TOKENS.spacing[5] }}>
+    <Skeleton height={28} width="50%" style={{ marginBottom: DESIGN_TOKENS.spacing[5] }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[4], marginBottom: DESIGN_TOKENS.spacing[6] }}>
       {Array.from({ length: stages }).map((_, i) => (
-        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, alignItems: 'center' }}>
+        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[4], alignItems: 'center' }}>
           <Skeleton variant="circular" width={32} height={32} />
           <div style={{ flex: 1 }}>
             <Skeleton height={14} width="50%" style={{ marginBottom: 4 }} />
@@ -99,8 +99,8 @@ export const TrackingSkeleton = ({ stages = 4 }: TrackingSkeletonProps) => (
         </div>
       ))}
     </div>
-    <Skeleton height={120} width="100%" borderRadius={12} style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
-    <Skeleton height={48} width="100%" borderRadius={12} />
+    <Skeleton height={120} width="100%" borderRadius={DESIGN_TOKENS.radius.lg} style={{ marginBottom: DESIGN_TOKENS.spacing[5] }} />
+    <Skeleton height={48} width="100%" borderRadius={DESIGN_TOKENS.radius.lg} />
   </div>
 );
 
@@ -109,11 +109,11 @@ interface TimelineTrackingSkeletonProps {
 }
 
 export const TimelineTrackingSkeleton = ({ stages = 4 }: TimelineTrackingSkeletonProps) => (
-  <div style={{ padding: DESIGN_TOKENS.spacing.lg }}>
-    <Skeleton height={24} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing.lg }} />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.xl }}>
+  <div style={{ padding: DESIGN_TOKENS.spacing[5] }}>
+    <Skeleton height={28} width="40%" style={{ marginBottom: DESIGN_TOKENS.spacing[5] }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[5] }}>
       {Array.from({ length: stages }).map((_, i) => (
-        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md }}>
+        <div key={i} style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[4] }}>
           <Skeleton variant="circular" width={40} height={40} />
           <div style={{ flex: 1 }}>
             <Skeleton height={14} width="60%" style={{ marginBottom: 6 }} />

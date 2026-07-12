@@ -8,3 +8,4 @@ interface LottieSuccessAnimationProps {
 }
 declare const LottieSuccessAnimation: React.FC<LottieSuccessAnimationProps>;
 export default LottieSuccessAnimation;
+//# sourceMappingURL=LottieSuccessAnimation.d.ts.map

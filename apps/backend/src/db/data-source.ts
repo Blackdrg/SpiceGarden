@@ -1,6 +1,15 @@
 import "reflect-metadata";
+import * as path from "path";
+import * as dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { entities } from "./entities.index";
+
+dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+
+const migrationGlobs = [
+  path.join(__dirname, "migrations", "*.js"),
+  path.join(__dirname, "migrations", "*.ts"),
+];
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -10,7 +19,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS || "spicegarden_dev",
   database: process.env.DB_NAME || "spicegarden",
   entities,
-  migrations: ["src/db/migrations/*.ts"],
+  migrations: migrationGlobs,
   synchronize: false,
   migrationsRun: true,
   poolSize: parseInt(process.env.DB_POOL_SIZE || "20"),

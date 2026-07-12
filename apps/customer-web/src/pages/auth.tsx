@@ -17,100 +17,102 @@ const AuthPage = () => {
   const [mfaCode, setMfaCode] = useState('');
   const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async () => {
-        setError('');
-        
-        if (!formData.email || !formData.password) {
-            setError('Please enter email and password');
-            return;
-        }
-        
-        if (!isLogin && (!formData.name || !formData.phone)) {
-            setError('Please fill in all required fields');
-            return;
-        }
-        
-        setLoading(true);
-        try {
-            const endpoint = isLogin ? '/auth/login' : '/auth/register';
-            const res = await api<{ user: { id: string; email: string; role?: string; fullName?: string; status?: string } }>(endpoint, {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password,
-                    fullName: isLogin ? undefined : formData.name,
-                    phone: isLogin ? undefined : formData.phone,
-                    deviceName: 'web',
-                    deviceType: 'browser',
-                }),
-            });
+  const handleSubmit = async () => {
+    setError('');
 
-            if ((res.data as any).mfaRequired) {
-              setMfaRequired(true);
-              setFormData({ ...formData, password: '' }); // Clear password for security
-              return;
-            }
+    if (!formData.email || !formData.password) {
+      setError('Please enter email and password');
+      return;
+    }
 
-                const userData = {
-                    id: (res.data as any).user?.id,
-                    email: (res.data as any).user?.email || formData.email,
-                    fullName: (res.data as any).user?.fullName,
-                    role: (res.data as any).user?.role || 'customer',
-                    status: (res.data as any).user?.status,
-                };
-                
-                dispatch(setCredentials({ user: userData }));
-                router.push('/');
-        } catch (err: any) {
-            setError(err.message || (isLogin ? 'Login failed' : 'Registration failed'));
-        } finally {
-            setLoading(false);
-        }
-    };
+    if (!isLogin && (!formData.name || !formData.phone)) {
+      setError('Please fill in all required fields');
+      return;
+    }
 
-    const handleMfaSubmit = async () => {
-      setError('');
-      if (!mfaCode) {
-        setError('Please enter your verification code.');
+    setLoading(true);
+    try {
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const res = await api<{ user: { id: string; email: string; role?: string; fullName?: string; status?: string } }>(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: isLogin ? undefined : formData.name,
+          phone: isLogin ? undefined : formData.phone,
+          deviceName: 'web',
+          deviceType: 'browser',
+        }),
+      });
+
+      if ((res.data as any).mfaRequired) {
+        setMfaRequired(true);
+        setFormData({ ...formData, password: '' });
         return;
       }
 
-      setLoading(true);
-      try {
-        const res = await api<{ user: { id: string; email: string; role?: string; fullName?: string; status?: string } }>('/auth/login/verify-mfa', {
-          method: 'POST',
-          body: JSON.stringify({
-            email: formData.email,
-            code: mfaCode,
-            deviceName: 'web',
-            deviceType: 'browser',
-          }),
-        });
+      const userData = {
+        id: (res.data as any).user?.id,
+        email: (res.data as any).user?.email || formData.email,
+        fullName: (res.data as any).user?.fullName,
+        role: (res.data as any).user?.role || 'customer',
+        status: (res.data as any).user?.status,
+      };
 
-        const userData = {
-          id: res.data.user?.id,
-          email: res.data.user?.email,
-          fullName: res.data.user?.fullName,
-          role: res.data.user?.role,
-          status: res.data.user?.status,
-        };
-        dispatch(setCredentials({ user: userData }));
-        router.push('/');
-      } catch (err: any) {
-        setError(err.message || 'Invalid verification code.');
-      } finally {
-        setLoading(false);
-      }
-    };
+      dispatch(setCredentials({ user: userData }));
+      router.push('/');
+    } catch (err: any) {
+      setError(err.message || (isLogin ? 'Login failed' : 'Registration failed'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMfaSubmit = async () => {
+    setError('');
+    if (!mfaCode) {
+      setError('Please enter your verification code.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api<{ user: { id: string; email: string; role?: string; fullName?: string; status?: string } }>('/auth/login/verify-mfa', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: formData.email,
+          code: mfaCode,
+          deviceName: 'web',
+          deviceType: 'browser',
+        }),
+      });
+
+      const userData = {
+        id: res.data.user?.id,
+        email: res.data.user?.email,
+        fullName: res.data.user?.fullName,
+        role: res.data.user?.role,
+        status: res.data.user?.status,
+      };
+      dispatch(setCredentials({ user: userData }));
+      router.push('/');
+    } catch (err: any) {
+      setError(err.message || 'Invalid verification code.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.headerContainer}>
-        <h1 className={styles.logo}>&#x1F35F; SpiceGarden</h1>
+        <h1 className={styles.logo}>
+          <span style={{ fontSize: '1.5rem' }}>🌶️</span> SpiceGarden
+        </h1>
         <p className={styles.subtitle}>Order food from your favourite restaurants</p>
       </div>
 
-      <Card title={mfaRequired ? 'Two-Factor Authentication' : isLogin ? 'Welcome Back' : 'Create Account'}>
+      <Card title={mfaRequired ? 'Two-Factor Authentication' : isLogin ? 'Welcome Back' : 'Create Account'} variant="elevated">
         {error && (
           <div className={styles.errorMsg}>
             {error}
@@ -119,9 +121,7 @@ const AuthPage = () => {
 
         {mfaRequired ? (
           <>
-            <p className={styles.subtitle} style={{ textAlign: 'center', marginBottom: '16px' }}>
-              Enter the code from your authenticator app.
-            </p>
+            <p className={styles.mfaSubtitle}>Enter the code from your authenticator app.</p>
             <div className={styles.fieldLg}>
               <label htmlFor="mfa-code" className={styles.label}>Verification Code</label>
               <input
@@ -203,44 +203,45 @@ const AuthPage = () => {
             <Button
               label={loading ? 'Loading…' : isLogin ? 'Sign In' : 'Sign Up'}
               onClick={handleSubmit}
+              fullWidth
             />
 
             <div className={styles.footer}>
-                {isLogin && (
-                    <button
-                        type="button"
-                        onClick={() => { router.push('/reset-password'); setError(''); }}
-                        className={styles.textButton}
-                    >
-                        Forgot password?
-                    </button>
-                )}
-                <div className={styles.socialSection}>
-                    <div className={styles.socialLabel}>Or continue with</div>
-                    <div className={styles.socialButtonsRow}>
-                        <button
-                            type="button"
-                            onClick={() => { window.location.href = `${API_URL}/auth/google`; }}
-                            className={styles.googleButton}
-                        >
-                            🔵 Google
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => { window.location.href = `${API_URL}/auth/facebook`; }}
-                            className={styles.facebookButton}
-                        >
-                            𝔽 Facebook
-                        </button>
-                    </div>
-                </div>
+              {isLogin && (
                 <button
-                    type="button"
-                    onClick={() => { setIsLogin(!isLogin); setError(''); }}
-                    className={styles.textButton}
+                  type="button"
+                  onClick={() => { router.push('/reset-password'); setError(''); }}
+                  className={styles.textButton}
                 >
-                    {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+                  Forgot password?
                 </button>
+              )}
+              <div className={styles.socialSection}>
+                <div className={styles.socialLabel}>Or continue with</div>
+                <div className={styles.socialButtonsRow}>
+                  <button
+                    type="button"
+                    onClick={() => { window.location.href = `${API_URL}/auth/google`; }}
+                    className={styles.googleButton}
+                  >
+                    Google
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { window.location.href = `${API_URL}/auth/facebook`; }}
+                    className={styles.facebookButton}
+                  >
+                    Facebook
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setIsLogin(!isLogin); setError(''); }}
+                className={styles.textButton}
+              >
+                {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+              </button>
             </div>
           </>
         )}

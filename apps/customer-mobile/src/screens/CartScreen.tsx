@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { formatCurrency } from '../utils/currency';
 import { STRINGS } from '../constants/strings';
 import Toast from 'react-native-root-toast';
@@ -158,22 +159,22 @@ const CartScreen = () => {
       <View style={styles.cartItem} accessible={true} accessibilityLabel={STRINGS.accessibility.cartItem(item.name, validQty)}>
         <Image source={{ uri: item.image }} style={styles.cartItemImage} accessibilityLabel={item.name} accessibilityRole="image" />
         <View style={styles.cartItemInfo}>
-          <Text style={styles.cartItemName}>{item.name}</Text>
-          <Text style={styles.cartItemDescription} numberOfLines={2}>{item.description}</Text>
-          <View style={styles.cartItemQuantity}>
-            <Pressable onPress={() => updateQuantity(item.id, validQty - 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.decreaseQuantity(item.name)} accessibilityRole="button">
-              <Text style={styles.quantityButtonText}>-</Text>
-            </Pressable>
-            <Text style={styles.quantityText} accessibilityLabel={`Quantity: ${validQty}`}>{validQty}</Text>
-            <Pressable onPress={() => updateQuantity(item.id, validQty + 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.increaseQuantity(item.name)} accessibilityRole="button">
-              <Text style={styles.quantityButtonText}>+</Text>
-            </Pressable>
-          </View>
-          <Text style={styles.cartItemPrice}>{formatCurrency(validPrice * validQty, 'INR')}</Text>
+        <Text style={styles.cartItemName}>{item.name}</Text>
+        <Text style={styles.cartItemDescription} numberOfLines={2}>{item.description}</Text>
+        <View style={styles.cartItemQuantity}>
+          <Pressable onPress={() => updateQuantity(item.id, validQty - 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.decreaseQuantity(item.name)} accessibilityRole="button">
+            <Ionicons name="remove" size={18} color={DESIGN_TOKENS.colors.textPrimary} />
+          </Pressable>
+          <Text style={styles.quantityText} accessibilityLabel={`Quantity: ${validQty}`}>{validQty}</Text>
+          <Pressable onPress={() => updateQuantity(item.id, validQty + 1)} style={styles.quantityButton} accessibilityLabel={STRINGS.accessibility.increaseQuantity(item.name)} accessibilityRole="button">
+            <Ionicons name="add" size={18} color={DESIGN_TOKENS.colors.textPrimary} />
+          </Pressable>
         </View>
-        <Pressable onPress={() => removeFromCart(item.id)} style={styles.removeButton} accessibilityLabel={STRINGS.accessibility.removeFromCart(item.name)} accessibilityRole="button">
-          <Text style={styles.removeButtonText}>X</Text>
-        </Pressable>
+        <Text style={styles.cartItemPrice}>{formatCurrency(validPrice * validQty, 'INR')}</Text>
+      </View>
+      <Pressable onPress={() => removeFromCart(item.id)} style={styles.removeButton} accessibilityLabel={STRINGS.accessibility.removeFromCart(item.name)} accessibilityRole="button">
+        <Ionicons name="trash-outline" size={18} color={DESIGN_TOKENS.colors.danger} />
+      </Pressable>
       </View>
     );
   }, [updateQuantity, removeFromCart]);
@@ -270,43 +271,41 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: DESIGN_TOKENS.colors.background },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: DESIGN_TOKENS.colors.background },
-  loadingText: { fontSize: 16, color: DESIGN_TOKENS.colors.textSecondary, marginTop: 16, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  loadingText: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginTop: DESIGN_TOKENS.spacing.md, fontFamily: DESIGN_TOKENS.typography.fontFamily },
   errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: DESIGN_TOKENS.spacing.lg },
   errorIcon: { fontSize: 48, marginBottom: DESIGN_TOKENS.spacing.md },
   errorText: { fontSize: 16, color: DESIGN_TOKENS.colors.danger, textAlign: 'center', marginBottom: 20, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.md, backgroundColor: DESIGN_TOKENS.colors.surface, borderBottomWidth: 1, borderBottomColor: DESIGN_TOKENS.colors.border },
-  backButton: { padding: DESIGN_TOKENS.spacing.xs },
-  backButtonText: { fontSize: 20, color: DESIGN_TOKENS.colors.textPrimary },
-  headerText: { fontSize: 20, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: DESIGN_TOKENS.spacing.md, paddingTop: DESIGN_TOKENS.spacing.lg, backgroundColor: DESIGN_TOKENS.colors.surface, borderBottomWidth: 1, borderBottomColor: DESIGN_TOKENS.colors.borderLight, ...DESIGN_TOKENS.shadows.small },
+  backButton: { padding: DESIGN_TOKENS.spacing.xs, flexDirection: 'row', alignItems: 'center', gap: DESIGN_TOKENS.spacing.xs },
+  backButtonText: { fontSize: 16, color: DESIGN_TOKENS.colors.textPrimary, fontWeight: '600', fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  headerText: { fontSize: 18, fontWeight: '700', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
   emptyCart: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: DESIGN_TOKENS.spacing.lg },
-  emptyIconContainer: { width: 80, height: 80, borderRadius: 40, backgroundColor: DESIGN_TOKENS.colors.elevated, justifyContent: 'center', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg },
+  emptyIconContainer: { width: 88, height: 88, borderRadius: DESIGN_TOKENS.radius.full, backgroundColor: DESIGN_TOKENS.colors.elevated, justifyContent: 'center', alignItems: 'center', marginBottom: DESIGN_TOKENS.spacing.lg },
   emptyIcon: { fontSize: 40 },
-  emptyText: { fontSize: 18, color: DESIGN_TOKENS.colors.textPrimary, marginBottom: 8, fontFamily: DESIGN_TOKENS.typography.fontFamily, fontWeight: '600' },
+  emptyText: { fontSize: 18, color: DESIGN_TOKENS.colors.textPrimary, marginBottom: 8, fontFamily: DESIGN_TOKENS.typography.fontFamily, fontWeight: '700' },
   emptySubtext: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginBottom: 20, fontFamily: DESIGN_TOKENS.typography.fontFamily, textAlign: 'center' },
   primaryButton: { backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 12, paddingHorizontal: 24, borderRadius: DESIGN_TOKENS.radius.button },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600', fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.xs, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', padding: DESIGN_TOKENS.spacing.sm },
-  cartItemImage: { width: 80, height: 80 },
+  cartItem: { flexDirection: 'row', backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, marginVertical: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.card, overflow: 'hidden', ...DESIGN_TOKENS.shadows.small, padding: DESIGN_TOKENS.spacing.md },
+  cartItemImage: { width: 80, height: 80, borderRadius: DESIGN_TOKENS.radius.sm },
   cartItemInfo: { flex: 1, marginLeft: DESIGN_TOKENS.spacing.sm, justifyContent: 'space-between' },
-  cartItemName: { fontSize: 16, fontWeight: '600', marginBottom: 4, color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  cartItemDescription: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, marginBottom: 8, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  cartItemName: { fontSize: 15, fontWeight: '700', marginBottom: 2, color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  cartItemDescription: { fontSize: 13, color: DESIGN_TOKENS.colors.textSecondary, marginBottom: 8, fontFamily: DESIGN_TOKENS.typography.fontFamily },
   cartItemQuantity: { flexDirection: 'row', alignItems: 'center' },
-  quantityButton: { width: 32, height: 32, borderWidth: 1, borderColor: DESIGN_TOKENS.colors.border, justifyContent: 'center', alignItems: 'center', borderRadius: DESIGN_TOKENS.radius.sm },
-  quantityButtonText: { fontSize: 18, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary },
-  quantityText: { marginHorizontal: DESIGN_TOKENS.spacing.sm, fontSize: 16, fontWeight: '500', minWidth: 24, textAlign: 'center', fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  cartItemPrice: { fontSize: 16, fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  removeButton: { paddingVertical: 8, paddingHorizontal: 12, backgroundColor: DESIGN_TOKENS.colors.elevated, borderRadius: DESIGN_TOKENS.radius.sm, justifyContent: 'center', alignItems: 'center' },
-  removeButtonText: { fontSize: 14, color: DESIGN_TOKENS.colors.dangerDark, fontWeight: '500' },
-  cartFooter: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: DESIGN_TOKENS.colors.surface, padding: DESIGN_TOKENS.spacing.md, borderTopWidth: 1, borderTopColor: DESIGN_TOKENS.colors.border },
-  checkoutButton: { backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 14, borderRadius: DESIGN_TOKENS.radius.button, alignItems: 'center' },
-  checkoutButtonText: { color: 'white', fontSize: 16, fontWeight: '600', fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  summarySection: { padding: DESIGN_TOKENS.spacing.md, backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, borderRadius: DESIGN_TOKENS.radius.card, marginTop: DESIGN_TOKENS.spacing.sm },
+  quantityButton: { width: 32, height: 32, borderWidth: 1, borderColor: DESIGN_TOKENS.colors.border, justifyContent: 'center', alignItems: 'center', borderRadius: DESIGN_TOKENS.radius.sm, backgroundColor: DESIGN_TOKENS.colors.elevated },
+  quantityText: { marginHorizontal: DESIGN_TOKENS.spacing.sm, fontSize: 15, fontWeight: '600', minWidth: 24, textAlign: 'center', fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  cartItemPrice: { fontSize: 15, fontWeight: '700', color: DESIGN_TOKENS.colors.primary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  removeButton: { paddingVertical: 8, paddingHorizontal: 10, backgroundColor: DESIGN_TOKENS.colors.dangerLight + '40', borderRadius: DESIGN_TOKENS.radius.sm, justifyContent: 'center', alignItems: 'center', marginLeft: DESIGN_TOKENS.spacing.xs },
+  cartFooter: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: DESIGN_TOKENS.colors.surface, padding: DESIGN_TOKENS.spacing.md, borderTopWidth: 1, borderTopColor: DESIGN_TOKENS.colors.border, ...DESIGN_TOKENS.shadows.medium },
+  checkoutButton: { backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 14, borderRadius: DESIGN_TOKENS.radius.button, alignItems: 'center', ...DESIGN_TOKENS.shadows.small },
+  checkoutButtonText: { color: 'white', fontSize: 16, fontWeight: '700', fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  summarySection: { padding: DESIGN_TOKENS.spacing.md, backgroundColor: DESIGN_TOKENS.colors.surface, marginHorizontal: DESIGN_TOKENS.spacing.md, borderRadius: DESIGN_TOKENS.radius.card, marginTop: DESIGN_TOKENS.spacing.sm, ...DESIGN_TOKENS.shadows.small },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   summaryLabel: { fontSize: 14, color: DESIGN_TOKENS.colors.textSecondary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
   summaryValue: { fontSize: 14, color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
   totalRow: { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: DESIGN_TOKENS.colors.border },
-  totalLabel: { fontSize: 16, fontWeight: '600', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
-  totalAmount: { fontSize: 18, fontWeight: 'bold', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  totalLabel: { fontSize: 16, fontWeight: '700', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
+  totalAmount: { fontSize: 18, fontWeight: '800', color: DESIGN_TOKENS.colors.textPrimary, fontFamily: DESIGN_TOKENS.typography.fontFamily },
 });
 
 export default CartScreen;

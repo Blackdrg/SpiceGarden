@@ -1,88 +1,170 @@
-.container {
-  padding: var(--spacing-md);
-  padding-bottom: 80px;
+/* subscriptions.module.css - Customer Web Subscriptions Page */
+
+.pageContainer {
+  min-height: 100vh;
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: var(--spacing-5);
 }
 
 .pageTitle {
-  margin-bottom: var(--spacing-lg);
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
 }
 
 .cardList {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+}
+
+.subCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
+  padding: var(--spacing-5);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.subCard:hover {
+  box-shadow: var(--shadow-small);
+  border-color: var(--color-border, #E5E7EB);
+  transform: translateY(-1px);
+}
+
+.subHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-4);
+}
+
+.subName {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
 }
 
 .priceWrapper {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-3) 0;
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
 }
 
 .priceInfo {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .price {
-  font-size: 22px;
-  font-weight: bold;
-  color: var(--color-primary);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-textPrimary, #111827);
 }
 
 .priceLabel {
-  color: #999;
-  font-size: 14px;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
 }
 
 .statusBadge {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: bold;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .statusActive {
-  background-color: #e8f5e8;
-  color: var(--color-success);
+  background: var(--color-successLight, #D1FAE5);
+  color: var(--color-successDark, #059669);
 }
 
 .statusInactive {
-  background-color: #f5f5f5;
-  color: #999;
+  background: var(--color-gray100, #F3F4F6);
+  color: var(--color-textSecondary, #6B7280);
 }
 
 .benefits {
-  margin: 0 0 16px 20px;
+  list-style: none;
   padding: 0;
-  color: #555;
-  font-size: 14px;
-  list-style: disc;
+  margin: 0 0 var(--spacing-4) 0;
 }
 
 .benefitItem {
-  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+}
+
+.benefitItem::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-success, #10B981);
+  flex-shrink: 0;
 }
 
 .cardFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
 }
 
 .nextBilling {
-  color: #999;
-  font-size: 13px;
+  font-size: 0.8125rem;
+  color: var(--color-textTertiary, #9CA3AF);
 }
 
 .exploreCard {
-  margin-top: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-premiumLight, #FDF6E3) 0%, #FEF3C7 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-premium, #D4AF37)33;
+}
+
+.exploreTitle {
+  margin: 0 0 var(--spacing-2) 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
 }
 
 .exploreText {
-  margin-bottom: var(--spacing-md);
+  margin: 0 0 var(--spacing-4) 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+  line-height: 1.5;
 }
 
 .bottomNav {
@@ -90,31 +172,51 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
-  background-color: white;
-  border-top: 1px solid #eee;
+  height: 64px;
+  background-color: var(--color-surface, #FFFFFF);
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
   display: flex;
   justify-content: space-around;
   align-items: center;
+  box-shadow: var(--shadow-small);
+  z-index: 100;
 }
 
 .navItem {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  flex: 1;
+  height: 100%;
+  padding: var(--spacing-2);
+  border: none;
+  background: transparent;
   cursor: pointer;
-  font-size: 11px;
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.navIcon {
-  font-size: 22px;
-}
-
-.navLabel {
-  color: #999;
+.navItem:focus-visible {
+  outline: 2px solid var(--color-primary, #FF5A1F);
+  outline-offset: -2px;
+  border-radius: var(--radius-md);
 }
 
 .navItemActive {
-  color: var(--color-primary);
+  color: var(--color-primary, #FF5A1F);
   font-weight: 600;
+}
+
+.navLabel {
+  color: var(--color-textTertiary, #9CA3AF);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

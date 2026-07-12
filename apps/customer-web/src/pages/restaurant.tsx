@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Button, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, DESIGN_TOKENS, HomeIcon, SearchIcon, CartIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
+import { ArrowLeftIcon, PlusIcon, StarIcon } from 'lucide-react';
+import styles from './restaurant.module.css';
 
 const categories = [
   { id: 'burgers', name: 'Burgers', count: 12 },
@@ -19,38 +21,6 @@ const menuItems = [
   { id: 6, name: 'Large Coke', desc: '1.25L Bottle', price: 79, emoji: '🥤', category: 'drinks' },
 ];
 
-const menuItemStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: DESIGN_TOKENS.spacing.sm,
-  backgroundColor: 'white',
-  borderRadius: DESIGN_TOKENS.radius.md,
-  cursor: 'pointer',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-};
-
-const bottomNavStyle: React.CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const navButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-};
-
 const RestaurantPage = () => {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('burgers');
@@ -58,78 +28,88 @@ const RestaurantPage = () => {
 
   const filtered = activeCategory === 'all' ? menuItems : menuItems.filter((item) => item.category === activeCategory);
 
+  const handleAddToCart = (item: typeof menuItems[0]) => {
+    dispatch(addToCart({
+      item: {
+        id: item.id.toString(),
+        name: item.name,
+        price: item.price,
+        quantity: 1,
+      },
+      restaurantId: 'rest-001'
+    }));
+  };
+
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        <Button label="← Back" onClick={() => router.back()} variant="secondary" />
-      </div>
-      <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg, textAlign: 'center' }}>
-        <h2 style={{ margin: 0, fontSize: '22px' }}>🍔 Burger King</h2>
-        <p style={{ color: '#666', margin: '4px 0' }}>&#9733; 4.2 &middot; 25–30 min &middot; &#8377;199 minimum</p>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <Button onClick={() => router.back()} variant="secondary">
+          <ArrowLeftIcon size={18} />
+        </Button>
       </div>
 
-      <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, overflowX: 'auto', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        {categories.map((c) => (
-          <Button
-            key={c.id}
-            label={`${c.name} (${c.count})`}
-            onClick={() => setActiveCategory(c.id)}
-            variant={activeCategory === c.id ? 'primary' : 'secondary'}
-          />
-        ))}
+      <div className={styles.restaurantHeader}>
+        <h2 className={styles.restaurantName}>🍔 Burger King</h2>
+        <p className={styles.restaurantMeta}>
+          <StarIcon size={14} fill={DESIGN_TOKENS.colors.warning} color={DESIGN_TOKENS.colors.warning} />
+          {' '}4.2 · 25–30 min · ₹199 minimum
+        </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+      <div className={styles.categorySection}>
+        <div className={styles.categoryList}>
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              className={`${styles.categoryChip} ${activeCategory === c.id ? styles.categoryChipActive : ''}`}
+              onClick={() => setActiveCategory(c.id)}
+            >
+              {c.name} ({c.count})
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.menuList}>
         {filtered.map((item) => (
           <div
             key={item.id}
-            style={menuItemStyle}
+            className={styles.menuItem}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.sm, flex: 1 }}>
-              <span style={{ fontSize: '28px' }}>{item.emoji}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{item.name}</div>
-                <div style={{ fontSize: '13px', color: '#888' }}>{item.desc}</div>
+            <div className={styles.itemInfo}>
+              <div className={styles.itemEmoji}>{item.emoji}</div>
+              <div className={styles.itemText}>
+                <div className={styles.itemName}>{item.name}</div>
+                <div className={styles.itemDesc}>{item.desc}</div>
               </div>
             </div>
-       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-         <span style={{ fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary, whiteSpace: 'nowrap' }}>&#8377;{item.price}</span>
-         <Button label="+" onClick={() => {
-           // Show customization modal (simplified for demo)
-           const customization = window.prompt("Add special instructions (e.g., 'No onions', 'Extra spicy'):");
-           dispatch(addToCart({ 
-             item: { 
-               id: item.id.toString(), 
-               name: item.name, 
-               price: item.price, 
-               quantity: 1,
-               customization: customization || undefined,
-               specialInstructions: customization || undefined  // For demo, using same field
-             }, 
-             restaurantId: 'rest-001' // Hardcoded for demo, should come from restaurant context
-           }));
-         }} variant="secondary" />
-       </div>
+            <div className={styles.itemActions}>
+              <span className={styles.itemPrice}>₹{item.price}</span>
+              <Button onClick={() => handleAddToCart(item)} variant="secondary" size="sm">
+                <PlusIcon size={16} />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
 
       {/* Bottom nav */}
-      <nav style={bottomNavStyle}>
+      <nav className={styles.bottomNav}>
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'menu', label: 'Menu', icon: '📋', path: '/menu' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
+          { key: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', icon: SearchIcon, path: '/search' },
+          { key: 'menu', label: 'Menu', icon: CartIcon, path: '/menu' },
+          { key: 'account', label: 'Account', icon: ProfileIcon, path: '/profile' },
         ].map((tab) => (
           <button
             type="button"
             key={tab.key}
             onClick={() => router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: tab.key === 'menu' ? DESIGN_TOKENS.colors.primary : '#999' }}
+            className={`${styles.navButton} ${tab.key === 'menu' ? styles.navActive : styles.navInactive}`}
+            aria-label={tab.label}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.navIcon}><tab.icon size={22} /></span>
             <span>{tab.label}</span>
           </button>
         ))}

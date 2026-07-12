@@ -5,6 +5,7 @@ import Animated, { useSharedValue, withTiming, withSequence } from 'react-native
 const AnimatedCompat = Animated as any;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 // SCREEN_WIDTH was unused and removed
@@ -22,29 +23,29 @@ const onboardingSlides: OnboardingSlide[] = [
     id: 'welcome',
     title: 'Welcome to SpiceGarden',
     subtitle: 'Your favourite food from top restaurants, delivered hot & fresh',
-    icon: 'Menu',
-    backgroundColor: '#1a1e2e',
+    icon: 'restaurant',
+    backgroundColor: DESIGN_TOKENS.colors.primary,
   },
   {
     id: 'tracking',
     title: 'Live Order Tracking',
     subtitle: 'Track your order in real-time with GPS. Know exactly when your food arrives',
-    icon: 'Location',
-    backgroundColor: '#16213e',
+    icon: 'navigate',
+    backgroundColor: DESIGN_TOKENS.colors.secondary,
   },
   {
     id: 'safety',
     title: 'Safe & Reliable',
     subtitle: 'Verified restaurants, contactless delivery, and secure payments',
-    icon: 'Secure',
-    backgroundColor: '#0f3460',
+    icon: 'shield-checkmark',
+    backgroundColor: DESIGN_TOKENS.colors.info,
   },
   {
     id: 'delivery',
     title: 'Lightning Fast Delivery',
     subtitle: 'Our drivers race against time to get your food to you ASAP',
-    icon: '🚀',
-    backgroundColor: '#1e4620',
+    icon: 'flash',
+    backgroundColor: DESIGN_TOKENS.colors.success,
   },
 ];
 
@@ -154,12 +155,11 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
           }
         ]}
       >
-        <Text 
-          style={styles.icon}
-          accessible={false}
-        >
-          {currentSlide.icon}
-        </Text>
+        <View style={styles.iconContainer}>
+          <View style={styles.iconCircle}>
+            <Ionicons name={currentSlide.icon as any} size={48} color="white" />
+          </View>
+        </View>
         <Text 
           style={styles.title}
           accessible={true}
@@ -217,15 +217,21 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
 
         <View style={styles.trustIndicators}>
           <View style={styles.trustRow}>
-            <Text style={styles.trustIcon}>✓</Text>
+            <View style={styles.trustIconContainer}>
+              <Ionicons name="checkmark-circle" size={16} color={DESIGN_TOKENS.colors.textPrimary} />
+            </View>
             <Text style={styles.trustText}>10,000+ Happy Customers</Text>
           </View>
           <View style={styles.trustRow}>
-            <Text style={styles.trustIcon}>✓</Text>
+            <View style={styles.trustIconContainer}>
+              <Ionicons name="star" size={16} color={DESIGN_TOKENS.colors.warning} />
+            </View>
             <Text style={styles.trustText}>5-Star Rated Service</Text>
           </View>
           <View style={styles.trustRow}>
-            <Text style={styles.trustIcon}>✓</Text>
+            <View style={styles.trustIconContainer}>
+              <Ionicons name="speedometer" size={16} color={DESIGN_TOKENS.colors.success} />
+            </View>
             <Text style={styles.trustText}>Fast & Reliable Delivery</Text>
           </View>
         </View>
@@ -237,7 +243,6 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DESIGN_TOKENS.colors.background,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -249,15 +254,15 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: DESIGN_TOKENS.colors.borderDark + '80',
     marginHorizontal: 4,
   },
   progressDotActive: {
-    backgroundColor: DESIGN_TOKENS.colors.primary,
+    backgroundColor: DESIGN_TOKENS.colors.textInverse,
     width: 24,
   },
   progressDotCompleted: {
-    backgroundColor: DESIGN_TOKENS.colors.success,
+    backgroundColor: DESIGN_TOKENS.colors.textInverse + '80',
   },
   content: {
     flex: 1,
@@ -265,17 +270,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 40,
   },
-  icon: {
-    fontSize: 80,
+  iconContainer: {
     marginBottom: 40,
+  },
+  iconCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: DESIGN_TOKENS.radius.xxl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...DESIGN_TOKENS.shadows.medium,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: DESIGN_TOKENS.colors.textPrimary,
     textAlign: 'center',
     marginBottom: 16,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 16,
@@ -286,7 +299,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingBottom: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   skipButton: {
     alignSelf: 'flex-end',
@@ -296,6 +309,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 14,
     color: DESIGN_TOKENS.colors.textSecondary,
+    fontWeight: '500',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   navigationRow: {
@@ -308,14 +322,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: DESIGN_TOKENS.radius.button,
+    minWidth: 100,
+    alignItems: 'center',
   },
   nextButton: {
     backgroundColor: DESIGN_TOKENS.colors.primary,
+    ...DESIGN_TOKENS.shadows.small,
   },
   navButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
-    color: DESIGN_TOKENS.colors.textPrimary,
+    color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   nextButtonText: {
@@ -324,20 +341,23 @@ const styles = StyleSheet.create({
   trustIndicators: {
     marginTop: 40,
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   trustRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  trustIcon: {
-    color: DESIGN_TOKENS.colors.success,
-    fontSize: 16,
+  trustIconContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   trustText: {
     fontSize: 12,
-    color: DESIGN_TOKENS.colors.textSecondary,
+    color: DESIGN_TOKENS.colors.textTertiary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

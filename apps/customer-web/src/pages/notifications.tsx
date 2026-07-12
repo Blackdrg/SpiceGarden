@@ -69,67 +69,70 @@ const NotificationsPage = () => {
 
   const queryError = error instanceof Error ? error.message : (mutation.error instanceof Error ? mutation.error.message : null);
 
+  const preferenceGroups = [
+    {
+      title: 'Push Notifications',
+      items: [
+        { key: 'pushOrders' as const, label: 'Order Updates' },
+        { key: 'pushPromotions' as const, label: 'Promotions & Offers' },
+        { key: 'pushDeliveryUpdates' as const, label: 'Delivery Updates' },
+      ]
+    },
+    {
+      title: 'Email Notifications',
+      items: [
+        { key: 'emailOrders' as const, label: 'Order Confirmations' },
+        { key: 'emailPromotions' as const, label: 'Promotional Emails' },
+      ]
+    },
+    {
+      title: 'SMS Notifications',
+      items: [
+        { key: 'smsDeliveryUpdates' as const, label: 'Delivery Updates' },
+      ]
+    }
+  ];
+
   return (
     <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Notification Preferences</h2>
+        <p className={styles.pageSubtitle}>Manage how you receive updates</p>
+      </div>
+
       {queryError && (
         <div className={styles.errorBanner}>
           {queryError}
         </div>
       )}
 
-      <h2 className={styles.pageTitle}>Notification Preferences</h2>
-
-      <Card title="Push Notifications">
-        <div className={styles.cardContent}>
-          <div className={styles.preferenceRow}>
-            <span>Order Updates</span>
-            <button type="button" onClick={() => togglePref('pushOrders')} disabled={mutation.isPending} aria-label="Order updates">
-              {prefs.pushOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-            </button>
+      {preferenceGroups.map((group) => (
+        <Card key={group.title} title={group.title} variant="elevated">
+          <div className={styles.cardContent}>
+            {group.items.map((item) => (
+              <div key={item.key} className={styles.preferenceRow}>
+                <span className={styles.preferenceLabel}>{item.label}</span>
+                <button
+                  type="button"
+                  onClick={() => togglePref(item.key)}
+                  disabled={mutation.isPending}
+                  aria-label={item.label}
+                  className={`${styles.toggleButton} ${prefs[item.key] ? styles.toggleActive : styles.toggleInactive}`}
+                >
+                  {prefs[item.key] ? (
+                    <Bell size={20} color={DESIGN_TOKENS.colors.primary} />
+                  ) : (
+                    <BellOff size={20} color={DESIGN_TOKENS.colors.textTertiary} />
+                  )}
+                </button>
+              </div>
+            ))}
           </div>
-          <div className={styles.preferenceRow}>
-            <span>Promotions & Offers</span>
-            <button type="button" onClick={() => togglePref('pushPromotions')} disabled={mutation.isPending} aria-label="Promotions and offers">
-              {prefs.pushPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-            </button>
-          </div>
-          <div className={styles.preferenceRow}>
-            <span>Delivery Updates</span>
-            <button type="button" onClick={() => togglePref('pushDeliveryUpdates')} disabled={mutation.isPending} aria-label="Delivery updates">
-              {prefs.pushDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-            </button>
-          </div>
-        </div>
-      </Card>
-
-      <Card title="Email Notifications">
-        <div className={styles.cardContent}>
-          <div className={styles.preferenceRow}>
-            <span>Order Confirmations</span>
-            <button type="button" onClick={() => togglePref('emailOrders')} disabled={mutation.isPending} aria-label="Order confirmations">
-              {prefs.emailOrders ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-            </button>
-          </div>
-          <div className={styles.preferenceRow}>
-            <span>Promotional Emails</span>
-            <button type="button" onClick={() => togglePref('emailPromotions')} disabled={mutation.isPending} aria-label="Promotional emails">
-              {prefs.emailPromotions ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-            </button>
-          </div>
-        </div>
-      </Card>
-
-      <Card title="SMS Notifications">
-        <div className={styles.preferenceRow}>
-          <span>Delivery Updates</span>
-          <button type="button" onClick={() => togglePref('smsDeliveryUpdates')} disabled={mutation.isPending} aria-label="SMS delivery updates">
-            {prefs.smsDeliveryUpdates ? <Bell color={DESIGN_TOKENS.colors.primary} /> : <BellOff color="#666" />}
-          </button>
-        </div>
-      </Card>
+        </Card>
+      ))}
 
       <div className={styles.saveActions}>
-        <Button label={mutation.isPending ? 'Saving...' : 'Save Preferences'} onClick={() => {}} disabled={mutation.isPending} />
+        <Button label={mutation.isPending ? 'Saving...' : 'Save Preferences'} onClick={() => {}} disabled={mutation.isPending} fullWidth />
       </div>
     </div>
   );

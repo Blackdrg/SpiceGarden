@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
 import { Easing } from 'react-native';
@@ -133,7 +134,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton} accessibilityLabel='Go back' accessibilityRole='button'>
-            <Text style={styles.backButtonText}>?</Text>
+            <Ionicons name="arrow-back" size={22} color={DESIGN_TOKENS.colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerText}>Checkout</Text>
         </View>
@@ -174,7 +175,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
                   accessibilityState={{ checked: paymentMethod === method }}
                 >
                   <Text style={styles.paymentOptionText}>
-                    {method === 'card' ? '?? Card' : method === 'upi' ? '?? UPI' : '?? Cash'}
+                    {method === 'card' ? '₹ Card' : method === 'upi' ? '₹ UPI' : '₹ Cash'}
                   </Text>
                 </Pressable>
               ))}
@@ -189,11 +190,11 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
                   key={tipAmount}
                   onPress={() => setTip(tipAmount)}
                   style={[styles.tipOption, tip === tipAmount && styles.selectedTipOption]}
-                  accessibilityLabel={`Add ?${tipAmount} tip`}
+                  accessibilityLabel={`Add ₹${tipAmount} tip`}
                   accessibilityRole='radio'
                   accessibilityState={{ checked: tip === tipAmount }}
                 >
-                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `?${tipAmount}`}</Text>
+                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}</Text>
                 </Pressable>
               ))}
             </View>
@@ -221,31 +222,31 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
             <Text style={styles.sectionTitle}>Order Summary</Text>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Item Total</Text>
-              <Text style={styles.summaryAmount}>?{calculateSubtotal().toFixed(0)}</Text>
+              <Text style={styles.summaryAmount}>₹{calculateSubtotal().toFixed(0)}</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Delivery Fee</Text>
-              <Text style={styles.summaryAmount}>?20</Text>
+              <Text style={styles.summaryAmount}>₹20</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Taxes</Text>
-              <Text style={styles.summaryAmount}>?{calculateTax().toFixed(0)}</Text>
+              <Text style={styles.summaryAmount}>₹{calculateTax().toFixed(0)}</Text>
             </View>
             {tip > 0 && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Tip</Text>
-                <Text style={styles.summaryAmount}>?{tip}</Text>
+                <Text style={styles.summaryAmount}>₹{tip}</Text>
               </View>
             )}
             {calculatePromoDiscount() > 0 && (
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Promo Discount</Text>
-                <Text style={styles.summaryAmount}>-?{calculatePromoDiscount().toFixed(0)}</Text>
+                <Text style={styles.summaryAmount}>-₹{calculatePromoDiscount().toFixed(0)}</Text>
               </View>
             )}
             <View style={styles.summaryRowTotal}>
               <Text style={styles.summaryLabelTotal}>Total</Text>
-              <Text style={styles.summaryAmountTotal}>?{calculateTotal().toFixed(0)}</Text>
+              <Text style={styles.summaryAmountTotal}>₹{calculateTotal().toFixed(0)}</Text>
             </View>
           </View>
         </ScrollView>

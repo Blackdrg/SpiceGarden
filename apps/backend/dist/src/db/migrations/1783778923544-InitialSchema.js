@@ -4,6 +4,7 @@ exports.InitialSchema1783778923544 = void 0;
 class InitialSchema1783778923544 {
     name = 'InitialSchema1783778923544';
     async up(queryRunner) {
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
         await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fullName" character varying NOT NULL, "email" character varying NOT NULL, "phone" character varying NOT NULL, "passwordHash" character varying NOT NULL, "profileImage" character varying, "role" character varying NOT NULL DEFAULT 'customer', "status" character varying NOT NULL DEFAULT 'active', "emailVerified" boolean NOT NULL DEFAULT false, "phoneVerified" boolean NOT NULL DEFAULT false, "isMfaEnabled" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "UQ_a000cca60bcf04454e727699490" UNIQUE ("phone"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "idx_users_created_at" ON "users" ("createdAt") `);
         await queryRunner.query(`CREATE INDEX "idx_users_email_verified" ON "users" ("emailVerified") `);

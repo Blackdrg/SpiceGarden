@@ -3,38 +3,26 @@
 import React from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
-const shimmerStyle = `
-  @keyframes sg-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-`;
-
-if (typeof document !== 'undefined' && !document.getElementById('sg-skeleton-styles')) {
-  const style = document.createElement('style');
-  style.id = 'sg-skeleton-styles';
-  style.textContent = shimmerStyle;
-  document.head.appendChild(style);
-}
-
 interface SkeletonProps {
   width?: string | number;
   height?: string | number;
   borderRadius?: number;
   variant?: 'text' | 'circular' | 'rectangular';
   style?: React.CSSProperties;
+  className?: string;
 }
 
-export const Skeleton = ({ 
-  width, 
-  height = 16, 
-  borderRadius, 
+export const Skeleton = ({
+  width,
+  height = 16,
+  borderRadius,
   variant = 'rectangular',
   style,
+  className,
 }: SkeletonProps) => {
   const getDefaultRadius = () => {
     if (borderRadius) return borderRadius;
-    if (variant === 'circular') return 9999;
+    if (variant === 'circular') return DESIGN_TOKENS.radius.full;
     if (variant === 'text') return DESIGN_TOKENS.radius.sm;
     return DESIGN_TOKENS.radius.md;
   };
@@ -49,6 +37,7 @@ export const Skeleton = ({
 
   return (
     <div
+      className={className}
       style={{
         ...getDefaultSize(),
         backgroundColor: DESIGN_TOKENS.colors.elevated,
@@ -64,9 +53,9 @@ export const Skeleton = ({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: `linear-gradient(90deg, ${DESIGN_TOKENS.colors.elevated} 0px, ${DESIGN_TOKENS.colors.surface} 40px, ${DESIGN_TOKENS.colors.elevated} 80px)`,
+        backgroundImage: `linear-gradient(90deg, ${DESIGN_TOKENS.colors.elevated} 0%, ${DESIGN_TOKENS.colors.gray200} 40px, ${DESIGN_TOKENS.colors.elevated} 80px)`,
         backgroundSize: '200% 100%',
-        animation: `sg-shimmer ${DESIGN_TOKENS.motion.standard * 2}ms infinite linear`,
+        animation: `sg-shimmer ${DESIGN_TOKENS.motion.slow}ms infinite linear`,
       }} />
     </div>
   );
@@ -77,22 +66,25 @@ interface SkeletonCardProps {
 }
 
 export const SkeletonCard = ({ count = 1 }: SkeletonCardProps) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[4] }}>
     {Array.from({ length: count }).map((_, i) => (
       <div key={i} style={{
-        border: `1px solid ${DESIGN_TOKENS.colors.border}`,
-        borderRadius: `${DESIGN_TOKENS.radius.card}px`,
-        padding: `${DESIGN_TOKENS.spacing.lg}px`,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: DESIGN_TOKENS.spacing[3],
+        padding: DESIGN_TOKENS.spacing[5],
         backgroundColor: DESIGN_TOKENS.colors.surface,
+        borderRadius: DESIGN_TOKENS.radius.xl,
+        border: `1px solid ${DESIGN_TOKENS.colors.borderLight}`,
       }}>
-        <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.md, alignItems: 'center' }}>
-          <Skeleton variant="circular" width={48} />
+        <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[4], alignItems: 'center' }}>
+          <Skeleton variant="circular" width={48} height={48} />
           <div style={{ flex: 1 }}>
-            <Skeleton height={16} width="70%" style={{ marginBottom: DESIGN_TOKENS.spacing.xs }} />
+            <Skeleton height={16} width="70%" style={{ marginBottom: DESIGN_TOKENS.spacing[2] }} />
             <Skeleton height={14} width="40%" />
           </div>
         </div>
-        <Skeleton height={12} style={{ marginTop: DESIGN_TOKENS.spacing.md }} />
+        <Skeleton height={12} />
         <Skeleton height={12} width="80%" />
         <Skeleton height={12} width="60%" />
       </div>
@@ -101,17 +93,31 @@ export const SkeletonCard = ({ count = 1 }: SkeletonCardProps) => (
 );
 
 export const SkeletonList = ({ count = 3 }: { count?: number }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.sm }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[2] }}>
     {Array.from({ length: count }).map((_, i) => (
       <div key={i} style={{
         display: 'flex',
-        gap: DESIGN_TOKENS.spacing.sm,
+        gap: DESIGN_TOKENS.spacing[3],
         alignItems: 'center',
-        padding: DESIGN_TOKENS.spacing.sm,
+        padding: DESIGN_TOKENS.spacing[3],
       }}>
-        <Skeleton variant="circular" width={32} />
+        <Skeleton variant="circular" width={32} height={32} />
         <Skeleton height={14} width="60%" />
       </div>
     ))}
   </div>
 );
+
+const shimmerStyle = `
+  @keyframes sg-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+`;
+
+if (typeof document !== 'undefined' && !document.getElementById('sg-skeleton-styles')) {
+  const style = document.createElement('style');
+  style.id = 'sg-skeleton-styles';
+  style.textContent = shimmerStyle;
+  document.head.appendChild(style);
+}

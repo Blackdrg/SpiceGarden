@@ -9,7 +9,7 @@ export default function LoyaltyIndex() {
         {[
           { label: 'Active Coupons', value: '12', href: '/loyalty/coupons' },
           { label: 'Total Referrals', value: '248', href: '/loyalty/referrals' },
-          { label: 'Subscriptions', value: '89', href: '/loyalty/subscriptions' },
+          { label: 'Subscriptions', value: '89', href: '/loyalty' },
         ].map((card) => (
           <a key={card.label} href={card.href} className={styles.link}>
             <div className={styles.card}>

@@ -16,5 +16,7 @@ export declare const NetworkError: ({ onRetry, message }: NetworkErrorProps) => 
 export interface LoadingStateProps {
     count?: number;
     variant?: 'card' | 'list' | 'text';
+    label?: string;
 }
-export declare const LoadingState: ({ count, variant }: LoadingStateProps) => React.JSX.Element;
+export declare const LoadingState: ({ count, variant, label }: LoadingStateProps) => React.JSX.Element;
+//# sourceMappingURL=LoadingStates.d.ts.map

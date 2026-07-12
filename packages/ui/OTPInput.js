@@ -37,7 +37,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OTPInput = void 0;
 const react_1 = __importStar(require("react"));
 const tokens_1 = require("./tokens");
-const OTPInput = ({ length = 4, value = '', onChange, onComplete, error, disabled = false, }) => {
+const OTPInput = ({ length = 4, value = '', onChange, onComplete, error, disabled = false, label, }) => {
     const [otp, setOtp] = (0, react_1.useState)(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
     const inputRefs = (0, react_1.useRef)(Array(length).fill(null));
     (0, react_1.useEffect)(() => {
@@ -81,25 +81,38 @@ const OTPInput = ({ length = 4, value = '', onChange, onComplete, error, disable
             }
         }
     };
-    return (react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.sm, justifyContent: 'center' } },
-        otp.map((digit, index) => (react_1.default.createElement("input", { key: index, ref: (el) => { inputRefs.current[index] = el; }, type: "text", inputMode: "numeric", maxLength: 1, value: digit, onChange: (e) => handleChange(index, e.target.value), onKeyDown: (e) => handleKeyDown(index, e), onPaste: handlePaste, disabled: disabled, "aria-label": `OTP digit ${index + 1}`, "aria-invalid": !!error, style: {
-                width: 48,
-                height: 48,
+    return (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing[3] } },
+        label && (react_1.default.createElement("label", { style: {
+                ...tokens_1.DESIGN_TOKENS.typography.smallLabel,
+                color: error ? tokens_1.DESIGN_TOKENS.colors.danger : tokens_1.DESIGN_TOKENS.colors.textPrimary,
+            } }, label)),
+        react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing[3], justifyContent: 'center' } }, otp.map((digit, index) => (react_1.default.createElement("input", { key: index, ref: (el) => { inputRefs.current[index] = el; }, type: "text", inputMode: "numeric", maxLength: 1, value: digit, onChange: (e) => handleChange(index, e.target.value), onKeyDown: (e) => handleKeyDown(index, e), onPaste: handlePaste, disabled: disabled, "aria-label": `OTP digit ${index + 1}`, "aria-invalid": !!error, style: {
+                width: 52,
+                height: 56,
                 textAlign: 'center',
-                fontSize: 20,
-                fontWeight: 600,
-                borderRadius: tokens_1.DESIGN_TOKENS.radius.md,
+                fontSize: 22,
+                fontWeight: 700,
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.lg,
                 border: `2px solid ${error ? tokens_1.DESIGN_TOKENS.colors.danger : tokens_1.DESIGN_TOKENS.colors.border}`,
                 backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
                 color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
                 outline: 'none',
-                transition: `border-color ${tokens_1.DESIGN_TOKENS.motion.micro}ms`,
+                transition: `border-color ${tokens_1.DESIGN_TOKENS.motion.micro}ms ${tokens_1.MOTION_EASING.easeOutSoft}, box-shadow ${tokens_1.DESIGN_TOKENS.motion.micro}ms ${tokens_1.MOTION_EASING.easeOutSoft}`,
                 fontFamily: tokens_1.DESIGN_TOKENS.typography.fontFamily,
-            } }))),
+                boxShadow: digit ? `0 0 0 3px ${tokens_1.DESIGN_TOKENS.colors.primary}15` : 'none',
+            }, onFocus: (e) => {
+                e.currentTarget.style.borderColor = error ? tokens_1.DESIGN_TOKENS.colors.danger : tokens_1.DESIGN_TOKENS.colors.primary;
+                e.currentTarget.style.boxShadow = `0 0 0 3px ${tokens_1.DESIGN_TOKENS.colors.primary}22`;
+            }, onBlur: (e) => {
+                e.currentTarget.style.borderColor = error ? tokens_1.DESIGN_TOKENS.colors.danger : tokens_1.DESIGN_TOKENS.colors.border;
+                e.currentTarget.style.boxShadow = digit ? `0 0 0 3px ${tokens_1.DESIGN_TOKENS.colors.primary}15` : 'none';
+            } })))),
         error && (react_1.default.createElement("span", { role: "alert", style: {
-                ...tokens_1.DESIGN_TOKENS.typography.smallLabel,
+                ...tokens_1.DESIGN_TOKENS.typography.caption,
                 color: tokens_1.DESIGN_TOKENS.colors.danger,
-                marginTop: tokens_1.DESIGN_TOKENS.spacing.xs,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
             } }, error))));
 };
 exports.OTPInput = OTPInput;

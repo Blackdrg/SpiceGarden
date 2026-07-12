@@ -4,10 +4,10 @@
   "private": true,
   "main": "index.js",
   "module": "index.js",
-  "types": "index.ts",
+  "types": "index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.ts",
+      "types": "./index.d.ts",
       "default": "./index.js"
     }
   },

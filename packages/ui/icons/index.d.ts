@@ -17,3 +17,4 @@ import { DrinkIcon } from './commerce/DrinkIcon';
 import { DessertIcon } from './commerce/DessertIcon';
 import { HealthyIcon } from './commerce/HealthyIcon';
 export { RatingIcon, NotificationIcon, LocationIcon, SearchIcon, ProfileIcon, HomeIcon, KitchenIcon, Flame, DeliveryIcon, WalletIcon, PaymentIcon, OrderIcon, CartIcon, BurgerIcon, PizzaIcon, DrinkIcon, DessertIcon, HealthyIcon, };
+//# sourceMappingURL=index.d.ts.map

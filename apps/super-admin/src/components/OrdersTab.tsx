@@ -1,70 +1,96 @@
+import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { DESIGN_TOKENS } from '@spicegarden/ui';
+import type { ComponentType } from 'react';
 import type { LiveOrder, Stats } from './types';
+import styles from './OrdersTab.module.css';
+import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { DashboardCard } from './DashboardCard';
 import { KPICard } from './KPICard';
+import {
+  IconPackage,
+  IconCheck,
+  IconClock,
+  IconTruck,
+  IconX,
+  IconActivity,
+} from './icons/SGIcon';
 
 type OrdersChartsProps = { liveOrders: LiveOrder[]; stats: Stats };
 const OrdersCharts = dynamic<OrdersChartsProps>(() => import('./OrdersCharts'), { ssr: false });
 
-export function OrdersTab({ liveOrders, stats, clientNow }: { liveOrders: LiveOrder[]; stats: Stats; clientNow: number }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-      <KPICard label="New" value={String(countStatus(liveOrders, 'received'))} upColor="#f04e31" />
-      <KPICard label="Confirmed" value={String(countStatus(liveOrders, 'confirmed'))} upColor="#ff9800" />
-      <KPICard label="Preparing" value={String(countStatus(liveOrders, 'preparing'))} upColor="#2196f3" />
-      <KPICard label="Ready for Pickup" value={String(countStatus(liveOrders, 'ready'))} upColor="#4caf50" />
-      <KPICard label="Delivered (today)" value={String(Math.max(0, stats.orders - liveOrders.length))} upColor="#9c27b0" />
-      <KPICard label="Cancelled (today)" value="0" upColor="#999" />
+const statusConfig: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
+  received: { label: 'New', className: styles.statusReceived, icon: <IconPackage size={12} /> },
+  confirmed: { label: 'Confirmed', className: styles.statusConfirmed, icon: <IconCheck size={12} /> },
+  preparing: { label: 'Preparing', className: styles.statusPreparing, icon: <IconClock size={12} /> },
+  ready: { label: 'Ready', className: styles.statusReady, icon: <IconCheck size={12} /> },
+  delivered: { label: 'Delivered', className: styles.statusDelivered, icon: <IconCheck size={12} /> },
+  cancelled: { label: 'Cancelled', className: styles.statusDefault, icon: <IconX size={12} /> },
+};
 
-      <div style={{ gridColumn: '1 / -1' }}>
-        <DashboardCard title="Active Orders — live socket stream" sub={`${liveOrders.length} items`}>
-          <div style={{ maxHeight: 500, overflowY: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #eee' }}>
+export function OrdersTab({ liveOrders, stats, clientNow }: { liveOrders: LiveOrder[]; stats: Stats; clientNow: number }) {
+  const statusCounts = useMemo(() => ({
+    received: countStatus(liveOrders, 'received'),
+    confirmed: countStatus(liveOrders, 'confirmed'),
+    preparing: countStatus(liveOrders, 'preparing'),
+    ready: countStatus(liveOrders, 'ready'),
+    delivered: Math.max(0, stats.orders - liveOrders.length),
+    cancelled: 0,
+  }), [liveOrders, stats.orders]);
+
+  return (
+    <div className={styles.ordersGrid}>
+      <KPICard label="New" value={String(statusCounts.received)} upColor="#EF4444" delta="received" icon={<IconPackage size={18} color="#EF4444" />} />
+      <KPICard label="Confirmed" value={String(statusCounts.confirmed)} upColor="#F59E0B" delta="confirmed" icon={<IconCheck size={18} color="#F59E0B" />} />
+      <KPICard label="Preparing" value={String(statusCounts.preparing)} upColor="#3B82F6" delta="in kitchen" icon={<IconClock size={18} color="#3B82F6" />} />
+      <KPICard label="Ready" value={String(statusCounts.ready)} upColor="#10B981" delta="for pickup" icon={<IconTruck size={18} color="#10B981" />} />
+      <KPICard label="Delivered" value={String(statusCounts.delivered)} upColor="#8B5CF6" delta="today" icon={<IconCheck size={18} color="#8B5CF6" />} />
+      <KPICard label="Cancelled" value={String(statusCounts.cancelled)} upColor="#9CA3AF" delta="today" icon={<IconX size={18} color="#9CA3AF" />} />
+
+      <div className={`${styles.fullWidth} ${styles.chartsSubGrid}`}>
+        <DashboardCard title="Active Orders — live socket stream" sub={`${liveOrders.length} items`} iconVariant="primary" titleIcon={<IconActivity size={16} color="#FF5A1F" />}>
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead className={styles.tableHead}>
+                <tr>
                   {['Order #', 'Branch', 'Amount', 'ETA', 'Status', 'Age'].map((header) => (
-                    <th key={header} style={{ textAlign: 'left', padding: '8px 12px', color: '#888', fontWeight: 600, fontSize: 12, textTransform: 'uppercase' }}>{header}</th>
+                    <th key={header} className={styles.tableHeadCell}>{header}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {liveOrders.map((order) => (
-                  <tr key={order.id + order.timestamp} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 'bold' }}>#{order.id}</td>
-                    <td style={{ padding: '10px 12px', color: '#666' }}>{order.branch}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>₹{order.amount}</td>
-                    <td style={{ padding: '10px 12px', color: '#888' }}>{order.eta}m</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{
-                        padding: '2px 10px', borderRadius: 12, fontSize: 12, fontWeight: 'bold',
-                        background: order.status === 'delivered' ? '#e8f5e8' :
-                          order.status === 'ready' ? '#e8f5e8' :
-                            order.status === 'preparing' ? '#fff3e0' : '#f5f5f5',
-                        color: order.status === 'received' ? '#f04e31' : '#555',
-                      }}>{order.status.toUpperCase()}</span>
-                    </td>
-                    <td style={{ padding: '10px 12px', color: '#999', fontSize: 12 }}>
-                      {clientNow && order.timestamp ? `${Math.floor((clientNow - order.timestamp) / 60000)}m` : ''}
-                    </td>
-                  </tr>
-                ))}
+                {liveOrders.map((order) => {
+                  const config = statusConfig[order.status] || statusConfig.received;
+                  return (
+                    <tr key={order.id + order.timestamp} className={styles.tableRow}>
+                      <td className={styles.cellBold}>#{order.id}</td>
+                      <td className={styles.cellMuted}>{order.branch}</td>
+                      <td className={styles.cellAmount}>₹{order.amount}</td>
+                      <td className={styles.cellEta}>{order.eta}m</td>
+                      <td className={styles.cell}>
+                        <span className={`${styles.statusBadge} ${config.className}`}>
+                          {config.label}
+                        </span>
+                      </td>
+                      <td className={styles.cellAge}>
+                        {clientNow && order.timestamp ? `${Math.floor((clientNow - order.timestamp) / 60000)}m` : ''}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             {liveOrders.length === 0 && (
-              <div style={{ textAlign: 'center', padding: 40, color: '#aaa' }}>No orders yet — new ones arrive via socket</div>
+              <div className={styles.emptyState}>No orders yet — new ones arrive via socket</div>
             )}
           </div>
         </DashboardCard>
-      </div>
 
-      <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         <OrdersCharts liveOrders={liveOrders} stats={stats} />
       </div>
     </div>
   );
 }
 
-function countStatus(orders: LiveOrder[], status: LiveOrder['status']) {
+function countStatus(orders: LiveOrder[], status: string) {
   return orders.filter((order) => order.status === status).length;
 }

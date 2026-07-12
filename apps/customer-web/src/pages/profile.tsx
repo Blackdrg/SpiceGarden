@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Card } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { api } from '@spicegarden/shared/api';
 import { useMfaManagement } from '../hooks/useMfaManagement';
+import { ShieldCheckIcon, ShieldOffIcon, QrCodeIcon } from 'lucide-react';
+import styles from './profile.module.css';
 
 interface UserProfile {
   id: string;
@@ -57,7 +59,7 @@ const ProfilePage: React.FC = () => {
     const success = await enableMfa(mfaCode);
     if (success) {
       setMfaCode('');
-      fetchUserProfile(); // Refetch user to update JWT and profile status
+      fetchUserProfile();
     }
   };
 
@@ -65,90 +67,150 @@ const ProfilePage: React.FC = () => {
     const success = await disableMfa(mfaCode);
     if (success) {
       setMfaCode('');
-      fetchUserProfile(); // Refetch user to update JWT and profile status
+      fetchUserProfile();
     }
   };
 
   if (loading) {
     return (
-      <div style={styles.container}>
-        <h1>My Profile</h1>
-        <p>Loading...</p>
+      <div className={styles.pageContainer}>
+        <div className={styles.pageHeader}>
+          <h2 className={styles.pageTitle}>My Profile</h2>
+        </div>
+        <Card variant="elevated">
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <div style={{ width: 40, height: 40, border: '3px solid var(--color-border, #E5E7EB)', borderTopColor: 'var(--color-primary, #FF5A1F)', borderRadius: '50%', animation: 'sg-spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+            <p style={{ color: 'var(--color-textSecondary, #6B7280)' }}>Loading profile...</p>
+          </div>
+        </Card>
       </div>
     );
   }
 
   if (fetchError) {
     return (
-      <div style={styles.container}>
-        <h1>My Profile</h1>
-        <p style={styles.errorText}>{fetchError}</p>
+      <div className={styles.pageContainer}>
+        <div className={styles.pageHeader}>
+          <h2 className={styles.pageTitle}>My Profile</h2>
+        </div>
+        <Card variant="elevated">
+          <p style={{ color: 'var(--color-danger, #EF4444)', textAlign: 'center' }}>{fetchError}</p>
+          <Button label="Retry" onClick={fetchUserProfile} variant="secondary" />
+        </Card>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div style={styles.container}>
-        <h1>My Profile</h1>
-        <p>Could not load user data.</p>
+      <div className={styles.pageContainer}>
+        <div className={styles.pageHeader}>
+          <h2 className={styles.pageTitle}>My Profile</h2>
+        </div>
+        <Card variant="elevated">
+          <p style={{ textAlign: 'center', color: 'var(--color-textSecondary, #6B7280)' }}>Could not load user data.</p>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <h1>Welcome, {user.fullName}</h1>
-      <p>Email: {user.email}</p>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>My Profile</h2>
+        <p className={styles.pageSubtitle}>Manage your account settings</p>
+      </div>
 
-      <Card title="Security Settings" style={styles.card}>
-        {mfaError && <p style={styles.errorText}>{mfaError}</p>}
-        {mfaMessage && <p style={styles.messageText}>{mfaMessage}</p>}
+      <Card variant="elevated">
+        <div className={styles.profileHeader}>
+          <div className={styles.avatar}>
+            {user.fullName?.charAt(0)?.toUpperCase() || 'U'}
+          </div>
+          <div>
+            <h3 className={styles.profileName}>Welcome, {user.fullName}</h3>
+            <p className={styles.profileEmail}>{user.email}</p>
+          </div>
+        </div>
+      </Card>
+
+      <div className={styles.sectionDivider} />
+
+      <div className={styles.pageHeader}>
+        <h3 className={styles.sectionTitle}>
+          <ShieldCheckIcon size={20} color={DESIGN_TOKENS.colors.primary} />
+          Security Settings
+        </h3>
+      </div>
+
+      <Card variant="elevated">
+        {mfaError && <div className={styles.errorText}>{mfaError}</div>}
+        {mfaMessage && <div className={styles.messageText}>{mfaMessage}</div>}
+
+        <div className={`${styles.mfaStatus} ${isMfaEnabled ? styles.mfaEnabled : styles.mfaDisabled}`}>
+          <span className={`${styles.mfaIndicator} ${isMfaEnabled ? styles.mfaIndicatorEnabled : styles.mfaIndicatorDisabled}`} />
+          {isMfaEnabled ? 'Two-Factor Authentication is Enabled' : 'Two-Factor Authentication is Disabled'}
+        </div>
 
         {isMfaEnabled ? (
           <div>
-            <p style={styles.mfaStatusText}>
-              <span style={styles.mfaEnabledIndicator}>●</span>
-              Two-Factor Authentication is <strong>Enabled</strong>.
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-textSecondary, #6B7280)', marginBottom: '16px' }}>
+              Enter the 6-digit code from your authenticator app to disable 2FA.
             </p>
-            <div style={styles.formGroup}>
-              <label htmlFor="mfa-disable-code" style={styles.label}>Enter code to disable</label>
+            <div className={styles.formGroup}>
+              <label htmlFor="mfa-disable-code" className={styles.formLabel}>Verification Code</label>
               <input
                 id="mfa-disable-code"
                 type="text"
+                placeholder="Enter 6-digit code"
                 value={mfaCode}
                 onChange={(e) => setMfaCode(e.target.value)}
-                placeholder="6-digit code"
                 maxLength={6}
-                style={styles.codeInput}
+                className={styles.codeInput}
                 disabled={isMfaLoading}
               />
             </div>
-            <Button label={isMfaLoading ? 'Disabling...' : 'Disable 2FA'} onClick={handleDisable} disabled={isMfaLoading} variant="destructive" />
+            <Button
+              label={isMfaLoading ? 'Disabling...' : 'Disable 2FA'}
+              onClick={handleDisable}
+              disabled={isMfaLoading}
+              variant="destructive"
+              fullWidth
+            />
           </div>
         ) : (
           <div>
-            <p style={styles.mfaStatusText}>
-              <span style={styles.mfaDisabledIndicator}>●</span>
-              Two-Factor Authentication is <strong>Disabled</strong>.
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-textSecondary, #6B7280)', marginBottom: '16px' }}>
+              Add an extra layer of security to your account with two-factor authentication.
             </p>
             {!qrCodeDataUrl ? (
-              <Button label="Setup MFA" onClick={generateQrCode} disabled={isMfaLoading} />
+              <Button label="Setup MFA" onClick={generateQrCode} disabled={isMfaLoading} fullWidth />
             ) : (
-              <div style={styles.qrContainer}>
-                <img src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} />
-                <p>Enter the 6-digit code from your authenticator app:</p>
+              <div className={styles.qrContainer}>
+                <div className={styles.qrHeader}>
+                  <QrCodeIcon size={24} color={DESIGN_TOKENS.colors.primary} />
+                  <span style={{ fontWeight: 600 }}>Scan QR Code</span>
+                </div>
+                <img src={qrCodeDataUrl} alt="MFA QR Code" className={styles.qrCode} />
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-textSecondary, #6B7280)', textAlign: 'center', marginBottom: '16px' }}>
+                  Enter the 6-digit code from your authenticator app:
+                </p>
                 <input
                   id="mfa-enable-code"
                   type="text"
+                  placeholder="000000"
                   value={mfaCode}
                   onChange={(e) => setMfaCode(e.target.value)}
                   maxLength={6}
-                  style={styles.codeInput}
+                  className={styles.codeInput}
                   disabled={isMfaLoading}
                   aria-label="Enter the 6-digit code from your authenticator app"
                 />
-                <Button label={isMfaLoading ? 'Enabling...' : 'Enable MFA'} onClick={handleEnable} disabled={isMfaLoading} />
+                <Button
+                  label={isMfaLoading ? 'Enabling...' : 'Enable MFA'}
+                  onClick={handleEnable}
+                  disabled={isMfaLoading}
+                  fullWidth
+                />
               </div>
             )}
           </div>
@@ -156,38 +218,6 @@ const ProfilePage: React.FC = () => {
       </Card>
     </div>
   );
-};
-
-const styles = {
-  container: { padding: '20px', fontFamily: 'Arial, sans-serif' },
-  card: { marginTop: '20px' },
-  qrContainer: { display: 'flex', flexDirection: 'column' as 'column', alignItems: 'center', marginTop: '20px', border: '1px solid #ccc', padding: '20px', borderRadius: '8px', backgroundColor: '#f9f9f9' },
-  qrCode: { width: '200px', height: '200px', marginBottom: '20px', border: '1px solid #eee' },
-  formGroup: { marginBottom: '15px' },
-  label: { display: 'block', marginBottom: '5px', fontWeight: 'bold' },
-  codeInput: {
-    padding: '10px',
-    margin: '10px 0',
-    fontSize: '18px',
-    textAlign: 'center' as 'center',
-    width: '150px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-  },
-  errorText: { color: 'red' },
-  messageText: { color: 'green' },
-  mfaStatusText: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '16px',
-  },
-  mfaEnabledIndicator: {
-    color: 'green',
-  },
-  mfaDisabledIndicator: {
-    color: 'red',
-  },
 };
 
 export default ProfilePage;

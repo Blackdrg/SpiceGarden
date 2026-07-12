@@ -237,7 +237,7 @@ export default function KitchenDashboard() {
   const counts = useMemo(() => Object.fromEntries(statuses.map((s) => [s, state.orders.filter((order) => order.status === s).length])) as Record<OrderStatus, number>, [state.orders]);
 
   return (
-    <div className={styles.rootContainer}>
+    <div className={`${styles.kdsRoot} ${styles.rootContainer}`}>
       <DashboardHeader
         orderCount={state.orders.length}
         batchMode={state.batchMode}

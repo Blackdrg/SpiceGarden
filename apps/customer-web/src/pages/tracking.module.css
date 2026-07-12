@@ -1,162 +1,192 @@
-/* tracking.module.css */
-/* Modern, glassmorphism-inspired styles for the Tracking page */
+/* tracking.module.css - Customer Web Tracking Page */
 
-/* Container with subtle glass effect */
-.container {
-  padding: var(--spacing-md, 1rem);
+.pageContainer {
   min-height: 100vh;
-  background: rgba(255, 255, 255, 0.7);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: var(--spacing-5);
+}
+
+.pageTitle {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+}
+
+.statusTimeline {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.5rem);
-}
-
-.title {
-  margin-bottom: var(--spacing-lg, 1.5rem);
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--color-primary, #ff6f61);
-}
-
-.loadingContainer {
-  padding: var(--spacing-md, 1rem);
-  min-height: 100vh;
-  background: rgba(250, 250, 250, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.statusContainer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs, 0.5rem);
-  margin-bottom: var(--spacing-xl, 2rem);
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
 }
 
 .statusStep {
   display: flex;
   align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) 0;
 }
 
-.iconDone {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--color-success, #4caf50);
+.statusIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.iconPending {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
+.statusIconDone {
+  background: var(--color-successLight, #D1FAE5);
+  color: var(--color-success, #10B981);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.statusIconPending {
+  background: var(--color-elevated, #F3F4F6);
+  color: var(--color-textTertiary, #9CA3AF);
 }
 
 .stepLabel {
-  margin-left: var(--spacing-sm, 0.75rem);
+  font-size: 0.875rem;
   font-weight: 500;
+  color: var(--color-textSecondary, #6B7280);
 }
 
-.liveTrackingCard {
-  background: rgba(255, 255, 255, 0.85);
--webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: var(--spacing-lg, 1.5rem);
-  margin-top: var(--spacing-lg, 1.5rem);
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.driverInfo {
-  text-align: center;
-  margin-bottom: var(--spacing-lg, 1.5rem);
-}
-
-.vehicleIcon {
-  font-size: 64px;
-}
-
-.driverName {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 8px 0;
-}
-
-.eta {
-  color: var(--color-primary, #ff6f61);
+.stepLabelDone {
+  color: var(--color-textPrimary, #111827);
   font-weight: 600;
 }
 
-.locationInfo {
+.trackingCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
+  padding: var(--spacing-5);
+  margin-bottom: var(--spacing-4);
+  animation: sg-fade-in 0.4s ease-out;
+}
+
+.driverSection {
+  text-align: center;
+  padding: var(--spacing-4) 0;
+}
+
+.driverIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--color-primaryLight, #FFF0EB);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-3);
+  font-size: 2rem;
+}
+
+.driverName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-textPrimary, #111827);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.driverEta {
+  color: var(--color-primary, #FF5A1F);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.locationRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--spacing-sm, 0.75rem);
+  align-items: center;
+  padding: var(--spacing-2) 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
 }
 
-.buttonGroup {
-  margin-top: var(--spacing-md, 1rem);
+.actionButtons {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 0.75rem);
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
 }
 
-.fullWidthButton {
-  width: 100%;
-}
-
-.secondaryButton {
-  width: 100%;
-  margin-top: var(--spacing-sm, 0.75rem);
-}
-
-.orderDetailsCard {
-  background: rgba(255, 255, 255, 0.85);
--webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: var(--spacing-lg, 1.5rem);
-  margin-top: var(--spacing-lg, 1.5rem);
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.detailsContent {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm, 0.75rem);
+.detailsCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
+  padding: var(--spacing-5);
+  margin-bottom: var(--spacing-4);
+  animation: sg-fade-in 0.4s ease-out 0.1s both;
 }
 
 .itemRow {
   display: flex;
   justify-content: space-between;
-  padding: var(--spacing-sm, 0.75rem);
-  border-bottom: 1px solid #eee;
+  align-items: center;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
+  font-size: 0.9375rem;
+}
+
+.itemRow:last-of-type {
+  border-bottom: none;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
-  font-weight: 600;
-  margin-top: var(--spacing-sm, 0.75rem);
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-textPrimary, #111827);
+  padding-top: var(--spacing-3);
+  border-top: 2px solid var(--color-border, #E5E7EB);
+  margin-top: var(--spacing-2);
 }
 
-.contactRestaurantDiv {
-  margin-top: var(--spacing-lg, 1.5rem);
+.contactSection {
   text-align: center;
+  margin-top: var(--spacing-5);
 }
 
-/* Simple fade‑in animation for cards */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.9375rem;
+}
+
+@keyframes sg-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { Plus, Trash2, Star, AlertCircle } from 'lucide-react';
+import { PlusIcon, Trash2Icon, StarIcon, MapPinIcon, AlertCircleIcon } from 'lucide-react';
 import { API_URL } from '@spicegarden/shared/constants';
 import { useAddresses } from '../hooks/useAddresses';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -95,51 +95,73 @@ const AddressesPage = () => {
 
   return (
     <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Saved Addresses</h2>
+        <p className={styles.pageSubtitle}>Manage your delivery addresses</p>
+        <button
+          type="button"
+          onClick={() => setShowAddForm(true)}
+          aria-label="Add new address"
+          className={styles.addButton}
+        >
+          <PlusIcon size={22} />
+        </button>
+      </div>
+
       {queryErrorText && (
-        <div className={styles.errorBanner}>
-          <AlertCircle size={16} />
+        <div className={`${styles.errorBanner} ${styles.errorBannerActions}`}>
+          <AlertCircleIcon size={16} />
           <span>{queryErrorText}</span>
         </div>
       )}
       {actionError && (
         <div className={`${styles.errorBanner} ${styles.errorBannerActions}`}>
-          <AlertCircle size={16} />
+          <AlertCircleIcon size={16} />
           <span>{actionError}</span>
         </div>
       )}
 
-      <div className={styles.pageHeader}>
-        <h2 className={styles.pageTitle}>Saved Addresses</h2>
-        <button type="button" onClick={() => setShowAddForm(true)} aria-label="Add new address">
-          <Plus size={24} />
-        </button>
-      </div>
-
       {addresses.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p className={styles.emptyText}>No addresses saved yet. Add one to get started!</p>
-        </div>
+        <Card variant="elevated">
+          <div className={styles.emptyState}>
+            <MapPinIcon size={40} color={DESIGN_TOKENS.colors.textTertiary} style={{ marginBottom: 12 }} />
+            <p className={styles.emptyText}>No addresses saved yet. Add one to get started!</p>
+          </div>
+        </Card>
       ) : (
         addresses.map(addr => (
-          <Card key={addr.id} title={addr.label}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <p style={{ margin: 0 }}>{addr.addressLine}</p>
-                <p style={{ margin: '4px 0', color: '#666' }}>{addr.city}, {addr.state} {addr.postalCode}</p>
+          <Card key={addr.id} title={addr.label} variant="interactive">
+            <div className={styles.addressHeader}>
+              <div className={styles.addressInfo}>
+                <div className={styles.addressLabel}>{addr.label}</div>
+                <div className={styles.addressText}>{addr.addressLine}</div>
+                <div className={styles.addressText}>{addr.city}, {addr.state} {addr.postalCode}</div>
                 {addr.isDefault && (
-                  <span style={{ color: DESIGN_TOKENS.colors.primary, fontSize: '12px' }}>
-                    <Star size={12} fill={DESIGN_TOKENS.colors.primary} /> Default
+                  <span className={styles.defaultBadge}>
+                    <StarIcon size={12} fill={DESIGN_TOKENS.colors.primary} color={DESIGN_TOKENS.colors.primary} /> Default
                   </span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.xs }}>
+              <div className={styles.addressActions}>
                 {!addr.isDefault && (
-                  <button type="button" onClick={() => handleSetDefault(addr.id)} aria-label="Set as default">
-                    <Star size={16} />
+                  <button
+                    type="button"
+                    onClick={() => handleSetDefault(addr.id)}
+                    aria-label="Set as default"
+                    className={styles.actionButton}
+                    title="Set as default"
+                  >
+                    <StarIcon size={16} />
                   </button>
                 )}
-                <button type="button" onClick={() => handleDelete(addr.id)} aria-label="Delete address" className={styles.deleteButton}>
-                  <Trash2 size={16} />
+                <button
+                  type="button"
+                  onClick={() => handleDelete(addr.id)}
+                  aria-label="Delete address"
+                  className={`${styles.actionButton} ${styles.actionButtonDanger}`}
+                  title="Delete address"
+                >
+                  <Trash2Icon size={16} />
                 </button>
               </div>
             </div>
@@ -149,64 +171,66 @@ const AddressesPage = () => {
 
       {showAddForm && (
         <div className={styles.modalOverlay}>
-          <Card title="Add New Address">
-            <div className={styles.form}>
-              <div className={styles.fieldGroup}>
-                <label htmlFor="addr-label" className={styles.label}>Label (e.g., Home, Work)</label>
-                <input
-                  id="addr-label"
-                  className={styles.input}
-                  placeholder="Label (e.g., Home, Work)"
-                  value={newAddress.label}
-                  onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
-                />
+          <div className={styles.modalCard}>
+            <Card title="Add New Address" variant="elevated">
+              <div className={styles.form}>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="addr-label" className={styles.formLabel}>Label (e.g., Home, Work)</label>
+                  <input
+                    id="addr-label"
+                    className={styles.formInput}
+                    placeholder="Label (e.g., Home, Work)"
+                    value={newAddress.label}
+                    onChange={(e) => setNewAddress({ ...newAddress, label: e.target.value })}
+                  />
+                </div>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="addr-address" className={styles.formLabel}>Address Line</label>
+                  <input
+                    id="addr-address"
+                    className={styles.formInput}
+                    placeholder="Address Line"
+                    value={newAddress.addressLine}
+                    onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
+                  />
+                </div>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="addr-city" className={styles.formLabel}>City</label>
+                  <input
+                    id="addr-city"
+                    className={styles.formInput}
+                    placeholder="City"
+                    value={newAddress.city}
+                    onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                  />
+                </div>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="addr-state" className={styles.formLabel}>State</label>
+                  <input
+                    id="addr-state"
+                    className={styles.formInput}
+                    placeholder="State"
+                    value={newAddress.state}
+                    onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+                  />
+                </div>
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="addr-postal" className={styles.formLabel}>Postal Code</label>
+                  <input
+                    id="addr-postal"
+                    className={styles.formInput}
+                    placeholder="Postal Code"
+                    value={newAddress.postalCode}
+                    onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
+                  />
+                </div>
+                <div className={styles.formActions}>
+                  <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
+                  <Button label="Save" onClick={handleAddAddress} />
+                </div>
               </div>
-              <div className={styles.fieldGroup}>
-                <label htmlFor="addr-address" className={styles.label}>Address Line</label>
-                <input
-                  id="addr-address"
-                  className={styles.input}
-                  placeholder="Address Line"
-                  value={newAddress.addressLine}
-                  onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                />
-              </div>
-              <div className={styles.fieldGroup}>
-                <label htmlFor="addr-city" className={styles.label}>City</label>
-                <input
-                  id="addr-city"
-                  className={styles.input}
-                  placeholder="City"
-                  value={newAddress.city}
-                  onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                />
-              </div>
-              <div className={styles.fieldGroup}>
-                <label htmlFor="addr-state" className={styles.label}>State</label>
-                <input
-                  id="addr-state"
-                  className={styles.input}
-                  placeholder="State"
-                  value={newAddress.state}
-                  onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
-                />
-              </div>
-              <div className={styles.fieldGroup}>
-                <label htmlFor="addr-postal" className={styles.label}>Postal Code</label>
-                <input
-                  id="addr-postal"
-                  className={styles.input}
-                  placeholder="Postal Code"
-                  value={newAddress.postalCode}
-                  onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
-                />
-              </div>
-              <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => setShowAddForm(false)} variant="secondary" />
-                <Button label="Save" onClick={handleAddAddress} />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       )}
     </div>

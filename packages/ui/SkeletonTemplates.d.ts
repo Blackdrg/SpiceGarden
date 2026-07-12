@@ -20,3 +20,4 @@ interface TimelineTrackingSkeletonProps {
 }
 export declare const TimelineTrackingSkeleton: ({ stages }: TimelineTrackingSkeletonProps) => React.JSX.Element;
 export {};
+//# sourceMappingURL=SkeletonTemplates.d.ts.map

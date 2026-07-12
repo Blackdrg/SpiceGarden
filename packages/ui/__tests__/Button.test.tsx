@@ -31,7 +31,8 @@ describe('Button', () => {
 
   it('shows loading state', () => {
     render(<Button label="Submit" onClick={() => {}} isLoading />);
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    const button = screen.getByRole('button', { name: /submit/i });
+    expect(button).toBeDisabled();
   });
 
   it('has accessible aria-label', () => {

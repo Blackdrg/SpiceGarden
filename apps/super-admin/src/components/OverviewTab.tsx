@@ -2,10 +2,24 @@ import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
 import type { BranchStatus, DisputeTicket, HeatmapPoint, LiveOrder, Stats } from './types';
 import type { RevenueDatum } from './RevenueChart';
+import styles from './OverviewTab.module.css';
 import { DashboardCard } from './DashboardCard';
 import { KPICard } from './KPICard';
+import {
+  IconDollarSign,
+  IconShoppingBag,
+  IconUsers,
+  IconReceipt,
+  IconAlertCircle,
+  IconBan,
+  IconTrendingUp,
+  IconMapPin,
+  IconActivity,
+  IconAlertTriangle,
+} from './icons/SGIcon';
 
 const RevenueChart = dynamic<RevenueChartProps>(() => import('./RevenueChart'), { ssr: false });
+import revenueChartStyles from './RevenueChart.module.css';
 
 type RevenueChartProps = { data: RevenueDatum[] };
 
@@ -32,85 +46,82 @@ export function OverviewTab({
 
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, marginBottom: 24 }}>
-        <KPICard label="Revenue Today" value={`₹${stats.revenue.toLocaleString()}`} delta="+12%" upColor="#4caf50" />
-        <KPICard label="Total Orders" value={String(stats.orders)} delta="Today" upColor="#2196f3" />
-        <KPICard label="Drivers Online" value={String(stats.driversOnline)} delta="92% util" upColor="#4caf50" />
-        <KPICard label="Refunds" value={String(stats.refunds)} delta="Processed" upColor="#ff9800" />
-        <KPICard label="Open Disputes" value={String(openTickets.length)} delta="Action req" upColor="#ff4444" />
-        <KPICard label="Fraud Blocks" value={String(stats.fraudAlerts)} delta="Today" upColor="#9c27b0" />
+      <div className={styles.kpiGrid}>
+        <KPICard label="Revenue Today" value={`₹${stats.revenue.toLocaleString()}`} upColor="#10B981" delta="+12%" icon={<IconDollarSign size={20} color="#10B981" />} />
+        <KPICard label="Total Orders" value={String(stats.orders)} upColor="#3B82F6" delta="Today" icon={<IconShoppingBag size={20} color="#3B82F6" />} />
+        <KPICard label="Drivers Online" value={String(stats.driversOnline)} upColor="#10B981" delta="92% util" icon={<IconUsers size={20} color="#10B981" />} />
+        <KPICard label="Refunds" value={String(stats.refunds)} upColor="#F59E0B" delta="Processed" icon={<IconReceipt size={20} color="#F59E0B" />} />
+        <KPICard label="Open Disputes" value={String(openTickets.length)} upColor="#EF4444" delta="Action req" icon={<IconAlertCircle size={20} color="#EF4444" />} />
+        <KPICard label="Fraud Blocks" value={String(stats.fraudAlerts)} upColor="#8B5CF6" delta="Today" icon={<IconBan size={20} color="#8B5CF6" />} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
-        <DashboardCard title="Revenue — 24h Trend">
-          <div style={{ height: 280 }}>
+      <div className={styles.chartsRow}>
+        <DashboardCard title="Revenue — 24h Trend" sub="Hourly revenue and order volume" iconVariant="primary" titleIcon={<IconTrendingUp size={16} color="#FF5A1F" />}>
+          <div className={revenueChartStyles.chartContainer}>
             <RevenueChart data={revenueData as RevenueDatum[]} />
           </div>
         </DashboardCard>
 
-        <DashboardCard title="Live Order Feed">
+        <DashboardCard title="Live Order Feed" sub={`${liveOrders.length} active orders`} iconVariant="info" titleIcon={<IconActivity size={16} color="#3B82F6" />}>
           <div style={{ maxHeight: 280, overflowY: 'auto' }}>
-            {liveOrders.length === 0 && <p style={{ color: '#aaa', textAlign: 'center', padding: 20 }}>Waiting for orders…</p>}
+            {liveOrders.length === 0 && <p className={styles.emptyState}>Waiting for orders…</p>}
             {liveOrders.map((order) => (
-              <div key={order.id + order.timestamp} style={{ padding: '10px 0', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 14 }}>#{order.id}</div>
-                  <div style={{ fontSize: 12, color: '#888' }}>{order.branch} · ETA {order.eta}m</div>
+              <div key={order.id + order.timestamp} className={styles.liveOrderItem}>
+                <div className={styles.liveOrderLeft}>
+                  <span className={styles.liveOrderId}>#{order.id}</span>
+                  <span className={styles.liveOrderMeta}>{order.branch} · ETA {order.eta}m</span>
                 </div>
-                <span style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 14 }}>₹{order.amount}</span>
+                <span className={styles.liveOrderAmount}>₹{order.amount}</span>
               </div>
             ))}
           </div>
         </DashboardCard>
       </div>
 
-      <DashboardCard title="🚨 System Alerts">
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          {nonOperationalBranches.map((branch) => (
-            <div key={branch.name} style={{ flex: 1, padding: '12px 16px', background: '#fff5f5', borderLeft: `4px solid ${branchColor(branch.status)}`, borderRadius: 6, minWidth: 220 }}>
-              <strong>{branch.name} Kitchen</strong> — {branch.status === 'delayed' ? `Avg prep ${branch.avgPrepMins}m (target 18m)` : 'CRITICAL — all drivers exhausted'}
-            </div>
-          ))}
-          {normalBranches.length > 0 && (
-            <div style={{ flex: 1, padding: '12px 16px', background: '#f5fff5', borderLeft: '4px solid #4caf50', borderRadius: 6, minWidth: 220 }}>
-              All other {normalBranches.length} branches are within normal SLA targets.
-            </div>
-          )}
-        </div>
-      </DashboardCard>
+      <div className={styles.alertsCard}>
+        <DashboardCard title="System Alerts" iconVariant="warning" titleIcon={<IconAlertTriangle size={16} color="#F59E0B" />}>
+          <div className={styles.alertsRow}>
+            {nonOperationalBranches.map((branch) => (
+              <div key={branch.name} className={`${styles.alertItem} ${branch.status === 'critical' ? styles.alertDanger : styles.alertWarning}`}>
+                <div className={styles.alertTitle}>{branch.name} Kitchen</div>
+                <div className={styles.alertBody}>
+                  {branch.status === 'delayed' ? `Avg prep ${branch.avgPrepMins}m (target 18m)` : 'CRITICAL — all drivers exhausted'}
+                </div>
+              </div>
+            ))}
+            {normalBranches.length > 0 && (
+              <div className={`${styles.alertItem} ${styles.alertSuccess}`}>
+                <div className={styles.alertTitle}>All Systems Normal</div>
+                <div className={styles.alertBody}>All other {normalBranches.length} branches are within normal SLA targets.</div>
+              </div>
+            )}
+          </div>
+        </DashboardCard>
+      </div>
 
-      <div style={{ marginTop: 24 }}>
-        <DashboardCard title="📍 Delivery Heatmap" sub={`SpiceGarden service area — ${heatmapData.length > 0 ? `${heatmapData.length} data points` : 'computing…'}`}>
+      <div className={styles.heatmapRow}>
+        <DashboardCard title="Delivery Heatmap" sub={`SpiceGarden service area — ${heatmapData.length > 0 ? `${heatmapData.length} data points` : 'computing…'}`} iconVariant="primary" titleIcon={<IconMapPin size={16} color="#FF5A1F" />}>
           {heatmapData.length > 0 ? (
             <div>
               <DeliveryHeatmap data={heatmapData} />
-              <div style={{ display: 'flex', gap: 20, marginTop: 16, fontSize: 13, color: '#666' }}>
+              <div className={styles.heatmapLegend}>
                 {Array.from(new Set(heatmapData.map((point) => point.label))).map((label) => {
                   const points = heatmapData.filter((point) => point.label === label);
                   const avg = points.reduce((sum, point) => sum + point.intensity, 0) / points.length;
                   return (
-                    <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 14, height: 14, borderRadius: 3, background: `rgba(220,70,30,${avg})` }} />
-                      {label} <strong style={{ color: '#f04e31' }}>{Math.round(avg * 100)}%</strong>
+                    <div key={label} className={styles.heatmapLegendItem}>
+                      <div className={styles.heatmapLegendColor} style={{ background: `rgba(220,70,30,${avg})` }} />
+                      {label} <strong className={styles.heatmapLegendValue}>{Math.round(avg * 100)}%</strong>
                     </div>
                   );
                 })}
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: 60, color: '#aaa' }}>Initializing heatmap…</div>
+            <div className={styles.emptyState}>Initializing heatmap…</div>
           )}
         </DashboardCard>
       </div>
     </>
   );
-}
-
-function branchColor(status: BranchStatus['status']) {
-  const colors: Record<BranchStatus['status'], string> = {
-    operational: '#4caf50',
-    delayed: '#ff4444',
-    critical: '#9c27b0',
-  };
-  return colors[status];
 }

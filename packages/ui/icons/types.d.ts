@@ -4,3 +4,4 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref'> {
     color?: string;
     strokeWidth?: number;
 }
+//# sourceMappingURL=types.d.ts.map

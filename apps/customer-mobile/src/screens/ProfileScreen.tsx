@@ -6,6 +6,7 @@ const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { STRINGS } from '../constants/strings';
 import Toast from 'react-native-root-toast';
 import { safeParse } from '../utils/safe-parse';
@@ -23,12 +24,12 @@ type ProfileScreen =
   | 'Logout';
 
 const MENU_ITEMS = [
-  { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
-  { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-  { id: 'addresses', label: 'Addresses', icon: 'Location', screen: 'Addresses' },
-  { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
-  { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
-  { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
+  { id: 'wallet', label: 'Wallet', icon: 'wallet-outline', screen: 'Wallet' },
+  { id: 'orders', label: 'My Orders', icon: 'receipt-outline', screen: 'History' },
+  { id: 'addresses', label: 'Addresses', icon: 'location-outline', screen: 'Addresses' },
+  { id: 'payment', label: 'Payment Methods', icon: 'card-outline', screen: 'Payment' },
+  { id: 'notifications', label: 'Notifications', icon: 'notifications-outline', screen: 'Notifications' },
+  { id: 'support', label: 'Help & Support', icon: 'help-circle-outline', screen: 'Support' },
 ] as const;
 
 const ProfileScreen = () => {
@@ -253,10 +254,13 @@ const ProfileScreen = () => {
                 <View style={styles.profileImageContainer}>
                   <Text style={styles.profileImage}>P</Text>
                 </View>
-                <View style={styles.profileInfo}>
+                  <View style={styles.profileInfo}>
                   <Text style={styles.profileName}>{userData.fullName || 'User Name'}</Text>
                   <Text style={styles.profileEmail}>{userData.email || 'email@example.com'}</Text>
-                  <Text style={styles.profilePhone}>📞 {userData.phone || '+91 XXXXX XXXXX'}</Text>
+                  <View style={styles.profilePhoneContainer}>
+                    <Ionicons name="call-outline" size={14} color={DESIGN_TOKENS.colors.textSecondary} />
+                    <Text style={styles.profilePhone}>{userData.phone || '+91 XXXXX XXXXX'}</Text>
+                  </View>
                 </View>
               </View>
 
@@ -285,9 +289,13 @@ const ProfileScreen = () => {
                     accessibilityLabel={`Go to ${item.label}`}
                     accessibilityRole="link"
                   >
-                    <Text style={styles.menuItemIcon}>{item.icon}</Text>
+                    <View style={styles.menuItemIconContainer}>
+                      <Ionicons name={item.icon as any} size={22} color={DESIGN_TOKENS.colors.primary} />
+                    </View>
                     <Text style={styles.menuItemText}>{item.label}</Text>
-                    <Text style={styles.menuItemArrow}>›</Text>
+                    <View style={styles.menuItemArrowContainer}>
+                      <Text style={styles.menuItemArrow}>›</Text>
+                    </View>
                   </Pressable>
                 ))}
               </View>
@@ -317,19 +325,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: DESIGN_TOKENS.colors.background,
   },
   loadingSpinner: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 3,
     borderColor: DESIGN_TOKENS.colors.primary,
     borderTopColor: 'transparent',
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: 14,
     color: DESIGN_TOKENS.colors.textSecondary,
-    marginTop: 16,
+    marginTop: DESIGN_TOKENS.spacing.md,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   header: {
@@ -337,26 +346,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
+    paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   headerContent: {
     flex: 1,
   },
   headerText: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   editButton: {
-    padding: DESIGN_TOKENS.spacing.xs,
+    padding: DESIGN_TOKENS.spacing.sm,
   },
   editButtonText: {
     fontSize: 14,
     color: DESIGN_TOKENS.colors.primary,
-    fontWeight: '500',
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   content: {
@@ -365,35 +376,43 @@ const styles = StyleSheet.create({
   profileHeader: {
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.xl,
+    paddingTop: DESIGN_TOKENS.spacing.lg,
   },
   profileImageContainer: {
-    width: 80,
-    height: 80,
+    width: 88,
+    height: 88,
     backgroundColor: DESIGN_TOKENS.colors.primary,
-    borderRadius: 40,
+    borderRadius: DESIGN_TOKENS.radius.full,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: DESIGN_TOKENS.spacing.md,
+    ...DESIGN_TOKENS.shadows.medium,
   },
   profileImage: {
-    fontSize: 36,
+    fontSize: 40,
     color: 'white',
+    fontWeight: '700',
   },
   profileInfo: {
     alignItems: 'center',
   },
   profileName: {
     fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 4,
+    fontWeight: '700',
+    marginBottom: DESIGN_TOKENS.spacing.xs,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   profileEmail: {
-    fontSize: 16,
+    fontSize: 14,
     color: DESIGN_TOKENS.colors.textSecondary,
-    marginBottom: 4,
+    marginBottom: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  profilePhoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DESIGN_TOKENS.spacing.xs,
   },
   profilePhone: {
     fontSize: 14,
@@ -408,32 +427,46 @@ const styles = StyleSheet.create({
   },
   statBox: {
     alignItems: 'center',
-    padding: DESIGN_TOKENS.spacing.sm,
+    padding: DESIGN_TOKENS.spacing.md,
+    backgroundColor: DESIGN_TOKENS.colors.surface,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    minWidth: 80,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   statNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: DESIGN_TOKENS.colors.textSecondary,
-    marginTop: 4,
+    marginTop: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   menuSection: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderRadius: DESIGN_TOKENS.radius.card,
     overflow: 'hidden',
     marginHorizontal: DESIGN_TOKENS.spacing.md,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
     padding: DESIGN_TOKENS.spacing.md,
-    color: DESIGN_TOKENS.colors.textPrimary,
+    paddingBottom: DESIGN_TOKENS.spacing.xs,
+    color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   menuItem: {
     flexDirection: 'row',
@@ -441,32 +474,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
   },
-  menuItemIcon: {
-    fontSize: 16,
-    marginRight: 12,
+  menuItemIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    backgroundColor: DESIGN_TOKENS.colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: DESIGN_TOKENS.spacing.sm,
   },
   menuItemText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    fontWeight: '500',
+  },
+  menuItemArrowContainer: {
+    padding: DESIGN_TOKENS.spacing.xs,
   },
   menuItemArrow: {
-    fontSize: 16,
-    color: DESIGN_TOKENS.colors.textSecondary,
+    fontSize: 18,
+    color: DESIGN_TOKENS.colors.textTertiary,
+    fontWeight: '300',
   },
   logoutButton: {
     margin: DESIGN_TOKENS.spacing.md,
-    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    backgroundColor: DESIGN_TOKENS.colors.dangerLight,
     borderRadius: DESIGN_TOKENS.radius.button,
-    paddingVertical: 12,
+    paddingVertical: DESIGN_TOKENS.spacing.md,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.danger + '30',
   },
   logoutButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: DESIGN_TOKENS.colors.dangerDark,
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
@@ -477,8 +522,8 @@ const styles = StyleSheet.create({
     marginBottom: DESIGN_TOKENS.spacing.md,
   },
   inputLabel: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
     color: DESIGN_TOKENS.colors.textPrimary,
     marginBottom: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -487,33 +532,35 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: DESIGN_TOKENS.colors.border,
-    borderRadius: DESIGN_TOKENS.radius.input,
+    borderRadius: DESIGN_TOKENS.radius.lg,
     paddingHorizontal: DESIGN_TOKENS.spacing.md,
-    fontSize: 16,
+    fontSize: 15,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    color: DESIGN_TOKENS.colors.textPrimary,
   },
   fieldError: {
     fontSize: 12,
     color: DESIGN_TOKENS.colors.danger,
-    marginTop: 4,
+    marginTop: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   saveButton: {
     backgroundColor: DESIGN_TOKENS.colors.primary,
-    paddingVertical: 12,
+    paddingVertical: DESIGN_TOKENS.spacing.md,
     borderRadius: DESIGN_TOKENS.radius.button,
     alignItems: 'center',
     marginVertical: DESIGN_TOKENS.spacing.xs,
+    ...DESIGN_TOKENS.shadows.small,
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   cancelButton: {
-    paddingVertical: 12,
+    paddingVertical: DESIGN_TOKENS.spacing.md,
     borderRadius: DESIGN_TOKENS.radius.button,
     alignItems: 'center',
     marginVertical: DESIGN_TOKENS.spacing.xs,
@@ -522,8 +569,8 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: DESIGN_TOKENS.colors.primary,
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

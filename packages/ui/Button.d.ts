@@ -10,6 +10,12 @@ interface ButtonProps {
     style?: React.CSSProperties;
     ariaLabel?: string;
     className?: string;
+    type?: 'button' | 'submit' | 'reset';
+    fullWidth?: boolean;
 }
-export declare const Button: ({ label, children, onClick, variant, size, isLoading, disabled, style, ariaLabel, className, }: ButtonProps) => React.JSX.Element;
+export declare const Button: {
+    ({ label, children, onClick, variant, size, isLoading, disabled, style, ariaLabel, className, type, fullWidth, }: ButtonProps): React.JSX.Element;
+    displayName: string;
+};
 export {};
+//# sourceMappingURL=Button.d.ts.map

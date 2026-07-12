@@ -1,108 +1,228 @@
-.errorBanner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 16px;
-  border-radius: 4px;
-  margin-bottom: 16px;
+/* payment-methods.module.css - Customer Web Payment Methods Page */
+
+.pageContainer {
+  min-height: 100vh;
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .pageHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-}
-
-.loadingState {
-  padding: 16px;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: var(--spacing-5);
 }
 
 .pageTitle {
   margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-surface, #FFFFFF);
+  color: var(--color-primary, #FF5A1F);
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-xs);
+}
+
+.addButton:hover {
+  background: var(--color-primaryLight, #FFF0EB);
+  border-color: var(--color-primary, #FF5A1F);
+  transform: scale(1.05);
+}
+
+.errorBanner {
+  background: var(--color-dangerLight, #FEE2E2);
+  color: var(--color-dangerDark, #DC2626);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-4);
+  font-size: 0.875rem;
+  border: 1px solid var(--color-danger, #EF4444)33;
 }
 
 .emptyState {
   text-align: center;
-  padding: 32px;
+  padding: var(--spacing-10);
 }
 
 .emptyText {
-  color: #666;
-}
-
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  min-width: 400px;
-}
-
-.fieldGroup {
-  margin-bottom: 12px;
-}
-
-.formActions {
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.input,
-.select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.deleteButton {
-  color: #f44336;
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.9375rem;
+  max-width: 300px;
+  margin: 0 auto;
+  line-height: 1.5;
 }
 
 .cardContent {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
 }
 
 .expiryText {
-  margin: 0;
-  font-size: 14px;
+  margin: var(--spacing-1) 0 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-textSecondary, #6B7280);
 }
 
 .defaultBadge {
-  color: #FF5A1F;
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary, #FF5A1F);
+  margin-top: var(--spacing-2);
 }
 
 .actionsContainer {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
 }
 
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-surface, #FFFFFF);
+  color: var(--color-textSecondary, #6B7280);
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.deleteButton:hover {
+  background: var(--color-dangerLight, #FEE2E2);
+  color: var(--color-danger, #EF4444);
+  border-color: var(--color-danger, #EF4444)44;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay, rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal, 1300);
+  padding: var(--spacing-5);
+  backdrop-filter: blur(4px);
+  WebkitBackdropFilter: blur(4px);
+}
+
+.modalCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xxl);
+  padding: var(--spacing-6);
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: var(--shadow-xl);
+  animation: sg-slide-up 250ms ease-out;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.formLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-textPrimary, #111827);
+}
+
+.formInput {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-surface, #FFFFFF);
+  font-size: 0.9375rem;
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  color: var(--color-textPrimary, #111827);
+  min-height: 44px;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-xs);
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--color-primary, #FF5A1F);
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.1);
+}
+
+.formInput::placeholder {
+  color: var(--color-textTertiary, #9CA3AF);
+}
+
+.formSelect {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-surface, #FFFFFF);
+  font-size: 0.9375rem;
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  color: var(--color-textPrimary, #111827);
+  min-height: 44px;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+}
+
+.formSelect:focus {
+  outline: none;
+  border-color: var(--color-primary, #FF5A1F);
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.1);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-2);
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.9375rem;
+}
+
+@keyframes sg-slide-up {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

@@ -1,199 +1,254 @@
+/* order-details.module.css - Customer Web Order Details Page */
+
 .pageContainer {
-  padding: 16px;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.loadingState {
-  padding: 16px;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.errorState {
-  padding: 16px;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
-.notFoundState {
-  padding: 16px;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  text-align: center;
-}
-
-.errorBanner {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.backButton {
-  margin-bottom: 24px;
+.pageHeader {
+  margin-bottom: var(--spacing-5);
 }
 
 .pageTitle {
-  margin-bottom: 24px;
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+}
+
+.backButton {
+  margin-bottom: var(--spacing-4);
+}
+
+.contentCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
+  padding: var(--spacing-5);
+  margin-bottom: var(--spacing-4);
+}
+
+.cardTitle {
+  margin: 0 0 var(--spacing-4) 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
 }
 
 .restaurantContent {
   display: flex;
-  gap: 16px;
   align-items: center;
+  gap: var(--spacing-4);
 }
 
 .restaurantImage {
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .restaurantPlaceholder {
   width: 60px;
   height: 60px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
+  border-radius: var(--radius-lg);
+  background: var(--color-elevated, #F3F4F6);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 2rem;
+  flex-shrink: 0;
 }
 
 .restaurantTitle {
-  margin: 0 0 4px 0;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-textPrimary, #111827);
 }
 
 .restaurantSubtitle {
-  margin: 0;
-  color: #666;
-  font-size: 14px;
+  margin: var(--spacing-1) 0 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-textSecondary, #6B7280);
 }
 
 .itemsList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .itemRow {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 8px;
-  border-bottom: 1px solid #eee;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
+}
+
+.itemRow:last-child {
+  border-bottom: none;
 }
 
 .itemImageWrap {
   display: flex;
-  gap: 8px;
   align-items: center;
-}
-
-.itemName {
-  font-weight: bold;
-}
-
-.itemMeta {
-  font-size: 14px;
-  color: #666;
-}
-
-.itemPrice {
-  text-align: right;
-  font-weight: bold;
-}
-
-.emptyItems {
-  text-align: center;
-  color: #666;
-  padding: 32px;
-}
-
-.summaryList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.summaryRow {
-  display: flex;
-  justify-content: space-between;
-}
-
-.summaryTotal {
-  font-weight: bold;
-  border-top: 1px solid #ddd;
-  padding-top: 8px;
-}
-
-.infoList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.statusBadge {
-  background-color: rgba(33, 150, 243, 0.2);
-  color: #2196f3;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.addressLabel {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.addressText {
-  color: #666;
-}
-
-.actionWrapper {
-  margin-top: 24px;
-  text-align: center;
-}
-
-.placed {
-  background-color: rgba(33, 150, 243, 0.2) !important;
-  color: #2196f3 !important;
-}
-.preparing, .ready, .pickedup {
-  background-color: rgba(255, 152, 0, 0.2) !important;
-  color: #ff9800 !important;
-}
-.delivered {
-  background-color: rgba(76, 175, 80, 0.2) !important;
-  color: #4caf50 !important;
-}
-.cancelled {
-  background-color: rgba(244, 67, 54, 0.2) !important;
-  color: #f44336 !important;
-}
-
-.mr16 {
-  margin-right: 16px !important;
+  gap: var(--spacing-3);
+  flex: 1;
+  min-width: 0;
 }
 
 .itemImage {
-  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .itemPlaceholder {
   width: 40px;
   height: 40px;
-  border-radius: 4px;
-  background-color: #f5f5f5;
+  border-radius: var(--radius-md);
+  background: var(--color-elevated, #F3F4F6);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
+.itemName {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-textPrimary, #111827);
+}
 
+.itemMeta {
+  font-size: 0.8125rem;
+  color: var(--color-textSecondary, #6B7280);
+  margin-top: var(--spacing-1);
+}
+
+.itemPrice {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-textPrimary, #111827);
+  flex-shrink: 0;
+}
+
+.emptyItems {
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--spacing-4) 0;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) 0;
+  font-size: 0.9375rem;
+  color: var(--color-textSecondary, #6B7280);
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
+}
+
+.summaryRow:last-of-type {
+  border-bottom: none;
+}
+
+.summaryTotal {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+  padding-top: var(--spacing-3);
+  border-top: 2px solid var(--color-border, #E5E7EB) !important;
+  margin-top: var(--spacing-2);
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.statusBadge {
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.addressLabel {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-textPrimary, #111827);
+  margin-bottom: var(--spacing-1);
+}
+
+.addressText {
+  font-size: 0.9375rem;
+  color: var(--color-textSecondary, #6B7280);
+  line-height: 1.5;
+}
+
+.actionWrapper {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-5);
+}
+
+.mr16 {
+  margin-right: var(--spacing-4);
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.9375rem;
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--spacing-4);
+}
+
+.errorBanner {
+  background: var(--color-dangerLight, #FEE2E2);
+  color: var(--color-dangerDark, #DC2626);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  border: 1px solid var(--color-danger, #EF4444)33;
+  margin-bottom: var(--spacing-4);
+  text-align: center;
+}
+
+.notFoundState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--spacing-4);
+}

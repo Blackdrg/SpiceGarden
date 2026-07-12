@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { DESIGN_TOKENS } from './tokens';
+import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
 interface OTPInputProps {
   length?: 4 | 6;
@@ -10,6 +10,7 @@ interface OTPInputProps {
   onComplete?: (value: string) => void;
   error?: string;
   disabled?: boolean;
+  label?: string;
 }
 
 export const OTPInput = ({
@@ -19,6 +20,7 @@ export const OTPInput = ({
   onComplete,
   error,
   disabled = false,
+  label,
 }: OTPInputProps) => {
   const [otp, setOtp] = useState<string[]>(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
   const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(length).fill(null));
@@ -33,7 +35,7 @@ export const OTPInput = ({
     const newOtp = [...otp];
     newOtp[index] = digit;
     setOtp(newOtp);
-    
+
     const newValue = newOtp.join('');
     onChange?.(newValue);
 
@@ -72,42 +74,63 @@ export const OTPInput = ({
   };
 
   return (
-    <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, justifyContent: 'center' }}>
-      {otp.map((digit, index) => (
-        <input
-          key={index}
-          ref={(el) => { inputRefs.current[index] = el; }}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digit}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(index, e)}
-          onPaste={handlePaste}
-          disabled={disabled}
-          aria-label={`OTP digit ${index + 1}`}
-          aria-invalid={!!error}
-          style={{
-            width: 48,
-            height: 48,
-            textAlign: 'center',
-            fontSize: 20,
-            fontWeight: 600,
-            borderRadius: DESIGN_TOKENS.radius.md,
-            border: `2px solid ${error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.border}`,
-            backgroundColor: DESIGN_TOKENS.colors.surface,
-            color: DESIGN_TOKENS.colors.textPrimary,
-            outline: 'none',
-            transition: `border-color ${DESIGN_TOKENS.motion.micro}ms`,
-            fontFamily: DESIGN_TOKENS.typography.fontFamily,
-          }}
-        />
-      ))}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: DESIGN_TOKENS.spacing[3] }}>
+      {label && (
+        <label style={{
+          ...DESIGN_TOKENS.typography.smallLabel,
+          color: error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.textPrimary,
+        }}>
+          {label}
+        </label>
+      )}
+      <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[3], justifyContent: 'center' }}>
+        {otp.map((digit, index) => (
+          <input
+            key={index}
+            ref={(el) => { inputRefs.current[index] = el; }}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            onPaste={handlePaste}
+            disabled={disabled}
+            aria-label={`OTP digit ${index + 1}`}
+            aria-invalid={!!error}
+            style={{
+              width: 52,
+              height: 56,
+              textAlign: 'center',
+              fontSize: 22,
+              fontWeight: 700,
+              borderRadius: DESIGN_TOKENS.radius.lg,
+              border: `2px solid ${error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.border}`,
+              backgroundColor: DESIGN_TOKENS.colors.surface,
+              color: DESIGN_TOKENS.colors.textPrimary,
+              outline: 'none',
+              transition: `border-color ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}, box-shadow ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}`,
+              fontFamily: DESIGN_TOKENS.typography.fontFamily,
+              boxShadow: digit ? `0 0 0 3px ${DESIGN_TOKENS.colors.primary}15` : 'none',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.primary;
+              e.currentTarget.style.boxShadow = `0 0 0 3px ${DESIGN_TOKENS.colors.primary}22`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.border;
+              e.currentTarget.style.boxShadow = digit ? `0 0 0 3px ${DESIGN_TOKENS.colors.primary}15` : 'none';
+            }}
+          />
+        ))}
+      </div>
       {error && (
         <span role="alert" style={{
-          ...DESIGN_TOKENS.typography.smallLabel,
+          ...DESIGN_TOKENS.typography.caption,
           color: DESIGN_TOKENS.colors.danger,
-          marginTop: DESIGN_TOKENS.spacing.xs,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
         }}>
           {error}
         </span>

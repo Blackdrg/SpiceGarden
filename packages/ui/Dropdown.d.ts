@@ -3,6 +3,7 @@ interface DropdownOption {
     value: string;
     label: string;
     disabled?: boolean;
+    icon?: React.ReactNode;
 }
 interface DropdownProps {
     options: DropdownOption[];
@@ -12,9 +13,11 @@ interface DropdownProps {
     label?: string;
     error?: string;
     disabled?: boolean;
+    fullWidth?: boolean;
 }
 export declare const Dropdown: {
-    ({ options, value, onChange, placeholder, label, error, disabled, }: DropdownProps): React.JSX.Element;
+    ({ options, value, onChange, placeholder, label, error, disabled, fullWidth, }: DropdownProps): React.JSX.Element;
     displayName: string;
 };
 export {};
+//# sourceMappingURL=Dropdown.d.ts.map

@@ -1,45 +1,108 @@
+/* notifications.module.css - Customer Web Notifications Page */
+
 .pageContainer {
-  padding: 16px;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.loadingState {
-  padding: 16px;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.errorBanner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 16px;
-  border-radius: 4px;
-  margin-bottom: 16px;
+.pageHeader {
+  margin-bottom: var(--spacing-5);
 }
 
 .pageTitle {
-  margin-bottom: 24px;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
+}
+
+.errorBanner {
+  background: var(--color-dangerLight, #FEE2E2);
+  color: var(--color-dangerDark, #DC2626);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-4);
+  font-size: 0.875rem;
+  border: 1px solid var(--color-danger, #EF4444)33;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
 .cardContent {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .preferenceRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
+}
+
+.preferenceRow:last-child {
+  border-bottom: none;
+}
+
+.preferenceLabel {
+  font-size: 0.9375rem;
+  color: var(--color-textPrimary, #111827);
+  font-weight: 500;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-surface, #FFFFFF);
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-xs);
+}
+
+.toggleButton:hover {
+  background: var(--color-elevated, #F3F4F6);
+  transform: scale(1.05);
+}
+
+.toggleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.toggleActive {
+  background: var(--color-primaryLight, #FFF0EB);
+  border-color: var(--color-primary, #FF5A1F);
+}
+
+.toggleInactive {
+  background: var(--color-surface, #FFFFFF);
+  border-color: var(--color-border, #E5E7EB);
 }
 
 .saveActions {
-  margin-top: 24px;
+  margin-top: var(--spacing-5);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.9375rem;
 }

@@ -1,75 +1,89 @@
 import type { BranchStatus } from './types';
+import styles from './BranchesTab.module.css';
 import { AdminButton } from './AdminButton';
 import { DashboardCard } from './DashboardCard';
 import { useToast } from '@spicegarden/ui';
+import {
+  IconStore,
+  IconClock,
+  IconTruck,
+  IconExternalLink,
+  IconUserPlus,
+} from './icons/SGIcon';
 
-const BRANCH_STATUS_COLORS: Record<BranchStatus['status'], string> = {
-  operational: '#4caf50',
-  delayed: '#ff4444',
-  critical: '#9c27b0',
+const BRANCH_STATUS_MAP: Record<BranchStatus['status'], { label: string; className: string }> = {
+  operational: { label: 'Operational', className: styles.branchStatusOperational },
+  delayed: { label: 'Delayed', className: styles.branchStatusDelayed },
+  critical: { label: 'Critical', className: styles.branchStatusCritical },
 };
 
 export function BranchesTab({ branches }: { branches: BranchStatus[] }) {
   const toast = useToast();
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
-      {branches.map((branch) => (
-        <DashboardCard key={branch.name} title={branch.name} sub={`${branch.orderCount} orders · ${branch.driversAssigned} drivers`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <span style={{
-              padding: '4px 12px', borderRadius: 16, fontSize: 12, fontWeight: 'bold',
-              background: `${BRANCH_STATUS_COLORS[branch.status]}22`,
-              color: BRANCH_STATUS_COLORS[branch.status],
-              border: `1px solid ${BRANCH_STATUS_COLORS[branch.status]}66`,
-            }}>
-              {branch.status.toUpperCase()}
-            </span>
-            <span style={{ color: '#666', fontSize: 13 }}>
-              Avg prep: <strong style={{ color: branch.avgPrepMins > 20 ? '#ff4444' : '#4caf50' }}>{branch.avgPrepMins}m</strong>
-            </span>
-          </div>
+    <div className={styles.branchesGrid}>
+      {branches.map((branch) => {
+        const statusInfo = BRANCH_STATUS_MAP[branch.status];
+        const prepRatio = Math.min(100, (branch.avgPrepMins / 18) * 100);
+        const driverRatio = branch.orderCount === 0 ? 100 : Math.min(100, (branch.driversAssigned / branch.orderCount) * 100);
+        const prepColor = branch.avgPrepMins > 20 ? '#EF4444' : '#10B981';
+        const driverColor = branch.driversAssigned < branch.orderCount * 0.3 ? '#F59E0B' : '#3B82F6';
 
-          <ProgressBar
-            label="Prep time"
-            detail={`${branch.avgPrepMins} / 18 min target`}
-            ratio={Math.min(100, (branch.avgPrepMins / 18) * 100)}
-            color={branch.avgPrepMins > 20 ? '#ff4444' : '#4caf50'}
-          />
+        return (
+          <DashboardCard
+            key={branch.name}
+            title={branch.name}
+            sub={`${branch.orderCount} orders · ${branch.driversAssigned} drivers assigned`}
+            iconVariant={branch.status === 'operational' ? 'success' : branch.status === 'delayed' ? 'warning' : 'danger'}
+            titleIcon={<IconStore size={16} color={branch.status === 'operational' ? '#10B981' : branch.status === 'delayed' ? '#F59E0B' : '#EF4444'} />}
+          >
+            <div className={styles.branchHeader}>
+              <span className={`${styles.branchStatus} ${statusInfo.className}`}>
+                {statusInfo.label}
+              </span>
+              <span className={styles.branchPrepInfo}>
+                Avg prep: <strong className={branch.avgPrepMins > 20 ? styles.prepWarning : styles.prepGood}>{branch.avgPrepMins}m</strong>
+              </span>
+            </div>
 
-          <ProgressBar
-            label="Driver coverage"
-            detail={`${branch.driversAssigned} drivers / ${branch.orderCount} orders`}
-            ratio={branch.orderCount === 0 ? 100 : Math.min(100, (branch.driversAssigned / branch.orderCount) * 100)}
-            color={branch.driversAssigned < branch.orderCount * 0.3 ? '#ff9800' : '#2196f3'}
-          />
+            <div className={styles.progressSection}>
+              <div className={styles.progressHeader}>
+                <span className={styles.progressLabel}>Prep time</span>
+                <span className={styles.progressDetail}>{branch.avgPrepMins} / 18 min target</span>
+              </div>
+              <div className={styles.progressBar}>
+                <div className={styles.progressFill} style={{ width: `${prepRatio}%`, background: prepColor }} />
+              </div>
+            </div>
 
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <AdminButton label="View KDS" onClick={() => toast.showToast({ message: `Opening KDS for ${branch.name}`, type: 'info', duration: 0 })} style={{ flex: 1 }} />
-            <AdminButton label="Dispatch Driver" onClick={() => toast.showToast({ message: `Dispatching driver to ${branch.name}`, type: 'success', duration: 0 })} variant="secondary" style={{ flex: 1 }} />
-          </div>
-        </DashboardCard>
-      ))}
-    </div>
-  );
-}
+            <div className={styles.progressSection}>
+              <div className={styles.progressHeader}>
+                <span className={styles.progressLabel}>Driver coverage</span>
+                <span className={styles.progressDetail}>{branch.driversAssigned} drivers / {branch.orderCount} orders</span>
+              </div>
+              <div className={styles.progressBar}>
+                <div className={styles.progressFill} style={{ width: `${driverRatio}%`, background: driverColor }} />
+              </div>
+            </div>
 
-function ProgressBar({ label, detail, ratio, color }: { label: string; detail: string; ratio: number; color: string }) {
-  const scale = Math.max(0, Math.min(1, ratio / 100));
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#888', marginBottom: 4 }}>
-        <span>{label}</span>
-        <span>{detail}</span>
-      </div>
-      <div style={{ height: 8, borderRadius: 4, background: '#eee', overflow: 'hidden' }}>
-        <div style={{
-          height: '100%', width: '100%',
-          background: color, borderRadius: 4,
-          transform: `scaleX(${scale})`,
-          transformOrigin: 'left',
-          transition: 'transform 0.4s',
-        }} />
-      </div>
+            <div className={styles.branchButtons}>
+              <button
+                type="button"
+                className={styles.branchButtonPrimary}
+                onClick={() => toast.showToast({ message: `Opening KDS for ${branch.name}`, type: 'info', duration: 0 })}
+              >
+                <IconExternalLink size={14} color="white" /> View KDS
+              </button>
+              <button
+                type="button"
+                className={styles.branchButtonSecondary}
+                onClick={() => toast.showToast({ message: `Dispatching driver to ${branch.name}`, type: 'success', duration: 0 })}
+              >
+                <IconUserPlus size={14} color="#374151" /> Dispatch Driver
+              </button>
+            </div>
+          </DashboardCard>
+        );
+      })}
     </div>
   );
 }

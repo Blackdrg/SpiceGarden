@@ -7,3 +7,4 @@ export declare const trackEvent: (event: AnalyticsEvent) => void;
 export declare const useAnalytics: () => void;
 export declare const useWebVitals: () => null;
 export {};
+//# sourceMappingURL=analytics.d.ts.map

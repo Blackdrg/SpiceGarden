@@ -1,0 +1,290 @@
+/* SupportTab.module.css - Support & security tab */
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.twoColLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filterRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  padding: 6px 14px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  background: #FFFFFF;
+  color: #374151;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.filterButton:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+.filterButtonActive {
+  background: #FF5A1F;
+  color: #FFFFFF;
+  border-color: #FF5A1F;
+  box-shadow: 0 2px 8px rgba(255, 90, 31, 0.25);
+}
+
+.filterButtonActive:hover {
+  background: #E84E18;
+  border-color: #E84E18;
+}
+
+.ticketScroll {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.ticketItem {
+  padding: 14px 0;
+  border-bottom: 1px solid #F3F4F6;
+  transition: background 150ms ease;
+  border-radius: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.ticketItem:last-child {
+  border-bottom: none;
+}
+
+.ticketItem:hover {
+  background: #F9FAFB;
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.ticketLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticketIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ticketIconRefund {
+  background: #FEF3C7;
+}
+
+.ticketIconSupport {
+  background: #DBEAFE;
+}
+
+.ticketIconFraud {
+  background: #FEE2E2;
+}
+
+.ticketId {
+  font-weight: 600;
+  font-size: 13px;
+  color: #111827;
+}
+
+.severityBadge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.severityLow {
+  background: #DBEAFE;
+  color: #2563EB;
+}
+
+.severityMedium {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.severityHigh {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.severityCritical {
+  background: #F3E8FF;
+  color: #9333EA;
+}
+
+.ticketTime {
+  font-size: 11px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.ticketDescription {
+  margin: 2px 0 6px;
+  color: #4B5563;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ticketFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticketReporter {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.ticketActions {
+  display: flex;
+  gap: 6px;
+}
+
+.refundHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.refundAmount {
+  font-weight: 700;
+  color: #EF4444;
+  font-size: 14px;
+}
+
+.refundDescription {
+  color: #6B7280;
+  font-size: 12px;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.refundActions {
+  display: flex;
+  gap: 8px;
+}
+
+.fraudItem {
+  padding: 14px;
+  background: #FEF2F2;
+  border-radius: 10px;
+  border-left: 4px solid #EF4444;
+  margin-bottom: 10px;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fraudItem:hover {
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+  transform: translateX(2px);
+}
+
+.fraudHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.fraudId {
+  font-weight: 700;
+  color: #EF4444;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fraudTime {
+  font-size: 11px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.fraudDescription {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #4B5563;
+  line-height: 1.5;
+}
+
+.fraudActions {
+  display: flex;
+  gap: 8px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px 20px;
+  color: #9CA3AF;
+  font-size: 13px;
+}
+
+@media (max-width: 1024px) {
+  .twoColLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .filterGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .ticketHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ticketFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

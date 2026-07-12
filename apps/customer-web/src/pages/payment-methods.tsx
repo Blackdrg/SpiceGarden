@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { Plus, CreditCard, Trash2, Star } from 'lucide-react';
+import { PlusIcon, CreditCardIcon, Trash2Icon, StarIcon } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
 import styles from './payment-methods.module.css';
@@ -138,45 +138,66 @@ const PaymentMethodsPage = () => {
 
   return (
     <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Payment Methods</h2>
+        <p className={styles.pageSubtitle}>Manage your saved payment options</p>
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: true })}
+          aria-label="Add payment method"
+          className={styles.addButton}
+        >
+          <PlusIcon size={22} />
+        </button>
+      </div>
+
       {uiState.error && (
         <div className={styles.errorBanner}>
           <span>{uiState.error}</span>
         </div>
       )}
 
-      <div className={styles.pageHeader}>
-        <h2 className={styles.pageTitle}>Payment Methods</h2>
-        <button type="button" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: true })} aria-label="Add payment method">
-          <Plus size={24} />
-        </button>
-      </div>
-
       {data.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p className={styles.emptyText}>No payment methods saved yet. Add one to get started!</p>
-        </div>
+        <Card variant="elevated">
+          <div className={styles.emptyState}>
+            <CreditCardIcon size={40} color={DESIGN_TOKENS.colors.textTertiary} style={{ marginBottom: 12 }} />
+            <p className={styles.emptyText}>No payment methods saved yet. Add one to get started!</p>
+          </div>
+        </Card>
       ) : (
         data.map(method => (
-          <Card key={method.id} title={method.type === 'card' ? `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || '****'}` : `UPI • ${method.upiId || '****'}`}>
+          <Card key={method.id} title={method.type === 'card' ? `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || '****'}` : `UPI • ${method.upiId || '****'}`} variant="interactive">
             <div className={styles.cardContent}>
-              <div>
+              <div className={styles.cardInfo}>
                 {method.type === 'card' && method.cardExpiry && (
                   <p className={styles.expiryText}>Expires {method.cardExpiry}</p>
                 )}
                 {method.isDefault && (
                   <span className={styles.defaultBadge}>
-                    <Star size={12} fill={DESIGN_TOKENS.colors.primary} /> Default
+                    <StarIcon size={12} fill={DESIGN_TOKENS.colors.primary} color={DESIGN_TOKENS.colors.primary} /> Default
                   </span>
                 )}
               </div>
               <div className={styles.actionsContainer}>
                 {!method.isDefault && (
-                  <button type="button" onClick={() => handleSetDefault(method.id)} aria-label="Set as default">
-                    <Star size={16} />
+                  <button
+                    type="button"
+                    onClick={() => handleSetDefault(method.id)}
+                    aria-label="Set as default"
+                    className={styles.actionButton}
+                    title="Set as default"
+                  >
+                    <StarIcon size={16} />
                   </button>
                 )}
-                <button type="button" onClick={() => handleDelete(method.id)} aria-label="Delete" className={styles.deleteButton}>
-                  <Trash2 size={16} />
+                <button
+                  type="button"
+                  onClick={() => handleDelete(method.id)}
+                  aria-label="Delete"
+                  className={`${styles.actionButton} ${styles.deleteButton}`}
+                  title="Delete payment method"
+                >
+                  <Trash2Icon size={16} />
                 </button>
               </div>
             </div>
@@ -186,71 +207,75 @@ const PaymentMethodsPage = () => {
 
       {uiState.showAddForm && (
         <div className={styles.modalOverlay}>
-          <Card title="Add Payment Method">
-            <div className={styles.form}>
-              <select
-                className={styles.select}
-                value={uiState.newMethod.type}
-                onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
-                title="Select Payment Method Type"
-                aria-label="Select payment method type"
-              >
-                <option value="card">Credit/Debit Card</option>
-                <option value="upi">UPI</option>
-              </select>
-              {uiState.newMethod.type === 'card' && (
-                <div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-brand" className={styles.label}>Card Brand (Visa, Mastercard)</label>
-                    <input
-                      id="pm-card-brand"
-                      className={styles.input}
-                      placeholder="Card Brand (Visa, Mastercard)"
-                      value={uiState.newMethod.cardBrand}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardBrand: e.target.value } })}
-                    />
-                  </div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-last4" className={styles.label}>Last 4 digits</label>
-                    <input
-                      id="pm-last4"
-                      className={styles.input}
-                      placeholder="Last 4 digits"
-                      value={uiState.newMethod.cardLast4}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardLast4: e.target.value } })}
-                      maxLength={4}
-                    />
-                  </div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-expiry" className={styles.label}>Expiry (MM/YY)</label>
-                    <input
-                      id="pm-expiry"
-                      className={styles.input}
-                      placeholder="Expiry (MM/YY)"
-                      value={uiState.newMethod.cardExpiry}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardExpiry: e.target.value } })}
-                    />
-                  </div>
-                </div>
-              )}
-              {uiState.newMethod.type === 'upi' && (
+          <div className={styles.modalCard}>
+            <Card title="Add Payment Method" variant="elevated">
+              <div className={styles.form}>
                 <div className={styles.fieldGroup}>
-                  <label htmlFor="pm-upi-id" className={styles.label}>UPI ID (example@upi)</label>
-                  <input
-                    id="pm-upi-id"
-                    className={styles.input}
-                    placeholder="UPI ID (example@upi)"
-                    value={uiState.newMethod.upiId}
-                    onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, upiId: e.target.value } })}
-                  />
+                  <label htmlFor="pm-type" className={styles.formLabel}>Payment Method Type</label>
+                  <select
+                    id="pm-type"
+                    className={styles.formSelect}
+                    value={uiState.newMethod.type}
+                    onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
+                  >
+                    <option value="card">Credit/Debit Card</option>
+                    <option value="upi">UPI</option>
+                  </select>
                 </div>
-              )}
-              <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false })} variant="secondary" />
-                <Button label="Save" onClick={handleAddMethod} />
+                {uiState.newMethod.type === 'card' && (
+                  <div>
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="pm-card-brand" className={styles.formLabel}>Card Brand (Visa, Mastercard)</label>
+                      <input
+                        id="pm-card-brand"
+                        className={styles.formInput}
+                        placeholder="Card Brand (Visa, Mastercard)"
+                        value={uiState.newMethod.cardBrand}
+                        onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardBrand: e.target.value } })}
+                      />
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="pm-last4" className={styles.formLabel}>Last 4 digits</label>
+                      <input
+                        id="pm-last4"
+                        className={styles.formInput}
+                        placeholder="Last 4 digits"
+                        value={uiState.newMethod.cardLast4}
+                        onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardLast4: e.target.value } })}
+                        maxLength={4}
+                      />
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="pm-expiry" className={styles.formLabel}>Expiry (MM/YY)</label>
+                      <input
+                        id="pm-expiry"
+                        className={styles.formInput}
+                        placeholder="Expiry (MM/YY)"
+                        value={uiState.newMethod.cardExpiry}
+                        onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardExpiry: e.target.value } })}
+                      />
+                    </div>
+                  </div>
+                )}
+                {uiState.newMethod.type === 'upi' && (
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="pm-upi-id" className={styles.formLabel}>UPI ID (example@upi)</label>
+                    <input
+                      id="pm-upi-id"
+                      className={styles.formInput}
+                      placeholder="UPI ID (example@upi)"
+                      value={uiState.newMethod.upiId}
+                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, upiId: e.target.value } })}
+                    />
+                  </div>
+                )}
+                <div className={styles.formActions}>
+                  <Button label="Cancel" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false })} variant="secondary" />
+                  <Button label="Save" onClick={handleAddMethod} />
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       )}
     </div>

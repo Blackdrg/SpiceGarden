@@ -1,39 +1,187 @@
-.walletInline0 {
-margin: 0;
-color: '#666';
-}
-.walletInline1 {
-display: 'flex';
-flex-direction: 'column';
-}
-.walletInline2 {
-margin: 0;
-font-size: '14px';
-}
-.walletInline3 {
-margin: '4px 0 0 0';
-color: '#999';
-font-size: '12px';
-}
-.walletInline4 {
-font-size: '22px';
+/* wallet.module.css - Customer Web Wallet Page */
+
+.pageContainer {
+  min-height: 100vh;
+  background-color: var(--color-background, #F9FAFB);
+  padding: var(--spacing-5);
+  padding-bottom: 88px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.walletInline0 {
-padding: var(--spacing-md);
-padding-bottom: 80;
+.pageHeader {
+  margin-bottom: var(--spacing-5);
 }
-.walletInline1 {
-margin: '0 0 8px 0';
-font-size: '2.5rem';
-color: var(--color-primary);
+
+.pageTitle {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-textPrimary, #111827);
 }
-.walletInline2 {
-display: 'flex';
-justify-content: 'center';
-gap: var(--spacing-md);
-margin-top: var(--spacing-lg);
+
+.walletCard {
+  background: var(--color-surface, #FFFFFF);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-borderLight, #F3F4F6);
+  box-shadow: var(--shadow-xs);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
 }
-.walletInline3 {
-margin-top: var(--spacing-lg);
+
+.balanceSection {
+  text-align: center;
+  padding: var(--spacing-5) 0;
+  background: linear-gradient(135deg, var(--color-primaryLight, #FFF0EB) 0%, var(--color-warningLight, #FEF3C7) 100%);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-5);
+}
+
+.balanceLabel {
+  margin: 0 0 var(--spacing-2) 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+  font-weight: 500;
+}
+
+.balanceAmount {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary, #FF5A1F);
+  letter-spacing: -0.02em;
+}
+
+.balanceSuffix {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-textSecondary, #6B7280);
+}
+
+.walletActions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+}
+
+.transactionSection {
+  margin-bottom: var(--spacing-5);
+}
+
+.sectionTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-textPrimary, #111827);
+  margin-bottom: var(--spacing-3);
+}
+
+.transactionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-borderLight, #F3F4F6);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.transactionItem:last-child {
+  border-bottom: none;
+}
+
+.transactionItem:hover {
+  padding-left: var(--spacing-2);
+}
+
+.transactionInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.transactionDesc {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-textPrimary, #111827);
+}
+
+.transactionDate {
+  margin: var(--spacing-1) 0 0 0;
+  font-size: 0.75rem;
+  color: var(--color-textTertiary, #9CA3AF);
+}
+
+.transactionAmount {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  flex-shrink: 0;
+  margin-left: var(--spacing-3);
+}
+
+.transactionCredit {
+  color: var(--color-success, #10B981);
+}
+
+.transactionDebit {
+  color: var(--color-danger, #EF4444);
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: var(--color-surface, #FFFFFF);
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: var(--shadow-small);
+  z-index: 100;
+}
+
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  flex: 1;
+  height: 100%;
+  padding: var(--spacing-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-textTertiary, #9CA3AF);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--color-primary, #FF5A1F);
+  outline-offset: -2px;
+  border-radius: var(--radius-md);
+}
+
+.navActive {
+  color: var(--color-primary, #FF5A1F);
+  font-weight: 600;
+}
+
+.navInactive {
+  color: var(--color-textTertiary, #9CA3AF);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

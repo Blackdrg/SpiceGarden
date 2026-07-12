@@ -5,8 +5,9 @@ interface SkeletonProps {
     borderRadius?: number;
     variant?: 'text' | 'circular' | 'rectangular';
     style?: React.CSSProperties;
+    className?: string;
 }
-export declare const Skeleton: ({ width, height, borderRadius, variant, style, }: SkeletonProps) => React.JSX.Element;
+export declare const Skeleton: ({ width, height, borderRadius, variant, style, className, }: SkeletonProps) => React.JSX.Element;
 interface SkeletonCardProps {
     count?: number;
 }
@@ -15,3 +16,4 @@ export declare const SkeletonList: ({ count }: {
     count?: number;
 }) => React.JSX.Element;
 export {};
+//# sourceMappingURL=Skeleton.d.ts.map

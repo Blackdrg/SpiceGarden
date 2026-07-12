@@ -123,7 +123,7 @@ const NotificationsScreen = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backButtonText}>Back</Text>
+            <Ionicons name="arrow-back" size={22} color={DESIGN_TOKENS.colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerText}>Notifications</Text>
         </View>
@@ -165,20 +165,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
+    paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.xs,
   },
-  backButtonText: {
-    fontSize: 20,
-    color: DESIGN_TOKENS.colors.textPrimary,
-  },
   headerText: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     marginLeft: DESIGN_TOKENS.spacing.md,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -188,23 +192,31 @@ const styles = StyleSheet.create({
     margin: DESIGN_TOKENS.spacing.md,
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.md,
+    ...DESIGN_TOKENS.shadows.small,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     marginBottom: DESIGN_TOKENS.spacing.md,
-    color: DESIGN_TOKENS.colors.textPrimary,
+    color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   toggleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: DESIGN_TOKENS.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
   },
   toggleLabel: {
-    fontSize: 16,
+    fontSize: 15,
     color: DESIGN_TOKENS.colors.textPrimary,
+    fontWeight: '500',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

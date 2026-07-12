@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
-type ToastType = 'success' | 'error' | 'info';
+type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface Toast {
   id: string;
@@ -29,11 +29,44 @@ export const useToast = () => {
   return context;
 };
 
+const ToastIcon = ({ type }: { type: ToastType }) => {
+  switch (type) {
+    case 'success':
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="10" r="10" fill={DESIGN_TOKENS.colors.successLight} />
+          <path d="M6.5 10.5L9 13L13.5 7.5" stroke={DESIGN_TOKENS.colors.success} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'error':
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="10" r="10" fill={DESIGN_TOKENS.colors.dangerLight} />
+          <path d="M7 7L13 13M13 7L7 13" stroke={DESIGN_TOKENS.colors.danger} strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case 'warning':
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="10" r="10" fill={DESIGN_TOKENS.colors.warningLight} />
+          <path d="M10 7V11M10 14V14.5" stroke={DESIGN_TOKENS.colors.warning} strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="10" r="10" fill={DESIGN_TOKENS.colors.infoLight} />
+          <path d="M10 7V10M10 13.5V14" stroke={DESIGN_TOKENS.colors.info} strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+  }
+};
+
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = Date.now().toString();
+    const id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
     const duration = toast.duration ?? 4000;
     const newToast: Toast = { ...toast, id, duration };
     setToasts((prev) => [...prev, newToast]);
@@ -54,53 +87,87 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
       <div style={{
         position: 'fixed',
-        top: 20,
-        right: 20,
-        zIndex: 9999,
+        top: DESIGN_TOKENS.spacing[5],
+        right: DESIGN_TOKENS.spacing[5],
+        zIndex: DESIGN_TOKENS.zIndex.toast,
         display: 'flex',
         flexDirection: 'column',
-        gap: DESIGN_TOKENS.spacing.sm,
-        maxWidth: 400,
+        gap: DESIGN_TOKENS.spacing[3],
+        maxWidth: 420,
+        width: 'calc(100% - 40px)',
+        pointerEvents: 'none',
       }}>
         {toasts.map((toast) => (
           <div
             key={toast.id}
             role="alert"
             style={{
-              padding: `${DESIGN_TOKENS.spacing.lg}px`,
-              borderRadius: DESIGN_TOKENS.radius.card,
-              backgroundColor: toast.type === 'success' ? '#e8f5e8' :
-                toast.type === 'error' ? '#fff5f5' : '#f0f0f5',
-              borderLeft: `4px solid ${toast.type === 'success' ? DESIGN_TOKENS.colors.success :
-                toast.type === 'error' ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.primary}`,
-              boxShadow: DESIGN_TOKENS.shadows.medium,
-              animation: `slideIn ${DESIGN_TOKENS.motion.standard}ms ${MOTION_EASING.easeOutSoft}`,
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: DESIGN_TOKENS.spacing[3],
+              padding: `${DESIGN_TOKENS.spacing[4]}px ${DESIGN_TOKENS.spacing[5]}px`,
+              borderRadius: DESIGN_TOKENS.radius.lg,
+              backgroundColor: DESIGN_TOKENS.colors.surface,
+              border: `1px solid ${DESIGN_TOKENS.colors.border}`,
+              boxShadow: DESIGN_TOKENS.shadows.large,
+              animation: `sg-toast-in ${DESIGN_TOKENS.motion.standard}ms ${MOTION_EASING.easeOutSoft}`,
+              pointerEvents: 'auto',
             }}
           >
-            <span style={{
-              ...DESIGN_TOKENS.typography.body,
-              color: DESIGN_TOKENS.colors.textPrimary,
-            }}>
-              {toast.message}
-            </span>
-            {toast.actionLabel && toast.onAction && (
-              <button
-                onClick={toast.onAction}
-                style={{
-                  marginTop: DESIGN_TOKENS.spacing.sm,
-                  padding: '4px 12px',
-                  fontSize: 13,
-                  border: 'none',
-                  borderRadius: DESIGN_TOKENS.radius.sm,
-                  background: toast.type === 'success' ? DESIGN_TOKENS.colors.success :
-                    toast.type === 'error' ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.primary,
-                  color: 'white',
-                  cursor: 'pointer',
-                }}
-              >
-                {toast.actionLabel}
-              </button>
-            )}
+            <ToastIcon type={toast.type} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <span style={{
+                ...DESIGN_TOKENS.typography.bodySmall,
+                color: DESIGN_TOKENS.colors.textPrimary,
+                display: 'block',
+              }}>
+                {toast.message}
+              </span>
+              {toast.actionLabel && toast.onAction && (
+                <button
+                  onClick={toast.onAction}
+                  style={{
+                    marginTop: DESIGN_TOKENS.spacing[2],
+                    padding: `${DESIGN_TOKENS.spacing[1]}px ${DESIGN_TOKENS.spacing[3]}px`,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    border: 'none',
+                    borderRadius: DESIGN_TOKENS.radius.sm,
+                    background: DESIGN_TOKENS.colors.primary,
+                    color: 'white',
+                    cursor: 'pointer',
+                    transition: `background ${DESIGN_TOKENS.motion.micro}ms`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = DESIGN_TOKENS.colors.primaryHover; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = DESIGN_TOKENS.colors.primary; }}
+                >
+                  {toast.actionLabel}
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => hideToast(toast.id)}
+              aria-label="Dismiss notification"
+              style={{
+                border: 'none',
+                background: 'transparent',
+                color: DESIGN_TOKENS.colors.textTertiary,
+                cursor: 'pointer',
+                fontSize: 18,
+                padding: 2,
+                lineHeight: 1,
+                borderRadius: DESIGN_TOKENS.radius.sm,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: `color ${DESIGN_TOKENS.motion.micro}ms`,
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.textSecondary; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.textTertiary; }}
+            >
+              ×
+            </button>
           </div>
         ))}
       </div>
@@ -117,37 +184,33 @@ export const InlineAlert = ({
   message: string;
   onClose?: () => void;
 }) => {
-  const bgColor = type === 'success' ? '#e8f5e8' :
-    type === 'error' ? '#fff5f5' : '#f0f0f5';
-  const icon = type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ';
+  const bgColors: Record<ToastType, string> = {
+    success: DESIGN_TOKENS.colors.successLight,
+    error: DESIGN_TOKENS.colors.dangerLight,
+    warning: DESIGN_TOKENS.colors.warningLight,
+    info: DESIGN_TOKENS.colors.infoLight,
+  };
+
+  const borderColors: Record<ToastType, string> = {
+    success: DESIGN_TOKENS.colors.success,
+    error: DESIGN_TOKENS.colors.danger,
+    warning: DESIGN_TOKENS.colors.warning,
+    info: DESIGN_TOKENS.colors.info,
+  };
 
   return (
     <div style={{
-      padding: `${DESIGN_TOKENS.spacing.md}px`,
-      borderRadius: DESIGN_TOKENS.radius.md,
-      backgroundColor: bgColor,
-      border: `1px solid ${type === 'success' ? DESIGN_TOKENS.colors.success :
-        type === 'error' ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.primary}66`,
       display: 'flex',
       alignItems: 'center',
-      gap: DESIGN_TOKENS.spacing.sm,
+      gap: DESIGN_TOKENS.spacing[3],
+      padding: `${DESIGN_TOKENS.spacing[3]}px ${DESIGN_TOKENS.spacing[4]}px`,
+      borderRadius: DESIGN_TOKENS.radius.lg,
+      backgroundColor: bgColors[type],
+      border: `1px solid ${borderColors[type]}33`,
     }}>
+      <ToastIcon type={type} />
       <span style={{
-        width: 20,
-        height: 20,
-        borderRadius: '50%',
-        background: type === 'success' ? DESIGN_TOKENS.colors.success :
-          type === 'error' ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.primary,
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-      }}>
-        {icon}
-      </span>
-      <span style={{
-        ...DESIGN_TOKENS.typography.body,
+        ...DESIGN_TOKENS.typography.bodySmall,
         flex: 1,
         color: DESIGN_TOKENS.colors.textPrimary,
       }}>
@@ -160,10 +223,20 @@ export const InlineAlert = ({
           style={{
             border: 'none',
             background: 'transparent',
-            color: DESIGN_TOKENS.colors.textSecondary,
+            color: DESIGN_TOKENS.colors.textTertiary,
             cursor: 'pointer',
-            fontSize: 16,
+            fontSize: 18,
+            padding: 2,
+            lineHeight: 1,
+            borderRadius: DESIGN_TOKENS.radius.sm,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: `color ${DESIGN_TOKENS.motion.micro}ms`,
+            flexShrink: 0,
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.textSecondary; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.textTertiary; }}
         >
           ×
         </button>

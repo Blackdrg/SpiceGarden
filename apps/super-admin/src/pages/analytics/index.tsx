@@ -109,9 +109,9 @@ export default function AnalyticsOverview() {
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Customers</h3>
               <p style={{ fontSize: 13, color: '#71717a' }}>Churn & repeat analysis</p>
             </Link>
-            <Link href="/analytics/conversion" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
-              <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Conversion</h3>
-              <p style={{ fontSize: 13, color: '#71717a' }}>Funnel analysis</p>
+            <Link href="/analytics" style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 20, textDecoration: 'none', color: '#fff' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Overview</h3>
+              <p style={{ fontSize: 13, color: '#71717a' }}>Analytics dashboard</p>
             </Link>
           </div>
         </>

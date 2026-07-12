@@ -1,0 +1,17 @@
+module.exports = {
+  createIconSet: () => () => null,
+  Ionicons: () => null,
+  MaterialIcons: () => null,
+  FontAwesome: () => null,
+  Feather: () => null,
+  Foundation: () => null,
+  MaterialCommunityIcons: () => null,
+  Octicons: () => null,
+  SimpleLineIcons: () => null,
+  Zocial: () => null,
+  EvilIcons: () => null,
+  Entypo: () => null,
+  FontAwesome5: () => null,
+  FontAwesome5Pro: () => null,
+  AntDesign: () => null,
+};

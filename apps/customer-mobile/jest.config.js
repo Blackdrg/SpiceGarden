@@ -13,13 +13,14 @@ module.exports = {
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
     '^react-native-reanimated$': '<rootDir>/__mocks__/react-native-reanimated.js',
+    '^@expo/vector-icons$': '<rootDir>/__mocks__/expo-vector-icons.js',
     '^.+\\.module\\.(css|scss|sass)$': '<rootDir>/../../packages/ui/__mocks__/styleMock.js',
   },
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@expo|expo|expo-image|expo-modules-core|@spicegarden)/)',
+    'node_modules/(?!(react-native|@react-native|@expo|expo|expo-image|expo-modules-core|expo-font|@spicegarden)/)',
   ],
   testMatch: ['**/*.test.{js,jsx}', '**/*.integration.test.{js,jsx}'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.expo/'],

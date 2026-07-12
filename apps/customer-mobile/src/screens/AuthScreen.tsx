@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Easing } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Easing, ActivityIndicator } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
 const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../constants/api';
 
 const AuthScreen = () => {
@@ -122,6 +123,11 @@ const AuthScreen = () => {
     <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ translateX: shakeAnim }] }}>
       <View style={styles.container}>
         <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Ionicons name="restaurant" size={32} color={DESIGN_TOKENS.colors.primary} />
+            </View>
+          </View>
           <Text style={styles.headerText}>SpiceGarden</Text>
           <Text style={styles.headerSubtext}>Order food from your favourite restaurants</Text>
         </View>
@@ -129,72 +135,87 @@ const AuthScreen = () => {
         <View style={styles.formContainer}>
           {!isLogin && (
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Full Name</Text>
-              <TextInput
-                placeholder="Enter your full name"
-                value={name}
-                onChangeText={setName}
-                style={styles.input}
-                accessibilityLabel="Full name"
-                accessibilityHint="Enter your full name as it appears on your ID"
-              />
+              <View style={styles.iconInputRow}>
+                <View style={styles.inputIconContainer}>
+                  <Ionicons name="person-outline" size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChangeText={setName}
+                  accessibilityLabel="Full name"
+                  accessibilityHint="Enter your full name as it appears on your ID"
+                />
+              </View>
             </View>
           )}
 
           {!isLogin && (
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Phone Number</Text>
-              <TextInput
-                placeholder="Enter your phone number"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                style={styles.input}
-                accessibilityLabel="Phone number"
-                accessibilityHint="Enter your mobile number"
-              />
+              <View style={styles.iconInputRow}>
+                <View style={styles.inputIconContainer}>
+                  <Ionicons name="call-outline" size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your phone number"
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  accessibilityLabel="Phone number"
+                  accessibilityHint="Enter your mobile number"
+                />
+              </View>
             </View>
           )}
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email Address</Text>
-            <TextInput
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                if (emailError) validateEmail(text);
-              }}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              style={[styles.input, emailError ? styles.inputError : null]}
-              accessibilityLabel="Email address"
-              accessibilityHint="Enter your email for account access"
-              accessibilityState={{}}
-            />
+            <View style={[styles.iconInputRow, emailError ? styles.iconInputRowError : {}]}>
+              <View style={styles.inputIconContainer}>
+                <Ionicons name="mail-outline" size={18} color={emailError ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.textSecondary} />
+              </View>
+              <TextInput
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (emailError) validateEmail(text);
+                }}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                style={styles.input}
+                accessibilityLabel="Email address"
+                accessibilityHint="Enter your email for account access"
+              />
+            </View>
             {emailError && <Text style={styles.fieldError}>{emailError}</Text>}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <TextInput
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                if (passwordError) validatePassword(text);
-              }}
-              secureTextEntry
-              style={[styles.input, passwordError ? styles.inputError : null]}
-              accessibilityLabel="Password"
-              accessibilityHint={isLogin ? "Enter your password" : "Create a secure password"}
-              accessibilityState={{}}
-            />
+            <View style={[styles.iconInputRow, passwordError ? styles.iconInputRowError : {}]}>
+              <View style={styles.inputIconContainer}>
+                <Ionicons name="lock-closed-outline" size={18} color={passwordError ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.textSecondary} />
+              </View>
+              <TextInput
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (passwordError) validatePassword(text);
+                }}
+                secureTextEntry
+                style={styles.input}
+                accessibilityLabel="Password"
+                accessibilityHint={isLogin ? "Enter your password" : "Create a secure password"}
+              />
+            </View>
             {passwordError && <Text style={styles.fieldError}>{passwordError}</Text>}
           </View>
 
           {error && (
             <View style={styles.errorContainer} accessibilityLiveRegion="polite">
+              <Ionicons name="alert-circle-outline" size={18} color={DESIGN_TOKENS.colors.danger} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
@@ -207,9 +228,13 @@ const AuthScreen = () => {
             accessibilityRole="button"
             accessibilityState={{ disabled: loading }}
           >
-            <Text style={styles.buttonText}>
-              {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>
+                {isLogin ? 'Sign In' : 'Create Account'}
+              </Text>
+            )}
           </Pressable>
         </View>
 
@@ -241,29 +266,80 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: DESIGN_TOKENS.colors.background,
-    padding: DESIGN_TOKENS.spacing.lg,
     justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
     marginBottom: DESIGN_TOKENS.spacing.xl,
+    paddingHorizontal: DESIGN_TOKENS.spacing.lg,
+  },
+  logoContainer: {
+    marginBottom: DESIGN_TOKENS.spacing.md,
+  },
+  logoCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: DESIGN_TOKENS.radius.lg,
+    backgroundColor: DESIGN_TOKENS.colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: DESIGN_TOKENS.colors.primary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    letterSpacing: -0.5,
   },
   headerSubtext: {
     color: DESIGN_TOKENS.colors.textSecondary,
-    marginTop: 4,
+    marginTop: DESIGN_TOKENS.spacing.xs,
+    fontSize: 14,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textAlign: 'center',
   },
   formContainer: {
     width: '100%',
+    backgroundColor: DESIGN_TOKENS.colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: DESIGN_TOKENS.colors.borderLight,
+    borderBottomWidth: 1,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    paddingHorizontal: DESIGN_TOKENS.spacing.lg,
+    paddingVertical: DESIGN_TOKENS.spacing.lg,
   },
   inputGroup: {
     marginBottom: DESIGN_TOKENS.spacing.md,
+  },
+  iconInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DESIGN_TOKENS.spacing.sm,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.border,
+    borderRadius: DESIGN_TOKENS.radius.lg,
+    paddingHorizontal: DESIGN_TOKENS.spacing.md,
+    paddingVertical: DESIGN_TOKENS.spacing.sm,
+    backgroundColor: DESIGN_TOKENS.colors.background,
+    minHeight: 50,
+  },
+  iconInputRowError: {
+    borderColor: DESIGN_TOKENS.colors.danger,
+    backgroundColor: DESIGN_TOKENS.colors.dangerLight + '20',
+  },
+  inputIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: DESIGN_TOKENS.colors.textPrimary,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   inputLabel: {
     fontSize: 14,
@@ -272,33 +348,28 @@ const styles = StyleSheet.create({
     marginBottom: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: DESIGN_TOKENS.colors.border,
-    borderRadius: DESIGN_TOKENS.radius.input,
-    paddingHorizontal: DESIGN_TOKENS.spacing.md,
-    fontSize: 16,
-    backgroundColor: DESIGN_TOKENS.colors.surface,
-    fontFamily: DESIGN_TOKENS.typography.fontFamily,
-  },
-  inputError: {
-    borderColor: DESIGN_TOKENS.colors.danger,
-  },
   fieldError: {
     fontSize: 12,
     color: DESIGN_TOKENS.colors.danger,
-    marginTop: 4,
+    marginTop: DESIGN_TOKENS.spacing.xs,
+    marginLeft: DESIGN_TOKENS.spacing.sm,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   errorContainer: {
     marginBottom: DESIGN_TOKENS.spacing.sm,
+    padding: DESIGN_TOKENS.spacing.sm,
+    backgroundColor: DESIGN_TOKENS.colors.dangerLight,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DESIGN_TOKENS.spacing.xs,
   },
   errorText: {
     color: DESIGN_TOKENS.colors.danger,
     fontSize: 14,
     textAlign: 'center',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    flex: 1,
   },
   button: {
     height: 50,
@@ -306,21 +377,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: DESIGN_TOKENS.radius.button,
-    marginTop: DESIGN_TOKENS.spacing.md,
+    marginTop: DESIGN_TOKENS.spacing.lg,
+    ...DESIGN_TOKENS.shadows.small,
   },
   buttonLoading: {
-    opacity: 0.7,
+    opacity: 0.8,
   },
   buttonText: {
     color: DESIGN_TOKENS.colors.textInverse,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: DESIGN_TOKENS.spacing.lg,
+    paddingHorizontal: DESIGN_TOKENS.spacing.lg,
   },
   dividerLine: {
     flex: 1,
@@ -330,15 +403,18 @@ const styles = StyleSheet.create({
   dividerText: {
     paddingHorizontal: DESIGN_TOKENS.spacing.md,
     color: DESIGN_TOKENS.colors.textSecondary,
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   toggleButton: {
     alignItems: 'center',
+    paddingVertical: DESIGN_TOKENS.spacing.sm,
   },
   toggleButtonText: {
     color: DESIGN_TOKENS.colors.primary,
     fontSize: 14,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

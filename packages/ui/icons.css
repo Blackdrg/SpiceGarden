@@ -1,10 +1,10 @@
 :root {
-  --icon-primary: theme('colors.primary');
-  --icon-secondary: theme('colors.textPrimary');
-  --icon-muted: theme('colors.textSecondary');
-  --icon-danger: theme('colors.danger');
-  --icon-success: theme('colors.success');
-  --icon-warning: theme('colors.warning');
+  --icon-primary: #FF5A1F;
+  --icon-secondary: #111827;
+  --icon-muted: #6B7280;
+  --icon-danger: #EF4444;
+  --icon-success: #10B981;
+  --icon-warning: #F59E0B;
 }
 
 /* Icon Sizes */

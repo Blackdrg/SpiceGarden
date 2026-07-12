@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  Button, Card, DESIGN_TOKENS, MOTION_EASING, SkeletonCard,
+  Button, Card, DESIGN_TOKENS,
   BurgerIcon, PizzaIcon, DrinkIcon, DessertIcon, HealthyIcon,
   HomeIcon, SearchIcon, CartIcon, ProfileIcon, LocationIcon,
-  RatingIcon, NotificationIcon,
+  RatingIcon, NotificationIcon, SearchIcon as SearchIconLucide,
 } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -55,10 +55,6 @@ const handleRetry = () => {
   window.location.reload();
 };
 
-const getTabClass = (tabKey: string) => {
-  return `${styles.tab} ${tabKey === 'home' ? styles.activeTab : styles.inactiveTab}`;
-};
-
 const categories: Category[] = [
   { name: 'Burgers', Icon: BurgerIcon },
   { name: 'Pizza', Icon: PizzaIcon },
@@ -86,12 +82,12 @@ const HomePage = () => {
   const error = fetchError instanceof Error ? fetchError.message : null;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.pageContainer}>
       <header className={styles.header}>
-        <div>
+        <div className={styles.headerContent}>
           <h2 className={styles.userName}>
             <LocationIcon size={20} color={DESIGN_TOKENS.colors.primary} />
-            {' '}{user?.name?.split(' ')[0] || 'Guest'}
+            {user?.name?.split(' ')[0] || 'Guest'}
           </h2>
           <p className={styles.deliveryLocation}>
             Deliver to: Home - Sector 17, Chandigarh
@@ -100,7 +96,7 @@ const HomePage = () => {
         <div className={styles.headerActions}>
           <button
             type="button"
-            onClick={() => null}
+            onClick={() => router.push('/notifications')}
             className={styles.iconButton}
             aria-label="Notifications"
           >
@@ -109,6 +105,7 @@ const HomePage = () => {
         </div>
       </header>
 
+      <div className={styles.searchSection}>
         <button
           type="button"
           onClick={() => router.push('/search')}
@@ -116,9 +113,10 @@ const HomePage = () => {
           className={styles.searchBar}
           aria-label="Search restaurants and dishes"
         >
-        <span className={styles.searchIcon}><SearchIcon size={20} /></span>
-        <span className={styles.searchText}>Search restaurants, dishes…</span>
-      </button>
+          <span className={styles.searchIcon}><SearchIconLucide size={20} /></span>
+          <span className={styles.searchText}>Search restaurants, dishes…</span>
+        </button>
+      </div>
 
       <div className={styles.categoryContainer}>
         {categories.map((cat) => (
@@ -128,83 +126,85 @@ const HomePage = () => {
             className={styles.categoryItem}
             aria-label={`Browse ${cat.name} category`}
           >
-            <div className={styles.categoryIcon}>
-              <cat.Icon size={28} color={categoryColors[cat.name]} />
+            <div className={styles.categoryIconWrap} style={{ backgroundColor: categoryColors[cat.name] + '15' }}>
+              <cat.Icon size={24} color={categoryColors[cat.name]} />
             </div>
             <div className={styles.categoryName}>{cat.name}</div>
           </button>
         ))}
       </div>
 
+      <div className={styles.promoSection}>
         <button
           type="button"
           onClick={() => router.push('/search')}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
           className={styles.promoBanner}
         >
-        <h2 className={styles.promoTitle}>50% OFF</h2>
-        <p className={styles.promoText}>
-          On your first 3 orders. Use code: <strong>WELCOME50</strong>
-        </p>
-        <div className={styles.promoButton}>
-          <Button
-            label="Order Now"
-            onClick={() => router.push('/search')}
-            ariaLabel="Order now with welcome discount"
-          />
-        </div>
-      </button>
-
-      <Card title="Recommended Restaurants" variant="elevated">
-        {loading ? (
-          <SkeletonCard count={3} />
-        ) : error ? (
-          <div className={styles.errorContainer}>
-            <p className={styles.errorMessage}>{error}</p>
-            <button
-              type="button"
-              onClick={handleRetry}
-              className={styles.retryButton}
-            >
-              Retry
-            </button>
-          </div>
-        ) : restaurants.length === 0 ? (
-          <p className={styles.noRestaurants}>
-            No restaurants available right now
+          <h2 className={styles.promoTitle}>50% OFF</h2>
+          <p className={styles.promoText}>
+            On your first 3 orders. Use code: <strong>WELCOME50</strong>
           </p>
-        ) : (
-          <div className={styles.restaurantItemGrid}>
-            {restaurants.slice(0, 3).map((restaurant) => (
-<button
+          <div className={styles.promoButton}>
+            <Button label="Order Now" onClick={() => router.push('/search')} ariaLabel="Order now with welcome discount" />
+          </div>
+        </button>
+      </div>
+
+      <h2 className={styles.sectionTitle}>Recommended Restaurants</h2>
+      {loading ? (
+        <div className={styles.restaurantGrid}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className={styles.restaurantItem} style={{ cursor: 'default' }}>
+              <div className={styles.restaurantContent}>
+                <div className={styles.restaurantName} style={{ width: '60%' }}>Loading...</div>
+                <div className={styles.restaurantDescription} style={{ width: '40%' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className={styles.errorContainer}>
+          <p className={styles.errorMessage}>{error}</p>
+          <button
+            type="button"
+            onClick={handleRetry}
+            className={styles.retryButton}
+          >
+            Retry
+          </button>
+        </div>
+      ) : restaurants.length === 0 ? (
+        <div className={styles.noRestaurants}>
+          No restaurants available right now
+        </div>
+      ) : (
+        <div className={styles.restaurantGrid}>
+          {restaurants.slice(0, 3).map((restaurant) => (
+            <button
               type="button"
               key={restaurant.id}
               className={styles.restaurantItem}
-                onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/restaurant?id=${restaurant.id}`); } }}
-                aria-label={`View ${restaurant.name} details`}
-              >
-                <div className={styles.restaurantContent}>
-                  <div className={styles.restaurantName}>
-                    {restaurant.name}
-                  </div>
-                  <div className={styles.restaurantDescription}>
-                    {restaurant.description}
-                  </div>
-                  <div className={styles.restaurantMeta}>
-                    <span>
-                      <RatingIcon size={14} fill={DESIGN_TOKENS.colors.warning} />
-                      {' '}{restaurant.rating}
-                    </span>
-                    <span>{restaurant.deliveryTime} min</span>
-                    <span>{distanceFromId(restaurant.id)} km</span>
-                  </div>
+              onClick={() => router.push(`/restaurant?id=${restaurant.id}`)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/restaurant?id=${restaurant.id}`); } }}
+              aria-label={`View ${restaurant.name} details`}
+            >
+              <div className={styles.restaurantContent}>
+                <div className={styles.restaurantName}>{restaurant.name}</div>
+                <div className={styles.restaurantDescription}>{restaurant.description}</div>
+                <div className={styles.restaurantMeta}>
+                  <span>
+                    <RatingIcon size={14} fill={DESIGN_TOKENS.colors.warning} />
+                    {' '}{restaurant.rating}
+                  </span>
+                  <span>{restaurant.deliveryTime} min</span>
+                  <span>{distanceFromId(restaurant.id)} km</span>
                 </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </Card>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       <nav
         className={styles.nav}
@@ -218,7 +218,7 @@ const HomePage = () => {
               onClick={() => {
                 if (tab.path) router.push(tab.path);
               }}
-              className={getTabClass(tab.key)}
+              className={`${tab.key === 'home' ? styles.activeTab : styles.inactiveTab}`}
               aria-label={tab.label}
             >
               <span className={styles.tabIcon}><tab.Icon size={22} /></span>

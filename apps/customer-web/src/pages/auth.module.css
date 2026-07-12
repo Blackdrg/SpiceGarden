@@ -1,102 +1,190 @@
-.socialLabel {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 16px;
-}
-
-.socialButtonsRow {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-}
-
-.socialButtonBase {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.googleButton {
-  background: white;
-  color: black;
-}
-
-.facebookButton {
-  background: #1877f2;
-  color: white;
-  border: none;
-}
+/* auth.module.css - Customer Web Auth Page */
 
 .pageContainer {
-  padding: 24px;
   min-height: 100vh;
-  background-color: #9CA3AF;
+  background: linear-gradient(180deg, var(--color-background, #F9FAFB) 0%, var(--color-surface, #FFFFFF) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-6);
 }
 
 .headerContainer {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-7);
 }
 
 .logo {
-  color: #FF5A1F;
+  color: var(--color-primary, #FF5A1F);
+  font-size: 2rem;
+  margin: 0 0 var(--spacing-2) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
 .subtitle {
-  color: #666;
+  color: var(--color-textSecondary, #6B7280);
   margin: 0;
+  font-size: 0.9375rem;
 }
 
 .errorMsg {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  font-size: 14px;
+  background-color: var(--color-dangerLight, #FEE2E2);
+  color: var(--color-dangerDark, #DC2626);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-4);
+  font-size: 0.875rem;
+  border: 1px solid var(--color-danger, #EF4444)22;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
 .fieldMd {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .fieldLg {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-5);
 }
 
 .label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-textPrimary, #111827);
+  letter-spacing: 0.01em;
 }
 
 .input {
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border, #E5E7EB);
+  background-color: var(--color-surface, #FFFFFF);
+  font-size: 0.9375rem;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  color: var(--color-textPrimary, #111827);
+  min-height: 44px;
+  box-shadow: var(--shadow-xs);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary, #FF5A1F);
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.1);
+}
+
+.input::placeholder {
+  color: var(--color-textTertiary, #9CA3AF);
 }
 
 .footer {
   text-align: center;
-  margin-top: 24px;
+  margin-top: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
 }
 
 .textButton {
   background: none;
   border: none;
-  color: #FF5A1F;
+  color: var(--color-primary, #FF5A1F);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+}
+
+.textButton:hover {
+  background-color: var(--color-primaryLight, #FFF0EB);
 }
 
 .socialSection {
-  margin-top: 16px;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-borderLight, #F3F4F6);
+  width: 100%;
 }
 
+.socialLabel {
+  font-size: 0.8125rem;
+  color: var(--color-textSecondary, #6B7280);
+  margin-bottom: var(--spacing-3);
+  text-align: center;
+}
+
+.socialButtonsRow {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: center;
+}
+
+.googleButton {
+  background: white;
+  color: #374151;
+  border: 1px solid var(--color-border, #E5E7EB);
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  min-height: 40px;
+}
+
+.googleButton:hover {
+  background: var(--color-elevated, #F3F4F6);
+  border-color: var(--color-borderDark, #D1D5DB);
+  transform: translateY(-1px);
+}
+
+.facebookButton {
+  background: #1877F2;
+  color: white;
+  border: none;
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--spicegarden-font-family, -apple-system, sans-serif);
+  min-height: 40px;
+}
+
+.facebookButton:hover {
+  background: #166FE5;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-small);
+}
+
+.mfaSection {
+  text-align: center;
+  margin-bottom: var(--spacing-5);
+}
+
+.mfaSubtitle {
+  color: var(--color-textSecondary, #6B7280);
+  font-size: 0.875rem;
+  margin: 0 0 var(--spacing-4) 0;
+}

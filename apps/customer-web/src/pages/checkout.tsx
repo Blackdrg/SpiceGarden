@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi } from '@spicegarden/shared/api';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { CreditCardIcon, SmartphoneIcon, BanknoteIcon, TagIcon } from 'lucide-react';
+import styles from './checkout.module.css';
 
 interface OrderResponse {
   id: string;
@@ -154,124 +156,141 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Checkout</h2>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Checkout</h2>
+        <p className={styles.pageSubtitle}>Review your order before placing it</p>
+      </div>
 
       {state.loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.lg }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[6] }}>
           <SkeletonCard count={2} />
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Payment Method</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, flexWrap: 'wrap' }}>
-              <Skeleton width={80} height={20} variant="rectangular" style={{ marginBottom: DESIGN_TOKENS.spacing.xs }} />
-              <Skeleton width={80} height={20} variant="rectangular" style={{ marginBottom: DESIGN_TOKENS.spacing.xs }} />
-              <Skeleton width={80} height={20} variant="rectangular" />
-            </div>
-          </div>
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Tip</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-              <Skeleton width={60} height={20} variant="rectangular" style={{ marginRight: DESIGN_TOKENS.spacing.sm }} />
-              <Skeleton width={60} height={20} variant="rectangular" style={{ marginRight: DESIGN_TOKENS.spacing.sm }} />
-              <Skeleton width={60} height={20} variant="rectangular" style={{ marginRight: DESIGN_TOKENS.spacing.sm }} />
-              <Skeleton width={60} height={20} variant="rectangular" />
-            </div>
-          </div>
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Promo Code</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-              <Skeleton width={200} height={20} variant="rectangular" style={{ flex: 1, marginRight: DESIGN_TOKENS.spacing.sm }} />
-              <Skeleton width={60} height={20} variant="rectangular" />
-            </div>
-          </div>
-          <SkeletonCard count={2} />
+          <Skeleton height={120} borderRadius={DESIGN_TOKENS.radius.xl} />
+          <Skeleton height={200} borderRadius={DESIGN_TOKENS.radius.xl} />
         </div>
       ) : (
         <>
-          <Card title="Delivery Address">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p style={{ margin: 0 }}>{state.address}</p>
-              <Button label="Change" onClick={() => {
-                const newAddress = prompt('Enter your delivery address:', state.address);
-                if (newAddress !== null && newAddress.trim() !== '') {
-                  dispatch({ type: 'SET_ADDRESS', payload: newAddress });
-                }
-              }} variant="secondary" />
-            </div>
-          </Card>
+          <div className={styles.section}>
+            <Card title="Delivery Address" variant="interactive" subtitle={state.address}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p style={{ margin: 0, fontSize: '0.9375rem' }}>{state.address}</p>
+                <Button label="Change" onClick={() => {
+                  const newAddress = prompt('Enter your delivery address:', state.address);
+                  if (newAddress !== null && newAddress.trim() !== '') {
+                    dispatch({ type: 'SET_ADDRESS', payload: newAddress });
+                  }
+                }} variant="secondary" size="sm" />
+              </div>
+            </Card>
+          </div>
 
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Payment Method</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, flexWrap: 'wrap' }}>
-              <Button label="💳 Card" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' })} variant={state.paymentMethod === 'card' ? 'primary' : 'secondary'} />
-              <Button label="💰 UPI" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'upi' })} variant={state.paymentMethod === 'upi' ? 'primary' : 'secondary'} />
-              <Button label="💵 Cash" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'cash' })} variant={state.paymentMethod === 'cash' ? 'primary' : 'secondary'} />
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <CreditCardIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+              Payment Method
+            </h3>
+            <div className={styles.paymentMethods}>
+              {[
+                { key: 'card', label: 'Card', icon: CreditCardIcon },
+                { key: 'upi', label: 'UPI', icon: SmartphoneIcon },
+                { key: 'cash', label: 'Cash', icon: BanknoteIcon },
+              ].map((method) => (
+                <button
+                  key={method.key}
+                  type="button"
+                  className={`${styles.paymentMethodBtn} ${state.paymentMethod === method.key ? styles.paymentMethodBtnActive : ''}`}
+                  onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: method.key })}
+                >
+                  <method.icon size={18} />
+                  {method.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Tip</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
-              <Button label="No tip" onClick={() => dispatch({ type: 'SET_TIP', payload: 0 })} variant={state.tip === 0 ? 'primary' : 'secondary'} />
-              <Button label="₹30" onClick={() => dispatch({ type: 'SET_TIP', payload: 30 })} variant={state.tip === 30 ? 'primary' : 'secondary'} />
-              <Button label="₹50" onClick={() => dispatch({ type: 'SET_TIP', payload: 50 })} variant={state.tip === 50 ? 'primary' : 'secondary'} />
-              <Button label="₹100" onClick={() => dispatch({ type: 'SET_TIP', payload: 100 })} variant={state.tip === 100 ? 'primary' : 'secondary'} />
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>Add a Tip</h3>
+            <div className={styles.tipOptions}>
+              {[0, 30, 50, 100].map((tip) => (
+                <button
+                  key={tip}
+                  type="button"
+                  className={`${styles.tipBtn} ${state.tip === tip ? styles.tipBtnActive : ''}`}
+                  onClick={() => dispatch({ type: 'SET_TIP', payload: tip })}
+                >
+                  {tip === 0 ? 'No tip' : `₹${tip}`}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-            <h3>Promo Code</h3>
-            <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm }}>
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <TagIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+              Promo Code
+            </h3>
+            <div className={styles.promoSection}>
               <input
                 type="text"
                 placeholder="Enter promo code"
                 aria-label="Promo code"
                 value={state.promoCode}
                 onChange={(e) => dispatch({ type: 'SET_PROMO_CODE', payload: e.target.value })}
-                style={{ flex: 1, padding: DESIGN_TOKENS.spacing.sm, borderRadius: DESIGN_TOKENS.radius.sm, border: '1px solid #ddd' }}
+                className={styles.promoInput}
               />
               <Button label="Apply" onClick={applyPromo} variant="secondary" />
             </div>
             {state.promoError && (
-              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{state.promoError}</p>
+              <p className={styles.promoError}>{state.promoError}</p>
             )}
             {state.promoSuccess && (
-              <div style={{ textAlign: 'center', margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
-                <p style={{ color: '#2e7d32', fontSize: '14px', marginTop: 4 }}>{state.promoSuccess}</p>
-              </div>
+              <p className={styles.promoSuccess}>{state.promoSuccess}</p>
             )}
             {state.orderError && (
-              <p style={{ color: '#c62828', fontSize: '14px', marginTop: 4 }}>{state.orderError}</p>
+              <p className={styles.orderError}>{state.orderError}</p>
             )}
           </div>
 
-          <Card title="Order Summary">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
-              <span>Item Total</span>
-              <span>₹{subtotal.toFixed(0)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
-              <span>Delivery Fee</span>
-              <span>₹{deliveryFee}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
-              <span>Taxes</span>
-              <span>₹{taxes.toFixed(0)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: DESIGN_TOKENS.spacing.xs }}>
-              <span>Tip</span>
-              <span>₹{state.tip.toFixed(0)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold', borderTop: '1px solid #ddd', paddingTop: DESIGN_TOKENS.spacing.sm }}>
-              <span>Total</span>
-              <span>₹{grandTotal.toFixed(0)}</span>
-            </div>
-          </Card>
+          <div className={styles.summarySection}>
+            <Card title="Order Summary" variant="elevated">
+              <div className={styles.summaryRow}>
+                <span>Item Total</span>
+                <span style={{ fontWeight: 600 }}>₹{subtotal.toFixed(0)}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span>Delivery Fee</span>
+                <span style={{ fontWeight: 600 }}>₹{deliveryFee}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span>Taxes (5%)</span>
+                <span style={{ fontWeight: 600 }}>₹{taxes.toFixed(0)}</span>
+              </div>
+              <div className={styles.summaryRow}>
+                <span>Tip</span>
+                <span style={{ fontWeight: 600 }}>₹{state.tip}</span>
+              </div>
+              {state.promoDiscount > 0 && (
+                <div className={styles.summaryRow}>
+                  <span>Promo Discount</span>
+                  <span style={{ fontWeight: 600, color: DESIGN_TOKENS.colors.success }}>−₹{state.promoDiscount.toFixed(0)}</span>
+                </div>
+              )}
+              <div className={styles.summaryTotal}>
+                <span>Total</span>
+                <span style={{ color: DESIGN_TOKENS.colors.primary }}>₹{grandTotal.toFixed(0)}</span>
+              </div>
+            </Card>
+          </div>
         </>
       )}
 
-      <div style={{ marginTop: DESIGN_TOKENS.spacing.xl }}>
-        <Button label={state.loading ? 'Placing Order...' : 'Place Order'} onClick={handlePlaceOrder} />
+      <div className={styles.placeOrderSection}>
+        <Button
+          label={state.loading ? 'Placing Order...' : 'Place Order'}
+          onClick={handlePlaceOrder}
+          fullWidth
+          size="lg"
+        />
       </div>
     </div>
   );

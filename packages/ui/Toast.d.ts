@@ -1,5 +1,5 @@
 import React from 'react';
-type ToastType = 'success' | 'error' | 'info';
+type ToastType = 'success' | 'error' | 'info' | 'warning';
 interface Toast {
     id: string;
     type: ToastType;
@@ -22,3 +22,4 @@ export declare const InlineAlert: ({ type, message, onClose, }: {
     onClose?: () => void;
 }) => React.JSX.Element;
 export {};
+//# sourceMappingURL=Toast.d.ts.map

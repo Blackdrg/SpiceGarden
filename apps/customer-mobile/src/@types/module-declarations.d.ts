@@ -82,10 +82,6 @@ declare module '@react-navigation/native-stack' {
       stale: false;
     }>;
   };
-  export type NativeStackScreenProps<ParamList extends object, RouteName extends keyof ParamList> = {
-    navigation: NativeStackNavigationProp<ParamList, RouteName>;
-    route: NativeStackRouteProp<ParamList, RouteName>;
-  };
 }
 
 declare module '@react-native-async-storage/async-storage' {
@@ -96,54 +92,6 @@ declare module '@react-native-async-storage/async-storage' {
     multiRemove(keys: string[]): Promise<void>;
   };
   export default AsyncStorage;
-}
-
-
-declare module '@spicegarden/ui' {
-  export const DESIGN_TOKENS: {
-    colors: {
-      primary: string;
-      secondary: string;
-      background: string;
-      surface: string;
-      elevated: string;
-      textPrimary: string;
-      textSecondary: string;
-      textInverse: string;
-      success: string;
-      danger: string;
-      warning: string;
-      premium: string;
-      border: string;
-      dangerDark: string;
-      neutral: string;
-    };
-    spacing: {
-      xs: number;
-      sm: number;
-      md: number;
-      lg: number;
-      xl: number;
-      xxl: number;
-    };
-    typography: {
-      fontFamily: string;
-    };
-    radius: {
-      sm: number;
-      md: number;
-      button: number;
-      input: number;
-      card: number;
-      container: number;
-      full: number;
-    };
-    motion: {
-      micro: number;
-      standard: number;
-      page: number;
-    };
-  };
 }
 
 declare module '../components/SkeletonLoader' {

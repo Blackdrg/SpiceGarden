@@ -1,6 +1,21 @@
-import { useEffect, useMemo, useReducer } from 'react';
-import styles from './Sidebar.module.css';
-import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import styles from './AdminDashboard.module.css';
+import sidebarStyles from './Sidebar.module.css';
+import {
+  IconDashboard,
+  IconOrders,
+  IconBranches,
+  IconSupport,
+  IconMenu,
+  IconX,
+  IconTrendingUp,
+  IconAlertTriangle,
+  IconMapPin,
+  IconDollarSign,
+  IconUsers,
+  IconActivity,
+  IconChevronRight,
+} from '../components/icons/SGIcon';
 import type { Socket } from 'socket.io-client';
 import {
   adminDashboardReducer,
@@ -43,6 +58,7 @@ async function fetchOrders(): Promise<(LiveOrder & { createdAt?: string })[]> {
 
 export default function AdminDashboard() {
   const [state, dispatch] = useReducer(adminDashboardReducer, undefined, initialAdminDashboardState);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => dispatch({ type: 'client-tick' }), 60000);
@@ -89,10 +105,25 @@ export default function AdminDashboard() {
   const subtitle = dashboardSubtitle(state.selectedTab, state.liveOrders, state.branches, state.tickets, openTickets.length);
 
   return (
-    <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <Sidebar selectedTab={state.selectedTab} onSelectTab={(tab) => dispatch({ type: 'tab-selected', tab })} />
+    <div className={styles.container}>
+      <button
+        type="button"
+        className={styles.mobileMenuButton}
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle navigation menu"
+      >
+        {sidebarOpen ? <IconX size={18} color="#111827" /> : <IconMenu size={18} color="#111827" />}
+      </button>
 
-      <main style={{ marginLeft: 220, padding: '24px 32px', paddingTop: 20 }}>
+      <div
+        className={`${styles.sidebarOverlay} ${sidebarOpen ? styles.sidebarOverlayVisible : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      <Sidebar selectedTab={state.selectedTab} onSelectTab={(tab) => { dispatch({ type: 'tab-selected', tab }); setSidebarOpen(false); }} sidebarOpen={sidebarOpen} />
+
+      <main className={`${sidebarOpen ? styles.mainFullWidth : styles.main}`}>
         <DashboardHeader title={title} subtitle={subtitle} />
 
         {state.selectedTab === 'overview' && (
@@ -134,41 +165,65 @@ export default function AdminDashboard() {
         button { font-family: inherit; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+        @media (max-width: 768px) {
+          ${sidebarStyles.sidebar} {
+            transform: translateX(${sidebarOpen ? '0' : '-100%'});
+            transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+          }
+        }
       `}</style>
     </div>
   );
 }
 
-const sidebarNavItems: { key: AdminTab; label: string; emoji: string }[] = [
-  { key: 'overview', label: 'Dashboard', emoji: '📊' },
-  { key: 'orders', label: 'Live Orders', emoji: '🛵' },
-  { key: 'branches', label: 'Kitchen Monitor', emoji: '🏪' },
-  { key: 'support', label: 'Support & Security', emoji: '🛡️' },
+const sidebarNavItems: { key: AdminTab; label: string; Icon: React.FC<{ size?: number; color?: string; 'aria-hidden'?: boolean | 'true' | 'false' }> }[] = [
+  { key: 'overview', label: 'Dashboard', Icon: IconDashboard },
+  { key: 'orders', label: 'Live Orders', Icon: IconOrders },
+  { key: 'branches', label: 'Kitchen Monitor', Icon: IconBranches },
+  { key: 'support', label: 'Support & Security', Icon: IconSupport },
 ];
 
-function Sidebar({ selectedTab, onSelectTab }: { selectedTab: AdminTab; onSelectTab: (tab: AdminTab) => void }) {
+function Sidebar({ selectedTab, onSelectTab, sidebarOpen }: { selectedTab: AdminTab; onSelectTab: (tab: AdminTab) => void; sidebarOpen: boolean }) {
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.logoSection}>
-        <div className={styles.logoText}>🌶️ SpiceGarden</div>
-        <div className={styles.adminText}>Super Admin</div>
+    <aside className={sidebarStyles.sidebar} role="navigation" aria-label="Main navigation">
+      <div className={sidebarStyles.logoSection}>
+        <div className={sidebarStyles.logoText}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF5A1F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#FF5A1F" fillOpacity="0.15" />
+              <path d="M14.5 9.5L9.5 14.5M9.5 9.5l5 5" stroke="#FF5A1F" />
+            </svg>
+            SpiceGarden
+          </span>
+        </div>
+        <div className={sidebarStyles.adminText}>Super Admin</div>
       </div>
 
-      {sidebarNavItems.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          onClick={() => onSelectTab(tab.key)}
-          className={`${styles.navButton} ${selectedTab === tab.key ? styles.navButtonActive : styles.navButtonInactive}`}
-        >
-          <span className={styles.navEmoji}>{tab.emoji}</span> {tab.label}
-        </button>
-      ))}
+      <nav className={sidebarStyles.nav}>
+        {sidebarNavItems.map((tab) => {
+          const isActive = selectedTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onSelectTab(tab.key)}
+              className={`${sidebarStyles.navButton} ${isActive ? sidebarStyles.navButtonActive : sidebarStyles.navButtonInactive}`}
+              aria-current={isActive ? 'page' : undefined}
+              title={tab.label}
+            >
+              <tab.Icon size={18} color={isActive ? '#FF5A1F' : undefined} />
+              <span>{tab.label}</span>
+              {isActive && <span style={{ marginLeft: 'auto' }}><IconChevronRight size={14} color="#FF5A1F" /></span>}
+            </button>
+          );
+        })}
+      </nav>
 
-      <div className={styles.footer}>
-        <div className={styles.footerLabel}>Logged in as</div>
-        <div className={styles.footerName}>Super Admin</div>
+      <div className={sidebarStyles.footer}>
+        <div className={sidebarStyles.footerLabel}>Logged in as</div>
+        <div className={sidebarStyles.footerName}>Super Admin</div>
       </div>
     </aside>
   );
@@ -176,19 +231,19 @@ function Sidebar({ selectedTab, onSelectTab }: { selectedTab: AdminTab; onSelect
 
 function DashboardHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <header style={{ marginBottom: 24 }}>
-      <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>{title}</h1>
-      <p style={{ margin: '4px 0 0', color: '#666', fontSize: 14 }}>{subtitle}</p>
+    <header className={styles.pageHeader}>
+      <h1 className={styles.pageTitle}>{title}</h1>
+      <p className={styles.pageSubtitle}>{subtitle}</p>
     </header>
   );
 }
 
 function dashboardTitle(tab: AdminTab) {
   const titles: Record<AdminTab, string> = {
-    overview: '📊 Platform Overview',
-    orders: '🛵 Live Orders',
-    branches: '🏪 Kitchen Monitoring',
-    support: '🛡️ Support & Security',
+    overview: 'Platform Overview',
+    orders: 'Live Orders',
+    branches: 'Kitchen Monitoring',
+    support: 'Support & Security',
   };
   return titles[tab];
 }
@@ -213,10 +268,16 @@ function DeliveryHeatmap({ data }: { data: HeatmapPoint[] }) {
   });
 
   return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: `repeat(${100 / GRID}, 1fr)`,
-      gap: 1, aspectRatio: '1', borderRadius: 8, overflow: 'hidden',
-    }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${100 / GRID}, 1fr)`,
+        gap: 1,
+        aspectRatio: '1',
+        borderRadius: 8,
+        overflow: 'hidden',
+      }}
+    >
       {Array.from({ length: (100 / GRID) * (100 / GRID) }, (_, i) => {
         const col = i % (100 / GRID);
         const row = Math.floor(i / (100 / GRID));

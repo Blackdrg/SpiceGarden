@@ -1,31 +1,22 @@
-import { useState, CSSProperties } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { Button, Card, DESIGN_TOKENS, useToast } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import { WalletIcon, ArrowDownIcon, ArrowUpIcon, HomeIcon, SearchIcon, UserIcon } from 'lucide-react';
+import styles from './wallet.module.css';
 
 const bottomNavStyle: CSSProperties = {
   position: 'fixed',
   bottom: 0,
   left: 0,
   right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
+  height: 64,
+  backgroundColor: 'var(--color-surface, #FFFFFF)',
+  borderTop: '1px solid var(--color-borderLight, #F3F4F6)',
   display: 'flex',
   justifyContent: 'space-around',
   alignItems: 'center',
-};
-
-const navButtonStyle: CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
+  boxShadow: 'var(--shadow-small)',
+  zIndex: 100,
 };
 
 const WalletPage = () => {
@@ -47,68 +38,63 @@ const WalletPage = () => {
 
   const addMoney = () => {
     setBalance((prev) => prev + 100);
+    toast.showToast({ message: '₹100 added to your wallet', type: 'success', duration: 3000 });
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>My Wallet</h2>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>My Wallet</h2>
+        <p className={styles.pageSubtitle}>Manage your balance and transactions</p>
+      </div>
 
-      <Card title="Wallet Balance" isElevated>
-        <div style={{
-          textAlign: 'center', padding: `${DESIGN_TOKENS.spacing.lg}px 0`,
-          backgroundColor: '#f0f8ff', borderRadius: DESIGN_TOKENS.radius.md,
-        }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '2.5rem', color: DESIGN_TOKENS.colors.primary }}>&#8377;{balance}</h1>
-          <p style={{ margin: 0, color: '#666' }}>Available balance</p>
+      <Card variant="elevated">
+        <div className={styles.balanceSection}>
+          <p className={styles.balanceLabel}>Available Balance</p>
+          <h1 className={styles.balanceAmount}>₹{balance}</h1>
+          <p className={styles.balanceSuffix}>Ready to use</p>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.lg }}>
-          <Button label="Add Money" onClick={addMoney} />
-          <Button label="Withdraw" onClick={handleWithdraw} variant="secondary" />
+        <div className={styles.walletActions}>
+          <Button onClick={addMoney}><ArrowDownIcon size={18} /></Button>
+          <Button onClick={handleWithdraw} variant="secondary"><ArrowUpIcon size={18} /></Button>
         </div>
       </Card>
 
-      <Card title="Transaction History" style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {transactionHistory.map((txn) => (
-            <div
-              key={txn.id}
-              style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: `${DESIGN_TOKENS.spacing.sm}px 0`,
-                borderBottom: '1px solid #f0f0f0',
-              }}
-            >
-              <div>
-                <h4 style={{ margin: 0, fontSize: '14px' }}>{txn.description}</h4>
-                <p style={{ margin: '4px 0 0 0', color: '#999', fontSize: '12px' }}>{txn.date}</p>
+      <div className={styles.transactionSection}>
+        <h3 className={styles.sectionTitle}>Transaction History</h3>
+        <Card variant="default">
+          <div className={styles.transactionList}>
+            {transactionHistory.map((txn) => (
+              <div key={txn.id} className={styles.transactionItem}>
+                <div className={styles.transactionInfo}>
+                  <div className={styles.transactionDesc}>{txn.description}</div>
+                  <div className={styles.transactionDate}>{txn.date}</div>
+                </div>
+                <span className={`${styles.transactionAmount} ${txn.type === 'credit' ? styles.transactionCredit : styles.transactionDebit}`}>
+                  {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
+                </span>
               </div>
-              <span style={{
-                fontWeight: 'bold',
-                color: txn.type === 'credit' ? DESIGN_TOKENS.colors.success : DESIGN_TOKENS.colors.danger,
-              }}>
-                {txn.type === 'credit' ? '+' : '-'}&#8377;{txn.amount}
-              </span>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+        </Card>
+      </div>
 
       {/* Bottom nav */}
       <nav style={bottomNavStyle}>
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'wallet', label: 'Wallet', icon: '💰' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
+          { key: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', icon: SearchIcon, path: '/search' },
+          { key: 'wallet', label: 'Wallet', icon: WalletIcon, path: '/wallet' },
+          { key: 'account', label: 'Account', icon: UserIcon, path: '/profile' },
         ].map((tab) => (
           <button
             type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999' }}
+            className={`${styles.navButton} ${activeTab === tab.key ? styles.navActive : styles.navInactive}`}
+            aria-label={tab.label}
           >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+            <span className={styles.navIcon}><tab.icon size={22} /></span>
             <span>{tab.label}</span>
           </button>
         ))}

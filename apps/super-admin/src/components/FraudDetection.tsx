@@ -2,25 +2,45 @@ import type { DisputeTicket } from './types';
 import { AdminButton } from './AdminButton';
 import { DashboardCard } from './DashboardCard';
 import { useToast } from '@spicegarden/ui';
+import { IconShield, IconBan, IconSearch } from './icons/SGIcon';
+import styles from './SupportTab.module.css';
 
 export function FraudDetection({ tickets }: { tickets: DisputeTicket[] }) {
   const toast = useToast();
 
   return (
-    <DashboardCard title="🛡️ Fraud Detection" sub="Recent blocks">
+    <DashboardCard title="Fraud Detection" sub="Recent blocks" iconVariant="danger" titleIcon={<IconShield size={16} color="#EF4444" />}>
       {tickets.map((ticket) => (
-        <div key={ticket.id} style={{ padding: '12px', background: '#fff5f5', borderRadius: 8, marginBottom: 8, borderLeft: '4px solid #f04e31' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <strong style={{ color: '#f04e31' }}>🚫 {ticket.id}</strong>
-            <span style={{ color: '#999', fontSize: 12 }}>{ticket.createdAt}</span>
+        <div key={ticket.id} className={styles.fraudItem}>
+          <div className={styles.fraudHeader}>
+            <strong className={styles.fraudId}>
+              <IconBan size={14} color="#EF4444" />
+              {ticket.id}
+            </strong>
+            <span className={styles.fraudTime}>{ticket.createdAt}</span>
           </div>
-          <p style={{ margin: '0 0 8px', fontSize: 13 }}>{ticket.description}</p>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <AdminButton label="Investigate" onClick={() => toast.showToast({ message: `Opening case ${ticket.id}`, type: 'info', duration: 0 })} style={{ flex: 1, padding: '6px 0', fontSize: 12 }} />
-            <AdminButton label="Block IP" onClick={() => toast.showToast({ message: `IP blocked for ${ticket.id}`, type: 'error', duration: 0 })} variant="secondary" style={{ flex: 1, padding: '6px 0', fontSize: 12 }} />
+          <p className={styles.fraudDescription}>{ticket.description}</p>
+          <div className={styles.fraudActions}>
+            <button
+              type="button"
+              className={styles.branchButtonPrimary}
+              onClick={() => toast.showToast({ message: `Opening case ${ticket.id}`, type: 'info', duration: 0 })}
+              style={{ flex: 1, padding: '6px 0', fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+            >
+              <IconSearch size={14} color="white" /> Investigate
+            </button>
+            <button
+              type="button"
+              className={styles.branchButtonSecondary}
+              onClick={() => toast.showToast({ message: `IP blocked for ${ticket.id}`, type: 'error', duration: 0 })}
+              style={{ flex: 1, padding: '6px 0', fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+            >
+              <IconBan size={14} color="#374151" /> Block IP
+            </button>
           </div>
         </div>
       ))}
+      {tickets.length === 0 && <p className={styles.emptyState}>No fraud alerts</p>}
     </DashboardCard>
   );
 }

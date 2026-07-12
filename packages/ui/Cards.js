@@ -8,13 +8,13 @@ exports.ReviewCard = exports.TrackingCard = exports.MapCard = exports.MenuCard =
 const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const FoodCard = ({ image, title, price, rating, offerBadge, isVeg, spiceLevel, onPress, style, }) => {
-    const spiceLabels = { 1: '🌶️ Mild', 2: '🌶️🌶️ Medium', 3: '🌶️🌶️🌶️ Hot' };
+    const spiceLabels = { 1: 'Mild', 2: 'Medium', 3: 'Hot' };
     return (react_1.default.createElement("div", { onClick: onPress, role: onPress ? 'button' : undefined, tabIndex: onPress ? 0 : undefined, style: {
             display: 'flex',
-            gap: tokens_1.DESIGN_TOKENS.spacing.md,
+            gap: tokens_1.DESIGN_TOKENS.spacing[3],
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
+            padding: tokens_1.DESIGN_TOKENS.spacing[6],
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             boxShadow: tokens_1.DESIGN_TOKENS.shadows.small,
             transition: `transform ${tokens_1.DESIGN_TOKENS.motion.micro}ms ${tokens_1.MOTION_EASING.easeOutSoft}`,
@@ -70,9 +70,9 @@ exports.FoodCard = FoodCard;
 const MenuCard = ({ title, description, price, image, variant = 'item', onPress, }) => {
     if (variant === 'section') {
         return (react_1.default.createElement("div", { style: {
-                padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+                padding: tokens_1.DESIGN_TOKENS.spacing[6],
                 backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-                borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
                 border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             } },
             react_1.default.createElement("h3", { style: {
@@ -89,10 +89,10 @@ const MenuCard = ({ title, description, price, image, variant = 'item', onPress,
     if (variant === 'combo') {
         return (react_1.default.createElement("div", { onClick: onPress, role: onPress ? 'button' : undefined, style: {
                 display: 'flex',
-                gap: tokens_1.DESIGN_TOKENS.spacing.md,
+                gap: tokens_1.DESIGN_TOKENS.spacing[3],
                 backgroundColor: '#fff8f0',
-                borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-                padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
+                padding: tokens_1.DESIGN_TOKENS.spacing[6],
                 border: `2px dashed ${tokens_1.DESIGN_TOKENS.colors.primary}`,
                 cursor: onPress ? 'pointer' : 'default',
             } },
@@ -120,9 +120,9 @@ const MenuCard = ({ title, description, price, image, variant = 'item', onPress,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+            padding: tokens_1.DESIGN_TOKENS.spacing[6],
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             cursor: onPress ? 'pointer' : 'default',
         } },
@@ -152,12 +152,12 @@ const MapCard = ({ eta, riderName, riderAvatar, progress = 0 }) => {
         progress < 70 ? tokens_1.DESIGN_TOKENS.colors.warning : tokens_1.DESIGN_TOKENS.colors.success;
     return (react_1.default.createElement("div", { style: {
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
+            padding: tokens_1.DESIGN_TOKENS.spacing[6],
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             boxShadow: tokens_1.DESIGN_TOKENS.shadows.medium,
         } },
-        react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing.md, marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } },
+        react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing[3], marginBottom: tokens_1.DESIGN_TOKENS.spacing[3] } },
             riderAvatar && (react_1.default.createElement("img", { src: riderAvatar, alt: riderName || 'Rider', style: {
                     width: 40,
                     height: 40,
@@ -208,12 +208,12 @@ const TrackingCard = ({ status, eta, address, onContact, onSupport }) => {
     };
     return (react_1.default.createElement("div", { style: {
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
+            padding: tokens_1.DESIGN_TOKENS.spacing[6],
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
             boxShadow: tokens_1.DESIGN_TOKENS.shadows.small,
         } },
-        react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing.md } },
+        react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing[3] } },
             react_1.default.createElement("div", { style: {
                     width: 12,
                     height: 12,
@@ -237,12 +237,12 @@ const TrackingCard = ({ status, eta, address, onContact, onSupport }) => {
                 ...tokens_1.DESIGN_TOKENS.typography.caption,
                 color: tokens_1.DESIGN_TOKENS.colors.textSecondary,
             } }, address)),
-        (onContact || onSupport) && (react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.sm, marginTop: tokens_1.DESIGN_TOKENS.spacing.md } },
+        (onContact || onSupport) && (react_1.default.createElement("div", { style: { display: 'flex', gap: tokens_1.DESIGN_TOKENS.spacing.sm, marginTop: tokens_1.DESIGN_TOKENS.spacing[3] } },
             onContact && (react_1.default.createElement("button", { onClick: onContact, style: {
                     flex: 1,
                     padding: '8px 16px',
                     border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.primary}`,
-                    borderRadius: tokens_1.DESIGN_TOKENS.radius.button,
+                    borderRadius: tokens_1.DESIGN_TOKENS.radius.lg,
                     background: 'transparent',
                     color: tokens_1.DESIGN_TOKENS.colors.primary,
                     ...tokens_1.DESIGN_TOKENS.typography.bodyMedium,
@@ -252,7 +252,7 @@ const TrackingCard = ({ status, eta, address, onContact, onSupport }) => {
                     flex: 1,
                     padding: '8px 16px',
                     border: 'none',
-                    borderRadius: tokens_1.DESIGN_TOKENS.radius.button,
+                    borderRadius: tokens_1.DESIGN_TOKENS.radius.lg,
                     background: tokens_1.DESIGN_TOKENS.colors.elevated,
                     color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
                     ...tokens_1.DESIGN_TOKENS.typography.bodyMedium,
@@ -265,8 +265,8 @@ const ReviewCard = ({ orderId, onSubmit }) => {
     const [review, setReview] = react_1.default.useState('');
     return (react_1.default.createElement("div", { style: {
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
-            borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
-            padding: tokens_1.DESIGN_TOKENS.spacing.lg,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.xl,
+            padding: tokens_1.DESIGN_TOKENS.spacing[6],
             border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
         } },
         react_1.default.createElement("h3", { style: {
@@ -274,7 +274,7 @@ const ReviewCard = ({ orderId, onSubmit }) => {
                 ...tokens_1.DESIGN_TOKENS.typography.headingS,
                 color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
             } }, "Rate Your Order"),
-        react_1.default.createElement("div", { style: { display: 'flex', gap: 8, marginBottom: tokens_1.DESIGN_TOKENS.spacing.lg } }, [1, 2, 3, 4, 5].map((star) => (react_1.default.createElement("button", { key: star, onClick: () => setRating(star), "aria-label": `Rate ${star} star${star > 1 ? 's' : ''}`, style: {
+        react_1.default.createElement("div", { style: { display: 'flex', gap: 8, marginBottom: tokens_1.DESIGN_TOKENS.spacing[6] } }, [1, 2, 3, 4, 5].map((star) => (react_1.default.createElement("button", { key: star, onClick: () => setRating(star), "aria-label": `Rate ${star} star${star > 1 ? 's' : ''}`, style: {
                 fontSize: 32,
                 color: star <= rating ? '#ffd700' : tokens_1.DESIGN_TOKENS.colors.border,
                 background: 'transparent',
@@ -284,19 +284,19 @@ const ReviewCard = ({ orderId, onSubmit }) => {
         react_1.default.createElement("textarea", { placeholder: "Your review...", value: review, onChange: (e) => setReview(e.target.value), style: {
                 width: '100%',
                 minHeight: 100,
-                padding: tokens_1.DESIGN_TOKENS.spacing.md,
-                borderRadius: tokens_1.DESIGN_TOKENS.radius.input,
+                padding: tokens_1.DESIGN_TOKENS.spacing[3],
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.lg,
                 border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,
                 ...tokens_1.DESIGN_TOKENS.typography.body,
                 fontFamily: tokens_1.DESIGN_TOKENS.typography.fontFamily,
                 resize: 'vertical',
-                marginBottom: tokens_1.DESIGN_TOKENS.spacing.md,
+                marginBottom: tokens_1.DESIGN_TOKENS.spacing[3],
             } }),
         react_1.default.createElement("button", { onClick: () => onSubmit?.(rating, review), disabled: rating === 0, style: {
                 width: '100%',
                 padding: '12px 24px',
                 border: 'none',
-                borderRadius: tokens_1.DESIGN_TOKENS.radius.button,
+                borderRadius: tokens_1.DESIGN_TOKENS.radius.lg,
                 background: rating > 0 ? tokens_1.DESIGN_TOKENS.colors.primary : tokens_1.DESIGN_TOKENS.colors.border,
                 color: 'white',
                 ...tokens_1.DESIGN_TOKENS.typography.bodyMedium,

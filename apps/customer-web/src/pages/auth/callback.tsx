@@ -2,7 +2,7 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 const AuthCallbackPage = () => {
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.lg, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.neutral, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ padding: DESIGN_TOKENS.spacing.lg, minHeight: '100vh', backgroundColor: DESIGN_TOKENS.colors.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p>Signing you in...</p>
     </div>
   );

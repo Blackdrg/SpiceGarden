@@ -1,6 +1,8 @@
 import type { DisputeTicket } from './types';
+import styles from './SupportTab.module.css';
 import { AdminButton } from './AdminButton';
 import { DashboardCard } from './DashboardCard';
+import { IconReceipt, IconCheck, IconX } from './icons/SGIcon';
 
 export function RefundManagement({
   refunds,
@@ -12,21 +14,35 @@ export function RefundManagement({
   onReject: (id: string) => void;
 }) {
   return (
-    <DashboardCard title="💸 Refund Management" sub="Recent requests">
+    <DashboardCard title="Refund Management" sub="Recent requests" iconVariant="warning" titleIcon={<IconReceipt size={16} color="#F59E0B" />}>
       {refunds.map((ticket) => (
-        <div key={ticket.id} style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <span style={{ fontWeight: 600, fontSize: 13 }}>{ticket.id}</span>
-            <span style={{ fontWeight: 'bold', color: '#ff4444' }}>-₹{ticket.amount}</span>
+        <div key={ticket.id} className={styles.refundItem}>
+          <div className={styles.refundHeader}>
+            <span style={{ fontWeight: 600, fontSize: 13, color: '#111827' }}>{ticket.id}</span>
+            <span className={styles.refundAmount}>-₹{ticket.amount}</span>
           </div>
-          <p style={{ color: '#666', fontSize: 12, margin: '0 0 8px' }}>{ticket.description}</p>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <AdminButton label="Approve" onClick={() => onApprove(ticket.id)} style={{ flex: 1, padding: '6px 0', fontSize: 12 }} />
-            <AdminButton label="Reject" onClick={() => onReject(ticket.id)} variant="secondary" style={{ flex: 1, padding: '6px 0', fontSize: 12 }} />
+          <p className={styles.refundDescription}>{ticket.description}</p>
+          <div className={styles.refundActions}>
+            <button
+              type="button"
+              className={styles.branchButtonPrimary}
+              onClick={() => onApprove(ticket.id)}
+              style={{ flex: 1, padding: '6px 0', fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+            >
+              <IconCheck size={14} color="white" /> Approve
+            </button>
+            <button
+              type="button"
+              className={styles.branchButtonSecondary}
+              onClick={() => onReject(ticket.id)}
+              style={{ flex: 1, padding: '6px 0', fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+            >
+              <IconX size={14} color="#374151" /> Reject
+            </button>
           </div>
         </div>
       ))}
-      {refunds.length === 0 && <p style={{ color: '#aaa', textAlign: 'center', padding: 20 }}>No pending refunds</p>}
+      {refunds.length === 0 && <p className={styles.emptyState}>No pending refunds</p>}
     </DashboardCard>
   );
 }

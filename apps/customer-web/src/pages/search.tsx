@@ -1,7 +1,9 @@
 import { useReducer, useCallback, useEffect, CSSProperties } from 'react';
-import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, SkeletonCard, HomeIcon, CartIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useOfflineQueue } from '../hooks/useOfflineQueue';
+import { SearchIcon as SearchIconLucide, Filter, MapPin, Star, SlidersHorizontal, WifiOffIcon } from 'lucide-react';
+import styles from './search.module.css';
 
 interface Restaurant {
   id: string;
@@ -47,40 +49,6 @@ function searchReducer(state: SearchState, action: { type: string; payload?: unk
   }
 }
 
-const offlineBannerStyle:   CSSProperties = {
-  backgroundColor: '#fff3e0',
-  color: '#f57c00',
-  padding: '4px 16px',
-  borderRadius: 8,
-  marginBottom: 16,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  fontSize: '14px',
-};
-
-const bottomNavStyle:   CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const navButtonStyle = (isActive: boolean):   CSSProperties => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-  color: isActive ? DESIGN_TOKENS.colors.primary : '#999',
-});
-
 const SearchPage = () => {
   const router = useRouter();
   const [state, dispatch] = useReducer(searchReducer, initialSearchState);
@@ -112,103 +80,119 @@ const SearchPage = () => {
   }, [searchRestaurants]);
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Search</h2>
+      </div>
+
       {!isOnline && (
-        <div style={offlineBannerStyle}>
-          <span>📵</span>
-          <span>You're offline. Requests will be queued and sent when back online.</span>
+        <div className={styles.offlineBanner}>
+          <WifiOffIcon size={18} />
+          <span>You&apos;re offline. Requests will be queued and sent when back online.</span>
         </div>
       )}
 
-      <div style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>
-      <input
-        type="text"
-        placeholder="Search restaurants, dishes..."
-        aria-label="Search"
-        value={state.query}
-        onChange={(e) => dispatch({ type: 'SET_QUERY', payload: e.target.value })}
-        style={{ width: '100%', padding: DESIGN_TOKENS.spacing.md, borderRadius: DESIGN_TOKENS.radius.md, fontSize: '16px', border: '1px solid #ddd' }}
-      />
-    </div>
-
-    <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, overflowX: 'auto', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-      {filters.map((f) => (
-        <Button
-          key={f}
-          label={f.charAt(0).toUpperCase() + f.slice(1)}
-          onClick={() => dispatch({ type: 'SET_ACTIVE_FILTER', payload: f })}
-          variant={state.activeFilter === f ? 'primary' : 'secondary'}
+      <div className={styles.searchBar}>
+        <SearchIconLucide size={20} color={DESIGN_TOKENS.colors.textTertiary} />
+        <input
+          type="text"
+          placeholder="Search restaurants, dishes..."
+          aria-label="Search"
+          value={state.query}
+          onChange={(e) => dispatch({ type: 'SET_QUERY', payload: e.target.value })}
+          className={styles.searchInput}
         />
-      ))}
-    </div>
-
-    {state.error ? (
-      <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.lg }}>
-        <p style={{ color: DESIGN_TOKENS.colors.danger }}>{state.error}</p>
-        {!isOnline && (
-          <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: '14px', marginTop: DESIGN_TOKENS.spacing.xs }}>
-            You appear to be offline. Your request has been queued and will be sent when you're back online.
-          </p>
+        {state.query && (
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'SET_QUERY', payload: '' })}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: DESIGN_TOKENS.colors.textTertiary,
+              cursor: 'pointer',
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            aria-label="Clear search"
+          >
+            <SlidersHorizontal size={18} />
+          </button>
         )}
-        <Button
-          label="Retry"
-          onClick={retryFailedRequests}
-          variant="outline"
-        />
       </div>
-    ) : state.restaurants.length === 0 ? (
-      <div style={{ textAlign: 'center', padding: DESIGN_TOKENS.spacing.lg }}>
-        <p style={{ fontSize: '20px', marginBottom: DESIGN_TOKENS.spacing.md }}>🔍</p>
-        <p style={{ color: DESIGN_TOKENS.colors.textSecondary, marginBottom: DESIGN_TOKENS.spacing.sm }}>No restaurants found</p>
-        <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: '14px' }}>
-          Try changing your search criteria or check your spelling.
-        </p>
-        <Button
-          label="Try Again"
-          onClick={() => {
-            dispatch({ type: 'SET_LOADING', payload: true });
-            setTimeout(() => dispatch({ type: 'SET_LOADING', payload: false }), 1000);
-          }}
-          variant="outline"
-        />
+
+      <div className={styles.filterSection}>
+        <div className={styles.filterBar}>
+          {filters.map((f) => (
+            <button
+              key={f}
+              className={`${styles.filterChip} ${state.activeFilter === f ? styles.filterChipActive : ''}`}
+              onClick={() => dispatch({ type: 'SET_ACTIVE_FILTER', payload: f })}
+            >
+              {f === 'rated 4+' ? '★ 4+' : f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
-    ) : (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
-        {state.loading ? (
-          <SkeletonCard count={3} />
-        ) : (
-          state.restaurants.map((r) => (
-            <Card key={r.id} title={r.name}>
-              <p style={{ fontSize: '13px', color: '#666', margin: '0 0 16px 0' }}>
-                {r.description} &middot; {r.deliveryTime} min &middot; {r.address}
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary }}>
-                  ⭐ {r.rating}
+
+      {state.error ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>🔍</div>
+          <h3 className={styles.emptyTitle}>No results found</h3>
+          <p className={styles.emptyText}>{state.error}</p>
+          <Button label="Retry" onClick={retryFailedRequests} variant="outline" />
+        </div>
+      ) : state.restaurants.length === 0 && !state.loading ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>🍽️</div>
+          <h3 className={styles.emptyTitle}>No restaurants found</h3>
+          <p className={styles.emptyText}>Try changing your search criteria or check back later.</p>
+          <Button label="Browse All" onClick={() => router.push('/')} variant="outline" />
+        </div>
+      ) : (
+        <div className={styles.resultsSection}>
+          {state.loading ? (
+            <SkeletonCard count={3} />
+          ) : (
+            state.restaurants.map((r) => (
+              <Card key={r.id} title={r.name} variant="interactive" onClick={() => router.push(`/restaurant?id=${r.id}`)}>
+                <p style={{ fontSize: '0.875rem', color: DESIGN_TOKENS.colors.textSecondary, margin: '0 0 12px 0', lineHeight: 1.5 }}>
+                  {r.description} · {r.deliveryTime} min · {r.address}
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 600, color: DESIGN_TOKENS.colors.primary, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Star size={16} fill={DESIGN_TOKENS.colors.warning} color={DESIGN_TOKENS.colors.warning} />
+                    {r.rating}
+                  </div>
+                  <Button label="View Menu" onClick={() => router.push(`/restaurant?id=${r.id}`)} size="sm" />
                 </div>
-                <Button label="View Menu" onClick={() => router.push(`/restaurant?id=${r.id}`)} />
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
-    )}
+              </Card>
+            ))
+          )}
+        </div>
+      )}
 
-    {/* Bottom nav */}
-    <nav style={bottomNavStyle}>
-      {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '🔍' }, { key: 'orders', label: 'Orders', icon: '📦', path: '/history' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map((tab) => (
-        <button
-          type="button"
-          key={tab.key}
-          onClick={() => tab.path && router.push(tab.path)}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-          style={navButtonStyle(!tab.path)}
-        >
-          <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
-    </nav>
+      {/* Bottom nav */}
+      <nav className={styles.bottomNav}>
+        {[
+          { key: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', icon: SearchIconLucide, path: '/search' },
+          { key: 'orders', label: 'Orders', icon: CartIcon, path: '/history' },
+          { key: 'account', label: 'Account', icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => (
+          <button
+            type="button"
+            key={tab.key}
+            onClick={() => tab.path && router.push(tab.path)}
+            className={`${styles.navButton} ${tab.key === 'search' ? styles.navActive : styles.navInactive}`}
+            aria-label={tab.label}
+          >
+            <span className={styles.navIcon}><tab.icon size={22} /></span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };

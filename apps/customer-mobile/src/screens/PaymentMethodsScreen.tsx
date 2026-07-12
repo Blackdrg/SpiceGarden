@@ -150,9 +150,10 @@ const PaymentMethodsScreen = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={DESIGN_TOKENS.colors.textPrimary} />
+            <Ionicons name="arrow-back" size={22} color={DESIGN_TOKENS.colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerText}>Payment Methods</Text>
+          <View style={{ width: 36 }} />
         </View>
 
         <View style={styles.content}>
@@ -232,16 +233,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
+    paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: DESIGN_TOKENS.colors.border,
+    borderBottomColor: DESIGN_TOKENS.colors.borderLight,
+    ...DESIGN_TOKENS.shadows.small,
   },
   backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.xs,
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     marginLeft: DESIGN_TOKENS.spacing.md,
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -256,9 +265,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: DESIGN_TOKENS.spacing.xl,
   },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: DESIGN_TOKENS.radius.full,
+    backgroundColor: DESIGN_TOKENS.colors.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: DESIGN_TOKENS.spacing.lg,
+  },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     marginTop: DESIGN_TOKENS.spacing.md,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -269,12 +287,16 @@ const styles = StyleSheet.create({
     marginTop: DESIGN_TOKENS.spacing.xs,
     textAlign: 'center',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    lineHeight: 20,
   },
   paymentMethodCard: {
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.md,
     marginBottom: DESIGN_TOKENS.spacing.sm,
+    ...DESIGN_TOKENS.shadows.small,
+    borderWidth: 1,
+    borderColor: DESIGN_TOKENS.colors.borderLight,
   },
   paymentMethodInfo: {
     flexDirection: 'row',
@@ -285,34 +307,39 @@ const styles = StyleSheet.create({
     marginLeft: DESIGN_TOKENS.spacing.md,
   },
   paymentMethodTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   paymentMethodSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: 2,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   defaultBadge: {
-    backgroundColor: DESIGN_TOKENS.colors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: DESIGN_TOKENS.radius.sm,
+    backgroundColor: DESIGN_TOKENS.colors.successLight,
+    paddingHorizontal: DESIGN_TOKENS.spacing.sm,
+    paddingVertical: DESIGN_TOKENS.spacing.xs,
+    borderRadius: DESIGN_TOKENS.radius.full,
+    marginLeft: DESIGN_TOKENS.spacing.sm,
   },
   defaultBadgeText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '500',
+    color: DESIGN_TOKENS.colors.successDark,
+    fontSize: 11,
+    fontWeight: '700',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textTransform: 'uppercase',
   },
   paymentMethodActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
     marginTop: DESIGN_TOKENS.spacing.md,
+    paddingTop: DESIGN_TOKENS.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: DESIGN_TOKENS.colors.borderLight,
   },
   actionButton: {
     marginRight: DESIGN_TOKENS.spacing.md,
@@ -320,10 +347,13 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: DESIGN_TOKENS.colors.primary,
     fontSize: 14,
+    fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   deleteButton: {
-    padding: DESIGN_TOKENS.spacing.xs,
+    padding: DESIGN_TOKENS.spacing.sm,
+    borderRadius: DESIGN_TOKENS.radius.sm,
+    backgroundColor: DESIGN_TOKENS.colors.dangerLight,
   },
   addButton: {
     flexDirection: 'row',
@@ -333,14 +363,15 @@ const styles = StyleSheet.create({
     margin: DESIGN_TOKENS.spacing.md,
     padding: DESIGN_TOKENS.spacing.md,
     borderRadius: DESIGN_TOKENS.radius.button,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: DESIGN_TOKENS.colors.primary,
+    ...DESIGN_TOKENS.shadows.small,
   },
   addButtonText: {
     color: DESIGN_TOKENS.colors.primary,
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: DESIGN_TOKENS.spacing.xs,
+    fontSize: 15,
+    fontWeight: '600',
+    marginLeft: DESIGN_TOKENS.spacing.sm,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

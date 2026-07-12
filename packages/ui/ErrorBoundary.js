@@ -37,7 +37,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorBoundary = void 0;
 const react_1 = __importStar(require("react"));
 const Button_1 = require("./Button");
-const Card_1 = require("./Card");
 const tokens_1 = require("./tokens");
 class ErrorBoundary extends react_1.Component {
     constructor() {
@@ -65,8 +64,40 @@ class ErrorBoundary extends react_1.Component {
     }
 }
 exports.ErrorBoundary = ErrorBoundary;
-const DefaultErrorFallback = ({ error, resetError, }) => (react_1.default.createElement(Card_1.Card, null,
-    react_1.default.createElement("div", { style: { textAlign: 'center', padding: tokens_1.DESIGN_TOKENS.spacing.lg } },
-        react_1.default.createElement("h3", null, "Something went wrong"),
-        react_1.default.createElement("p", { style: { color: tokens_1.DESIGN_TOKENS.colors.textSecondary, marginBottom: tokens_1.DESIGN_TOKENS.spacing.md } }, error.message),
-        react_1.default.createElement(Button_1.Button, { label: "Try Again", onClick: resetError, variant: "secondary" }))));
+const DefaultErrorFallback = ({ error, resetError, }) => (react_1.default.createElement("div", { style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: tokens_1.DESIGN_TOKENS.spacing[10],
+        minHeight: '100vh',
+        textAlign: 'center',
+    } },
+    react_1.default.createElement("div", { style: {
+            width: 80,
+            height: 80,
+            borderRadius: tokens_1.DESIGN_TOKENS.radius.full,
+            backgroundColor: tokens_1.DESIGN_TOKENS.colors.dangerLight,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: tokens_1.DESIGN_TOKENS.spacing[5],
+        } },
+        react_1.default.createElement("svg", { width: "40", height: "40", viewBox: "0 0 24 24", fill: "none", stroke: tokens_1.DESIGN_TOKENS.colors.danger, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+            react_1.default.createElement("path", { d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" }),
+            react_1.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }),
+            react_1.default.createElement("line", { x1: "12", y1: "17", x2: "12.01", y2: "17" }))),
+    react_1.default.createElement("h3", { style: {
+            margin: 0,
+            marginBottom: tokens_1.DESIGN_TOKENS.spacing[3],
+            color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
+            ...tokens_1.DESIGN_TOKENS.typography.headingM,
+        } }, "Something went wrong"),
+    react_1.default.createElement("p", { style: {
+            margin: 0,
+            color: tokens_1.DESIGN_TOKENS.colors.textSecondary,
+            ...tokens_1.DESIGN_TOKENS.typography.bodySmall,
+            marginBottom: tokens_1.DESIGN_TOKENS.spacing[5],
+            maxWidth: 400,
+        } }, error.message),
+    react_1.default.createElement(Button_1.Button, { label: "Try Again", onClick: resetError })));

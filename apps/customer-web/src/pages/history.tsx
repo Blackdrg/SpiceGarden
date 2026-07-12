@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, SkeletonCard, HomeIcon, SearchIcon, CartIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@spicegarden/ui';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
+import { StarIcon, RefreshCcwIcon } from 'lucide-react';
 import styles from './history.module.css';
 
 interface ApiOrder {
@@ -130,21 +131,33 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Order History</h2>
+    <div className={styles.pageContainer}>
+      <div className={styles.pageHeader}>
+        <h2 className={styles.pageTitle}>Order History</h2>
+        <p className={styles.pageSubtitle}>View and reorder your past orders</p>
+      </div>
 
       {error && (
         <div className={styles.errorBox}>{error}</div>
       )}
 
       <div className={styles.filterBar}>
-        {[{ key: 'all', label: 'All' }, { key: 'delivered', label: 'Delivered' }, { key: 'cancelled', label: 'Cancelled' }, { key: 'preparing', label: 'Preparing' }, { key: 'ready', label: 'Ready' }, { key: 'pickedup', label: 'Picked Up' }].map(f => (
-          <Button
+        {[
+          { key: 'all', label: 'All' },
+          { key: 'delivered', label: 'Delivered' },
+          { key: 'cancelled', label: 'Cancelled' },
+          { key: 'preparing', label: 'Preparing' },
+          { key: 'ready', label: 'Ready' },
+          { key: 'pickedup', label: 'Picked Up' },
+        ].map(f => (
+          <button
             key={f.key}
-            label={f.label}
+            type="button"
+            className={`${styles.filterChip} ${filter === f.key ? styles.filterChipActive : ''}`}
             onClick={() => setFilter(f.key as any)}
-            variant={filter === f.key ? 'primary' : 'secondary'}
-          />
+          >
+            {f.label}
+          </button>
         ))}
       </div>
 
@@ -155,7 +168,9 @@ const HistoryPage = () => {
         </div>
       ) : filteredOrders.length === 0 ? (
         <div className={styles.noOrders}>
-          <div className={styles.noOrdersIcon}>📦</div>
+          <div className={styles.noOrdersIcon}>
+            <RefreshCcwIcon size={32} color={DESIGN_TOKENS.colors.textTertiary} />
+          </div>
           <h3 className={styles.noOrdersTitle}>No orders yet</h3>
           <p className={styles.noOrdersMsg}>Your order history will appear here once you place your first order.</p>
           <Button label="Place First Order" onClick={() => router.push('/search')} variant="secondary" />
@@ -163,26 +178,25 @@ const HistoryPage = () => {
       ) : (
         <div className={styles.ordersList}>
           {filteredOrders.map(order => (
-            <Card key={order.id} title={`#${order.id}`}>
+            <Card key={order.id} title={`#${order.id}`} variant="interactive" onClick={() => router.push(`/order-details?id=${order.id}`)}>
               <div className={styles.orderHeader}>
                 <div>
                   <h4 className={styles.orderRestaurant}>{order.restaurant}</h4>
-                  <p className={styles.orderDetails}>{order.items} items · ₹{order.amount}</p>
+                  <p className={styles.orderDetails}>{order.items} items · ₹{order.amount} · {order.date}</p>
                 </div>
                 <span className={`${styles.statusBadge} ${getStatusBadgeClass(order.status)}`}>
                   {order.status?.toUpperCase() || 'UNKNOWN'}
                 </span>
               </div>
-              <p className={styles.orderDateTime}>{order.date} · {order.time}</p>
               <div className={styles.ratingContainer}>
                 {(order.rating || 0) > 0 && (
                   <div className={styles.ratingFlex}>
                     {[1, 2, 3, 4, 5].map(star => (
-                      <span key={star} className={star <= (order.rating || 0) ? styles.ratingStarActive : styles.ratingStarInactive}>★</span>
+                      <StarIcon key={star} size={14} fill={star <= (order.rating || 0) ? DESIGN_TOKENS.colors.warning : 'none'} color={star <= (order.rating || 0) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.gray200} />
                     ))}
                   </div>
                 )}
-                <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
+                <Button label="Reorder" onClick={() => { handleReorder(order.id); }} variant="secondary" size="sm" />
               </div>
             </Card>
           ))}
@@ -191,15 +205,20 @@ const HistoryPage = () => {
 
       {/* Bottom nav */}
       <nav className={styles.bottomNav}>
-        {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '🔍', path: '/search' }, { key: 'orders', label: 'Orders', icon: '📦' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map(tab => (
+        {[
+          { key: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', icon: SearchIcon, path: '/search' },
+          { key: 'orders', label: 'Orders', icon: CartIcon, path: '/history' },
+          { key: 'account', label: 'Account', icon: ProfileIcon, path: '/profile' },
+        ].map(tab => (
           <button
             type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
             className={`${styles.navButton} ${getNavColorClass(tab.key)}`}
+            aria-label={tab.label}
           >
-            <span className={styles.navIcon}>{tab.icon}</span>
+            <span className={styles.navIcon}><tab.icon size={22} /></span>
             <span>{tab.label}</span>
           </button>
         ))}
