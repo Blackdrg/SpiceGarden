@@ -32,6 +32,7 @@ import { DriverFleetModule } from './services/driver-fleet/driver-fleet.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { ReviewServiceModule } from './services/review/review.module';
 import { UserProfileModule } from './services/user/user-profile.module';
+import { UserModule } from './services/users/user.module';
 import { ApisModule } from './apis.module';
 
 @Module({
@@ -69,6 +70,7 @@ import { ApisModule } from './apis.module';
     AnalyticsModule,
     ReviewServiceModule,
     UserProfileModule,
+    UserModule,
     ApisModule,
   ],
   controllers: [AppController],

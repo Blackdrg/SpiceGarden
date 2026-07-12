@@ -135,7 +135,7 @@ export class Soc2ReadinessService {
         name: 'Input Validation',
         description: 'Data input validation and sanitization',
         status: 'implemented',
-        evidence: ['class-validator', 'ValidationPipe', 'mongo-sanitize'],
+        evidence: ['class-validator', 'ValidationPipe', 'express-mongo-sanitize'],
         lastChecked: new Date(),
       },
       {

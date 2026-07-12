@@ -7,6 +7,7 @@ import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
+import { OtpService } from './otp.service';
 import { MfaService } from './mfa.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -38,8 +39,8 @@ function requireJwtSecret(configService: ConfigService): string {
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, PasswordResetService, MfaService, JwtStrategy, GoogleStrategy, FacebookStrategy],
+  providers: [AuthService, PasswordResetService, OtpService, MfaService, JwtStrategy, GoogleStrategy, FacebookStrategy],
   controllers: [AuthController, MfaController],
-  exports: [AuthService, PasswordResetService, MfaService],
+  exports: [AuthService, PasswordResetService, OtpService, MfaService],
 })
 export class AuthServiceModule { }

@@ -24,9 +24,9 @@ function createMockRes() {
   } as any;
 }
 
-function createController(userRepo: any, authService: any, passwordResetService: any, notificationService: any, configService: any = { get: () => 'http://localhost:3000' }) {
+function createController(userRepo: any, authService: any, passwordResetService: any, notificationService: any, configService: any = { get: () => 'http://localhost:3000' }, otpService: any = { requestOtp: jest.fn(), verifyOtp: jest.fn() }) {
   return {
-    controller: new AuthController(authService, passwordResetService, userRepo, notificationService, configService),
+    controller: new AuthController(authService, passwordResetService, otpService, userRepo, notificationService, configService),
     userRepo,
     authService,
     passwordResetService,

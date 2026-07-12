@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { AddressService } from './address.service';
-import { AddressEntity } from '../../db/entities/address.entity';
+import { AddressController } from './address.controller';
+import { PaymentMethodsService } from './payment-methods.service';
+import { PaymentMethodsController } from './payment-methods.controller';
 
 @Module({
   imports: [DbRepositoriesModule],
-  providers: [AddressService],
-  exports: [AddressService],
+  controllers: [AddressController, PaymentMethodsController],
+  providers: [AddressService, PaymentMethodsService],
+  exports: [AddressService, PaymentMethodsService],
 })
 export class UserModule {}

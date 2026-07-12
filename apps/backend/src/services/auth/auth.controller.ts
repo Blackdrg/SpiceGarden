@@ -1,6 +1,7 @@
 import { Controller, Post, Body, ConflictException, UnauthorizedException, Req, BadRequestException, Get, UseGuards, Res, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
+import { OtpService } from './otp.service';
 import { InjectRepository, getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
@@ -75,6 +76,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private passwordResetService: PasswordResetService,
+    private otpService: OtpService,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
     private notificationService: NotificationService,
@@ -132,6 +134,23 @@ export class AuthController {
         status: user.status,
       },
     };
+  }
+
+  @Post('otp')
+  async requestOtp(@Body() body: { email: string }) {
+    return this.otpService.requestOtp(body?.email);
+  }
+
+  @Post('otp/verify')
+  async verifyOtp(@Body() body: MfaLoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const deviceInfo = this.getDeviceInfo(body, req);
+    const result = await this.otpService.verifyOtp(body.email, body.code, deviceInfo);
+
+    if (result.access_token && result.refresh_token) {
+      setAuthCookies(res, result.access_token, result.refresh_token, this.configService);
+    }
+
+    return result;
   }
 
   @Post('register')
