@@ -1,11 +1,29 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FlatList, Text, TouchableOpacity, View, Pressable, StyleSheet } from 'react-native';
+import { FlatList, Text, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { deliveryApi, type DeliveryOrder } from '../services/delivery-api.service';
 import { Screen, CardView, PrimaryButton } from '../components/Screen';
 import { EmptyState, LoadingSpinner, ErrorState } from '../components/Indicators';
 import type { ScreenProps } from '../types';
+
+const StatusChip = ({ online }: { online: boolean }) => (
+  <View style={[
+    styles.statusChip,
+    online ? styles.statusChipOnline : styles.statusChipOffline,
+  ]}>
+    <View style={[
+      styles.statusDot,
+      online ? styles.statusDotOnline : styles.statusDotOffline,
+    ]} />
+    <Text style={[
+      styles.statusText,
+      online ? styles.statusTextOnline : styles.statusTextOffline,
+    ]}>
+      {online ? 'Online' : 'Offline'}
+    </Text>
+  </View>
+);
 
 export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Element {
   const [orders, setOrders] = useState<DeliveryOrder[]>([]);
@@ -37,7 +55,7 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     };
   }, [onReceived]);
 
-  const toggleOnline = async () => {
+  const toggleOnline = useCallback(async () => {
     const next = !online;
     setOnline(next);
     try {
@@ -45,9 +63,9 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     } catch {
       /* offline-tolerant */
     }
-  };
+  }, [online]);
 
-  const accept = async (order: DeliveryOrder) => {
+  const accept = useCallback(async (order: DeliveryOrder) => {
     try {
       const updated = await deliveryApi.acceptOrder(order.orderId);
       setOrders((prev) => prev.filter((o) => o.id !== order.id));
@@ -55,16 +73,71 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     } catch (e) {
       console.error('Accept order error:', e);
     }
-  };
+  }, [navigation]);
 
-  const reject = async (order: DeliveryOrder) => {
+  const reject = useCallback(async (order: DeliveryOrder) => {
     try {
       await deliveryApi.rejectOrder(order.orderId);
       setOrders((prev) => prev.filter((o) => o.id !== order.id));
     } catch {
       /* ignore */
     }
-  };
+  }, []);
+
+  const renderItem = useCallback(({ item }: { item: DeliveryOrder }) => (
+    <CardView style={styles.orderCard}>
+      <View style={styles.orderHeader}>
+        <View style={styles.orderIdContainer}>
+          <Ionicons name="receipt-outline" size={16} color={DESIGN_TOKENS.colors.primary} />
+          <Text style={styles.orderId}>#{item.orderId.slice(0, 8)}</Text>
+        </View>
+        <View style={styles.amountBadge}>
+          <Text style={styles.orderAmount}>₹{item.amount}</Text>
+        </View>
+      </View>
+      <View style={styles.orderContent}>
+        <View style={styles.orderLocationRow}>
+          <View style={styles.locationDotContainer}>
+            <View style={[styles.locationDot, styles.pickupDot]} />
+          </View>
+          <View style={styles.locationTextContainer}>
+            <Text style={styles.locationLabel}>Pickup</Text>
+            <Text style={styles.locationText}>{item.restaurant.name}</Text>
+            <Text style={styles.locationAddress}>{item.restaurant.address}</Text>
+          </View>
+        </View>
+        <View style={styles.orderLocationRow}>
+          <View style={styles.locationDotContainer}>
+            <View style={[styles.locationDot, styles.dropDot]} />
+          </View>
+          <View style={styles.locationTextContainer}>
+            <Text style={styles.locationLabel}>Drop</Text>
+            <Text style={styles.locationText}>{item.customer.address}</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.orderMeta}>
+        <View style={styles.metaChip}>
+          <Ionicons name="navigate-outline" size={14} color={DESIGN_TOKENS.colors.textSecondary} />
+          <Text style={styles.metaText}>{item.distanceKm} km</Text>
+        </View>
+        <View style={styles.metaChip}>
+          <Ionicons name="time-outline" size={14} color={DESIGN_TOKENS.colors.textSecondary} />
+          <Text style={styles.metaText}>{item.estimatedTimeMinutes} min</Text>
+        </View>
+      </View>
+      <View style={styles.orderActions}>
+                <Pressable onPress={() => accept(item)} style={styles.acceptButton}>
+          <Ionicons name="checkmark" size={18} color="#fff" />
+          <Text style={styles.acceptButtonText}>Accept</Text>
+        </TouchableOpacity>
+                <Pressable onPress={() => reject(item)} style={styles.rejectButton}>
+          <Ionicons name="close" size={18} color={DESIGN_TOKENS.colors.danger} />
+          <Text style={styles.rejectButtonText}>Reject</Text>
+        </TouchableOpacity>
+      </View>
+    </CardView>
+  ), [accept, reject]);
 
   if (loading) {
     return <LoadingSpinner label="Loading queue…" />;
@@ -78,30 +151,12 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     );
   }
 
-  const StatusChip = ({ online }: { online: boolean }) => (
-    <View style={[
-      styles.statusChip,
-      online ? styles.statusChipOnline : styles.statusChipOffline,
-    ]}>
-      <View style={[
-        styles.statusDot,
-        online ? styles.statusDotOnline : styles.statusDotOffline,
-      ]} />
-      <Text style={[
-        styles.statusText,
-        online ? styles.statusTextOnline : styles.statusTextOffline,
-      ]}>
-        {online ? 'Online' : 'Offline'}
-      </Text>
-    </View>
-  );
-
   return (
     <Screen
       title="Order Queue"
       navigation={navigation}
       right={
-        <TouchableOpacity onPress={toggleOnline} style={styles.statusToggle}>
+        <Pressable onPress={toggleOnline} style={styles.statusToggle}>
           <StatusChip online={online} />
         </TouchableOpacity>
       }
@@ -120,60 +175,7 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
         <FlatList
           data={orders}
           keyExtractor={(o) => o.id}
-          renderItem={({ item }) => (
-            <CardView style={styles.orderCard}>
-              <View style={styles.orderHeader}>
-                <View style={styles.orderIdContainer}>
-                  <Ionicons name="receipt-outline" size={16} color={DESIGN_TOKENS.colors.primary} />
-                  <Text style={styles.orderId}>#{item.orderId.slice(0, 8)}</Text>
-                </View>
-                <View style={styles.amountBadge}>
-                  <Text style={styles.orderAmount}>₹{item.amount}</Text>
-                </View>
-              </View>
-              <View style={styles.orderContent}>
-                <View style={styles.orderLocationRow}>
-                  <View style={styles.locationDotContainer}>
-                    <View style={[styles.locationDot, styles.pickupDot]} />
-                  </View>
-                  <View style={styles.locationTextContainer}>
-                    <Text style={styles.locationLabel}>Pickup</Text>
-                    <Text style={styles.locationText}>{item.restaurant.name}</Text>
-                    <Text style={styles.locationAddress}>{item.restaurant.address}</Text>
-                  </View>
-                </View>
-                <View style={styles.orderLocationRow}>
-                  <View style={styles.locationDotContainer}>
-                    <View style={[styles.locationDot, styles.dropDot]} />
-                  </View>
-                  <View style={styles.locationTextContainer}>
-                    <Text style={styles.locationLabel}>Drop</Text>
-                    <Text style={styles.locationText}>{item.customer.address}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.orderMeta}>
-                <View style={styles.metaChip}>
-                  <Ionicons name="navigate-outline" size={14} color={DESIGN_TOKENS.colors.textSecondary} />
-                  <Text style={styles.metaText}>{item.distanceKm} km</Text>
-                </View>
-                <View style={styles.metaChip}>
-                  <Ionicons name="time-outline" size={14} color={DESIGN_TOKENS.colors.textSecondary} />
-                  <Text style={styles.metaText}>{item.estimatedTimeMinutes} min</Text>
-                </View>
-              </View>
-              <View style={styles.orderActions}>
-                <TouchableOpacity onPress={() => accept(item)} style={styles.acceptButton}>
-                  <Ionicons name="checkmark" size={18} color="#fff" />
-                  <Text style={styles.acceptButtonText}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => reject(item)} style={styles.rejectButton}>
-                  <Ionicons name="close" size={18} color={DESIGN_TOKENS.colors.danger} />
-                  <Text style={styles.rejectButtonText}>Reject</Text>
-                </TouchableOpacity>
-              </View>
-            </CardView>
-          )}
+          renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: DESIGN_TOKENS.spacing.xl }}
         />
       )}

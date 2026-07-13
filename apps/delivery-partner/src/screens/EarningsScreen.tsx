@@ -8,28 +8,23 @@ import { deliveryApi } from '../services/delivery-api.service';
 import type { ScreenProps } from '../types';
 
 export default function EarningsScreen(_props: ScreenProps): React.JSX.Element {
-  const [earnings, setEarnings] = useState<{ availableBalance: number; pendingBalance: number; lifetimeEarnings: number; weeklyEarnings: number; todayEarnings: number } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<{ earnings: { availableBalance: number; pendingBalance: number; lifetimeEarnings: number; weeklyEarnings: number; todayEarnings: number } | null; loading: boolean; error: string | null }>({ earnings: null, loading: true, error: null });
 
   useEffect(() => {
     let active = true;
     deliveryApi.getEarnings().then((data) => {
       if (active) {
-        setEarnings(data);
-        setLoading(false);
+        setState({ earnings: data, loading: false, error: null });
       }
     }).catch((e) => {
       if (active) {
-        setError(e instanceof Error ? e.message : 'Failed to load earnings');
-        setEarnings({ availableBalance: 0, pendingBalance: 0, lifetimeEarnings: 0, weeklyEarnings: 0, todayEarnings: 0 });
-        setLoading(false);
+        setState({ earnings: { availableBalance: 0, pendingBalance: 0, lifetimeEarnings: 0, weeklyEarnings: 0, todayEarnings: 0 }, loading: false, error: e instanceof Error ? e.message : 'Failed to load earnings' });
       }
     });
     return () => { active = false; };
   }, []);
 
-  if (loading) {
+  if (state.loading) {
     return (
       <Screen title="Earnings" navigation={_props.navigation}>
         <LoadingSpinner label="Loading earnings…" />
@@ -37,26 +32,26 @@ export default function EarningsScreen(_props: ScreenProps): React.JSX.Element {
     );
   }
 
-  if (error) {
+  if (state.error) {
     return (
       <Screen title="Earnings" navigation={_props.navigation}>
-        <ErrorState message={error} />
+        <ErrorState message={state.error} />
       </Screen>
     );
   }
 
   const statCards = [
-    { label: "Today's Earnings", value: `₹${earnings?.todayEarnings.toFixed(2)}`, icon: 'today', color: DESIGN_TOKENS.colors.primary },
-    { label: 'Weekly Earnings', value: `₹${earnings?.weeklyEarnings.toFixed(2)}`, icon: 'calendar-outline', color: DESIGN_TOKENS.colors.info },
-    { label: 'Lifetime Earnings', value: `₹${earnings?.lifetimeEarnings.toFixed(2)}`, icon: 'trophy-outline', color: DESIGN_TOKENS.colors.premium },
-    { label: 'Pending Balance', value: `₹${earnings?.pendingBalance.toFixed(2)}`, icon: 'time-outline', color: DESIGN_TOKENS.colors.warning },
+    { label: "Today's Earnings", value: `₹${state.earnings?.todayEarnings.toFixed(2)}`, icon: 'today', color: DESIGN_TOKENS.colors.primary },
+    { label: 'Weekly Earnings', value: `₹${state.earnings?.weeklyEarnings.toFixed(2)}`, icon: 'calendar-outline', color: DESIGN_TOKENS.colors.info },
+    { label: 'Lifetime Earnings', value: `₹${state.earnings?.lifetimeEarnings.toFixed(2)}`, icon: 'trophy-outline', color: DESIGN_TOKENS.colors.premium },
+    { label: 'Pending Balance', value: `₹${state.earnings?.pendingBalance.toFixed(2)}`, icon: 'time-outline', color: DESIGN_TOKENS.colors.warning },
   ];
 
   return (
     <Screen title="Earnings" navigation={_props.navigation}>
       <CardView style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Available Balance</Text>
-        <Text style={styles.balanceAmount}>₹{earnings?.availableBalance.toFixed(2)}</Text>
+        <Text style={styles.balanceAmount}>₹{state.earnings?.availableBalance.toFixed(2)}</Text>
         <View style={styles.balanceActionRow}>
           <View style={styles.balanceChip}>
             <Ionicons name="cash-outline" size={16} color={DESIGN_TOKENS.colors.success} />

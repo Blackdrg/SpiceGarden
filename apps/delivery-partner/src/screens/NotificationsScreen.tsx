@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import { LoadingSpinner, EmptyState } from '../components/Indicators';
+import { EmptyState } from '../components/Indicators';
 import type { ScreenProps } from '../types';
 
-export default function NotificationsScreen(_props: ScreenProps): React.JSX.Element {
-  const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState<{ id: string; title: string; body: string; time: string; type: 'order' | 'system' }[]>([]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <Screen title="Notifications" navigation={_props.navigation}>
-        <LoadingSpinner label="Loading notifications…" />
-      </Screen>
-    );
+const getTypeConfig = (type: string) => {
+  switch (type) {
+    case 'order':
+      return { icon: 'receipt-outline', color: DESIGN_TOKENS.colors.primary, bg: DESIGN_TOKENS.colors.primaryLight };
+    case 'system':
+      return { icon: 'settings-outline', color: DESIGN_TOKENS.colors.info, bg: DESIGN_TOKENS.colors.infoLight };
+    default:
+      return { icon: 'notifications-outline', color: DESIGN_TOKENS.colors.primary, bg: DESIGN_TOKENS.colors.primaryLight };
   }
-
-  const getTypeConfig = (type: string) => {
-    switch (type) {
-      case 'order':
-        return { icon: 'receipt-outline', color: DESIGN_TOKENS.colors.primary, bg: DESIGN_TOKENS.colors.primaryLight };
-      case 'system':
-        return { icon: 'settings-outline', color: DESIGN_TOKENS.colors.info, bg: DESIGN_TOKENS.colors.infoLight };
-      default:
-        return { icon: 'notifications-outline', color: DESIGN_TOKENS.colors.primary, bg: DESIGN_TOKENS.colors.primaryLight };
-    }
 };
+
+export default function NotificationsScreen(_props: ScreenProps): React.JSX.Element {
+  const [notifications, setNotifications] = useState<{ id: string; title: string; body: string; time: string; type: 'order' | 'system' }[]>([]);
 
   return (
     <Screen title="Notifications" navigation={_props.navigation}>

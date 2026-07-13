@@ -76,20 +76,8 @@ const CartPage = () => {
                 <button
                   type="button"
                   onClick={() => dispatch(removeFromCart(item.id))}
-                  style={{
-                    border: 'none',
-                    background: 'transparent',
-                    color: DESIGN_TOKENS.colors.textTertiary,
-                    cursor: 'pointer',
-                    padding: 8,
-                    borderRadius: 8,
-                    display: 'flex',
-                    alignItems: 'center',
-                    transition: 'all 200ms',
-                  }}
+                  className={styles.deleteButton}
                   aria-label="Remove item"
-                  onMouseEnter={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.danger; e.currentTarget.style.background = DESIGN_TOKENS.colors.dangerLight; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = DESIGN_TOKENS.colors.textTertiary; e.currentTarget.style.background = 'transparent'; }}
                 >
                   <Trash2Icon size={18} />
                 </button>

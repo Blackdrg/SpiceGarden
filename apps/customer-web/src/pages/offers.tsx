@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { GiftIcon, Share2Icon, CopyIcon, CheckIcon } from 'lucide-react';
@@ -43,11 +43,11 @@ const OffersPage = () => {
   const [activeTab] = useState<'home' | 'search' | 'offers' | 'account'>('offers');
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
-  const handleCopy = (code: string, id: number) => {
-    copyCode(code);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
+  useEffect(() => {
+    if (copiedId === null) return;
+    const timer = setTimeout(() => setCopiedId(null), 2000);
+    return () => clearTimeout(timer);
+  }, [copiedId]);
 
   const getTabClass = (key: string) => {
     return `${styles.tabItem} ${activeTab === key ? styles.activeTab : styles.tabText}`;
@@ -76,7 +76,10 @@ const OffersPage = () => {
             <div className={styles.buttonRow}>
               <Button
                 label={copiedId === offer.id ? 'Copied!' : 'Copy Code'}
-                onClick={() => handleCopy(offer.code, offer.id)}
+                onClick={() => {
+                  copyCode(offer.code);
+                  setCopiedId(offer.id);
+                }}
                 variant="secondary"
               />
               <Button label="Use Now" onClick={() => router.push('/')} />

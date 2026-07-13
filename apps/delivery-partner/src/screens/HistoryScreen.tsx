@@ -3,25 +3,23 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import { LoadingSpinner, ErrorState, EmptyState } from '../components/Indicators';
+import { ErrorState, EmptyState } from '../components/Indicators';
 import type { ScreenProps } from '../types';
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'completed':
+      return DESIGN_TOKENS.colors.success;
+    case 'cancelled':
+      return DESIGN_TOKENS.colors.danger;
+    default:
+      return DESIGN_TOKENS.colors.textSecondary;
+  }
+};
+
 export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<{ orderId: string; restaurant: string; amount: number; date: string; status: string }[]>([]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <Screen title="History" navigation={_props.navigation}>
-        <LoadingSpinner label="Loading delivery history…" />
-      </Screen>
-    );
-  }
 
   if (error) {
     return (
@@ -30,17 +28,6 @@ export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
       </Screen>
     );
   }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return DESIGN_TOKENS.colors.success;
-      case 'cancelled':
-        return DESIGN_TOKENS.colors.danger;
-      default:
-        return DESIGN_TOKENS.colors.textSecondary;
-    }
-  };
 
   return (
     <Screen title="History" navigation={_props.navigation}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Linking, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
@@ -16,10 +16,10 @@ export default function EmergencyScreen(_props: ScreenProps): React.JSX.Element 
           <Text style={styles.emergencyTitle}>Emergency Assistance</Text>
           <Text style={styles.emergencyText}>If you are in danger or need immediate assistance, contact support or local authorities.</Text>
         </View>
-        <TouchableOpacity style={styles.sosButton} onPress={() => Linking.openURL('tel:+919876543210')}>
+        <Pressable style={styles.sosButton} onPress={() => Linking.openURL('tel:+919876543210')}>
           <Ionicons name="call" size={20} color="#fff" />
           <Text style={styles.sosText}>Call Support</Text>
-        </TouchableOpacity>
+        </Pressable>
       </CardView>
 
       <View style={styles.quickActions}>

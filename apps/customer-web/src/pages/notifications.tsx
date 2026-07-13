@@ -34,6 +34,30 @@ const savePreferences = async (prefs: NotificationPreferences): Promise<void> =>
   if (!res.ok) throw new Error('Failed to save preferences');
 };
 
+const preferenceGroups = [
+  {
+    title: 'Push Notifications',
+    items: [
+      { key: 'pushOrders' as const, label: 'Order Updates' },
+      { key: 'pushPromotions' as const, label: 'Promotions & Offers' },
+      { key: 'pushDeliveryUpdates' as const, label: 'Delivery Updates' },
+    ]
+  },
+  {
+    title: 'Email Notifications',
+    items: [
+      { key: 'emailOrders' as const, label: 'Order Confirmations' },
+      { key: 'emailPromotions' as const, label: 'Promotional Emails' },
+    ]
+  },
+  {
+    title: 'SMS Notifications',
+    items: [
+      { key: 'smsDeliveryUpdates' as const, label: 'Delivery Updates' },
+    ]
+  }
+];
+
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
 
@@ -68,30 +92,6 @@ const NotificationsPage = () => {
   }
 
   const queryError = error instanceof Error ? error.message : (mutation.error instanceof Error ? mutation.error.message : null);
-
-  const preferenceGroups = [
-    {
-      title: 'Push Notifications',
-      items: [
-        { key: 'pushOrders' as const, label: 'Order Updates' },
-        { key: 'pushPromotions' as const, label: 'Promotions & Offers' },
-        { key: 'pushDeliveryUpdates' as const, label: 'Delivery Updates' },
-      ]
-    },
-    {
-      title: 'Email Notifications',
-      items: [
-        { key: 'emailOrders' as const, label: 'Order Confirmations' },
-        { key: 'emailPromotions' as const, label: 'Promotional Emails' },
-      ]
-    },
-    {
-      title: 'SMS Notifications',
-      items: [
-        { key: 'smsDeliveryUpdates' as const, label: 'Delivery Updates' },
-      ]
-    }
-  ];
 
   return (
     <div className={styles.pageContainer}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View, StatusBar } from 'react-native';
+import { ScrollView, Text, Pressable, View, StatusBar } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import type { Navigator } from '../types';
 
@@ -29,7 +29,7 @@ export function Screen({ title, navigation, showBack = true, right, children }: 
         }}
       >
         {showBack && navigation ? (
-          <TouchableOpacity 
+          <Pressable 
             onPress={() => navigation.goBack()} 
             style={{ padding: DESIGN_TOKENS.spacing.xs, marginRight: DESIGN_TOKENS.spacing.xs }}
             accessibilityLabel="Go back"
@@ -43,7 +43,7 @@ export function Screen({ title, navigation, showBack = true, right, children }: 
             }}>
               <Text style={{ fontSize: 20, fontWeight: '600', color: DESIGN_TOKENS.colors.primary }}>←</Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         ) : (
           <View style={{ width: 40 }} />
         )}
@@ -71,23 +71,25 @@ export function PrimaryButton({
   disabled?: boolean;
 }): React.JSX.Element {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.8}
-      style={{
-        backgroundColor: disabled ? DESIGN_TOKENS.colors.border : DESIGN_TOKENS.colors.primary,
-        paddingVertical: DESIGN_TOKENS.spacing.sm,
-        paddingHorizontal: DESIGN_TOKENS.spacing.md,
-        borderRadius: DESIGN_TOKENS.radius.button,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 50,
-        ...(disabled ? {} : DESIGN_TOKENS.shadows.small),
-      }}
+      style={({ pressed }) => [
+        {
+          backgroundColor: disabled ? DESIGN_TOKENS.colors.border : DESIGN_TOKENS.colors.primary,
+          paddingVertical: DESIGN_TOKENS.spacing.sm,
+          paddingHorizontal: DESIGN_TOKENS.spacing.md,
+          borderRadius: DESIGN_TOKENS.radius.button,
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 50,
+          ...(disabled ? {} : DESIGN_TOKENS.shadows.small),
+          opacity: pressed && !disabled ? 0.8 : 1,
+        },
+      ]}
     >
       <Text style={{ color: disabled ? DESIGN_TOKENS.colors.textTertiary : '#fff', fontSize: 16, fontWeight: '700', fontFamily: DESIGN_TOKENS.typography.fontFamily }}>{label}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

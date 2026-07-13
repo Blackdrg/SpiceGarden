@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking, Alert, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Linking, Alert, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
@@ -25,7 +25,7 @@ export default function SupportScreen(_props: ScreenProps): React.JSX.Element {
             <Text style={styles.emergencyText}>If you are in danger or need immediate assistance, contact local authorities.</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.emergencyButton} onPress={() => Linking.openURL('tel:108')}>
+        <Pressable style={styles.emergencyButton} onPress={() => Linking.openURL('tel:108')}>
           <Ionicons name="call" size={18} color="#fff" />
           <Text style={styles.emergencyButtonText}>Call 108</Text>
         </TouchableOpacity>
@@ -35,7 +35,7 @@ export default function SupportScreen(_props: ScreenProps): React.JSX.Element {
         <Text style={styles.sectionTitle}>Help Topics</Text>
         <CardView style={styles.topicsCard}>
           {supportTopics.map((topic, index) => (
-            <TouchableOpacity
+            <Pressable
               key={topic.title}
               onPress={topic.action}
               style={[
@@ -51,7 +51,7 @@ export default function SupportScreen(_props: ScreenProps): React.JSX.Element {
                 <Text style={styles.topicSubtitle}>{topic.subtitle}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </CardView>
       </View>

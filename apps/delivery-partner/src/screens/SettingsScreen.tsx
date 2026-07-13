@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
@@ -8,35 +8,35 @@ import type { ScreenProps } from '../types';
 type SettingsState = { notifications: boolean; sounds: boolean; location: boolean };
 type SettingSection = { title: string; items: { label: string; icon: string; value?: string; toggle?: boolean; settingKey?: keyof SettingsState }[] };
 
+const sections: SettingSection[] = [
+  {
+    title: 'Notifications',
+    items: [
+      { label: 'Push Notifications', icon: 'notifications-outline', toggle: true, settingKey: 'notifications' },
+      { label: 'Sound Alerts', icon: 'volume-high-outline', toggle: true, settingKey: 'sounds' },
+    ],
+  },
+  {
+    title: 'Privacy & Location',
+    items: [
+      { label: 'Location Services', icon: 'location-outline', toggle: true, settingKey: 'location' },
+    ],
+  },
+  {
+    title: 'Account',
+    items: [
+      { label: 'Change Password', icon: 'lock-closed-outline' },
+      { label: 'Delete Account', icon: 'trash-outline' },
+    ],
+  },
+];
+
 export default function SettingsScreen(_props: ScreenProps): React.JSX.Element {
   const [settings, setSettings] = useState<{ notifications: boolean; sounds: boolean; location: boolean }>({
     notifications: true,
     sounds: true,
     location: true,
   });
-
-  const sections: SettingSection[] = [
-    {
-      title: 'Notifications',
-      items: [
-        { label: 'Push Notifications', icon: 'notifications-outline', toggle: true, settingKey: 'notifications' },
-        { label: 'Sound Alerts', icon: 'volume-high-outline', toggle: true, settingKey: 'sounds' },
-      ],
-    },
-    {
-      title: 'Privacy & Location',
-      items: [
-        { label: 'Location Services', icon: 'location-outline', toggle: true, settingKey: 'location' },
-      ],
-    },
-    {
-      title: 'Account',
-      items: [
-        { label: 'Change Password', icon: 'lock-closed-outline' },
-        { label: 'Delete Account', icon: 'trash-outline' },
-      ],
-    },
-  ];
 
   const toggleSetting = (key: keyof SettingsState) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -49,7 +49,7 @@ export default function SettingsScreen(_props: ScreenProps): React.JSX.Element {
           <Text style={styles.sectionTitle}>{section.title}</Text>
           <CardView style={styles.sectionCard}>
             {section.items.map((item, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={item.label}
                 style={[
                   styles.settingRow,
@@ -70,7 +70,7 @@ export default function SettingsScreen(_props: ScreenProps): React.JSX.Element {
                 ) : (
                   <Ionicons name="chevron-forward" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
                 )}
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </CardView>
         </View>

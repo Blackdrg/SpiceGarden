@@ -185,13 +185,6 @@ export const IconPackage: React.FC<IconProps> = (props) => (
   </IconBase>
 );
 
-export const IconRefreshCw: React.FC<IconProps> = (props) => (
-  <IconBase {...props}>
-    <polyline points="23 4 23 10 17 10" />
-    <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
-  </IconBase>
-);
-
 export const IconAlertCircle: React.FC<IconProps> = (props) => (
   <IconBase {...props}>
     <circle cx="12" cy="12" r="10" />
@@ -207,12 +200,6 @@ export const IconFileText: React.FC<IconProps> = (props) => (
     <line x1="16" y1="13" x2="8" y2="13" />
     <line x1="16" y1="17" x2="8" y2="17" />
     <polyline points="10 9 9 9 8 9" />
-  </IconBase>
-);
-
-export const IconFilter: React.FC<IconProps> = (props) => (
-  <IconBase {...props}>
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
   </IconBase>
 );
 

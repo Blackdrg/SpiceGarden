@@ -136,6 +136,23 @@
   margin-top: var(--spacing-5);
 }
 
+.deleteButton {
+  border: none;
+  background: transparent;
+  color: var(--color-textTertiary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: color 200ms, background-color 200ms;
+}
+
+.deleteButton:hover {
+  color: var(--color-danger);
+  background: var(--color-dangerLight);
+}
+
 .emptyContainer {
   display: flex;
   flex-direction: column;

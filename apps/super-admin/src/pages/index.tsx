@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import styles from './AdminDashboard.module.css';
 import sidebarStyles from './Sidebar.module.css';
 import {
@@ -65,14 +66,29 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    fetchStats().then((data) => {
+  useQuery({
+    queryKey: ['admin', 'stats'],
+    queryFn: fetchStats,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    onSuccess: (data) => {
       if (data) dispatch({ type: 'stats-loaded', payload: data });
-    });
-    fetchOrders().then((orders) => {
+    },
+  });
+
+  useQuery({
+    queryKey: ['admin', 'orders'],
+    queryFn: fetchOrders,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    onSuccess: (orders) => {
       if (orders.length > 0) dispatch({ type: 'orders-loaded', orders });
-    });
-  }, []);
+    },
+  });
 
   useEffect(() => {
     let cancelled = false;

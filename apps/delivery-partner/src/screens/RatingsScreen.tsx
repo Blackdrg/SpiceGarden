@@ -1,41 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import { LoadingSpinner, ErrorState, EmptyState } from '../components/Indicators';
+import { EmptyState } from '../components/Indicators';
 import type { ScreenProps } from '../types';
 
-export default function RatingsScreen(_props: ScreenProps): React.JSX.Element {
-  const [loading, setLoading] = useState(true);
-  const [rating, setRating] = useState<number | null>(null);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <Screen title="Ratings" navigation={_props.navigation}>
-        <LoadingSpinner label="Loading ratings…" />
-      </Screen>
+const renderStars = (rating: number) => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(
+      <Ionicons
+        key={i}
+        name={i <= Math.round(rating) ? 'star' : 'star-outline'}
+        size={28}
+        color={i <= Math.round(rating) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.border}
+      />
     );
   }
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Ionicons
-          key={i}
-          name={i <= Math.round(rating) ? 'star' : 'star-outline'}
-          size={28}
-          color={i <= Math.round(rating) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.border}
-        />
-      );
-    }
-    return stars;
+  return stars;
 };
+
+export default function RatingsScreen(_props: ScreenProps): React.JSX.Element {
+  const [rating, setRating] = useState<number | null>(null);
 
   return (
     <Screen title="Ratings" navigation={_props.navigation}>

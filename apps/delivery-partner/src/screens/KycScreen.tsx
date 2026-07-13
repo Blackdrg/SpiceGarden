@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Alert, Text, TextInput, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { deliveryApi } from '../services/delivery-api.service';
@@ -63,7 +63,7 @@ export default function KycScreen({ navigation }: ScreenProps): React.JSX.Elemen
         <Text style={styles.fieldLabel}>Document Type</Text>
         <View style={styles.docTypeGrid}>
           {DOCS.map((d) => (
-            <TouchableOpacity
+            <Pressable
               key={d}
               onPress={() => setDocType(d)}
               style={[
@@ -80,7 +80,7 @@ export default function KycScreen({ navigation }: ScreenProps): React.JSX.Elemen
               ]}>
                 {docLabels[d] || d.replace('_', ' ')}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 

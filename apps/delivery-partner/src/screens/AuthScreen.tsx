@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Alert, Text, TextInput, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { deliveryApi } from '../services/delivery-api.service';
@@ -65,10 +65,10 @@ export default function AuthScreen({ navigation }: ScreenProps): React.JSX.Eleme
           </View>
         </View>
         <PrimaryButton label={loading ? 'Signing in…' : 'Sign In'} onPress={onLogin} disabled={loading} />
-        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerRow}>
+        <Pressable onPress={() => navigation.navigate('Register')} style={styles.registerRow}>
           <Text style={styles.registerText}>New driver? </Text>
           <Text style={styles.registerLink}>Register</Text>
-        </TouchableOpacity>
+        </Pressable>
       </CardView>
     </Screen>
   );

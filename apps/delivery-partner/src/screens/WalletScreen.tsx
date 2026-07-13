@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
@@ -12,10 +12,10 @@ export default function WalletScreen(_props: ScreenProps): React.JSX.Element {
       <CardView style={styles.walletBalanceCard}>
         <Text style={styles.balanceLabel}>Wallet Balance</Text>
         <Text style={styles.balanceAmount}>₹0.00</Text>
-        <TouchableOpacity style={styles.withdrawButton}>
+        <Pressable style={styles.withdrawButton}>
           <Ionicons name="arrow-down-circle-outline" size={18} color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.withdrawButtonText}>Withdraw</Text>
-        </TouchableOpacity>
+        </Pressable>
       </CardView>
       <EmptyState 
         title="No transactions yet" 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Text, View, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Text, View, Pressable } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 export function LoadingSpinner({ label }: { label?: string }): React.JSX.Element {
@@ -84,7 +84,7 @@ export function EmptyState({ title, message, actionLabel, onAction }: {
         </Text>
       ) : null}
       {actionLabel && onAction ? (
-        <TouchableOpacity 
+        <Pressable
           onPress={onAction}
           style={{
             marginTop: DESIGN_TOKENS.spacing.md,
@@ -98,7 +98,7 @@ export function EmptyState({ title, message, actionLabel, onAction }: {
           <Text style={{ color: '#fff', fontWeight: '600', fontSize: 14, fontFamily: DESIGN_TOKENS.typography.fontFamily }}>
             {actionLabel}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       ) : null}
     </View>
   );
@@ -140,7 +140,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
         {message}
       </Text>
       {onRetry ? (
-        <TouchableOpacity
+        <Pressable
           onPress={onRetry}
           style={{
             marginTop: DESIGN_TOKENS.spacing.sm,
@@ -154,7 +154,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
           <Text style={{ color: '#fff', fontWeight: '600', fontSize: 14, fontFamily: DESIGN_TOKENS.typography.fontFamily }}>
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       ) : null}
     </View>
   );

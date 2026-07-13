@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Alert, Text, TextInput, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { deliveryApi } from '../services/delivery-api.service';
@@ -57,7 +57,7 @@ export default function RegisterScreen({ navigation }: ScreenProps): React.JSX.E
           <Text style={styles.fieldLabel}>Vehicle Type</Text>
           <View style={styles.vehicleGrid}>
             {VEHICLES.map((v) => (
-              <TouchableOpacity
+              <Pressable
                 key={v}
                 onPress={() => set('vehicleType', v)}
                 style={[
@@ -74,7 +74,7 @@ export default function RegisterScreen({ navigation }: ScreenProps): React.JSX.E
                 ]}>
                   {v.charAt(0).toUpperCase() + v.slice(1)}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
 

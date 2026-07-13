@@ -21,7 +21,7 @@ import SupportScreen from '../screens/SupportScreen';
 
 const NavigatorContext = createContext<Navigator | null>(null);
 
-export const useNavigation = (): Navigator => {
+const useNavigation = (): Navigator => {
   const ctx = useContext(NavigatorContext);
   if (!ctx) {
     throw new Error('useNavigation must be used within AppNavigator');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView, PrimaryButton } from '../components/Screen';

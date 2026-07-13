@@ -126,6 +126,7 @@ const SearchPage = () => {
         <div className={styles.filterBar}>
           {filters.map((f) => (
             <button
+              type="button"
               key={f}
               className={`${styles.filterChip} ${state.activeFilter === f ? styles.filterChipActive : ''}`}
               onClick={() => dispatch({ type: 'SET_ACTIVE_FILTER', payload: f })}

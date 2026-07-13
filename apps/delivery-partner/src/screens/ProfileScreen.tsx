@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Alert, Text, TextInput, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { deliveryApi } from '../services/delivery-api.service';
@@ -75,21 +75,21 @@ export default function ProfileScreen(_props: ScreenProps): React.JSX.Element {
       </CardView>
 
       <CardView>
-        <TouchableOpacity style={styles.menuItem} onPress={() => Alert.alert('KYC', 'KYC verification is completed.')}>
+        <Pressable style={styles.menuItem} onPress={() => Alert.alert('KYC', 'KYC verification is completed.')}>
           <Ionicons name="shield-checkmark-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.menuText}>KYC Verification</Text>
           <Ionicons name="chevron-forward" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => Alert.alert('Vehicle', 'Vehicle details are up to date.')}>
+        </Pressable>
+        <Pressable style={styles.menuItem} onPress={() => Alert.alert('Vehicle', 'Vehicle details are up to date.')}>
           <Ionicons name="car-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.menuText}>Vehicle Details</Text>
           <Ionicons name="chevron-forward" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => Alert.alert('Documents', 'All documents are verified.')}>
+        </Pressable>
+        <Pressable style={styles.menuItem} onPress={() => Alert.alert('Documents', 'All documents are verified.')}>
           <Ionicons name="document-text-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.menuText}>Documents</Text>
           <Ionicons name="chevron-forward" size={18} color={DESIGN_TOKENS.colors.textTertiary} />
-        </TouchableOpacity>
+        </Pressable>
       </CardView>
     </Screen>
   );
