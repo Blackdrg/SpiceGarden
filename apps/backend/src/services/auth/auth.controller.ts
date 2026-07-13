@@ -169,7 +169,16 @@ export class AuthController {
       role: UserRole.CUSTOMER,
       status: UserStatus.ACTIVE,
     });
-    const savedUser = await this.userRepo.save(user);
+    let savedUser: UserEntity;
+    try {
+      savedUser = await this.userRepo.save(user);
+    } catch (error: unknown) {
+      const code = (error as { code?: string })?.code;
+      if (code === '23505') {
+        throw new ConflictException('Email or phone already registered');
+      }
+      throw error;
+    }
     const deviceInfo = this.getDeviceInfo(body, req);
     const tokens = await this.authService.login(savedUser, deviceInfo);
     setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);

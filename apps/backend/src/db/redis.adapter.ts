@@ -13,7 +13,7 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
   }
 
   async connect(): Promise<void> {
-    const host = this.configService.get<string>('REDIS_HOST') || 'localhost';
+    const host = this.configService.get<string>('REDIS_HOST') || '127.0.0.1';
     const port = this.configService.get<number>('REDIS_PORT') || 6379;
     const password = this.configService.get<string>('REDIS_PASSWORD') || undefined;
 

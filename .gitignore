@@ -45,3 +45,12 @@ coverage/
 
 # Expo
 .expo/
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Next.js
+.next/

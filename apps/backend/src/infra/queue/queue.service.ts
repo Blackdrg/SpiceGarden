@@ -43,7 +43,7 @@ export class QueueService implements OnModuleDestroy {
     private readonly orderRepo: Repository<OrderEntity>,
   ) {
     try {
-      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://127.0.0.1:6379';
       this.connection = new IORedis(redisUrl, {
         maxRetriesPerRequest: null,
         enableReadyCheck: false,

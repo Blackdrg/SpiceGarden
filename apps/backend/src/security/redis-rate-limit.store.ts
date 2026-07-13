@@ -24,7 +24,7 @@ export class RedisRateLimitStore implements Store {
   private redisAvailable = false;
 
   constructor(options: RedisRateLimitStoreOptions = {}) {
-    this.redisUrl = options.redisUrl || 'redis://localhost:6379';
+    this.redisUrl = options.redisUrl || 'redis://127.0.0.1:6379';
     this.prefix = options.prefix || 'spicegarden:ratelimit';
     this.fallbackToMemory = options.fallbackToMemory ?? true;
   }

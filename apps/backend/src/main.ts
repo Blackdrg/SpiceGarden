@@ -17,6 +17,7 @@ import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
 import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 const metricsRegistry = new Registry();
 collectDefaultMetrics({ register: metricsRegistry });
@@ -81,7 +82,7 @@ function validateProductionEnvironment(configService: ConfigService): void {
 function getRedisRateLimitUrl(configService: ConfigService): string {
   return configService.get<string>('REDIS_RATE_LIMIT_URL')
     || configService.get<string>('REDIS_URL')
-    || `redis://${configService.get<string>('REDIS_HOST', 'localhost')}:${configService.get<number>('REDIS_PORT', 6379)}`;
+    || `redis://${configService.get<string>('REDIS_HOST', '127.0.0.1')}:${configService.get<number>('REDIS_PORT', 6379)}`;
 }
 
 function getRateLimitWindow(configService: ConfigService, name: string, fallbackMs: number): number {
@@ -294,6 +295,20 @@ const dsn = configService.get<string>("SENTRY_DSN");
       transform: true,
     })
   );
+
+  const swaggerEnabled = configService.get<string>('SWAGGER_ENABLED', 'true') !== 'false';
+  if (swaggerEnabled) {
+    const document = SwaggerModule.createDocument(
+      app,
+      new DocumentBuilder()
+        .setTitle('SpiceGarden API')
+        .setDescription('Food delivery platform REST API')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build(),
+    );
+    SwaggerModule.setup('docs', app, document);
+  }
 
   await app.listen(3001);
 }
