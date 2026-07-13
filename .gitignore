@@ -52,5 +52,11 @@ build/
 out/
 *.tsbuildinfo
 
+# Local test artifacts
+.local*.json
+.localrd.tmp
+.localreactdoctor.json
+loc-report.json
+
 # Next.js
 .next/
