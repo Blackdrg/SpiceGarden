@@ -7,8 +7,14 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
-import { DisputeType, DisputeStatus } from '../../db/entities/dispute.entity';
-import { RefundType } from '../../db/entities/refund.entity';
+import { DisputeStatus } from '../../db/entities/dispute.entity';
+import {
+  EscalateTicketDto,
+  ProcessRefundDto,
+  RaiseDisputeDto,
+  RequestRefundDto,
+  ReviewDisputeDto,
+} from './support.dto';
 
 @Controller('support')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -21,7 +27,7 @@ export class SupportController {
   ) {}
 
   @Post('disputes')
-  async raiseDispute(@Body() body: { orderId: string; customerId: string; type: DisputeType; description: string }) {
+  async raiseDispute(@Body() body: RaiseDisputeDto) {
     return this.supportService.raiseDispute(body.orderId, body.customerId, body.type, body.description);
   }
 
@@ -31,17 +37,17 @@ export class SupportController {
   }
 
   @Put('disputes/:id/review')
-  async reviewDispute(@Param('id') id: string, @Body() body: { reviewerId: string; status: DisputeStatus; notes?: string }) {
+  async reviewDispute(@Param('id') id: string, @Body() body: ReviewDisputeDto) {
     return this.supportService.reviewDispute(id, body.reviewerId, body.status, body.notes);
   }
 
   @Post('refunds')
-  async requestRefund(@Body() body: { orderId: string; requestedBy: string; type: RefundType; amount: number; reason: string }) {
+  async requestRefund(@Body() body: RequestRefundDto) {
     return this.supportService.requestRefund(body.orderId, body.requestedBy, body.type, body.amount, body.reason);
   }
 
   @Put('refunds/:id/process')
-  async processRefund(@Param('id') id: string, @Body() body: { processedBy: string; paymentReference?: string }) {
+  async processRefund(@Param('id') id: string, @Body() body: ProcessRefundDto) {
     return this.supportService.processRefund(id, body.processedBy, body.paymentReference);
   }
 
@@ -56,7 +62,7 @@ export class SupportController {
   }
 
   @Post('tickets/:id/escalate')
-  async escalateTicket(@Param('id') id: string, @Body() body: { level?: number }) {
+  async escalateTicket(@Param('id') id: string, @Body() body: EscalateTicketDto) {
     return this.routingService.escalateTicket(id, body.level || 1);
   }
 }

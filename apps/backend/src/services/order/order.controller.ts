@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Headers, UseGuards, Request, Get, Query, Param } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { PlaceOrderDto } from './dto/place-order.dto';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
@@ -13,7 +14,7 @@ export class OrderController {
   @Post()
   @Roles(UserRole.CUSTOMER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async placeOrder(
-    @Body() body: any,
+    @Body() body: PlaceOrderDto,
     @Headers('x-idempotency-key') idempotencyKey?: string
   ) {
     return this.orderService.placeOrder(body, idempotencyKey);

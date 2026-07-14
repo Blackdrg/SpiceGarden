@@ -1,8 +1,10 @@
 import type { AppProps } from 'next/app';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { trackEvent, ToastProvider } from '@spicegarden/ui';
 import * as Sentry from '@sentry/nextjs';
+import { AuthProvider, useAuth } from '../auth/AuthContext';
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || 'https://example-sentry-dsn.com',
@@ -11,6 +13,28 @@ Sentry.init({
 });
 
 const queryClient = new QueryClient();
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, hydrated } = useAuth();
+  const router = useRouter();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setChecked(true);
+    if (router.pathname === '/login') {
+      if (isAuthenticated) router.replace('/');
+    } else if (!isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [hydrated, isAuthenticated, router]);
+
+  if (!hydrated || !checked) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
 
 export default function AdminApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -21,7 +45,11 @@ export default function AdminApp({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <Sentry.ErrorBoundary fallback={<p>An error occurred</p>}>
-          <Component {...pageProps} />
+          <AuthProvider>
+            <AuthGate>
+              <Component {...pageProps} />
+            </AuthGate>
+          </AuthProvider>
         </Sentry.ErrorBoundary>
       </ToastProvider>
     </QueryClientProvider>

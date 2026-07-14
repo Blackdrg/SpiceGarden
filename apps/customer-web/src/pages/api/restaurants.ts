@@ -3,14 +3,21 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+
   try {
-    const response = await fetch(`${BACKEND_URL}/business/restaurants`, {
+    let url = `${BACKEND_URL}/business/restaurants`;
+    if (id && typeof id === 'string') {
+      url = `${BACKEND_URL}/restaurants/${id}`;
+    }
+
+    const response = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
-      throw new Error(`Backend returned ${response.status}`);
+      return res.status(response.status).json({ error: `Backend returned ${response.status}` });
     }
 
     const data = await response.json();

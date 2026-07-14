@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { SupportTicketEntity, TicketCategory, TicketStatus, TicketPriority } from '../../db/entities/support-ticket.entity';
@@ -40,7 +40,7 @@ export class TicketRoutingService {
     });
     
     if (!ticket) {
-      throw new Error('Ticket not found');
+      throw new NotFoundException('Ticket not found');
     }
 
     if (ticket.assignedToId) {
@@ -63,7 +63,7 @@ export class TicketRoutingService {
 
     const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
     if (!result) {
-      throw new Error('Ticket not found');
+      throw new NotFoundException('Ticket not found');
     }
     return result;
   }
@@ -80,7 +80,7 @@ export class TicketRoutingService {
   async escalateTicket(ticketId: string, escalationLevel: number = 1): Promise<SupportTicketEntity> {
     const ticket = await this.ticketRepo.findOne({ where: { id: ticketId } });
     if (!ticket) {
-      throw new Error('Ticket not found');
+      throw new NotFoundException('Ticket not found');
     }
 
     const newLevel = (ticket.escalationLevel || 0) + 1;
@@ -96,7 +96,7 @@ export class TicketRoutingService {
 
     const result = await this.ticketRepo.findOne({ where: { id: ticketId } });
     if (!result) {
-      throw new Error('Ticket not found');
+      throw new NotFoundException('Ticket not found');
     }
     return result;
   }

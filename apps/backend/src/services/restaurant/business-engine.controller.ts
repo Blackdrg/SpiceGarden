@@ -6,6 +6,7 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { SetDriverAvailabilityDto } from './business-engine.dto';
 
 @Controller('business')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -55,7 +56,7 @@ export class BusinessEngineController {
   @Permissions('deliveries:manage_assigned')
   async setDriverAvailability(
     @Param('id') driverId: string,
-    @Body() body: { isAvailable: boolean }
+    @Body() body: SetDriverAvailabilityDto
   ) {
     return this.businessEngine.toggleDriverAvailability(driverId, body.isAvailable);
   }

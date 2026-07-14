@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -50,7 +50,7 @@ export class GSTService {
       });
 
       if (!order) {
-        throw new Error(`Order not found: ${orderId}`);
+        throw new NotFoundException(`Order not found: ${orderId}`);
       }
 
       // Get restaurant GST details
@@ -60,12 +60,12 @@ export class GSTService {
       });
 
       if (!restaurant) {
-        throw new Error(`Restaurant not found: ${order.restaurantId}`);
+        throw new NotFoundException(`Restaurant not found: ${order.restaurantId}`);
       }
 
       const restaurantGST = restaurant.gstDetail;
       if (!restaurantGST) {
-        throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);
+        throw new NotFoundException(`GST details not found for restaurant: ${order.restaurantId}`);
       }
 
       // Calculate taxable value and GST breakdown
@@ -192,7 +192,7 @@ export class GSTService {
       });
 
       if (!order) {
-        throw new Error(`Order not found: ${orderId}`);
+        throw new NotFoundException(`Order not found: ${orderId}`);
       }
 
       if (!order.gstDetail) {
@@ -222,7 +222,7 @@ export class GSTService {
       });
 
       if (!restaurant || !restaurant.gstDetail) {
-        throw new Error(`GST details not found for restaurant: ${order.restaurantId}`);
+        throw new NotFoundException(`GST details not found for restaurant: ${order.restaurantId}`);
       }
 
       const gstDetail = order.gstDetail!;

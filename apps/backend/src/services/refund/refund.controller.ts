@@ -9,6 +9,7 @@ import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 import { type Request } from 'express';
+import { ApproveRefundRequestDto, CreateRefundRequestDto, ProcessRefundDto, RejectRefundRequestDto } from './refund.dto';
 
 @ApiTags('refunds')
 @Controller('refunds')
@@ -37,7 +38,7 @@ export class RefundController {
     }
   })
   async createRefundRequest(
-    @Body() body: any
+    @Body() body: CreateRefundRequestDto
   ) {
     return await this.refundService.createRefundRequest(
       body.orderId,
@@ -68,7 +69,7 @@ export class RefundController {
   })
   async approveRefundRequest(
     @Param('approvalId') approvalId: string,
-    @Body() body: any
+    @Body() body: ApproveRefundRequestDto
   ) {
     return await this.refundService.approveRefundRequest(
       approvalId,
@@ -97,7 +98,7 @@ export class RefundController {
   })
   async rejectRefundRequest(
     @Param('approvalId') approvalId: string,
-    @Body() body: any
+    @Body() body: RejectRefundRequestDto
   ) {
     return await this.refundService.rejectRefundRequest(
       approvalId,
@@ -126,7 +127,7 @@ export class RefundController {
   })
   async processRefund(
     @Param('approvalId') approvalId: string,
-    @Body() body: any
+    @Body() body: ProcessRefundDto
   ) {
     return await this.refundService.processRefund(
       approvalId,

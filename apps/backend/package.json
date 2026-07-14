@@ -48,6 +48,8 @@
     "argon2": "^0.40.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.78.1",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.7",
     "express-mongo-sanitize": "^2.2.0",

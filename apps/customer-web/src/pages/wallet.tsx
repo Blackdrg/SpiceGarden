@@ -1,6 +1,7 @@
-import React, { useState, CSSProperties } from 'react';
-import { Button, Card, DESIGN_TOKENS, useToast } from '@spicegarden/ui';
+import React, { useState, useEffect, CSSProperties } from 'react';
+import { Button, Card, DESIGN_TOKENS, useToast, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 import { WalletIcon, ArrowDownIcon, ArrowUpIcon, HomeIcon, SearchIcon, UserIcon } from 'lucide-react';
 import styles from './wallet.module.css';
 
@@ -19,27 +20,51 @@ const bottomNavStyle: CSSProperties = {
   zIndex: 100,
 };
 
+interface Transaction {
+  id: string;
+  type: 'credit' | 'debit';
+  amount: number;
+  description: string;
+  date: string;
+}
+
 const WalletPage = () => {
   const router = useRouter();
   const toast = useToast();
-  const [balance, setBalance] = useState(500);
+  const reduxUser = useSelector((state: any) => state.auth.user);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWallet = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/wallet');
+        if (res.ok) {
+          const data = await res.json();
+          setBalance(data.balance);
+          setTransactions(data.transactions || []);
+        }
+      } catch {
+        // keep empty state on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWallet();
+  }, []);
 
   const handleWithdraw = () => {
     toast.showToast({ message: 'Withdrawal feature coming soon', type: 'info', duration: 0 });
   };
-  const [transactionHistory] = useState([
-    { id: 1, type: 'credit' as const, amount: 500, description: 'Welcome Bonus', date: '2026-05-20' },
-    { id: 2, type: 'debit' as const, amount: 347, description: 'Order #SG12345', date: '2026-05-21' },
-    { id: 3, type: 'credit' as const, amount: 100, description: 'Referral Bonus', date: '2026-05-22' },
-    { id: 4, type: 'debit' as const, amount: 30, description: 'Order #SG12344', date: '2026-05-18' },
-    { id: 5, type: 'credit' as const, amount: 200, description: 'Top-up', date: '2026-05-15' },
-  ]);
-  const [activeTab] = useState<'home' | 'search' | 'wallet' | 'account'>('wallet');
 
   const addMoney = () => {
-    setBalance((prev) => prev + 100);
-    toast.showToast({ message: '₹100 added to your wallet', type: 'success', duration: 3000 });
+    toast.showToast({ message: 'Top-up feature coming soon', type: 'info', duration: 0 });
   };
+
+  const displayBalance = balance !== null ? `₹${balance}` : '₹0.00';
 
   return (
     <div className={styles.pageContainer}>
@@ -49,11 +74,19 @@ const WalletPage = () => {
       </div>
 
       <Card variant="elevated">
-        <div className={styles.balanceSection}>
-          <p className={styles.balanceLabel}>Available Balance</p>
-          <h1 className={styles.balanceAmount}>₹{balance}</h1>
-          <p className={styles.balanceSuffix}>Ready to use</p>
-        </div>
+        {loading ? (
+          <div className={styles.balanceSection}>
+            <Skeleton height={16} width="40%" style={{ marginBottom: 8 }} />
+            <Skeleton height={40} width="50%" />
+            <Skeleton height={14} width="30%" />
+          </div>
+        ) : (
+          <div className={styles.balanceSection}>
+            <p className={styles.balanceLabel}>Available Balance</p>
+            <h1 className={styles.balanceAmount}>{displayBalance}</h1>
+            <p className={styles.balanceSuffix}>Ready to use</p>
+          </div>
+        )}
         <div className={styles.walletActions}>
           <Button onClick={addMoney}><ArrowDownIcon size={18} /></Button>
           <Button onClick={handleWithdraw} variant="secondary"><ArrowUpIcon size={18} /></Button>
@@ -63,19 +96,31 @@ const WalletPage = () => {
       <div className={styles.transactionSection}>
         <h3 className={styles.sectionTitle}>Transaction History</h3>
         <Card variant="default">
-          <div className={styles.transactionList}>
-            {transactionHistory.map((txn) => (
-              <div key={txn.id} className={styles.transactionItem}>
-                <div className={styles.transactionInfo}>
-                  <div className={styles.transactionDesc}>{txn.description}</div>
-                  <div className={styles.transactionDate}>{txn.date}</div>
+          {loading ? (
+            <div>
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} height={48} style={{ marginBottom: 8 }} />
+              ))}
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className={styles.emptyContainer}>
+              <p className={styles.emptyText}>No transactions yet</p>
+            </div>
+          ) : (
+            <div className={styles.transactionList}>
+              {transactions.map((txn) => (
+                <div key={txn.id} className={styles.transactionItem}>
+                  <div className={styles.transactionInfo}>
+                    <div className={styles.transactionDesc}>{txn.description}</div>
+                    <div className={styles.transactionDate}>{new Date(txn.date).toLocaleDateString()}</div>
+                  </div>
+                  <span className={`${styles.transactionAmount} ${txn.type === 'credit' ? styles.transactionCredit : styles.transactionDebit}`}>
+                    {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
+                  </span>
                 </div>
-                <span className={`${styles.transactionAmount} ${txn.type === 'credit' ? styles.transactionCredit : styles.transactionDebit}`}>
-                  {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
 
@@ -91,7 +136,7 @@ const WalletPage = () => {
             type="button"
             key={tab.key}
             onClick={() => tab.path && router.push(tab.path)}
-            className={`${styles.navButton} ${activeTab === tab.key ? styles.navActive : styles.navInactive}`}
+            className={`${styles.navButton} ${tab.key === 'wallet' ? styles.navActive : styles.navInactive}`}
             aria-label={tab.label}
           >
             <span className={styles.navIcon}><tab.icon size={22} /></span>

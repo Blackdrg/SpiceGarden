@@ -7,6 +7,12 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import {
+  ReconcileDriverDto,
+  ReconcilePaymentsDto,
+  ReconcileRestaurantDto,
+  RunFullReconciliationDto,
+} from './finance.dto';
 
 @Controller('finance')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -32,7 +38,7 @@ export class FinanceController {
   }
 
   @Post('reconciliation/payments')
-  async reconcilePayments(@Body() body: { startDate: string; endDate: string }) {
+  async reconcilePayments(@Body() body: ReconcilePaymentsDto) {
     return this.reconciliationService.reconcilePayments(
       new Date(body.startDate),
       new Date(body.endDate),
@@ -41,7 +47,7 @@ export class FinanceController {
 
   @Post('reconciliation/payouts')
   async reconcilePayouts(
-    @Body() body: { restaurantId: string; startDate: string; endDate: string },
+    @Body() body: ReconcileRestaurantDto,
   ) {
     return this.reconciliationService.reconcilePayouts(
       body.restaurantId,
@@ -52,7 +58,7 @@ export class FinanceController {
 
   @Post('reconciliation/driver')
   async reconcileDriverPayments(
-    @Body() body: { driverId: string; startDate: string; endDate: string },
+    @Body() body: ReconcileDriverDto,
   ) {
     return this.reconciliationService.reconcileDriverPayments(
       body.driverId,
@@ -62,7 +68,7 @@ export class FinanceController {
   }
 
   @Post('reconciliation/full')
-  async runFullReconciliation(@Body() body: { startDate: string; endDate: string }) {
+  async runFullReconciliation(@Body() body: RunFullReconciliationDto) {
     return this.reconciliationService.runFullReconciliation({
       start: new Date(body.startDate),
       end: new Date(body.endDate),

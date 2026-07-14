@@ -48,8 +48,9 @@ type DashboardState = {
 
 type DashboardAction =
   | { type: 'order-received'; order: Order }
+  | { type: 'orders-loaded'; orders: Order[] }
   | { type: 'order-transitioned'; orderId: string; status: OrderStatus }
-  | { type: 'inventory-initialized'; inventory: InventoryItem[] }
+  | { type: 'inventory-loaded'; inventory: InventoryItem[] }
   | { type: 'inventory-alert'; item: InventoryItem }
   | { type: 'inventory-stock-added'; amount: number }
   | { type: 'low-stock-used'; amount: number }
@@ -88,14 +89,9 @@ const now = () => new Date();
 
 function createInitialState(): DashboardState {
   return {
-    orders: [
-      demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
-      demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
-      demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
-      demoOrder('d4', { status: 'new', estPrepMins: 12 }),
-    ],
+    orders: [],
     batchMode: false,
-    inventory: seedInventory.map((item) => ({ ...item })),
+    inventory: [],
     activeTab: 'kitchen',
     audioEnabled: true,
     activeSounds: [],
@@ -113,13 +109,15 @@ function dashboardReducer(state: DashboardState, action: DashboardAction): Dashb
         lastAction: `New order #${order.orderNumber} received`,
       };
     }
+    case 'orders-loaded':
+      return { ...state, orders: action.orders.map(normalizeOrder) };
     case 'order-transitioned':
       return {
         ...state,
         orders: updateOrderStatus(state.orders, action.orderId, action.status),
         lastAction: `Order #${action.orderId.slice(-6)} → ${action.status.toUpperCase()}`,
       };
-    case 'inventory-initialized':
+    case 'inventory-loaded':
       return { ...state, inventory: action.inventory };
     case 'inventory-alert':
       return {
@@ -140,7 +138,7 @@ function dashboardReducer(state: DashboardState, action: DashboardAction): Dashb
     case 'audio-toggled':
       return { ...state, audioEnabled: !state.audioEnabled };
     case 'active-sound-added':
-      return { ...state, activeSounds: [action.id, ...state.activeSounds] };
+      return { ...state, activeSounds: [...state.activeSounds, action.id] };
     case 'active-sound-dismissed':
       return { ...state, activeSounds: state.activeSounds.filter((x) => x !== action.id) };
     case 'last-action-set':
@@ -199,6 +197,34 @@ function updateOrderStatus(orders: Order[], orderId: string, status: OrderStatus
 
 export default function KitchenDashboard() {
   const [state, dispatch] = useReducer(dashboardReducer, undefined, createInitialState);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchInitialData = async () => {
+      try {
+        const [ordersRes, inventoryRes] = await Promise.all([
+          fetch('/api/orders'),
+          fetch('/api/inventory?lowStock=true'),
+        ]);
+
+        if (!cancelled) {
+          if (ordersRes.ok) {
+            const orders = await ordersRes.json();
+            dispatch({ type: 'orders-loaded', orders });
+          }
+          if (inventoryRes.ok) {
+            const inventory = await inventoryRes.json();
+            dispatch({ type: 'inventory-loaded', inventory });
+          }
+        }
+      } catch {
+        // keep empty state on error
+      }
+    };
+
+    fetchInitialData();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

@@ -6,6 +6,7 @@ import { Roles } from '../../security/roles.decorator';
 import { PermissionGuard } from '../../security/permission.guard';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { DeviceInfoDto, RegisterDeviceDto, UnregisterDeviceDto, UpdateDeviceDto } from './device.dto';
 
 @Controller('devices')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -18,7 +19,7 @@ export class DeviceController {
   @HttpCode(HttpStatus.OK)
   async registerDevice(
     @Req() req: Request & { user: { userId?: string; sub?: string } },
-    @Body() body: { userId?: string; fcmToken?: string; apnsToken?: string; deviceInfo?: { name?: string; type?: string; userAgent?: string; ip?: string } }
+    @Body() body: RegisterDeviceDto
   ) {
     const { fcmToken, apnsToken, deviceInfo } = body;
     const authenticatedUserId = req.user?.userId || req.user?.sub;
@@ -40,7 +41,7 @@ export class DeviceController {
   @HttpCode(HttpStatus.OK)
   async unregisterDevice(
     @Req() req: Request & { user: { userId?: string; sub?: string; role?: string } },
-    @Body() body: { userId?: string; fcmToken?: string; apnsToken?: string }
+    @Body() body: UnregisterDeviceDto
   ) {
     const authenticatedUserId = req.user?.userId || req.user?.sub;
     const targetUserId = authenticatedUserId;

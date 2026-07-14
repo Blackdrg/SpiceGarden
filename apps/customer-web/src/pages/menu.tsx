@@ -5,12 +5,13 @@ import { ShoppingCartIcon, PlusIcon } from 'lucide-react';
 import styles from './menu.module.css';
 
 interface MenuItem {
-  id: number;
+  id: string;
   name: string;
-  desc: string;
+  description: string;
   price: number;
   image: string;
   category: string;
+  categoryName: string;
 }
 
 interface Category {
@@ -19,52 +20,66 @@ interface Category {
   count: number;
 }
 
-const categories: Category[] = [
-  { id: 'all', name: 'All', count: 24 },
-  { id: 'burgers', name: 'Burgers', count: 8 },
-  { id: 'pizza', name: 'Pizza', count: 6 },
-  { id: 'sides', name: 'Sides', count: 4 },
-  { id: 'drinks', name: 'Drinks', count: 6 },
-];
-
-const menuItems: MenuItem[] = [
-  { id: 1, name: 'Classic Burger', desc: 'Lettuce, tomato, onion', price: 129, image: '🍔', category: 'burgers' },
-  { id: 2, name: 'Cheese Burger', desc: 'With extra cheese', price: 149, image: '🍔', category: 'burgers' },
-  { id: 3, name: 'Veggie Burger', desc: 'Plant-based patty', price: 139, image: '🍔', category: 'burgers' },
-  { id: 4, name: 'Margherita Pizza', desc: 'Tomato, mozzarella, basil', price: 249, image: '🍕', category: 'pizza' },
-  { id: 5, name: 'Pepperoni Pizza', desc: 'With spicy pepperoni', price: 279, image: '🍕', category: 'pizza' },
-  { id: 6, name: 'Veggie Pizza', desc: 'Bell peppers, olives, onions', price: 259, image: '🍕', category: 'pizza' },
-  { id: 7, name: 'French Fries', desc: 'Crispy golden fries', price: 99, image: '🍟', category: 'sides' },
-  { id: 8, name: 'Onion Rings', desc: 'Battered and fried', price: 109, image: '🧅', category: 'sides' },
-  { id: 9, name: 'Garlic Bread', desc: 'With herbs and cheese', price: 119, image: '🥖', category: 'sides' },
-  { id: 10, name: 'Coca Cola', desc: '500ml Bottle', price: 49, image: '🥤', category: 'drinks' },
-  { id: 11, name: 'Sprite', desc: '500ml Bottle', price: 49, image: '🥤', category: 'drinks' },
-  { id: 12, name: 'Iced Tea', desc: 'Lemon flavored', price: 39, image: '🧃', category: 'drinks' },
-];
-
 const MenuPage = () => {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [cart, setCart] = useState<Array<MenuItem & { quantity: number }>>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    const fetchMenu = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/categories');
+        if (res.ok) {
+          const cats = await res.json();
+          const allItems: MenuItem[] = [];
+          const categoryMap = new Map<string, Category>();
 
-    return () => clearTimeout(timer);
+          cats.forEach((cat: any) => {
+            categoryMap.set(cat.name, { id: cat.name, name: cat.name, count: cat.items?.length || 0 });
+            if (cat.items) {
+              cat.items.forEach((item: any) => {
+                allItems.push({
+                  id: item.id,
+                  name: item.name,
+                  description: item.description || '',
+                  price: item.price,
+                  image: item.image || '🍽️',
+                  category: cat.id,
+                  categoryName: cat.name,
+                });
+              });
+            }
+          });
+
+          setMenuItems(allItems);
+          setCategories([
+            { id: 'all', name: 'All', count: allItems.length },
+            ...Array.from(categoryMap.values()),
+          ]);
+        }
+      } catch {
+        // keep empty state on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenu();
   }, []);
 
   const filteredItems = activeCategory === 'all'
     ? menuItems
-    : menuItems.filter(item => item.category === activeCategory);
+    : menuItems.filter(item => item.categoryName === activeCategory || item.category === activeCategory);
 
   const addToCart = (item: MenuItem) => {
     setCart(prev => [...prev, { ...item, quantity: 1 }]);
   };
 
-  const removeFromCart = (itemId: number) => {
+  const removeFromCart = (itemId: string) => {
     setCart(prev => prev.filter(item => item.id !== itemId));
   };
 
@@ -133,7 +148,7 @@ const MenuPage = () => {
                 <div className={styles.itemImage}>{item.image}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className={styles.itemName}>{item.name}</div>
-                  <div className={styles.itemDesc}>{item.desc}</div>
+                  <div className={styles.itemDesc}>{item.description}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span className={styles.itemPrice}>₹{item.price}</span>
@@ -185,7 +200,7 @@ const MenuPage = () => {
       )}
 
       {/* Bottom nav */}
-      <nav className={styles.bottomNav}>
+      <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
           { key: 'home', label: 'Home', icon: HomeIcon, path: '/' },
           { key: 'search', label: 'Search', icon: SearchIcon, path: '/search' },
@@ -199,7 +214,7 @@ const MenuPage = () => {
             className={`${styles.navButton} ${tab.key === 'menu' ? styles.navButtonActive : styles.navButtonInactive}`}
             aria-label={tab.label}
           >
-            <span className={styles.navIcon}><tab.icon size={22} /></span>
+            <span className={styles.navIcon}><tab.icon size={20} /></span>
             <span>{tab.label}</span>
           </button>
         ))}

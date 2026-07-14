@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, IsNull } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -105,7 +105,7 @@ export class DriverAssignmentService {
     });
 
     if (!assignment) {
-      throw new Error('Assignment not found');
+      throw new NotFoundException('Assignment not found');
     }
 
     assignment.status = status;
@@ -138,7 +138,7 @@ export class DriverAssignmentService {
     });
 
     if (!assignment) {
-      throw new Error('Assignment not found');
+      throw new NotFoundException('Assignment not found');
     }
 
     assignment.routeData = routeData;
@@ -173,7 +173,7 @@ export class DriverAssignmentService {
   async updateDriverScore(driverId: string): Promise<DriverScoreEntity> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) {
-      throw new Error('Driver not found');
+      throw new NotFoundException('Driver not found');
     }
 
 // Get recent assignments for scoring calculations
@@ -275,7 +275,7 @@ export class DriverAssignmentService {
     ]);
 
     if (!driver || !branch) {
-      throw new Error('Driver or branch not found');
+      throw new NotFoundException('Driver or branch not found');
     }
 
     const sla = this.slaRepo.create({
@@ -311,7 +311,7 @@ export class DriverAssignmentService {
     ]);
 
     if (!driver || !order || !branch) {
-      throw new Error('Driver, order, or branch not found');
+      throw new NotFoundException('Driver, order, or branch not found');
     }
 
     const fraud = this.fraudRepo.create({

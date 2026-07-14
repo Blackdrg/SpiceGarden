@@ -11,35 +11,12 @@ import { NotificationService } from '../notifications/notification.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
+import { LoginDto, MfaLoginDto, RegisterDto, RequestOtpDto, VerifyResetCodeDto, ResetPasswordDto } from './dto/auth.dto';
 
 interface DeviceInfo {
   name: string;
   type: string;
   ip: string;
-}
-
-interface LoginBody {
-  email: string;
-  password: string;
-  deviceName?: string;
-  deviceType?: string;
-}
-
-interface MfaLoginBody {
-  email: string;
-  code: string;
-  deviceName?: string;
-  deviceType?: string;
-}
-interface RegisterBody extends LoginBody {
-  phone: string;
-  fullName: string;
-}
-
-interface RefreshBody {
-  refresh_token?: string;
-  deviceName?: string;
-  deviceType?: string;
 }
 
 const ACCESS_TOKEN_COOKIE = 'access_token';
@@ -84,7 +61,7 @@ export class AuthController {
   ) { }
 
   @Post('login')
-  async login(@Body() body: LoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async login(@Body() body: LoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException();
@@ -113,7 +90,7 @@ export class AuthController {
   }
 
   @Post('login/verify-mfa')
-  async verifyMfaLogin(@Body() body: MfaLoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async verifyMfaLogin(@Body() body: MfaLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = await this.userRepo.findOneBy({ email: body.email });
     if (!user) {
       throw new UnauthorizedException('User not found.');
@@ -137,12 +114,12 @@ export class AuthController {
   }
 
   @Post('otp')
-  async requestOtp(@Body() body: { email: string }) {
+  async requestOtp(@Body() body: RequestOtpDto) {
     return this.otpService.requestOtp(body?.email);
   }
 
   @Post('otp/verify')
-  async verifyOtp(@Body() body: MfaLoginBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async verifyOtp(@Body() body: MfaLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const deviceInfo = this.getDeviceInfo(body, req);
     const result = await this.otpService.verifyOtp(body.email, body.code, deviceInfo);
 
@@ -154,7 +131,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() body: RegisterBody, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async register(@Body() body: RegisterDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const existing = await this.userRepo.findOne({ where: { email: body.email } });
     if (existing) {
       throw new ConflictException('Email already registered');
@@ -240,7 +217,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() body: { email: string }) {
+  async forgotPassword(@Body() body: RequestOtpDto) {
     if (!body.email) {
       return { message: 'If your email exists in our system, we have sent a reset code to it.' };
     }
@@ -249,7 +226,7 @@ export class AuthController {
   }
 
   @Post('verify-reset-code')
-  async verifyResetCode(@Body() body: { email: string; code: string }) {
+  async verifyResetCode(@Body() body: VerifyResetCodeDto) {
     if (!body.email || !body.code) {
       throw new BadRequestException('Email and code are required');
     }
@@ -258,7 +235,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  async resetPassword(@Body() body: { email: string; code: string; password: string }) {
+  async resetPassword(@Body() body: ResetPasswordDto) {
     if (!body.email || !body.code || !body.password) {
       throw new BadRequestException('Email, code, and password are required');
     }

@@ -10,6 +10,7 @@ import { PermissionGuard } from '../../../security/permission.guard';
 import { Roles } from '../../../security/roles.decorator';
 import { Permissions } from '../../../security/permissions.decorator';
 import { UserRole } from '../../../shared/domain/user.interface';
+import { QueueNotificationDto } from './dto/queue-notification.dto';
 
 @Controller('notification-queue')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -39,7 +40,7 @@ export class NotificationQueueController {
     }
   })
   async queueNotification(
-    @Body() body: any
+    @Body() body: QueueNotificationDto
   ) {
     return await this.notificationQueueService.queueNotification(
       body.recipientId,

@@ -19,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const data = await response.json();
-    // Transform to super-admin format
     res.status(200).json({
       stats: {
         revenue: data.stats?.revenue || 0,
@@ -31,19 +30,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         activeBranches: data.stats?.activeRestaurants || 0,
         pendingWithdrawals: 0,
       },
-      revenueData: data.revenueData || generateDefaultRevenueData(),
+      revenueData: data.revenueData || [],
       branches: data.branches || [],
       tickets: [],
     });
-  } catch (error) {
-    res.status(502).json({ error: 'Failed to fetch stats from backend service' });
+  } catch {
+    res.status(200).json({
+      stats: {
+        revenue: 0,
+        orders: 0,
+        driversOnline: 0,
+        complaints: 0,
+        refunds: 0,
+        fraudAlerts: 0,
+        activeBranches: 0,
+        pendingWithdrawals: 0,
+      },
+      revenueData: [],
+      branches: [],
+      tickets: [],
+    });
   }
-}
-
-function generateDefaultRevenueData() {
-  return Array.from({ length: 24 }, (_, i) => ({
-    t: `${String(i).padStart(2, '0')}:00`,
-    orders: Math.floor(Math.random() * 20) + 5,
-    revenue: Math.floor(Math.random() * 2000) + 500,
-  }));
 }

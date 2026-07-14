@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { StartOnboardingDto, UploadDocumentDto, VerifyDocumentDto, CalculateIncentivesDto, GenerateIncentiveDto, ApproveIncentiveDto } from './dto/driver-ops.dto';
 import { DriverOnboardingService } from './driver-onboarding.service';
 import { DriverPayoutService } from './driver-payout.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
@@ -19,12 +20,12 @@ export class DriverOpsController {
   ) {}
 
   @Post('onboarding')
-  async startOnboarding(@Body() body: any) {
+  async startOnboarding(@Body() body: StartOnboardingDto) {
     return this.onboardingService.startOnboarding(body.userId, body.data);
   }
 
   @Post('documents')
-  async uploadDocument(@Body() body: { driverId: string; type: string; url: string; expiryDate?: string }) {
+  async uploadDocument(@Body() body: UploadDocumentDto) {
     return this.onboardingService.uploadDocument(
       body.driverId,
       body.type as any,
@@ -39,7 +40,7 @@ export class DriverOpsController {
   }
 
   @Put('documents/:id/verify')
-  async verifyDocument(@Param('id') id: string, @Body() body: { status: string; notes?: string; verifierId?: string }) {
+  async verifyDocument(@Param('id') id: string, @Body() body: VerifyDocumentDto) {
     return this.onboardingService.verifyDocument(id, body.status as any, body.notes, body.verifierId);
   }
 
@@ -49,17 +50,17 @@ export class DriverOpsController {
   }
 
   @Post('incentives/calculate')
-  async calculateIncentives(@Body() body: { driverId: string; weekStart: string }) {
+  async calculateIncentives(@Body() body: CalculateIncentivesDto) {
     return this.payoutService.calculateWeeklyIncentives(body.driverId, new Date(body.weekStart));
   }
 
   @Post('incentives')
-  async generateIncentive(@Body() body: { driverId: string; type: string; amount: number; description: string }) {
+  async generateIncentive(@Body() body: GenerateIncentiveDto) {
     return this.payoutService.generateIncentive(body.driverId, body.type, body.amount, body.description);
   }
 
   @Put('incentives/:id/approve')
-  async approveIncentive(@Param('id') id: string, @Body() body: { approverId: string }) {
+  async approveIncentive(@Param('id') id: string, @Body() body: ApproveIncentiveDto) {
     return this.payoutService.approveIncentive(id, body.approverId);
   }
 

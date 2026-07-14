@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { UpdateBranchStatusDto } from './dto/update-branch-status.dto';
 
 @Controller('restaurants')
 export class RestaurantController {
@@ -38,7 +39,7 @@ export class RestaurantController {
   @Put('branch/:id/status')
   async updateStatus(
     @Param('id') id: string,
-    @Body() body: { isOnline: boolean }
+    @Body() body: UpdateBranchStatusDto
   ) {
     return this.restaurantService.updateBranchStatus(id, body.isOnline);
   }

@@ -1,44 +1,139 @@
-import React, { useState } from 'react';
-import { Button, DESIGN_TOKENS, HomeIcon, SearchIcon, CartIcon, ProfileIcon } from '@spicegarden/ui';
+import React, { useState, useEffect } from 'react';
+import { Button, DESIGN_TOKENS, HomeIcon, SearchIcon, CartIcon, ProfileIcon, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 import { ArrowLeftIcon, PlusIcon, StarIcon } from 'lucide-react';
 import styles from './restaurant.module.css';
 
-const categories = [
-  { id: 'burgers', name: 'Burgers', count: 12 },
-  { id: 'sides', name: 'Sides', count: 8 },
-  { id: 'drinks', name: 'Drinks', count: 6 },
-];
+interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  categoryName: string;
+}
 
-const menuItems = [
-  { id: 1, name: 'Whopper', desc: 'Flame-grilled beef patty', price: 149, emoji: '🍔', category: 'burgers' },
-  { id: 2, name: 'Chicken Fries', desc: 'Crispy chicken fries', price: 99, emoji: '🍟', category: 'sides' },
-  { id: 3, name: 'Coke', desc: '330ml Can', price: 49, emoji: '🥤', category: 'drinks' },
-  { id: 4, name: 'Double Cheese', desc: 'Two patties, twice the cheese', price: 199, emoji: '🍔', category: 'burgers' },
-  { id: 5, name: 'Veg Burger', desc: 'Crispy veggie patty', price: 129, emoji: '🍔', category: 'burgers' },
-  { id: 6, name: 'Large Coke', desc: '1.25L Bottle', price: 79, emoji: '🥤', category: 'drinks' },
-];
+interface Category {
+  id: string;
+  name: string;
+  count: number;
+}
 
 const RestaurantPage = () => {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState('burgers');
+  const { id } = router.query;
   const dispatch = useDispatch();
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [restaurant, setRestaurant] = useState<{ name: string; rating: number; deliveryTime: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const filtered = activeCategory === 'all' ? menuItems : menuItems.filter((item) => item.category === activeCategory);
+  useEffect(() => {
+    if (!id || typeof id !== 'string') return;
 
-  const handleAddToCart = (item: typeof menuItems[0]) => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const [restaurantRes, menuRes] = await Promise.all([
+          fetch(`/api/restaurants?id=${encodeURIComponent(id)}`),
+          fetch(`/api/menu?restaurantId=${encodeURIComponent(id)}`),
+        ]);
+
+        if (restaurantRes.ok) {
+          const restaurantData = await restaurantRes.json();
+          setRestaurant({
+            name: restaurantData.name || 'Restaurant',
+            rating: restaurantData.rating || 4.0,
+            deliveryTime: restaurantData.deliveryTime || 30,
+          });
+        }
+
+        if (menuRes.ok) {
+          const menuData = await menuRes.json();
+          setMenuItems(menuData);
+
+          const categoryMap = new Map<string, { id: string; name: string; count: number }>();
+          menuData.forEach((item: MenuItem) => {
+            const catName = item.categoryName || item.category || 'Other';
+            if (!categoryMap.has(catName)) {
+              categoryMap.set(catName, { id: catName, name: catName, count: 0 });
+            }
+            categoryMap.get(catName)!.count++;
+          });
+          setCategories(Array.from(categoryMap.values()));
+        }
+      } catch {
+        setError('Failed to load restaurant data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  const filtered = activeCategory === 'all' ? menuItems : menuItems.filter((item) => item.category === (categories.find(c => c.id === activeCategory)?.name || activeCategory) || item.category === activeCategory);
+
+  const handleAddToCart = (item: MenuItem) => {
     dispatch(addToCart({
       item: {
-        id: item.id.toString(),
+        id: item.id,
         name: item.name,
         price: item.price,
         quantity: 1,
       },
-      restaurantId: 'rest-001'
+      restaurantId: typeof id === 'string' ? id : 'rest-001'
     }));
   };
+
+  if (loading) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.pageHeader}>
+          <Button onClick={() => router.back()} variant="secondary"><ArrowLeftIcon size={18} /></Button>
+          <Skeleton height={24} width="60%" />
+        </div>
+        <div className={styles.categorySection}>
+          <div className={styles.categoryList}>
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} height={32} width={80} style={{ marginRight: 8 }} />
+            ))}
+          </div>
+        </div>
+        <div className={styles.menuList}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.menuItem}>
+              <div className={styles.itemInfo}>
+                <div className={styles.itemEmoji}>🍽️</div>
+                <div style={{ flex: 1 }}>
+                  <Skeleton height={16} width="70%" style={{ marginBottom: 4 }} />
+                  <Skeleton height={14} width="40%" />
+                </div>
+              </div>
+              <Skeleton height={32} width={32} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !restaurant) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.pageHeader}>
+          <Button onClick={() => router.back()} variant="secondary"><ArrowLeftIcon size={18} /></Button>
+        </div>
+        <p>{error || 'Restaurant not found'}</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageContainer}>
@@ -49,15 +144,23 @@ const RestaurantPage = () => {
       </div>
 
       <div className={styles.restaurantHeader}>
-        <h2 className={styles.restaurantName}>🍔 Burger King</h2>
+        <h2 className={styles.restaurantName}>{restaurant.name}</h2>
         <p className={styles.restaurantMeta}>
           <StarIcon size={14} fill={DESIGN_TOKENS.colors.warning} color={DESIGN_TOKENS.colors.warning} />
-          {' '}4.2 · 25–30 min · ₹199 minimum
+          {' '}{restaurant.rating} · {restaurant.deliveryTime} min
         </p>
       </div>
 
       <div className={styles.categorySection}>
         <div className={styles.categoryList}>
+          <button
+            key="all"
+            type="button"
+            className={`${styles.categoryChip} ${activeCategory === 'all' ? styles.categoryChipActive : ''}`}
+            onClick={() => setActiveCategory('all')}
+          >
+            All ({menuItems.length})
+          </button>
           {categories.map((c) => (
             <button
               key={c.id}
@@ -72,26 +175,30 @@ const RestaurantPage = () => {
       </div>
 
       <div className={styles.menuList}>
-        {filtered.map((item) => (
-          <div
-            key={item.id}
-            className={styles.menuItem}
-          >
-            <div className={styles.itemInfo}>
-              <div className={styles.itemEmoji}>{item.emoji}</div>
-              <div className={styles.itemText}>
-                <div className={styles.itemName}>{item.name}</div>
-                <div className={styles.itemDesc}>{item.desc}</div>
+        {filtered.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <div className={styles.emptyIcon}>🍽️</div>
+            <h3 className={styles.emptyText}>No items found</h3>
+          </div>
+        ) : (
+          filtered.map((item) => (
+            <div key={item.id} className={styles.menuItem}>
+              <div className={styles.itemInfo}>
+                <div className={styles.itemEmoji}>{item.image || '🍽️'}</div>
+                <div className={styles.itemText}>
+                  <div className={styles.itemName}>{item.name}</div>
+                  <div className={styles.itemDesc}>{item.description}</div>
+                </div>
+              </div>
+              <div className={styles.itemActions}>
+                <span className={styles.itemPrice}>₹{item.price}</span>
+                <Button onClick={() => handleAddToCart(item)} variant="secondary" size="sm">
+                  <PlusIcon size={16} />
+                </Button>
               </div>
             </div>
-            <div className={styles.itemActions}>
-              <span className={styles.itemPrice}>₹{item.price}</span>
-              <Button onClick={() => handleAddToCart(item)} variant="secondary" size="sm">
-                <PlusIcon size={16} />
-              </Button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Bottom nav */}

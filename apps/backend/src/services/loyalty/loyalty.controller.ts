@@ -7,6 +7,12 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import {
+  ApplyCouponDto,
+  GenerateReferralCodeDto,
+  ProcessCashbackDto,
+  ProcessReferralDto,
+} from './loyalty.dto';
 
 @ApiTags('loyalty')
 @ApiBearerAuth()
@@ -27,7 +33,7 @@ export class LoyaltyController {
   @Roles(UserRole.CUSTOMER)
   @Permissions('wallet:transact_own')
   @ApiOperation({ summary: 'Apply coupon to order' })
-  applyCoupon(@Body() body: { code: string; userId: string; orderAmount: number; orderId?: string }) {
+  applyCoupon(@Body() body: ApplyCouponDto) {
     return this.loyaltyService.applyCoupon(body.code, body.userId, body.orderAmount, body.orderId);
   }
 
@@ -59,7 +65,7 @@ export class LoyaltyController {
   @Roles(UserRole.CUSTOMER)
   @Permissions('orders:read_own')
   @ApiOperation({ summary: 'Generate referral code' })
-  generateReferralCode(@Body() body: { userId: string }) {
+  generateReferralCode(@Body() body: GenerateReferralCodeDto) {
     return this.loyaltyService.generateReferralCode(body.userId);
   }
 
@@ -67,7 +73,7 @@ export class LoyaltyController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('orders:manage')
   @ApiOperation({ summary: 'Process referral' })
-  processReferral(@Body() body: { code: string; refereeId: string; firstOrderId: string }) {
+  processReferral(@Body() body: ProcessReferralDto) {
     return this.loyaltyService.processReferral(body.code, body.refereeId, body.firstOrderId);
   }
 
@@ -83,7 +89,7 @@ export class LoyaltyController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.FINANCE_STAFF)
   @Permissions('finance:read')
   @ApiOperation({ summary: 'Process cashback for order' })
-  processCashback(@Body() body: { userId: string; orderId: string; orderAmount: number }) {
+  processCashback(@Body() body: ProcessCashbackDto) {
     return this.loyaltyService.processCashback(body.userId, body.orderId, body.orderAmount);
   }
 

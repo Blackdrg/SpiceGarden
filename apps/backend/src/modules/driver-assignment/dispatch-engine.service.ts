@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -56,7 +56,7 @@ const order = await manager.findOne(OrderEntity, {
        });
 
       if (!order) {
-        throw new Error('Order not found');
+        throw new NotFoundException('Order not found');
       }
 
       // 2. Get restaurant branch (simplified - in reality you'd get branch from restaurant)
@@ -65,7 +65,7 @@ const order = await manager.findOne(OrderEntity, {
       });
 
       if (!branch) {
-        throw new Error('Restaurant branch not found');
+        throw new NotFoundException('Restaurant branch not found');
       }
 
       // 3. Find available drivers based on multiple criteria
@@ -76,7 +76,7 @@ const order = await manager.findOne(OrderEntity, {
       );
 
       if (!availableDrivers || availableDrivers.length === 0) {
-        throw new Error('No available drivers found');
+        throw new BadRequestException('No available drivers found');
       }
 
       // 4. Select best driver based on scoring algorithm
@@ -227,7 +227,7 @@ const order = await manager.findOne(OrderEntity, {
     return this.dataSource.transaction(async (manager) => {
       const driver = await manager.findOne(DriverEntity, { where: { id: driverId } });
       if (!driver) {
-        throw new Error('Driver not found');
+        throw new NotFoundException('Driver not found');
       }
 
       const orders = await manager.find(OrderEntity, {
@@ -235,7 +235,7 @@ const order = await manager.findOne(OrderEntity, {
       });
 
       if (orders.length !== orderIds.length) {
-        throw new Error('Some orders not found');
+        throw new NotFoundException('Some orders not found');
       }
 
       // Get branch from first order (assuming all orders are from same restaurant)
@@ -298,13 +298,13 @@ const currentAssignment = await manager.findOne(DriverAssignmentEntity, {
        });
 
       if (!currentAssignment) {
-        throw new Error('Assignment not found');
+        throw new NotFoundException('Assignment not found');
       }
 
       // Get new driver
       const newDriver = await manager.findOne(DriverEntity, { where: { id: newDriverId } });
       if (!newDriver) {
-        throw new Error('New driver not found');
+        throw new NotFoundException('New driver not found');
       }
 
       // Update current assignment as reassigned

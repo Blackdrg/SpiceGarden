@@ -127,14 +127,14 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
         </View>
       </View>
       <View style={styles.orderActions}>
-                <Pressable onPress={() => accept(item)} style={styles.acceptButton}>
+                 <Pressable onPress={() => accept(item)} style={styles.acceptButton}>
           <Ionicons name="checkmark" size={18} color="#fff" />
           <Text style={styles.acceptButtonText}>Accept</Text>
-        </TouchableOpacity>
-                <Pressable onPress={() => reject(item)} style={styles.rejectButton}>
+        </Pressable>
+                 <Pressable onPress={() => reject(item)} style={styles.rejectButton}>
           <Ionicons name="close" size={18} color={DESIGN_TOKENS.colors.danger} />
           <Text style={styles.rejectButtonText}>Reject</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </CardView>
   ), [accept, reject]);
@@ -158,7 +158,7 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
       right={
         <Pressable onPress={toggleOnline} style={styles.statusToggle}>
           <StatusChip online={online} />
-        </TouchableOpacity>
+        </Pressable>
       }
     >
       <CardView>

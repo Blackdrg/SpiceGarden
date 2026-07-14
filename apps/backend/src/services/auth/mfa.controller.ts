@@ -2,6 +2,7 @@ import { Controller, Post, Body, Req, UseGuards, UnauthorizedException, BadReque
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { MfaService } from './mfa.service';
 import { AuthenticatedUser } from './auth.service';
+import { DisableMfaDto, EnableMfaDto } from './mfa.dto';
 
 interface AuthenticatedRequest extends Request {
     user: AuthenticatedUser;
@@ -28,7 +29,7 @@ export class MfaController {
      * Verifies the provided TOTP code and enables MFA for the user.
      */
     @Post('enable')
-    async enable(@Req() req: AuthenticatedRequest, @Body() body: { code: string }) {
+    async enable(@Req() req: AuthenticatedRequest, @Body() body: EnableMfaDto) {
         if (!req.user) {
             throw new UnauthorizedException();
         }
@@ -44,7 +45,7 @@ export class MfaController {
      * Verifies the provided TOTP code and disables MFA for the user.
      */
     @Post('disable')
-    async disable(@Req() req: AuthenticatedRequest, @Body() body: { code: string }) {
+    async disable(@Req() req: AuthenticatedRequest, @Body() body: DisableMfaDto) {
         if (!req.user) {
             throw new UnauthorizedException();
         }

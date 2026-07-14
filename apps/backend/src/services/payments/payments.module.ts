@@ -1,5 +1,5 @@
 ﻿
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
@@ -34,7 +34,7 @@ import { ChargebackService } from './chargeback/chargeback.service';
     AuditModule,
     LedgerModule,
     GSTModule,
-    forwardRef(() => ChargebackModule),
+    ChargebackModule,
   ],
   providers: [
     PaymentService, 

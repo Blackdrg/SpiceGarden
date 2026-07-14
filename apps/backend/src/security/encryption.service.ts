@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { getRequiredSecret } from '../common/errors/missing-env.error';
@@ -25,7 +25,7 @@ export class EncryptionService {
   decrypt(payload: string): string {
     try {
       const [ivB64, ciphertextB64, tagB64] = payload.split('.');
-      if (!ivB64 || !ciphertextB64 || !tagB64) throw new Error('Invalid payload format');
+      if (!ivB64 || !ciphertextB64 || !tagB64) throw new BadRequestException('Invalid payload format');
       const iv = Buffer.from(ivB64, 'base64');
       const ciphertext = Buffer.from(ciphertextB64, 'base64');
       const authTag = Buffer.from(tagB64, 'base64');
@@ -34,7 +34,7 @@ export class EncryptionService {
       const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
       return plaintext.toString('utf-8');
     } catch {
-      throw new Error('Decryption failed');
+      throw new BadRequestException('Decryption failed');
     }
   }
 
@@ -60,7 +60,7 @@ export class EncryptionService {
           decrypted[field] = this.decrypt(value);
         } catch (error) {
           const errMsg = error instanceof Error ? error.message : 'unknown';
-          throw new Error(`Failed to decrypt field ${field}: ${errMsg}`);
+          throw new BadRequestException(`Failed to decrypt field ${field}: ${errMsg}`);
         }
       }
     }

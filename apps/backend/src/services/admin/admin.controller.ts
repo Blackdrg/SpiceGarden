@@ -7,6 +7,7 @@ import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 import { type Request } from 'express';
+import { BanUserDto } from './admin.dto';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -37,7 +38,7 @@ export class AdminController {
   @Post('users/ban')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('users:manage')
-  async banUser(@Body() body: { userId: string; reason: string }, @Req() req: Request & { user: { id: string; role: string } }) {
+  async banUser(@Body() body: BanUserDto, @Req() req: Request & { user: { id: string; role: string } }) {
     return this.adminService.banUser(body.userId, body.reason);
   }
 }

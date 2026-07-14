@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EncryptionService } from '../../security/encryption.service';
 import { Repository, DataSource, LessThan } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
@@ -123,12 +123,12 @@ export class DataPrivacyService {
       const deletionRepo = manager.getRepository(DeletionRequestEntity);
 
       const user = await userRepo.findOne({ where: { id: userId } });
-      if (!user) throw new Error('User not found');
+      if (!user) throw new NotFoundException('User not found');
 
       const exportRequests = await exportRepo.find({ where: { userId, status: 'completed' } });
       const deletionRequest = await deletionRepo.findOne({ where: { userId, status: 'pending' } });
 
-      if (!deletionRequest) throw new Error('Active deletion request not found');
+      if (!deletionRequest) throw new NotFoundException('Active deletion request not found');
 
       if (exportRequests.length === 0) {
         const exportData = await this.getUserData(userId) as any;

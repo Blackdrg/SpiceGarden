@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { type Request as ExpressRequest } from 'express';
 import { ComplianceService } from './compliance.service';
 import { Soc2ReadinessService } from './soc2-readiness.service';
@@ -126,7 +126,7 @@ export class ComplianceController {
 
   async exportUserDataGdpr(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
     if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
-      throw new Error('Unauthorized to export this user data');
+      throw new ForbiddenException('Unauthorized to export this user data');
     }
     const data = await this.complianceService.exportUserData(userId);
     return {
@@ -143,7 +143,7 @@ export class ComplianceController {
 
   async exportUserDataDpdp(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
     if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
-      throw new Error('Unauthorized to export this user data');
+      throw new ForbiddenException('Unauthorized to export this user data');
     }
     const data = await this.complianceService.exportUserData(userId);
     return {
@@ -160,7 +160,7 @@ export class ComplianceController {
 
   async requestGdprDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
     if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
-      throw new Error('Unauthorized to submit deletion request for this user');
+      throw new ForbiddenException('Unauthorized to submit deletion request for this user');
     }
     const result = await this.complianceService.requestUserDataDeletion(userId, 'gdpr', dto.reason);
     return {
@@ -178,7 +178,7 @@ export class ComplianceController {
 
   async requestDpdpDeletion(@Param('userId') userId: string, @Body() dto: DeletionRequestDto, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
     if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
-      throw new Error('Unauthorized to submit deletion request for this user');
+      throw new ForbiddenException('Unauthorized to submit deletion request for this user');
     }
     const result = await this.complianceService.requestUserDataDeletion(userId, 'dpdp', dto.reason);
     return {
@@ -196,7 +196,7 @@ export class ComplianceController {
 
   async cancelGdprDeletion(@Param('userId') userId: string, @Request() req: ExpressRequest & { user?: { sub?: string; role?: UserRole } }) {
     if (req.user?.sub !== userId && ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(req.user?.role as UserRole)) {
-      throw new Error('Unauthorized');
+      throw new ForbiddenException('Unauthorized');
     }
     const result = await this.complianceService.cancelUserDataDeletion(userId);
     return {

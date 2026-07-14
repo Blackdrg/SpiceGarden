@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '../../../security/jwt-auth.guard';
 import { RolesGuard } from '../../../security/roles.guard';
 import { Roles } from '../../../security/roles.decorator';
 import { UserRole } from '../../../shared/domain/user.interface';
+import { InitiateRefundForWonDisputeDto } from './chargeback.dto';
 
 @ApiTags('chargebacks')
 @Controller('chargebacks')
@@ -87,7 +88,7 @@ export class ChargebackController {
   })
   async initiateRefundForWonDispute(
     @Param('disputeId') disputeId: string,
-    @Body() body: { processedBy: string; gateway?: string }
+    @Body() body: InitiateRefundForWonDisputeDto
   ) {
     return await this.chargebackService.initiateRefundForWonDispute(disputeId, body.processedBy, body.gateway);
   }

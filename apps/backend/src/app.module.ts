@@ -19,7 +19,6 @@ import { AdminServiceModule } from './services/admin/admin.module';
 import { NotificationModule } from './services/notifications/notification.module';
 import { KitchenModule } from './modules/kitchen/kitchen.module';
 import { DriverAssignmentModule } from './modules/driver-assignment/driver-assignment.module';
-import { MetricsModule } from './metrics/metrics.module';
 import { ComplianceModule } from './compliance/compliance.module';
 import { AuditModule } from './audit/audit.module';
 import { WalletModule } from './services/wallet/wallet.module';
@@ -57,7 +56,6 @@ import { ApisModule } from './apis.module';
     NotificationModule,
     KitchenModule,
     DriverAssignmentModule,
-    MetricsModule,
     ComplianceModule,
     AuditModule,
     WalletModule,

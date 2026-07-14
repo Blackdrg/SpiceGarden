@@ -1,12 +1,21 @@
 import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { RestaurantOpsService } from './restaurant-ops.service';
-import { OnboardingStep } from '../../db/entities/restaurant-onboarding.entity';
 import { MenuModerationService } from './menu-moderation.service';
-import { ModerationStatus, ModerationAction } from '../../db/entities/menu-moderation.entity';
 import { PayoutService } from './payout.service';
 import { BranchManagementService } from './branch-management.service';
 import { CommissionService } from './commission.service';
-import { CommissionType } from '../../db/entities/commission-rule.entity';
+import {
+  CalculateCommissionDto,
+  CreateBranchDto,
+  CreateCommissionRuleDto,
+  GeneratePayoutDto,
+  ProcessPayoutDto,
+  ReviewModerationDto,
+  StartOnboardingDto,
+  SubmitForModerationDto,
+  ToggleBranchStatusDto,
+  UpdateOnboardingStepDto,
+} from './restaurant-ops.dto';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { PermissionGuard } from '../../security/permission.guard';
@@ -32,7 +41,7 @@ export class RestaurantOpsController {
   ) {}
 
   @Post('onboarding')
-  async startOnboarding(@Body() body: { userId: string; restaurantData: { name: string; slug: string; description?: string; businessDetails?: any } }) {
+  async startOnboarding(@Body() body: StartOnboardingDto) {
     return this.opsService.startOnboarding(body.userId, body.restaurantData);
   }
 
@@ -42,7 +51,7 @@ export class RestaurantOpsController {
   }
 
   @Put('onboarding/:id/step')
-  async updateOnboardingStep(@Param('id') id: string, @Body() body: { step: OnboardingStep; data?: any }) {
+  async updateOnboardingStep(@Param('id') id: string, @Body() body: UpdateOnboardingStepDto) {
     return this.opsService.updateStep(id, body.step, body.data);
   }
 
@@ -52,7 +61,7 @@ export class RestaurantOpsController {
   }
 
   @Post('moderation')
-  async submitForModeration(@Body() body: { menuItemId: string; restaurantId: string; action: ModerationAction; data: Record<string, any>; originalData?: Record<string, any> }) {
+  async submitForModeration(@Body() body: SubmitForModerationDto) {
     return this.moderationService.submitForModeration(
       body.menuItemId,
       body.restaurantId,
@@ -68,7 +77,7 @@ export class RestaurantOpsController {
   }
 
   @Put('moderation/:id/review')
-  async reviewModeration(@Param('id') id: string, @Body() body: { status: ModerationStatus; notes?: string }, @Req() req: AuthenticatedRequest) {
+  async reviewModeration(@Param('id') id: string, @Body() body: ReviewModerationDto, @Req() req: AuthenticatedRequest) {
     return this.moderationService.reviewModeration(id, req.user.id, body.status, body.notes);
   }
 
@@ -78,7 +87,7 @@ export class RestaurantOpsController {
   }
 
   @Post('payout/generate')
-  async generatePayout(@Body() body: { restaurantId: string; periodStart: string; periodEnd: string }) {
+  async generatePayout(@Body() body: GeneratePayoutDto) {
     return this.payoutService.generatePayoutReport(
       body.restaurantId,
       new Date(body.periodStart),
@@ -87,12 +96,12 @@ export class RestaurantOpsController {
   }
 
   @Post('payout/:id/process')
-  async processPayout(@Param('id') id: string, @Body() body: { reference: string }) {
+  async processPayout(@Param('id') id: string, @Body() body: ProcessPayoutDto) {
     return this.payoutService.processPayout(id, body.reference);
   }
 
   @Post('branch')
-  async createBranch(@Body() body: { restaurantId: string; branchData: { branchName: string; address: string; lat: number; lng: number; openingTime?: string; closingTime?: string } }) {
+  async createBranch(@Body() body: CreateBranchDto) {
     return this.branchService.createBranch(body.restaurantId, body.branchData);
   }
 
@@ -102,7 +111,7 @@ export class RestaurantOpsController {
   }
 
   @Put('branch/:id/status')
-  async toggleBranchStatus(@Param('id') id: string, @Body() body: { isOnline: boolean }) {
+  async toggleBranchStatus(@Param('id') id: string, @Body() body: ToggleBranchStatusDto) {
     return this.branchService.toggleBranchStatus(id, body.isOnline);
   }
 
@@ -112,7 +121,7 @@ export class RestaurantOpsController {
   }
 
   @Post('commission')
-  async createCommissionRule(@Body() body: { restaurantId: string; ruleData: { type: CommissionType; value: number; minOrderValue?: number; maxOrderValue?: number; validFrom?: Date; validTo?: Date; applicableCategories?: string[] } }) {
+  async createCommissionRule(@Body() body: CreateCommissionRuleDto) {
     return this.commissionService.createCommissionRule(body.restaurantId, body.ruleData);
   }
 
@@ -122,7 +131,7 @@ export class RestaurantOpsController {
   }
 
   @Post('commission/calculate')
-  async calculateCommission(@Body() body: { restaurantId: string; orderAmount: number }) {
+  async calculateCommission(@Body() body: CalculateCommissionDto) {
     const amount = await this.commissionService.calculateCommission(
       body.restaurantId,
       body.orderAmount,

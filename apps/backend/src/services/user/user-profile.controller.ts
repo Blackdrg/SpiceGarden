@@ -1,27 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { UserProfileService } from './user-profile.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
-
-interface AddressCreateBody {
-  label: string;
-  addressLine: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  location: { lat: number; lng: number };
-  isDefault?: boolean;
-}
-
-interface PaymentMethodCreateBody {
-  type: 'card' | 'upi' | 'wallet';
-  cardLast4?: string;
-  cardBrand?: string;
-  cardExpiry?: string;
-  upiId?: string;
-  walletProvider?: string;
-  externalPaymentMethodId?: string;
-  isDefault?: boolean;
-}
+import { AddressDto, UpdateAddressDto, PaymentMethodDto } from './dto/user-profile.dto';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -35,13 +15,13 @@ export class UserProfileController {
   }
 
   @Post('addresses')
-  async createAddress(@Req() req: any, @Body() body: AddressCreateBody) {
+  async createAddress(@Req() req: any, @Body() body: AddressDto) {
     const userId = req.user?.sub;
     return this.profileService.createAddress(userId, body);
   }
 
   @Put('addresses/:id')
-  async updateAddress(@Req() req: any, @Param('id') id: string, @Body() body: Partial<AddressCreateBody>) {
+  async updateAddress(@Req() req: any, @Param('id') id: string, @Body() body: UpdateAddressDto) {
     const userId = req.user?.sub;
     return this.profileService.updateAddress(userId, id, body);
   }
@@ -59,7 +39,7 @@ export class UserProfileController {
   }
 
   @Post('payment-methods')
-  async createPaymentMethod(@Req() req: any, @Body() body: PaymentMethodCreateBody) {
+  async createPaymentMethod(@Req() req: any, @Body() body: PaymentMethodDto) {
     const userId = req.user?.sub;
     return this.profileService.createPaymentMethod(userId, body);
   }

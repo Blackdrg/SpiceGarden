@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '../../security/jwt-auth.guard';
 import { RolesGuard } from '../../security/roles.guard';
 import { Roles } from '../../security/roles.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { CreatePaymentIntentDto, RefundPaymentDto } from './dto/payment.dto';
 
 @Controller('payments')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -32,7 +33,7 @@ export class PaymentsController {
   @ApiResponse({ status: 200, description: 'Payment intent created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async createPaymentIntent(
-    @Body() body: any,
+    @Body() body: CreatePaymentIntentDto,
     @Req() req: Request,
     @Headers('x-idempotency-key') idempotencyKey?: string,
     @Query('gateway') gateway?: string // Optional gateway parameter
@@ -104,7 +105,7 @@ export class PaymentsController {
   @ApiResponse({ status: 200, description: 'Refund processed successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async refund(
-    @Body() body: any,
+    @Body() body: RefundPaymentDto,
     @Headers('x-idempotency-key') idempotencyKey?: string,
     @Query('gateway') gateway?: string // Optional gateway parameter
   ) {

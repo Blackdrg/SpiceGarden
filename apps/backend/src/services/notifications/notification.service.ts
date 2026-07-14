@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -97,7 +97,7 @@ export class NotificationService {
 
       const result = (await response.json()) as { message?: string; sid?: string };
       if (!response.ok) {
-        throw new Error(result.message || 'Twilio API error');
+        throw new InternalServerErrorException(result.message || 'Twilio API error');
       }
 
       this.logger.log(`SMS sent to ${phone}`);
@@ -131,7 +131,7 @@ export class NotificationService {
 
       if (!response.ok) {
         const error = await response.text();
-        throw new Error(error);
+        throw new InternalServerErrorException(error);
       }
 
       this.logger.log(`Email sent to ${email}`);

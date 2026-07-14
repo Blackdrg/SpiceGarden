@@ -1,0 +1,191 @@
+{
+  "TOTAL FILES": 191413,
+  "TOTAL DIRECTORIES": 32302,
+  "Readable text files": 175193,
+  "Binary files": 15594,
+  "TOTAL LINES": 25144806,
+  "TOTAL BLANK LINES": 1520695,
+  "TOTAL COMMENT LINES": 3663234,
+  "TOTAL CODE LINES": 19960877,
+  "Repository Size": "30753.12 MB (30.03 GB)",
+  "Average file size": "168468 bytes",
+  "Median file size": "17 bytes",
+  "Average lines per file": 144,
+  "Breakdown": {
+    "Other": {
+      "files": 56773,
+      "lines": 2879852
+    },
+    "ENV": {
+      "files": 10,
+      "lines": 321
+    },
+    "JSON": {
+      "files": 7605,
+      "lines": 1632053
+    },
+    "JavaScript": {
+      "files": 64570,
+      "lines": 15043398
+    },
+    "Markdown": {
+      "files": 5475,
+      "lines": 799899
+    },
+    "YAML": {
+      "files": 382,
+      "lines": 40612
+    },
+    "Dockerfile": {
+      "files": 7,
+      "lines": 231
+    },
+    "TypeScript": {
+      "files": 37383,
+      "lines": 4420157
+    },
+    "Shell": {
+      "files": 597,
+      "lines": 20882
+    },
+    "Lock files": {
+      "files": 9,
+      "lines": 44514
+    },
+    "TSX": {
+      "files": 803,
+      "lines": 96742
+    },
+    "SQL": {
+      "files": 5,
+      "lines": 1330
+    },
+    "CSS": {
+      "files": 166,
+      "lines": 20804
+    },
+    "HTML": {
+      "files": 146,
+      "lines": 28409
+    },
+    "XML": {
+      "files": 1220,
+      "lines": 112928
+    },
+    "SCSS": {
+      "files": 6,
+      "lines": 34
+    },
+    "Proto": {
+      "files": 32,
+      "lines": 2640
+    }
+  },
+  "Largest directory": "D:\\SpiceGarden",
+  "Largest file": "D:/SpiceGarden/apps/customer-mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+  "Top 100 files": [
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/expo-modules-core/android/build/intermediates/cxx/Debug/652se141/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-gesture-handler/android/build/intermediates/cxx/Debug/205t5y2y/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-screens/android/build/intermediates/cxx/Debug/5m284f6x/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/arm64-v8a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/expo-modules-core/android/build/intermediates/cxx/Debug/652se141/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-gesture-handler/android/build/intermediates/cxx/Debug/205t5y2y/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-screens/android/build/intermediates/cxx/Debug/5m284f6x/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86_64/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/expo-modules-core/android/build/intermediates/cxx/Debug/652se141/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-gesture-handler/android/build/intermediates/cxx/Debug/205t5y2y/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-screens/android/build/intermediates/cxx/Debug/5m284f6x/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/expo-modules-core/android/build/intermediates/cxx/Debug/652se141/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-gesture-handler/android/build/intermediates/cxx/Debug/205t5y2y/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-screens/android/build/intermediates/cxx/Debug/5m284f6x/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/cxx/Debug/253a4y3b/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/armeabi-v7a/libreactnative.so",
+    "D:/SpiceGarden/apps/launcher/node_modules/electron/dist/electron.exe",
+    "D:/SpiceGarden/node_modules/spicegarden-launcher/node_modules/electron/dist/electron.exe",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/outputs/aar/react-native-reanimated-debug.aar",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/outputs/aar/react-native-reanimated-debug.aar",
+    "D:/SpiceGarden/.git/lfs/objects/21/7c/217c7abc77aaa868b9423ff3e6e8f40f62633ccc4121786fac64e481aef3429d",
+    "D:/SpiceGarden/node_modules/@next/swc-win32-x64-msvc/next-swc.win32-x64-msvc.node",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_jni/debug/copyDebugJniLibsProjectOnly/jni/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_jni/debug/copyDebugJniLibsProjectOnly/jni/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/debug/prefab/modules/reanimated/libs/android.arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/debug/prefab/modules/reanimated/libs/android.arm64-v8a/libreanimated.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/arm64-v8a/libhermesvm.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/arm64-v8a/libhermesvm.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_jni/debug/copyDebugJniLibsProjectOnly/jni/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_jni/debug/copyDebugJniLibsProjectOnly/jni/x86_64/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/debug/prefab/modules/reanimated/libs/android.x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/@spicegarden/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/debug/prefab/modules/reanimated/libs/android.x86_64/libreanimated.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cmake/debug/obj/x86_64/libhermesvm.so",
+    "D:/SpiceGarden/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/2j611r2e/obj/x86_64/libhermesvm.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cmake/debug/obj/x86/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/android/app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/x86/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/40211t1d/obj/x86/libreanimated.so",
+    "D:/SpiceGarden/apps/customer-mobile/node_modules/react-native-reanimated/android/build/intermediates/library_jni/debug/copyDebugJniLibsProjectOnly/jni/x86/libreanimated.so"
+  ],
+  "Top 100 folders": [
+    "D:\\SpiceGarden"
+  ]
+}

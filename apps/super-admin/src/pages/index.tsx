@@ -66,29 +66,31 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  useQuery({
+  const { data: stats } = useQuery({
     queryKey: ['admin', 'stats'],
     queryFn: fetchStats,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    onSuccess: (data) => {
-      if (data) dispatch({ type: 'stats-loaded', payload: data });
-    },
   });
 
-  useQuery({
+  useEffect(() => {
+    if (stats) dispatch({ type: 'stats-loaded', payload: stats });
+  }, [stats, dispatch]);
+
+  const { data: orders } = useQuery({
     queryKey: ['admin', 'orders'],
     queryFn: fetchOrders,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    onSuccess: (orders) => {
-      if (orders.length > 0) dispatch({ type: 'orders-loaded', orders });
-    },
   });
+
+  useEffect(() => {
+    if (orders && orders.length > 0) dispatch({ type: 'orders-loaded', orders });
+  }, [orders, dispatch]);
 
   useEffect(() => {
     let cancelled = false;

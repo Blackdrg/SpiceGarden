@@ -7,6 +7,7 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { GetEarningsDto, IssuePenaltyDto, WaivePenaltyDto } from './driver-fleet.dto';
 
 @ApiTags('driver-fleet')
 @ApiBearerAuth()
@@ -37,7 +38,7 @@ export class DriverFleetController {
 
   @Post('earnings')
   @ApiOperation({ summary: 'Get driver earnings for a period' })
-  getEarnings(@Body() body: { driverId: string; start: string; end: string }) {
+  getEarnings(@Body() body: GetEarningsDto) {
     return this.fleetService.getEarnings(body.driverId, { start: new Date(body.start), end: new Date(body.end) });
   }
 
@@ -49,8 +50,8 @@ export class DriverFleetController {
 
   @Post('penalties')
   @ApiOperation({ summary: 'Issue a penalty to driver' })
-  issuePenalty(@Body() body: any) {
-    return this.fleetService.issuePenalty(body.driverId, body);
+  issuePenalty(@Body() body: IssuePenaltyDto) {
+    return this.fleetService.issuePenalty(body.driverId, body as any);
   }
 
   @Get('performance')
@@ -79,7 +80,7 @@ export class DriverFleetController {
 
   @Put('penalties/:id/waive')
   @ApiOperation({ summary: 'Waive penalty' })
-  waivePenalty(@Param('id') id: string, @Body() body: { waivedBy: string; reason: string }) {
+  waivePenalty(@Param('id') id: string, @Body() body: WaivePenaltyDto) {
     return this.fleetService.waivePenalty(id, body.waivedBy, body.reason);
   }
 }

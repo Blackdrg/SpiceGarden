@@ -10,6 +10,14 @@ import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
 import { type Request } from 'express';
+import {
+  CompleteOnboardingDto,
+  RejectOnboardingDto,
+  SetupPricingDto,
+  SetupPayoutDto,
+  SubmitGstConfigDto,
+  UpdateOnboardingStepDto,
+} from './onboarding.dto';
 
 @ApiTags('restaurant-onboarding')
 @Controller('restaurant-onboarding')
@@ -50,7 +58,7 @@ export class RestaurantOnboardingController {
   })
   async updateStep(
     @Param('onboardingId') onboardingId: string,
-    @Body() body: any
+    @Body() body: UpdateOnboardingStepDto
   ) {
     return await this.onboardingService.updateStep(
       onboardingId,
@@ -90,7 +98,7 @@ export class RestaurantOnboardingController {
   })
   async completeOnboarding(
     @Param('onboardingId') onboardingId: string,
-    @Body() body: any
+    @Body() body: CompleteOnboardingDto
   ) {
     return await this.onboardingService.completeOnboarding(
       onboardingId,
@@ -117,7 +125,7 @@ export class RestaurantOnboardingController {
   })
   async rejectOnboarding(
     @Param('onboardingId') onboardingId: string,
-    @Body() body: any
+    @Body() body: RejectOnboardingDto
   ) {
     return await this.onboardingService.rejectOnboarding(
       onboardingId,
@@ -134,7 +142,7 @@ export class RestaurantOnboardingController {
   @ApiOperation({ summary: 'Configure GST for a restaurant' })
   async submitGSTConfig(
     @Param('restaurantId') restaurantId: string,
-    @Body() gstData: any
+    @Body() gstData: SubmitGstConfigDto
   ) {
     return await this.onboardingService.submitGSTConfig(restaurantId, gstData);
   }
@@ -147,7 +155,7 @@ export class RestaurantOnboardingController {
   @ApiOperation({ summary: 'Setup pricing for a restaurant' })
   async setupPricing(
     @Param('restaurantId') restaurantId: string,
-    @Body() pricing: any
+    @Body() pricing: SetupPricingDto
   ) {
     return await this.onboardingService.setupPricing(restaurantId, pricing);
   }
@@ -160,7 +168,7 @@ export class RestaurantOnboardingController {
   @ApiOperation({ summary: 'Setup payout settings for a restaurant' })
   async setupPayout(
     @Param('restaurantId') restaurantId: string,
-    @Body() payout: any
+    @Body() payout: SetupPayoutDto
   ) {
     return await this.onboardingService.setupPayout(restaurantId, payout);
   }

@@ -28,7 +28,7 @@ export default function SupportScreen(_props: ScreenProps): React.JSX.Element {
         <Pressable style={styles.emergencyButton} onPress={() => Linking.openURL('tel:108')}>
           <Ionicons name="call" size={18} color="#fff" />
           <Text style={styles.emergencyButtonText}>Call 108</Text>
-        </TouchableOpacity>
+        </Pressable>
       </CardView>
 
       <View style={styles.section}>

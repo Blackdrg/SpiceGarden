@@ -296,7 +296,7 @@ const dsn = configService.get<string>("SENTRY_DSN");
     })
   );
 
-  const swaggerEnabled = configService.get<string>('SWAGGER_ENABLED', 'true') !== 'false';
+  const swaggerEnabled = configService.get<string>('SWAGGER_ENABLED', 'false') === 'true';
   if (swaggerEnabled) {
     const document = SwaggerModule.createDocument(
       app,

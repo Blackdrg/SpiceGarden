@@ -5,6 +5,7 @@ import { DbRepositoriesModule } from '../../db/db-repositories.module';
 import { DriverOnboardingService } from './driver-onboarding.service';
 import { DriverPayoutService } from './driver-payout.service';
 import { DriverOpsController } from './driver-ops.controller';
+import { DriverController } from '../../controllers/driver.controller';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { DriverDocumentEntity } from '../../db/entities/driver-document.entity';
 import { DriverIncentiveEntity } from '../../db/entities/driver-incentive.entity';
@@ -21,7 +22,7 @@ import { PaymentServiceModule } from '../payments/payments.module';
     PaymentServiceModule,
   ],
   providers: [DriverOnboardingService, DriverPayoutService],
-  controllers: [DriverOpsController],
+  controllers: [DriverOpsController, DriverController],
   exports: [DriverOnboardingService, DriverPayoutService],
 })
 export class DriverOpsModule {}

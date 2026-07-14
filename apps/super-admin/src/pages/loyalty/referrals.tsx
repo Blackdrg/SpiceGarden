@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import styles from './referrals.module.css';
 import Link from 'next/link';
 
@@ -20,10 +21,14 @@ interface ReferralHistory {
 }
 
 export default function LoyaltyReferrals() {
+  const router = useRouter();
+  const userId = typeof router.query.userId === 'string' ? router.query.userId : '';
+
   const { data: history = {}, isLoading: loading } = useQuery<ReferralHistory>({
-    queryKey: ['loyalty-referrals-demo-user'],
+    queryKey: ['loyalty-referrals', userId],
     queryFn: async () => {
-      const response = await fetch(`${API}/loyalty/referrals/demo-user`);
+      if (!userId) return {};
+      const response = await fetch(`${API}/loyalty/referrals/${encodeURIComponent(userId)}`);
       if (!response.ok) throw new Error('Failed to load referral history');
       return response.json() as Promise<ReferralHistory>;
     },

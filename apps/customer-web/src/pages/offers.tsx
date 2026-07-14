@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, ProfileIcon } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, ProfileIcon, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { GiftIcon, Share2Icon, CopyIcon, CheckIcon } from 'lucide-react';
 import styles from './offers.module.css';
 
 interface Offer {
-  id: number;
+  id: string;
   title: string;
   description: string;
   code: string;
@@ -35,13 +35,28 @@ const getDiscountClass = (type: string) => {
 
 const OffersPage = () => {
   const router = useRouter();
-  const [offers] = useState<Offer[]>([
-    { id: 1, title: 'Flat 50% Off', description: 'On your first 3 orders', code: 'WELCOME50', validTill: '2026-06-30', type: 'percentage', value: 50, minOrder: 199 },
-    { id: 2, title: '₹100 Off', description: 'On orders above ₹499', code: 'SAVE100', validTill: '2026-05-31', type: 'fixed', value: 100, minOrder: 499 },
-    { id: 3, title: 'Buy 1 Get 1 Free', description: 'On selected pizzas', code: 'PIZZABOGO', validTill: '2026-06-15', type: 'bogo', value: 0, minOrder: 0 },
-  ]);
-  const [activeTab] = useState<'home' | 'search' | 'offers' | 'account'>('offers');
-  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/offers');
+        if (res.ok) {
+          const data = await res.json();
+          setOffers(data);
+        }
+      } catch {
+        // keep empty state on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
+  }, []);
 
   useEffect(() => {
     if (copiedId === null) return;
@@ -50,7 +65,7 @@ const OffersPage = () => {
   }, [copiedId]);
 
   const getTabClass = (key: string) => {
-    return `${styles.tabItem} ${activeTab === key ? styles.activeTab : styles.tabText}`;
+    return `${styles.tabItem} ${key === 'offers' ? styles.activeTab : styles.tabText}`;
   };
 
   return (
@@ -61,31 +76,48 @@ const OffersPage = () => {
       </div>
 
       <div className={styles.cardList}>
-        {offers.map((offer) => (
-          <Card key={offer.id} title={offer.title} variant="elevated">
-            <p className={styles.offerDesc}>{offer.description}</p>
-            <div className={styles.offerHeader}>
-              <div className={styles.codeRow}>
-                <div className={styles.codeBlock}>{offer.code}</div>
-                <span className={styles.validTill}>Valid till {offer.validTill}</span>
+        {loading ? (
+          [1, 2, 3].map((i) => (
+            <Card key={i} variant="elevated">
+              <Skeleton height={20} width="60%" style={{ marginBottom: 8 }} />
+              <Skeleton height={14} width="80%" />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
+                <Skeleton height={36} width={100} />
+                <Skeleton height={36} width={80} />
               </div>
-              <span className={`${styles.discountBadge} ${getDiscountClass(offer.type)}`}>
-                {getDiscountText(offer)}
-              </span>
-            </div>
-            <div className={styles.buttonRow}>
-              <Button
-                label={copiedId === offer.id ? 'Copied!' : 'Copy Code'}
-                onClick={() => {
-                  copyCode(offer.code);
-                  setCopiedId(offer.id);
-                }}
-                variant="secondary"
-              />
-              <Button label="Use Now" onClick={() => router.push('/')} />
-            </div>
+            </Card>
+          ))
+        ) : offers.length === 0 ? (
+          <Card variant="default">
+            <p>No offers available right now</p>
           </Card>
-        ))}
+        ) : (
+          offers.map((offer) => (
+            <Card key={offer.id} title={offer.title} variant="elevated">
+              <p className={styles.offerDesc}>{offer.description}</p>
+              <div className={styles.offerHeader}>
+                <div className={styles.codeRow}>
+                  <div className={styles.codeBlock}>{offer.code}</div>
+                  <span className={styles.validTill}>Valid till {offer.validTill}</span>
+                </div>
+                <span className={`${styles.discountBadge} ${getDiscountClass(offer.type)}`}>
+                  {getDiscountText(offer)}
+                </span>
+              </div>
+              <div className={styles.buttonRow}>
+                <Button
+                  label={copiedId === offer.id ? 'Copied!' : 'Copy Code'}
+                  onClick={() => {
+                    copyCode(offer.code);
+                    setCopiedId(offer.id);
+                  }}
+                  variant="secondary"
+                />
+                <Button label="Use Now" onClick={() => router.push('/')} />
+              </div>
+            </Card>
+          ))
+        )}
       </div>
 
       <Card variant="interactive" style={{ background: 'linear-gradient(135deg, var(--color-primary, #FF5A1F) 0%, #FF8A65 100%)', border: 'none', color: 'white' }}>

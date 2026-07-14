@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, MoreThan, LessThan, Between, IsNull, Not } from 'typeorm';
 import { InventoryItemEntity } from '../../db/entities/inventory-item.entity';
@@ -167,10 +167,9 @@ const item = await this.inventoryRepo.findOne({
 
   async updateInventoryStock(itemId: string, quantityChange: number): Promise<InventoryItemEntity> {
     const item = await this.inventoryRepo.findOne({ where: { id: itemId } });
-    if (!item) {
-      throw new Error('Inventory item not found');
-    }
-    item.currentStock = Math.max(0, item.currentStock + quantityChange);
+      if (!item) {
+        throw new NotFoundException('Inventory item not found');
+      }
     if (item.unitCost !== null && item.unitCost !== undefined) {
       item.totalCost = item.currentStock * item.unitCost;
     }
@@ -185,7 +184,7 @@ const item = await this.inventoryRepo.findOne({
   async recordWastage(itemId: string, wastedQuantity: number, reason?: string): Promise<InventoryItemEntity> {
     const item = await this.inventoryRepo.findOne({ where: { id: itemId } });
     if (!item) {
-      throw new Error('Inventory item not found');
+      throw new NotFoundException('Inventory item not found');
     }
     
     item.wastage = (item.wastage || 0) + wastedQuantity;
@@ -247,7 +246,7 @@ async getRecipeById(id: string): Promise<RecipeEntity> {
   async updateBatchStatus(batchId: string, status: BatchEntity['status']): Promise<BatchEntity> {
     const batch = await this.batchRepo.findOne({ where: { id: batchId } });
     if (!batch) {
-      throw new Error('Batch not found');
+      throw new NotFoundException('Batch not found');
     }
     batch.status = status;
     if (status === 'ready' || status === 'used' || status === 'discarded') {
@@ -278,7 +277,7 @@ async getRecipeById(id: string): Promise<RecipeEntity> {
   async updateFoodPrepQuality(prepId: string, qualityData: Partial<FoodPrepEntity['qualityCheck']>): Promise<FoodPrepEntity> {
     const foodPrep = await this.foodPrepRepo.findOne({ where: { id: prepId } });
     if (!foodPrep) {
-      throw new Error('Food prep record not found');
+      throw new NotFoundException('Food prep record not found');
     }
     foodPrep.qualityCheck = { 
       ...(foodPrep.qualityCheck || { taste: 0, temperature: 0, appearance: 0, passed: false }), 
@@ -506,7 +505,7 @@ const batch = await this.batchRepo.findOne({
   async calculateAndRecordFoodRejectionRate(branchId: string, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     try {
       const branch = await this.branchRepo.findOne({ where: { id: branchId } });
-      if (!branch) throw new Error(`Branch not found: ${branchId}`);
+      if (!branch) throw new NotFoundException(`Branch not found: ${branchId}`);
 
       // Determine time period for calculation
       const now = new Date();
@@ -592,7 +591,7 @@ const batch = await this.batchRepo.findOne({
   async calculateAndRecordKitchenThroughput(branchId: string, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     try {
       const branch = await this.branchRepo.findOne({ where: { id: branchId } });
-      if (!branch) throw new Error(`Branch not found: ${branchId}`);
+      if (!branch) throw new NotFoundException(`Branch not found: ${branchId}`);
 
       // Determine time period for calculation
       const now = new Date();
@@ -653,7 +652,7 @@ const batch = await this.batchRepo.findOne({
   async calculateAndRecordAvgPrepTime(branchId: string, period: 'hourly' | 'daily' | 'weekly' = 'hourly'): Promise<KitchenSLAEntity> {
     try {
       const branch = await this.branchRepo.findOne({ where: { id: branchId } });
-      if (!branch) throw new Error(`Branch not found: ${branchId}`);
+      if (!branch) throw new NotFoundException(`Branch not found: ${branchId}`);
 
       // Determine time period for calculation
       const now = new Date();

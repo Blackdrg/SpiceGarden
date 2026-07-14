@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, Between } from 'typeorm';
 import { DriverIncentiveEntity, IncentiveStatus } from '../../db/entities/driver-incentive.entity';
@@ -70,7 +70,7 @@ export class DriverPayoutService {
   ): Promise<DriverIncentiveEntity> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) {
-      throw new Error('Driver not found');
+      throw new NotFoundException('Driver not found');
     }
 
     const incentive = this.incentiveRepo.create({
@@ -87,7 +87,7 @@ export class DriverPayoutService {
   async approveIncentive(incentiveId: string, approverId: string): Promise<DriverIncentiveEntity> {
     const incentive = await this.incentiveRepo.findOne({ where: { id: incentiveId } });
     if (!incentive) {
-      throw new Error('Incentive not found');
+      throw new NotFoundException('Incentive not found');
     }
 
     await this.incentiveRepo.update(incentiveId, {
@@ -102,7 +102,7 @@ export class DriverPayoutService {
   async markPaid(incentiveId: string, payoutReference: string): Promise<DriverIncentiveEntity> {
     const incentive = await this.incentiveRepo.findOne({ where: { id: incentiveId } });
     if (!incentive) {
-      throw new Error('Incentive not found');
+      throw new NotFoundException('Incentive not found');
     }
 
     await this.incentiveRepo.update(incentiveId, {

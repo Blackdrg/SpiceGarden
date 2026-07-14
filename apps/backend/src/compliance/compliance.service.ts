@@ -1,4 +1,4 @@
-import { Injectable, Logger, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { UserEntity } from '../db/entities/user.entity';
@@ -103,7 +103,7 @@ export class ComplianceService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     const orders = await this.orderRepo.find({
@@ -263,9 +263,9 @@ async getRetentionStatistics(): Promise<any> {
    async verifyPiiEncryption(userId: string): Promise<any> {
      const piiFields = ['email', 'phone', 'fullName'];
      const user = await this.userRepo.findOne({ where: { id: userId } });
-     if (!user) {
-       throw new Error('User not found');
-     }
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
 
      const fieldsStatus: Record<string, 'encrypted' | 'plaintext_warning' | 'missing'> = {};
      const encryptedFields: string[] = [];

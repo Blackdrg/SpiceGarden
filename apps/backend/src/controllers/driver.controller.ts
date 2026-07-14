@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { RolesGuard } from '../security/roles.guard';
 import { Roles } from '../security/roles.decorator';
@@ -14,6 +14,15 @@ import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
 import { OrderStatus } from '@/shared/domain/order.interface';
 import { NotificationService } from '../services/notifications/notification.service';
+import {
+  AcceptOrderDto,
+  RejectOrderDto,
+  ReportIssueDto,
+  ToggleAvailabilityDto,
+  UpdateLocationDto,
+  UpdateStatusDto,
+  VerifyOtpDto,
+} from './driver.dto';
 
 @Controller('drivers')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -87,7 +96,7 @@ const assignments = await this.assignmentRepo.find({
   @Permissions('deliveries:manage_assigned')
   async updateLocation(
     @Param('id') id: string,
-    @Body() body: { lat: number; lng: number; heading?: number; speed?: number },
+    @Body() body: UpdateLocationDto,
     @Request() req: { user: { id: string; role: UserRole } },
   ) {
     if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
@@ -116,7 +125,7 @@ const assignments = await this.assignmentRepo.find({
   @Permissions('deliveries:manage_assigned')
   async toggleAvailability(
     @Param('id') id: string,
-    @Body() body: { isAvailable: boolean },
+    @Body() body: ToggleAvailabilityDto,
     @Request() req: { user: { id: string; role: UserRole } },
   ) {
     if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
@@ -167,10 +176,10 @@ export class OrderDriverController {
   ) {}
 
   @Post(':id/accept')
-  async acceptOrder(@Param('id') id: string, @Body() body: { driverId: string }) {
+  async acceptOrder(@Param('id') id: string, @Body() body: AcceptOrderDto) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     await this.dataSource.manager.transaction(async (manager) => {
@@ -206,10 +215,10 @@ export class OrderDriverController {
   }
 
   @Post(':id/reject')
-  async rejectOrder(@Param('id') id: string, @Body() body: { driverId: string }) {
+  async rejectOrder(@Param('id') id: string, @Body() body: RejectOrderDto) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     await this.orderRepo.update(id, { status: OrderStatus.PLACED });
@@ -227,15 +236,11 @@ export class OrderDriverController {
   @Put(':id/status')
   async updateStatus(
     @Param('id') id: string,
-    @Body() body: { 
-      status: 'pickedUp' | 'onTheWay' | 'delivered' | 'failed';
-      actualTimeMinutes?: number;
-      failureReason?: string;
-    }
+    @Body() body: UpdateStatusDto
   ) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     const statusMap: Record<string, OrderStatus> = {
@@ -292,7 +297,7 @@ export class OrderDriverController {
   @Post(':id/verify-otp')
   async verifyOTP(
     @Param('id') id: string,
-    @Body() body: { otp: string; driverId: string }
+    @Body() body: VerifyOtpDto
   ) {
 const assignment = await this.assignmentRepo.findOne({
        where: { order: { id } } as any,
@@ -310,7 +315,7 @@ const assignment = await this.assignmentRepo.findOne({
   @Post(':id/issues')
   async reportIssue(
     @Param('id') id: string,
-    @Body() body: { issue: string; details: string }
+    @Body() body: ReportIssueDto
   ) {
     console.log(`Issue reported for order ${id}:`, body.issue, body.details);
     return { status: 'reported' };
