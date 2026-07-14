@@ -89,7 +89,7 @@ describe('PasswordResetService', () => {
   });
 
   it('forgotPassword sends email when user has no phone', async () => {
-    jest.spyOn(userRepo, 'findOne').mockResolvedValue({ ...user, phone: undefined } as UserEntity);
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue({ ...user, phone: '' } as UserEntity);
     await service.forgotPassword(user.email);
     expect(notificationService.sendEmail).toHaveBeenCalled();
     expect(notificationService.sendSMS).not.toHaveBeenCalled();

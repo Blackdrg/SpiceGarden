@@ -4,11 +4,12 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
 import { ErrorState, EmptyState } from '../components/Indicators';
+import { deliveryApi } from '../services/delivery-api.service';
 import type { ScreenProps } from '../types';
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'completed':
+    case 'delivered':
       return DESIGN_TOKENS.colors.success;
     case 'cancelled':
       return DESIGN_TOKENS.colors.danger;
@@ -18,8 +19,44 @@ const getStatusColor = (status: string) => {
 };
 
 export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<{ orderId: string; restaurant: string; amount: number; date: string; status: string }[]>([]);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const assignments = await deliveryApi.getDeliveryHistory();
+        const mapped = assignments
+          .filter((a: any) => a.order)
+          .map((a: any) => ({
+            orderId: a.order.id,
+            restaurant: a.branch?.branchName || a.order.restaurantId || 'Restaurant',
+            amount: Number(a.order.grandTotal || 0),
+            date: a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '',
+            status: a.status || a.order.status || 'completed',
+          }));
+        setHistory(mapped);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load history');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadHistory();
+  }, []);
+
+  if (loading) {
+    return (
+      <Screen title="History" navigation={_props.navigation}>
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
 
   if (error) {
     return (
@@ -52,7 +89,7 @@ export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
             </View>
             <Text style={styles.historyRestaurant}>{item.restaurant}</Text>
             <View style={styles.historyFooter}>
-              <Text style={styles.historyAmount}>₹{item.amount}</Text>
+              <Text style={styles.historyAmount}>₹{item.amount.toFixed(2)}</Text>
               <View style={styles.historyDateContainer}>
                 <Ionicons name="time-outline" size={14} color={DESIGN_TOKENS.colors.textTertiary} />
                 <Text style={styles.historyDate}>{item.date}</Text>
@@ -66,6 +103,11 @@ export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   historyCard: {
     marginBottom: DESIGN_TOKENS.spacing.sm,
   },

@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const restaurantId = 'demo-restaurant';
+  const restaurantId = req.body?.restaurantId;
+  if (!restaurantId) {
+    return res.status(400).json({ error: 'restaurantId is required in request body' });
+  }
 
   try {
     const statusResponse = await fetch(`${BACKEND_URL}/restaurant-onboarding/status/${restaurantId}`, {

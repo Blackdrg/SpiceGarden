@@ -45,6 +45,7 @@ import { IdempotencyEntity } from "../services/payments/idempotency.entity";
 import { PaymentValidationEventEntity } from "../services/payments/payment-validation.entity";
 import { PaymentFraudFlagEntity } from "../services/payments/payment-fraud.entity";
 import { PaymentEventEntity } from "../services/payments/payment-event.entity";
+import { DriverIssueEntity } from "./entities/driver-issue.entity";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
 import { AppLocalDataSource } from "./data-source.local";
 import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
@@ -90,6 +91,7 @@ const entities = [
   PaymentValidationEventEntity,
   PaymentFraudFlagEntity,
   PaymentEventEntity,
+  DriverIssueEntity,
 ];
 
 const localSqlite = process.env.LOCAL_DB === "sqlite";

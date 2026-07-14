@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import React from 'react';
 import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './business.module.css';
@@ -14,16 +15,36 @@ export default function OnboardingBusiness() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const RESTAURANT_ID = 'demo-restaurant';
+  const [restaurantId, setRestaurantId] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setRestaurantId(data.user?.id || null);
+        }
+      } catch {
+        setRestaurantId(null);
+      }
+    };
+    fetchRestaurantId();
+  }, []);
 
   const submit = async () => {
+    if (!restaurantId) {
+      setError('Restaurant ID not found. Please log in again.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`/api/restaurant-onboarding/step/${RESTAURANT_ID}`, {
+      const res = await fetch(`/api/restaurant-onboarding/step`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          restaurantId,
           step: 'BUSINESS_REGISTRATION',
           data: form,
         }),

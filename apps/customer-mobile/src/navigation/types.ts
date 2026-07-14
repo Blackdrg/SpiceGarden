@@ -9,6 +9,7 @@ export type RootStackParamList = {
   Checkout: { cartItems: CartItem[] };
   Address: undefined;
   Home: undefined;
+  Restaurant: { restaurantId: string; slug?: string };
 };
 
 export type TabParamList = {

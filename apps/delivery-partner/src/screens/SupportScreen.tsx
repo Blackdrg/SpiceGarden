@@ -6,7 +6,6 @@ import { Screen, CardView } from '../components/Screen';
 import type { ScreenProps } from '../types';
 
 const supportTopics = [
-  { title: 'Chat with Support', subtitle: 'Get help from our team', icon: 'chatbubbles-outline', color: DESIGN_TOKENS.colors.primary, action: () => Alert.alert('Support', 'Chat support is not available right now.') },
   { title: 'Call Support', subtitle: '24/7 helpline available', icon: 'call-outline', color: DESIGN_TOKENS.colors.success, action: () => Linking.openURL('tel:+919876543210') },
   { title: 'Email Us', subtitle: 'support@spicegarden.com', icon: 'mail-outline', color: DESIGN_TOKENS.colors.info, action: () => Linking.openURL('mailto:support@spicegarden.com') },
   { title: 'FAQ', subtitle: 'Common questions answered', icon: 'help-circle-outline', color: DESIGN_TOKENS.colors.warning, action: () => Alert.alert('FAQ', 'Please visit our help center for common questions.') },

@@ -11,7 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage --coverageThreshold={\\\\\\\"global\\\\\\\":{\\\\\\\"branches\\\\\\\":80,\\\\\\\"functions\\\\\\\":80,\\\\\\\"lines\\\\\\\":80,\\\\\\\"statements\\\\\\\":80}}",
-    "test:unit": "jest --runInBand test/order.service.spec.ts test/kitchen.service.spec.ts test/delivery.service.spec.ts",
+    "test:unit": "jest",
     "test:integration": "jest --testPathPatterns=\\\".integration.\\\" --testPathIgnorePatterns=\\\"test/mongo-connection.spec.ts\\\"",
     "test:e2e": "jest --runInBand test/e2e.spec.ts test/payment-verification.e2e.spec.ts",
     "test:load": "LOAD_TEST_MODE=true k6 run test/load/10k-users.js",

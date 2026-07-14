@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import { EmptyState } from '../components/Indicators';
+import { EmptyState, LoadingSpinner } from '../components/Indicators';
+import { deliveryApi } from '../services/delivery-api.service';
 import type { ScreenProps } from '../types';
 
 const getTypeConfig = (type: string) => {
@@ -19,6 +20,47 @@ const getTypeConfig = (type: string) => {
 
 export default function NotificationsScreen(_props: ScreenProps): React.JSX.Element {
   const [notifications, setNotifications] = useState<{ id: string; title: string; body: string; time: string; type: 'order' | 'system' }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await deliveryApi.getNotifications();
+        const mapped = data.map((n: any) => ({
+          id: n.id,
+          title: n.payload?.title || n.payload?.subject || 'Notification',
+          body: n.payload?.body || n.payload?.message || '',
+          time: n.createdAt ? new Date(n.createdAt).toLocaleString() : '',
+          type: (n.notificationType === 'push' ? 'order' : 'system') as 'order' | 'system',
+        }));
+        setNotifications(mapped);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load notifications');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadNotifications();
+  }, []);
+
+  if (loading) {
+    return (
+      <Screen title="Notifications" navigation={_props.navigation}>
+        <LoadingSpinner label="Loading notifications…" />
+      </Screen>
+    );
+  }
+
+  if (error) {
+    return (
+      <Screen title="Notifications" navigation={_props.navigation}>
+        <EmptyState title="Unable to load notifications" message={error} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen title="Notifications" navigation={_props.navigation}>

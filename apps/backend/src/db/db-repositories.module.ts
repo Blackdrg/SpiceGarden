@@ -69,6 +69,7 @@ import { DisputeEntity } from './entities/dispute.entity';
 import { SupportTicketEntity } from './entities/support-ticket.entity';
 import { PaymentMethodEntity } from './entities/payment-method.entity';
 import { MfaSecretEntity } from './entities/mfa.entity';
+import { DriverIssueEntity } from './entities/driver-issue.entity';
 
 const entities = [
   UserEntity,
@@ -137,6 +138,7 @@ const entities = [
   SupportTicketEntity,
   PaymentMethodEntity,
   MfaSecretEntity,
+  DriverIssueEntity,
 ];
 
 const isLocalSqlite =

@@ -83,12 +83,13 @@ class DeliveryApiService {
 
     const data = await response.json();
     this.token = data.access_token;
-    this.driverId = data.driverId as string;
+    this.driverId = (data.driverId as string) || (data.user && (data.user as { id?: string }).id) || null;
     
     if (this.token && this.driverId) {
       await Promise.all([
         AsyncStorage.setItem('driver_token', this.token),
         AsyncStorage.setItem('driver_id', this.driverId),
+        ...(data.refresh_token ? [AsyncStorage.setItem('driver_refresh_token', data.refresh_token)] : []),
       ]);
     }
 
@@ -277,6 +278,37 @@ class DeliveryApiService {
     });
   }
 
+  async getDriverPerformance(driverId?: string): Promise<any> {
+    const token = await this.getStoredToken();
+    const id = driverId || await this.getStoredDriverId();
+
+    const response = await fetch(`${API_BASE_URL}/api/fleet/performance/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch driver performance');
+    }
+
+    return response.json();
+  }
+
+  async getTransactions(driverId?: string): Promise<any[]> {
+    const token = await this.getStoredToken();
+    const id = driverId || await this.getStoredDriverId();
+
+    const response = await fetch(`${API_BASE_URL}/api/wallet/transactions?driverId=${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch transactions');
+    }
+
+    const data = await response.json();
+    return data.transactions || [];
+  }
+
   connectWebSocket(onOrderReceived: (order: DeliveryOrder) => void, onOrderCancelled?: (orderId: string) => void): void {
     const token = this.getStoredTokenSync();
     
@@ -325,10 +357,41 @@ class DeliveryApiService {
     return this.driverId;
   }
 
+  async getNotifications(driverId?: string): Promise<any[]> {
+    const token = await this.getStoredToken();
+    const id = driverId || await this.getStoredDriverId();
+
+    const response = await fetch(`${API_BASE_URL}/api/notification-queue/recipient/${id}?recipientType=user`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch notifications');
+    }
+
+    return response.json();
+  }
+
+  async getDeliveryHistory(driverId?: string): Promise<any[]> {
+    const token = await this.getStoredToken();
+    const id = driverId || await this.getStoredDriverId();
+
+    const response = await fetch(`${API_BASE_URL}/api/driver-assignment/driver/${id}/assignments`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch delivery history');
+    }
+
+    return response.json();
+  }
+
   async logout(): Promise<void> {
     this.disconnectWebSocket();
     await AsyncStorage.removeItem('driver_token');
     await AsyncStorage.removeItem('driver_id');
+    await AsyncStorage.removeItem('driver_refresh_token');
     this.token = null;
     this.driverId = null;
   }

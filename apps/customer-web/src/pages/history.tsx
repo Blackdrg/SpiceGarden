@@ -62,7 +62,6 @@ const HistoryPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let timerId: ReturnType<typeof setTimeout> | null = null;
     const loadOrderHistory = async () => {
       setLoading(true);
       setError(null);
@@ -83,22 +82,12 @@ const HistoryPage = () => {
       } catch (err) {
         console.error('Failed to load order history:', err);
         setError('Failed to load order history. Please try again later.');
-        timerId = setTimeout(() => {
-          setOrders([
-            { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
-            { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
-            { id: 'SG12343', date: '2026-05-15', time: '20:45', restaurant: 'Subway', items: 3, amount: 420, status: 'delivered', rating: 5 },
-            { id: 'SG12342', date: '2026-05-10', time: '14:20', restaurant: "Domino's", items: 2, amount: 380, status: 'cancelled', rating: 0 },
-          ]);
-        }, 600);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
     };
     loadOrderHistory();
-    return () => {
-      if (timerId) clearTimeout(timerId);
-    };
   }, []);
 
   const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);

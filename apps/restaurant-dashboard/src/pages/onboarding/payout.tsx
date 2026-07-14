@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './payout.module.css';
@@ -14,16 +14,35 @@ export default function OnboardingPayout() {
     branchName: '',
   });
   const [loading, setLoading] = useState(false);
-  const RESTAURANT_ID = 'demo-restaurant';
+  const [restaurantId, setRestaurantId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setRestaurantId(data.user?.id || null);
+        }
+      } catch {
+        setRestaurantId(null);
+      }
+    };
+    fetchRestaurantId();
+  }, []);
 
   const submit = async () => {
+    if (!restaurantId) {
+      toast.showToast({ message: 'Restaurant ID not found. Please log in again.', type: 'error', duration: 0 });
+      return;
+    }
     if (form.accountNumber !== form.confirmAccountNumber) {
       toast.showToast({ message: 'Account numbers do not match', type: 'error', duration: 0 });
       return;
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/restaurant-onboarding/payout/${RESTAURANT_ID}`, {
+      const res = await fetch(`/api/restaurant-onboarding/payout/${restaurantId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

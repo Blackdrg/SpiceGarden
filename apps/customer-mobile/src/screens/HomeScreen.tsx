@@ -9,11 +9,22 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
 import { STRINGS } from '../constants/strings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { restaurantService } from '../services/restaurant.service';
 
+interface RestaurantCard {
+  id: string;
+  name: string;
+  description: string;
+  rating: number;
+  deliveryTime: string;
+  distance: string;
+  image: string;
+  slug: string;
+}
 
 const HomeScreen = () => {
-  const navigation = useNavigation<{ navigate: (screen: string) => void }>();
-  const [restaurants, setRestaurants] = useState<{ id: string; name: string; description: string; rating: number; deliveryTime: string; distance: string; image: string }[]>([]);
+  const navigation = useNavigation<{ navigate: (screen: string, params?: { restaurantId?: string; slug?: string }) => void }>();
+  const [restaurants, setRestaurants] = useState<RestaurantCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,40 +41,26 @@ const HomeScreen = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Directly set restaurants data (removed fake API delay)
-      setRestaurants([
-        {
-          id: 'rest-001',
-          name: 'Burger King',
-          description: 'Flame-grilled burgers & fries',
-          rating: 4.2,
-          deliveryTime: '25-30 min',
-          distance: '3.2 km',
-          image: '',
-        },
-        {
-          id: 'rest-002',
-          name: 'Pizza Hut',
-          description: 'Freshly baked pizzas',
-          rating: 4.5,
-          deliveryTime: '30-35 min',
-          distance: '2.1 km',
-          image: '',
-        },
-        {
-          id: 'rest-003',
-          name: 'Subway',
-          description: 'Fresh made sandwiches',
-          rating: 4.0,
-          deliveryTime: '15-20 min',
-          distance: '1.8 km',
-          image: '',
-        },
-      ]);
+
+      const data = await restaurantService.getRestaurants();
+
+      const mapped: RestaurantCard[] = data.map((restaurant) => {
+        const branch = restaurant.branches?.[0];
+        return {
+          id: restaurant.id,
+          name: restaurant.name,
+          description: restaurant.description,
+          rating: 0,
+          deliveryTime: branch ? `${branch.openingTime} - ${branch.closingTime}` : '30-45 min',
+          distance: '',
+          image: restaurant.logoUrl || restaurant.bannerUrl || '',
+          slug: restaurant.slug || restaurant.id,
+        };
+      });
+
+      setRestaurants(mapped);
       setLoading(false);
-      
-      // Start animations immediately
+
       AnimatedCompat.parallel([
         AnimatedCompat.timing(fadeAnim, {
           toValue: 1,
@@ -78,10 +75,10 @@ const HomeScreen = () => {
           useNativeDriver: true,
         }),
       ]).start();
-    } catch (error) {
+    } catch (err) {
       setError('Failed to load restaurants. Pull to refresh.');
       setLoading(false);
-      console.error('Failed to load restaurants:', error);
+      console.error('Failed to load restaurants:', err);
     }
   }, [fadeAnim, slideAnim]);
 
@@ -108,11 +105,11 @@ const HomeScreen = () => {
     }
   }, [loadRestaurants]);
 
-  const renderRestaurant = useCallback(({ item }: { item: typeof restaurants[0] }) => {
+  const renderRestaurant = useCallback(({ item }: { item: RestaurantCard }) => {
     return (
       <Pressable
         style={styles.restaurantCard}
-        onPress={() => navigation.navigate('Restaurant' as never)}
+        onPress={() => navigation.navigate('Restaurant' as never, { restaurantId: item.id, slug: item.slug })}
         accessibilityLabel={item.name}
         accessibilityRole="button"
         android_ripple={{ color: DESIGN_TOKENS.colors.primaryLight }}
@@ -127,13 +124,10 @@ const HomeScreen = () => {
           <Text style={styles.restaurantDescription}>{item.description}</Text>
           <View style={styles.restaurantMeta}>
             <View style={styles.ratingBadge}>
-              <Text style={styles.ratingText}>★ {item.rating}</Text>
+              <Text style={styles.ratingText}>★ {item.rating > 0 ? item.rating.toFixed(1) : 'New'}</Text>
             </View>
             <View style={styles.metaItem}>
               <Text style={styles.metaText}>{item.deliveryTime}</Text>
-            </View>
-            <View style={styles.metaItem}>
-              <Text style={styles.metaText}>{item.distance}</Text>
             </View>
           </View>
         </View>
@@ -144,12 +138,23 @@ const HomeScreen = () => {
     );
   }, [navigation]);
 
-  const keyExtractor = useCallback((item: typeof restaurants[0]) => item.id, []);
+  const keyExtractor = useCallback((item: RestaurantCard) => item.id, []);
 
   if (loading) {
     return (
       <View style={styles.loadingContainer} accessible={true} accessibilityLabel="Loading restaurants">
         <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
+      </View>
+    );
+  }
+
+  if (error && restaurants.length === 0) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <Pressable style={styles.retryButton} onPress={loadRestaurants}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </Pressable>
       </View>
     );
   }
@@ -170,6 +175,11 @@ const HomeScreen = () => {
           refreshing={refreshing}
           onRefresh={handleRefresh}
           contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No restaurants available</Text>
+            </View>
+          }
         />
       </View>
     </Animated.View>
@@ -179,45 +189,82 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: DESIGN_TOKENS.colors.background,
   },
-  loadingContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: DESIGN_TOKENS.colors.background,
   },
-  header: { 
-    padding: DESIGN_TOKENS.spacing.md, 
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: DESIGN_TOKENS.spacing.xl,
+    backgroundColor: DESIGN_TOKENS.colors.background,
+  },
+  errorText: {
+    color: DESIGN_TOKENS.colors.danger,
+    fontSize: 16,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+    textAlign: 'center',
+    marginBottom: DESIGN_TOKENS.spacing.md,
+  },
+  retryButton: {
+    backgroundColor: DESIGN_TOKENS.colors.primary,
+    paddingVertical: DESIGN_TOKENS.spacing.sm,
+    paddingHorizontal: DESIGN_TOKENS.spacing.lg,
+    borderRadius: DESIGN_TOKENS.radius.button,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: DESIGN_TOKENS.spacing.xl,
+  },
+  emptyText: {
+    color: DESIGN_TOKENS.colors.textSecondary,
+    fontSize: 16,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  header: {
+    padding: DESIGN_TOKENS.spacing.md,
     paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: DESIGN_TOKENS.colors.borderLight,
   },
-  welcomeText: { 
-    fontSize: 24, 
+  welcomeText: {
+    fontSize: 24,
     fontWeight: '700',
-    color: DESIGN_TOKENS.colors.textPrimary, 
+    color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
     letterSpacing: -0.01,
   },
-  headerSubtext: { 
-    fontSize: 14, 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  headerSubtext: {
+    fontSize: 14,
+    color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: DESIGN_TOKENS.spacing.xs,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
     lineHeight: 20,
   },
-  listContent: { 
+  listContent: {
     paddingBottom: DESIGN_TOKENS.spacing.xl,
   },
-  restaurantCard: { 
-    backgroundColor: DESIGN_TOKENS.colors.surface, 
-    marginHorizontal: DESIGN_TOKENS.spacing.md, 
-    marginVertical: DESIGN_TOKENS.spacing.sm, 
-    borderRadius: DESIGN_TOKENS.radius.card, 
+  restaurantCard: {
+    backgroundColor: DESIGN_TOKENS.colors.surface,
+    marginHorizontal: DESIGN_TOKENS.spacing.md,
+    marginVertical: DESIGN_TOKENS.spacing.sm,
+    borderRadius: DESIGN_TOKENS.radius.card,
     padding: DESIGN_TOKENS.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
@@ -248,22 +295,22 @@ const styles = StyleSheet.create({
   restaurantInfo: {
     flex: 1,
   },
-  restaurantName: { 
-    fontSize: 16, 
+  restaurantName: {
+    fontSize: 16,
     fontWeight: '700',
-    color: DESIGN_TOKENS.colors.textPrimary, 
+    color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
     marginBottom: 2,
   },
-  restaurantDescription: { 
-    fontSize: 13, 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  restaurantDescription: {
+    fontSize: 13,
+    color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: 2,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
     lineHeight: 18,
     marginBottom: DESIGN_TOKENS.spacing.sm,
   },
-  restaurantMeta: { 
+  restaurantMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
@@ -275,9 +322,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: DESIGN_TOKENS.radius.sm,
   },
-  ratingText: { 
-    fontSize: 13, 
-    color: DESIGN_TOKENS.colors.warningDark, 
+  ratingText: {
+    fontSize: 13,
+    color: DESIGN_TOKENS.colors.warningDark,
     fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
@@ -286,9 +333,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  metaText: { 
-    fontSize: 12, 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  metaText: {
+    fontSize: 12,
+    color: DESIGN_TOKENS.colors.textSecondary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   chevronContainer: {
@@ -300,4 +347,3 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
 });
-

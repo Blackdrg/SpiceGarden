@@ -5,175 +5,160 @@ import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 const AnimatedCompat = Animated as any;
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/types';
+import { restaurantService, MenuItem } from '../services/restaurant.service';
 
-interface RestaurantInfo {
-  id: string;
-  name: string;
-  rating: number;
-  deliveryTime: string;
-  address: string;
-}
-
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  image: string;
-}
+type RestaurantParams = RootStackParamList['Restaurant'];
 
 const RestaurantScreen = () => {
-   const [restaurantId, setRestaurantId] = useState<string | null>(null);
-   const [restaurant, setRestaurant] = useState<RestaurantInfo | null>(null);
-   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [addingItem, setAddingItem] = useState<string | null>(null);
-   
-   const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const route = useRoute();
+  const { restaurantId, slug } = route.params as RestaurantParams;
+  const [restaurant, setRestaurant] = useState<{ id: string; name: string; description: string; address: string; rating: number; deliveryTime: string } | null>(null);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [addingItem, setAddingItem] = useState<string | null>(null);
 
-   useEffect(() => {
-     const loadData = async () => {
-       try {
-         // Removed fake API delay - directly set data
-         
-         const restaurants: Record<string, RestaurantInfo> = {
-           'rest-001': { id: 'rest-001', name: 'Burger King', rating: 4.2, deliveryTime: '25-30 min', address: 'Phase 5, Mohali' },
-           'rest-002': { id: 'rest-002', name: 'Pizza Hut', rating: 4.5, deliveryTime: '30-35 min', address: 'Phase 7, Mohali' },
-           'rest-003': { id: 'rest-003', name: 'Subway', rating: 4.0, deliveryTime: '15-20 min', address: 'Sector 17, Chandigarh' },
-         };
-         
-         setRestaurant(restaurants[restaurantId!] || null);
-         
-         let items: MenuItem[] = [];
-         if (restaurantId === 'rest-001') {
-           items = [
-              { id: 'item-001', name: 'Whopper', description: 'Flame-grilled beef patty with fresh lettude', price: 149, category: 'burgers', image: '' },
-              { id: 'item-002', name: 'Double Whopper', description: 'Two flame-grilled beef patties', price: 199, category: 'burgers', image: '' },
-           ];
-         } else if (restaurantId === 'rest-002') {
-           items = [
-              { id: 'item-007', name: 'Margherita Pizza', description: 'Fresh mozzarella & tomatoes', price: 299, category: 'pizza', image: '' },
-           ];
-         } else {
-           items = [
-              { id: 'item-013', name: 'Chicken Teriyaki', description: 'Grilled chicken with teriyaki sauce', price: 249, category: 'sandwiches', image: '' },
-           ];
-         }
-         
-         setMenuItems(items);
-         setLoading(false);
-         
-          AnimatedCompat.timing(fadeAnim, {
-           toValue: 1,
-           duration: DESIGN_TOKENS.motion.standard,
-           easing: Easing.out(Easing.quad),
-           useNativeDriver: true,
-         }).start();
-       } catch (error) {
-         setError('Failed to load menu');
-         setLoading(false);
-       }
-     };
-     loadData();
-   }, [restaurantId, fadeAnim]);
+  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
 
-    const addToCart = (itemId: string) => {
-      setAddingItem(itemId);
-      setTimeout(() => setAddingItem(null), 500);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const restaurantData = await restaurantService.getRestaurantBySlug(slug || restaurantId);
+        if (!restaurantData) {
+          setError('Restaurant not found');
+          setLoading(false);
+          return;
+        }
+
+        const branch = restaurantData.branches?.[0];
+        setRestaurant({
+          id: restaurantData.id,
+          name: restaurantData.name,
+          description: restaurantData.description,
+          address: branch?.address || '',
+          rating: 0,
+          deliveryTime: branch ? `${branch.openingTime} - ${branch.closingTime}` : '30-45 min',
+        });
+
+        const items = await restaurantService.getMenuItems(restaurantId);
+        setMenuItems(items);
+        setLoading(false);
+
+        AnimatedCompat.timing(fadeAnim, {
+          toValue: 1,
+          duration: DESIGN_TOKENS.motion.standard,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }).start();
+      } catch (err) {
+        setError('Failed to load menu');
+        setLoading(false);
+        console.error('Failed to load restaurant data:', err);
+      }
     };
+    loadData();
+  }, [restaurantId, slug, fadeAnim]);
 
-    if (loading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
-          <Text style={styles.loadingText}>Loading menu...</Text>
-        </View>
-      );
-    }
+  const addToCart = (itemId: string) => {
+    setAddingItem(itemId);
+    setTimeout(() => setAddingItem(null), 500);
+  };
 
-    if (error) {
-      return (
-        <View style={styles.errorContainer}>
-          <View style={styles.errorIconContainer}>
-            <Ionicons name="alert-circle-outline" size={40} color={DESIGN_TOKENS.colors.danger} />
-          </View>
-          <Text style={styles.errorText}>{error}</Text>
-          <Pressable style={styles.retryButton} onPress={() => setLoading(true)}>
-            <Text style={styles.retryButtonText}>Retry</Text>
-          </Pressable>
-        </View>
-      );
-    }
-
+  if (loading) {
     return (
-      <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
-        {restaurant && (
-          <>
-            <View style={styles.header}>
-              <View style={styles.headerTitleContainer}>
-                <Text style={styles.title}>{restaurant.name}</Text>
-                <View style={styles.headerMetaRow}>
-                  <View style={styles.ratingContainer}>
-                    <Ionicons name="star" size={14} color={DESIGN_TOKENS.colors.warning} />
-                    <Text style={styles.ratingText}>{restaurant.rating}</Text>
-                  </View>
-                  <Text style={styles.dividerDot}>•</Text>
-                  <Text style={styles.subtitle}>{restaurant.deliveryTime}</Text>
-                  <Text style={styles.dividerDot}>•</Text>
-                  <Text style={styles.subtitle}>{restaurant.address}</Text>
-                </View>
-              </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
+        <Text style={styles.loadingText}>Loading menu...</Text>
+      </View>
+    );
+  }
+
+  if (error || !restaurant) {
+    return (
+      <View style={styles.errorContainer}>
+        <View style={styles.errorIconContainer}>
+          <Ionicons name="alert-circle-outline" size={40} color={DESIGN_TOKENS.colors.danger} />
+        </View>
+        <Text style={styles.errorText}>{error || 'Restaurant not found'}</Text>
+        <Pressable style={styles.retryButton} onPress={() => setLoading(true)}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <Animated.View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
+      <View style={styles.header}>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.title}>{restaurant.name}</Text>
+          <View style={styles.headerMetaRow}>
+            <View style={styles.ratingContainer}>
+              <Ionicons name="star" size={14} color={DESIGN_TOKENS.colors.warning} />
+              <Text style={styles.ratingText}>{restaurant.rating > 0 ? restaurant.rating.toFixed(1) : 'New'}</Text>
             </View>
-            <Animated.View style={[styles.menuContainer, { opacity: fadeAnim }]}>
-              {menuItems.map(item => (
-                <Pressable
-                  key={item.id}
-                  style={styles.menuItem}
-                  onPress={() => addToCart(item.id)}
-                >
-                  <View style={styles.itemIconContainer}>
-                    <Ionicons name="fast-food-outline" size={28} color={DESIGN_TOKENS.colors.primary} />
-                  </View>
-                  <View style={styles.menuItemContent}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemDescription}>{item.description}</Text>
-                    <Text style={styles.itemPrice}>₹{item.price}</Text>
-                  </View>
-                  <View style={styles.addButtonContainer}>
-                    {addingItem === item.id ? (
-                      <View style={styles.addedBadge}>
-                        <Ionicons name="checkmark" size={16} color={DESIGN_TOKENS.colors.success} />
-                        <Text style={styles.addedText}>Added</Text>
-                      </View>
-                    ) : (
-                      <Pressable style={styles.addButton}>
-                        <Ionicons name="add" size={20} color={DESIGN_TOKENS.colors.surface} />
-                      </Pressable>
-                    )}
-                  </View>
+            <Text style={styles.dividerDot}>•</Text>
+            <Text style={styles.subtitle}>{restaurant.deliveryTime}</Text>
+            <Text style={styles.dividerDot}>•</Text>
+            <Text style={styles.subtitle}>{restaurant.address}</Text>
+          </View>
+        </View>
+      </View>
+      <Animated.View style={[styles.menuContainer, { opacity: fadeAnim }]}>
+        {menuItems.map(item => (
+          <Pressable
+            key={item.id}
+            style={styles.menuItem}
+            onPress={() => addToCart(item.id)}
+          >
+            <View style={styles.itemIconContainer}>
+              <Ionicons name="fast-food-outline" size={28} color={DESIGN_TOKENS.colors.primary} />
+            </View>
+            <View style={styles.menuItemContent}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemDescription}>{item.description}</Text>
+              <Text style={styles.itemPrice}>₹{item.price}</Text>
+            </View>
+            <View style={styles.addButtonContainer}>
+              {addingItem === item.id ? (
+                <View style={styles.addedBadge}>
+                  <Ionicons name="checkmark" size={16} color={DESIGN_TOKENS.colors.success} />
+                  <Text style={styles.addedText}>Added</Text>
+                </View>
+              ) : (
+                <Pressable style={styles.addButton}>
+                  <Ionicons name="add" size={20} color={DESIGN_TOKENS.colors.surface} />
                 </Pressable>
-              ))}
-            </Animated.View>
-          </>
+              )}
+            </View>
+          </Pressable>
+        ))}
+        {menuItems.length === 0 && (
+          <View style={styles.emptyMenu}>
+            <Text style={styles.emptyMenuText}>No menu items available</Text>
+          </View>
         )}
       </Animated.View>
-    );
-  };
+    </Animated.View>
+  );
+};
 
 export default RestaurantScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DESIGN_TOKENS.colors.background },
-  loadingContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: DESIGN_TOKENS.colors.background,
   },
-  loadingText: { 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  loadingText: {
+    color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: DESIGN_TOKENS.spacing.md,
     fontSize: 14,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -194,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: DESIGN_TOKENS.spacing.md,
   },
-  errorText: { 
+  errorText: {
     color: DESIGN_TOKENS.colors.danger,
     fontSize: 16,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -214,7 +199,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
-  header: { 
+  header: {
     padding: DESIGN_TOKENS.spacing.md,
     paddingTop: DESIGN_TOKENS.spacing.lg,
     backgroundColor: DESIGN_TOKENS.colors.surface,
@@ -225,8 +210,8 @@ const styles = StyleSheet.create({
   headerTitleContainer: {
     gap: DESIGN_TOKENS.spacing.xs,
   },
-  title: { 
-    fontSize: 22, 
+  title: {
+    fontSize: 22,
     fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
@@ -252,15 +237,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: DESIGN_TOKENS.colors.textTertiary,
   },
-  subtitle: { 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  subtitle: {
+    color: DESIGN_TOKENS.colors.textSecondary,
     fontSize: 13,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
-  menuContainer: { 
+  menuContainer: {
     padding: DESIGN_TOKENS.spacing.md,
   },
-  menuItem: { 
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: DESIGN_TOKENS.spacing.md,
@@ -283,22 +268,22 @@ const styles = StyleSheet.create({
   menuItemContent: {
     flex: 1,
   },
-  itemName: { 
-    fontSize: 16, 
+  itemName: {
+    fontSize: 16,
     fontWeight: '700',
     color: DESIGN_TOKENS.colors.textPrimary,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
-  itemDescription: { 
-    color: DESIGN_TOKENS.colors.textSecondary, 
+  itemDescription: {
+    color: DESIGN_TOKENS.colors.textSecondary,
     marginTop: 2,
     fontSize: 13,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
     lineHeight: 18,
     marginBottom: DESIGN_TOKENS.spacing.xs,
   },
-  itemPrice: { 
-    color: DESIGN_TOKENS.colors.primary, 
+  itemPrice: {
+    color: DESIGN_TOKENS.colors.primary,
     marginTop: 2,
     fontWeight: '700',
     fontSize: 15,
@@ -329,6 +314,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: DESIGN_TOKENS.colors.successDark,
     fontWeight: '600',
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
+  },
+  emptyMenu: {
+    padding: DESIGN_TOKENS.spacing.xl,
+    alignItems: 'center',
+  },
+  emptyMenuText: {
+    color: DESIGN_TOKENS.colors.textSecondary,
+    fontSize: 14,
     fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
 });

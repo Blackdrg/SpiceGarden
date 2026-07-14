@@ -25,13 +25,12 @@ export default function WalletScreen(_props: ScreenProps): React.JSX.Element {
   useEffect(() => {
     const fetchWallet = async () => {
       try {
-        const data = await deliveryApi.getEarnings();
-        setEarnings(data);
-        setTransactions([
-          { id: '1', type: 'credit', amount: data.todayEarnings || 0, description: "Today's earnings", date: new Date().toISOString() },
-          { id: '2', type: 'credit', amount: data.weeklyEarnings || 0, description: 'This week', date: new Date().toISOString() },
-          { id: '3', type: 'credit', amount: data.lifetimeEarnings || 0, description: 'Lifetime earnings', date: new Date().toISOString() },
+        const [earningsData, transactionsData] = await Promise.all([
+          deliveryApi.getEarnings(),
+          deliveryApi.getTransactions(),
         ]);
+        setEarnings(earningsData);
+        setTransactions(transactionsData);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load wallet');
       } finally {

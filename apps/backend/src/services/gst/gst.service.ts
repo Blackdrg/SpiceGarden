@@ -332,10 +332,14 @@ export class GSTService {
         where: { hsnCode: hsnSacCode },
       });
 
-      return hsnSac?.gstRate || 18; // Default to 18% if not found
+      if (!hsnSac || hsnSac.gstRate == null) {
+        throw new Error(`HSN/SAC code ${hsnSacCode} not found or has no GST rate`);
+      }
+
+      return hsnSac.gstRate;
     } catch (error) {
       this.logger.error(`Error getting GST rate for HSN/SAC ${hsnSacCode}`, error);
-      return 18; // Default fallback
+      throw error;
     }
   }
 

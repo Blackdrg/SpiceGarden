@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import { EmptyState } from '../components/Indicators';
+import { EmptyState, LoadingSpinner } from '../components/Indicators';
+import { deliveryApi } from '../services/delivery-api.service';
 import type { ScreenProps } from '../types';
 
 const renderStars = (rating: number) => {
@@ -23,6 +24,48 @@ const renderStars = (rating: number) => {
 
 export default function RatingsScreen(_props: ScreenProps): React.JSX.Element {
   const [rating, setRating] = useState<number | null>(null);
+  const [rank, setRank] = useState<number | null>(null);
+  const [totalDeliveries, setTotalDeliveries] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadPerformance = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await deliveryApi.getDriverPerformance();
+        const driverData = data.rankings?.find((r: any) => r.driverId === data.driverRank) || data.rankings?.[0];
+        if (driverData) {
+          setRating(driverData.customerRating || 0);
+          setRank(data.driverRank || null);
+          setTotalDeliveries(driverData.totalDeliveries || 0);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load ratings');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPerformance();
+  }, []);
+
+  if (loading) {
+    return (
+      <Screen title="Ratings" navigation={_props.navigation}>
+        <LoadingSpinner label="Loading ratings…" />
+      </Screen>
+    );
+  }
+
+  if (error) {
+    return (
+      <Screen title="Ratings" navigation={_props.navigation}>
+        <EmptyState title="Unable to load ratings" message={error} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen title="Ratings" navigation={_props.navigation}>
@@ -30,13 +73,11 @@ export default function RatingsScreen(_props: ScreenProps): React.JSX.Element {
         <View style={styles.starsRow}>
           {renderStars(rating || 0)}
         </View>
-        <Text style={styles.ratingScore}>{rating?.toFixed(1)}</Text>
-        <Text style={styles.ratingCount}>No ratings yet</Text>
+        <Text style={styles.ratingScore}>{rating?.toFixed(1) || '0.0'}</Text>
+        <Text style={styles.ratingCount}>
+          {rank ? `Rank #${rank} · ${totalDeliveries} deliveries` : 'No ratings yet'}
+        </Text>
       </CardView>
-      <EmptyState 
-        title="No feedback yet" 
-        message="Customer ratings and feedback will appear here after deliveries."
-      />
     </Screen>
   );
 }

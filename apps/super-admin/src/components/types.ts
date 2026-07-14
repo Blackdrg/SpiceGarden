@@ -80,14 +80,14 @@ export type AdminDashboardAction =
 export function initialAdminDashboardState(): AdminDashboardState {
   return {
     stats: {
-      revenue: 45200,
-      orders: 124,
-      driversOnline: 18,
-      complaints: 3,
-      refunds: 12,
-      fraudAlerts: 3,
-      activeBranches: 3,
-      pendingWithdrawals: 8,
+      revenue: 0,
+      orders: 0,
+      driversOnline: 0,
+      complaints: 0,
+      refunds: 0,
+      fraudAlerts: 0,
+      activeBranches: 0,
+      pendingWithdrawals: 0,
     },
     liveOrders: [],
     branches: [],

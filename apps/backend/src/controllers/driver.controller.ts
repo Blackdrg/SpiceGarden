@@ -8,7 +8,8 @@ import { UserRole } from '../shared/domain/user.interface';
 import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../db/entities/driver-assignment.entity';
-import { Repository } from 'typeorm';
+import { DriverIssueEntity, DriverIssueStatus } from '../db/entities/driver-issue.entity';
+import { Repository, DeepPartial } from 'typeorm';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
@@ -32,6 +33,8 @@ export class DriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectRepository(DriverIssueEntity)
+    private issueRepo: Repository<DriverIssueEntity>,
     @InjectDataSource()
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
@@ -169,6 +172,8 @@ export class OrderDriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectRepository(DriverIssueEntity)
+    private issueRepo: Repository<DriverIssueEntity>,
     @InjectDataSource()
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
@@ -317,7 +322,23 @@ const assignment = await this.assignmentRepo.findOne({
     @Param('id') id: string,
     @Body() body: ReportIssueDto
   ) {
-    console.log(`Issue reported for order ${id}:`, body.issue, body.details);
-    return { status: 'reported' };
+    const issueData: DeepPartial<DriverIssueEntity> = {
+      driverId: id,
+      orderId: undefined,
+      issue: body.issue,
+      details: body.details,
+      status: DriverIssueStatus.REPORTED,
+    };
+    const issue = await this.issueRepo.save(issueData);
+
+    await this.trackingGateway.publishToRoom(`driver:${id}`, {
+      type: 'issueReported',
+      driverId: id,
+      issue: body.issue,
+      details: body.details,
+      timestamp: new Date().toISOString(),
+    });
+
+    return { status: 'reported', issueId: issue.id };
   }
 }

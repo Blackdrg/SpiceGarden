@@ -6,6 +6,7 @@ import { PaymentHardeningService } from './payment-hardening.service';
 import { RetryService, RetryResult } from './retry.service';
 import { FraudHardeningService, FraudCheckResult } from './fraud-hardening.service';
 import { IdempotencyService } from './idempotency.service';
+import { PaymentGatewayFactory } from './gateway-factory.service';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
@@ -24,6 +25,7 @@ export class PaymentsController {
     private fraudHardening: FraudHardeningService,
     private idempotency: IdempotencyService,
     private configService: ConfigService,
+    private gatewayFactory: PaymentGatewayFactory,
   ) {}
 
   @Post('create-intent')
@@ -156,9 +158,7 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Get available payment gateways' })
   @ApiResponse({ status: 200, description: 'List of available payment gateways' })
   getAvailableGateways() {
-    // In a real implementation, this would come from the gateway factory
-    // For now, we'll return the hardcoded list
-    return ['stripe', 'razorpay'];
+    return this.gatewayFactory.getAvailableGateways();
   }
 
   @Get('gateway/config')

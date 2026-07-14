@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const restaurantId = (req.query.restaurantId as string) || 'demo-restaurant';
+  const restaurantId = req.query.restaurantId as string;
+  if (!restaurantId) {
+    return res.status(400).json({ error: 'restaurantId is required' });
+  }
 
   try {
     const response = await fetch(`${BACKEND_URL}/restaurant-onboarding/payout/${restaurantId}`, {

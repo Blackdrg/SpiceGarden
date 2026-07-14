@@ -73,7 +73,22 @@ export class MapsService {
   }
 
   async getHeatmapData(bounds: { north: number; south: number; east: number; west: number }, zoom: number): Promise<HeatmapPoint[]> {
-    return [];
+    const surgeZones = await this.surgeZoneRepo.find({ where: { isActive: true } });
+
+    const points: HeatmapPoint[] = [];
+    for (const zone of surgeZones) {
+      for (const coord of zone.polygon) {
+        if (coord.lat >= bounds.south && coord.lat <= bounds.north && coord.lng >= bounds.west && coord.lng <= bounds.east) {
+          points.push({
+            lat: coord.lat,
+            lng: coord.lng,
+            weight: Number(zone.multiplier),
+          });
+        }
+      }
+    }
+
+    return points;
   }
 
   async getSurgeZones(): Promise<SurgeZoneEntity[]> {
@@ -81,7 +96,32 @@ export class MapsService {
   }
 
   async isAddressInSurgeZone(lat: number, lng: number): Promise<{ inSurgeZone: boolean; multiplier?: number; zoneName?: string }> {
+    const surgeZones = await this.surgeZoneRepo.find({ where: { isActive: true } });
+
+    for (const zone of surgeZones) {
+      if (this.isPointInPolygon({ lat, lng }, zone.polygon)) {
+        return {
+          inSurgeZone: true,
+          multiplier: Number(zone.multiplier),
+          zoneName: zone.name,
+        };
+      }
+    }
+
     return { inSurgeZone: false };
+  }
+
+  private isPointInPolygon(point: { lat: number; lng: number }, polygon: { lat: number; lng: number }[]): boolean {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].lat, yi = polygon[i].lng;
+      const xj = polygon[j].lat, yj = polygon[j].lng;
+
+      const intersect = ((yi > point.lng) !== (yj > point.lng)) &&
+        (point.lat < (xj - xi) * (point.lng - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
   }
 
   private calculateDistance(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
@@ -99,6 +139,18 @@ export class MapsService {
   }
 
   private async calculateSurgeMultiplier(origin: { lat: number; lng: number }, destination: { lat: number; lng: number }): Promise<number> {
-    return 1.0;
+    const surgeZones = await this.surgeZoneRepo.find({ where: { isActive: true } });
+
+    let maxMultiplier = 1.0;
+    for (const zone of surgeZones) {
+      if (this.isPointInPolygon(origin, zone.polygon) || this.isPointInPolygon(destination, zone.polygon)) {
+        const multiplier = Number(zone.multiplier);
+        if (multiplier > maxMultiplier) {
+          maxMultiplier = multiplier;
+        }
+      }
+    }
+
+    return maxMultiplier;
   }
 }

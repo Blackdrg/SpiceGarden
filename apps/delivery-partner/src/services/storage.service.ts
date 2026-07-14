@@ -23,16 +23,16 @@ interface EarningsHistory {
 }
 
 const defaultProfile: DriverProfile = {
-  id: 'driver-001',
-  name: 'Raj Kumar',
-  email: 'raj.kumar@spicegarden.com',
-  phone: '+91 98765 43210',
-  vehicle: 'Bajaj Dominar 400 | DL8CAB 7890',
-  licenseNumber: 'DL-XXXX-XXXX-XX',
-  rating: 4.8,
-  totalDeliveries: 420,
-  memberSince: 'Jan 2024',
-  isVerified: true,
+  id: '',
+  name: '',
+  email: '',
+  phone: '',
+  vehicle: '',
+  licenseNumber: '',
+  rating: 0,
+  totalDeliveries: 0,
+  memberSince: '',
+  isVerified: false,
 };
 
 export async function saveDriverProfile(profile: DriverProfile): Promise<void> {
