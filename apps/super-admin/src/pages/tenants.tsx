@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState, EmptyState } from '@spicegarden/ui';
 import styles from './tenants.module.css';
 
@@ -23,7 +23,7 @@ const TenantsPage = () => {
     fetchTenants();
   }, [filter]);
 
-  const fetchTenants = async () => {
+  const fetchTenants = useCallback(async () => {
     try {
       setLoading(true);
       const url = filter === 'all' ? '/api/admin/tenants' : `/api/admin/tenants?status=${filter}`;
@@ -36,17 +36,17 @@ const TenantsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
-  const suspendTenant = async (id: string) => {
+  const suspendTenant = useCallback(async (id: string) => {
     await fetch(`/api/admin/tenants/${id}/suspend`, { method: 'POST' });
     fetchTenants();
-  };
+  }, [fetchTenants]);
 
-  const activateTenant = async (id: string) => {
+  const activateTenant = useCallback(async (id: string) => {
     await fetch(`/api/admin/tenants/${id}/activate`, { method: 'POST' });
     fetchTenants();
-  };
+  }, [fetchTenants]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;

@@ -1,6 +1,17 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import KitchenDashboard from '../src/pages';
+
+const queryClient = new QueryClient();
+
+function renderWithQueryClient(ui: React.ReactElement) {
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>,
+  );
+}
 
 jest.mock('socket.io-client', () => ({
   io: jest.fn(() => ({
@@ -42,7 +53,7 @@ describe('Restaurant Dashboard KDS e2e flow', () => {
   });
 
   it('accepts, prepares, marks ready, and switches to inventory', async () => {
-    render(<KitchenDashboard />);
+    renderWithQueryClient(<KitchenDashboard />);
 
     expect(screen.getByText(/KITCHEN DISPLAY/i)).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText(/4 orders/i)).toBeInTheDocument());

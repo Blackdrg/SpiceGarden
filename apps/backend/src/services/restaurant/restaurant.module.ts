@@ -29,10 +29,12 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { SubscriptionPlanEntity } from '../../db/entities/subscription-plan.entity';
 import { RestaurantSubscriptionEntity } from '../../db/entities/restaurant-subscription.entity';
 import { KdsGateway } from './kds.gateway';
+import { PaymentServiceModule } from '../payments/payments.module';
 
 @Module({
   imports: [
     DbRepositoriesModule,
+    PaymentServiceModule,
   ],
   providers: [
     RestaurantService,

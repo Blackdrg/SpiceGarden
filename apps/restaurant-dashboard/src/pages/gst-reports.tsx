@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState } from '@spicegarden/ui';
 import styles from './gst-reports.module.css';
 
@@ -31,7 +31,7 @@ const GstReportsPage = () => {
     fetchReport();
   }, [month, year]);
 
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/business/gst/reports?month=${month}&year=${year}`);
@@ -44,9 +44,9 @@ const GstReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [month, year]);
 
-  const exportGSTR1 = async () => {
+  const exportGSTR1 = useCallback(async () => {
     try {
       const res = await fetch(`/api/business/gst/export/gstr1?month=${month}&year=${year}`);
       if (res.ok) {
@@ -60,7 +60,7 @@ const GstReportsPage = () => {
     } catch (err) {
       console.error('Failed to export GSTR1:', err);
     }
-  };
+  }, [month, year]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;
@@ -71,12 +71,12 @@ const GstReportsPage = () => {
       <div className={styles.header}>
         <h1 className={styles.title}>GST Reports</h1>
         <div className={styles.controls}>
-          <select value={month} onChange={(e) => setMonth(Number(e.target.value))} className={styles.select}>
+          <select value={month} onChange={(e) => setMonth(Number(e.target.value))} className={styles.select} aria-label="Month">
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
             ))}
           </select>
-          <select value={year} onChange={(e) => setYear(Number(e.target.value))} className={styles.select}>
+          <select value={year} onChange={(e) => setYear(Number(e.target.value))} className={styles.select} aria-label="Year">
             {Array.from({ length: 5 }, (_, i) => (
               <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}</option>
             ))}
@@ -122,8 +122,8 @@ const GstReportsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {report.hsnWise.map((row, idx) => (
-                  <tr key={idx}>
+                {report.hsnWise.map((row) => (
+                  <tr key={row.hsnCode}>
                     <td>{row.hsnCode}</td>
                     <td>₹{row.taxableValue.toFixed(2)}</td>
                     <td>₹{row.cgst.toFixed(2)}</td>

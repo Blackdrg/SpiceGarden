@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Button, Card, DESIGN_TOKENS, LoadingState, EmptyState } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { StarIcon, HomeIcon, SearchIcon, UserIcon } from 'lucide-react';
@@ -41,7 +41,7 @@ const SubscriptionsPage = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -65,9 +65,9 @@ const SubscriptionsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleSubscribe = async (planId: string) => {
+  const handleSubscribe = useCallback(async (planId: string) => {
     try {
       setSubscribing(true);
       setError(null);
@@ -89,9 +89,9 @@ const SubscriptionsPage = () => {
     } finally {
       setSubscribing(false);
     }
-  };
+  }, [fetchData]);
 
-  const handleCancel = async () => {
+  const handleCancel = useCallback(async () => {
     try {
       setSubscribing(true);
       setError(null);
@@ -112,7 +112,7 @@ const SubscriptionsPage = () => {
     } finally {
       setSubscribing(false);
     }
-  };
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -132,7 +132,7 @@ const SubscriptionsPage = () => {
       {error && (
         <div className={styles.errorBanner} role="alert">
           {error}
-          <button onClick={() => setError(null)} className={styles.errorClose}>×</button>
+          <button onClick={() => setError(null)} className={styles.errorClose} type="button">×</button>
         </div>
       )}
 

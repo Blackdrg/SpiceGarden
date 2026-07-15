@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState, EmptyState } from '@spicegarden/ui';
 import styles from './subscription.module.css';
 
@@ -36,7 +36,7 @@ const SubscriptionPage = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [plansRes, subRes] = await Promise.all([
@@ -51,9 +51,9 @@ const SubscriptionPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleSubscribe = async (planId: string) => {
+  const handleSubscribe = useCallback(async (planId: string) => {
     try {
       setActionLoading(true);
       const res = await fetch('/api/business/restaurant/subscription/subscribe', {
@@ -68,9 +68,9 @@ const SubscriptionPage = () => {
     } finally {
       setActionLoading(false);
     }
-  };
+  }, [fetchData]);
 
-  const handleUpgrade = async (newPlanId: string) => {
+  const handleUpgrade = useCallback(async (newPlanId: string) => {
     try {
       setActionLoading(true);
       const res = await fetch('/api/business/restaurant/subscription/upgrade', {
@@ -85,7 +85,7 @@ const SubscriptionPage = () => {
     } finally {
       setActionLoading(false);
     }
-  };
+  }, [fetchData]);
 
   if (loading) return <div className={styles.loading}><LoadingState /></div>;
 
@@ -116,8 +116,8 @@ const SubscriptionPage = () => {
             <p className={styles.price}>₹{plan.monthlyPrice}/mo</p>
             <p className={styles.commission}>Commission: {plan.commissionRate}%</p>
             <ul className={styles.features}>
-              {Object.entries(plan.features || {}).filter(([, v]) => v).map(([key]) => (
-                <li key={key}>{key}</li>
+              {Object.entries(plan.features || {}).reduce<string[]>((acc, [, v]) => { if (v) acc.push(typeof v === 'string' ? v : String(v)); return acc; }, []).map((featureKey) => (
+                <li key={featureKey}>{featureKey}</li>
               ))}
             </ul>
             {subscription ? (

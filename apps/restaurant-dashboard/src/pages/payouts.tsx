@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState } from '@spicegarden/ui';
 import styles from './payouts.module.css';
 
@@ -28,7 +28,7 @@ const PayoutsPage = () => {
     fetchPayouts();
   }, []);
 
-  const fetchPayouts = async () => {
+  const fetchPayouts = useCallback(async () => {
     try {
       const res = await fetch('/api/business/restaurant/payouts/history');
       if (res.ok) {
@@ -40,7 +40,7 @@ const PayoutsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;

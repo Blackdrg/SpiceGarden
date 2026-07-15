@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState, EmptyState } from '@spicegarden/ui';
 import styles from './campaigns.module.css';
 
@@ -25,7 +25,7 @@ const CampaignsPage = () => {
     fetchCampaigns();
   }, []);
 
-  const fetchCampaigns = async () => {
+  const fetchCampaigns = useCallback(async () => {
     try {
       const [campaignsRes, statsRes] = await Promise.all([
         fetch('/api/admin/marketing/campaigns'),
@@ -46,17 +46,17 @@ const CampaignsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const activateCampaign = async (id: string) => {
+  const activateCampaign = useCallback(async (id: string) => {
     await fetch(`/api/admin/marketing/campaigns/${id}/activate`, { method: 'POST' });
     fetchCampaigns();
-  };
+  }, [fetchCampaigns]);
 
-  const pauseCampaign = async (id: string) => {
+  const pauseCampaign = useCallback(async (id: string) => {
     await fetch(`/api/admin/marketing/campaigns/${id}/pause`, { method: 'POST' });
     fetchCampaigns();
-  };
+  }, [fetchCampaigns]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;
@@ -119,7 +119,7 @@ const CampaignsPage = () => {
               </div>
               <div>
                 <span className={styles.label}>CTR</span>
-                <span className={styles.value}>{campaign.ctr?.toFixed(2) || 0}%</span>
+                <span className={styles.value}>{campaign.impressions > 0 ? ((campaign.clicks / campaign.impressions) * 100).toFixed(2) : '0.00'}%</span>
               </div>
             </div>
             <div className={styles.actions}>

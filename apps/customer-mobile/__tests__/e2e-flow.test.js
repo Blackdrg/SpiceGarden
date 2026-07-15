@@ -19,9 +19,24 @@ describe('Customer Mobile App - Full E2E Flow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     storage.getItem.mockResolvedValue(null);
-    global.fetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ access_token: 'test-token' }),
+    global.fetch.mockImplementation((url) => {
+      if (typeof url === 'string' && url.includes('/auth/login')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ access_token: 'test-token' }),
+        });
+      }
+      if (typeof url === 'string' && url.includes('/restaurants')) {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve([
+              { id: 'r1', name: 'Burger King', description: 'Burgers', branches: [{ openingTime: '10:00', closingTime: '22:00' }], logoUrl: '', bannerUrl: '' },
+              { id: 'r2', name: 'Pizza Hub', description: 'Pizza', branches: [{ openingTime: '11:00', closingTime: '23:00' }], logoUrl: '', bannerUrl: '' },
+            ]),
+        });
+      }
+      return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
     });
   });
 
