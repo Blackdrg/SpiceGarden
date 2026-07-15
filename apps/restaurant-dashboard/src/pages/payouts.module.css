@@ -1,0 +1,93 @@
+.payoutsContainer {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.netValue {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status.pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status.paid {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status.processing {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status.failed {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.orders {
+  font-size: 0.875rem;
+  color: #6B7280;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, ProfileIcon, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { GiftIcon, Share2Icon, CopyIcon, CheckIcon } from 'lucide-react';
 import styles from './offers.module.css';
 
@@ -33,40 +34,27 @@ const getDiscountClass = (type: string) => {
   }
 };
 
+const getTabClass = (key: string) => {
+  return `${styles.tabItem} ${key === 'offers' ? styles.activeTab : styles.tabText}`;
+};
+
 const OffersPage = () => {
   const router = useRouter();
-  const [offers, setOffers] = useState<Offer[]>([]);
-  const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchOffers = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/offers');
-        if (res.ok) {
-          const data = await res.json();
-          setOffers(data);
-        }
-      } catch {
-        // keep empty state on error
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOffers();
-  }, []);
+  const { data: offers = [], isLoading: loading } = useQuery<Offer[]>({
+    queryKey: ['offers'],
+    queryFn: async () => {
+      const res = await fetch('/api/offers');
+      if (!res.ok) throw new Error('Failed to load offers');
+      return res.json();
+    },
+  });
 
   useEffect(() => {
     if (copiedId === null) return;
     const timer = setTimeout(() => setCopiedId(null), 2000);
     return () => clearTimeout(timer);
   }, [copiedId]);
-
-  const getTabClass = (key: string) => {
-    return `${styles.tabItem} ${key === 'offers' ? styles.activeTab : styles.tabText}`;
-  };
 
   return (
     <div className={styles.pageContainer}>

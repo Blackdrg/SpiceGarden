@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Card, DESIGN_TOKENS, Skeleton, HomeIcon, SearchIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { ShoppingCartIcon, PlusIcon } from 'lucide-react';
 import styles from './menu.module.css';
 
@@ -20,56 +21,50 @@ interface Category {
   count: number;
 }
 
+const fetchMenu = async (): Promise<{ menuItems: MenuItem[]; categories: Category[] }> => {
+  const res = await fetch('/api/categories');
+  if (!res.ok) throw new Error('Failed to load menu');
+  const cats = await res.json();
+  const allItems: MenuItem[] = [];
+  const categoryMap = new Map<string, Category>();
+
+  (cats as any[]).forEach((cat: any) => {
+    categoryMap.set(cat.name, { id: cat.name, name: cat.name, count: cat.items?.length || 0 });
+    if (cat.items) {
+      cat.items.forEach((item: any) => {
+        allItems.push({
+          id: item.id,
+          name: item.name,
+          description: item.description || '',
+          price: item.price,
+          image: item.image || '🍽️',
+          category: cat.id,
+          categoryName: cat.name,
+        });
+      });
+    }
+  });
+
+  return {
+    menuItems: allItems,
+    categories: [
+      { id: 'all', name: 'All', count: allItems.length },
+      ...Array.from(categoryMap.values()),
+    ],
+  };
+};
+
 const MenuPage = () => {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [cart, setCart] = useState<Array<MenuItem & { quantity: number }>>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/categories');
-        if (res.ok) {
-          const cats = await res.json();
-          const allItems: MenuItem[] = [];
-          const categoryMap = new Map<string, Category>();
-
-          cats.forEach((cat: any) => {
-            categoryMap.set(cat.name, { id: cat.name, name: cat.name, count: cat.items?.length || 0 });
-            if (cat.items) {
-              cat.items.forEach((item: any) => {
-                allItems.push({
-                  id: item.id,
-                  name: item.name,
-                  description: item.description || '',
-                  price: item.price,
-                  image: item.image || '🍽️',
-                  category: cat.id,
-                  categoryName: cat.name,
-                });
-              });
-            }
-          });
-
-          setMenuItems(allItems);
-          setCategories([
-            { id: 'all', name: 'All', count: allItems.length },
-            ...Array.from(categoryMap.values()),
-          ]);
-        }
-      } catch {
-        // keep empty state on error
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMenu();
-  }, []);
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['menu'],
+    queryFn: fetchMenu,
+  });
+  const menuItems = data?.menuItems ?? [];
+  const categories = data?.categories ?? [];
 
   const filteredItems = activeCategory === 'all'
     ? menuItems

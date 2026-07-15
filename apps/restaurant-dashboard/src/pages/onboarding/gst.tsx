@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import { Button, useToast } from '@spicegarden/ui';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import styles from './gst.module.css';
 
 export default function OnboardingGST() {
@@ -14,22 +16,9 @@ export default function OnboardingGST() {
     stateCode: '',
   });
   const [loading, setLoading] = useState(false);
-  const [restaurantId, setRestaurantId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchRestaurantId = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setRestaurantId(data.user?.id || null);
-        }
-      } catch {
-        setRestaurantId(null);
-      }
-    };
-    fetchRestaurantId();
-  }, []);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const restaurantId = user?.id ?? null;
 
   const submit = async () => {
     if (!restaurantId) {

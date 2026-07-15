@@ -1,6 +1,7 @@
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import { Button, Card, DESIGN_TOKENS, useToast, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { WalletIcon, ArrowDownIcon, ArrowUpIcon, HomeIcon, SearchIcon, UserIcon } from 'lucide-react';
 import styles from './wallet.module.css';
@@ -28,33 +29,24 @@ interface Transaction {
   date: string;
 }
 
+const fetchWallet = async (): Promise<{ balance: number | null; transactions: Transaction[] }> => {
+  const res = await fetch('/api/wallet');
+  if (!res.ok) throw new Error('Failed to load wallet');
+  const data = await res.json();
+  return { balance: data.balance, transactions: data.transactions || [] };
+};
+
 const WalletPage = () => {
   const router = useRouter();
   const toast = useToast();
   const reduxUser = useSelector((state: any) => state.auth.user);
-  const [balance, setBalance] = useState<number | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchWallet = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/wallet');
-        if (res.ok) {
-          const data = await res.json();
-          setBalance(data.balance);
-          setTransactions(data.transactions || []);
-        }
-      } catch {
-        // keep empty state on error
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWallet();
-  }, []);
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: fetchWallet,
+  });
+  const balance = data?.balance ?? null;
+  const transactions = data?.transactions ?? [];
 
   const handleWithdraw = () => {
     toast.showToast({ message: 'Withdrawal feature coming soon', type: 'info', duration: 0 });
@@ -112,7 +104,7 @@ const WalletPage = () => {
                 <div key={txn.id} className={styles.transactionItem}>
                   <div className={styles.transactionInfo}>
                     <div className={styles.transactionDesc}>{txn.description}</div>
-                    <div className={styles.transactionDate}>{new Date(txn.date).toLocaleDateString()}</div>
+                    <div className={styles.transactionDate}>{new Date(txn.date).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}</div>
                   </div>
                   <span className={`${styles.transactionAmount} ${txn.type === 'credit' ? styles.transactionCredit : styles.transactionDebit}`}>
                     {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}

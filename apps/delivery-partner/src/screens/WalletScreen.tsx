@@ -74,21 +74,25 @@ export default function WalletScreen(_props: ScreenProps): React.JSX.Element {
           <FlatList
             data={transactions}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.transactionItem}>
-                <View>
-                  <Text style={styles.transactionDesc}>{item.description}</Text>
-                  <Text style={styles.transactionDate}>{new Date(item.date).toLocaleDateString()}</Text>
-                </View>
-                <Text style={[styles.transactionAmount, item.type === 'credit' ? styles.transactionCredit : styles.transactionDebit]}>
-                  {item.type === 'credit' ? '+' : '-'}₹{item.amount.toFixed(2)}
-                </Text>
-              </View>
-            )}
+            renderItem={renderTransaction}
           />
         )}
       </View>
     </Screen>
+  );
+}
+
+function renderTransaction({ item }: { item: Transaction }): React.JSX.Element {
+  return (
+    <View style={styles.transactionItem}>
+      <View>
+        <Text style={styles.transactionDesc}>{item.description}</Text>
+        <Text style={styles.transactionDate}>{new Date(item.date).toLocaleDateString()}</Text>
+      </View>
+      <Text style={[styles.transactionAmount, item.type === 'credit' ? styles.transactionCredit : styles.transactionDebit]}>
+        {item.type === 'credit' ? '+' : '-'}₹{item.amount.toFixed(2)}
+      </Text>
+    </View>
   );
 }
 

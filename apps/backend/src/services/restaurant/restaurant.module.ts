@@ -12,6 +12,8 @@ import { BranchManagementService } from './branch-management.service';
 import { CommissionService } from './commission.service';
 import { RestaurantOnboardingService } from './onboarding.service';
 import { RestaurantOnboardingController } from './onboarding.controller';
+import { SubscriptionService } from './subscription.service';
+import { SubscriptionController } from './subscription.controller';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { MenuCategoryEntity } from '../../db/entities/menu-category.entity';
@@ -24,34 +26,39 @@ import { CommissionRuleEntity } from '../../db/entities/commission-rule.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { GSTDetailEntity } from '../../db/entities/gst-detail.entity';
 import { UserEntity } from '../../db/entities/user.entity';
+import { SubscriptionPlanEntity } from '../../db/entities/subscription-plan.entity';
+import { RestaurantSubscriptionEntity } from '../../db/entities/restaurant-subscription.entity';
 import { KdsGateway } from './kds.gateway';
 
 @Module({
-imports: [
-  DbRepositoriesModule,
-],
-providers: [
-  RestaurantService,
-  RestaurantOpsService,
-  MenuModerationService,
-  PayoutService,
-  BranchManagementService,
-   CommissionService,
-   RestaurantOnboardingService
- ],
- controllers: [
-   RestaurantController,
-   RestaurantOpsController,
-   RestaurantOnboardingController
- ],
- exports: [
-   RestaurantService,
-   RestaurantOpsService,
-   MenuModerationService,
-   PayoutService,
-   BranchManagementService,
-   CommissionService,
-   RestaurantOnboardingService
- ],
+  imports: [
+    DbRepositoriesModule,
+  ],
+  providers: [
+    RestaurantService,
+    RestaurantOpsService,
+    MenuModerationService,
+    PayoutService,
+    BranchManagementService,
+    CommissionService,
+    RestaurantOnboardingService,
+    SubscriptionService,
+  ],
+  controllers: [
+    RestaurantController,
+    RestaurantOpsController,
+    RestaurantOnboardingController,
+    SubscriptionController,
+  ],
+  exports: [
+    RestaurantService,
+    RestaurantOpsService,
+    MenuModerationService,
+    PayoutService,
+    BranchManagementService,
+    CommissionService,
+    RestaurantOnboardingService,
+    SubscriptionService,
+  ],
 })
 export class RestaurantServiceModule {}

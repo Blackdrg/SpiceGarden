@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
+import { useState } from 'react';
 import { Button, useToast } from '@spicegarden/ui';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import Head from 'next/head';
 import styles from './business.module.css';
 
@@ -15,22 +16,9 @@ export default function OnboardingBusiness() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [restaurantId, setRestaurantId] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    const fetchRestaurantId = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setRestaurantId(data.user?.id || null);
-        }
-      } catch {
-        setRestaurantId(null);
-      }
-    };
-    fetchRestaurantId();
-  }, []);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const restaurantId = user?.id ?? null;
 
   const submit = async () => {
     if (!restaurantId) {

@@ -88,9 +88,10 @@ export class GSTService {
         const gstRate = item.hsnSac?.gstRate || 18; // Default to 18% if not specified
 
         // Determine if it's intra-state or inter-state supply
-        // For simplicity, we're assuming all supplies are intra-state
-        // In a real implementation, you'd compare restaurant state with delivery state
-        const isIntraState = true; // This should be based on actual logic
+        // Compare restaurant state with delivery address state
+        const restaurantState = (restaurantGST as any)?.stateCode || 'XX';
+        const customerState = (order as any)?.deliveryAddressStateCode || 'XX';
+        const isIntraState = restaurantState === customerState || customerState === 'XX';
 
         if (isIntraState) {
           // Intra-state supply: CGST + SGST

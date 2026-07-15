@@ -1,38 +1,126 @@
-import React, { useState } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, DESIGN_TOKENS, LoadingState, EmptyState } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { StarIcon, HomeIcon, SearchIcon, UserIcon } from 'lucide-react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import styles from './subscriptions.module.css';
 
-type Subscription = {
-  id: number;
+type Plan = {
+  id: string;
+  planType: string;
   name: string;
-  price: number;
-  benefits: string[];
-  active: boolean;
-  nextBilling: string;
+  description: string;
+  monthlyPrice: number;
+  quarterlyPrice?: number;
+  annualPrice?: number;
+  features: Record<string, any>;
+  trialDays: number;
 };
 
-const getStatusClass = (isActive: boolean) => {
-  return `${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`;
+type Subscription = {
+  id: string;
+  planId: string;
+  planType: string;
+  status: string;
+  amount: number;
+  billingCycle: string;
+  currentPeriodEnd: string;
+  isTrial: boolean;
+  benefits: Record<string, any>;
 };
 
 const SubscriptionsPage = () => {
   const router = useRouter();
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([
-    { id: 1, name: 'SpiceGarden Prime', price: 99, benefits: ['Free Delivery on All Orders', 'Priority Customer Support', 'Extra 5% Off Every Order'], active: true, nextBilling: '2026-06-15' },
-    { id: 2, name: 'Weekly Meal Plan', price: 199, benefits: ['4 Chef-Selected Meals/Week', 'Skip Any Week', 'Partner Restaurant Priority'], active: false, nextBilling: '2026-06-01' },
-  ]);
-  const [activeTab] = useState<'home' | 'search' | 'subs' | 'account'>('subs');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [subscribing, setSubscribing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleSubscription = (id: number) => {
-    setSubscriptions((prev) => prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s)));
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [plansRes, subRes] = await Promise.all([
+        fetch('/api/customer/subscription/plans'),
+        fetch('/api/customer/subscription/me'),
+      ]);
+
+      if (plansRes.ok) {
+        const plansData = await plansRes.json();
+        setPlans(plansData);
+      }
+
+      if (subRes.ok) {
+        const subData = await subRes.json();
+        setSubscription(subData);
+      }
+    } catch (err) {
+      setError('Failed to load subscription data');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getNavClass = (key: string) => {
-    return `${styles.navItem} ${activeTab === key ? styles.navItemActive : styles.navLabel}`;
+  const handleSubscribe = async (planId: string) => {
+    try {
+      setSubscribing(true);
+      setError(null);
+
+      const res = await fetch('/api/customer/subscription/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId, billingCycle: 'monthly' }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to subscribe');
+      }
+
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message || 'Failed to subscribe');
+    } finally {
+      setSubscribing(false);
+    }
   };
+
+  const handleCancel = async () => {
+    try {
+      setSubscribing(true);
+      setError(null);
+
+      const res = await fetch('/api/customer/subscription/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to cancel');
+      }
+
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message || 'Failed to cancel');
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.pageContainer}>
+        <LoadingState label="Loading subscriptions..." />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageContainer}>
@@ -41,40 +129,78 @@ const SubscriptionsPage = () => {
         <p className={styles.pageSubtitle}>Manage your active plans</p>
       </div>
 
-      <div className={styles.cardList}>
-        {subscriptions.map((sub) => (
-          <Card key={sub.id} title={sub.name} variant="elevated">
-            <div className={styles.priceWrapper}>
-              <div className={styles.priceInfo}>
-                <span className={styles.price}>₹{sub.price}</span>
-                <span className={styles.priceLabel}> / month</span>
-              </div>
-              <span className={getStatusClass(sub.active)}>{sub.active ? 'ACTIVE' : 'INACTIVE'}</span>
-            </div>
-            <ul className={styles.benefits}>
-              {sub.benefits.map((b) => <li key={`${sub.id}-${b}`} className={styles.benefitItem}>{b}</li>)}
-            </ul>
-            <div className={styles.cardFooter}>
-              <span className={styles.nextBilling}>Next billing: {sub.nextBilling}</span>
-              <Button
-                label={sub.active ? 'Cancel' : 'Activate'}
-                onClick={() => toggleSubscription(sub.id)}
-                variant={sub.active ? 'secondary' : 'primary'}
-                size="sm"
-              />
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      <Card variant="interactive" style={{ background: 'linear-gradient(135deg, var(--color-premiumLight, #FDF6E3) 0%, #FEF3C7 100%)', border: '1px solid var(--color-premium, #D4AF37)33' }}>
-        <div className={styles.exploreTitle}>
-          <StarIcon size={18} color={DESIGN_TOKENS.colors.premium} style={{ display: 'inline', marginRight: 8 }} />
-          Explore More Plans
+      {error && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+          <button onClick={() => setError(null)} className={styles.errorClose}>×</button>
         </div>
-        <p className={styles.exploreText}>Save on every order. Gold, Premium, Family options available.</p>
-        <Button label="View All Plans" onClick={() => null} variant="secondary" />
-      </Card>
+      )}
+
+      {subscription && (
+        <Card title="SpiceGarden Prime" variant="elevated" className={styles.activeCard}>
+          <div className={styles.priceWrapper}>
+            <div className={styles.priceInfo}>
+              <span className={styles.price}>₹{subscription.amount}</span>
+              <span className={styles.priceLabel}> / {subscription.billingCycle}</span>
+            </div>
+            <span className={styles.statusActive}>ACTIVE</span>
+          </div>
+          <ul className={styles.benefits}>
+            {(subscription.benefits?.freeDelivery && <li className={styles.benefitItem}>Free Delivery on All Orders</li>)}
+            {(subscription.benefits?.prioritySupport && <li className={styles.benefitItem}>Priority Customer Support</li>)}
+            {(subscription.benefits?.cashbackPercentage && <li className={styles.benefitItem}>Extra {subscription.benefits.cashbackPercentage}% Off Every Order</li>)}
+            {(subscription.benefits?.exclusiveCoupons && <li className={styles.benefitItem}>Exclusive Coupons</li>)}
+          </ul>
+          <div className={styles.cardFooter}>
+            <span className={styles.nextBilling}>
+              {subscription.isTrial ? 'Trial ends' : 'Renews'} on {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
+            </span>
+            <Button
+              label="Cancel"
+              onClick={handleCancel}
+              variant="secondary"
+              size="sm"
+              disabled={subscribing}
+            />
+          </div>
+        </Card>
+      )}
+
+      {!subscription && (
+        <div className={styles.plansList}>
+          <h3 className={styles.plansTitle}>Choose a Plan</h3>
+          {plans.map((plan) => (
+            <Card key={plan.id} title={plan.name} variant="elevated">
+              <p className={styles.planDescription}>{plan.description}</p>
+              <div className={styles.priceWrapper}>
+                <div className={styles.priceInfo}>
+                  <span className={styles.price}>₹{plan.monthlyPrice}</span>
+                  <span className={styles.priceLabel}> / month</span>
+                </div>
+                {plan.trialDays > 0 && (
+                  <span className={styles.trialBadge}>{plan.trialDays} days free trial</span>
+                )}
+              </div>
+              <ul className={styles.benefits}>
+                {plan.features?.freeDelivery && <li className={styles.benefitItem}>Free Delivery</li>}
+                {plan.features?.prioritySupport && <li className={styles.benefitItem}>Priority Support</li>}
+                {plan.features?.exclusiveCoupons && <li className={styles.benefitItem}>Exclusive Coupons</li>}
+                {plan.features?.gstReports && <li className={styles.benefitItem}>GST Reports</li>}
+                {plan.features?.analytics && <li className={styles.benefitItem}>Advanced Analytics</li>}
+              </ul>
+              <div className={styles.cardFooter}>
+                <Button
+                  label="Subscribe"
+                  onClick={() => handleSubscribe(plan.id)}
+                  variant="primary"
+                  size="md"
+                  disabled={subscribing}
+                />
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
@@ -86,7 +212,7 @@ const SubscriptionsPage = () => {
             <button
               type="button"
               key={tab.key}
-              className={getNavClass(tab.key)}
+              className={styles.navItem}
               onClick={() => tab.path && router.push(tab.path)}
               aria-label={tab.label}
             >

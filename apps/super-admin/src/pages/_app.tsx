@@ -1,10 +1,11 @@
 import type { AppProps } from 'next/app';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { trackEvent, ToastProvider } from '@spicegarden/ui';
 import * as Sentry from '@sentry/nextjs';
-import { AuthProvider, useAuth } from '../auth/AuthContext';
+import { AuthProvider } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 if (sentryDsn) {
@@ -20,19 +21,13 @@ const queryClient = new QueryClient();
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, hydrated } = useAuth();
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const isLoginPage = router.pathname === '/login';
 
-  useEffect(() => {
-    if (!hydrated) return;
-    setChecked(true);
-    if (router.pathname === '/login') {
-      if (isAuthenticated) router.replace('/');
-    } else if (!isAuthenticated) {
-      router.replace('/login');
-    }
-  }, [hydrated, isAuthenticated, router]);
+  if (!hydrated) {
+    return null;
+  }
 
-  if (!hydrated || !checked) {
+  if (!isLoginPage && !isAuthenticated) {
     return null;
   }
 

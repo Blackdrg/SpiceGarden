@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AuthProvider, useAuth } from '../src/auth/AuthContext';
+import { AuthProvider } from '../src/auth/AuthContext';
+import { useAuth } from '../src/auth/useAuth';
 
 function Harness() {
   const { user, isAuthenticated, login, logout } = useAuth();

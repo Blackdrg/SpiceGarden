@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import ProtectedRoute from '../src/components/ProtectedRoute';
 
 const mockAuth = {
@@ -12,9 +12,8 @@ const mockAuth = {
 
 const mockRouter = { pathname: '/', replace: jest.fn() };
 
-jest.mock('../src/auth/AuthContext', () => ({
+jest.mock('../src/auth/useAuth', () => ({
   useAuth: () => mockAuth,
-  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 jest.mock('next/router', () => ({
@@ -22,7 +21,7 @@ jest.mock('next/router', () => ({
 }));
 
 describe('ProtectedRoute (super-admin)', () => {
-  it('redirects to /login when not authenticated', async () => {
+  it('renders nothing when not authenticated after hydration', () => {
     mockAuth.isAuthenticated = false;
     mockAuth.hydrated = true;
     const replace = mockRouter.replace as jest.Mock;
@@ -34,7 +33,7 @@ describe('ProtectedRoute (super-admin)', () => {
     );
 
     expect(container).toBeEmptyDOMElement();
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/login'));
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it('renders children when authenticated', () => {

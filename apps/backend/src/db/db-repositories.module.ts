@@ -70,6 +70,17 @@ import { SupportTicketEntity } from './entities/support-ticket.entity';
 import { PaymentMethodEntity } from './entities/payment-method.entity';
 import { MfaSecretEntity } from './entities/mfa.entity';
 import { DriverIssueEntity } from './entities/driver-issue.entity';
+import { SubscriptionPlanEntity } from './entities/subscription-plan.entity';
+import { CustomerSubscriptionEntity } from './entities/customer-subscription.entity';
+import { RestaurantSubscriptionEntity } from './entities/restaurant-subscription.entity';
+import { DeliveryPricingEntity } from './entities/delivery-pricing.entity';
+import { PlatformFeeEntity } from './entities/platform-fee.entity';
+import { JournalEntryEntity } from './entities/journal-entry.entity';
+import { CampaignEntity } from './entities/campaign.entity';
+import { TenantEntity } from './entities/tenant.entity';
+import { ApiKeyEntity } from './entities/api-key.entity';
+import { BankAccountEntity } from './entities/bank-account.entity';
+import { SettlementReportEntity } from './entities/settlement-report.entity';
 
 const entities = [
   UserEntity,
@@ -139,6 +150,17 @@ const entities = [
   PaymentMethodEntity,
   MfaSecretEntity,
   DriverIssueEntity,
+  SubscriptionPlanEntity,
+  CustomerSubscriptionEntity,
+  RestaurantSubscriptionEntity,
+  DeliveryPricingEntity,
+  PlatformFeeEntity,
+  JournalEntryEntity,
+  CampaignEntity,
+  TenantEntity,
+  ApiKeyEntity,
+  BankAccountEntity,
+  SettlementReportEntity,
 ];
 
 const isLocalSqlite =

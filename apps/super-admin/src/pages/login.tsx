@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { Button, Input, useToast } from '@spicegarden/ui';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import styles from './login.module.css';
 
 export default function LoginPage() {

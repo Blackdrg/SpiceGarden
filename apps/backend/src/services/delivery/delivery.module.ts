@@ -12,12 +12,15 @@ import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.enti
 import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
 import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 import { GeoService } from '../../services/geo/geo.service';
+import { DeliveryPricingModule } from './delivery-pricing.module';
 
 @Module({
   imports: [
     DbRepositoriesModule,
+    DeliveryPricingModule,
   ],
   providers: [DeliveryService, GeoService],
-  exports: [DeliveryService],
+  controllers: [],
+  exports: [DeliveryService, DeliveryPricingModule],
 })
 export class DeliveryServiceModule {}

@@ -6,22 +6,25 @@ export class LedgerEntryEntity {
   id!: string;
 
   @Column()
-  transactionId!: string; // Groups entries of a single transaction
+  transactionId!: string;
 
   @Column()
-  account!: string; // e.g., 'cash', 'revenue', 'refund', 'fees'
+  account!: string;
+
+  @Column({ nullable: true })
+  accountName!: string;
 
   @Column('decimal', { precision: 12, scale: 2 })
-  amount!: number; // Can be positive or negative
+  amount!: number;
 
   @Column({ default: 'INR' })
   currency!: string;
 
   @Column()
-  type!: string; // e.g., 'payment', 'refund', 'fee', 'adjustment'
+  type!: string;
 
   @Column({ nullable: true })
-  referenceId!: string; // e.g., payment intent id, order id, dispute id
+  referenceId!: string;
 
   @Column()
   description!: string;

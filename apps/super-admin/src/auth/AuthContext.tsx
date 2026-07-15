@@ -1,30 +1,6 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-
-export interface AuthUser {
-  id?: string;
-  email?: string;
-  fullName?: string;
-  role?: string;
-  status?: string;
-  isMfaEnabled?: boolean;
-  [key: string]: unknown;
-}
-
-interface LoginResult {
-  ok: boolean;
-  error?: string;
-  mfaRequired?: boolean;
-}
-
-interface AuthContextValue {
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  hydrated: boolean;
-  login: (email: string, password: string) => Promise<LoginResult>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+import { useCallback, useEffect, useMemo, useState, ReactNode } from 'react';
+import { AuthContext } from './useAuth';
+import type { AuthUser, AuthContextValue, LoginResult } from './authTypes';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -49,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = async (email: string, password: string): Promise<LoginResult> => {
+  const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -75,24 +51,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       return { ok: false, error: 'Unable to reach the authentication service' };
     }
-  };
+  }, []);
 
-  const logout = async (): Promise<void> => {
+  const logout = useCallback(async (): Promise<void> => {
     await fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);
     setUser(null);
-  };
+  }, []);
+
+  const value = useMemo<AuthContextValue>(
+    () => ({ user, isAuthenticated: !!user, hydrated, login, logout }),
+    [user, hydrated, login, logout],
+  );
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, hydrated, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return ctx;
 }

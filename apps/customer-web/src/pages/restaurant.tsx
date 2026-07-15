@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, DESIGN_TOKENS, HomeIcon, SearchIcon, CartIcon, ProfileIcon, Skeleton } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 import { addToCart } from '../redux/slices/cartSlice';
 import { ArrowLeftIcon, PlusIcon, StarIcon } from 'lucide-react';
 import styles from './restaurant.module.css';
@@ -22,61 +23,66 @@ interface Category {
   count: number;
 }
 
+interface RestaurantInfo {
+  name: string;
+  rating: number;
+  deliveryTime: number;
+}
+
+const fetchRestaurantData = async (
+  restaurantId: string,
+): Promise<{ restaurant: RestaurantInfo | null; menuItems: MenuItem[]; categories: Category[] }> => {
+  const [restaurantRes, menuRes] = await Promise.all([
+    fetch(`/api/restaurants?id=${encodeURIComponent(restaurantId)}`),
+    fetch(`/api/menu?restaurantId=${encodeURIComponent(restaurantId)}`),
+  ]);
+
+  let restaurant: RestaurantInfo | null = null;
+  if (restaurantRes.ok) {
+    const restaurantData = await restaurantRes.json();
+    restaurant = {
+      name: restaurantData.name || 'Restaurant',
+      rating: restaurantData.rating || 4.0,
+      deliveryTime: restaurantData.deliveryTime || 30,
+    };
+  }
+
+  const menuItems: MenuItem[] = [];
+  const categories: Category[] = [];
+  if (menuRes.ok) {
+    const menuData = (await menuRes.json()) as MenuItem[];
+    const categoryMap = new Map<string, { id: string; name: string; count: number }>();
+    menuData.forEach((item: MenuItem) => {
+      const catName = item.categoryName || item.category || 'Other';
+      if (!categoryMap.has(catName)) {
+        categoryMap.set(catName, { id: catName, name: catName, count: 0 });
+      }
+      categoryMap.get(catName)!.count++;
+    });
+    categories.push(...Array.from(categoryMap.values()));
+    menuItems.push(...menuData);
+  }
+
+  return { restaurant, menuItems, categories };
+};
+
 const RestaurantPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const dispatch = useDispatch();
   const [activeCategory, setActiveCategory] = useState('all');
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [restaurant, setRestaurant] = useState<{ name: string; rating: number; deliveryTime: number } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (!id || typeof id !== 'string') return;
+  const { data, isLoading, error: queryError } = useQuery({
+    queryKey: ['restaurant', id],
+    queryFn: () => fetchRestaurantData(id as string),
+    enabled: !!id && typeof id === 'string',
+  });
 
-    const fetchData = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const [restaurantRes, menuRes] = await Promise.all([
-          fetch(`/api/restaurants?id=${encodeURIComponent(id)}`),
-          fetch(`/api/menu?restaurantId=${encodeURIComponent(id)}`),
-        ]);
-
-        if (restaurantRes.ok) {
-          const restaurantData = await restaurantRes.json();
-          setRestaurant({
-            name: restaurantData.name || 'Restaurant',
-            rating: restaurantData.rating || 4.0,
-            deliveryTime: restaurantData.deliveryTime || 30,
-          });
-        }
-
-        if (menuRes.ok) {
-          const menuData = await menuRes.json();
-          setMenuItems(menuData);
-
-          const categoryMap = new Map<string, { id: string; name: string; count: number }>();
-          menuData.forEach((item: MenuItem) => {
-            const catName = item.categoryName || item.category || 'Other';
-            if (!categoryMap.has(catName)) {
-              categoryMap.set(catName, { id: catName, name: catName, count: 0 });
-            }
-            categoryMap.get(catName)!.count++;
-          });
-          setCategories(Array.from(categoryMap.values()));
-        }
-      } catch {
-        setError('Failed to load restaurant data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  const loading = isLoading || !id;
+  const error = queryError ? 'Failed to load restaurant data' : '';
+  const restaurant = data?.restaurant ?? null;
+  const menuItems = data?.menuItems ?? [];
+  const categories = data?.categories ?? [];
 
   const filtered = activeCategory === 'all' ? menuItems : menuItems.filter((item) => item.category === (categories.find(c => c.id === activeCategory)?.name || activeCategory) || item.category === activeCategory);
 

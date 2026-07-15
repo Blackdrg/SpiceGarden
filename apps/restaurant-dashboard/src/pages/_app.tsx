@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { Provider, useSelector, useDispatch } from 'react-redux';
@@ -24,7 +24,7 @@ function AuthHydrator({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: ReturnType<typeof store.getState>) => state.auth.isAuthenticated);
   const hydrated = useSelector((state: ReturnType<typeof store.getState>) => state.auth.hydrated);
-  const [checked, setChecked] = useState(false);
+  const isLoginPage = router.pathname === '/login';
 
   useEffect(() => {
     let cancelled = false;
@@ -46,18 +46,11 @@ function AuthHydrator({ children }: { children: React.ReactNode }) {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    setChecked(true);
-    const isLoginPage = router.pathname === '/login';
-    if (isLoginPage && isAuthenticated) {
-      router.replace('/');
-    } else if (!isLoginPage && !isAuthenticated) {
-      router.replace('/login');
-    }
-  }, [hydrated, isAuthenticated, router]);
+  if (!hydrated) {
+    return null;
+  }
 
-  if (!hydrated || !checked) {
+  if (!isLoginPage && !isAuthenticated) {
     return null;
   }
 

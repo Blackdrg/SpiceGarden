@@ -29,15 +29,17 @@ export default function HistoryScreen(_props: ScreenProps): React.JSX.Element {
         setLoading(true);
         setError(null);
         const assignments = await deliveryApi.getDeliveryHistory();
-        const mapped = assignments
-          .filter((a: any) => a.order)
-          .map((a: any) => ({
+        const mapped: { orderId: string; restaurant: string; amount: number; date: string; status: string }[] = [];
+        for (const a of assignments as any[]) {
+          if (!a.order) continue;
+          mapped.push({
             orderId: a.order.id,
             restaurant: a.branch?.branchName || a.order.restaurantId || 'Restaurant',
             amount: Number(a.order.grandTotal || 0),
             date: a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '',
             status: a.status || a.order.status || 'completed',
-          }));
+          });
+        }
         setHistory(mapped);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load history');

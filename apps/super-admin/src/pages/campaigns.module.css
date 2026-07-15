@@ -1,0 +1,109 @@
+.campaignsContainer {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-top: 8px;
+}
+
+.campaignList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campaignHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status.active {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status.draft {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+.status.paused {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status.completed {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.type {
+  font-size: 0.875rem;
+  color: #6B7280;
+  text-transform: capitalize;
+}
+
+.campaignStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6B7280;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.value {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #E5E7EB;
+}

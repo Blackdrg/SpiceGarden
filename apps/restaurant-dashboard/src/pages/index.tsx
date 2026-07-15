@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
 import { Button } from '@spicegarden/ui';
+import { useQuery } from '@tanstack/react-query';
 import type { Socket } from 'socket.io-client';
 import styles from './index.module.css';
 
@@ -198,33 +199,27 @@ function updateOrderStatus(orders: Order[], orderId: string, status: OrderStatus
 export default function KitchenDashboard() {
   const [state, dispatch] = useReducer(dashboardReducer, undefined, createInitialState);
 
+  const { data } = useQuery({
+    queryKey: ['dashboard-initial'],
+    queryFn: async () => {
+      const [ordersRes, inventoryRes] = await Promise.all([
+        fetch('/api/orders'),
+        fetch('/api/inventory?lowStock=true'),
+      ]);
+      const orders = ordersRes.ok ? await ordersRes.json() : [];
+      const inventory = inventoryRes.ok ? await inventoryRes.json() : [];
+      return { orders, inventory };
+    },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  });
+
   useEffect(() => {
-    let cancelled = false;
-
-    const fetchInitialData = async () => {
-      try {
-        const [ordersRes, inventoryRes] = await Promise.all([
-          fetch('/api/orders'),
-          fetch('/api/inventory?lowStock=true'),
-        ]);
-
-        if (!cancelled) {
-          if (ordersRes.ok) {
-            const orders = await ordersRes.json();
-            dispatch({ type: 'orders-loaded', orders });
-          }
-          if (inventoryRes.ok) {
-            const inventory = await inventoryRes.json();
-            dispatch({ type: 'inventory-loaded', inventory });
-          }
-        }
-      } catch {
-        // keep empty state on error
-      }
-    };
-
-    fetchInitialData();
-  }, []);
+    if (data) {
+      dispatch({ type: 'orders-loaded', orders: data.orders });
+      dispatch({ type: 'inventory-loaded', inventory: data.inventory });
+    }
+  }, [data, dispatch]);
 
   useEffect(() => {
     let cancelled = false;
