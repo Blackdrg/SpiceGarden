@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id } = req.query;
 
   try {
-    let url = `${BACKEND_URL}/business/restaurants`;
+    let url = `${BACKEND_URL}/restaurants`;
     if (id && typeof id === 'string') {
       url = `${BACKEND_URL}/restaurants/${id}`;
     }

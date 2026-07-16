@@ -9,6 +9,7 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
+import { CreateStripeConnectAccountDto, CreateRazorpayFundAccountDto } from './payment-provider.dto';
 
 @ApiTags('payment-provider')
 @Controller('payment-provider')
@@ -26,14 +27,14 @@ export class PaymentProviderController {
   @ApiBody({ schema: { type: 'object' } })
   async createStripeConnectAccount(
     @Request() req: any,
-    @Body() dto: any
+    @Body() dto: CreateStripeConnectAccountDto
   ) {
     const restaurantId = req.user?.restaurantId || req.user?.id;
     if (!restaurantId) {
       throw new BadRequestException('Restaurant ID not found in user context');
     }
 
-    return this.stripeConnectService.createConnectAccount(restaurantId, dto);
+    return this.stripeConnectService.createConnectAccount(restaurantId, dto as any);
   }
 
   @Get('stripe-connect/status')
@@ -51,14 +52,14 @@ export class PaymentProviderController {
   @ApiBody({ schema: { type: 'object' } })
   async createRazorpayFundAccount(
     @Request() req: any,
-    @Body() dto: any
+    @Body() dto: CreateRazorpayFundAccountDto
   ) {
     const restaurantId = req.user?.restaurantId || req.user?.id;
     if (!restaurantId) {
       throw new BadRequestException('Restaurant ID not found in user context');
     }
 
-    return this.razorpaySettlementService.createFundAccount(restaurantId, dto);
+    return this.razorpaySettlementService.createFundAccount(restaurantId, dto as any);
   }
 
   @Get('razorpay/settlement/status')

@@ -1,0 +1,6 @@
+{"type":"receive","time":1784223481669.064,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"4af701080065f03e\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223481669.783,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223479677}"}
+{"type":"receive","time":1784223481675.095,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}
+{"type":"send","time":1784223481841.135,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223476868.5,\"endTime\":1784223481840.9,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/restaurant\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223482736.002,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}
+{"type":"send","time":1784223484183.572,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/restaurant\"}"}

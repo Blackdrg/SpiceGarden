@@ -43,6 +43,15 @@ import { TenantModule } from './services/tenant/tenant.module';
 import { ApiKeyModule } from './services/enterprise/api-key.module';
 import { BankAccountModule } from './services/finance/bank-account.module';
 import { SettlementModule } from './services/finance/settlement.module';
+import { WebhookModule } from './services/payments/webhook/webhook.module';
+import { WebhookRetryModule } from './services/payments/webhook/webhook-retry.module';
+import { PaymentProviderModule } from './services/payment-provider/payment-provider.module';
+import { MapsModule } from './services/maps/maps.module';
+import { LegalModule } from './legal/legal.module';
+import { MenuCustomizationModule } from './services/menu-customization/menu-customization.module';
+import { GeoModule } from './services/geo/geo.module';
+import { AiServiceModule } from './services/ai/ai.module';
+import { EnhancedDeliveryServiceModule } from './services/delivery/enhanced-delivery.module';
 
 @Module({
   imports: [
@@ -90,6 +99,15 @@ import { SettlementModule } from './services/finance/settlement.module';
     ApiKeyModule,
     BankAccountModule,
     SettlementModule,
+    WebhookModule,
+    WebhookRetryModule,
+    PaymentProviderModule,
+    MapsModule,
+    LegalModule,
+    MenuCustomizationModule,
+    GeoModule,
+    AiServiceModule,
+    EnhancedDeliveryServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

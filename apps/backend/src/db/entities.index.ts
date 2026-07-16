@@ -15,6 +15,7 @@ import { DriverAssignmentEntity } from "./entities/driver-assignment.entity";
 import { DriverDocumentEntity } from "./entities/driver-document.entity";
 import { DriverFraudEntity } from "./entities/driver-fraud.entity";
 import { DriverIncentiveEntity } from "./entities/driver-incentive.entity";
+import { DriverIssueEntity } from "./entities/driver-issue.entity";
 import { DriverPenaltyEntity } from "./entities/driver-penalty.entity";
 import { DriverScoreEntity } from "./entities/driver-score.entity";
 import { DriverShiftEntity } from "./entities/driver-shift.entity";
@@ -97,6 +98,7 @@ export const entities = [
   DriverDocumentEntity,
   DriverFraudEntity,
   DriverIncentiveEntity,
+  DriverIssueEntity,
   DriverPenaltyEntity,
   DriverScoreEntity,
   DriverShiftEntity,

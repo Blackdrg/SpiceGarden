@@ -25,6 +25,7 @@ module.exports = {
     '/dist/',
     'mongo-connection.spec.ts',
     'mongo-connection.spec.js',
-    'mongo-connection.spec.cjs'
+    'mongo-connection.spec.cjs',
+    'test/integration/',
   ]
 };

@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SettlementService } from './settlement.service';
+import { CreateSettlementDto, GetSettlementsQueryDto, FailSettlementDto, GetSettlementSummaryDto } from './settlement.dto';
 
 @Controller('finance/settlements')
 @ApiTags('Settlements')
@@ -9,14 +10,14 @@ export class SettlementController {
 
   @Post()
   @ApiOperation({ summary: 'Create settlement report' })
-  async createSettlement(@Body() settlementData: any) {
+  async createSettlement(@Body() settlementData: CreateSettlementDto) {
     return this.settlementService.createSettlementReport(settlementData);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get settlement reports' })
-  async getSettlements(@Body() body?: any) {
-    return this.settlementService.getSettlementReports(body);
+  async getSettlements(@Query() query: GetSettlementsQueryDto) {
+    return this.settlementService.getSettlementReports(query as any);
   }
 
   @Get(':id')
@@ -33,7 +34,7 @@ export class SettlementController {
 
   @Post(':id/fail')
   @ApiOperation({ summary: 'Mark settlement as failed' })
-  async failSettlement(@Param('id') id: string, @Body() body: { reason: string }) {
+  async failSettlement(@Param('id') id: string, @Body() body: FailSettlementDto) {
     return this.settlementService.failSettlement(id, body.reason);
   }
 
@@ -51,7 +52,7 @@ export class SettlementController {
 
   @Get('summary/:restaurantId')
   @ApiOperation({ summary: 'Get settlement summary for restaurant' })
-  async getSummary(@Param('restaurantId') restaurantId: string, @Body() body: { month: number; year: number }) {
-    return this.settlementService.getSettlementSummary(restaurantId, body.month, body.year);
+  async getSummary(@Param('restaurantId') restaurantId: string, @Query() query: GetSettlementSummaryDto) {
+    return this.settlementService.getSettlementSummary(restaurantId, query.month, query.year);
   }
 }

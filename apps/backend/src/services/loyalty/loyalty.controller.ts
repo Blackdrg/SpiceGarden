@@ -12,6 +12,7 @@ import {
   GenerateReferralCodeDto,
   ProcessCashbackDto,
   ProcessReferralDto,
+  CreateCouponDto,
 } from './loyalty.dto';
 
 @ApiTags('loyalty')
@@ -25,7 +26,7 @@ export class LoyaltyController {
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('orders:manage')
   @ApiOperation({ summary: 'Create a new coupon' })
-  createCoupon(@Body() data: any) {
+  createCoupon(@Body() data: CreateCouponDto) {
     return this.loyaltyService.createCoupon(data);
   }
 

@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { AddAddressDto } from './address.dto';
 
 @Controller('addresses')
 @UseGuards(JwtAuthGuard)
@@ -14,7 +15,7 @@ export class AddressController {
   }
 
   @Post()
-  async addAddress(@Req() req: any, @Body() data: any) {
+  async addAddress(@Req() req: any, @Body() data: AddAddressDto) {
     const userId = req.user?.sub;
     return this.addressService.addAddress(userId, data);
   }

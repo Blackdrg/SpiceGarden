@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CustomerSubscriptionService } from './customer-subscription.service';
+import { SubscribeCustomerDto, CancelCustomerSubscriptionDto } from './customer-subscription.dto';
 
 @Controller('customer/subscription')
 @ApiTags('Customer Subscription')
@@ -15,13 +16,13 @@ export class CustomerSubscriptionController {
 
   @Post('subscribe')
   @ApiOperation({ summary: 'Subscribe customer to Prime' })
-  async subscribe(@Body() body: { userId: string; planId: string; billingCycle: string }) {
+  async subscribe(@Body() body: SubscribeCustomerDto) {
     return this.customerSubscriptionService.subscribeCustomer(body.userId, body.planId, body.billingCycle as any);
   }
 
   @Post('cancel')
   @ApiOperation({ summary: 'Cancel Prime subscription' })
-  async cancel(@Body() body: { userId: string }) {
+  async cancel(@Body() body: CancelCustomerSubscriptionDto) {
     return this.customerSubscriptionService.cancelSubscription(body.userId);
   }
 

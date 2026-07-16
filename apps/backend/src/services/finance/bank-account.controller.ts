@@ -1,6 +1,13 @@
 import { Controller, Post, Get, Body, Param, UseGuards, Request, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { BankAccountService } from './bank-account.service';
+import {
+  AddBankAccountDto,
+  UpdateBankAccountDto,
+  SubmitKycDto,
+  VerifyBankAccountDto,
+  RejectKycDto,
+} from './bank-account.dto';
 
 @Controller('finance/bank-accounts')
 @ApiTags('Bank Accounts')
@@ -9,8 +16,8 @@ export class BankAccountController {
 
   @Post()
   @ApiOperation({ summary: 'Add bank account' })
-  async addBankAccount(@Body() bankData: any) {
-    return this.bankAccountService.addBankAccount(bankData);
+  async addBankAccount(@Body() bankData: AddBankAccountDto) {
+    return this.bankAccountService.addBankAccount(bankData as any);
   }
 
   @Get(':entityType/:entityId')
@@ -27,25 +34,25 @@ export class BankAccountController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update bank account' })
-  async updateBankAccount(@Param('id') id: string, @Body() updateData: any) {
-    return this.bankAccountService.updateBankAccount(id, updateData);
+  async updateBankAccount(@Param('id') id: string, @Body() updateData: UpdateBankAccountDto) {
+    return this.bankAccountService.updateBankAccount(id, updateData as any);
   }
 
   @Post(':id/kyc')
   @ApiOperation({ summary: 'Submit KYC documents' })
-  async submitKyc(@Param('id') id: string, @Body() body: { documents: any }) {
+  async submitKyc(@Param('id') id: string, @Body() body: SubmitKycDto) {
     return this.bankAccountService.submitKyc(id, body.documents);
   }
 
   @Post(':id/verify')
   @ApiOperation({ summary: 'Verify bank account' })
-  async verify(@Param('id') id: string, @Body() body: { verifiedBy: string }) {
+  async verify(@Param('id') id: string, @Body() body: VerifyBankAccountDto) {
     return this.bankAccountService.verifyBankAccount(id, body.verifiedBy);
   }
 
   @Post(':id/reject')
   @ApiOperation({ summary: 'Reject KYC' })
-  async rejectKyc(@Param('id') id: string, @Body() body: { reason: string }) {
+  async rejectKyc(@Param('id') id: string, @Body() body: RejectKycDto) {
     return this.bankAccountService.rejectKyc(id, body.reason);
   }
 

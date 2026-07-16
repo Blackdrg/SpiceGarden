@@ -1,0 +1,9 @@
+{"type":"receive","time":1784223500644.5378,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"17ac2f64a703e075\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223500645.205,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223500405}"}
+{"type":"receive","time":1784223500645.894,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}
+{"type":"send","time":1784223503916.328,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223496770,\"endTime\":1784223503916,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223505325.1938,"opcode":1,"data":"{\"action\":\"building\"}"}
+{"type":"receive","time":1784223506060.503,"opcode":1,"data":"{\"action\":\"built\",\"hash\":\"17ac2f64a703e075\",\"warnings\":[],\"errors\":[]}"}
+{"type":"send","time":1784223506060.938,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223500405}"}
+{"type":"send","time":1784223506231.4,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/\"}"}
+{"type":"receive","time":1784223506854.26,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}

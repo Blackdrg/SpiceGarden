@@ -1,0 +1,6 @@
+{"type":"receive","time":1784223521757.965,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"9187e98439c19bd9\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223521758.748,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223519617}"}
+{"type":"receive","time":1784223521762.41,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/mfa-setup\":true,\"/reset-password\":true,\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}
+{"type":"send","time":1784223521869.018,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223517590.9,\"endTime\":1784223521868.6997,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/mfa-setup\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223522827.359,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/mfa-setup\":true,\"/reset-password\":true,\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}
+{"type":"send","time":1784223524269.841,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/mfa-setup\"}"}

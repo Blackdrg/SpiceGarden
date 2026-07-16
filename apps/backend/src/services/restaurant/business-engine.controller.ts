@@ -6,7 +6,7 @@ import { PermissionGuard } from '../../security/permission.guard';
 import { Roles } from '../../security/roles.decorator';
 import { Permissions } from '../../security/permissions.decorator';
 import { UserRole } from '../../shared/domain/user.interface';
-import { SetDriverAvailabilityDto } from './business-engine.dto';
+import { SetDriverAvailabilityDto, UpdateDriverLocationDto } from './business-engine.dto';
 
 @Controller('business')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -46,7 +46,7 @@ export class BusinessEngineController {
   @Permissions('deliveries:manage_assigned')
   async updateDriverLocation(
     @Param('id') driverId: string,
-    @Body() location: { lat: number; lng: number; heading?: number; speed?: number }
+    @Body() location: UpdateDriverLocationDto
   ) {
     return this.businessEngine.registerDriverLocation(driverId, location);
   }

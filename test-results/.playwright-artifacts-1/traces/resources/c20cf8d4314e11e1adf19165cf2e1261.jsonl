@@ -1,0 +1,10 @@
+{"type":"receive","time":1784223451277.9648,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"a89bafb84ea18501\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223451279.7979,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223449277}"}
+{"type":"receive","time":1784223451295.306,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}
+{"type":"send","time":1784223451588.095,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223442993.8,\"endTime\":1784223451587.3,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/offers\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223452251.4858,"opcode":1,"data":"{\"action\":\"building\"}"}
+{"type":"receive","time":1784223453055.144,"opcode":1,"data":"{\"action\":\"built\",\"hash\":\"3911ec966d9c2a21\",\"warnings\":[],\"errors\":[]}"}
+{"type":"send","time":1784223453055.534,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223449277}"}
+{"type":"send","time":1784223453142.1099,"opcode":1,"data":"{\"event\":\"client-hmr-latency\",\"id\":1784223449277,\"startTime\":1784223452251,\"endTime\":1784223453141,\"page\":\"/offers\",\"updatedModules\":[],\"isPageHidden\":false}"}
+{"type":"send","time":1784223453816.857,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/offers\"}"}
+{"type":"receive","time":1784223454540.4539,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}

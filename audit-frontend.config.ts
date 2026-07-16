@@ -10,9 +10,9 @@ export default defineConfig({
   testDir: '.',
   testMatch: /audit-frontend\.spec\.ts/,
   fullyParallel: false, // keep console/network capture deterministic per route
-  workers: 2,
+  workers: 1,
   retries: 0,
-  timeout: 90_000,
+  timeout: 120_000,
   expect: { timeout: 15_000 },
   reporter: [['list'], ['html', { outputFolder: 'playwright-report-audit', open: 'never' }]],
   use: {

@@ -14,6 +14,8 @@ import { RestaurantOnboardingService } from './onboarding.service';
 import { RestaurantOnboardingController } from './onboarding.controller';
 import { SubscriptionService } from './subscription.service';
 import { SubscriptionController } from './subscription.controller';
+import { BusinessEngineService } from './business-engine.service';
+import { BusinessEngineController } from './business-engine.controller';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { MenuCategoryEntity } from '../../db/entities/menu-category.entity';
@@ -29,12 +31,16 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { SubscriptionPlanEntity } from '../../db/entities/subscription-plan.entity';
 import { RestaurantSubscriptionEntity } from '../../db/entities/restaurant-subscription.entity';
 import { KdsGateway } from './kds.gateway';
+import { DriverAssignmentModule } from '../../modules/driver-assignment/driver-assignment.module';
+import { AuditModule } from '../../audit/audit.module';
 import { PaymentServiceModule } from '../payments/payments.module';
 
 @Module({
   imports: [
     DbRepositoriesModule,
     PaymentServiceModule,
+    DriverAssignmentModule,
+    AuditModule,
   ],
   providers: [
     RestaurantService,
@@ -45,12 +51,14 @@ import { PaymentServiceModule } from '../payments/payments.module';
     CommissionService,
     RestaurantOnboardingService,
     SubscriptionService,
+    BusinessEngineService,
   ],
   controllers: [
     RestaurantController,
     RestaurantOpsController,
     RestaurantOnboardingController,
     SubscriptionController,
+    BusinessEngineController,
   ],
   exports: [
     RestaurantService,

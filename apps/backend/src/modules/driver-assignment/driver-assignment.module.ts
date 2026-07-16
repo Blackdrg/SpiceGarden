@@ -13,5 +13,10 @@ import { DbModule } from '../../db/db.module';
     DispatchEngineService,
     ETAIntelligenceService
   ],
+  exports: [
+    DriverAssignmentService,
+    DispatchEngineService,
+    ETAIntelligenceService
+  ],
 })
 export class DriverAssignmentModule {}

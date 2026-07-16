@@ -42,6 +42,10 @@ import { IdempotencyEntity } from '../services/payments/idempotency.entity';
 import { PaymentValidationEventEntity } from '../services/payments/payment-validation.entity';
 import { PaymentFraudFlagEntity } from '../services/payments/payment-fraud.entity';
 import { PaymentEventEntity } from '../services/payments/payment-event.entity';
+import { BranchControlEntity } from './entities/branch-control.entity';
+import { HolidayScheduleEntity } from './entities/holiday-schedule.entity';
+import { TicketMessageEntity } from './entities/support-ticket.entity';
+import { NotificationAnalyticsEntity } from './entities/notification-analytics.entity';
 import { ReviewDocument, ReviewSchema } from './schemas/review.schema';
 import { DeletionRequestEntity } from './entities/deletion-request.entity';
 import { DataExportRequestEntity } from './entities/data-export-request.entity';
@@ -161,6 +165,10 @@ const entities = [
   ApiKeyEntity,
   BankAccountEntity,
   SettlementReportEntity,
+  BranchControlEntity,
+  HolidayScheduleEntity,
+  NotificationAnalyticsEntity,
+  TicketMessageEntity,
 ];
 
 const isLocalSqlite =

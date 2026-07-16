@@ -1,22 +1,17 @@
 import { Controller, Post, Get, Body, Param, UseGuards, Request, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { DeliveryPricingService } from './delivery-pricing.service';
+import { CalculateDeliveryFeeDto, CreatePricingRuleDto, UpdatePricingRuleDto } from './delivery-pricing.dto';
 
 @Controller('delivery/pricing')
 @ApiTags('Delivery Pricing')
 export class DeliveryPricingController {
   constructor(private readonly deliveryPricingService: DeliveryPricingService) {}
 
-  @Get('calculate')
+  @Post('calculate')
   @ApiOperation({ summary: 'Calculate delivery fee' })
   async calculate(
-    @Body() body: {
-      restaurantId: string;
-      distanceKm: number;
-      durationMinutes: number;
-      weatherCondition?: string;
-      isHoliday?: boolean;
-    }
+    @Body() body: CalculateDeliveryFeeDto,
   ) {
     return this.deliveryPricingService.calculateDeliveryFee(
       body.restaurantId,
@@ -35,13 +30,13 @@ export class DeliveryPricingController {
 
   @Post('rules')
   @ApiOperation({ summary: 'Create pricing rule' })
-  async createRule(@Body() ruleData: any) {
+  async createRule(@Body() ruleData: CreatePricingRuleDto) {
     return this.deliveryPricingService.createPricingRule(ruleData);
   }
 
   @Put('rules/:ruleId')
   @ApiOperation({ summary: 'Update pricing rule' })
-  async updateRule(@Param('ruleId') ruleId: string, @Body() updateData: any) {
+  async updateRule(@Param('ruleId') ruleId: string, @Body() updateData: UpdatePricingRuleDto) {
     return this.deliveryPricingService.updatePricingRule(ruleId, updateData);
   }
 }

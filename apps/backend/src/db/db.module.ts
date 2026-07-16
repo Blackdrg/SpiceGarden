@@ -3,118 +3,13 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { MongooseModule, getModelToken } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as crypto from "crypto";
-import * as path from "path";
-import { LocalRepositoryModule } from "./local-repository.module";
-import { UserEntity } from "./entities/user.entity";
-import { OrderEntity } from "./entities/order.entity";
-import { SessionEntity } from "./entities/session.entity";
-import { AuditLogEntity } from "./entities/audit-log.entity";
-import { RestaurantEntity } from "./entities/restaurant.entity";
-import { RestaurantBranchEntity } from "./entities/restaurant-branch.entity";
-import { MenuCategoryEntity } from "./entities/menu-category.entity";
-import { MenuItemEntity } from "./entities/menu-item.entity";
-import { InventoryItemEntity } from "./entities/inventory-item.entity";
-import { DriverEntity } from "./entities/driver.entity";
-import { WalletEntity } from "./entities/wallet.entity";
-import { WalletTransactionEntity } from "./entities/wallet-transaction.entity";
-import { AddressEntity } from "./entities/address.entity";
-import { MenuVariantEntity } from "./entities/menu-variant.entity";
-import { MenuAddonEntity } from "./entities/menu-addon.entity";
-import { OrderItemEntity } from "./entities/order-item.entity";
-import { SubscriptionEntity } from "./entities/subscription.entity";
-import { HSNSACEntity } from "./entities/hsn-sac.entity";
-import { OtpEntity } from "./entities/otp.entity";
-import { DeviceFingerprintEntity } from "./entities/device-fingerprint.entity";
-import { RecipeEntity } from "./entities/recipe.entity";
-import { BatchEntity } from "./entities/batch.entity";
-import { FoodPrepEntity } from "./entities/food-prep.entity";
-import { KitchenSLAEntity } from "./entities/kitchen-sla.entity";
-import { SupplierEntity } from "./entities/supplier.entity";
-import { InventoryAlertEntity } from "./entities/inventory-alert.entity";
-import { DriverAssignmentEntity } from "./entities/driver-assignment.entity";
-import { SLAAlertEntity } from "./entities/sla-alert.entity";
-import { MenuItemAvailabilityEntity } from "./entities/menu-item-availability.entity";
-import { DriverScoreEntity } from "./entities/driver-score.entity";
-import { DeliverySLAEntity } from "./entities/delivery-sla.entity";
-import { DriverFraudEntity } from "./entities/driver-fraud.entity";
-import { StripeWebhookEntity } from "./entities/stripe-webhook.entity";
-import { GSTDetailEntity } from "./entities/gst-detail.entity";
-import { RestaurantGSTEntity } from "./entities/restaurant-gst.entity";
-import { PaymentDisputeEntity } from "./entities/payment-dispute.entity";
-import { IdempotencyEntity } from "../services/payments/idempotency.entity";
-import { PaymentValidationEventEntity } from "../services/payments/payment-validation.entity";
-import { PaymentFraudFlagEntity } from "../services/payments/payment-fraud.entity";
-import { PaymentEventEntity } from "../services/payments/payment-event.entity";
-import { DriverIssueEntity } from "./entities/driver-issue.entity";
-import { SubscriptionPlanEntity } from "./entities/subscription-plan.entity";
-import { CustomerSubscriptionEntity } from "./entities/customer-subscription.entity";
-import { RestaurantSubscriptionEntity } from "./entities/restaurant-subscription.entity";
-import { DeliveryPricingEntity } from "./entities/delivery-pricing.entity";
-import { PlatformFeeEntity } from "./entities/platform-fee.entity";
-import { JournalEntryEntity } from "./entities/journal-entry.entity";
-import { CampaignEntity } from "./entities/campaign.entity";
-import { TenantEntity } from "./entities/tenant.entity";
-import { ApiKeyEntity } from "./entities/api-key.entity";
-import { BankAccountEntity } from "./entities/bank-account.entity";
-import { SettlementReportEntity } from "./entities/settlement-report.entity";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
-import { AppLocalDataSource } from "./data-source.local";
 import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
 
-const entities = [
-  UserEntity,
-  OrderEntity,
-  SessionEntity,
-  AuditLogEntity,
-  RestaurantEntity,
-  RestaurantBranchEntity,
-  RestaurantGSTEntity,
-  MenuCategoryEntity,
-  MenuItemEntity,
-  HSNSACEntity,
-  InventoryItemEntity,
-  DriverEntity,
-  WalletEntity,
-  WalletTransactionEntity,
-  AddressEntity,
-  MenuVariantEntity,
-  MenuAddonEntity,
-  OrderItemEntity,
-  SubscriptionEntity,
-  OtpEntity,
-  DeviceFingerprintEntity,
-  RecipeEntity,
-  BatchEntity,
-  FoodPrepEntity,
-  KitchenSLAEntity,
-  SupplierEntity,
-  InventoryAlertEntity,
-  DriverAssignmentEntity,
-  SLAAlertEntity,
-  MenuItemAvailabilityEntity,
-  DriverScoreEntity,
-  DeliverySLAEntity,
-  DriverFraudEntity,
-  StripeWebhookEntity,
-  GSTDetailEntity,
-  PaymentDisputeEntity,
-  IdempotencyEntity,
-  PaymentValidationEventEntity,
-  PaymentFraudFlagEntity,
-  PaymentEventEntity,
-  DriverIssueEntity,
-  SubscriptionPlanEntity,
-  CustomerSubscriptionEntity,
-  RestaurantSubscriptionEntity,
-  DeliveryPricingEntity,
-  PlatformFeeEntity,
-  JournalEntryEntity,
-  CampaignEntity,
-  TenantEntity,
-  ApiKeyEntity,
-  BankAccountEntity,
-  SettlementReportEntity,
-];
+const entitiesGlob =
+  process.env.LOCAL_DB === "sqlite" || process.env.LOCAL_DB === "sqlite-file"
+    ? "dist/db/**/*.entity.js"
+    : [__dirname + "/../**/*.entity.js"];
 
 const localSqlite = process.env.LOCAL_DB === "sqlite";
 const localSqliteFile = process.env.LOCAL_DB === "sqlite-file";
@@ -140,7 +35,7 @@ function createSqliteImports() {
       useFactory: (configService: ConfigService) => ({
         type: "sqlite",
         database: configService.get<string>("LOCAL_DB_PATH") || "./local-dev.sqlite",
-        entities,
+        entitiesGlob,
         synchronize: true,
         logging: configService.get<string>("DB_LOGGING", "false") === "true",
       }),
@@ -164,7 +59,7 @@ const imports: any[] = useLocalSqlite
           username: configService.get<string>("DB_USER") || "spicegarden",
           password: configService.get<string>("DB_PASS") || "spicegarden_dev",
           database: configService.get<string>("DB_NAME") || "spicegarden",
-          entities,
+          entitiesGlob,
           synchronize: false,
           migrations: ["dist/db/migrations/*.js"],
           migrationsRun: true,

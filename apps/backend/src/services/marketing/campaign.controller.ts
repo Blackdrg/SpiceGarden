@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CampaignService, CampaignStatus } from './campaign.service';
+import { CreateCampaignDto, RecordConversionDto } from './campaign.dto';
 
 @Controller('marketing/campaigns')
 @ApiTags('Campaigns')
@@ -9,7 +10,7 @@ export class CampaignController {
 
   @Post()
   @ApiOperation({ summary: 'Create campaign' })
-  async create(@Body() campaignData: any) {
+  async create(@Body() campaignData: CreateCampaignDto) {
     return this.campaignService.createCampaign(campaignData);
   }
 
@@ -27,8 +28,8 @@ export class CampaignController {
 
   @Get()
   @ApiOperation({ summary: 'Get campaigns' })
-  async getCampaigns(@Body() body?: { status?: CampaignStatus; restaurantId?: string }) {
-    return this.campaignService.getCampaigns(body);
+  async getCampaigns(@Query() query: { status?: CampaignStatus; restaurantId?: string }) {
+    return this.campaignService.getCampaigns(query);
   }
 
   @Get(':id')
@@ -59,14 +60,14 @@ export class CampaignController {
 
   @Post(':id/conversion')
   @ApiOperation({ summary: 'Record conversion' })
-  async recordConversion(@Param('id') id: string, @Body() body: { orderAmount: number }) {
+  async recordConversion(@Param('id') id: string, @Body() body: RecordConversionDto) {
     await this.campaignService.recordConversion(id, body.orderAmount);
     return { success: true };
   }
 
   @Get('platform/stats')
   @ApiOperation({ summary: 'Get platform campaign stats' })
-  async getPlatformStats(@Body() body: { startDate: string; endDate: string }) {
-    return this.campaignService.getPlatformCampaignStats(new Date(body.startDate), new Date(body.endDate));
+  async getPlatformStats(@Query() query: { startDate: string; endDate: string }) {
+    return this.campaignService.getPlatformCampaignStats(new Date(query.startDate), new Date(query.endDate));
   }
 }

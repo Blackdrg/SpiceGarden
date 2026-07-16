@@ -11,6 +11,7 @@ import { PermissionGuard } from '../security/permission.guard';
 import { Roles } from '../security/roles.decorator';
 import { Permissions } from '../security/permissions.decorator';
 import { UserRole } from '../shared/domain/user.interface';
+import { MaskPiiDto, UnmaskPiiDto } from './compliance.dto';
 
 export interface DeletionRequestDto {
   userId: string;
@@ -258,7 +259,7 @@ export class ComplianceController {
   @Post('mask/pii')
   @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
   @Roles('admin', 'super_admin')
-  async maskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
+  async maskPiiFields(@Body() dto: MaskPiiDto) {
     const masked = this.dataPrivacyService.maskPii(dto.data, dto.fields);
     return { maskedData: masked };
   }
@@ -266,7 +267,7 @@ export class ComplianceController {
   @Post('unmask/pii')
   @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
   @Roles('admin', 'super_admin')
-  async unmaskPiiFields(@Body() dto: { data: Record<string, any>; fields: string[] }) {
+  async unmaskPiiFields(@Body() dto: UnmaskPiiDto) {
     const decrypted = this.dataPrivacyService.unmaskPii(dto.data, dto.fields);
     return { decryptedData: decrypted };
   }

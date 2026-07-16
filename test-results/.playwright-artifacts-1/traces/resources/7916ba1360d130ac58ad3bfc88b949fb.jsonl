@@ -1,0 +1,6 @@
+{"type":"receive","time":1784223470130.312,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"4cb167c6ec9a9206\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223470130.947,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223469840}"}
+{"type":"receive","time":1784223470131.408,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}
+{"type":"send","time":1784223472744.634,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223465384.6,\"endTime\":1784223472743.7002,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/checkout\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223473628.96,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true,\"/\":true}}"}
+{"type":"send","time":1784223475114.675,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/checkout\"}"}

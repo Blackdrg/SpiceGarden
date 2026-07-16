@@ -1,6 +1,13 @@
 import { Controller, Post, Get, Body, Param, UseGuards, Request, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { TenantService, TenantStatus } from './tenant.service';
+import {
+  CreateTenantDto,
+  UpdateTenantDto,
+  UpdateBrandingDto,
+  UpdateSettingsDto,
+  ListTenantsQueryDto,
+} from './tenant.dto';
 
 @Controller('admin/tenants')
 @ApiTags('Tenants')
@@ -9,7 +16,7 @@ export class TenantController {
 
   @Post()
   @ApiOperation({ summary: 'Create tenant' })
-  async create(@Body() tenantData: any) {
+  async create(@Body() tenantData: CreateTenantDto) {
     return this.tenantService.createTenant(tenantData);
   }
 
@@ -27,7 +34,7 @@ export class TenantController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update tenant' })
-  async updateTenant(@Param('id') id: string, @Body() updateData: any) {
+  async updateTenant(@Param('id') id: string, @Body() updateData: UpdateTenantDto) {
     return this.tenantService.updateTenant(id, updateData);
   }
 
@@ -45,19 +52,19 @@ export class TenantController {
 
   @Get()
   @ApiOperation({ summary: 'List tenants' })
-  async listTenants(@Body() body?: { status?: TenantStatus }) {
-    return this.tenantService.listTenants(body);
+  async listTenants(@Body() body: ListTenantsQueryDto) {
+    return this.tenantService.listTenants(body as any);
   }
 
   @Put(':id/branding')
   @ApiOperation({ summary: 'Update tenant branding' })
-  async updateBranding(@Param('id') id: string, @Body() branding: any) {
+  async updateBranding(@Param('id') id: string, @Body() branding: UpdateBrandingDto) {
     return this.tenantService.updateBranding(id, branding);
   }
 
   @Put(':id/settings')
   @ApiOperation({ summary: 'Update tenant settings' })
-  async updateSettings(@Param('id') id: string, @Body() settings: any) {
+  async updateSettings(@Param('id') id: string, @Body() settings: UpdateSettingsDto) {
     return this.tenantService.updateSettings(id, settings);
   }
 }

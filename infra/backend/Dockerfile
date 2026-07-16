@@ -17,7 +17,6 @@ WORKDIR /app
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder --chown=nodejs:nodejs /app/packages/shared/dist ./packages/shared/dist
-COPY --from=builder --chown=nodejs:nodejs /app/packages/api-types/dist ./packages/api-types/dist
 COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 ENV NODE_ENV=production
 USER nodejs

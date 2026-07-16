@@ -2,6 +2,7 @@ import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ApiKeyService } from './api-key.service';
 import { ApiKeyScope } from '../../db/entities/api-key.entity';
+import { GenerateApiKeyDto, RevokeApiKeyDto } from './api-key.dto';
 
 @Controller('enterprise/api-keys')
 @ApiTags('API Keys')
@@ -10,7 +11,7 @@ export class ApiKeyController {
 
   @Post()
   @ApiOperation({ summary: 'Generate API key' })
-  async generate(@Body() body: { userId: string; name: string; scopes: ApiKeyScope[]; tenantId?: string }) {
+  async generate(@Body() body: GenerateApiKeyDto) {
     return this.apiKeyService.generateApiKey(body.userId, body.name, body.scopes, body.tenantId);
   }
 
@@ -28,7 +29,7 @@ export class ApiKeyController {
 
   @Post(':id/revoke')
   @ApiOperation({ summary: 'Revoke API key' })
-  async revoke(@Param('id') id: string, @Body() body: { revokedBy: string }) {
+  async revoke(@Param('id') id: string, @Body() body: RevokeApiKeyDto) {
     return this.apiKeyService.revokeApiKey(id, body.revokedBy);
   }
 

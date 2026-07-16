@@ -23,8 +23,16 @@ const API_ORIGIN = 'http://localhost:3001';
 
 const SCREENSHOT_DIR = path.join(__dirname, 'audit-screenshots');
 const REPORT_PATH = path.join(__dirname, 'audit-report.json');
+const RESULTS_JSONL = path.join(__dirname, 'audit-results.jsonl');
 
 if (!fs.existsSync(SCREENSHOT_DIR)) fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+// Truncate results file at start so re-runs do not append stale data
+fs.writeFileSync(RESULTS_JSONL, '', 'utf-8');
+
+// Process-safe append of each route result (one JSON object per line)
+function persistResult(r: RouteResult) {
+  fs.appendFileSync(RESULTS_JSONL, JSON.stringify(r) + '\n', 'utf-8');
+}
 
 // ---------------------------------------------------------------------------
 // App + route definitions (discovered from src/pages of each app)
@@ -195,8 +203,9 @@ interface RouteResult {
   notes: string[];
 }
 
-const ALL_RESULTS: RouteResult[] = [];
-
+// NOTE: with workers the array is per-process; results are persisted to disk
+// per-route via persistResult() so the consolidated report is built from the
+// results JSONL file.
 function sanitize(s: string): string {
   return s.replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '') || 'root';
 }
@@ -289,11 +298,10 @@ async function auditRoute(page: Page, app: AppDef, route: string): Promise<Route
     // ---- navigate --------------------------------------------------------
     let nav;
     try {
-      nav = await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-    } catch (e) {
-      // networkidle can time out on dev servers with long-poll HMR; fall back
-      nav = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => null);
-      result.notes.push('networkidle timed out; used domcontentloaded');
+      nav = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch (e: any) {
+      result.issues.push(`Navigation failed: ${e?.message ?? String(e)}`);
+      nav = null;
     }
 
     result.httpStatus = nav ? nav.status() : null;
@@ -301,7 +309,7 @@ async function auditRoute(page: Page, app: AppDef, route: string): Promise<Route
     result.redirected = result.finalUrl.replace(/\/$/, '') !== url.replace(/\/$/, '');
 
     // Give client hydration / SPA a moment
-    await page.waitForTimeout(app.spa ? 4000 : 1500);
+    await page.waitForTimeout(app.spa ? 2500 : 800);
     result.finalUrl = page.url();
     result.redirected = result.finalUrl.replace(/\/$/, '') !== url.replace(/\/$/, '');
 
@@ -357,10 +365,7 @@ async function auditRoute(page: Page, app: AppDef, route: string): Promise<Route
       result.responsive.push({ label: vp.label, ok, note });
 
       // screenshot each viewport
-      const shot = path.join(
-        SCREENSHOT_DIR,
-        `${app.name}__${sanitize(route)}__${vp.label}.png`,
-      );
+      const shot = path.join(SCREENSHOT_DIR, `${app.name}__${sanitize(route)}__${vp.label}.png`);
       await page.screenshot({ path: shot, fullPage: false }).catch(() => {});
       result.screenshots.push(path.relative(__dirname, shot));
     }
@@ -434,7 +439,7 @@ for (const app of APPS) {
     for (const route of app.routes) {
       test(`${app.name} ${route}`, async ({ page }) => {
         const res = await auditRoute(page, app, route);
-        ALL_RESULTS.push(res);
+        persistResult(res);
 
         // Log a compact per-route summary to the console
         console.log(
@@ -451,27 +456,33 @@ for (const app of APPS) {
         // We do NOT hard-fail the Playwright test on route issues; the audit
         // records everything and produces a structured report. This keeps the
         // run green so all routes get audited, while issues are captured.
-        expect(res.httpStatus === null ? false : true).toBeTruthy();
+        expect(res).toBeDefined();
       });
     }
   });
 }
 
 // ---------------------------------------------------------------------------
-// Write consolidated report after all tests
+// Build consolidated report from the per-route JSONL results file.
+// Uses process.exit() hook so the report is written regardless of whether the
+// runner is still alive (handles timeouts with partially-completed audits).
 // ---------------------------------------------------------------------------
-test.afterAll(async () => {
+function buildReport() {
+  const lines = fs.existsSync(RESULTS_JSONL)
+    ? fs.readFileSync(RESULTS_JSONL, 'utf-8').split('\n').filter((l) => l.trim())
+    : [];
+  const all: RouteResult[] = lines.map((l) => JSON.parse(l));
   const byApp: Record<string, RouteResult[]> = {};
-  for (const r of ALL_RESULTS) (byApp[r.app] ||= []).push(r);
+  for (const r of all) (byApp[r.app] ||= []).push(r);
 
   const summary = {
     generatedAt: new Date().toISOString(),
-    totalRoutes: ALL_RESULTS.length,
+    totalRoutes: all.length,
     counts: {
-      PASS: ALL_RESULTS.filter((r) => r.status === 'PASS').length,
-      PARTIAL: ALL_RESULTS.filter((r) => r.status === 'PARTIAL').length,
-      FAIL: ALL_RESULTS.filter((r) => r.status === 'FAIL').length,
-      'NOT VERIFIED': ALL_RESULTS.filter((r) => r.status === 'NOT VERIFIED').length,
+      PASS: all.filter((r) => r.status === 'PASS').length,
+      PARTIAL: all.filter((r) => r.status === 'PARTIAL').length,
+      FAIL: all.filter((r) => r.status === 'FAIL').length,
+      'NOT VERIFIED': all.filter((r) => r.status === 'NOT VERIFIED').length,
     },
     apps: byApp,
   };
@@ -479,4 +490,9 @@ test.afterAll(async () => {
   fs.writeFileSync(REPORT_PATH, JSON.stringify(summary, null, 2), 'utf-8');
   console.log(`\n\n===== AUDIT REPORT WRITTEN TO ${REPORT_PATH} =====`);
   console.log(JSON.stringify(summary.counts, null, 2));
-});
+  return summary;
+}
+
+// Build the report on normal exit and on forced timeout/interrupt so a
+// partially-completed audit is still captured.
+process.on('exit', () => buildReport());

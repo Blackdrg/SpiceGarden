@@ -1,0 +1,6 @@
+{"type":"receive","time":1784223512690.663,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"e20a03798433007c\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.10\",\"installed\":\"15.5.20\"},\"debug\":{},\"devIndicator\":{\"disabledUntil\":0},\"devToolsConfig\":{}}"}
+{"type":"send","time":1784223512692.2483,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1784223510534}"}
+{"type":"receive","time":1784223512701.8823,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/reset-password\":true,\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}
+{"type":"send","time":1784223512924.7312,"opcode":1,"data":"{\"event\":\"span-end\",\"startTime\":1784223508477.6,\"endTime\":1784223512923.8,\"spanName\":\"navigation-to-hydration\",\"attributes\":{\"pathname\":\"/reset-password\",\"query\":\"\"}}"}
+{"type":"receive","time":1784223514016.777,"opcode":1,"data":"{\"action\":\"isrManifest\",\"data\":{\"/reset-password\":true,\"/\":true,\"/auth\":true,\"/restaurant\":true,\"/checkout\":true,\"/cart\":true,\"/offers\":true,\"/search\":true,\"/menu\":true}}"}
+{"type":"send","time":1784223515218.2961,"opcode":1,"data":"{\"event\":\"ping\",\"page\":\"/reset-password\"}"}

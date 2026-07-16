@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { PaymentMethodsService } from './payment-methods.service';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
+import { AddPaymentMethodDto } from './payment-method.dto';
 
 @Controller('payment-methods')
 @UseGuards(JwtAuthGuard)
@@ -14,7 +15,7 @@ export class PaymentMethodsController {
   }
 
   @Post()
-  async addPaymentMethod(@Req() req: any, @Body() data: any) {
+  async addPaymentMethod(@Req() req: any, @Body() data: AddPaymentMethodDto) {
     const userId = req.user?.sub;
     return this.paymentService.addPaymentMethod(userId, data);
   }
