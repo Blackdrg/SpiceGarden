@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-07-16T12:40:32.684Z",
+  "totalRoutes": 0,
+  "counts": {
+    "PASS": 0,
+    "PARTIAL": 0,
+    "FAIL": 0,
+    "NOT VERIFIED": 0
+  },
+  "apps": {}
+}

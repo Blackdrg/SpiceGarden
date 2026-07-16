@@ -1,0 +1,1452 @@
+{
+  "summary": {
+    "200": 24,
+    "201": 2,
+    "400": 9,
+    "401": 201,
+    "404": 5,
+    "500": 47
+  },
+  "results": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login/verify-mfa",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp/verify",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh-token",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/auth/me",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/verify-reset-code",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google/callback",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/auth/facebook",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/auth/facebook/callback",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/setup",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/enable",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/disable",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/devices/register",
+      "status": 401
+    },
+    {
+      "method": "DELETE",
+      "path": "/devices/unregister",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/queue",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/recipient/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/1/cancel",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/stats/overview",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/process",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/orders",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/orders/health",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/orders/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/orders/1/accept",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/orders/1/reject",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/orders/1/status",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/orders/1/verify-otp",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/orders/1/issues",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/payments/create-intent",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/payments/refund",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/payments/gateways",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/payments/gateway/config",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/gst/calculate/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/gst/invoice/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/gst/rate-summary/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/gst/validate-gstin",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/order/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/chargebacks/1/initiate-refund",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/stats/overview",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/search",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/nearby",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/1",
+      "status": 200
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurants/branch/1/status",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/onboarding",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/onboarding/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/onboarding/1/step",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/onboarding/1/complete",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/moderation",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/moderation/pending",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/moderation/1/review",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/payout/history",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/payout/generate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/payout/1/process",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/branch",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/branch/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/branch/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/branch/1/status",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/commission",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/commission/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/commission/calculate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/initialize/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/step/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant-onboarding/status/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/complete/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/reject/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/gst/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/pricing/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/payout/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant-onboarding/analytics/overview",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/plans",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/subscribe",
+      "status": 404
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/upgrade",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/cancel",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/1/feature/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/search",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/search/trending",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/search/recommended",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/delivery/pricing/calculate",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/delivery/pricing/rules",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/delivery/pricing/rules",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/delivery/pricing/rules/1",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/onboarding",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/documents",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/documents/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/drivers/documents/1/verify",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/onboarding/1/status",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/incentives/calculate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/incentives",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/drivers/incentives/1/approve",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/incentives/pending",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/me",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/1/earnings",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/1/location",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/1/availability",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/available",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/wallet",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/wallet/balance",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/wallet/transactions",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/credit",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/debit",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/compensate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/process",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/confirm",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/refund",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/prevent-duplicate",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/admin/dashboard",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/admin/stats",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/admin/orders",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users/ban",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/inventory",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/inventory/1/stock",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/inventory/1/wastage",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/low-stock/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/inventory/low-stock/notify/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/recipes",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/recipes/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/batches",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/batches/1/status",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/food-prep",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/food-prep/1/quality",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/avg-prep-time/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/late-prep/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/food-rejection/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/food-rejection/calculate/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/throughput/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/throughput/calculate/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/record-all/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/sla/branch/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/sla/summary/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/suppliers",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/suppliers/1/inventory",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/consumption/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/forecast/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/assign/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/batch-assign",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/reassign/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/driver/1/assignments",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/order/1/assignments",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/1/status",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/1/route",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/drivers/available",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/drivers/1/score",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/eta/1/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/sla",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/sla",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/fraud",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/fraud",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/drivers/1/fraud",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/finance/gst/report",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/payments",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/payouts",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/driver",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/full",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/finance/platform-fee/calculate",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/finance/platform-fee",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/finance/platform-fee",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/finance/platform-fee/1",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/accounting/journal",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/accounting/journal/reverse/1",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/trial-balance",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/profit-loss",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/journal-entries",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/1/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/1",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/finance/bank-accounts/1",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/1/kyc",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/1/verify",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/1/reject",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/kyc/pending",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/settlements",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/finance/settlements/1",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/1/process",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/1/fail",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/1/retry",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/from-payout/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/finance/settlements/summary/1",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/support/disputes",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/support/disputes",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/support/disputes/1/review",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/support/refunds",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/support/refunds/1/process",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/support/tickets/stats",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/1/route",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/1/escalate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/refunds/request",
+      "status": 401
+    },
+    {
+      "method": "PATCH",
+      "path": "/refunds/1/approve",
+      "status": 401
+    },
+    {
+      "method": "PATCH",
+      "path": "/refunds/1/reject",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/refunds/1/process",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/refunds/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/refunds/order/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/refunds",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/coupons",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/coupons",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/coupons/apply",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/coupons/1/analytics",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/loyalty/coupons/1/deactivate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/referrals/code",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/referrals/process",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/referrals/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/cashback/process",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/cashback/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/shifts/start",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/shifts/end",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/shifts/1",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/earnings",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/incentives/calculate",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/penalties",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/performance",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/performance/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/schedule/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/fleet/penalties/1/approve",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/fleet/penalties/1/waive",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/top-dishes",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/churn",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/repeat-users",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/conversion",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/heatmap",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/peak-hours",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/restaurant/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/platform",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/reviews",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/order/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/restaurant/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/restaurant/1/rating",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/user/addresses",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/user/addresses",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/user/addresses/1",
+      "status": 401
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/addresses/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/user/payment-methods",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/user/payment-methods",
+      "status": 401
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/payment-methods/1",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/user/payment-methods/1/set-default",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/addresses",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/addresses",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/addresses/1/default",
+      "status": 401
+    },
+    {
+      "method": "DELETE",
+      "path": "/addresses/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/payment-methods",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/payment-methods",
+      "status": 401
+    },
+    {
+      "method": "PUT",
+      "path": "/payment-methods/1/default",
+      "status": 401
+    },
+    {
+      "method": "DELETE",
+      "path": "/payment-methods/1",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/apis",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/apis/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/plans",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/customer/subscription/subscribe",
+      "status": 404
+    },
+    {
+      "method": "POST",
+      "path": "/customer/subscription/cancel",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/1/benefits",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/1/activate",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/1/pause",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/1/analytics",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/1/impression",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/1/click",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/1/conversion",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/platform/stats",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/admin/tenants",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/admin/tenants",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/admin/tenants/1",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/1",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/admin/tenants/slug/1",
+      "status": 404
+    },
+    {
+      "method": "POST",
+      "path": "/admin/tenants/1/suspend",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/admin/tenants/1/activate",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/1/branding",
+      "status": 500
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/1/settings",
+      "status": 500
+    },
+    {
+      "method": "POST",
+      "path": "/enterprise/api-keys",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/user/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/tenant/1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/enterprise/api-keys/1/revoke",
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/1/rate-limit",
+      "status": 500
+    }
+  ]
+}

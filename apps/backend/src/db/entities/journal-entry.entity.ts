@@ -18,7 +18,7 @@ export enum JournalEntryStatus {
 @Index('idx_journal_entries_transaction_id', ['transactionId'])
 @Index('idx_journal_entries_status', ['status'])
 @Index('idx_journal_entries_date', ['entryDate'])
-@Index('idx_journal_entries_account', ['account'])
+@Index('idx_journal_entries_account', ['accountCode'])
 export class JournalEntryEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
