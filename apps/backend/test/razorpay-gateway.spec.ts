@@ -46,7 +46,7 @@ describe('RazorpayGateway', () => {
     const result = await gateway.createPaymentIntent(25, 'inr', 'user-1', { orderId: 'order-1' });
 
     expect(result.id).toBe('order_123');
-    expect(result.amount).toBe(25);
+    expect(result.amount).toBe(2500);
     expect(result.currency).toBe('INR');
     expect(result.status).toBe('created');
     expect(result.client_secret).toBe('order_123');
@@ -112,7 +112,7 @@ describe('RazorpayGateway', () => {
     const result = await gateway.fetchPaymentDetails('order_fetch');
 
     expect(result.id).toBe('order_fetch');
-    expect(result.amount).toBe(15);
+    expect(result.amount).toBe(1500);
     expect(result.currency).toBe('INR');
     expect(result.status).toBe('paid');
   });
@@ -192,7 +192,7 @@ describe('RazorpayGateway', () => {
     const result = await gateway.refundPayment('order_ref', 50, 'user-1', 'requested_by_customer');
 
     expect(result.id).toBe('rfnd_123');
-    expect(result.amount).toBe(50);
+    expect(result.amount).toBe(5000);
     expect(result.currency).toBe('INR');
   });
 

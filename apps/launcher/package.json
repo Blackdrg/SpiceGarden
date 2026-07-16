@@ -5,7 +5,8 @@
   "private": true,
   "main": "dist/main/main.js",
   "scripts": {
-    "dev": "npm run build:main && concurrently \"npm:dev:build:main\" \"npm:dev:renderer\" \"npm:dev:electron\"",
+    "dev": "npm run build:main && concurrently \"npm:dev:build:main\" \"npm:dev:renderer\" \"npm:dev:main\"",
+    "dev:build:main": "tsc -p tsconfig.main.json --watch",
     "dev:main": "wait-on http://localhost:3001 && electron .",
     "dev:renderer": "webpack serve --config webpack.renderer.config.js",
     "build": "npm run build:main && npm run build:renderer",

@@ -1,5 +1,5 @@
 
-import { Injectable, Logger, NotFoundException, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual, LessThanOrEqual, IsNull } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -148,7 +148,7 @@ for (const notification of notifications) {
           });
         }
       } else {
-        throw new Error(result?.error || 'any error');
+        throw new InternalServerErrorException(result?.error || 'Notification delivery failed');
       }
     } catch (error: any) {
       notification.errorInfo = {

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, InternalServerErrorException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 interface FailoverState {
@@ -37,6 +37,7 @@ export class DatabaseFailoverService implements OnModuleInit, OnModuleDestroy {
     this.healthCheckInterval = setInterval(async () => {
       await this.performHealthCheck();
     }, 30000);
+    (this.healthCheckInterval as { unref?: () => void }).unref?.();
   }
 
   private stopHealthCheck(): void {
@@ -122,7 +123,7 @@ export class DatabaseFailoverService implements OnModuleInit, OnModuleDestroy {
       try {
         return await fallbackQuery();
       } catch (fallbackError) {
-        throw new Error(`Both primary and fallback queries failed: ${fallbackError}`);
+        throw new InternalServerErrorException(`Both primary and fallback queries failed: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`);
       }
     }
 
@@ -133,7 +134,7 @@ export class DatabaseFailoverService implements OnModuleInit, OnModuleDestroy {
         try {
           return await fallbackQuery();
         } catch (fallbackError) {
-          throw new Error(`Primary failed after max retries, fallback also failed: ${fallbackError}`);
+          throw new InternalServerErrorException(`Primary failed after max retries, fallback also failed: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`);
         }
       }
       throw primaryError;

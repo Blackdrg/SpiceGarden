@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { Bell, BellOff } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '@spicegarden/shared/constants';
@@ -130,10 +130,6 @@ const NotificationsPage = () => {
           </div>
         </Card>
       ))}
-
-      <div className={styles.saveActions}>
-        <Button label={mutation.isPending ? 'Saving...' : 'Save Preferences'} onClick={() => {}} disabled={mutation.isPending} fullWidth />
-      </div>
     </div>
   );
 };

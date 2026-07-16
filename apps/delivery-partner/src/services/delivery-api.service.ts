@@ -71,7 +71,7 @@ class DeliveryApiService {
   private driverId: string | null = null;
 
   async login(email: string, password: string): Promise<{ token: string; driverId: string; profile: DriverProfile }> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -105,7 +105,7 @@ class DeliveryApiService {
     vehicleType: string;
     vehicleNumber: string;
   }): Promise<DriverProfile> {
-    const response = await fetch(`${API_BASE_URL}/api/drivers/onboarding`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/onboarding`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ class DeliveryApiService {
 
   async getProfile(): Promise<DriverProfile> {
     const token = await this.getStoredToken();
-    const response = await fetch(`${API_BASE_URL}/api/drivers/me`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/me`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -132,6 +132,10 @@ class DeliveryApiService {
     }
 
     const profile = await response.json();
+    if (profile && profile.id) {
+      this.driverId = profile.id;
+      await AsyncStorage.setItem('driver_id', profile.id);
+    }
     await AsyncStorage.setItem('sg_driver_data', JSON.stringify(profile));
     return profile;
   }
@@ -146,7 +150,7 @@ class DeliveryApiService {
       this.socket.emit('updateLocation', { driverId: id, lat, lng });
     }
 
-    await fetch(`${API_BASE_URL}/api/drivers/${id}/location`, {
+    await fetch(`${API_BASE_URL}/drivers/${id}/location`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -160,7 +164,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    await fetch(`${API_BASE_URL}/api/drivers/${id}/availability`, {
+    await fetch(`${API_BASE_URL}/drivers/${id}/availability`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -174,7 +178,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/drivers/${id}/earnings`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/${id}/earnings`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -195,7 +199,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/accept`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/accept`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -215,7 +219,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    await fetch(`${API_BASE_URL}/api/orders/${orderId}/reject`, {
+    await fetch(`${API_BASE_URL}/orders/${orderId}/reject`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -233,7 +237,7 @@ class DeliveryApiService {
   ): Promise<DeliveryOrder> {
     const token = await this.getStoredToken();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
       method: 'PUT',
       headers: { 
         'Content-Type': 'application/json',
@@ -253,7 +257,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/verify-otp`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/verify-otp`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -268,7 +272,7 @@ class DeliveryApiService {
   async reportIssue(orderId: string, issue: string, details: string): Promise<void> {
     const token = await this.getStoredToken();
 
-    await fetch(`${API_BASE_URL}/api/orders/${orderId}/issues`, {
+    await fetch(`${API_BASE_URL}/orders/${orderId}/issues`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -282,7 +286,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/fleet/performance/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/fleet/performance/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -297,7 +301,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/wallet/transactions?driverId=${id}`, {
+    const response = await fetch(`${API_BASE_URL}/wallet/transactions?driverId=${id}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -351,7 +355,7 @@ class DeliveryApiService {
     return this.token;
   }
 
-  private async getStoredDriverId(): Promise<string | null> {
+  async getStoredDriverId(): Promise<string | null> {
     if (this.driverId) return this.driverId;
     this.driverId = await AsyncStorage.getItem('driver_id');
     return this.driverId;
@@ -361,7 +365,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/notification-queue/recipient/${id}?recipientType=user`, {
+    const response = await fetch(`${API_BASE_URL}/notification-queue/recipient/${id}?recipientType=user`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -376,7 +380,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/driver-assignment/driver/${id}/assignments`, {
+    const response = await fetch(`${API_BASE_URL}/driver-assignment/driver/${id}/assignments`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 

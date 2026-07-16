@@ -334,7 +334,7 @@ export class GSTService {
       });
 
       if (!hsnSac || hsnSac.gstRate == null) {
-        throw new Error(`HSN/SAC code ${hsnSacCode} not found or has no GST rate`);
+        throw new NotFoundException(`HSN/SAC code ${hsnSacCode} not found or has no GST rate`);
       }
 
       return hsnSac.gstRate;

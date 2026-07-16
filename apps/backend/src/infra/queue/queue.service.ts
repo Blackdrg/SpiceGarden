@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue, Worker, Job, JobsOptions } from 'bullmq';
@@ -103,7 +103,7 @@ export class QueueService implements OnModuleDestroy {
 
   getQueue(queueName: QueueName): Queue {
     if (!this.redisAvailable || !this.connection) {
-      throw new Error('Queue operations require Redis. Please start Redis and restart the application.');
+      throw new InternalServerErrorException('Queue operations require Redis. Please start Redis and restart the application.');
     }
     const existing = this.queues.get(queueName);
     if (existing) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -51,7 +51,7 @@ export class ETAIntelligenceService {
     ]);
 
     if (!order || !driver || !branch) {
-      throw new Error('Required data not found for ETA calculation');
+      throw new BadRequestException('Required data not found for ETA calculation');
     }
 
     // Base ETA calculation factors

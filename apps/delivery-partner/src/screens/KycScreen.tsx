@@ -30,10 +30,11 @@ export default function KycScreen({ navigation }: ScreenProps): React.JSX.Elemen
     setLoading(true);
     try {
       const token = await deliveryApi.getStoredToken();
-      const response = await fetch(`${deliveryApiApiBase()}/api/drivers/kyc`, {
+      const driverId = await deliveryApi.getStoredDriverId();
+      const response = await fetch(`${deliveryApiApiBase()}/drivers/documents`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token ?? ''}` },
-        body: JSON.stringify({ docType, docNumber, selfieNote }),
+        body: JSON.stringify({ driverId, type: docType, url: docNumber }),
       });
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unknown error');

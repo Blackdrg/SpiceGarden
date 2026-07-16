@@ -20,7 +20,7 @@ module.exports = {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@expo|expo|expo-image|expo-modules-core|expo-font|@spicegarden)/)',
+    'node_modules/(?!(react-native|@react-native|@expo|expo|expo-.*|expo-image|expo-modules-core|expo-font|@spicegarden)/)',
   ],
   testMatch: ['**/*.test.{js,jsx}', '**/*.integration.test.{js,jsx}'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.expo/'],

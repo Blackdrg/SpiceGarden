@@ -17,6 +17,15 @@ describe('LedgerService', () => {
       createQueryBuilder: jest.fn(),
     } as any;
 
+    // createTransaction persists both entries atomically via
+    // ledgerRepo.manager.transaction; the mocked manager delegates back to the
+    // repository mock so create/save assertions continue to work.
+    (ledgerRepo as any).manager = {
+      transaction: jest.fn(async (cb: (m: any) => Promise<unknown>) =>
+        cb({ getRepository: () => ledgerRepo }),
+      ),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LedgerService,

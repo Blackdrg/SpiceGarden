@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, In, Like } from 'typeorm';
+import { Repository, DataSource, In, Like, MoreThanOrEqual } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
@@ -47,35 +47,51 @@ export class WalletService {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
-    const wallet = await this.getWallet(userId);
+    return this.connection.transaction(async (manager: any) => {
+      let wallet = await manager.findOne(WalletEntity, {
+        where: { userId },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-    // Update wallet balance
-    wallet.balance += amount;
-    wallet.updatedAt = new Date();
-    await this.walletRepo.save(wallet);
+      if (!wallet) {
+        wallet = await manager.save(
+          WalletEntity,
+          this.walletRepo.create({
+            userId,
+            balance: 0,
+            currency: this.configService.get<string>('WALLET_DEFAULT_CURRENCY', 'INR'),
+          }),
+        );
+      }
 
-    // Create transaction record
-    const transaction = this.walletTransactionRepo.create({
-      walletId: wallet.id,
-      amount,
-      type: 'credit',
-      description,
-      referenceId,
+      // Update wallet balance atomically under row lock
+      wallet.balance += amount;
+      wallet.updatedAt = new Date();
+      await manager.save(WalletEntity, wallet);
+
+      // Create transaction record
+      const transaction = manager.create(WalletTransactionEntity, {
+        walletId: wallet.id,
+        amount,
+        type: 'credit',
+        description,
+        referenceId,
+      });
+
+      const savedTransaction = await manager.save(WalletTransactionEntity, transaction);
+
+      // Send notification for significant amounts
+      if (amount >= this.configService.get<number>('WALLET_NOTIFICATION_THRESHOLD', 100)) {
+        await this.notificationService.sendPush(
+          userId,
+          'Wallet Credited',
+          `₹${amount} has been added to your wallet. New balance: ₹${wallet.balance}`,
+          { walletId: wallet.id }
+        );
+      }
+
+      return savedTransaction;
     });
-
-    const savedTransaction = await this.walletTransactionRepo.save(transaction);
-
-    // Send notification for significant amounts
-    if (amount >= this.configService.get<number>('WALLET_NOTIFICATION_THRESHOLD', 100)) {
-      await this.notificationService.sendPush(
-        userId,
-        'Wallet Credited',
-        `₹${amount} has been added to your wallet. New balance: ₹${wallet.balance}`,
-        { walletId: wallet.id }
-      );
-    }
-
-    return savedTransaction;
   }
 
   async debitWallet(userId: string, amount: number, description: string, referenceId?: string): Promise<WalletTransactionEntity> {
@@ -83,39 +99,48 @@ export class WalletService {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
-    const wallet = await this.getWallet(userId);
+    return this.connection.transaction(async (manager: any) => {
+      const wallet = await manager.findOne(WalletEntity, {
+        where: { userId },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-    if (wallet.balance < amount) {
-      throw new BadRequestException('Insufficient wallet balance');
-    }
+      if (!wallet) {
+        throw new BadRequestException('Wallet not found');
+      }
 
-    // Update wallet balance
-    wallet.balance -= amount;
-    wallet.updatedAt = new Date();
-    await this.walletRepo.save(wallet);
+      if (wallet.balance < amount) {
+        throw new BadRequestException('Insufficient wallet balance');
+      }
 
-    // Create transaction record
-    const transaction = this.walletTransactionRepo.create({
-      walletId: wallet.id,
-      amount,
-      type: 'debit',
-      description,
-      referenceId,
+      // Update wallet balance atomically under row lock
+      wallet.balance -= amount;
+      wallet.updatedAt = new Date();
+      await manager.save(WalletEntity, wallet);
+
+      // Create transaction record
+      const transaction = manager.create(WalletTransactionEntity, {
+        walletId: wallet.id,
+        amount,
+        type: 'debit',
+        description,
+        referenceId,
+      });
+
+      const savedTransaction = await manager.save(WalletTransactionEntity, transaction);
+
+      // Send notification for low balance
+      if (wallet.balance < this.configService.get<number>('WALLET_LOW_BALANCE_THRESHOLD', 50)) {
+        await this.notificationService.sendPush(
+          userId,
+          'Low Wallet Balance',
+          `Your wallet balance is low: ₹${wallet.balance}. Please add funds to continue using wallet payments.`,
+          { walletId: wallet.id }
+        );
+      }
+
+      return savedTransaction;
     });
-
-    const savedTransaction = await this.walletTransactionRepo.save(transaction);
-
-    // Send notification for low balance
-    if (wallet.balance < this.configService.get<number>('WALLET_LOW_BALANCE_THRESHOLD', 50)) {
-      await this.notificationService.sendPush(
-        userId,
-        'Low Wallet Balance',
-        `Your wallet balance is low: ₹${wallet.balance}. Please add funds to continue using wallet payments.`,
-        { walletId: wallet.id }
-      );
-    }
-
-    return savedTransaction;
   }
 
   async debitWalletWithLock(userId: string, amount: number, description: string, referenceId?: string): Promise<WalletTransactionEntity> {

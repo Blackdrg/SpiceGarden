@@ -6,7 +6,7 @@ module.exports = {
     '^.+\\.(js|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|expo|@expo|@spicegarden)/)',
+    'node_modules/(?!(react-native|@react-native|@expo|expo|expo-.*|expo-image|expo-modules-core|expo-font|@spicegarden)/)',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/*.test.ts', '**/*.spec.ts'],

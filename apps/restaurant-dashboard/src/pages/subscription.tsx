@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState, EmptyState } from '@spicegarden/ui';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 import styles from './subscription.module.css';
 
 type Plan = {
@@ -32,16 +34,15 @@ const SubscriptionPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const restaurantId = user?.id ?? null;
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [plansRes, subRes] = await Promise.all([
-        fetch('/api/business/restaurant/subscription/plans'),
-        fetch('/api/business/restaurant/subscription/me'),
+        fetch('/api/restaurant/subscription/plans'),
+        restaurantId ? fetch(`/api/restaurant/subscription/${restaurantId}`) : Promise.resolve({ ok: false } as Response),
       ]);
 
       if (plansRes.ok) setPlans(await plansRes.json());
@@ -51,15 +52,19 @@ const SubscriptionPage = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [restaurantId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSubscribe = useCallback(async (planId: string) => {
     try {
       setActionLoading(true);
-      const res = await fetch('/api/business/restaurant/subscription/subscribe', {
+      const res = await fetch('/api/restaurant/subscription/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId, billingCycle: 'monthly' }),
+        body: JSON.stringify({ planId, billingCycle: 'monthly', restaurantId }),
       });
       if (!res.ok) throw new Error('Subscription failed');
       await fetchData();
@@ -68,15 +73,15 @@ const SubscriptionPage = () => {
     } finally {
       setActionLoading(false);
     }
-  }, [fetchData]);
+  }, [fetchData, restaurantId]);
 
   const handleUpgrade = useCallback(async (newPlanId: string) => {
     try {
       setActionLoading(true);
-      const res = await fetch('/api/business/restaurant/subscription/upgrade', {
+      const res = await fetch('/api/restaurant/subscription/upgrade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPlanId }),
+        body: JSON.stringify({ newPlanId, restaurantId }),
       });
       if (!res.ok) throw new Error('Upgrade failed');
       await fetchData();
@@ -85,7 +90,7 @@ const SubscriptionPage = () => {
     } finally {
       setActionLoading(false);
     }
-  }, [fetchData]);
+  }, [fetchData, restaurantId]);
 
   if (loading) return <div className={styles.loading}><LoadingState /></div>;
 

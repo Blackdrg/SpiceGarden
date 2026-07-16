@@ -48,19 +48,19 @@ describe('Delivery Partner API e2e flow', () => {
   it('logs in, stores credentials, fetches earnings, and logs out', async () => {
     const fetchMock = jest.spyOn(global, 'fetch').mockImplementation((async (input: RequestInfo | URL) => {
       const url = String(input);
-      if (url.endsWith('/api/auth/login')) {
+      if (url.endsWith('/auth/login')) {
         return {
           ok: true,
           json: async () => ({ access_token: 'driver-token', driverId: 'driver-123' }),
         } as Response;
       }
-      if (url.endsWith('/api/drivers/me')) {
+      if (url.endsWith('/drivers/me')) {
         return {
           ok: true,
           json: async () => profile,
         } as Response;
       }
-      if (url.endsWith('/api/drivers/driver-123/earnings')) {
+      if (url.endsWith('/drivers/driver-123/earnings')) {
         return {
           ok: true,
           json: async () => earnings,
@@ -78,7 +78,7 @@ describe('Delivery Partner API e2e flow', () => {
     expect(loginResult.profile).toEqual(profile);
     expect(earningsResult).toEqual(earnings);
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('/api/auth/login'),
+      expect.stringContaining('/auth/login'),
       expect.objectContaining({ method: 'POST' }),
     );
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('driver_token', 'driver-token');

@@ -17,52 +17,52 @@ function createContext(handlerMetadata: Record<string, unknown>, requestUser?: a
 describe('RBAC Endpoint Coverage Tests', () => {
   describe('RolesGuard coverage', () => {
     it('allows access for CUSTOMER role to customer endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.CUSTOMER] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.CUSTOMER] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.CUSTOMER, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('allows access for ADMIN role to admin endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.ADMIN] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.ADMIN] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.ADMIN, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('allows access for SUPER_ADMIN role when listed in roles', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.SUPER_ADMIN] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.SUPER_ADMIN] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.SUPER_ADMIN, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('allows access for DELIVERY_PARTNER to delivery endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.DELIVERY_PARTNER] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.DELIVERY_PARTNER] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.DELIVERY_PARTNER, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('allows access for KITCHEN_STAFF to kitchen endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.KITCHEN_STAFF] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.KITCHEN_STAFF] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.KITCHEN_STAFF, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('allows access for RESTAURANT to restaurant endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.RESTAURANT] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.RESTAURANT] } as any);
       expect(guard.canActivate(createContext({}, { role: UserRole.RESTAURANT, status: UserStatus.ACTIVE }))).toBe(true);
     });
 
     it('blocks wrong role for protected endpoints', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.ADMIN] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.ADMIN] } as any);
       expect(() => guard.canActivate(createContext({}, { role: UserRole.CUSTOMER, status: UserStatus.ACTIVE }))).toThrow(ForbiddenException);
     });
 
     it('blocks access when role is missing', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.CUSTOMER] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.CUSTOMER] } as any);
       expect(() => guard.canActivate(createContext({}, { status: UserStatus.ACTIVE }))).toThrow(ForbiddenException);
     });
 
     it('blocks INACTIVE status users', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.CUSTOMER] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.CUSTOMER] } as any);
       expect(() => guard.canActivate(createContext({}, { role: UserRole.CUSTOMER, status: UserStatus.INACTIVE }))).toThrow(ForbiddenException);
     });
 
     it('blocks SUSPENDED status users', () => {
-      const guard = new RolesGuard({ get: () => [UserRole.CUSTOMER] } as any);
+      const guard = new RolesGuard({ getAllAndOverride: () => [UserRole.CUSTOMER] } as any);
       expect(() => guard.canActivate(createContext({}, { role: UserRole.DELIVERY_PARTNER, status: UserStatus.SUSPENDED }))).toThrow(ForbiddenException);
     });
   });

@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -84,7 +84,7 @@ export class VaultService implements OnModuleInit {
     });
 
     if (!response.ok) {
-      throw new Error(`Vault request failed: ${response.status}`);
+      throw new BadRequestException(`Vault request failed: ${response.status}`);
     }
 
     return response.json();

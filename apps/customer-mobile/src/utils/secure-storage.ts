@@ -108,6 +108,8 @@ export async function saveCartSafe(cart: unknown[]): Promise<boolean> {
       quantity: item.quantity,
       image: item.image,
       description: item.description,
+      restaurantId: item.restaurantId,
+      restaurantName: item.restaurantName,
     }));
     await AsyncStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(safeCart));
     return true;

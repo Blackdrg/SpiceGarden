@@ -9,6 +9,13 @@ export function csrfProtection() {
       return next();
     }
 
+    const authHeader = req.headers['authorization'];
+    if (typeof authHeader === 'string' && authHeader.toLowerCase().startsWith('bearer ')) {
+      // Token-based (non-cookie) clients such as mobile apps and JWT SPAs are not
+      // susceptible to CSRF, which targets cookie-authenticated browser sessions.
+      return next();
+    }
+
     const csrfTokenHeader = 'x-csrf-token';
     const csrfTokenCookie = '_csrf';
 

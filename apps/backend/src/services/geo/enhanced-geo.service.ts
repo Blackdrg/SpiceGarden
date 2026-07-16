@@ -1,5 +1,5 @@
 ﻿
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -253,7 +253,7 @@ async updateDriverLocation(
   ): Promise<DriverEntity> {
     const driver = await this.driverRepo.findOne({ where: { id: driverId } });
     if (!driver) {
-      throw new Error(`Driver not found: ${driverId}`);
+      throw new NotFoundException(`Driver not found: ${driverId}`);
     }
 
     // Update driver location
@@ -349,7 +349,7 @@ async updateDriverLocation(
     waypoints: GeoPoint[]
   ): Promise<RouteOptimizationResult> {
     if (waypoints.length < 2) {
-      throw new Error('At least 2 waypoints required for route optimization');
+      throw new BadRequestException('At least 2 waypoints required for route optimization');
     }
 
     // In production, you'd use a service like Google Maps Directions API or OSRM

@@ -21,15 +21,11 @@ const CampaignsPage = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
 
-  useEffect(() => {
-    fetchCampaigns();
-  }, []);
-
   const fetchCampaigns = useCallback(async () => {
     try {
       const [campaignsRes, statsRes] = await Promise.all([
-        fetch('/api/admin/marketing/campaigns'),
-        fetch('/api/admin/marketing/campaigns/platform/stats', {
+        fetch('/api/marketing/campaigns'),
+        fetch('/api/marketing/campaigns/platform/stats', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -48,13 +44,17 @@ const CampaignsPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    fetchCampaigns();
+  }, [fetchCampaigns]);
+
   const activateCampaign = useCallback(async (id: string) => {
-    await fetch(`/api/admin/marketing/campaigns/${id}/activate`, { method: 'POST' });
+    await fetch(`/api/marketing/campaigns/${id}/activate`, { method: 'POST' });
     fetchCampaigns();
   }, [fetchCampaigns]);
 
   const pauseCampaign = useCallback(async (id: string) => {
-    await fetch(`/api/admin/marketing/campaigns/${id}/pause`, { method: 'POST' });
+    await fetch(`/api/marketing/campaigns/${id}/pause`, { method: 'POST' });
     fetchCampaigns();
   }, [fetchCampaigns]);
 

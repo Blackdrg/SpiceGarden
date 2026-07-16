@@ -29,21 +29,27 @@ describe('WalletService Edge Cases', () => {
     create: jest.fn(),
   };
 
-  const mockDataSource = {
-    manager: {
-      transaction: jest.fn((cb) => cb({
-        findOne: jest.fn(),
-        update: jest.fn(),
-        save: jest.fn(),
-        create: jest.fn(),
-      })),
+  const buildManager = () => ({
+    findOne: (entity: any, ...args: any[]) => {
+      if (entity === WalletEntity) return mockWalletRepo.findOne(...args);
+      if (entity === WalletTransactionEntity) return mockWalletTransactionRepo.findOne(...args);
+      return undefined;
     },
-    transaction: jest.fn((cb) => cb({
-      findOne: jest.fn(),
-      update: jest.fn(),
-      save: jest.fn(),
-      create: jest.fn(),
-    })),
+    save: (entity: any, ...args: any[]) => {
+      if (entity === WalletEntity) return mockWalletRepo.save(...args);
+      if (entity === WalletTransactionEntity) return mockWalletTransactionRepo.save(...args);
+      return args[0];
+    },
+    create: (entity: any, ...args: any[]) => {
+      if (entity === WalletEntity) return mockWalletRepo.create(...args);
+      if (entity === WalletTransactionEntity) return mockWalletTransactionRepo.create(...args);
+      return args[0];
+    },
+    update: jest.fn(),
+  });
+
+  const mockDataSource = {
+    transaction: jest.fn((cb) => cb(buildManager())),
     getRepository: jest.fn((entity: any) => {
       if (entity === WalletEntity) return mockWalletRepo;
       if (entity === WalletTransactionEntity) return mockWalletTransactionRepo;
@@ -85,6 +91,9 @@ describe('WalletService Edge Cases', () => {
     walletTransactionRepo = module.get<Repository<WalletTransactionEntity>>(getRepositoryToken(WalletTransactionEntity));
 
     jest.clearAllMocks();
+    // Re-establish the default transaction manager so per-test overrides from
+    // sibling describe blocks (e.g. debitWalletWithLock) do not leak in.
+    mockDataSource.transaction.mockImplementation((cb) => cb(buildManager()));
   });
 
   describe('getWallet', () => {

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -53,7 +53,7 @@ export class PasswordResetService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`Failed to send email: ${error}`);
+      throw new InternalServerErrorException(`Failed to send email: ${String(error)}`);
     }
   }
 

@@ -1,5 +1,5 @@
 ﻿
-import { Controller, Post, Get, Req, HttpCode, HttpStatus, RawBodyRequest, Headers as HeadersDecorator } from '@nestjs/common';
+import { Controller, Post, Get, Req, HttpCode, HttpStatus, RawBodyRequest, Headers as HeadersDecorator, BadRequestException } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
@@ -23,7 +23,7 @@ export class PaymentWebhookController {
     // Determine which signature to use based on what's provided
     const signature = stripeSignature || razorpaySignature;
     if (!signature) {
-      throw new Error('Missing webhook signature');
+      throw new BadRequestException('Missing webhook signature');
     }
     
     return await this.webhookService.processWebhook(rawBody, signature, req.headers);

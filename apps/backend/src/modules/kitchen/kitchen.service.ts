@@ -13,6 +13,7 @@ import { SLAAlertEntity } from '../../db/entities/sla-alert.entity';
 import { MenuItemAvailabilityEntity } from '../../db/entities/menu-item-availability.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { OrderItemEntity } from '../../db/entities/order-item.entity';
+import { OrderStatus } from '../../shared/domain/order.interface';
 
 @Injectable()
 export class KitchenService {
@@ -836,14 +837,121 @@ const batch = await this.batchRepo.findOne({
   }
 
   async getInventoryConsumption(branchId: string, days = 7): Promise<any> {
+    const periodStart = new Date();
+    periodStart.setDate(periodStart.getDate() - days);
+
+    // Consumption is derived from the ingredients of the dishes that were
+    // actually prepared/fulfilled in the period. We count orders that reached at
+    // least the preparing stage (i.e. the kitchen consumed ingredients for them)
+    // and were not cancelled.
+    const consumingStatuses = [
+      OrderStatus.PREPARING,
+      OrderStatus.READY,
+      OrderStatus.READY_FOR_PICKUP,
+      OrderStatus.DRIVER_ASSIGNED,
+      OrderStatus.PICKED_UP,
+      OrderStatus.ON_THE_WAY,
+      OrderStatus.DELIVERED,
+      OrderStatus.BATCHED,
+    ];
+
+    const orders = await this.orderRepo.find({
+      where: {
+        branchId,
+        status: In(consumingStatuses),
+        createdAt: MoreThan(periodStart),
+      },
+      select: { id: true },
+    });
+
+    if (orders.length === 0) {
+      return {
+        branchId,
+        periodDays: days,
+        consumptionData: [],
+        totalConsumptionCost: 0,
+        generatedAt: new Date(),
+      };
+    }
+
+    const orderIds = orders.map((o) => o.id);
+
+    // Aggregate the quantity sold per menu item across the qualifying orders.
+    const orderItems = await this.orderItemRepo.find({
+      where: { orderId: In(orderIds) },
+      relations: { menuItem: true },
+    });
+
+    const soldByMenuItemName = new Map<string, number>();
+    for (const item of orderItems) {
+      const name = item.menuItem?.name?.trim().toLowerCase();
+      if (!name) continue;
+      soldByMenuItemName.set(name, (soldByMenuItemName.get(name) || 0) + Number(item.quantity || 0));
+    }
+
+    // Recipes map each dish to its standardized ingredient list.
+    const recipes = await this.recipeRepo.find({
+      where: { branch: { id: branchId }, isActive: true },
+    });
+
+    // Resolve inventory item metadata (name, unit, unit cost) for costing.
+    const inventoryItems = await this.inventoryRepo.find({
+      where: { branch: { id: branchId } },
+    });
+    const inventoryById = new Map(inventoryItems.map((i) => [i.id, i]));
+
+    // Accumulate consumed quantity and cost per inventory item.
+    const consumption = new Map<string, { itemId: string; itemName: string; consumed: number; unit: string; cost: number }>();
+
+    for (const recipe of recipes) {
+      const recipeName = recipe.name?.trim().toLowerCase();
+      if (!recipeName) continue;
+      const soldQuantity = soldByMenuItemName.get(recipeName);
+      if (!soldQuantity || !Array.isArray(recipe.ingredients)) continue;
+
+      // A recipe yields `servingsNumber` servings; scale ingredient usage by the
+      // number of servings sold.
+      const servingsPerRecipe = recipe.servingsNumber && recipe.servingsNumber > 0 ? recipe.servingsNumber : 1;
+      const batchMultiplier = soldQuantity / servingsPerRecipe;
+
+      for (const ingredient of recipe.ingredients) {
+        if (!ingredient?.inventoryItemId) continue;
+        const inventoryItem = inventoryById.get(ingredient.inventoryItemId);
+        const consumedQty = Number(ingredient.quantity || 0) * batchMultiplier;
+        if (consumedQty <= 0) continue;
+        const unitCost = Number(inventoryItem?.unitCost || 0);
+        const existing = consumption.get(ingredient.inventoryItemId);
+        if (existing) {
+          existing.consumed += consumedQty;
+          existing.cost += consumedQty * unitCost;
+        } else {
+          consumption.set(ingredient.inventoryItemId, {
+            itemId: ingredient.inventoryItemId,
+            itemName: inventoryItem?.name || ingredient.inventoryItemId,
+            consumed: consumedQty,
+            unit: inventoryItem?.unit || ingredient.unit || '',
+            cost: consumedQty * unitCost,
+          });
+        }
+      }
+    }
+
+    const consumptionData = Array.from(consumption.values()).map((c) => ({
+      ...c,
+      consumed: Math.round(c.consumed * 1000) / 1000,
+      cost: Math.round(c.cost * 100) / 100,
+    }));
+
+    const totalConsumptionCost = Math.round(
+      consumptionData.reduce((sum, c) => sum + c.cost, 0) * 100,
+    ) / 100;
+
     return {
       branchId,
       periodDays: days,
-      consumptionData: [
-        { itemId: 'sample-item-1', itemName: 'Sample Ingredient', consumed: 10.5, unit: 'kg', cost: 52.50 }
-      ],
-      totalConsumptionCost: 52.50,
-      generatedAt: new Date()
+      consumptionData,
+      totalConsumptionCost,
+      generatedAt: new Date(),
     };
   }
 

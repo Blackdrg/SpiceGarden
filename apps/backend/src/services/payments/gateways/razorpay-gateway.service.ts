@@ -44,7 +44,7 @@ export class RazorpayGateway implements PaymentGateway {
       if (!response.ok) {
         const errorData = (await response.json().catch(() => ({}))) as Record<string, any>;
         const desc = (errorData.error as Record<string, any> | undefined)?.description;
-        throw new Error((typeof desc === 'string' ? desc : null) || `Razorpay API error: ${response.status}`);
+        throw new BadRequestException((typeof desc === 'string' ? desc : null) || `Razorpay API error: ${response.status}`);
       }
 
       return (await response.json()) as Record<string, any>;
@@ -79,8 +79,12 @@ export class RazorpayGateway implements PaymentGateway {
       const payment = await this.razorpayRequest('POST', 'orders', paymentData);
 
       return {
+        // Amounts are returned in the smallest currency unit (paise) to match
+        // the gateway contract used by all downstream consumers (which convert
+        // back to major units by dividing by 100). Stripe follows the same
+        // convention, keeping the PaymentGateway abstraction consistent.
         id: payment.id as string,
-        amount: (payment.amount as number) / 100,
+        amount: payment.amount as number,
         currency: payment.currency as string,
         status: payment.status as string,
         client_secret: payment.id as string | undefined,
@@ -95,7 +99,7 @@ export class RazorpayGateway implements PaymentGateway {
     const payment = await this.razorpayRequest('GET', `orders/${paymentId}`);
     return {
       id: payment.id as string,
-      amount: (payment.amount as number) / 100,
+      amount: payment.amount as number,
       currency: payment.currency as string,
       status: payment.status as string,
       client_secret: payment.id as string | undefined,
@@ -112,7 +116,7 @@ export class RazorpayGateway implements PaymentGateway {
       if (order.status === 'paid' || order.status === 'captured') {
         return {
           id: order.id as string,
-          amount: (order.amount as number) / 100,
+          amount: order.amount as number,
           currency: order.currency as string,
           status: order.status as string,
         };
@@ -162,7 +166,7 @@ export class RazorpayGateway implements PaymentGateway {
 
       return {
         id: refund.id as string,
-        amount: (refund.amount as number) / 100,
+        amount: refund.amount as number,
         currency: order.currency || 'inr',
         status: refund.status as string,
       };
@@ -183,8 +187,13 @@ export class RazorpayGateway implements PaymentGateway {
         .update(payload.toString())
         .digest('hex');
 
-      if (expectedSignature !== signature) {
-        throw new Error('Invalid webhook signature');
+      const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+      const signatureBuffer = Buffer.from(signature ?? '', 'utf8');
+      if (
+        expectedBuffer.length !== signatureBuffer.length ||
+        !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)
+      ) {
+        throw new BadRequestException('Invalid webhook signature');
       }
 
       const parsed = safeParse<Record<string, any>>(payload.toString());

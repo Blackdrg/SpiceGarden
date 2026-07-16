@@ -33,6 +33,8 @@ export interface CartItem {
   quantity: number;
   image: string;
   description: string;
+  restaurantId?: string;
+  restaurantName?: string;
 }
 
 interface PaginatedOrders {
@@ -113,7 +115,7 @@ export const orderService = {
 
     try {
       const response = await fetchWithRetry(
-        `${getBackendUrl()}/api/orders?page=${page}&limit=${limit}`
+        `${getBackendUrl()}/orders?page=${page}&limit=${limit}`
       );
 
       const data: { orders: Order[]; total: number } = await response.json();
@@ -146,7 +148,7 @@ export const orderService = {
   async fetchOrderById(orderId: string): Promise<Order | null> {
     try {
       const response = await fetchWithRetry(
-        `${getBackendUrl()}/api/orders/${orderId}`
+        `${getBackendUrl()}/orders/${orderId}`
       );
       return response.json();
     } catch (error) {
@@ -207,6 +209,39 @@ export const orderService = {
     } catch {
       return [];
     }
+  },
+
+  async createOrder(orderPayload: {
+    userId: string;
+    restaurantId: string;
+    restaurantName: string;
+    deliveryAddressId?: string;
+    items: { name: string; quantity: number; price: number }[];
+    subtotal: number;
+    deliveryFee: number;
+    tax: number;
+    tip: number;
+    grandTotal: number;
+    paymentMethod?: string;
+  }): Promise<{ id: string }> {
+    const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    const response = await fetchWithRetry(`${getBackendUrl()}/orders`, {
+      method: 'POST',
+      headers: token
+        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+        : { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const message = (data && (data.message || data.error)) || `Order failed (${response.status})`;
+      throw new Error(message);
+    }
+
+    await AsyncStorage.removeItem(STORAGE_KEYS.CART);
+    await setCachedOrders([]);
+    return { id: data.id };
   },
 
   clearCache(): void {

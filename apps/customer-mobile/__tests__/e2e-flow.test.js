@@ -3,6 +3,20 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import App from '../App';
 
+jest.mock('expo-location', () => ({
+  PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
+  requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
+  getCurrentPositionAsync: jest
+    .fn()
+    .mockResolvedValue({ coords: { latitude: 0, longitude: 0, accuracy: 1 } }),
+  reverseGeocodeAsync: jest.fn().mockResolvedValue([]),
+  hasServicesEnabledAsync: jest.fn().mockResolvedValue(true),
+  enableNetworkProviderAsync: jest.fn(),
+  LocationAccuracy: { Balanced: 4, High: 5 },
+  LocationActivityType: { Other: 'other' },
+  Location: {},
+}));
+
 const storage = AsyncStorage.default || AsyncStorage;
 
 class ErrorBoundary extends React.Component {

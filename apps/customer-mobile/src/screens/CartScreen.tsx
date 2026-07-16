@@ -24,6 +24,8 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  restaurantId?: string;
+  restaurantName?: string;
 }
 
 interface User {
@@ -148,7 +150,12 @@ const CartScreen = () => {
     }
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    navigation.navigate('Checkout', { cartItems: validCart });
+    const firstItem = validCart[0];
+    navigation.navigate('Checkout', {
+      cartItems: validCart,
+      restaurantId: firstItem?.restaurantId || '',
+      restaurantName: firstItem?.restaurantName || 'Restaurant',
+    });
   }, [cartItems, navigation]);
 
   const renderCartItem = useCallback(({ item }: { item: CartItem }) => {

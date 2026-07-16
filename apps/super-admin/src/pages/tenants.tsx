@@ -19,10 +19,6 @@ const TenantsPage = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
 
-  useEffect(() => {
-    fetchTenants();
-  }, [filter]);
-
   const fetchTenants = useCallback(async () => {
     try {
       setLoading(true);
@@ -47,6 +43,10 @@ const TenantsPage = () => {
     await fetch(`/api/admin/tenants/${id}/activate`, { method: 'POST' });
     fetchTenants();
   }, [fetchTenants]);
+
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants, filter]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;

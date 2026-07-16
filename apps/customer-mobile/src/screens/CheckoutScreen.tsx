@@ -4,13 +4,13 @@ import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
 const AnimatedCompat = Animated as any;
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
 import { safeGetItem } from '../utils/secure-storage';
 import { STORAGE_KEYS } from '../constants/storage.keys';
-import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { orderService } from '../services/order.service';
 
 interface CartItem {
   id: string;
@@ -19,17 +19,27 @@ interface CartItem {
   price: number;
 }
 
-type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tracking' | 'Home' | 'Address' | 'Checkout'>;
+interface AddressEntry {
+  id: string;
+  label: string;
+  address: string;
+  isDefault?: boolean;
+}
+
+type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tracking' | 'Home' | 'Address' | 'Checkout' | 'Auth'>;
 
 type PaymentMethod = 'card' | 'upi' | 'cash';
 
 interface CheckoutScreenProps {
   navigation: CheckoutScreenNavigationProp;
-  route?: { params?: { cartItems?: CartItem[] } };
+  route?: { params?: { cartItems?: CartItem[]; restaurantId?: string; restaurantName?: string } };
 }
 
 const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) => {
+  const restaurantId = route?.params?.restaurantId || '';
+  const restaurantName = route?.params?.restaurantName || 'Restaurant';
   const [address, setAddress] = useState('');
+  const [deliveryAddressId, setDeliveryAddressId] = useState<string | null>(null);
   const [cartItems] = useState<CartItem[]>(route?.params?.cartItems || []);
   const [tip, setTip] = useState(0);
   const [promoCode, setPromoCode] = useState('');
@@ -42,16 +52,22 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
 
   useEffect(() => {
     const loadAddress = async () => {
-      const addressJson = await safeGetItem(STORAGE_KEYS.ADDRESS);
-      if (addressJson && addressJson.trim().length > 0) {
-        try {
-          const parsed = safeParse(addressJson);
-          if (parsed && typeof parsed === 'string' && parsed.trim().length > 0) {
-            setAddress(parsed);
-          }
-        } catch {
-          await AsyncStorage.removeItem(STORAGE_KEYS.ADDRESS);
+      const addressesJson = await safeGetItem(STORAGE_KEYS.ADDRESSES);
+      const deviceAddress = await safeGetItem(STORAGE_KEYS.ADDRESS);
+      try {
+        const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
+        const selected =
+          (Array.isArray(addresses) && (addresses.find((a) => a.isDefault) || addresses[0])) || null;
+        if (selected) {
+          setDeliveryAddressId(selected.id);
+          setAddress(`${selected.label} - ${selected.address}`);
+          return;
         }
+      } catch {
+        /* fall through to device address */
+      }
+      if (deviceAddress && deviceAddress.trim().length > 0) {
+        setAddress(deviceAddress);
       }
     };
     loadAddress();
@@ -79,11 +95,48 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
       }),
     ]).start();
 
+    const subtotal = calculateSubtotal();
+    const tax = calculateTax();
+    const grandTotal = subtotal + tax + tip;
+
     try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.CART);
-      const orderId = 'SG' + Math.floor(Math.random() * 900000 + 100000).toString();
-      navigation.navigate('Tracking', { orderId });
-    } catch {
+      const userJson = await safeGetItem(STORAGE_KEYS.USER);
+      const user = userJson ? (safeParse(userJson) as { id?: string } | undefined) : undefined;
+      const userId = (user && (user.id || '')) as string;
+
+      if (!userId) {
+        setLoading(false);
+        navigation.navigate('Auth');
+        return;
+      }
+      if (!restaurantId) {
+        setLoading(false);
+        navigation.navigate('Home');
+        return;
+      }
+
+      const { id } = await orderService.createOrder({
+        userId,
+        restaurantId,
+        restaurantName,
+        deliveryAddressId: deliveryAddressId || undefined,
+        items: cartItems.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        subtotal,
+        deliveryFee: 20,
+        tax,
+        tip,
+        grandTotal,
+        paymentMethod,
+      });
+
+      navigation.navigate('Tracking', { orderId: id });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not place order';
+      setPromoError(message);
       navigation.navigate('Tracking');
     } finally {
       setLoading(false);

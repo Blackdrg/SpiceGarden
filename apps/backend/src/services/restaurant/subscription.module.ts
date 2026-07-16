@@ -8,9 +8,10 @@ import { SubscriptionPlanEntity } from '../../db/entities/subscription-plan.enti
 import { RestaurantSubscriptionEntity } from '../../db/entities/restaurant-subscription.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { CommissionRuleEntity } from '../../db/entities/commission-rule.entity';
+import { PaymentServiceModule } from '../payments/payments.module';
 
 @Module({
-  imports: [DbRepositoriesModule],
+  imports: [DbRepositoriesModule, PaymentServiceModule],
   providers: [SubscriptionService],
   controllers: [SubscriptionController],
   exports: [SubscriptionService],

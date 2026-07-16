@@ -8,8 +8,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
 import { restaurantService, MenuItem } from '../services/restaurant.service';
+import { getCartSafe, saveCartSafe } from '../utils/secure-storage';
 
 type RestaurantParams = RootStackParamList['Restaurant'];
+
+interface CartItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 const RestaurantScreen = () => {
   const route = useRoute();
@@ -64,9 +74,33 @@ const RestaurantScreen = () => {
     loadData();
   }, [restaurantId, slug, fadeAnim]);
 
-  const addToCart = (itemId: string) => {
-    setAddingItem(itemId);
-    setTimeout(() => setAddingItem(null), 500);
+  const addToCart = async (item: MenuItem) => {
+    try {
+      const currentCart = (await getCartSafe()) as CartItem[];
+      const existing = currentCart.find((ci) => ci.id === item.id);
+      const nextCart = existing
+        ? currentCart.map((ci) =>
+            ci.id === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
+          )
+        : [
+            ...currentCart,
+            {
+              id: item.id,
+              name: item.name,
+              description: item.description || '',
+              price: item.price,
+              quantity: 1,
+              image: '',
+              restaurantId,
+              restaurantName: restaurant?.name || '',
+            },
+          ];
+      await saveCartSafe(nextCart);
+      setAddingItem(item.id);
+      setTimeout(() => setAddingItem(null), 500);
+    } catch {
+      setAddingItem(null);
+    }
   };
 
   if (loading) {
@@ -112,9 +146,9 @@ const RestaurantScreen = () => {
       <Animated.View style={[styles.menuContainer, { opacity: fadeAnim }]}>
         {menuItems.map(item => (
           <Pressable
-            key={item.id}
+             key={item.id}
             style={styles.menuItem}
-            onPress={() => addToCart(item.id)}
+            onPress={() => addToCart(item)}
           >
             <View style={styles.itemIconContainer}>
               <Ionicons name="fast-food-outline" size={28} color={DESIGN_TOKENS.colors.primary} />

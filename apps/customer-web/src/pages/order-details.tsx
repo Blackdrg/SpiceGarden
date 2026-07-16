@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
+import { addToCart } from '../redux/slices/cartSlice';
 import { ordersApi } from '@spicegarden/shared/api';
 import { useQuery } from '@tanstack/react-query';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { ArrowLeftIcon, StarIcon, MapPinIcon, CreditCardIcon } from 'lucide-react';
+import { ArrowLeftIcon, StarIcon, MapPinIcon, CreditCardIcon, RefreshCwIcon } from 'lucide-react';
 import styles from './order-details.module.css';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -38,7 +39,9 @@ interface OrderItem {
 
 interface Order {
   id?: string;
+  restaurantId?: string;
   restaurant?: {
+    id?: string;
     name?: string;
     image?: string;
   };
@@ -82,6 +85,7 @@ const fetchOrder = async (orderId: string): Promise<Order> => {
 
 const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
 
   const { data: order, isLoading: loading, error: fetchError } = useQuery({
@@ -90,6 +94,25 @@ const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
   });
 
   const error = fetchError instanceof Error ? 'Failed to load order details. Please try again later.' : null;
+
+  const handleTrackOrder = () => {
+    router.push(`/tracking?order=${orderId}`);
+  };
+
+  const handleReorder = () => {
+    const items = (order?.items || []).filter((item) => item && item.id).map((item) => ({
+      item: {
+        id: String(item.id),
+        name: String(item.name || ''),
+        price: Number(item.price) || 0,
+        quantity: Number(item.quantity) || 1,
+      },
+      restaurantId: order?.restaurant?.id || order?.restaurantId || '',
+    }));
+    items.forEach((entry) => dispatch(addToCart(entry)));
+    router.push('/cart');
+  };
+
 
   if (loading && !order) {
     return (
@@ -249,21 +272,21 @@ const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
 
       {order.status !== 'delivered' && order.status !== 'cancelled' && (
         <div className={styles.actionWrapper}>
-          <Button onClick={() => {}} variant="secondary" className={styles.mr16}>
+          <Button onClick={handleTrackOrder} variant="secondary" className={styles.mr16} aria-label="Track order">
             <MapPinIcon size={16} />
           </Button>
-          <Button onClick={() => {}}>
-            <RefreshIcon size={16} />
+          <Button onClick={handleReorder} aria-label="Reorder">
+            <RefreshCwIcon size={16} />
           </Button>
         </div>
       )}
 
       {order.status === 'delivered' && (
         <div className={styles.actionWrapper}>
-          <Button onClick={() => {}} variant="secondary" className={styles.mr16}>
-            <RefreshIcon size={16} />
+          <Button onClick={handleReorder} variant="secondary" className={styles.mr16} aria-label="Reorder">
+            <RefreshCwIcon size={16} />
           </Button>
-          <Button onClick={() => {}}>
+          <Button onClick={() => router.push('/history')} aria-label="Rate order">
             <StarIcon size={16} />
           </Button>
         </div>

@@ -151,7 +151,7 @@ export class WebhookService {
       .digest('hex');
     
     if (generatedSignature !== signature) {
-      throw new Error('Invalid Razorpay signature');
+      throw new BadRequestException('Invalid Razorpay signature');
     }
     
     return JSON.parse(payload.toString());
@@ -188,7 +188,7 @@ export class WebhookService {
       return await this.handleRazorpayEvent(event);
     }
     
-    throw new Error(`Unsupported gateway: ${gateway}`);
+    throw new BadRequestException(`Unsupported gateway: ${gateway}`);
   }
 
   private async handleStripeEvent(event: Stripe.Event): Promise<any> {

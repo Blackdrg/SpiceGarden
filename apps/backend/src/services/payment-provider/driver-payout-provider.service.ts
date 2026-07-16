@@ -58,7 +58,7 @@ export class DriverPayoutProviderService {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       const message = (errorData as any)?.error?.description || `Razorpay API error: ${response.status}`;
-      throw new Error(message);
+      throw new BadRequestException(message);
     }
 
     if (method === 'DELETE') {

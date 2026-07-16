@@ -125,6 +125,26 @@ describe('CSRF Protection', () => {
       expect(mockRes.header).toHaveBeenCalledWith('X-CSRF-Token', validToken);
     });
 
+    it('should skip CSRF check for bearer-token (non-cookie) clients in production', () => {
+      process.env.NODE_ENV = 'production';
+
+      (mockReq.headers as Record<string, string>)['authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.signature';
+
+      csrfProtection()(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
+      expect(mockRes.status).not.toHaveBeenCalledWith(403);
+    });
+
+    it('should still require CSRF for cookie sessions even when no bearer token is present in production', () => {
+      process.env.NODE_ENV = 'production';
+
+      csrfProtection()(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(403);
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
     it('should generate cryptographically secure tokens', () => {
       const token1 = generateCsrfToken();
       const token2 = generateCsrfToken();

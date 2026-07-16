@@ -103,7 +103,7 @@ export class PayoutService {
   async processPayout(payoutId: string, reference: string): Promise<PayoutReportEntity> {
     const payout = await this.payoutRepo.findOne({ where: { id: payoutId } });
     if (!payout) {
-      throw new Error('Payout not found');
+      throw new NotFoundException('Payout not found');
     }
 
     await this.payoutRepo.update(payoutId, {

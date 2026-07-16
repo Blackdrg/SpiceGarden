@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -78,6 +78,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
+  private readonly cleanupIntervals: NodeJS.Timeout[] = [];
 
   constructor(
     private configService: ConfigService,
@@ -85,8 +86,19 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly notificationRepo: Repository<NotificationEntity>,
   ) {
     this.ackTimeoutMs = this.configService.get<number>('WS_ACK_TIMEOUT_MS', 5000);
-    setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
-    setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+    const connectionAttemptInterval = setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+    const messageQueueInterval = setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+    this.cleanupIntervals.push(connectionAttemptInterval, messageQueueInterval);
+    for (const interval of this.cleanupIntervals) {
+      (interval as { unref?: () => void }).unref?.();
+    }
+  }
+
+  onModuleDestroy() {
+    for (const interval of this.cleanupIntervals) {
+      clearInterval(interval);
+    }
+    this.cleanupIntervals.length = 0;
   }
 
   handleConnection(client: Socket) {
@@ -195,13 +207,15 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     if (data.ack) {
       const ackResult = await new Promise((resolve, reject) => {
+        const ackTimeout = setTimeout(() => {
+          this.pendingAcks.delete(data.id);
+          resolve({ status: 'timeout', message: 'Acknowledgement timeout' });
+        }, this.ackTimeoutMs);
+        (ackTimeout as { unref?: () => void }).unref?.();
         this.pendingAcks.set(data.id, {
           resolve,
           reject,
-          timeout: setTimeout(() => {
-            this.pendingAcks.delete(data.id);
-            resolve({ status: 'timeout', message: 'Acknowledgement timeout' });
-          }, this.ackTimeoutMs),
+          timeout: ackTimeout,
         });
       });
       return ackResult;
@@ -323,13 +337,13 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   private async waitForAcknowledgement(roomOrTopic: string, data: any): Promise<any> {
     const messageId = data.messageId;
-    
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.pendingAcks.delete(messageId);
         resolve({ status: 'timeout', messageId });
       }, this.ackTimeoutMs);
-
+      (timeout as { unref?: () => void }).unref?.();
       this.pendingAcks.set(messageId, { resolve, reject, timeout });
       this.server.to(roomOrTopic).emit('message', data);
     });

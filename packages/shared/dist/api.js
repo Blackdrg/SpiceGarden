@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.menuApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
+exports.menuApi = exports.addressesApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
 exports.api = api;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
 function getCsrfToken() {
@@ -107,6 +107,17 @@ exports.ordersApi = {
     }),
     track: (id) => api(`/orders/${id}/track`),
 };
+exports.addressesApi = {
+    list: () => api('/addresses'),
+    create: (data) => api('/addresses', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
+    setDefault: (id) => api(`/addresses/${id}/default`, {
+        method: 'PUT',
+    }),
+    remove: (id) => api(`/addresses/${id}`, { method: 'DELETE' }),
+};
 exports.menuApi = {
     list: (restaurantId) => api(`/restaurants/${restaurantId}/menu`),
     categories: (restaurantId) => api(`/restaurants/${restaurantId}/categories`),
@@ -116,4 +127,5 @@ exports.default = {
     restaurants: exports.restaurantsApi,
     orders: exports.ordersApi,
     menu: exports.menuApi,
+    addresses: exports.addressesApi,
 };

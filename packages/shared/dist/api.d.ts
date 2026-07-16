@@ -33,6 +33,12 @@ export declare const ordersApi: {
     create: (data: unknown) => Promise<ApiResponse<unknown>>;
     track: (id: string) => Promise<ApiResponse<unknown>>;
 };
+export declare const addressesApi: {
+    list: () => Promise<ApiResponse<unknown[]>>;
+    create: (data: unknown) => Promise<ApiResponse<unknown>>;
+    setDefault: (id: string) => Promise<ApiResponse<unknown>>;
+    remove: (id: string) => Promise<ApiResponse<unknown>>;
+};
 export declare const menuApi: {
     list: (restaurantId: string) => Promise<ApiResponse<unknown[]>>;
     categories: (restaurantId: string) => Promise<ApiResponse<unknown[]>>;
@@ -68,6 +74,12 @@ declare const _default: {
     menu: {
         list: (restaurantId: string) => Promise<ApiResponse<unknown[]>>;
         categories: (restaurantId: string) => Promise<ApiResponse<unknown[]>>;
+    };
+    addresses: {
+        list: () => Promise<ApiResponse<unknown[]>>;
+        create: (data: unknown) => Promise<ApiResponse<unknown>>;
+        setDefault: (id: string) => Promise<ApiResponse<unknown>>;
+        remove: (id: string) => Promise<ApiResponse<unknown>>;
     };
 };
 export default _default;

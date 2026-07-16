@@ -140,6 +140,23 @@ export const ordersApi = {
   track: (id: string) => api<unknown>(`/orders/${id}/track`),
 };
 
+export const addressesApi = {
+  list: () => api<unknown[]>('/addresses'),
+
+  create: (data: unknown) =>
+    api<unknown>('/addresses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  setDefault: (id: string) =>
+    api<unknown>(`/addresses/${id}/default`, {
+      method: 'PUT',
+    }),
+
+  remove: (id: string) => api<unknown>(`/addresses/${id}`, { method: 'DELETE' }),
+};
+
 export const menuApi = {
   list: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/menu`),
 
@@ -151,4 +168,5 @@ export default {
   restaurants: restaurantsApi,
   orders: ordersApi,
   menu: menuApi,
+  addresses: addressesApi,
 };

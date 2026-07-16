@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../constants/api';
+import { STORAGE_KEYS } from '../constants/storage.keys';
 
 const AuthScreen = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -90,14 +91,17 @@ const AuthScreen = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
-        await AsyncStorage.setItem('sg_token', data.access_token);
-        await AsyncStorage.setItem('sg_user', JSON.stringify({
-          email,
-          name: isLogin ? '' : name,
-          phone: isLogin ? '' : phone,
-        }));
-        navigation.replace('Main');
+       if (response.ok) {
+         await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, data.access_token);
+         if (data.refresh_token) {
+           await AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
+         }
+         await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify({
+           email,
+           name: isLogin ? '' : name,
+           phone: isLogin ? '' : phone,
+         }));
+         navigation.replace('Main');
       } else {
         setError(data.message || (isLogin ? 'Login failed. Please check your credentials.' : 'Registration failed. Please try again.'));
         shakeAnimation();

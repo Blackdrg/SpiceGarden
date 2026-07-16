@@ -37,10 +37,6 @@ const SubscriptionsPage = () => {
   const [subscribing, setSubscribing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -66,6 +62,10 @@ const SubscriptionsPage = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSubscribe = useCallback(async (planId: string) => {
     try {

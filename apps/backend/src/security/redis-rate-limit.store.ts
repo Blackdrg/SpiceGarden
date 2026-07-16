@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import type { ClientRateLimitInfo, IncrementResponse, Options, Store } from 'express-rate-limit';
+import { Logger } from '@nestjs/common';
 
 type MemoryBucket = {
   hits: number;
@@ -15,6 +16,8 @@ type RedisRateLimitStoreOptions = {
 export class RedisRateLimitStore implements Store {
   public readonly prefix: string;
   public readonly localKeys = false;
+  private readonly logger = new Logger(RedisRateLimitStore.name);
+  private static fallbackWarned = false;
 
   private readonly redisUrl: string;
   private readonly fallbackToMemory: boolean;
@@ -41,7 +44,7 @@ export class RedisRateLimitStore implements Store {
     this.client.on('error', (error) => {
       this.redisAvailable = false;
       if (process.env.NODE_ENV === 'production') {
-        console.error('[rate-limit] Redis rate-limit store error:', error.message);
+        this.logger.error(`Redis rate-limit store error: ${error.message}`);
       }
     });
 
@@ -49,13 +52,15 @@ export class RedisRateLimitStore implements Store {
       await this.client.connect();
       await this.client.ping();
       this.redisAvailable = true;
-      console.log(`[rate-limit] Redis rate-limit store connected: ${this.redisUrl}`);
+      this.logger.log(`Redis rate-limit store connected: ${this.redisUrl}`);
     } catch (error) {
       this.redisAvailable = false;
-      this.client.disconnect();
-      this.client = null;
+      await this.closeClient();
       if (this.fallbackToMemory) {
-        console.warn(`[rate-limit] Redis unavailable, using process-local fallback: ${error instanceof Error ? error.message : String(error)}`);
+        if (!RedisRateLimitStore.fallbackWarned) {
+          RedisRateLimitStore.fallbackWarned = true;
+          this.logger.warn(`Redis unavailable, using process-local fallback: ${error instanceof Error ? error.message : String(error)}`);
+        }
       } else {
         throw error;
       }
@@ -141,9 +146,22 @@ export class RedisRateLimitStore implements Store {
 
   async shutdown(): Promise<void> {
     this.memory.clear();
-    if (this.client) {
-      this.client.disconnect();
-      this.client = null;
+    await this.closeClient();
+  }
+
+  private async closeClient(): Promise<void> {
+    if (!this.client) return;
+    const client = this.client;
+    this.client = null;
+    try {
+      client.removeAllListeners();
+    } catch {
+      /* ignore listener removal errors during teardown */
+    }
+    try {
+      await client.disconnect();
+    } catch {
+      /* ignore disconnect errors during teardown */
     }
   }
 

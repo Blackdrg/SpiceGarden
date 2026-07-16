@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, LoadingState } from '@spicegarden/ui';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 import styles from './gst-reports.module.css';
 
 type GstReport = {
@@ -27,14 +29,13 @@ const GstReportsPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
 
-  useEffect(() => {
-    fetchReport();
-  }, [month, year]);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const restaurantId = user?.id ?? null;
 
   const fetchReport = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/business/gst/reports?month=${month}&year=${year}`);
+      const res = await fetch(`/api/finance/gst/report?restaurantId=${restaurantId || ''}&month=${month}&year=${year}`);
       if (res.ok) {
         const data = await res.json();
         setReport(data);
@@ -44,23 +45,33 @@ const GstReportsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [month, year]);
+  }, [month, year, restaurantId]);
 
-  const exportGSTR1 = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/business/gst/export/gstr1?month=${month}&year=${year}`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `GSTR1_${year}_${month}.csv`;
-        a.click();
-      }
-    } catch (err) {
-      console.error('Failed to export GSTR1:', err);
-    }
-  }, [month, year]);
+  const exportGSTR1 = useCallback(() => {
+    if (!report) return;
+    const header = ['HSN/SAC Code', 'Taxable Value', 'CGST', 'SGST', 'IGST', 'Total', 'Quantity'];
+    const rows = report.hsnWise.map((row) => [
+      row.hsnCode,
+      row.taxableValue.toFixed(2),
+      row.cgst.toFixed(2),
+      row.sgst.toFixed(2),
+      row.igst.toFixed(2),
+      row.total.toFixed(2),
+      String(row.quantity),
+    ]);
+    const csv = [header, ...rows].map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GSTR1_${year}_${month}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }, [report, month, year]);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport, month, year]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;

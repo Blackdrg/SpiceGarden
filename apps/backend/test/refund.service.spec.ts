@@ -239,7 +239,9 @@ it('processes refund successfully', async () => {
         expect((r as any).refund.status).toBe('processed');
         expect((r as any).approval.approvalStatus).toBe('processed');
         expect(paymentSvc.refundPayment).toHaveBeenCalled();
-        expect(ledgerSvc.createTransaction).toHaveBeenCalled();
+        // Ledger recording is delegated to PaymentService.refundPayment to avoid
+        // double-counting the refund in the ledger.
+        expect(ledgerSvc.createTransaction).not.toHaveBeenCalled();
       });
 
      it('throws NotFoundException for missing approval', async () => {
@@ -290,7 +292,7 @@ it('throws when already processed', async () => {
        expect(refundApprovalRepo.save).toHaveBeenCalled();
      });
 
-it('handles ledger failure gracefully', async () => {
+    it('does not write a duplicate ledger entry from the refund service', async () => {
         const { svc, refundApprovalRepo, userRepo, orderRepo, paymentSvc, refundRepo, ledgerSvc, prodNotif } = setup();
         refundApprovalRepo.findOne.mockResolvedValue(mkApproval());
         userRepo.findOne.mockImplementation((opts: any) => {
@@ -303,11 +305,11 @@ it('handles ledger failure gracefully', async () => {
         refundRepo.save.mockImplementation((e: any) => ({ ...e, status: 'processed' }));
         refundApprovalRepo.save.mockImplementation((e: any) => ({ ...e }));
         orderRepo.save.mockImplementation((e: any) => ({ ...e }));
-        ledgerSvc.createTransaction.mockRejectedValue(new Error('Ledger down'));
         prodNotif.sendPaymentNotification.mockResolvedValue(undefined);
 
         const r = await svc.processRefund('a1', 'processor-1');
         expect((r as any).refund.status).toBe('processed');
+        expect(ledgerSvc.createTransaction).not.toHaveBeenCalled();
       });
    });
 

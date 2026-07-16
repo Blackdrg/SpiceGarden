@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
@@ -57,7 +57,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     userId: string
   ): Promise<PaymentResult> {
     if (!paymentId?.startsWith('cod_')) {
-      throw new Error('Invalid COD payment ID');
+      throw new BadRequestException('Invalid COD payment ID');
     }
 
     return {

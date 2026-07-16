@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from 'bullmq';
@@ -26,7 +26,7 @@ export class OrderProcessor {
     const { orderId, status, userId } = data;
 
     if (!orderId || !status) {
-      throw new Error('Order lifecycle job requires orderId and status');
+      throw new BadRequestException('Order lifecycle job requires orderId and status');
     }
 
     const order = await this.orderRepo.findOne({ where: { id: orderId } });

@@ -27,6 +27,21 @@ jest.mock('@spicegarden/shared/api', () => ({
   authApi: {
     refreshToken: jest.fn(async () => ({ data: { refresh_token: 'refreshed-token' } })),
   },
+  addressesApi: {
+    list: jest.fn(async () => ({
+      data: [
+        {
+          id: 'addr-1',
+          label: 'Home',
+          addressLine: 'Sector 17',
+          city: 'Chandigarh',
+          state: 'Chandigarh',
+          postalCode: '160017',
+          isDefault: true,
+        },
+      ],
+    })),
+  },
 }));
 
 const { ordersApi } = jest.requireMock('@spicegarden/shared/api') as {

@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual, LessThan, Raw } from 'typeorm';
+import { Repository, MoreThanOrEqual, LessThan, Raw, EntityManager } from 'typeorm';
 import { LedgerEntryEntity } from '../../db/entities/ledger-entry.entity';
 
 @Injectable()
@@ -13,7 +13,9 @@ export class LedgerService {
   ) {}
 
   /**
-   * Create a single ledger entry
+   * Create a single ledger entry.
+   * When an EntityManager is supplied the entry participates in that
+   * caller-provided transaction, guaranteeing atomicity for double-entry writes.
    */
   async createEntry(
     transactionId: string,
@@ -23,8 +25,10 @@ export class LedgerService {
     type: string,
     referenceId: string | null = null,
     description: string = '',
+    manager?: EntityManager,
   ): Promise<LedgerEntryEntity> {
-    const entry = this.ledgerRepo.create({
+    const repo = manager ? manager.getRepository(LedgerEntryEntity) : this.ledgerRepo;
+    const entry = repo.create({
       transactionId,
       account,
       amount,
@@ -33,7 +37,7 @@ export class LedgerService {
       referenceId: referenceId ?? undefined,
       description,
     } as Parameters<typeof this.ledgerRepo.create>[0]);
-    return await this.ledgerRepo.save(entry);
+    return await repo.save(entry);
   }
 
   /**
@@ -59,30 +63,36 @@ export class LedgerService {
   ): Promise<void> {
     // Ensure amount is positive
     if (amount <= 0) {
-      throw new Error('Amount must be positive');
+      throw new BadRequestException('Amount must be positive');
     }
 
-    // Create debit entry (positive amount)
-    await this.createEntry(
-      transactionId,
-      debitAccount,
-      amount,
-      currency,
-      type,
-      referenceId,
-      description,
-    );
+    // Persist both entries atomically so the ledger can never be left
+    // unbalanced if the second write fails.
+    await this.ledgerRepo.manager.transaction(async (manager) => {
+      // Create debit entry (positive amount)
+      await this.createEntry(
+        transactionId,
+        debitAccount,
+        amount,
+        currency,
+        type,
+        referenceId,
+        description,
+        manager,
+      );
 
-    // Create credit entry (negative amount)
-    await this.createEntry(
-      transactionId,
-      creditAccount,
-      -amount,
-      currency,
-      type,
-      referenceId,
-      description,
-    );
+      // Create credit entry (negative amount)
+      await this.createEntry(
+        transactionId,
+        creditAccount,
+        -amount,
+        currency,
+        type,
+        referenceId,
+        description,
+        manager,
+      );
+    });
 
     this.logger.log(`Created ledger transaction ${transactionId}: ${debitAccount} +${amount}, ${creditAccount} -${amount}`);
   }

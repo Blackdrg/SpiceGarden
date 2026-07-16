@@ -24,13 +24,9 @@ const PayoutsPage = () => {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPayouts();
-  }, []);
-
   const fetchPayouts = useCallback(async () => {
     try {
-      const res = await fetch('/api/business/restaurant/payouts/history');
+      const res = await fetch('/api/restaurant/ops/payout/history');
       if (res.ok) {
         const data = await res.json();
         setPayouts(data);
@@ -41,6 +37,10 @@ const PayoutsPage = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchPayouts();
+  }, [fetchPayouts]);
 
   if (loading) {
     return <div className={styles.loading}><LoadingState /></div>;

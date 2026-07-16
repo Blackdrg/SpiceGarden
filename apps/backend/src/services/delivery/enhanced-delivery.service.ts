@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -121,7 +121,7 @@ export class EnhancedDeliveryService {
   async assignOrderToDriver(orderId: string, driverId: string): Promise<void> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     await this.dataSource.manager.transaction(async (manager) => {
@@ -192,7 +192,7 @@ export class EnhancedDeliveryService {
   ): Promise<void> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     await this.dataSource.manager.transaction(async (manager) => {

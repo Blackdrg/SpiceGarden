@@ -7,10 +7,14 @@ import { RootStackParamList, TabParamList } from './src/navigation/types';
 import { LocaleProvider } from './src/constants/i18n';
 import AuthScreen from './src/screens/AuthScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import SearchScreen from './src/screens/SearchScreen';
 import CartScreen from './src/screens/CartScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import TrackingScreen from './src/screens/TrackingScreen';
-import HistoryScreen from './src/screens/HistoryScreen';
+import OrderDetailsScreen from './src/screens/OrderDetailsScreen';
+import RestaurantScreen from './src/screens/RestaurantScreen';
+import CheckoutScreen from './src/screens/CheckoutScreen';
+import AddressesScreen from './src/screens/AddressesScreen';
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
@@ -28,7 +32,10 @@ function AppNavigator() {
         <Stack.Screen name="Auth" component={AuthScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
         <Stack.Screen name="Tracking" component={TrackingScreen} />
-        <Stack.Screen name="OrderDetails" component={HistoryScreen} />
+        <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
+        <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+        <Stack.Screen name="Checkout" component={CheckoutScreen} />
+        <Stack.Screen name="Address" component={AddressesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -43,7 +50,7 @@ function MainTabNavigator() {
           <Text style={{ color, fontSize: size }}>H</Text>
         )
       }} />
-      <Tab.Screen name="Search" component={HomeScreen} options={{
+      <Tab.Screen name="Search" component={SearchScreen} options={{
         tabBarLabel: 'Search',
         tabBarIcon: ({ color, size }) => (
           <Text style={{ color, fontSize: size }}>S</Text>

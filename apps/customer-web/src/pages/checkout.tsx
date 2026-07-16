@@ -1,9 +1,9 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { Button, Card, DESIGN_TOKENS, Skeleton, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { ordersApi, authApi } from '@spicegarden/shared/api';
+import { ordersApi, authApi, addressesApi } from '@spicegarden/shared/api';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { CreditCardIcon, SmartphoneIcon, BanknoteIcon, TagIcon } from 'lucide-react';
 import styles from './checkout.module.css';
@@ -12,9 +12,22 @@ interface OrderResponse {
   id: string;
 }
 
+interface Address {
+  id: string;
+  label: string;
+  addressLine: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  isDefault?: boolean;
+}
+
 interface CheckoutState {
   paymentMethod: string;
   address: string;
+  selectedAddressId: string | null;
+  addresses: Address[];
+  addressLoading: boolean;
   tip: number;
   promoCode: string;
   promoError: string;
@@ -26,7 +39,10 @@ interface CheckoutState {
 
 const initialCheckoutState: CheckoutState = {
   paymentMethod: 'card',
-  address: 'Home - Sector 17, Chandigarh',
+  address: '',
+  selectedAddressId: null,
+  addresses: [],
+  addressLoading: true,
   tip: 0,
   promoCode: '',
   promoError: '',
@@ -42,6 +58,26 @@ function checkoutReducer(state: CheckoutState, action: { type: string; payload?:
       return { ...state, paymentMethod: action.payload as string };
     case 'SET_ADDRESS':
       return { ...state, address: action.payload as string };
+    case 'SET_ADDRESSES': {
+      const addresses = action.payload as Address[];
+      const preselected = addresses.find((a) => a.isDefault) || addresses[0] || null;
+      return {
+        ...state,
+        addresses,
+        addressLoading: false,
+        selectedAddressId: preselected ? preselected.id : null,
+        address: preselected ? formatAddress(preselected) : '',
+      };
+    }
+    case 'SET_SELECTED_ADDRESS': {
+      const id = action.payload as string;
+      const selected = state.addresses.find((a) => a.id === id) || null;
+      return {
+        ...state,
+        selectedAddressId: id,
+        address: selected ? formatAddress(selected) : '',
+      };
+    }
     case 'SET_TIP':
       return { ...state, tip: action.payload as number };
     case 'SET_PROMO_CODE':
@@ -63,12 +99,32 @@ function checkoutReducer(state: CheckoutState, action: { type: string; payload?:
   }
 }
 
+function formatAddress(address: Address): string {
+  return `${address.label} - ${address.addressLine}, ${address.city}, ${address.state} ${address.postalCode}`;
+}
+
 const CheckoutPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const restaurantId = useSelector((state: RootState) => state.cart.restaurantId);
   const [state, dispatch] = useReducer(checkoutReducer, initialCheckoutState);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const response = await addressesApi.list();
+        if (!active) return;
+        dispatch({ type: 'SET_ADDRESSES', payload: (response.data as Address[]) || [] });
+      } catch {
+        if (active) dispatch({ type: 'SET_ADDRESSES', payload: [] });
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 20;
@@ -108,10 +164,22 @@ const CheckoutPage = () => {
     dispatch({ type: 'RESET_PROMO_STATES' });
     dispatch({ type: 'SET_ORDER_ERROR', payload: '' });
 
+    if (!restaurantId) {
+      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: 'SET_ORDER_ERROR', payload: 'No restaurant selected. Please add items from a restaurant menu.' });
+      return;
+    }
+
+    if (!state.selectedAddressId) {
+      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: 'SET_ORDER_ERROR', payload: 'Please select a delivery address before placing your order.' });
+      return;
+    }
+
     try {
       const orderData = {
-        restaurantId: restaurantId || 'rest-001',
-        deliveryAddressId: 'addr-001',
+        restaurantId,
+        deliveryAddressId: state.selectedAddressId,
         items: cartItems.map(item => ({
           menuItemId: item.id,
           quantity: item.quantity,
@@ -171,16 +239,41 @@ const CheckoutPage = () => {
       ) : (
         <>
           <div className={styles.section}>
-            <Card title="Delivery Address" variant="interactive" subtitle={state.address}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ margin: 0, fontSize: '0.9375rem' }}>{state.address}</p>
-                <Button label="Change" onClick={() => {
-                  const newAddress = prompt('Enter your delivery address:', state.address);
-                  if (newAddress !== null && newAddress.trim() !== '') {
-                    dispatch({ type: 'SET_ADDRESS', payload: newAddress });
-                  }
-                }} variant="secondary" size="sm" />
-              </div>
+            <Card title="Delivery Address" variant="interactive" subtitle={state.address || 'No address selected'}>
+              {state.addressLoading ? (
+                <Skeleton height={40} borderRadius={DESIGN_TOKENS.radius.lg} />
+              ) : state.addresses.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
+                  <p style={{ margin: 0, fontSize: '0.9375rem' }}>No saved addresses found.</p>
+                  <Button
+                    label="Add Address"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => router.push('/addresses')}
+                  />
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
+                  <select
+                    aria-label="Select delivery address"
+                    value={state.selectedAddressId || ''}
+                    onChange={(e) => dispatch({ type: 'SET_SELECTED_ADDRESS', payload: e.target.value })}
+                    className={styles.addressSelect}
+                  >
+                    {state.addresses.map((addr) => (
+                      <option key={addr.id} value={addr.id}>
+                        {formatAddress(addr)}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    label="Manage Addresses"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => router.push('/addresses')}
+                  />
+                </div>
+              )}
             </Card>
           </div>
 

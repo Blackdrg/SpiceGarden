@@ -168,12 +168,12 @@ const order = await this.orderRepo.findOne({
     });
 
     // Step 2: Simulate restaurant acceptance after delay
-    this.orderProcessingQueue.set(orderId, setTimeout(async () => {
+    const timer = setTimeout(async () => {
       await this.orderRepo.update(orderId, { status: OrderStatus.RESTAURANT_ACCEPTED });
-      
+
       // Step 3: Assign driver
       try {
-        const branch = await this.branchRepo.findOne({ 
+        const branch = await this.branchRepo.findOne({
           where: { id: order.branchId || order.restaurantId },
           relations: { restaurant: true }
         });
@@ -188,7 +188,7 @@ const order = await this.orderRepo.findOne({
           if (availableDrivers.length > 0) {
             const driver = availableDrivers[0];
             const assignment = await this.driverAssignmentService.assignDriverToOrder(orderId);
-            
+
             await this.orderRepo.update(orderId, {
               driverId: driver.id,
               status: OrderStatus.DRIVER_ASSIGNED,
@@ -206,7 +206,9 @@ const order = await this.orderRepo.findOne({
       } catch (error) {
         this.logger.error(`Failed to assign driver to order ${orderId}: ${error instanceof Error ? error.message : String(error)}`);
       }
-    }, 1000)); // Simulate 1 second for restaurant acceptance
+    }, 1000); // Simulate 1 second for restaurant acceptance
+    (timer as { unref?: () => void }).unref?.();
+    this.orderProcessingQueue.set(orderId, timer);
   }
 
   // Metrics and GMV

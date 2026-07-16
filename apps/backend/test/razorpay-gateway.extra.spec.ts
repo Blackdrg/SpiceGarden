@@ -18,11 +18,11 @@ describe('RazorpayGateway error/edge branches', () => {
     (global as any).fetch = originalFetch;
   });
 
-  it('creates a payment intent and converts paise to rupees', async () => {
-    (global as any).fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'order_1', amount: 13800, currency: 'inr', status: 'created' }) } as any);
-    const intent = await gateway.createPaymentIntent(138, 'inr', 'user-1', { orderId: 'o1' });
-    expect(intent.id).toBe('order_1');
-    expect(intent.amount).toBe(138);
+    it('creates a payment intent and returns the amount in paise', async () => {
+      (global as any).fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'order_1', amount: 13800, currency: 'inr', status: 'created' }) } as any);
+      const intent = await gateway.createPaymentIntent(138, 'inr', 'user-1', { orderId: 'o1' });
+      expect(intent.id).toBe('order_1');
+      expect(intent.amount).toBe(13800);
     expect(intent.currency).toBe('inr');
   });
 

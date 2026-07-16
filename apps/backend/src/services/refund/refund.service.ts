@@ -275,29 +275,18 @@ export class RefundService {
        approval.processedAt = new Date();
        await this.refundApprovalRepo.save(approval);
 
-        // Update order payment status
-        order.paymentStatus = PaymentStatus.REFUNDED;
-        order.updatedAt = new Date();
-        await this.orderRepo.save(order);
+         // Update order payment status
+         order.paymentStatus = PaymentStatus.REFUNDED;
+         order.updatedAt = new Date();
+         await this.orderRepo.save(order);
 
-       // Create ledger entry for the refund
-       try {
-         await this.ledgerService.createTransaction(
-           paymentRefund.id, // transactionId
-           'refund', // debitAccount (increase liability)
-           'cash', // creditAccount (decrease asset)
-           paymentRefund.amount / 100, // amount
-            'USD', // currency
-           'refund', // type
-           paymentRefund.id, // referenceId
-           `Refund processed for order ${order.id}, reason: ${approval.reason}`
-         );
-       } catch (ledgerError) {
-         this.logger.error('Failed to create ledger entry for refund:', ledgerError);
-       }
+        // The ledger entry for this refund is recorded by PaymentService.refundPayment
+        // (the shared chokepoint for both the approval workflow and the direct
+        // /payments/refund endpoint), which uses the actual gateway currency.
+        // Recording it again here would double-count the refund in the ledger.
 
-       // Notify about refund completion
-       await this.notifyRefundProcessed(savedRefund, order);
+        // Notify about refund completion
+        await this.notifyRefundProcessed(savedRefund, order);
 
        this.logger.log(`Processed refund for order ${order.id}`);
 

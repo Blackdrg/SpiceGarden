@@ -132,7 +132,10 @@ export class RestaurantOnboardingService {
   /**
    * Complete onboarding manually
    */
-  async completeOnboarding(onboardingId: string, reviewedBy: string): Promise<RestaurantOnboardingEntity> {
+  async completeOnboarding(
+    onboardingId: string,
+    reviewedBy: string,
+  ): Promise<RestaurantOnboardingEntity> {
     const onboarding = await this.onboardingRepo.findOne({ where: { id: onboardingId } });
     if (!onboarding) {
       throw new NotFoundException('Onboarding record not found');
