@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import styles from './AdminDashboard.module.css';
 import sidebarStyles from './Sidebar.module.css';
@@ -15,6 +16,7 @@ import {
   IconDollarSign,
   IconUsers,
   IconActivity,
+  IconShield,
   IconChevronRight,
 } from '../components/icons/SGIcon';
 import type { Socket } from 'socket.io-client';
@@ -204,6 +206,7 @@ const sidebarNavItems: { key: AdminTab; label: string; Icon: React.FC<{ size?: n
 ];
 
 function Sidebar({ selectedTab, onSelectTab, sidebarOpen }: { selectedTab: AdminTab; onSelectTab: (tab: AdminTab) => void; sidebarOpen: boolean }) {
+  const router = useRouter();
   return (
     <aside className={sidebarStyles.sidebar} role="navigation" aria-label="Main navigation">
       <div className={sidebarStyles.logoSection}>
@@ -237,6 +240,15 @@ function Sidebar({ selectedTab, onSelectTab, sidebarOpen }: { selectedTab: Admin
             </button>
           );
         })}
+        <button
+          type="button"
+          onClick={() => router.push('/compliance')}
+          className={`${sidebarStyles.navButton} ${sidebarStyles.navButtonInactive}`}
+          title="Compliance Center"
+        >
+          <IconShield size={18} />
+          <span>Compliance Center</span>
+        </button>
       </nav>
 
       <div className={sidebarStyles.footer}>

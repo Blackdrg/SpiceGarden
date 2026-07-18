@@ -41,7 +41,7 @@ describe('Customer Mobile Auth Integration', () => {
     });
 
     await waitFor(() => {
-      expect(storage.setItem).toHaveBeenCalledWith('sg_token', 'test-token');
+      expect(storage.setItem).toHaveBeenCalledWith('spicegarden_auth_token', 'test-token');
     });
   });
 });

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { entities } from '../../src/db/entities.index';
+import { entities } from '../../../src/db/entities-index';
 
 export class IntegrationTestHelper {
   private static dataSource: DataSource | null = null;

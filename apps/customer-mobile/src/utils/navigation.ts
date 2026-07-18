@@ -36,6 +36,8 @@ export const linking = {
         parse: { orderId: (id: string) => id },
       },
       Profile: 'profile',
+      Legal: 'legal',
+      Privacy: 'privacy',
     },
   },
 };

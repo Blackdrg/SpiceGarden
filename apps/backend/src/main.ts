@@ -12,6 +12,8 @@ import './reflect-metadata';
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
 import compression from "compression";
+import os from "os";
+import { Server } from "http";
 import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
@@ -311,6 +313,34 @@ const dsn = configService.get<string>("SENTRY_DSN");
   }
 
   await app.listen(3001);
+  const httpServer = app.getHttpAdapter().getInstance() as unknown as Server;
+  const shutdownGracePeriod = parseInt(configService.get<string>("SHUTDOWN_GRACE_PERIOD_MS", "10000"));
+
+  process.on("SIGTERM", () => {
+    console.log(`SIGTERM received — shutting down gracefully within ${shutdownGracePeriod}ms`);
+    httpServer.close(() => {
+      console.log("HTTP server closed");
+      process.exit(0);
+    });
+    setTimeout(() => {
+      console.error("Graceful shutdown timed out — forcing exit");
+      process.exit(1);
+    }, shutdownGracePeriod).unref();
+  });
+
+  process.on("SIGINT", () => {
+    console.log(`SIGINT received — shutting down gracefully within ${shutdownGracePeriod}ms`);
+    httpServer.close(() => {
+      console.log("HTTP server closed");
+      process.exit(0);
+    });
+    setTimeout(() => {
+      console.error("Graceful shutdown timed out — forcing exit");
+      process.exit(1);
+    }, shutdownGracePeriod).unref();
+  });
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();

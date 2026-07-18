@@ -79,6 +79,23 @@ import { TenantEntity } from "./entities/tenant.entity";
 import { ApiKeyEntity } from "./entities/api-key.entity";
 import { BankAccountEntity } from "./entities/bank-account.entity";
 import { SettlementReportEntity } from "./entities/settlement-report.entity";
+import {
+  LegalDocumentEntity,
+  LegalVersionEntity,
+  LegalAcceptanceEntity,
+  CookieConsentEntity,
+  ConsentLogEntity,
+  DataSubjectRequestEntity,
+  DataExportEntity,
+  RetentionPolicyEntity,
+  DataRetentionJobEntity,
+  SecurityIncidentEntity,
+  GrievanceEntity,
+  AgreementEntity,
+  AgreementAcceptanceEntity,
+  ComplianceAuditEntity,
+  CookieRegistryEntity,
+} from "../legal/entities";
 
 export const entities = [
   AddressEntity,
@@ -163,4 +180,19 @@ export const entities = [
   ApiKeyEntity,
   BankAccountEntity,
   SettlementReportEntity,
+  LegalDocumentEntity,
+  LegalVersionEntity,
+  LegalAcceptanceEntity,
+  CookieConsentEntity,
+  ConsentLogEntity,
+  DataSubjectRequestEntity,
+  DataExportEntity,
+  RetentionPolicyEntity,
+  DataRetentionJobEntity,
+  SecurityIncidentEntity,
+  GrievanceEntity,
+  AgreementEntity,
+  AgreementAcceptanceEntity,
+  ComplianceAuditEntity,
+  CookieRegistryEntity,
 ];

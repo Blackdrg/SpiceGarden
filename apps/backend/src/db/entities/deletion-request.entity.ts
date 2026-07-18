@@ -18,7 +18,7 @@ export class DeletionRequestEntity {
   @Column({ type: 'date' })
   scheduledDeletionDate!: Date;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'text', nullable: true })
   cancellationReason!: string;
 
   @CreateDateColumn()

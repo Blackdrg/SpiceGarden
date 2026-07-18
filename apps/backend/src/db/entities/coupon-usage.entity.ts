@@ -12,16 +12,16 @@ export class CouponUsageEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
+  @Column('uuid')
   couponId!: string;
 
-  @Column()
+  @Column('uuid')
   userId!: string;
 
   @Column({ type: 'varchar', enum: CouponUsageStatus, default: CouponUsageStatus.ACTIVE })
   status!: CouponUsageStatus;
 
-  @Column({ nullable: true })
+  @Column('uuid', { nullable: true })
   orderId!: string;
 
   @Column({ nullable: true })

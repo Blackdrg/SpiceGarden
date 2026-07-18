@@ -44,9 +44,25 @@ import { PaymentFraudFlagEntity } from '../services/payments/payment-fraud.entit
 import { PaymentEventEntity } from '../services/payments/payment-event.entity';
 import { BranchControlEntity } from './entities/branch-control.entity';
 import { HolidayScheduleEntity } from './entities/holiday-schedule.entity';
-import { TicketMessageEntity } from './entities/support-ticket.entity';
 import { NotificationAnalyticsEntity } from './entities/notification-analytics.entity';
 import { ReviewDocument, ReviewSchema } from './schemas/review.schema';
+import {
+  LegalDocumentEntity,
+  LegalVersionEntity,
+  LegalAcceptanceEntity,
+  CookieConsentEntity,
+  ConsentLogEntity,
+  DataSubjectRequestEntity,
+  DataExportEntity,
+  RetentionPolicyEntity,
+  DataRetentionJobEntity,
+  SecurityIncidentEntity,
+  GrievanceEntity,
+  AgreementEntity,
+  AgreementAcceptanceEntity,
+  ComplianceAuditEntity,
+  CookieRegistryEntity,
+} from '../legal/entities';
 import { DeletionRequestEntity } from './entities/deletion-request.entity';
 import { DataExportRequestEntity } from './entities/data-export-request.entity';
 import { NotificationEntity } from './entities/notification.entity';
@@ -70,7 +86,7 @@ import { CommissionRuleEntity } from './entities/commission-rule.entity';
 import { MenuModerationEntity } from './entities/menu-moderation.entity';
 import { RestaurantOnboardingEntity } from './entities/restaurant-onboarding.entity';
 import { DisputeEntity } from './entities/dispute.entity';
-import { SupportTicketEntity } from './entities/support-ticket.entity';
+import { SupportTicketEntity, TicketMessageEntity } from './entities/support-ticket.entity';
 import { PaymentMethodEntity } from './entities/payment-method.entity';
 import { MfaSecretEntity } from './entities/mfa.entity';
 import { DriverIssueEntity } from './entities/driver-issue.entity';
@@ -169,6 +185,21 @@ const entities = [
   HolidayScheduleEntity,
   NotificationAnalyticsEntity,
   TicketMessageEntity,
+  LegalDocumentEntity,
+  LegalVersionEntity,
+  LegalAcceptanceEntity,
+  CookieConsentEntity,
+  ConsentLogEntity,
+  DataSubjectRequestEntity,
+  DataExportEntity,
+  RetentionPolicyEntity,
+  DataRetentionJobEntity,
+  SecurityIncidentEntity,
+  GrievanceEntity,
+  AgreementEntity,
+  AgreementAcceptanceEntity,
+  ComplianceAuditEntity,
+  CookieRegistryEntity,
 ];
 
 const isLocalSqlite =

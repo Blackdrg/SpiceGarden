@@ -224,9 +224,9 @@ describe('ComplianceService', () => {
     it('should detect encrypted PII by ciphertext prefix', async () => {
       userRepo.findOne.mockResolvedValue({
         id: 'user-1',
-        email: 'U2FsdGVkX1+encrypted',
-        phone: 'U2FsdGVkX1+encrypted',
-        fullName: 'U2FsdGVkX1+encrypted',
+        email: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
+        phone: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
+        fullName: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
       } as any);
 
       const result = await service.verifyPiiEncryption('user-1');

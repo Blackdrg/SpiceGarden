@@ -81,7 +81,7 @@ export class CouponEntity {
     endTime?: string;
   };
 
-  @CreateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'now()' })
   validFrom!: Date;
 
   @Column()

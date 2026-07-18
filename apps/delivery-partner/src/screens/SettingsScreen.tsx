@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, CardView } from '../components/Screen';
-import type { ScreenProps } from '../types';
+import type { ScreenProps, ScreenName } from '../types';
 
 type SettingsState = { notifications: boolean; sounds: boolean; location: boolean };
-type SettingSection = { title: string; items: { label: string; icon: string; value?: string; toggle?: boolean; settingKey?: keyof SettingsState }[] };
+type SettingSection = { title: string; items: { label: string; icon: string; value?: string; toggle?: boolean; settingKey?: keyof SettingsState; navigate?: ScreenName; url?: string }[] };
 
 const sections: SettingSection[] = [
   {
@@ -23,8 +23,20 @@ const sections: SettingSection[] = [
     ],
   },
   {
+    title: 'Legal & Privacy',
+    items: [
+      { label: 'Security Center', icon: 'shield-checkmark-outline', navigate: 'DriverLegal' as any },
+      { label: 'Driver Agreement', icon: 'document-text-outline', navigate: 'DriverLegal' as any },
+      { label: 'Privacy Policy', icon: 'lock-closed-outline', url: 'https://spicegarden.com/privacy' },
+      { label: 'Terms of Service', icon: 'document-outline', url: 'https://spicegarden.com/terms' },
+      { label: 'Cookie Policy', icon: 'cube-outline', url: 'https://spicegarden.com/cookies' },
+      { label: 'Data Retention Policy', icon: 'time-outline', url: 'https://spicegarden.com/data-retention' },
+    ],
+  },
+  {
     title: 'Account',
     items: [
+      { label: 'Legal & Agreements', icon: 'document-text-outline', navigate: 'DriverLegal' as any },
       { label: 'Change Password', icon: 'lock-closed-outline' },
       { label: 'Delete Account', icon: 'trash-outline' },
     ],
@@ -55,7 +67,15 @@ export default function SettingsScreen(_props: ScreenProps): React.JSX.Element {
                   styles.settingRow,
                   index < section.items.length - 1 && styles.settingRowBorder,
                 ]}
-                onPress={() => item.toggle && item.settingKey && toggleSetting(item.settingKey)}
+                onPress={() => {
+                  if (item.navigate) {
+                    _props.navigation.navigate(item.navigate);
+                  } else if (item.url) {
+                    Linking.openURL(item.url);
+                  } else if (item.toggle && item.settingKey) {
+                    toggleSetting(item.settingKey);
+                  }
+                }}
               >
                 <View style={styles.settingLeft}>
                   <View style={styles.settingIconContainer}>

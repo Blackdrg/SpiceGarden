@@ -98,10 +98,15 @@ export class ComplianceController {
   @Post('secrets/rotate')
   async rotateSecrets(@Query('secrets') secrets?: string) {
     const secretList = secrets ? secrets.split(',') : ['jwt_secret', 'encryption', 'db_password'];
+    const results = [];
+    for (const secret of secretList) {
+      results.push(await this.secretsService.rotateSecret(secret));
+    }
+    const allRotated = results.every((r) => r.rotated);
     return {
-      success: true,
-      message: 'Secrets rotation initiated',
-      rotated: secretList,
+      success: allRotated,
+      message: allRotated ? 'All requested secrets rotated' : 'One or more secret rotations failed',
+      results,
     };
   }
 

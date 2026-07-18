@@ -3,17 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { EnhancedDeliveryService } from './enhanced-delivery.service';
-import { DriverEntity } from '../../db/entities/driver.entity';
-import { OrderEntity } from '../../db/entities/order.entity';
-import { BatchEntity } from '../../db/entities/batch.entity';
-import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
-import { GeoService } from '../../services/geo/geo.service';
+import { GeoModule } from '../geo/geo.module';
 
 @Module({
   imports: [
     DbRepositoriesModule,
+    GeoModule,
   ],
-  providers: [EnhancedDeliveryService, GeoService],
+  providers: [EnhancedDeliveryService],
   exports: [EnhancedDeliveryService],
 })
 export class EnhancedDeliveryServiceModule {}

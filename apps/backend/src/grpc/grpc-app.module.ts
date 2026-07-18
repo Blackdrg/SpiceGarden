@@ -8,7 +8,7 @@ import { TrackingModule } from "../infra/tracking/tracking.module";
 import { AuthServiceModule } from "../services/auth/auth.module";
 import { AuthGrpcController } from "./auth.controller";
 import { OrderGrpcController } from "./order.controller";
-import { OrderService } from "../services/order/order.service";
+import { OrderServiceModule } from "../services/order/order.module";
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { OrderService } from "../services/order/order.service";
     QueueModule,
     TrackingModule,
     AuthServiceModule,
-    OrderService,
+    OrderServiceModule,
   ],
   controllers: [AuthGrpcController, OrderGrpcController],
   providers: [],

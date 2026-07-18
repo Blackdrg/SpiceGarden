@@ -10,6 +10,8 @@ export type RootStackParamList = {
   Address: undefined;
   Home: undefined;
   Restaurant: { restaurantId: string; slug?: string };
+  Legal: undefined;
+  Privacy: undefined;
 };
 
 export type TabParamList = {

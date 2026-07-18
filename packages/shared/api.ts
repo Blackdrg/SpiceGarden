@@ -163,10 +163,121 @@ export const menuApi = {
   categories: (restaurantId: string) => api<unknown[]>(`/restaurants/${restaurantId}/categories`),
 };
 
+
+export interface LegalDocument {
+  id: string;
+  type: string;
+  title: string;
+  slug: string;
+  currentVersion: number;
+  currentVersionId?: string;
+  lastUpdated: string;
+  language: string;
+  version?: string;
+  effectiveDate?: string;
+  summary?: string;
+  sections?: { id: string; title: string; content: string; order: number }[];
+}
+
+export interface ConsentRecord {
+  id: string;
+  region: string;
+  consentVersion: string;
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  performance: boolean;
+  functional: boolean;
+  preference: boolean;
+  createdAt: string;
+}
+
+export interface PrivacyDashboard {
+  userId: string;
+  consent: { version: string; analytics: boolean; marketing: boolean } | null;
+  activeRequests: number;
+  exportsAvailable: number;
+  dpdpOfficer: { name: string; email: string; phone: string };
+  consentManager: { name: string; email: string } | null;
+}
+
+export const legalApi = {
+  center: (language = 'en') =>
+    api<{ categories: string[]; documents: LegalDocument[] }>(`/legal/center?language=${language}`),
+
+  document: (type: string, language = 'en') =>
+    api<LegalDocument>(`/legal/documents/${type}?language=${language}`),
+
+  versions: (type: string, language?: string) =>
+    api<{ document: string; currentVersion: number; versions: unknown[] }>(
+      `/legal/documents/${type}/versions${language ? `?language=${language}` : ''}`,
+    ),
+
+  requiredAcceptances: () => api<{ pending: { type: string; title: string; currentVersion: number }[] }>('/legal/required'),
+
+  accept: (documentId: string, versionId: string, method = 'click_accept') =>
+    api<unknown>('/legal/accept', {
+      method: 'POST',
+      body: JSON.stringify({ documentId, versionId, method }),
+    }),
+
+  myAcceptances: () => api<unknown[]>('/legal/me/acceptances'),
+
+  cookieRegistry: () => api<unknown[]>('/legal/cookie-registry'),
+
+  recordConsent: (payload: {
+    userId?: string;
+    anonymousToken?: string;
+    region: string;
+    consentVersion: string;
+    necessary: boolean;
+    analytics: boolean;
+    marketing: boolean;
+    performance: boolean;
+    functional: boolean;
+    preference: boolean;
+  }) =>
+    api<{ consentId: string; region: string; version: string }>('/legal/consent', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  activeConsent: (token: string) =>
+    api<ConsentRecord | null>(`/legal/consent/active?token=${encodeURIComponent(token)}`),
+
+  withdrawConsent: (consentId: string, userId?: string) =>
+    api<unknown>(`/legal/consent/${consentId}/withdraw`, {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    }),
+
+  dashboard: (userId: string) => api<PrivacyDashboard>(`/privacy/dashboard/${userId}`),
+
+  createRequest: (payload: {
+    userId: string;
+    type: string;
+    regulation: string;
+    reason?: string;
+    requestId?: string;
+  }) =>
+    api<unknown>('/privacy/requests', { method: 'POST', body: JSON.stringify(payload) }),
+
+  listRequests: (query = '') => api<unknown[]>(`/privacy/requests${query}`),
+
+  createExport: (payload: { userId: string; regulation: string; format: string; requestId?: string }) =>
+    api<unknown>('/privacy/exports', { method: 'POST', body: JSON.stringify(payload) }),
+
+  listExports: (userId: string) => api<unknown[]>(`/privacy/exports/${userId}`),
+
+  downloadExport: (exportId: string) => `${API_BASE_URL}/privacy/exports/${exportId}/download`,
+
+  dpdpInfo: () => api<{ officer: unknown; consentManager: unknown }>('/privacy/dpdp/officer'),
+};
 export default {
   auth: authApi,
   restaurants: restaurantsApi,
   orders: ordersApi,
   menu: menuApi,
   addresses: addressesApi,
+  legal: legalApi,
 };

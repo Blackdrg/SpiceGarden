@@ -2,7 +2,7 @@ import "reflect-metadata";
 import * as path from "path";
 import * as dotenv from "dotenv";
 import { DataSource } from "typeorm";
-import { entities } from "./entities.index";
+import { entities } from "./entities-index";
 
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 

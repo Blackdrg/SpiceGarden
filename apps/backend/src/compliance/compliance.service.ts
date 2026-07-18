@@ -261,31 +261,31 @@ async getRetentionStatistics(): Promise<any> {
    }
 
    async verifyPiiEncryption(userId: string): Promise<any> {
-     const piiFields = ['email', 'phone', 'fullName'];
-     const user = await this.userRepo.findOne({ where: { id: userId } });
-      if (!user) {
-        throw new NotFoundException('User not found');
+      const piiFields = ['email', 'phone', 'fullName'];
+      const user = await this.userRepo.findOne({ where: { id: userId } });
+       if (!user) {
+         throw new NotFoundException('User not found');
+       }
+
+      const fieldsStatus: Record<string, 'encrypted' | 'plaintext_warning' | 'missing'> = {};
+      const encryptedFields: string[] = [];
+      for (const field of piiFields) {
+        const value = user[field as keyof UserEntity] as any;
+        if (typeof value === 'string' && /^[A-Za-z0-9+/=]{40,}\.[A-Za-z0-9+/=]+\.[A-Za-z0-9+/=]+$/.test(value)) {
+          fieldsStatus[field] = 'encrypted';
+          encryptedFields.push(field);
+        } else if (typeof value === 'string' && value.length > 0) {
+          fieldsStatus[field] = 'plaintext_warning';
+        } else {
+          fieldsStatus[field] = 'missing';
+        }
       }
 
-     const fieldsStatus: Record<string, 'encrypted' | 'plaintext_warning' | 'missing'> = {};
-     const encryptedFields: string[] = [];
-     for (const field of piiFields) {
-       const value = user[field as keyof UserEntity] as any;
-       if (typeof value === 'string' && value.startsWith('U2FsdGVkX1+')) {
-         fieldsStatus[field] = 'encrypted';
-         encryptedFields.push(field);
-       } else if (typeof value === 'string') {
-         fieldsStatus[field] = 'plaintext_warning';
-       } else {
-         fieldsStatus[field] = 'missing';
-       }
-     }
-
-      return {
-        encryptedFields,
-        fieldsStatus,
-        isEncrypted: encryptedFields.length === piiFields.length,
-        verified: encryptedFields.length === piiFields.length,
-      };
-   }
+       return {
+         encryptedFields,
+         fieldsStatus,
+         isEncrypted: encryptedFields.length === piiFields.length,
+         verified: encryptedFields.length === piiFields.length,
+       };
+    }
 }

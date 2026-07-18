@@ -43,6 +43,23 @@ import { IdempotencyEntity } from '../services/payments/idempotency.entity';
 import { PaymentValidationEventEntity } from '../services/payments/payment-validation.entity';
 import { PaymentFraudFlagEntity } from '../services/payments/payment-fraud.entity';
 import { PaymentEventEntity } from '../services/payments/payment-event.entity';
+import {
+  LegalDocumentEntity,
+  LegalVersionEntity,
+  LegalAcceptanceEntity,
+  CookieConsentEntity,
+  ConsentLogEntity,
+  DataSubjectRequestEntity,
+  DataExportEntity,
+  RetentionPolicyEntity,
+  DataRetentionJobEntity,
+  SecurityIncidentEntity,
+  GrievanceEntity,
+  AgreementEntity,
+  AgreementAcceptanceEntity,
+  ComplianceAuditEntity,
+  CookieRegistryEntity,
+} from '../legal/entities';
 
 const entities = [
   UserEntity, OrderEntity, SessionEntity, AuditLogEntity,
@@ -54,8 +71,13 @@ const entities = [
   FoodPrepEntity, KitchenSLAEntity, SupplierEntity, InventoryAlertEntity,
   DriverAssignmentEntity, SLAAlertEntity, MenuItemAvailabilityEntity,
   DriverScoreEntity, DeliverySLAEntity, DriverFraudEntity, StripeWebhookEntity,
-  GSTDetailEntity, PaymentDisputeEntity, IdempotencyEntity,
+  GSTDetailEntity,   PaymentDisputeEntity, IdempotencyEntity,
   PaymentValidationEventEntity, PaymentFraudFlagEntity, PaymentEventEntity,
+  LegalDocumentEntity, LegalVersionEntity, LegalAcceptanceEntity,
+  CookieConsentEntity, ConsentLogEntity, DataSubjectRequestEntity,
+  DataExportEntity, RetentionPolicyEntity, DataRetentionJobEntity,
+  SecurityIncidentEntity, GrievanceEntity, AgreementEntity,
+  AgreementAcceptanceEntity, ComplianceAuditEntity, CookieRegistryEntity,
 ];
 
 @Global()

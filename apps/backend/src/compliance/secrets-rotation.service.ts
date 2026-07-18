@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface SecretRotationResult {
   secretName: string;
@@ -12,8 +14,12 @@ export interface SecretRotationResult {
 export class SecretsRotationService {
   private readonly logger = new Logger(SecretsRotationService.name);
   private readonly rotationHistory: Map<string, Date[]> = new Map();
+  private readonly rotationLogPath: string;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.rotationLogPath = path.join(process.cwd(), 'secrets', 'rotation-history.json');
+    this.loadRotationHistory();
+  }
 
   getSecretsRequiringRotation(): { name: string; lastRotation?: Date }[] {
     const secrets: { name: string; lastRotation?: Date }[] = [
@@ -38,11 +44,12 @@ export class SecretsRotationService {
     const secretsRequiringRotation = this.getSecretsRequiringRotation();
 
     for (const secret of secretsRequiringRotation) {
-      const hasRotationScript = this.checkRotationScriptExists(secret.name);
+      const scriptPath = this.getRotationScriptPath(secret.name);
+      const hasRotationScript = fs.existsSync(scriptPath);
       if (!hasRotationScript) {
-        details.push(`${secret.name}: No rotation script found`);
+        details.push(`${secret.name}: Manual rotation required via Vault/K8s secrets`);
       } else {
-        details.push(`${secret.name}: Rotation script available`);
+        details.push(`${secret.name}: Rotation script available at ${scriptPath}`);
       }
     }
 
@@ -60,6 +67,14 @@ export class SecretsRotationService {
       const rotationTime = new Date();
 
       this.recordRotation(secretName, rotationTime);
+      await this.persistRotationHistory();
+
+      const scriptPath = this.getRotationScriptPath(secretName);
+      if (fs.existsSync(scriptPath)) {
+        this.logger.log(`Rotation script found at ${scriptPath} — manual execution required by operations team`);
+      }
+
+      this.logger.log(`Rotation recorded for ${secretName}. New value generated. Apply via Vault/K8s.`);
 
       return {
         secretName,
@@ -103,33 +118,59 @@ export class SecretsRotationService {
     this.rotationHistory.set(secretName, rotations);
   }
 
-  private checkRotationScriptExists(secretName: string): boolean {
-    const scripts = [
-      'secrets-rotate-jwt',
-      'secrets-rotate-encryption',
-      'secrets-rotate-db',
-      'secrets-rotate-payment',
-    ];
+  private getRotationScriptPath(secretName: string): string {
+    const scriptsDir = path.join(process.cwd(), 'infra', 'scripts');
+    const scriptMap: Record<string, string> = {
+      jwt_secret: path.join(scriptsDir, 'secrets-rotate-jwt.ps1'),
+      encryption: path.join(scriptsDir, 'secrets-rotate-encryption.ps1'),
+      db_password: path.join(scriptsDir, 'secrets-rotate-db.ps1'),
+      stripe: path.join(scriptsDir, 'secrets-rotate-payment.ps1'),
+      grafana: path.join(scriptsDir, 'secrets-rotate-grafana.ps1'),
+    };
+    const key = secretName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    return scriptMap[key] || path.join(scriptsDir, `secrets-rotate-${secretName.toLowerCase()}.ps1`);
+  }
 
+  private persistRotationHistory(): void {
     try {
-      const fs = require('fs');
-      const path = require('path');
-      const scriptsDir = path.join(process.cwd(), 'infra', 'scripts');
+      const dir = path.dirname(this.rotationLogPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const data: Record<string, string[]> = {};
+      this.rotationHistory.forEach((dates, key) => {
+        data[key] = dates.map(d => d.toISOString());
+      });
+      fs.writeFileSync(this.rotationLogPath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (error) {
+      this.logger.warn(`Failed to persist rotation history: ${(error as Error).message}`);
+    }
+  }
 
-      return fs.existsSync(scriptsDir) || scripts.some(s => s.toLowerCase().includes(secretName.toLowerCase()));
-    } catch {
-      return false;
+  private loadRotationHistory(): void {
+    try {
+      if (fs.existsSync(this.rotationLogPath)) {
+        const content = fs.readFileSync(this.rotationLogPath, 'utf-8');
+        const data: Record<string, string[]> = JSON.parse(content);
+        Object.entries(data).forEach(([key, dates]) => {
+          this.rotationHistory.set(key, dates.map(d => new Date(d)));
+        });
+        this.logger.log(`Loaded rotation history from ${this.rotationLogPath}`);
+      }
+    } catch (error) {
+      this.logger.warn(`Failed to load rotation history: ${(error as Error).message}`);
     }
   }
 
   async getRotationProof(): Promise<Record<string, any>> {
-    const history = Object.fromEntries(this.rotationHistory);
-
     return {
-      rotationHistory: history,
+      rotationHistory: Object.fromEntries(
+        Array.from(this.rotationHistory.entries()).map(([k, v]) => [k, v.map(d => d.toISOString())])
+      ),
       secretsRequiringRotation: this.getSecretsRequiringRotation(),
       validation: await this.validateRotationCapability(),
       lastProofGenerated: new Date().toISOString(),
+      rotationLogPath: this.rotationLogPath,
     };
   }
 }

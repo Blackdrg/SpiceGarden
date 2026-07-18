@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage --coverageThreshold={\\\\\\\"global\\\\\\\":{\\\\\\\"branches\\\\\\\":80,\\\\\\\"functions\\\\\\\":80,\\\\\\\"lines\\\\\\\":80,\\\\\\\"statements\\\\\\\":80}}",
+    "test:cov": "jest --coverage",
     "test:unit": "jest",
     "test:integration": "jest --config jest.integration.config.js",
     "test:e2e": "jest --runInBand test/e2e.spec.ts test/payment-verification.e2e.spec.ts",

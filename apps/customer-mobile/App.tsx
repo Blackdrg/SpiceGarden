@@ -15,6 +15,8 @@ import OrderDetailsScreen from './src/screens/OrderDetailsScreen';
 import RestaurantScreen from './src/screens/RestaurantScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import AddressesScreen from './src/screens/AddressesScreen';
+import LegalScreen from './src/screens/LegalScreen';
+import PrivacyScreen from './src/screens/PrivacyScreen';
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
@@ -36,6 +38,8 @@ function AppNavigator() {
         <Stack.Screen name="Restaurant" component={RestaurantScreen} />
         <Stack.Screen name="Checkout" component={CheckoutScreen} />
         <Stack.Screen name="Address" component={AddressesScreen} />
+        <Stack.Screen name="Legal" component={LegalScreen} />
+        <Stack.Screen name="Privacy" component={PrivacyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

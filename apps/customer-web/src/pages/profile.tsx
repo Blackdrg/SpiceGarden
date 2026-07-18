@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { api } from '@spicegarden/shared/api';
 import { useMfaManagement } from '../hooks/useMfaManagement';
@@ -215,6 +216,24 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
         )}
+      </Card>
+
+      <div className={styles.sectionDivider} />
+
+      <div className={styles.pageHeader}>
+        <h3 className={styles.sectionTitle}>
+          <ShieldCheckIcon size={20} color={DESIGN_TOKENS.colors.primary} />
+          Privacy &amp; Legal
+        </h3>
+      </div>
+
+      <Card variant="elevated">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Link href="/privacy-dashboard" className={styles.legalLink}>Privacy Dashboard &amp; Data Controls</Link>
+          <Link href="/legal" className={styles.legalLink}>Legal Center (Policies &amp; Agreements)</Link>
+          <Link href="/legal/document/cookie_policy" className={styles.legalLink}>Cookie Policy</Link>
+          <Link href="/security" className={styles.legalLink}>Security Center</Link>
+        </div>
       </Card>
     </div>
   );

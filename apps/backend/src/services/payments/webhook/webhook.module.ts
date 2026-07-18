@@ -1,5 +1,4 @@
-﻿
-import { Module } from '@nestjs/common';
+﻿import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../../db/db-repositories.module';
 

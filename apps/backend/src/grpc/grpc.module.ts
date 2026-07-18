@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AuthGrpcController } from './auth.controller';
 import { OrderGrpcController } from './order.controller';
-import { AuthService } from '../services/auth/auth.service';
-import { OrderService } from '../services/order/order.service';
+import { AuthServiceModule } from '../services/auth/auth.module';
+import { OrderServiceModule } from '../services/order/order.module';
 
 @Module({
-  imports: [],
+  imports: [
+    AuthServiceModule,
+    OrderServiceModule,
+  ],
   controllers: [AuthGrpcController, OrderGrpcController],
-  providers: [AuthService, OrderService],
+  providers: [],
   exports: [],
 })
 export class GrpcModule {}

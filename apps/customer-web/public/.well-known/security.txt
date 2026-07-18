@@ -1,0 +1,7 @@
+Contact: mailto:security@spicegarden.com
+Encryption: https://spicegarden.com/.well-known/security-pgp-key.txt
+Acknowledgments: https://spicegarden.com/security/thanks
+Policy: https://spicegarden.com/legal/responsible-disclosure
+Hiring: https://spicegarden.com/security/careers
+Preferred-Languages: en
+Canonical: https://spicegarden.com/.well-known/security.txt

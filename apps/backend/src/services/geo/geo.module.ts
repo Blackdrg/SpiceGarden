@@ -7,10 +7,11 @@ import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.enti
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { EnhancedGeoService } from './enhanced-geo.service';
+import { GeoService } from './geo.service';
 
 @Module({
   imports: [DbRepositoriesModule],
-  providers: [EnhancedGeoService],
-  exports: [EnhancedGeoService],
+  providers: [EnhancedGeoService, GeoService],
+  exports: [EnhancedGeoService, GeoService],
 })
 export class GeoModule {}

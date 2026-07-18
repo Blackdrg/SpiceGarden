@@ -12,13 +12,13 @@ export class DataExportRequestEntity {
   @Column({ type: 'varchar', length: 50 })
   status!: string;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'text', nullable: true })
   exportUrl!: string;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'text', nullable: true })
   filePath!: string;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'text', nullable: true })
   exportFormat!: string;
 
   @Column({ type: 'text', nullable: true })

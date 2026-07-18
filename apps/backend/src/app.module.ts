@@ -1,8 +1,10 @@
 ﻿import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { RetentionJob } from './jobs/retention-job';
 import { DbModule } from './db/db.module';
 import { SecurityModule } from './security/security.module';
 import { LoggingModule } from './logging/logging.module';
@@ -59,6 +61,7 @@ import { EnhancedDeliveryServiceModule } from './services/delivery/enhanced-deli
       isGlobal: true,
       envFilePath: [path.resolve(process.cwd(), '../../.env'), path.resolve(process.cwd(), '.env')],
     }),
+    ScheduleModule.forRoot(),
     DbModule,
     SecurityModule,
     LoggingModule,
@@ -110,7 +113,7 @@ import { EnhancedDeliveryServiceModule } from './services/delivery/enhanced-deli
     EnhancedDeliveryServiceModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RetentionJob],
 })
 export class AppModule {}
 

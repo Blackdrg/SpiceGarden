@@ -18,6 +18,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import EmergencyScreen from '../screens/EmergencyScreen';
 import SupportScreen from '../screens/SupportScreen';
+import DriverLegalScreen from '../screens/DriverLegalScreen';
 
 const NavigatorContext = createContext<Navigator | null>(null);
 
@@ -47,6 +48,7 @@ const SCREENS: Record<ScreenName, React.ComponentType<ScreenProps>> = {
   Settings: SettingsScreen,
   Emergency: EmergencyScreen,
   Support: SupportScreen,
+  DriverLegal: DriverLegalScreen,
 };
 
 export function AppNavigator(): React.JSX.Element {

@@ -43,8 +43,8 @@ export class PciDssValidationService {
       notApplicable: requirements.filter(r => r.status === 'not_applicable').length,
     };
 
-    const overallCompliant = summary.nonCompliant === 0 || 
-      (summary.compliant >= requirements.length - summary.notApplicable);
+    const applicableCount = requirements.length - summary.notApplicable;
+    const overallCompliant = applicableCount > 0 && summary.compliant === applicableCount && summary.nonCompliant === 0;
 
     return {
       assessmentDate: new Date(),

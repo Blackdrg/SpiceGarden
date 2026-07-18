@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.menuApi = exports.addressesApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
+exports.legalApi = exports.menuApi = exports.addressesApi = exports.ordersApi = exports.restaurantsApi = exports.authApi = void 0;
 exports.api = api;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
 function getCsrfToken() {
@@ -122,10 +122,39 @@ exports.menuApi = {
     list: (restaurantId) => api(`/restaurants/${restaurantId}/menu`),
     categories: (restaurantId) => api(`/restaurants/${restaurantId}/categories`),
 };
+exports.legalApi = {
+    center: (language = 'en') => api(`/legal/center?language=${language}`),
+    document: (type, language = 'en') => api(`/legal/documents/${type}?language=${language}`),
+    versions: (type, language) => api(`/legal/documents/${type}/versions${language ? `?language=${language}` : ''}`),
+    requiredAcceptances: () => api('/legal/required'),
+    accept: (documentId, versionId, method = 'click_accept') => api('/legal/accept', {
+        method: 'POST',
+        body: JSON.stringify({ documentId, versionId, method }),
+    }),
+    myAcceptances: () => api('/legal/me/acceptances'),
+    cookieRegistry: () => api('/legal/cookie-registry'),
+    recordConsent: (payload) => api('/legal/consent', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+    }),
+    activeConsent: (token) => api(`/legal/consent/active?token=${encodeURIComponent(token)}`),
+    withdrawConsent: (consentId, userId) => api(`/legal/consent/${consentId}/withdraw`, {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+    }),
+    dashboard: (userId) => api(`/privacy/dashboard/${userId}`),
+    createRequest: (payload) => api('/privacy/requests', { method: 'POST', body: JSON.stringify(payload) }),
+    listRequests: (query = '') => api(`/privacy/requests${query}`),
+    createExport: (payload) => api('/privacy/exports', { method: 'POST', body: JSON.stringify(payload) }),
+    listExports: (userId) => api(`/privacy/exports/${userId}`),
+    downloadExport: (exportId) => `${API_BASE_URL}/privacy/exports/${exportId}/download`,
+    dpdpInfo: () => api('/privacy/dpdp/officer'),
+};
 exports.default = {
     auth: exports.authApi,
     restaurants: exports.restaurantsApi,
     orders: exports.ordersApi,
     menu: exports.menuApi,
     addresses: exports.addressesApi,
+    legal: exports.legalApi,
 };

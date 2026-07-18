@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from '../redux/store';
 import { setCredentials, setHydrated } from '../redux/slices/authSlice';
 import { trackEvent, ToastProvider } from '@spicegarden/ui';
+import Footer from './Footer';
 import * as Sentry from '@sentry/nextjs';
 
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -54,7 +55,12 @@ function AuthHydrator({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Footer />
+    </>
+  );
 }
 
 export default function RestaurantApp({ Component, pageProps }: AppProps) {

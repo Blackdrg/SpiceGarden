@@ -271,9 +271,9 @@ describe('ComplianceService coverage', () => {
     it('should handle mixed encrypted and plaintext fields', async () => {
       userRepo.findOne.mockResolvedValue({
         id: 'user-1',
-        email: 'U2FsdGVkX1+encrypted',
+        email: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
         phone: '+919876543210',
-        fullName: 'U2FsdGVkX1+encrypted',
+        fullName: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
       } as any);
 
       const result = await service.verifyPiiEncryption('user-1');

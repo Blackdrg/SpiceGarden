@@ -188,3 +188,18 @@
   background: var(--color-borderLight, #F3F4F6);
   margin: var(--spacing-4) 0;
 }
+
+.legalLink {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-background, #F3F4F6);
+  color: var(--color-textPrimary, #111827);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.legalLink:hover {
+  background: var(--color-border, #E5E7EB);
+}

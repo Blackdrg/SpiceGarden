@@ -6,6 +6,7 @@ import { trackEvent, ToastProvider } from '@spicegarden/ui';
 import * as Sentry from '@sentry/nextjs';
 import { AuthProvider } from '../auth/AuthContext';
 import { useAuth } from '../auth/useAuth';
+import { LegalFooter } from '../components/LegalFooter';
 
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 if (sentryDsn) {
@@ -45,7 +46,10 @@ export default function AdminApp({ Component, pageProps }: AppProps) {
         <Sentry.ErrorBoundary fallback={<p>An error occurred</p>}>
           <AuthProvider>
             <AuthGate>
-              <Component {...pageProps} />
+              <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+                <Component {...pageProps} />
+                <LegalFooter />
+              </div>
             </AuthGate>
           </AuthProvider>
         </Sentry.ErrorBoundary>

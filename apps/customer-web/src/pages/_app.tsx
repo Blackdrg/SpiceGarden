@@ -6,6 +6,8 @@ import { NetworkStatusProvider } from '../contexts/NetworkStatusContext';
 import { ToastProvider } from '@spicegarden/ui';
 import OfflineIndicator from '../components/OfflineIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
+import CookieConsentBanner from '../components/CookieConsentBanner';
+import Footer from '../components/Footer';
 import '../analytics';
 import { useAnalytics } from '../analytics';
 import { useMotion } from '../hooks/useMotion';
@@ -34,6 +36,8 @@ export default function App({ Component, pageProps }: AppProps) {
               <div className={`${styles.entryAnimation} ${animated ? styles.animated : ''} ${prefersReducedMotion ? styles.reducedMotion : ''}`}>
                 <Component {...pageProps} />
                 <OfflineIndicator />
+                <CookieConsentBanner />
+                <Footer />
               </div>
             </ErrorBoundary>
           </ToastProvider>

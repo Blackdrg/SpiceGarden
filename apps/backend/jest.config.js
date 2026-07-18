@@ -12,6 +12,14 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'json', 'json-summary'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
   testTimeout: 30000,
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   transform: {

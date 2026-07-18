@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddDriverIssuesTable1752547400000 implements MigrationInterface {
-    name = 'AddDriverIssuesTable1752547400000'
+export class AddDriverIssuesTable1784280713844 implements MigrationInterface {
+    name = 'AddDriverIssuesTable1784280713844'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "driver_issues" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "driverId" character varying NOT NULL, "orderId" character varying, "issue" character varying NOT NULL, "details" text NOT NULL, "status" character varying NOT NULL DEFAULT 'reported', "resolvedAt" TIMESTAMP, "resolvedBy" character varying, "resolutionNotes" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_8c6f0776187a6e7c4e88b2d3c8b" PRIMARY KEY ("id"))`);

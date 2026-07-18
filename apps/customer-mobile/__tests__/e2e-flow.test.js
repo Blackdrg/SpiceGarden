@@ -73,9 +73,9 @@ describe('Customer Mobile App - Full E2E Flow', () => {
     });
 
     await waitFor(() => {
-      expect(storage.setItem).toHaveBeenCalledWith('sg_token', 'test-token');
+      expect(storage.setItem).toHaveBeenCalledWith('spicegarden_auth_token', 'test-token');
       expect(storage.setItem).toHaveBeenCalledWith(
-        'sg_user',
+        'spicegarden_user',
         JSON.stringify({
           email: 'customer@example.com',
           name: '',

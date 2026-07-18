@@ -1,0 +1,25 @@
+.card {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.list li {
+  font-size: 14px;
+  color: var(--text-secondary, #555);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+}
+
+.faq {
+  margin-top: 12px;
+}
+
+.faq p {
+  margin: 4px 0 0;
+}

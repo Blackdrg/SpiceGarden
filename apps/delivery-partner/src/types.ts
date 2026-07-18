@@ -17,7 +17,8 @@ export type ScreenName =
   | 'Profile'
   | 'Settings'
   | 'Emergency'
-  | 'Support';
+  | 'Support'
+  | 'DriverLegal';
 
 export interface RouteParams {
   orderId?: string;

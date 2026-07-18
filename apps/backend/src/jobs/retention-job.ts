@@ -4,6 +4,7 @@ import { DataSource, LessThan } from 'typeorm';
 import { ComplianceService } from '../compliance/compliance.service';
 import { DataPrivacyService } from '../services/privacy/data-privacy.service';
 import { DeletionRequestEntity } from '../db/entities/deletion-request.entity';
+import { RetentionService } from '../legal/retention.service';
 
 @Injectable()
 export class RetentionJob {
@@ -13,6 +14,7 @@ export class RetentionJob {
     private complianceService: ComplianceService,
     private dataPrivacyService: DataPrivacyService,
     private dataSource: DataSource,
+    private legalRetention: RetentionService,
   ) {}
 
   @Cron('0 3 * * *')
@@ -21,7 +23,8 @@ export class RetentionJob {
     try {
       await this.complianceService.applyDataRetentionPolicies();
       await this.autoProcessDeletionRequests();
-      this.logger.log('Daily retention job completed');
+      const jobs = await this.legalRetention.runAllEnabled('scheduler');
+      this.logger.log(`Daily retention job completed — ${jobs.length} legal retention policies evaluated`);
     } catch (error) {
       this.logger.error('Daily retention job failed', error);
     }

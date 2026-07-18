@@ -6,9 +6,9 @@ import * as crypto from "crypto";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
 import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
 
-const entitiesGlob =
+const entitiesGlob: string[] =
   process.env.LOCAL_DB === "sqlite" || process.env.LOCAL_DB === "sqlite-file"
-    ? "dist/db/**/*.entity.js"
+    ? ["dist/src/**/*.entity.js"]
     : [__dirname + "/../**/*.entity.js"];
 
 const localSqlite = process.env.LOCAL_DB === "sqlite";
@@ -35,7 +35,7 @@ function createSqliteImports() {
       useFactory: (configService: ConfigService) => ({
         type: "sqlite",
         database: configService.get<string>("LOCAL_DB_PATH") || "./local-dev.sqlite",
-        entitiesGlob,
+        entities: entitiesGlob,
         synchronize: true,
         logging: configService.get<string>("DB_LOGGING", "false") === "true",
       }),
@@ -59,9 +59,9 @@ const imports: any[] = useLocalSqlite
           username: configService.get<string>("DB_USER") || "spicegarden",
           password: configService.get<string>("DB_PASS") || "spicegarden_dev",
           database: configService.get<string>("DB_NAME") || "spicegarden",
-          entitiesGlob,
+          entities: entitiesGlob,
           synchronize: false,
-          migrations: ["dist/db/migrations/*.js"],
+          migrations: ["dist/db/migrations/*.js", "dist/src/db/migrations/*.js"],
           migrationsRun: true,
           poolSize: configService.get<number>("DB_POOL_SIZE", 20),
           connectionTimeoutMillis: 5000,
