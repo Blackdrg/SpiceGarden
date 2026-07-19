@@ -1,44 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 const API = (path: string) => `/api/business/${path}`;
 
+const fetchDocument = async (type: string) => {
+  const res = await fetch(API(`legal/documents/${type}`));
+  if (!res.ok) throw new Error('Document not found');
+  return res.json();
+};
+
+const formatEffectiveDate = (value?: string) => {
+  if (!value) return '—';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+};
+
 const DocumentPage: React.FC = () => {
   const router = useRouter();
   const { type } = router.query;
-  const [doc, setDoc] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const docType = typeof type === 'string' ? type : '';
 
-  useEffect(() => {
-    if (!type) return;
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API(`legal/documents/${type}`));
-      if (!res.ok) throw new Error('Document not found');
-      setDoc(await res.json());
-    } catch (e: any) {
-      setError(e?.message || 'Document not found');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: doc, isLoading, isError, error } = useQuery({
+    queryKey: ['business-legal-document', docType],
+    queryFn: () => fetchDocument(docType),
+    enabled: Boolean(docType),
+    retry: 1,
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: DESIGN_TOKENS.colors.background, color: DESIGN_TOKENS.colors.textPrimary, padding: 24, fontFamily: DESIGN_TOKENS.typography.fontFamily, maxWidth: 900, margin: '0 auto' }}>
-      {loading && <p style={{ color: DESIGN_TOKENS.colors.textSecondary }}>Loading…</p>}
-      {error && <p style={{ color: '#EF4444' }}>{error}</p>}
+      {isLoading && <p style={{ color: DESIGN_TOKENS.colors.textSecondary }}>Loading…</p>}
+      {isError && <p style={{ color: '#EF4444' }}>{(error as Error)?.message || 'Document not found'}</p>}
       {doc && (
         <>
           <h1 style={{ fontSize: 24, fontWeight: 700 }}>{doc.title}</h1>
           <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: 14 }}>
-            Version {doc.version} · Effective {doc.effectiveDate ? new Date(doc.effectiveDate).toLocaleDateString() : '—'}
+            Version {doc.version} · Effective {formatEffectiveDate(doc.effectiveDate)}
           </p>
           {doc.sections?.map((s: any) => (
             <section key={s.id} style={{ marginTop: 16 }}>

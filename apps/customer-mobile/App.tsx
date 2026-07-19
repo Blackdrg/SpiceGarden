@@ -17,6 +17,11 @@ import CheckoutScreen from './src/screens/CheckoutScreen';
 import AddressesScreen from './src/screens/AddressesScreen';
 import LegalScreen from './src/screens/LegalScreen';
 import PrivacyScreen from './src/screens/PrivacyScreen';
+import WalletScreen from './src/screens/WalletScreen';
+import HistoryScreen from './src/screens/HistoryScreen';
+import PaymentMethodsScreen from './src/screens/PaymentMethodsScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
+import SupportScreen from './src/screens/SupportScreen';
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
@@ -40,6 +45,11 @@ function AppNavigator() {
         <Stack.Screen name="Address" component={AddressesScreen} />
         <Stack.Screen name="Legal" component={LegalScreen} />
         <Stack.Screen name="Privacy" component={PrivacyScreen} />
+        <Stack.Screen name="Wallet" component={WalletScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
+        <Stack.Screen name="Payment" component={PaymentMethodsScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Support" component={SupportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

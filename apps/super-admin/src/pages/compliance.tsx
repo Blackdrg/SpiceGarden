@@ -1,9 +1,77 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import Link from 'next/link';
 import { DashboardCard } from '../components/DashboardCard';
 import { IconAlertTriangle, IconUsers, IconShield, IconFileText, IconActivity, IconExternalLink } from '../components/icons/SGIcon';
 
 const API = (path: string) => `/api/compliance/${path}`;
+
+const LEGAL_HUB_LINK_STYLE: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  padding: '10px 14px',
+  borderRadius: 8,
+  border: '1px solid #1e293b',
+  background: '#0f172a',
+  color: '#cbd5e1',
+  textDecoration: 'none',
+  fontSize: 13,
+  fontWeight: 600,
+};
+
+const TABS = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'requests', label: 'GDPR / DPDP' },
+  { key: 'retention', label: 'Retention' },
+  { key: 'agreements', label: 'Agreements' },
+  { key: 'security', label: 'Security' },
+];
+
+interface ComplianceState {
+  overview: any;
+  gdpr: any[];
+  dpdp: any[];
+  deletion: any[];
+  retention: any;
+  consentLogs: any[];
+  holds: any[];
+  merchantAgreements: any[];
+  driverAgreements: any[];
+  securityEvents: any[];
+  loading: boolean;
+}
+
+type ComplianceAction =
+  | { type: 'load-start' }
+  | { type: 'load-success'; payload: Omit<ComplianceState, 'loading'> }
+  | { type: 'load-error' };
+
+const initialState: ComplianceState = {
+  overview: null,
+  gdpr: [],
+  dpdp: [],
+  deletion: [],
+  retention: null,
+  consentLogs: [],
+  holds: [],
+  merchantAgreements: [],
+  driverAgreements: [],
+  securityEvents: [],
+  loading: true,
+};
+
+const complianceReducer = (state: ComplianceState, action: ComplianceAction): ComplianceState => {
+  switch (action.type) {
+    case 'load-start':
+      return { ...state, loading: true };
+    case 'load-success':
+      return { ...action.payload, loading: false };
+    case 'load-error':
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
 
 const Section: React.FC<{ title: string; children: React.ReactNode; icon?: React.ReactNode }> = ({ title, children, icon }) => (
   <DashboardCard title={title} titleIcon={icon} style={{ marginBottom: 20 }}>
@@ -21,19 +89,7 @@ const Stat: React.FC<{ label: string; value: React.ReactNode; tone?: string }> =
 const LegalHubLink: React.FC<{ href: string; label: string }> = ({ href, label }) => (
   <Link
     href={href}
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 6,
-      padding: '10px 14px',
-      borderRadius: 8,
-      border: '1px solid #1e293b',
-      background: '#0f172a',
-      color: '#cbd5e1',
-      textDecoration: 'none',
-      fontSize: 13,
-      fontWeight: 600,
-    }}
+    style={LEGAL_HUB_LINK_STYLE}
   >
     <IconExternalLink size={14} />
     {label}
@@ -41,21 +97,12 @@ const LegalHubLink: React.FC<{ href: string; label: string }> = ({ href, label }
 );
 
 const ComplianceDashboardPage: React.FC = () => {
-  const [overview, setOverview] = useState<any>(null);
-  const [gdpr, setGdpr] = useState<any[]>([]);
-  const [dpdp, setDpdp] = useState<any[]>([]);
-  const [deletion, setDeletion] = useState<any[]>([]);
-  const [retention, setRetention] = useState<any>(null);
-  const [consentLogs, setConsentLogs] = useState<any[]>([]);
-  const [holds, setHolds] = useState<any[]>([]);
-  const [merchantAgreements, setMerchantAgreements] = useState<any[]>([]);
-  const [driverAgreements, setDriverAgreements] = useState<any[]>([]);
-  const [securityEvents, setSecurityEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [state, dispatch] = useReducer(complianceReducer, initialState);
   const [tab, setTab] = useState('overview');
+  const { overview, gdpr, dpdp, deletion, retention, consentLogs, holds, merchantAgreements, driverAgreements, securityEvents, loading } = state;
 
   const load = useCallback(async () => {
-    setLoading(true);
+    dispatch({ type: 'load-start' });
     try {
       const [o, g, d, del, r, c, h, ma, da, se] = await Promise.all([
         fetch(API('compliance-admin/overview')).then((x) => x.ok ? x.json() : null),
@@ -69,34 +116,29 @@ const ComplianceDashboardPage: React.FC = () => {
         fetch(API('compliance-admin/driver-agreements')).then((x) => x.ok ? x.json() : []),
         fetch(API('compliance-admin/security-events')).then((x) => x.ok ? x.json() : []),
       ]);
-      setOverview(o);
-      setGdpr(Array.isArray(g) ? g : []);
-      setDpdp(Array.isArray(d) ? d : []);
-      setDeletion(Array.isArray(del) ? del : []);
-      setRetention(r);
-      setConsentLogs(Array.isArray(c) ? c : []);
-      setHolds(Array.isArray(h) ? h : []);
-      setMerchantAgreements(Array.isArray(ma) ? ma : []);
-      setDriverAgreements(Array.isArray(da) ? da : []);
-      setSecurityEvents(Array.isArray(se) ? se : []);
+      dispatch({
+        type: 'load-success',
+        payload: {
+          overview: o,
+          gdpr: Array.isArray(g) ? g : [],
+          dpdp: Array.isArray(d) ? d : [],
+          deletion: Array.isArray(del) ? del : [],
+          retention: r,
+          consentLogs: Array.isArray(c) ? c : [],
+          holds: Array.isArray(h) ? h : [],
+          merchantAgreements: Array.isArray(ma) ? ma : [],
+          driverAgreements: Array.isArray(da) ? da : [],
+          securityEvents: Array.isArray(se) ? se : [],
+        },
+      });
     } catch {
-      // keep partial data
-    } finally {
-      setLoading(false);
+      dispatch({ type: 'load-error' });
     }
   }, []);
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  const tabs = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'requests', label: 'GDPR / DPDP' },
-    { key: 'retention', label: 'Retention' },
-    { key: 'agreements', label: 'Agreements' },
-    { key: 'security', label: 'Security' },
-  ];
 
   return (
     <div style={{ flex: 1, background: '#020617', color: '#f8fafc', padding: 24, fontFamily: 'system-ui, sans-serif' }}>
@@ -119,8 +161,9 @@ const ComplianceDashboardPage: React.FC = () => {
       </Section>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-        {tabs.map((t) => (
+        {TABS.map((t) => (
           <button
+            type="button"
             key={t.key}
             onClick={() => setTab(t.key)}
             style={{
@@ -244,8 +287,8 @@ const PolicyTable: React.FC<{ rows: any[] }> = ({ rows }) => (
     </thead>
     <tbody>
       {rows.length === 0 ? <tr><td colSpan={6} style={tdStyle}>No records</td></tr> :
-        rows.map((r, i) => (
-          <tr key={r.id || i}>
+        rows.map((r) => (
+          <tr key={r.id}>
             <td style={tdStyle}>{r.label}</td>
             <td style={tdStyle}>{r.dataType}</td>
             <td style={tdStyle}>{r.retentionDays}</td>
@@ -265,8 +308,8 @@ const AgreementTable: React.FC<{ rows: any[] }> = ({ rows }) => (
     </thead>
     <tbody>
       {rows.length === 0 ? <tr><td colSpan={5} style={tdStyle}>No records</td></tr> :
-        rows.map((r, i) => (
-          <tr key={r.id || i}>
+        rows.map((r) => (
+          <tr key={r.id}>
             <td style={tdStyle}>{r.title}</td>
             <td style={tdStyle}>{r.version}</td>
             <td style={tdStyle}>{r.party}</td>
@@ -285,8 +328,8 @@ const EventTable: React.FC<{ rows: any[] }> = ({ rows }) => (
     </thead>
     <tbody>
       {rows.length === 0 ? <tr><td colSpan={4} style={tdStyle}>No records</td></tr> :
-        rows.map((r, i) => (
-          <tr key={r.id || i}>
+        rows.map((r) => (
+          <tr key={r.id}>
             <td style={tdStyle}>{r.title}</td>
             <td style={tdStyle}>{r.severity}</td>
             <td style={tdStyle}>{r.status}</td>
@@ -304,8 +347,8 @@ const ConsentTable: React.FC<{ rows: any[] }> = ({ rows }) => (
     </thead>
     <tbody>
       {rows.length === 0 ? <tr><td colSpan={4} style={tdStyle}>No records</td></tr> :
-        rows.map((r, i) => (
-          <tr key={r.id || i}>
+        rows.map((r) => (
+          <tr key={r.id}>
             <td style={tdStyle}>{(r.userId || '').slice(0, 8)}</td>
             <td style={tdStyle}>{r.category}</td>
             <td style={tdStyle}>{r.action}</td>

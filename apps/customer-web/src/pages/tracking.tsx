@@ -182,8 +182,8 @@ const TrackingPage = () => {
         <Card title="Order Details" variant="elevated">
           <div className={styles.itemRow}>
             {orderDetails.items && orderDetails.items.length > 0 ? (
-              orderDetails.items.map((item, idx: number) => (
-                <div key={item.id || idx} className={styles.itemRow} style={{ padding: '8px 0', borderBottom: '1px solid var(--color-borderLight, #F3F4F6)' }}>
+              orderDetails.items.map((item) => (
+                <div key={item.id} className={styles.itemRow} style={{ padding: '8px 0', borderBottom: '1px solid var(--color-borderLight, #F3F4F6)' }}>
                   <div>
                     <span style={{ fontWeight: 500 }}>{item.name}</span>
                     <span style={{ color: DESIGN_TOKENS.colors.textSecondary, marginLeft: 8, fontSize: '0.875rem' }}>x{item.quantity}</span>

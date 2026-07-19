@@ -1,11 +1,15 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import type { GetServerSideProps } from 'next';
 
-const PrivacyPolicyPage: React.FC = () => {
-  const router = useRouter();
-  React.useEffect(() => {
-    router.replace('/legal/document/privacy_policy');
-  }, [router]);
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    redirect: {
+      destination: '/legal/document/privacy_policy',
+      permanent: false,
+    },
+  };
+};
+
+const PrivacyPolicyPage = () => {
   return null;
 };
 

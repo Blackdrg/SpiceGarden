@@ -63,6 +63,7 @@ export const LegalDocumentPage: React.FC<{ docType: string; heading: string }> =
         >
           <p style={{ margin: '0 0 12px' }}>{error || 'Unable to load this document.'}</p>
           <button
+            type="button"
             onClick={() => void load()}
             style={{ background: '#1e293b', color: '#f8fafc', border: '1px solid #334155', borderRadius: 8, padding: '8px 14px', fontSize: 13, cursor: 'pointer' }}
           >

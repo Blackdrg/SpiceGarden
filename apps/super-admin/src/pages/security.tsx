@@ -5,6 +5,20 @@ import { IconShield, IconActivity, IconFileText, IconExternalLink } from '../com
 
 const API = (path: string) => `/api/compliance/${path}`;
 
+const LEGAL_LINK_STYLE: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  padding: '10px 14px',
+  borderRadius: 8,
+  border: '1px solid #1e293b',
+  background: '#0f172a',
+  color: '#cbd5e1',
+  textDecoration: 'none',
+  fontSize: 13,
+  fontWeight: 600,
+};
+
 const Section: React.FC<{ title: string; children: React.ReactNode; icon?: React.ReactNode }> = ({ title, children, icon }) => (
   <DashboardCard title={title} titleIcon={icon} style={{ marginBottom: 20 }}>
     {children}
@@ -75,8 +89,8 @@ const SecurityCenterPage: React.FC = () => {
               </thead>
               <tbody>
                 {securityEvents.length === 0 ? <tr><td colSpan={4} style={tdStyle}>No records</td></tr> :
-                  securityEvents.map((r, i) => (
-                    <tr key={r.id || i}>
+                  securityEvents.map((r) => (
+                    <tr key={r.id}>
                       <td style={tdStyle}>{r.title}</td>
                       <td style={tdStyle}>{r.severity}</td>
                       <td style={tdStyle}>{r.status}</td>
@@ -94,8 +108,8 @@ const SecurityCenterPage: React.FC = () => {
               </thead>
               <tbody>
                 {consentLogs.length === 0 ? <tr><td colSpan={4} style={tdStyle}>No records</td></tr> :
-                  consentLogs.map((r, i) => (
-                    <tr key={r.id || i}>
+                  consentLogs.map((r) => (
+                    <tr key={r.id}>
                       <td style={tdStyle}>{(r.userId || '').slice(0, 8)}</td>
                       <td style={tdStyle}>{r.category}</td>
                       <td style={tdStyle}>{r.action}</td>
@@ -114,19 +128,7 @@ const SecurityCenterPage: React.FC = () => {
 const LegalLink: React.FC<{ href: string; label: string }> = ({ href, label }) => (
   <Link
     href={href}
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 6,
-      padding: '10px 14px',
-      borderRadius: 8,
-      border: '1px solid #1e293b',
-      background: '#0f172a',
-      color: '#cbd5e1',
-      textDecoration: 'none',
-      fontSize: 13,
-      fontWeight: 600,
-    }}
+    style={LEGAL_LINK_STYLE}
   >
     <IconExternalLink size={14} />
     {label}

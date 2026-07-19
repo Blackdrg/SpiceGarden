@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { Card, Button, DESIGN_TOKENS } from '@spicegarden/ui';
 
 const API = (path: string) => `/api/business/${path}`;
+
+const fetchProfile = async () => {
+  const res = await fetch(API('profile'));
+  if (!res.ok) return null;
+  const data = await res.json();
+  return (data && data.profile) ? data.profile : null;
+};
 
 const sectionHeading: React.CSSProperties = {
   fontSize: 16,
@@ -26,24 +34,11 @@ const valueStyle: React.CSSProperties = {
 
 const SettingsPage: React.FC = () => {
   const router = useRouter();
-  const [profile, setProfile] = useState<{ name?: string; email?: string; phone?: string }>({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    void load();
-  }, []);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API('profile')).then((x) => (x.ok ? x.json() : null)).catch(() => null);
-      if (res && res.profile) {
-        setProfile(res.profile);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: profile, isLoading: loading } = useQuery({
+    queryKey: ['business-profile'],
+    queryFn: fetchProfile,
+    retry: 1,
+  });
 
   return (
     <div style={{ minHeight: '100vh', background: DESIGN_TOKENS.colors.background, color: DESIGN_TOKENS.colors.textPrimary, padding: 24, fontFamily: DESIGN_TOKENS.typography.fontFamily }}>

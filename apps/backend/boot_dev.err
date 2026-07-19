@@ -1,0 +1,69 @@
+[seed] Business seeding failed (non-fatal): QueryFailedError: insert or update on table "menu_categories" violates foreign key constraint "FK_816c15bc4025d8358befc5cc7cf"
+    at PostgresQueryRunner.query (D:\SpiceGarden\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async InsertQueryBuilder.execute (D:\SpiceGarden\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (D:\SpiceGarden\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (D:\SpiceGarden\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (D:\SpiceGarden\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async BusinessSeederService.seedRestaurants (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:151:31)
+    at async BusinessSeederService.seedAll (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:59:13)
+    at async runBusinessSeed (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:236:9)
+    at async D:\SpiceGarden\apps\backend\dist\src\main.js:302:13 {
+  query: 'INSERT INTO "menu_categories"("id", "name", "sortOrder", "createdAt", "updatedAt", "branchId") VALUES ($1, $2, $3, DEFAULT, DEFAULT, $4), ($5, $6, $7, DEFAULT, DEFAULT, $8) RETURNING "id", "sortOrder", "createdAt", "updatedAt"',
+  parameters: [
+    'a4869d53-b735-4048-bc9f-82d7bf9fe4e2',
+    'Main Course',
+    1,
+    '62635bcc-b0af-44b0-b24f-f7e1103b05dd',
+    '6d6e6082-7974-4ddd-9814-1647887303b2',
+    'Sides',
+    2,
+    '62635bcc-b0af-44b0-b24f-f7e1103b05dd'
+  ],
+  driverError: error: insert or update on table "menu_categories" violates foreign key constraint "FK_816c15bc4025d8358befc5cc7cf"
+      at D:\SpiceGarden\node_modules\pg\lib\client.js:652:17
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async PostgresQueryRunner.query (D:\SpiceGarden\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:181:25)
+      at async InsertQueryBuilder.execute (D:\SpiceGarden\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+      at async SubjectExecutor.executeInsertOperations (D:\SpiceGarden\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+      at async SubjectExecutor.execute (D:\SpiceGarden\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+      at async EntityPersistExecutor.execute (D:\SpiceGarden\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+      at async BusinessSeederService.seedRestaurants (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:151:31)
+      at async BusinessSeederService.seedAll (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:59:13)
+      at async runBusinessSeed (D:\SpiceGarden\apps\backend\dist\src\services\restaurant\business.seeder.js:236:9) {
+    length: 336,
+    severity: 'ERROR',
+    code: '23503',
+    detail: 'Key (branchId)=(62635bcc-b0af-44b0-b24f-f7e1103b05dd) is not present in table "restaurant_branches".',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'menu_categories',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'FK_816c15bc4025d8358befc5cc7cf',
+    file: 'ri_triggers.c',
+    line: '2608',
+    routine: 'ri_ReportViolation'
+  },
+  length: 336,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (branchId)=(62635bcc-b0af-44b0-b24f-f7e1103b05dd) is not present in table "restaurant_branches".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'menu_categories',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'FK_816c15bc4025d8358befc5cc7cf',
+  file: 'ri_triggers.c',
+  line: '2608',
+  routine: 'ri_ReportViolation'
+}

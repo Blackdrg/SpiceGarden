@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import Link from 'next/link';
 import { Button, DESIGN_TOKENS, ToastProvider, useToast } from '@spicegarden/ui';
 import { useCookieConsent, CONSENT_VERSION } from '../hooks/useCookieConsent';
 import { legalPageContainer, legalTitle, legalMeta, legalSectionHeading } from '../lib/legalStyles';
@@ -140,7 +141,7 @@ const CookiePreferencesInner: React.FC = () => {
 
       <div className={styles.footerNote}>
         For more information about how we use cookies and your personal data, please read our{' '}
-        <a href="/legal/privacy">Privacy Policy</a> and <a href="/legal/terms">Terms of Service</a>.
+        <Link href="/legal/document/privacy_policy">Privacy Policy</Link> and <Link href="/legal/document/terms_of_service">Terms of Service</Link>.
         Your consent is governed by GDPR (EU/UK) and the DPDP Act (India).
         You can update your preferences at any time by returning to this page.
       </div>

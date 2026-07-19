@@ -1,11 +1,15 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import type { GetServerSideProps } from 'next';
 
-const TermsOfServicePage: React.FC = () => {
-  const router = useRouter();
-  React.useEffect(() => {
-    router.replace('/legal/document/terms_of_service');
-  }, [router]);
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    redirect: {
+      destination: '/legal/document/terms_of_service',
+      permanent: false,
+    },
+  };
+};
+
+const TermsOfServicePage = () => {
   return null;
 };
 

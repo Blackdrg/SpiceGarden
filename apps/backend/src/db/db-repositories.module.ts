@@ -97,6 +97,7 @@ import { DeliveryPricingEntity } from './entities/delivery-pricing.entity';
 import { PlatformFeeEntity } from './entities/platform-fee.entity';
 import { JournalEntryEntity } from './entities/journal-entry.entity';
 import { CampaignEntity } from './entities/campaign.entity';
+import { AnalyticsEventEntity } from './entities/analytics-event.entity';
 import { TenantEntity } from './entities/tenant.entity';
 import { ApiKeyEntity } from './entities/api-key.entity';
 import { BankAccountEntity } from './entities/bank-account.entity';
@@ -181,6 +182,7 @@ const entities = [
   ApiKeyEntity,
   BankAccountEntity,
   SettlementReportEntity,
+  AnalyticsEventEntity,
   BranchControlEntity,
   HolidayScheduleEntity,
   NotificationAnalyticsEntity,

@@ -82,9 +82,23 @@ function validateProductionEnvironment(configService: ConfigService): void {
 }
 
 function getRedisRateLimitUrl(configService: ConfigService): string {
-  return configService.get<string>('REDIS_RATE_LIMIT_URL')
-    || configService.get<string>('REDIS_URL')
-    || `redis://${configService.get<string>('REDIS_HOST', '127.0.0.1')}:${configService.get<number>('REDIS_PORT', 6379)}`;
+  const explicit = configService.get<string>('REDIS_RATE_LIMIT_URL')
+    || configService.get<string>('REDIS_URL');
+  if (explicit) {
+    return explicit;
+  }
+
+  const host = configService.get<string>('REDIS_HOST', '127.0.0.1');
+  const port = configService.get<number>('REDIS_PORT', 6379);
+  const password = configService.get<string>('REDIS_PASSWORD');
+  const username = configService.get<string>('REDIS_USERNAME');
+
+  if (password) {
+    const auth = username ? `${encodeURIComponent(username)}:${encodeURIComponent(password)}` : `:${encodeURIComponent(password)}`;
+    return `redis://${auth}@${host}:${port}`;
+  }
+
+  return `redis://${host}:${port}`;
 }
 
 function getRateLimitWindow(configService: ConfigService, name: string, fallbackMs: number): number {

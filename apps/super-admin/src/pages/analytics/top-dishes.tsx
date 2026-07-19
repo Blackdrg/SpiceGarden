@@ -45,7 +45,7 @@ export default function AnalyticsTopDishes() {
             </thead>
             <tbody>
               {dishes.map((dish, idx: number) => (
-                <tr key={dish.dishId || idx} style={{ borderBottom: '1px solid #1a1a1a' }}>
+                <tr key={dish.dishId ?? dish.name} style={{ borderBottom: '1px solid #1a1a1a' }}>
                   <td style={{ padding: '10px 16px', color: '#f97316', fontWeight: 600 }}>#{idx + 1}</td>
                   <td style={{ padding: '10px 16px' }}>{dish.name || 'Unknown'}</td>
                   <td style={{ padding: '10px 16px', textAlign: 'right', color: '#a1a1aa' }}>{dish.totalQuantity || 0}</td>

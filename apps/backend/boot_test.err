@@ -1,0 +1,15 @@
+D:\SpiceGarden\apps\backend\dist\src\common\errors\missing-env.error.js:43
+        throw new MissingEnvError(key, 'Set a real, non-placeholder value before starting the server.');
+              ^
+
+MissingEnvError: Required environment variable "REDIS_PASSWORD" is missing — Set a real, non-placeholder value before starting the server.
+    at getRequiredSecret (D:\SpiceGarden\apps\backend\dist\src\common\errors\missing-env.error.js:43:15)
+    at requireSecrets (D:\SpiceGarden\apps\backend\dist\src\common\errors\missing-env.error.js:49:9)
+    at validateProductionEnvironment (D:\SpiceGarden\apps\backend\dist\src\main.js:83:44)
+    at bootstrap (D:\SpiceGarden\apps\backend\dist\src\main.js:174:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  key: 'REDIS_PASSWORD',
+  hint: 'Set a real, non-placeholder value before starting the server.'
+}
+
+Node.js v25.5.0

@@ -38,14 +38,27 @@ export class RedisRateLimitStore implements Store {
       lazyConnect: true,
       maxRetriesPerRequest: 1,
       enableReadyCheck: true,
-      connectTimeout: 750,
+      connectTimeout: 2000,
+      retryStrategy: () => null,
     });
 
-    this.client.on('error', (error) => {
+    const handleError = (error: Error) => {
       this.redisAvailable = false;
-      if (process.env.NODE_ENV === 'production') {
+      if (this.fallbackToMemory) {
+        if (!RedisRateLimitStore.fallbackWarned) {
+          RedisRateLimitStore.fallbackWarned = true;
+          this.logger.warn(
+            `Redis unavailable, using process-local fallback: ${error.message}`,
+          );
+        }
+      } else if (process.env.NODE_ENV === 'production') {
         this.logger.error(`Redis rate-limit store error: ${error.message}`);
       }
+    };
+
+    this.client.on('error', handleError);
+    this.client.on('end', () => {
+      this.redisAvailable = false;
     });
 
     try {
@@ -59,7 +72,11 @@ export class RedisRateLimitStore implements Store {
       if (this.fallbackToMemory) {
         if (!RedisRateLimitStore.fallbackWarned) {
           RedisRateLimitStore.fallbackWarned = true;
-          this.logger.warn(`Redis unavailable, using process-local fallback: ${error instanceof Error ? error.message : String(error)}`);
+          this.logger.warn(
+            `Redis unavailable, using process-local fallback: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
         }
       } else {
         throw error;

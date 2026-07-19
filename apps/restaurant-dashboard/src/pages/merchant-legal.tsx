@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { Card, Button, DESIGN_TOKENS } from '@spicegarden/ui';
 
 const API = (path: string) => `/api/business/${path}`;
@@ -14,42 +15,37 @@ const linkStyle: React.CSSProperties = {
   padding: 0,
 };
 
+const POLICY_TYPES = [
+  'merchant_agreement',
+  'terms_of_service',
+  'privacy_policy',
+  'refund_policy',
+  'cookie_policy',
+  'cancellation_policy',
+  'delivery_policy',
+  'data_retention_policy',
+  'acceptable_use_policy',
+  'community_guidelines',
+  'copyright_policy',
+  'open_source_licenses',
+];
+
+const fetchAgreements = async () => {
+  const res = await fetch(API('agreements?party=merchant'));
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+};
+
 const MerchantLegalPage: React.FC = () => {
   const router = useRouter();
-  const [agreements, setAgreements] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    void load();
-  }, []);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const a = await fetch(API('agreements?party=merchant')).then((x) => (x.ok ? x.json() : [])).catch(() => []);
-      setAgreements(Array.isArray(a) ? a : []);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: agreements = [], isLoading: loading } = useQuery({
+    queryKey: ['merchant-agreements'],
+    queryFn: fetchAgreements,
+    retry: 1,
+  });
 
   const openDoc = (type: string) => router.push(`/legal/document/${type}`);
-
-  const policyTypes = [
-    'merchant_agreement',
-    'terms_of_service',
-    'privacy_policy',
-    'refund_policy',
-    'cookie_policy',
-    'cancellation_policy',
-    'delivery_policy',
-    'data_retention_policy',
-    'acceptable_use_policy',
-    'community_guidelines',
-    'copyright_policy',
-    'open_source_licenses',
-  ];
-
   return (
     <div style={{ minHeight: '100vh', background: DESIGN_TOKENS.colors.background, color: DESIGN_TOKENS.colors.textPrimary, padding: 24, fontFamily: DESIGN_TOKENS.typography.fontFamily }}>
       <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px' }}>Legal &amp; Agreements</h1>
@@ -68,7 +64,7 @@ const MerchantLegalPage: React.FC = () => {
                 {agreements.map((a) => (
                   <li key={a.id}>
                     {a.title} (v{a.version}, {a.status}) —{' '}
-                    <button onClick={() => openDoc('merchant_agreement')} style={linkStyle}>View</button>
+                    <button type="button" onClick={() => openDoc('merchant_agreement')} style={linkStyle}>View</button>
                   </li>
                 ))}
               </ul>
@@ -78,9 +74,9 @@ const MerchantLegalPage: React.FC = () => {
           <Card variant="elevated" style={{ marginBottom: 20, padding: 20 }}>
             <h2 style={sectionHeading}>Policies &amp; Disclosures</h2>
             <ul style={{ lineHeight: 1.9 }}>
-              {policyTypes.map((t) => (
+              {POLICY_TYPES.map((t) => (
                 <li key={t}>
-                  <button onClick={() => openDoc(t)} style={linkStyle}>{t.replace(/_/g, ' ')}</button>
+                  <button type="button" onClick={() => openDoc(t)} style={linkStyle}>{t.replace(/_/g, ' ')}</button>
                 </li>
               ))}
             </ul>

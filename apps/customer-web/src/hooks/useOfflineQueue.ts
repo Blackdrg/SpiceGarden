@@ -1,57 +1,69 @@
 /// <reference lib="dom" />
 import { useState, useCallback, useEffect } from 'react';
 
+const API_BASE_URL =
+  (typeof process !== 'undefined' && (process.env?.NEXT_PUBLIC_API_URL || process.env?.API_URL)) ||
+  'http://localhost:3001';
+
 interface QueuedRequest {
   id: string;
   endpoint: string;
-  options: unknown;
+  options: RequestInit;
   resolve: (_value?: unknown) => void;
   reject: (_reason?: unknown) => void;
 }
 
+function getOnline(): boolean {
+  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+}
+
+async function sendRequest(endpoint: string, options: RequestInit = {}): Promise<unknown> {
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+    credentials: 'include',
+  });
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    const message = (data && (data.message || data.error)) || `HTTP ${response.status}`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 export const useOfflineQueue = () => {
-  const { isOnline } = useOfflineQueue.__useNetworkStatus();
+  const [isOnline, setIsOnline] = useState<boolean>(getOnline);
   const [queue, setQueue] = useState<QueuedRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const simulateApiCall = useCallback(async (
-    endpoint: string,
-    options: unknown = {}
-  ): Promise<unknown> => {
-    const optionsReceived = typeof options === 'object' && options !== null;
-
-    if (endpoint.includes('/restaurants')) {
-      return [
-        { id: 'rest1', name: 'Demo Restaurant', rating: 4.5 },
-        { id: 'rest2', name: 'Another Restaurant', rating: 4.0 }
-      ];
-    }
-
-    if (endpoint.includes('/orders')) {
-      return [
-        { id: 'order1', amount: 250, status: 'delivered' },
-        { id: 'order2', amount: 120, status: 'preparing' }
-      ];
-    }
-
-    const baseDelay = optionsReceived ? 600 : 400;
-
-    if (Math.random() < 0.1) {
-      throw new Error('Network error');
-    }
-
-    await new Promise(resolve => setTimeout(resolve, baseDelay));
-
-    return { message: 'Success' };
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const processQueue = useCallback(async () => {
-    if (isProcessing || !isOnline || queue.length === 0) {
-      return;
-    }
+    if (isProcessing || !isOnline) return;
 
     setIsProcessing(true);
-
     try {
       const requestsToProcess = [...queue];
       setQueue([]);
@@ -59,47 +71,46 @@ export const useOfflineQueue = () => {
       await Promise.all(
         requestsToProcess.map(async (request) => {
           try {
-            const result = await simulateApiCall(request.endpoint, request.options);
+            const result = await sendRequest(request.endpoint, request.options);
             request.resolve(result);
           } catch (error) {
             request.reject(error);
           }
         })
       );
-
-      if (isOnline && queue.length > 0) {
-        await processQueue();
-      }
     } finally {
       setIsProcessing(false);
     }
-  }, [isOnline, isProcessing, queue, simulateApiCall]);
+  }, [isOnline, isProcessing, queue]);
 
-  const enqueueRequest = useCallback(<T>(
-    endpoint: string,
-    options: unknown = {}
-  ): Promise<T> => {
-    return new Promise<T>((resolve, reject) => {
-      const id = Math.random().toString(36).substr(2, 9);
-      const queuedRequest: QueuedRequest = {
-        id,
-        endpoint,
-        options,
-        resolve: resolve as (_value?: unknown) => void,
-        reject,
-      };
+  useEffect(() => {
+    if (isOnline && !isProcessing && queue.length > 0) {
+      void processQueue();
+    }
+  }, [isOnline, isProcessing, queue, processQueue]);
 
-      setQueue(prev => [...prev, queuedRequest]);
-
-      if (isOnline && !isProcessing) {
-        processQueue();
-      }
-    });
-  }, [isOnline, isProcessing, processQueue]);
+  const enqueueRequest = useCallback(
+    <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+      return new Promise<T>((resolve, reject) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        const queuedRequest: QueuedRequest = {
+          id,
+          endpoint,
+          options,
+          resolve: resolve as (_value?: unknown) => void,
+          reject,
+        };
+        setQueue((prev) => [...prev, queuedRequest]);
+      });
+    },
+    []
+  );
 
   const retryFailedRequests = useCallback(() => {
-    processQueue();
-  }, [processQueue]);
+    if (isOnline && !isProcessing && queue.length > 0) {
+      void processQueue();
+    }
+  }, [isOnline, isProcessing, queue, processQueue]);
 
   return {
     enqueueRequest,
@@ -107,33 +118,4 @@ export const useOfflineQueue = () => {
     queueLength: queue.length,
     retryFailedRequests,
   };
-};
-
-useOfflineQueue.__useNetworkStatus = () => {
-  const getOnline = () => typeof navigator !== 'undefined' ? navigator.onLine : true;
-  const [isOnline, setIsOnline] = useState(getOnline);
-  const [lastOnline, setLastOnline] = useState<Date | null>(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const handleOnline = () => {
-      setIsOnline(true);
-      setLastOnline(new Date());
-    };
-
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  return { isOnline, lastOnline };
 };

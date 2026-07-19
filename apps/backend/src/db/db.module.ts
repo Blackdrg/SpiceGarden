@@ -15,14 +15,22 @@ const localSqlite = process.env.LOCAL_DB === "sqlite";
 const localSqliteFile = process.env.LOCAL_DB === "sqlite-file";
 
 function localReviewModelProvider() {
-  const store: any[] = [];
+  const store = new Map<string, any>();
+  const all = () => Array.from(store.values());
+  const persist = (doc: any) => {
+    const id = doc.id || crypto.randomUUID();
+    const record = { ...doc, id, save: async () => record };
+    store.set(id, record);
+    return record;
+  };
   return {
     provide: getModelToken(ReviewDocument.name),
     useValue: {
-      create: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-      new: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-      findOne: async () => store[0] || null,
-      find: async () => store,
+      create: (data: any) => persist({ ...data }),
+      new: (data: any) => persist({ ...data }),
+      findOne: async (filter: any = {}) => all().find((r) => Object.entries(filter).every(([k, v]) => r[k] === v)) || null,
+      find: async (filter: any = {}) =>
+        all().filter((r) => Object.entries(filter).every(([k, v]) => r[k] === v)),
       aggregate: async () => [],
     },
   };

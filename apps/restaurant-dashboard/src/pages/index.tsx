@@ -68,19 +68,6 @@ const statusLabels = {
   new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
 } as const satisfies Record<OrderStatus, string>;
 
-const DEMO_ITEMS: OrderItem[] = [
-  { id: 'i1', name: 'Zinger Burger', qty: 1, modifiers: ['Extra Spicy'], note: 'Less onions' },
-  { id: 'i2', name: 'Large Fries', qty: 1 },
-  { id: 'i3', name: 'Coke', qty: 1, modifiers: ['Less Ice'] },
-];
-
-const seedInventory: InventoryItem[] = [
-  { id: 'inv-1', name: 'Burger Buns', inStock: 3, threshold: 20 },
-  { id: 'inv-2', name: 'Cheese Slices', inStock: 8, threshold: 50 },
-  { id: 'inv-3', name: 'Tomato', inStock: 2, threshold: 15 },
-  { id: 'inv-4', name: 'Ice Cream', inStock: 1, threshold: 10 },
-];
-
 const tryPlay = (base64: string) => {
   const el = new Audio(`data:audio/wav;base64,${base64}`);
   el.play().catch(() => null);
@@ -161,21 +148,6 @@ function orderElapsed(order: Order) {
 
 function isDelayed(order: Order) {
   return order.status === 'preparing' && orderElapsed(order) > order.estPrepMins;
-}
-
-function demoOrder(id: string, overrides: Partial<Order> = {}): Order {
-  return {
-    id,
-    orderNumber: `SG-${id.slice(-6).toUpperCase()}`,
-    diner: 'Guest',
-    table: 'T-0' + id.length,
-    serviceType: 'delivery',
-    items: DEMO_ITEMS.map((i) => ({ ...i, id: `${id}-${i.id}` })),
-    createdAt: now(),
-    status: 'new',
-    estPrepMins: 14,
-    ...overrides,
-  };
 }
 
 function normalizeOrder(order: Order): Order {

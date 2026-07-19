@@ -11,18 +11,6 @@ import { STRINGS } from '../constants/strings';
 import Toast from 'react-native-root-toast';
 import { safeParse } from '../utils/safe-parse';
 
-// Strict union for profile navigation destinations
-type ProfileScreen =
-  | 'Orders'
-  | 'Favorites'
-  | 'Wallet'
-  | 'Addresses'
-  | 'Notifications'
-  | 'Settings'
-  | 'Support'
-  | 'Privacy'
-  | 'Logout';
-
 const MENU_ITEMS = [
   { id: 'wallet', label: 'Wallet', icon: 'wallet-outline', screen: 'Wallet' },
   { id: 'orders', label: 'My Orders', icon: 'receipt-outline', screen: 'History' },
@@ -285,7 +273,7 @@ const ProfileScreen = () => {
                   <Pressable 
                     key={item.id} 
                     style={styles.menuItem}
-                    onPress={() => navigation.navigate(item.screen as ProfileScreen)}
+                    onPress={() => (navigation as any).navigate(item.screen)}
                     accessibilityLabel={`Go to ${item.label}`}
                     accessibilityRole="link"
                   >

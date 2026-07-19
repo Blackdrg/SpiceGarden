@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { legalPageContainer, legalTitle, legalMeta, legalSectionHeading } from '../lib/legalStyles';
 import styles from './security.module.css';
@@ -13,19 +13,6 @@ const FAQS: FaqItem[] = [
 ];
 
 const SecurityCenterPage: React.FC = () => {
-  const [soc, setSoc] = useState<any>(null);
-  const [incidents, setIncidents] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetch('/api/legal/security-center')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        setSoc(d);
-        setIncidents(d?.incidents || []);
-      })
-      .catch(() => {});
-  }, []);
-
   return (
     <div style={legalPageContainer}>
       <h1 style={legalTitle}>Security Center</h1>

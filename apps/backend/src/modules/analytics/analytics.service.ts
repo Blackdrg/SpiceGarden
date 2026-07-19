@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { OrderItemEntity } from '../../db/entities/order-item.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { UserEntity } from '../../db/entities/user.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { AddressEntity } from '../../db/entities/address.entity';
+import { AnalyticsEventEntity } from '../../db/entities/analytics-event.entity';
 
 @Injectable()
 export class AnalyticsService {
@@ -17,8 +18,46 @@ export class AnalyticsService {
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(RestaurantBranchEntity) private branchRepo: Repository<RestaurantBranchEntity>,
     @InjectRepository(AddressEntity) private addressRepo: Repository<AddressEntity>,
-    private dataSource: DataSource,
+    @InjectRepository(AnalyticsEventEntity) private analyticsEventRepo: Repository<AnalyticsEventEntity>,
   ) {}
+
+  async trackEvent(input: {
+    type: string;
+    userId?: string | null;
+    sessionId?: string | null;
+    properties?: Record<string, unknown> | null;
+    timestamp?: string | Date;
+  }): Promise<{ id: string }> {
+    const event = this.analyticsEventRepo.create({
+      type: input.type as AnalyticsEventEntity['type'],
+      userId: input.userId ?? null,
+      sessionId: input.sessionId ?? null,
+      properties: input.properties ?? null,
+      timestamp: input.timestamp ? new Date(input.timestamp) : new Date(),
+    });
+    const saved = await this.analyticsEventRepo.save(event);
+    return { id: saved.id };
+  }
+
+  async listEvents(opts: {
+    type?: string;
+    userId?: string;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<{ events: AnalyticsEventEntity[]; total: number }> {
+    const qb = this.analyticsEventRepo.createQueryBuilder('event');
+    if (opts.type) {
+      qb.andWhere('event.type = :type', { type: opts.type });
+    }
+    if (opts.userId) {
+      qb.andWhere('event.userId = :userId', { userId: opts.userId });
+    }
+    qb.orderBy('event.createdAt', 'DESC')
+      .skip(opts.offset ?? 0)
+      .take(opts.limit ?? 50);
+    const [events, total] = await qb.getManyAndCount();
+    return { events, total };
+  }
 
   async getTopDishes(restaurantId?: string, period = 30): Promise<any> {
     const startDate = new Date();

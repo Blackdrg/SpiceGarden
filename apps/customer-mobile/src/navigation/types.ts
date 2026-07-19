@@ -12,6 +12,11 @@ export type RootStackParamList = {
   Restaurant: { restaurantId: string; slug?: string };
   Legal: undefined;
   Privacy: undefined;
+  Wallet: undefined;
+  History: undefined;
+  Payment: undefined;
+  Notifications: undefined;
+  Support: undefined;
 };
 
 export type TabParamList = {

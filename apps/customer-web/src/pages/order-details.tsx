@@ -100,15 +100,19 @@ const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
   };
 
   const handleReorder = () => {
-    const items = (order?.items || []).filter((item) => item && item.id).map((item) => ({
-      item: {
-        id: String(item.id),
-        name: String(item.name || ''),
-        price: Number(item.price) || 0,
-        quantity: Number(item.quantity) || 1,
-      },
-      restaurantId: order?.restaurant?.id || order?.restaurantId || '',
-    }));
+    const items: Array<{ item: { id: string; name: string; price: number; quantity: number }; restaurantId: string }> = [];
+    for (const item of order?.items || []) {
+      if (!item || !item.id) continue;
+      items.push({
+        item: {
+          id: String(item.id),
+          name: String(item.name || ''),
+          price: Number(item.price) || 0,
+          quantity: Number(item.quantity) || 1,
+        },
+        restaurantId: order?.restaurant?.id || order?.restaurantId || '',
+      });
+    }
     items.forEach((entry) => dispatch(addToCart(entry)));
     router.push('/cart');
   };
@@ -181,8 +185,8 @@ const OrderDetailsPage = ({ orderId }: { orderId: string }) => {
       <Card title="Order Items" variant="elevated">
         <div className={styles.itemsList}>
           {order.items && order.items.length > 0 ? (
-            order.items.map((item, idx: number) => (
-              <div key={item.id || idx} className={styles.itemRow}>
+            order.items.map((item) => (
+              <div key={item.id} className={styles.itemRow}>
                 <div className={styles.itemImageWrap}>
                   {item.image ? (
                     <Image

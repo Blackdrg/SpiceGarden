@@ -80,6 +80,8 @@ const entities = [
   AgreementAcceptanceEntity, ComplianceAuditEntity, CookieRegistryEntity,
 ];
 
+const reviewStore = new Map<string, any>();
+
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature(entities)],
@@ -87,10 +89,22 @@ const entities = [
     {
       provide: getModelToken(ReviewDocument.name),
       useValue: {
-        create: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-        new: (data: any) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-        findOne: async () => null,
-        find: async () => [],
+        create: (data: any) => {
+          const id = data.id || crypto.randomUUID();
+          const record = { ...data, id, save: async () => record };
+          reviewStore.set(id, record);
+          return record;
+        },
+        new: (data: any) => {
+          const id = data.id || crypto.randomUUID();
+          const record = { ...data, id, save: async () => record };
+          reviewStore.set(id, record);
+          return record;
+        },
+        findOne: async (filter: any = {}) =>
+          Array.from(reviewStore.values()).find((r) => Object.entries(filter).every(([k, v]) => r[k] === v)) || null,
+        find: async (filter: any = {}) =>
+          Array.from(reviewStore.values()).filter((r) => Object.entries(filter).every(([k, v]) => r[k] === v)),
         aggregate: async () => [],
       },
     },
