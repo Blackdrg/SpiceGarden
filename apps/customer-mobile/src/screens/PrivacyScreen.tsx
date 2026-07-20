@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -45,7 +44,7 @@ const PrivacyScreen = () => {
     necessary: true,
   });
 
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
     const loadConsent = async () => {
@@ -65,17 +64,12 @@ const PrivacyScreen = () => {
       } finally {
         setLoading(false);
 
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 1,
-          duration: DESIGN_TOKENS.motion.page,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }).start();
+        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
       }
     };
 
     loadConsent();
-  }, [fadeAnim]);
+  }, []);
 
   const handleToggle = async (key: keyof ConsentState) => {
     if (key === 'necessary') {

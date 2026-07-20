@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
@@ -71,7 +70,7 @@ const LegalScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
     const loadAgreement = async () => {
@@ -94,17 +93,12 @@ const LegalScreen = () => {
       } finally {
         setLoading(false);
 
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 1,
-          duration: DESIGN_TOKENS.motion.page,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }).start();
+        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
       }
     };
 
     loadAgreement();
-  }, [fadeAnim]);
+  }, []);
 
   const handlePolicyPress = async (url: string) => {
     try {

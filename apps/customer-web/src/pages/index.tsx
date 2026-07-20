@@ -135,8 +135,9 @@ const HomePage = () => {
       </div>
 
       <div className={styles.promoSection}>
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => router.push('/search')}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/search'); } }}
           className={styles.promoBanner}
@@ -148,7 +149,7 @@ const HomePage = () => {
           <div className={styles.promoButton}>
             <Button label="Order Now" onClick={() => router.push('/search')} ariaLabel="Order now with welcome discount" />
           </div>
-        </button>
+        </div>
       </div>
 
       <h2 className={styles.sectionTitle}>Recommended Restaurants</h2>

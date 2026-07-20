@@ -12,7 +12,7 @@ const renderStars = (rating: number) => {
   for (let i = 1; i <= 5; i++) {
     stars.push(
       <Ionicons
-        key={i}
+        key={`star-${i}`}
         name={i <= Math.round(rating) ? 'star' : 'star-outline'}
         size={28}
         color={i <= Math.round(rating) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.border}

@@ -24,10 +24,11 @@ type GstReport = {
 };
 
 const GstReportsPage = () => {
+  const currentYear = new Date().getFullYear();
   const [report, setReport] = useState<GstReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState(currentYear);
 
   const user = useSelector((state: RootState) => state.auth.user);
   const restaurantId = user?.id ?? null;
@@ -89,7 +90,7 @@ const GstReportsPage = () => {
           </select>
           <select value={year} onChange={(e) => setYear(Number(e.target.value))} className={styles.select} aria-label="Year">
             {Array.from({ length: 5 }, (_, i) => (
-              <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}</option>
+              <option key={i} value={currentYear - i}>{currentYear - i}</option>
             ))}
           </select>
           <Button onClick={exportGSTR1} variant="secondary" size="sm">Export GSTR-1</Button>

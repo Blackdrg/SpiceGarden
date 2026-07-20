@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -26,7 +25,7 @@ export const AddressesScreen = () => {
   const [loading, setLoading] = useState(true);
   const locationPermission = useRef<MobileLocationPermissionStatus | null>(null);
   
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
 
   const requestLocationPermission = async () => {
     try {
@@ -49,14 +48,9 @@ export const AddressesScreen = () => {
       console.error('Failed to load addresses:', e);
     } finally {
       setLoading(false);
-        AnimatedCompat.timing(fadeAnim, {
-        toValue: 1,
-        duration: DESIGN_TOKENS.motion.page,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }).start();
+      fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
     }
-  }, [fadeAnim]);
+  }, []);
 
   const saveAddresses = useCallback(async (newAddresses: Address[]) => {
     try {

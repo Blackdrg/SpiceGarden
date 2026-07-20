@@ -3,6 +3,7 @@ export default ({ config }) => ({
   name: 'SpiceGarden Customer',
   slug: 'spicegarden-customer',
   version: '1.0.0',
+  platforms: ['ios', 'android', 'web'],
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
@@ -31,9 +32,7 @@ export default ({ config }) => ({
   web: {
     favicon: './assets/favicon.png',
     path: './web',
-    build: {
-      output: 'server',
-    },
+    output: 'single',
   },
   extra: {
     apiUrl: process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || (() => {

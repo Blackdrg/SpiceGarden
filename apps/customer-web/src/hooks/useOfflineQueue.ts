@@ -13,10 +13,6 @@ interface QueuedRequest {
   reject: (_reason?: unknown) => void;
 }
 
-function getOnline(): boolean {
-  return typeof navigator !== 'undefined' ? navigator.onLine : true;
-}
-
 async function sendRequest(endpoint: string, options: RequestInit = {}): Promise<unknown> {
   const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
   const response = await fetch(url, {
@@ -44,12 +40,12 @@ async function sendRequest(endpoint: string, options: RequestInit = {}): Promise
 }
 
 export const useOfflineQueue = () => {
-  const [isOnline, setIsOnline] = useState<boolean>(getOnline);
+  const [isOnline, setIsOnline] = useState<boolean>(true);
   const [queue, setQueue] = useState<QueuedRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    setIsOnline(typeof navigator !== 'undefined' ? navigator.onLine : true);
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);

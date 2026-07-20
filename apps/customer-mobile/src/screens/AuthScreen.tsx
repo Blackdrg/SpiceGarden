@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Easing, ActivityIndicator } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -20,18 +19,13 @@ const AuthScreen = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-   const navigation = useNavigation();
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
-  const shakeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const navigation = useNavigation();
+  const fadeAnim = useSharedValue(0);
+  const shakeAnim = useSharedValue(0);
 
   useEffect(() => {
-    AnimatedCompat.timing(fadeAnim, {
-      toValue: 1,
-      duration: DESIGN_TOKENS.motion.page,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-  }, [fadeAnim]);
+    fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+  }, []);
 
   const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,10 +96,10 @@ const AuthScreen = () => {
            phone: isLogin ? '' : phone,
          }));
          navigation.replace('Main');
-      } else {
-        setError(data.message || (isLogin ? 'Login failed. Please check your credentials.' : 'Registration failed. Please try again.'));
-        shakeAnimation();
-      }
+       } else {
+         setError(data.message || (isLogin ? 'Login failed. Please check your credentials.' : 'Registration failed. Please try again.'));
+         shakeAnimation();
+       }
     } catch (err) {
       setError('Network error. Please check your connection and try again.');
       shakeAnimation();
@@ -115,12 +109,12 @@ const AuthScreen = () => {
   };
 
   const shakeAnimation = () => {
-    AnimatedCompat.sequence([
-      AnimatedCompat.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      AnimatedCompat.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-      AnimatedCompat.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      AnimatedCompat.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
-    ]).start();
+    shakeAnim.value = withSequence(
+      withTiming(10, { duration: 50 }),
+      withTiming(-10, { duration: 50 }),
+      withTiming(10, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    );
   };
 
   return (

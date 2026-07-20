@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
@@ -53,42 +52,21 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(1), []);
-  const slideAnim = useMemo(() => new AnimatedCompat.Value(0), []);
-  const scaleAnim = useMemo(() => new AnimatedCompat.Value(1), []);
+  const fadeAnim = useSharedValue(1);
+  const slideAnim = useSharedValue(0);
+  const scaleAnim = useSharedValue(1);
 
   const animateTransition = useCallback((toIndex: number) => {
-    AnimatedCompat.sequence([
-      AnimatedCompat.parallel([
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 0,
-          duration: 150,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        AnimatedCompat.timing(slideAnim, {
-          toValue: toIndex > currentIndex ? 20 : -20,
-          duration: 150,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-      AnimatedCompat.parallel([
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 1,
-          duration: 200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        AnimatedCompat.timing(slideAnim, {
-          toValue: 0,
-          duration: 200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
-  }, [currentIndex, fadeAnim, slideAnim]);
+    const direction = toIndex > currentIndex ? 20 : -20;
+    fadeAnim.value = withSequence(
+      withTiming(0, { duration: 150, easing: Easing.out(Easing.quad) }),
+      withTiming(1, { duration: 200, easing: Easing.out(Easing.quad) })
+    );
+    slideAnim.value = withSequence(
+      withTiming(direction, { duration: 150, easing: Easing.out(Easing.quad) }),
+      withTiming(0, { duration: 200, easing: Easing.out(Easing.quad) })
+    );
+  }, [currentIndex]);
 
   const handleNext = async () => {
     setCurrentIndex((prev) => {

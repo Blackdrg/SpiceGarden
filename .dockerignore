@@ -30,7 +30,7 @@ infra/*
 !infra/super-admin/Dockerfile
 !infra/delivery-partner/Dockerfile
 **/k8s
-**/legal
+/legal
 **/logs
 **/node_modules
 **/npm-debug.log

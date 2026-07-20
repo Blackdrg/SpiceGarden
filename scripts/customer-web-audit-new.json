@@ -1,0 +1,306 @@
+[
+  {
+    "route": "/",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/\":true,\"/legal\":true,\"/auth\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true,\"/search\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/auth",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true,\"/search\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/reset-password",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true,\"/search\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/search",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/restaurant",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/cart",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/checkout",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true,\"/profile\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/profile",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Error: Unauthorized\n    at api (webpack-internal:///(pages-dir-browser)/../../packages/shared/dist/api.js:65:15)\n    at async ProfilePage.useCallback[fetchUserProfile] (webpack-internal:///(pages-dir-browser)/./src/pages/profile.tsx:44:34)"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/wallet",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/history\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/orders",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load order history: Error: Cannot GET /orders\n    at api (webpack-internal:///(pages-dir-browser)/../../packages/shared/dist/api.js:65:15)\n    at async HistoryPage.useEffect.loadOrderHistory (webpack-internal:///(pages-dir-browser)/./src/pages/history.tsx:66:42)"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/order-details",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/tracking",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/notifications",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/offers",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/subscriptions",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/addresses",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/menu",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/mfa-setup",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/mfa-disable\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/mfa-disable",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/legal",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "`legacyBehavior` is deprecated and will be removed in a future release. A codemod is available to upgrade your components:\n\nnpx @next/codemod@latest new-link .\n\nLearn more: https://nextjs.org/docs/app/building-your-application/upgrading/codemods#remove-a-tags-from-link-components"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/history\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/history",
+    "status": 200,
+    "verdict": "FAIL",
+    "pageErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load order history: Error: Cannot GET /orders\n    at api (webpack-internal:///(pages-dir-browser)/../../packages/shared/dist/api.js:65:15)\n    at async HistoryPage.useEffect.loadOrderHistory (webpack-internal:///(pages-dir-browser)/./src/pages/history.tsx:66:42)"
+    ],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/payment-methods",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/payment-methods\":true,\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/auth\":true,\"/\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/login",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/auth\":true,\"/payment-methods\":true,\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/privacy",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/privacy-dashboard\":true,\"/auth\":true,\"/payment-methods\":true,\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/\":true,\"/legal/document/[type]\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/terms",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/auth\":true,\"/payment-methods\":true,\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  },
+  {
+    "route": "/callback",
+    "status": 200,
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
+    "consoleWarnings": [
+      "[HMR] Invalid message: {\"action\":\"isrManifest\",\"data\":{\"/auth\":true,\"/legal/document/[type]\":true,\"/privacy-dashboard\":true,\"/payment-methods\":true,\"/history\":true,\"/legal\":true,\"/mfa-disable\":true,\"/mfa-setup\":true,\"/menu\":true,\"/addresses\":true,\"/subscriptions\":true,\"/offers\":true,\"/notifications\":true,\"/tracking\":true,\"/wallet\":true,\"/profile\":true,\"/checkout\":true,\"/cart\":true,\"/restaurant\":true,\"/search\":true,\"/reset-password\":true,\"/\":true}}\nTypeError: Cannot read properties of undefined (reading 'components')\n    at handleStaticIndicator (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:182:46)\n    at processMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:199:17)\n    at eval (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:72:13)\n    at WebSocket.handleMessage (webpack-internal:///(pages-dir-browser)/../../node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:69:17)"
+    ],
+    "failedReqs": []
+  }
+]

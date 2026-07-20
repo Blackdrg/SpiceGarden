@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
@@ -29,8 +28,8 @@ const HomeScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [user, setUser] = useState<{ name?: string } | null>(null);
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
-  const slideAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
+  const slideAnim = useSharedValue(0);
 
   useEffect(() => {
     loadRestaurants();
@@ -61,26 +60,14 @@ const HomeScreen = () => {
       setRestaurants(mapped);
       setLoading(false);
 
-      AnimatedCompat.parallel([
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 1,
-          duration: DESIGN_TOKENS.motion.page,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        AnimatedCompat.timing(slideAnim, {
-          toValue: 0,
-          duration: DESIGN_TOKENS.motion.page,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start();
+      fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+      slideAnim.value = withTiming(0, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
     } catch (err) {
       setError('Failed to load restaurants. Pull to refresh.');
       setLoading(false);
       console.error('Failed to load restaurants:', err);
     }
-  }, [fadeAnim, slideAnim]);
+  }, []);
 
   const loadUser = useCallback(async () => {
     try {

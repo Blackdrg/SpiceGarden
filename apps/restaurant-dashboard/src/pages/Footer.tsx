@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
         ))}
       </nav>
       <p className={styles.copy}>
-        &copy; {new Date().getFullYear()} SpiceGarden. All rights reserved. SpiceGarden is a registered data
+        &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> SpiceGarden. All rights reserved. SpiceGarden is a registered data
         fiduciary under the DPDP Act 2023.
       </p>
     </footer>

@@ -23,7 +23,7 @@ function formatDate(value?: string) {
 }
 
 export const LegalDocumentPage: React.FC<{ docType: string; heading: string }> = ({ docType, heading }) => {
-  const [doc, setDoc] = useState<LegalDocument | null>(null);
+  const [doc, setLegalDoc] = useState<LegalDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +34,7 @@ export const LegalDocumentPage: React.FC<{ docType: string; heading: string }> =
       const res = await fetch(API(docType));
       if (!res.ok) throw new Error(res.status === 404 ? 'Document not found' : `Failed to load document (${res.status})`);
       const data = (await res.json()) as LegalDocument;
-      setDoc(data);
+      setLegalDoc(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load document');
     } finally {

@@ -4,8 +4,8 @@ const path = require('path');
 const root = path.resolve(__dirname, '..', '..');
 const config = getDefaultConfig(__dirname);
 
-config.resolver.sourceExts = ['tsx', 'ts', 'js', 'jsx', 'json', 'css'];
-config.resolver.assetExts = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'css'];
+config.resolver.sourceExts = ['tsx', 'ts', 'js', 'jsx', 'json', 'css', 'cjs', 'mjs'];
+config.resolver.assetExts = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'css', 'ttf', 'otf'];
 config.watchFolders = [root];
 config.resolver.nodeModulesPaths = [path.join(root, 'node_modules')];
 
@@ -14,7 +14,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     return path.join(root, 'node_modules/lucide-react/dist/cjs/lucide-react.js');
   }
   if (typeof context.resolveRequest === 'function') {
-    return context.resolveRequest(moduleName, platform);
+    return context.resolveRequest(context, moduleName, platform);
   }
   return moduleName;
 };

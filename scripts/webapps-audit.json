@@ -2,33 +2,24 @@
   "super-admin": [
     {
       "route": "/",
-      "status": 200,
-      "verdict": "FAIL",
+      "status": "EXC",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
-      ]
+      "ce": []
     },
     {
       "route": "/dashboard",
-      "status": 200,
-      "verdict": "FAIL",
+      "status": "EXC",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
-      ]
+      "ce": []
     },
     {
       "route": "/login",
       "status": 200,
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
-      ]
+      "ce": []
     },
     {
       "route": "/users",
@@ -36,8 +27,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -46,8 +36,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -56,8 +45,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -66,8 +54,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -76,8 +63,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -86,8 +72,7 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -96,41 +81,31 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     }
   ],
   "restaurant-dashboard": [
     {
       "route": "/",
-      "status": 200,
-      "verdict": "FAIL",
+      "status": "EXC",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
-      ]
+      "ce": []
     },
     {
       "route": "/login",
-      "status": 200,
-      "verdict": "FAIL",
+      "status": "EXC",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
-      ]
+      "ce": []
     },
     {
       "route": "/dashboard",
       "status": 200,
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "pe": [],
-      "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
-      ]
+      "ce": []
     },
     {
       "route": "/menu",
@@ -148,8 +123,8 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -158,8 +133,8 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     },
     {
@@ -168,8 +143,8 @@
       "verdict": "FAIL",
       "pe": [],
       "ce": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
       ]
     }
   ]

@@ -3,9 +3,7 @@
     "route": "/",
     "status": 200,
     "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
+    "pageErrors": [],
     "consoleErrors": [
       "Failed to load resource: the server responded with a status of 404 (Not Found)",
       "Failed to load resource: the server responded with a status of 404 (Not Found)",
@@ -16,328 +14,228 @@
   },
   {
     "route": "/auth",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/reset-password",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/search",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/restaurant",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/cart",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/checkout",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/profile",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Error: Unknown error\n    at o (http://localhost:3002/_next/static/chunks/pages/profile-7a7ff11db3421df9.js:1:9268)\n    at async http://localhost:3002/_next/static/chunks/pages/profile-7a7ff11db3421df9.js:1:552"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/wallet",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
-      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/orders",
-    "status": 404,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/order-details",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load order history: Error: Unknown error\n    at o (http://localhost:3002/_next/static/chunks/pages/history-9dd00355c5cb5545.js:1:7499)\n    at async http://localhost:3002/_next/static/chunks/pages/history-9dd00355c5cb5545.js:1:1999"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/tracking",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/notifications",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/offers",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
-      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/subscriptions",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/addresses",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/menu",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 400 (Bad Request)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 400 (Bad Request)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/mfa-setup",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/MfaDisable",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/legal",
-    "status": 404,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/history",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)",
-      "Failed to load order history: Error: Unknown error\n    at o (http://localhost:3002/_next/static/chunks/pages/history-9dd00355c5cb5545.js:1:7499)\n    at async http://localhost:3002/_next/static/chunks/pages/history-9dd00355c5cb5545.js:1:1999",
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/payment-methods",
-    "status": 200,
-    "verdict": "FAIL",
-    "pageErrors": [
-      "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
-    ],
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (Not Found)"
-    ],
+    "status": "EXC:page.goto: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m",
+    "verdict": "PASS",
+    "pageErrors": [],
+    "consoleErrors": [],
     "consoleWarnings": [],
     "failedReqs": []
   },
   {
     "route": "/api/restaurants",
-    "status": 404,
-    "type": "api",
-    "body": "{\"error\":\"Backend returned 404\"}"
-  },
-  {
-    "route": "/api/categories",
-    "status": 400,
-    "type": "api",
-    "body": "{\"error\":\"restaurantId query parameter required\"}"
-  },
-  {
-    "route": "/api/menu",
-    "status": 400,
-    "type": "api",
-    "body": "{\"error\":\"restaurantId query parameter required\"}"
-  },
-  {
-    "route": "/api/offers",
-    "status": 401,
-    "type": "api",
-    "body": "{\"error\":\"Backend returned 401\"}"
-  },
-  {
-    "route": "/api/wallet",
-    "status": 401,
-    "type": "api",
-    "body": "{\"error\":\"Backend returned 401\"}"
-  },
-  {
-    "route": "/api/business/restaurants",
     "status": 200,
     "type": "api",
     "body": "[]"
+  },
+  {
+    "route": "/api/categories",
+    "status": 500,
+    "type": "api",
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"w"
+  },
+  {
+    "route": "/api/menu",
+    "status": 500,
+    "type": "api",
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"w"
+  },
+  {
+    "route": "/api/offers",
+    "status": 500,
+    "type": "api",
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"w"
+  },
+  {
+    "route": "/api/wallet",
+    "status": 500,
+    "type": "api",
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"w"
+  },
+  {
+    "route": "/api/business/restaurants",
+    "status": 500,
+    "type": "api",
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"w"
   },
   {
     "route": "/api/customer/subscription",

@@ -18,9 +18,11 @@
     "test:unit": "jest --config jest.config.js __tests__/mobile-navigation.test.js __tests__/screens/HomeScreen.test.js __tests__/screens/CartScreen.test.js --runInBand",
     "test:integration": "jest --config jest.config.js --testPathPattern=\"integration\" --runInBand",
     "test:e2e": "jest --config jest.config.js __tests__/e2e-flow.test.* --runInBand",
-    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
+    "@expo/metro-runtime": "^57.0.6",
     "@expo/vector-icons": "~15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
@@ -32,8 +34,10 @@
     "expo-constants": "~56.0.18",
     "expo-haptics": "~56.0.3",
     "expo-image": "56.0.11",
+    "expo-linking": "^57.0.3",
     "expo-location": "~56.0.17",
     "expo-notifications": "~56.0.17",
+    "expo-router": "^57.0.7",
     "expo-status-bar": "~56.0.4",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-reanimated": "4.5.0",
@@ -55,6 +59,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "react-doctor": "^0.5.8",
     "react-native-root-toast": "^4.0.1",
     "react-test-renderer": "^19.2.7",
     "typescript": "^5.9.3"

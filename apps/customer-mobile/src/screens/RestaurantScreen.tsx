@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
@@ -30,7 +29,7 @@ const RestaurantScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [addingItem, setAddingItem] = useState<string | null>(null);
 
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,12 +58,7 @@ const RestaurantScreen = () => {
         setMenuItems(items);
         setLoading(false);
 
-        AnimatedCompat.timing(fadeAnim, {
-          toValue: 1,
-          duration: DESIGN_TOKENS.motion.standard,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }).start();
+        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.standard, easing: Easing.out(Easing.quad) });
       } catch (err) {
         setError('Failed to load menu');
         setLoading(false);
@@ -72,7 +66,7 @@ const RestaurantScreen = () => {
       }
     };
     loadData();
-  }, [restaurantId, slug, fadeAnim]);
+  }, [restaurantId, slug]);
 
   const addToCart = async (item: MenuItem) => {
     try {

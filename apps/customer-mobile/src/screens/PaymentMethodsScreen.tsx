@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-const AnimatedCompat = Animated as any;
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -55,7 +54,7 @@ const PaymentMethodsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   
-  const fadeAnim = useMemo(() => new AnimatedCompat.Value(0), []);
+  const fadeAnim = useSharedValue(0);
 
   const fetchPaymentMethods = useCallback(async () => {
     try {
@@ -82,13 +81,8 @@ const PaymentMethodsScreen = () => {
 
   useEffect(() => {
     fetchPaymentMethods();
-    AnimatedCompat.timing(fadeAnim, {
-      toValue: 1,
-      duration: DESIGN_TOKENS.motion.page,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-  }, [fetchPaymentMethods, fadeAnim]);
+    fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+  }, [fetchPaymentMethods]);
 
   const handleDeletePaymentMethod = useCallback(async (id: string) => {
     try {

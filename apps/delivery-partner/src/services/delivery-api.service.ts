@@ -393,9 +393,11 @@ class DeliveryApiService {
 
   async logout(): Promise<void> {
     this.disconnectWebSocket();
-    await AsyncStorage.removeItem('driver_token');
-    await AsyncStorage.removeItem('driver_id');
-    await AsyncStorage.removeItem('driver_refresh_token');
+    await Promise.all([
+      AsyncStorage.removeItem('driver_token'),
+      AsyncStorage.removeItem('driver_id'),
+      AsyncStorage.removeItem('driver_refresh_token'),
+    ]);
     this.token = null;
     this.driverId = null;
   }

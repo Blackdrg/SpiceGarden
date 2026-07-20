@@ -1,0 +1,23 @@
+:root {
+  --icon-primary: #FF5A1F;
+  --icon-secondary: #111827;
+  --icon-muted: #6B7280;
+  --icon-danger: #EF4444;
+  --icon-success: #10B981;
+  --icon-warning: #F59E0B;
+}
+
+/* Icon Sizes */
+:root {
+  --icon-size-tiny: 12px;
+  --icon-size-inline: 16px;
+  --icon-size-normal: 20px;
+  --icon-size-nav: 24px;
+  --icon-size-hero: 32px;
+  --icon-size-empty: 48px;
+}
+
+/* Icon Stroke */
+:root {
+  --icon-stroke: 2px;
+}
