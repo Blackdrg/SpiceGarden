@@ -27,7 +27,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "lucide-react": ["./lucide-react.d.ts"]
     },
     "types": [
       "jest"
@@ -38,7 +39,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../lucide-react.d.ts"
+    "./lucide-react.d.ts"
   ],
   "exclude": [
     "node_modules"

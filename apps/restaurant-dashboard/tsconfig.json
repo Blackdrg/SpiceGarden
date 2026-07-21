@@ -21,13 +21,16 @@
     "noFallthroughCasesInSwitch": true,
     "types": [
       "node"
-    ]
+    ],
+    "paths": {
+      "lucide-react": ["./lucide-react.d.ts"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "../lucide-react.d.ts"
+    "./lucide-react.d.ts"
   ],
   "exclude": [
     "node_modules",

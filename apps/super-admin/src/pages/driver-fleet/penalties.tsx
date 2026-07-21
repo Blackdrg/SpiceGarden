@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -27,16 +26,26 @@ const primaryButtonStyle: React.CSSProperties = {
 export default function DriverFleetPenalties() {
   const [form, setForm] = useState({ driverId: '', type: 'late_pickup', amount: '', description: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [issuing, setIssuing] = useState(false);
+  const issuingRef = useRef(false);
 
   const issuePenalty = async () => {
-    await fetch(`${API}/fleet/penalties`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, amount: parseFloat(form.amount) }),
-    });
-    setSubmitted(true);
-    setForm({ driverId: '', type: 'late_pickup', amount: '', description: '' });
-    setTimeout(() => setSubmitted(false), 3000);
+    if (issuingRef.current) return;
+    issuingRef.current = true;
+    setIssuing(true);
+    try {
+      await fetch(`${API}/fleet/penalties`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, amount: parseFloat(form.amount) }),
+      });
+      setSubmitted(true);
+      setForm({ driverId: '', type: 'late_pickup', amount: '', description: '' });
+      setTimeout(() => setSubmitted(false), 3000);
+    } finally {
+      issuingRef.current = false;
+      setIssuing(false);
+    }
   };
 
   return (
@@ -83,9 +92,10 @@ export default function DriverFleetPenalties() {
           <button
             type="button"
             onClick={issuePenalty}
+            disabled={issuing}
             style={primaryButtonStyle}
           >
-            Issue Penalty
+            {issuing ? 'Issuing...' : 'Issue Penalty'}
           </button>
           {submitted && <p style={{ color: '#4ade80', fontSize: 13 }}>Penalty issued successfully</p>}
         </div>

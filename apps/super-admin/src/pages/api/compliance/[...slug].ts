@@ -16,7 +16,7 @@ async function proxyRequest(req: NextApiRequest, res: NextApiResponse, backendPa
       credentials: 'include',
     });
 
-    const data = await response.json();
+    const data = response.ok ? await response.json() : await response.text();
     res.status(response.status).json(data);
   } catch {
     res.status(500).json({ error: 'Failed to reach backend' });

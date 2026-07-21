@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@spicegarden/ui';
 import styles from './coupons.module.css';
@@ -19,6 +19,7 @@ interface Coupon {
 export default function LoyaltyCoupons() {
   const [form, setForm] = useState({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
   const [creating, setCreating] = useState(false);
+  const creatingRef = useRef(false);
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -47,17 +48,25 @@ export default function LoyaltyCoupons() {
   });
 
   const createCoupon = async () => {
+    if (creatingRef.current) return;
+    creatingRef.current = true;
     setCreating(true);
-    await createMutation.mutateAsync({
-      ...form,
-      discountValue: parseFloat(form.discountValue),
-      usageLimit: parseInt(form.usageLimit),
-      validFrom: new Date(),
-      validUntil: new Date(Date.now() + 30 * 86400000),
-    });
-    setForm({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
-    setCreating(false);
-    toast.showToast({ message: 'Coupon created successfully', type: 'success', duration: 0 });
+    try {
+      await createMutation.mutateAsync({
+        ...form,
+        discountValue: parseFloat(form.discountValue),
+        usageLimit: parseInt(form.usageLimit),
+        validFrom: new Date(),
+        validUntil: new Date(Date.now() + 30 * 86400000),
+      });
+      setForm({ code: '', type: 'percentage', discountValue: '', usageLimit: '' });
+      toast.showToast({ message: 'Coupon created successfully', type: 'success', duration: 0 });
+    } catch {
+      toast.showToast({ message: 'Failed to create coupon', type: 'error', duration: 0 });
+    } finally {
+      creatingRef.current = false;
+      setCreating(false);
+    }
   };
 
   const activeCoupons = coupons.filter((c) => c.status === 'active');

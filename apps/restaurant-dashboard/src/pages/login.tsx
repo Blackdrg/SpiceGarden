@@ -32,12 +32,13 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password, deviceName: 'restaurant-dashboard', deviceType: 'browser' }),
       });
 
-      const data = await res.json().catch(() => ({}));
-
       if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         setError((data as { error?: string }).error || 'Login failed');
         return;
       }
+
+      const data = await res.json();
 
       if ((data as { mfaRequired?: boolean }).mfaRequired) {
         setError('MFA is required for this account. Please use the mobile app or contact support.');

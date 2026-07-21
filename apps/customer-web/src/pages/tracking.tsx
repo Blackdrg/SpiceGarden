@@ -81,7 +81,7 @@ const TrackingPage = () => {
           setDisplayEstimatedTime(15);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     };
 

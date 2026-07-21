@@ -32,11 +32,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, deviceName: 'super-admin', deviceType: 'browser' }),
       });
-      const data = await res.json().catch(() => ({}));
-
       if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         return { ok: false, error: (data as { error?: string }).error || 'Login failed' };
       }
+      const data = await res.json();
       if ((data as { mfaRequired?: boolean }).mfaRequired) {
         return { ok: false, mfaRequired: true, error: 'MFA is required for this account' };
       }

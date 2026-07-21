@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.setHeader('Set-Cookie', setCookie);
     }
 
-    const data = await response.json().catch(() => ({}));
+    const data = response.ok ? await response.json() : await response.text();
     return res.status(response.status).json(data);
   } catch {
     return res.status(502).json({ error: 'Failed to connect to authentication service' });
