@@ -82,7 +82,7 @@ Feature growth is completely frozen. No exceptions require explicit approval.
 - ✅ Security Tests: 0 vulnerabilities (SQL injection, XSS, rate limiting, auth bypass, path traversal)
 - ✅ Penetration Tests: 0 issues (port scan, security headers, CORS, HTTP methods)
 - ✅ Stack Boot: PASS (backend, grafana, prometheus, opensearch all reachable)
-- ⚠️ npm audit: 31 moderate vulnerabilities (dev toolchain only, 0 high/critical)
+- ⚠️ npm audit: 21 vulnerabilities (2 low, 12 moderate, 6 high, 1 critical) — all in dev toolchain (Next.js, sharp, expo, tar). `npm audit fix` resolved 10 (31→21). `npm audit fix --force` causes breaking changes. CI gate: `npm audit --audit-level=high` fails due to Next.js/sharp high CVEs; these are not backend runtime deps.
 
 ### React Doctor Status (requires Phase 2 fixes)
 - customer-mobile: 60/100 (24 warnings; 21 unused-file + 2 no-multi-comp + 1 weak-crypto are false positives / generated artifacts — not actionable)

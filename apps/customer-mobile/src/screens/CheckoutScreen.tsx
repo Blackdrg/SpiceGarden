@@ -9,6 +9,7 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { safeParse } from '../utils/safe-parse';
 import { safeGetItem } from '../utils/secure-storage';
 import { STORAGE_KEYS } from '../constants/storage.keys';
+import { API_BASE_URL } from '../constants/api';
 import { orderService } from '../services/order.service';
 
 interface CartItem {
@@ -23,6 +24,8 @@ interface AddressEntry {
   label: string;
   address: string;
   isDefault?: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 type CheckoutScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tracking' | 'Home' | 'Address' | 'Checkout' | 'Auth'>;
@@ -46,8 +49,51 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
   const [promoMessage, setPromoMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+  const [codRestricted, setCodRestricted] = useState(false);
+  const [codRestrictionReason, setCodRestrictionReason] = useState('');
   const fadeAnim = useSharedValue(0);
   const scaleAnim = useSharedValue(1);
+
+  useEffect(() => {
+    if (!deliveryAddressId || paymentMethod !== 'cash') {
+      setCodRestricted(false);
+      setCodRestrictionReason('');
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const addressesJson = await safeGetItem(STORAGE_KEYS.ADDRESSES);
+        const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
+        const selected = addresses?.find((a) => a.id === deliveryAddressId);
+        if (selected?.lat && selected?.lng && !cancelled) {
+          const res = await fetch(`${API_BASE_URL}/risk/check-address`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ addressId: selected.id, lat: selected.lat, lng: selected.lng }),
+          });
+          if (res.ok && !cancelled) {
+            const data = await res.json();
+            if (!data.codAllowed) {
+              setCodRestricted(true);
+              setCodRestrictionReason(data.reason || 'COD is not available for this address due to safety restrictions');
+              setPaymentMethod('card');
+            } else {
+              setCodRestricted(false);
+              setCodRestrictionReason('');
+            }
+          }
+        }
+      } catch {
+        /* allow COD by default if check fails */
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [deliveryAddressId, paymentMethod]);
 
   useEffect(() => {
     const loadAddress = async () => {
@@ -203,21 +249,39 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Method</Text>
             <View style={styles.paymentOptions}>
-              {['card', 'upi', 'cash'].map(method => (
+              {[
+                { key: 'card' as PaymentMethod, label: '₹ Card' },
+                { key: 'upi' as PaymentMethod, label: '₹ UPI' },
+                { key: 'cash' as PaymentMethod, label: '₹ Cash', disabled: codRestricted },
+              ].map((method) => (
                 <Pressable
-                  key={method}
-                  onPress={() => setPaymentMethod(method as PaymentMethod)}
-                  style={[styles.paymentOption, paymentMethod === method && styles.selectedPaymentOption]}
-                  accessibilityLabel={`Pay with ${method}`}
+                  key={method.key}
+                  onPress={() => !method.disabled && setPaymentMethod(method.key)}
+                  style={[
+                    styles.paymentOption,
+                    paymentMethod === method.key && styles.selectedPaymentOption,
+                    method.disabled && styles.disabledPaymentOption,
+                  ]}
+                  accessibilityLabel={`Pay with ${method.key}`}
                   accessibilityRole='radio'
-                  accessibilityState={{ checked: paymentMethod === method }}
+                  accessibilityState={{ checked: paymentMethod === method.key, disabled: method.disabled || false }}
+                  disabled={method.disabled || false}
                 >
-                  <Text style={styles.paymentOptionText}>
-                    {method === 'card' ? '₹ Card' : method === 'upi' ? '₹ UPI' : '₹ Cash'}
+                  <Text style={[
+                    styles.paymentOptionText,
+                    method.disabled && styles.disabledPaymentText,
+                  ]}>
+                    {method.label}
                   </Text>
                 </Pressable>
               ))}
             </View>
+            {codRestricted ? (
+              <View style={styles.codRestrictionBanner}>
+                <Ionicons name="warning" size={16} color={DESIGN_TOKENS.colors.danger} />
+                <Text style={styles.codRestrictionText}>{codRestrictionReason}</Text>
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.section}>
@@ -437,6 +501,29 @@ const styles = StyleSheet.create({
   selectedPaymentOption: {
     borderColor: DESIGN_TOKENS.colors.primary,
     backgroundColor: `${DESIGN_TOKENS.colors.primary}10`,
+  },
+  disabledPaymentOption: {
+    opacity: 0.4,
+  },
+  disabledPaymentText: {
+    color: DESIGN_TOKENS.colors.textSecondary,
+  },
+  codRestrictionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DESIGN_TOKENS.spacing.sm,
+    backgroundColor: `${DESIGN_TOKENS.colors.danger}10`,
+    borderRadius: DESIGN_TOKENS.radius.md,
+    padding: DESIGN_TOKENS.spacing.sm,
+    marginTop: DESIGN_TOKENS.spacing.sm,
+    borderWidth: 1,
+    borderColor: `${DESIGN_TOKENS.colors.danger}30`,
+  },
+  codRestrictionText: {
+    flex: 1,
+    fontSize: 12,
+    color: DESIGN_TOKENS.colors.danger,
+    fontFamily: DESIGN_TOKENS.typography.fontFamily,
   },
   paymentOptionText: {
     fontSize: 14,

@@ -102,6 +102,16 @@ import { TenantEntity } from './entities/tenant.entity';
 import { ApiKeyEntity } from './entities/api-key.entity';
 import { BankAccountEntity } from './entities/bank-account.entity';
 import { SettlementReportEntity } from './entities/settlement-report.entity';
+import { RiskZoneEntity } from './entities/risk-zone.entity';
+import { RiskEventEntity } from './entities/risk-event.entity';
+import { RiskNotificationEntity } from './entities/risk-notification.entity';
+import { DriverIncidentEntity } from './entities/driver-incident.entity';
+import { FraudBlacklistEntity } from './entities/fraud-blacklist.entity';
+import { PaymentQrCodeEntity } from './entities/payment-qr.entity';
+import { GiftCardEntity } from './entities/gift-card.entity';
+import { EmergencyIncidentEntity } from './entities/emergency-incident.entity';
+import { EmergencyContactEntity } from './entities/emergency-contact.entity';
+import { EmergencyIncidentTimelineEntity } from './entities/emergency-incident-timeline.entity';
 
 const entities = [
   UserEntity,
@@ -202,6 +212,16 @@ const entities = [
   AgreementAcceptanceEntity,
   ComplianceAuditEntity,
   CookieRegistryEntity,
+  RiskZoneEntity,
+  RiskEventEntity,
+  RiskNotificationEntity,
+  DriverIncidentEntity,
+  FraudBlacklistEntity,
+  PaymentQrCodeEntity,
+  GiftCardEntity,
+  EmergencyIncidentEntity,
+  EmergencyContactEntity,
+  EmergencyIncidentTimelineEntity,
 ];
 
 const isLocalSqlite =

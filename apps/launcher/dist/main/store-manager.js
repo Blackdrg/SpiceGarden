@@ -41,6 +41,7 @@ const electron_1 = require("electron");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const electron_store_1 = __importDefault(require("electron-store"));
+const electronApp = electron_1.app || require('electron').app;
 class StoreManager {
     store;
     secretsPath;
@@ -53,7 +54,7 @@ class StoreManager {
                 theme: 'light'
             }
         });
-        this.secretsPath = path.join(electron_1.app.getAppPath(), '..', '..', 'secrets');
+        this.secretsPath = path.join(__dirname, '..', '..', 'secrets');
     }
     getConfig() {
         return this.store.store;

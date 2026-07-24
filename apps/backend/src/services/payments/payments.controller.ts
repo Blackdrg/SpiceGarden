@@ -7,6 +7,7 @@ import { RetryService, RetryResult } from './retry.service';
 import { FraudHardeningService, FraudCheckResult } from './fraud-hardening.service';
 import { IdempotencyService } from './idempotency.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
+import { RiskZoneService } from '../risk/risk-zone.service';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../security/jwt-auth.guard';
@@ -24,6 +25,7 @@ export class PaymentsController {
     private retryService: RetryService,
     private fraudHardening: FraudHardeningService,
     private idempotency: IdempotencyService,
+    private riskZoneService: RiskZoneService,
     private configService: ConfigService,
     private gatewayFactory: PaymentGatewayFactory,
   ) {}
@@ -53,6 +55,19 @@ export class PaymentsController {
         reasons: fraudCheck.reasons,
         riskScore: fraudCheck.riskScore,
       };
+    }
+
+    if (gateway === 'cod' && body.addressId && body.lat && body.lng) {
+      const codRestriction = await this.riskZoneService.checkAddressRisk(body.addressId, body.lat, body.lng);
+      if (!codRestriction.codAllowed) {
+        return {
+          error: 'COD not available for this address',
+          reason: codRestriction.reason,
+          codBlocked: true,
+          riskScore: codRestriction.zone?.riskScore || 0,
+          zoneName: codRestriction.zone?.name,
+        };
+      }
     }
 
     const retryResult: RetryResult<any> = await this.retryService.executeWithRetry(

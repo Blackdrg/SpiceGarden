@@ -37,7 +37,21 @@ infra/*
 **/obj
 **/reports
 **/secrets.dev.yaml
- **/storybook-static
- **/values.dev.yaml
- LICENSE
- README.md
+**/storybook-static
+**/values.dev.yaml
+**/android
+**/android-app
+**/ios
+**/.gradle
+**/dist-web
+**/.expo
+LICENSE
+README.md
+*_REPORT.md
+*_report.json
+audit-*.json
+build-*.log
+test-*.log
+*_FINAL*.md
+*_CERTIFICATION*.md
+*_AUDIT*.md

@@ -21,6 +21,24 @@ export class CreatePaymentIntentDto {
   @IsOptional()
   @IsString()
   paymentMethodId?: string;
+
+  @IsOptional()
+  @IsString()
+  gateway?: string;
+
+  @IsOptional()
+  @IsString()
+  addressId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  lat?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  lng?: number;
 }
 
 export class RefundPaymentDto {

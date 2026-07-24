@@ -9,6 +9,8 @@ export interface Address {
   state: string;
   postalCode: string;
   isDefault: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 async function fetchAddresses(): Promise<Address[]> {

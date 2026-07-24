@@ -20,6 +20,8 @@ interface Address {
   state: string;
   postalCode: string;
   isDefault?: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 interface CheckoutState {
@@ -125,6 +127,32 @@ const CheckoutPage = () => {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!state.selectedAddressId) return;
+    (async () => {
+      try {
+        const addresses = (await addressesApi.list()).data as Address[];
+        const address = addresses?.find((a: any) => a.id === state.selectedAddressId);
+        if (address?.lat && address?.lng) {
+          const res = await fetch('/api/risk/check-address', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ addressId: address.id, lat: address.lat, lng: address.lng }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.codAllowed) {
+              dispatch({ type: 'SET_PROMO_ERROR', payload: data.reason || 'COD is not available for this address due to safety restrictions' });
+              if (state.paymentMethod === 'cash') dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' });
+            }
+          }
+        }
+      } catch {
+        // allow COD by default if risk check fails
+      }
+    })();
+  }, [state.selectedAddressId, state.paymentMethod]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 20;

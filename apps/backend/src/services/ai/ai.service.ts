@@ -72,6 +72,9 @@ export class AiService {
   }
 
   async chatbotResponse(message: string) {
+    if (!message || typeof message !== 'string') {
+      return "Please provide a message so I can help you.";
+    }
     const msg = message.toLowerCase();
     if (msg.includes('order status')) return 'You can track your order in the "Active Orders" section.';
     if (msg.includes('refund')) return 'Refunds typically take 5-7 business days to process.';

@@ -1,3 +1,11 @@
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('react-test-renderer is deprecated')) {
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
+
 jest.mock('react-native', () => ({
   View: 'View',
   Text: 'Text',

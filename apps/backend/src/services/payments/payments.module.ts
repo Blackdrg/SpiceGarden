@@ -12,6 +12,14 @@ import { IdempotencyService } from './idempotency.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
 import { StripeGateway } from './gateways/stripe-gateway.service';
 import { RazorpayGateway } from './gateways/razorpay-gateway.service';
+import { GooglePayGateway } from './gateways/googlepay-gateway.service';
+import { PhonePeGateway } from './gateways/phonepe-gateway.service';
+import { PaytmGateway } from './gateways/paytm-gateway.service';
+import { BhimUpiGateway } from './gateways/bhim-upi-gateway.service';
+import { NetBankingGateway } from './gateways/netbanking-gateway.service';
+import { EmiGateway } from './gateways/emi-gateway.service';
+import { SplitPaymentGateway } from './gateways/split-payment-gateway.service';
+import { CashOnDeliveryGateway } from './gateways/cod-gateway.service';
 import { LedgerEntryEntity } from '../../db/entities/ledger-entry.entity';
 import { AuditModule } from '../../audit/audit.module';
 import { LedgerModule } from '../../modules/ledger/ledger.module';
@@ -35,6 +43,14 @@ import { ChargebackModule } from './chargeback/chargeback.module';
     PaymentGatewayFactory,
     StripeGateway,
     RazorpayGateway,
+    GooglePayGateway,
+    PhonePeGateway,
+    PaytmGateway,
+    BhimUpiGateway,
+    NetBankingGateway,
+    EmiGateway,
+    SplitPaymentGateway,
+    CashOnDeliveryGateway,
   ],
   controllers: [PaymentsController],
   exports: [
@@ -44,6 +60,16 @@ import { ChargebackModule } from './chargeback/chargeback.module';
     FraudHardeningService, 
     IdempotencyService,
     PaymentGatewayFactory,
+    StripeGateway,
+    RazorpayGateway,
+    GooglePayGateway,
+    PhonePeGateway,
+    PaytmGateway,
+    BhimUpiGateway,
+    NetBankingGateway,
+    EmiGateway,
+    SplitPaymentGateway,
+    CashOnDeliveryGateway,
   ],
 })
 export class PaymentServiceModule {}

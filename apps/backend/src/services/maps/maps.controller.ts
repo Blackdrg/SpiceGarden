@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
 import { MapsService, ETAResponse, RerouteResponse, HeatmapPoint } from './maps.service';
 import { SurgeZoneEntity } from '../../db/entities/surge-zone.entity';
 
@@ -38,6 +38,9 @@ export class MapsController {
       waypoints?: { lat: number; lng: number }[];
     }
   ): Promise<RerouteResponse> {
+    if (!body?.origin || !body?.destination) {
+      throw new BadRequestException('origin and destination are required');
+    }
     return this.mapsService.getReroutingOptions(body.origin, body.destination, body.waypoints);
   }
 

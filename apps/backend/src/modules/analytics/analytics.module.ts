@@ -4,6 +4,7 @@ import { DbRepositoriesModule } from '../../db/db-repositories.module';
 
 import { AnalyticsService } from './analytics.service';
 import { AnalyticsController } from './analytics.controller';
+import { AnalyticsIngestController } from './analytics-ingest.controller';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { OrderItemEntity } from '../../db/entities/order-item.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
@@ -16,7 +17,7 @@ import { AddressEntity } from '../../db/entities/address.entity';
     DbRepositoriesModule,
   ],
   providers: [AnalyticsService],
-  controllers: [AnalyticsController],
+  controllers: [AnalyticsController, AnalyticsIngestController],
   exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

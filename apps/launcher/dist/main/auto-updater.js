@@ -12,7 +12,7 @@ class AutoUpdater {
         this.init();
     }
     init() {
-        if (!electron_1.app.isPackaged)
+        if (typeof electron_1.app === 'undefined' || !electron_1.app.isPackaged)
             return;
         electron_updater_1.autoUpdater.setFeedURL({
             provider: 'github',

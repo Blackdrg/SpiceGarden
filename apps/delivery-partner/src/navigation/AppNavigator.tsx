@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScreenName, RouteParams, Navigator, ScreenProps } from '../types';
 import SplashScreen from '../screens/SplashScreen';
@@ -81,7 +81,7 @@ export function AppNavigator(): React.JSX.Element {
     setStack([{ name, params }]);
   }, []);
 
-  const navigator: Navigator = { navigate, replace, goBack, reset };
+  const navigator = useMemo<Navigator>(() => ({ navigate, replace, goBack, reset }), [navigate, replace, goBack, reset]);
 
   if (!ready) {
     return <SplashScreen navigation={navigator} route={{ params: {} }} />;

@@ -19,6 +19,7 @@ export enum UserRole {
   RESTAURANT = 'restaurant',
   KITCHEN_STAFF = 'kitchen_staff',
   DELIVERY_PARTNER = 'delivery_partner',
+  DRIVER = 'driver',
   ADMIN = 'admin',
   SUPER_ADMIN = 'super_admin',
   SUPPORT_STAFF = 'support_staff',

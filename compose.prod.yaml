@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: ./infra/customer-web/Dockerfile
     ports:
-      - "3002:3000"
+      - "3002:3002"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
@@ -94,7 +94,7 @@ services:
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1)).end()"]
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3002/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1)).end()"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -116,7 +116,7 @@ services:
       context: .
       dockerfile: ./infra/restaurant-dashboard/Dockerfile
     ports:
-      - "3003:3000"
+      - "3003:3003"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
@@ -137,7 +137,7 @@ services:
       context: .
       dockerfile: ./infra/super-admin/Dockerfile
     ports:
-      - "3004:3000"
+      - "3004:3004"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://api.spicegarden.com
@@ -191,6 +191,7 @@ services:
       retries: 5
     networks:
       - spicegarden-net
+    # mongosh retained as native MongoDB healthcheck tool (official mongo:7 image ships mongosh)
     deploy:
       resources:
         limits:

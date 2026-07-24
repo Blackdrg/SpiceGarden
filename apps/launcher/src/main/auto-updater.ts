@@ -12,7 +12,7 @@ export class AutoUpdater {
   }
 
   private init(): void {
-    if (!app.isPackaged) return;
+    if (typeof app === 'undefined' || !app.isPackaged) return;
 
     autoUpdater.setFeedURL({
       provider: 'github',

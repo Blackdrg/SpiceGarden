@@ -5,31 +5,53 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3001';
+const isWindows = process.platform === 'win32';
+const MAX_WINDOWS_VUS = 1000;
+
+function warnWindowsLimitation() {
+    if (isWindows) {
+        console.warn('\n⚠️  WINDOWS LOCALHOST SOCKET LIMITATION DETECTED');
+        console.warn('   Windows has a low default limit for ephemeral TCP ports hitting localhost.');
+        console.warn('   High-VU tests (5k+) will likely fail with EADDRINUSE or connection errors.');
+        console.warn('   WORKAROUND: Run load tests via WSL2 or Docker to bypass this limitation.');
+        console.warn('   Use: npm run test:load:docker:5k (or higher stages)\n');
+    }
+}
+
+function clampStagesForPlatform(stages) {
+    if (!isWindows) return stages;
+    return stages.filter(s => s.vus <= MAX_WINDOWS_VUS);
+}
+
+const STAGES = isWindows
+    ? [
+        { name: '1K Users (Windows cap)', file: 'stage-1-1k.js', vus: 1000, duration: '30m' },
+    ]
+    : [
+        { name: '1K Users', file: 'stage-1-1k.js', vus: 1000, duration: '30m' },
+        { name: '5K Users', file: 'stage-2-5k.js', vus: 5000, duration: '30m' },
+        { name: '10K Users', file: 'stage-3-10k.js', vus: 10000, duration: '45m' },
+        { name: '20K Users', file: 'stage-4-20k.js', vus: 20000, duration: '60m' },
+        { name: '50K Users', file: 'stage-5-50k.js', vus: 50000, duration: '90m' },
+        { name: '100K Users', file: 'stage-6-100k.js', vus: 100000, duration: '2h' },
+        { name: '500K Users', file: 'stage-7-500k.js', vus: 500000, duration: '4h' },
+        { name: '1M Users', file: 'stage-8-1m.js', vus: 1000000, duration: '6h+' },
+    ];
+
+const SPECIAL_TESTS = [
+    { name: 'WebSocket Stress', file: 'websocket-stress.js', vus: isWindows ? 500 : 10000, duration: '10m' },
+    { name: 'Database Stress', file: 'database-stress.js', vus: isWindows ? 500 : 5000, duration: '20m' },
+    { name: 'Payment Stress', file: 'payment-stress.js', vus: 1000, duration: '15m' },
+    { name: 'Failure Injection', file: 'failure-injection.js', vus: isWindows ? 500 : 5000, duration: '15m' },
+    { name: 'Security Under Load', file: 'security-under-load.js', vus: isWindows ? 1000 : 10000, duration: '10m' },
+];
+
+const BASE_URL = process.env.BASE_URL || (isWindows ? 'http://127.0.0.1:3001' : 'http://localhost:3001');
 const RESULTS_DIR = path.join(__dirname, '..', 'load-tests', 'results');
 
 if (!fs.existsSync(RESULTS_DIR)) {
     fs.mkdirSync(RESULTS_DIR, { recursive: true });
 }
-
-const STAGES = [
-    { name: '1K Users', file: 'stage-1-1k.js', vus: 1000, duration: '30m' },
-    { name: '5K Users', file: 'stage-2-5k.js', vus: 5000, duration: '30m' },
-    { name: '10K Users', file: 'stage-3-10k.js', vus: 10000, duration: '45m' },
-    { name: '20K Users', file: 'stage-4-20k.js', vus: 20000, duration: '60m' },
-    { name: '50K Users', file: 'stage-5-50k.js', vus: 50000, duration: '90m' },
-    { name: '100K Users', file: 'stage-6-100k.js', vus: 100000, duration: '2h' },
-    { name: '500K Users', file: 'stage-7-500k.js', vus: 500000, duration: '4h' },
-    { name: '1M Users', file: 'stage-8-1m.js', vus: 1000000, duration: '6h+' },
-];
-
-const SPECIAL_TESTS = [
-    { name: 'WebSocket Stress', file: 'websocket-stress.js', vus: 10000, duration: '10m' },
-    { name: 'Database Stress', file: 'database-stress.js', vus: 5000, duration: '20m' },
-    { name: 'Payment Stress', file: 'payment-stress.js', vus: 1000, duration: '15m' },
-    { name: 'Failure Injection', file: 'failure-injection.js', vus: 5000, duration: '15m' },
-    { name: 'Security Under Load', file: 'security-under-load.js', vus: 10000, duration: '10m' },
-];
 
 const results = {
     stages: [],
@@ -128,6 +150,7 @@ function runK6Test(testName, testFile, extraEnv = {}) {
 
 async function runAllTests() {
     checkPrerequisites();
+    warnWindowsLimitation();
     const backendOk = await checkBackendHealth();
     
     if (!backendOk && !process.env.FORCE_RUN) {

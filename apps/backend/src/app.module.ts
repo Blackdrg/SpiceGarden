@@ -54,6 +54,11 @@ import { MenuCustomizationModule } from './services/menu-customization/menu-cust
 import { GeoModule } from './services/geo/geo.module';
 import { AiServiceModule } from './services/ai/ai.module';
 import { EnhancedDeliveryServiceModule } from './services/delivery/enhanced-delivery.module';
+import { RiskZoneModule } from './services/risk/risk-zone.module';
+import { PaymentQrModule } from './services/payments/qr/payment-qr.module';
+import { GiftCardModule } from './services/payments/gift-card.module';
+import { FraudBlacklistModule } from './services/payments/fraud-blacklist.module';
+import { EmergencyModule } from './services/emergency/emergency.module';
 
 @Module({
   imports: [
@@ -111,6 +116,11 @@ import { EnhancedDeliveryServiceModule } from './services/delivery/enhanced-deli
     GeoModule,
     AiServiceModule,
     EnhancedDeliveryServiceModule,
+    RiskZoneModule,
+    PaymentQrModule,
+    GiftCardModule,
+    FraudBlacklistModule,
+    EmergencyModule,
   ],
   controllers: [AppController],
   providers: [AppService, RetentionJob],

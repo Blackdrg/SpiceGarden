@@ -2,12 +2,14 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost } from "@nestjs/common";
+import { QueryFailedError } from "typeorm";
 import helmet from "helmet";
 import * as Sentry from '@sentry/node';
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
+import { Response as ExpressResponse } from "express";
 import './reflect-metadata';
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
@@ -20,6 +22,38 @@ import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.err
 import { csrfProtection } from "./security/csrf.middleware";
 import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+
+@Catch(QueryFailedError)
+class QueryFailedErrorFilter implements ExceptionFilter {
+  catch(exception: QueryFailedError, host: ArgumentsHost) {
+    const message = exception.message || '';
+    const isBadRequest =
+      message.includes('invalid input syntax for type uuid') ||
+      message.includes('violates') ||
+      message.includes('duplicate key') ||
+      message.includes('not present in table') ||
+      message.includes('foreign key');
+
+    if (isBadRequest) {
+      const ctx = host.switchToHttp();
+      const response = ctx.getResponse<ExpressResponse>();
+      response.status(400).json({
+        statusCode: 400,
+        message: 'Bad request: invalid or duplicate data',
+        error: 'Bad Request'
+      });
+      return;
+    }
+
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<ExpressResponse>();
+    response.status(500).json({
+      statusCode: 500,
+      message: 'Database error',
+      error: 'Internal Server Error'
+    });
+  }
+}
 
 const metricsRegistry = new Registry();
 collectDefaultMetrics({ register: metricsRegistry });
@@ -278,7 +312,9 @@ const dsn = configService.get<string>("SENTRY_DSN");
   const requestTimeout = configService.get<number>('REQUEST_TIMEOUT_MS', 30000);
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.setTimeout(requestTimeout, () => {
-      res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+      if (!res.headersSent) {
+        res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+      }
     });
     next();
   });
@@ -311,6 +347,7 @@ const dsn = configService.get<string>("SENTRY_DSN");
       transform: true,
     })
   );
+  app.useGlobalFilters(new QueryFailedErrorFilter());
 
   const swaggerEnabled = configService.get<string>('SWAGGER_ENABLED', 'false') === 'true';
   if (swaggerEnabled) {

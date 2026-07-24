@@ -52,6 +52,7 @@ import { PaymentServiceModule } from '../payments/payments.module';
     RestaurantOnboardingService,
     SubscriptionService,
     BusinessEngineService,
+    KdsGateway,
   ],
   controllers: [
     RestaurantController,

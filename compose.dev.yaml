@@ -49,6 +49,8 @@ services:
     networks:
       - spicegarden-net
 
+  # mongosh retained as native MongoDB healthcheck tool (official mongo:7 image ships mongosh)
+
   prometheus:
     image: prom/prometheus:v2.51.0
     ports:
@@ -196,14 +198,14 @@ services:
       context: .
       dockerfile: ./infra/customer-web/Dockerfile
     ports:
-      - "3002:3000"
+      - "3002:3002"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NODE_ENV=development
+      - NODE_ENV=production
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -226,17 +228,18 @@ services:
       context: .
       dockerfile: ./infra/restaurant-dashboard/Dockerfile
     ports:
-      - "3003:3000"
+      - "3003:3003"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NODE_ENV=development
+      - NODE_ENV=production
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3003/', (r) => { process.exit(r.statusCode < 400 ? 0 : 1); }).on('error', () => process.exit(1));\""]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
     networks:
       - spicegarden-net
     read_only: true
@@ -253,14 +256,14 @@ services:
       context: .
       dockerfile: ./infra/super-admin/Dockerfile
     ports:
-      - "3004:3000"
+      - "3004:3004"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NODE_ENV=development
+      - NODE_ENV=production
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3004/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -283,12 +286,12 @@ services:
     ports:
       - "3005:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - API_URL=http://localhost:3001
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
       interval: 30s
       timeout: 10s
       retries: 3

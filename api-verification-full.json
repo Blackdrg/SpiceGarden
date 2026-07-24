@@ -1,0 +1,3452 @@
+{
+  "timestamp": "2026-07-22T19:04:12.480Z",
+  "backendUrl": "http://localhost:3001",
+  "statistics": {
+    "totalEndpoints": 382,
+    "totalTested": 382,
+    "pass": 58,
+    "fail": 324,
+    "notVerified": 0,
+    "criticalFailures": ""
+  },
+  "results": [
+    {
+      "method": "GET",
+      "path": "/apis/:menuId",
+      "controller": "apis.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"menuId\":\":menuId\"}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/soc2",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/soc2/evidence",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/pci-dss",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/pci-dss/payment-flow",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/pci-dss/saq",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/secrets/rotation-status",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/secrets/proof",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/secrets/rotate",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/retention-stats",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/retention/apply",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/gdpr/user/:userId/export",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/dpdp/user/:userId/export",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/gdpr/user/:userId/deletion-request",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/dpdp/user/:userId/deletion-request",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/gdpr/user/:userId/deletion-request/cancel",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/user/:userId/deletion-status",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/user/:userId/export-history",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/user/:userId/pii-verification",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/compliance/user/:userId/data-export",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/mask/pii",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/compliance/unmask/pii",
+      "controller": "compliance\\compliance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/me",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/:id",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/:id/earnings",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/:id/location",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/:id/availability",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/available",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/orders/:id/accept",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/orders/:id/reject",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/orders/:id/status",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/orders/:id/verify-otp",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/orders/:id/issues",
+      "controller": "controllers\\driver.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/agreements/current/:party/:type",
+      "controller": "legal\\agreement.controller.ts",
+      "statusCode": 200,
+      "responseBody": "",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/agreements/:id/approve",
+      "controller": "legal\\agreement.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/agreements/accept",
+      "controller": "legal\\agreement.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/agreements/:id/acceptances",
+      "controller": "legal\\agreement.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/agreements/acceptances/verify/:acceptanceId",
+      "controller": "legal\\agreement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/overview",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/gdpr-requests",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/dpdp-requests",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/deletion-queue",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/export-queue",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/retention-status",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/policy-versions",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/consent-logs",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/audit-logs",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/legal-holds",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/merchant-agreements",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/driver-agreements",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/compliance-admin/security-events",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/compliance-admin/integrity-scan",
+      "controller": "legal\\compliance-admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/center",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"categories\":[\"policies\",\"agreements\",\"security\",\"transparency\"],\"documents\":[{\"type\":\"open_source_licenses\",\"title\":\"Open Source Licenses\",\"slug\":\"open_source_licenses\",\"currentVersion\":1,\"lastUpdat",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/documents/:type",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 404,
+      "responseBody": "{\"message\":\"Document not found\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/documents/:type/versions",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 404,
+      "responseBody": "{\"message\":\"Document :type not found\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/documents",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/documents/:documentId/versions",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/versions/:versionId/approve",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/versions/:versionId/publish",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/versions/:versionId/rollback",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/accept",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/me/acceptances",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/required",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/consent",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"region must be one of the following values: gdpr, ccpa, dpdp, self_service\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/consent/:consentId/withdraw",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/consent/active",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 200,
+      "responseBody": "",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/consent/logs",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/legal/cookie-registry",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/seed",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/legal/retention/seed",
+      "controller": "legal\\legal.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/requests",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/requests",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/requests/:id",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/requests/:id/cancel",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/requests/:id/review",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/exports",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/exports/:userId",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/exports/:exportId/download",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/export-preview/:userId",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/dashboard/:userId",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/dpdp/grievances",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/dpdp/officer",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"officer\":{\"name\":\"Data Protection Grievance Officer\",\"email\":\"grievance@spicegarden.com\",\"phone\":\"+91-0000000000\",\"designation\":\"Grievance Officer (DPDP Act 2023)\"},\"consentManager\":{\"name\":\"SpiceGa",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/consent/withdraw-all",
+      "controller": "legal\\privacy.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/retention/policies",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/retention/policies",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/retention/policies/:key/legal-hold",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/retention/policies/:key/run",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/retention/run-all",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/retention/jobs",
+      "controller": "legal\\retention.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/contact",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"securityEmail\":\"security@spicegarden.com\",\"pgpFingerprint\":\"9F2A 4C1B 8E3D 6A05 7C9F 1B2E 3D4A 5F6B 7C8D 9E0F\",\"pgpPublicKeyUrl\":\"https://spicegarden.com/.well-known/pgp-key.asc\",\"bugBountyProgram\":",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/changelog",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[{\"version\":\"1.4.0\",\"date\":\"2026-06-01\",\"changes\":[\"Added DPDP consent manager integration\",\"Expanded audit logging coverage\"]},{\"version\":\"1.3.0\",\"date\":\"2026-03-15\",\"changes\":[\"Launched bug bounty p",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/incident-response",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"summary\":\"SpiceGarden operates a documented incident response plan aligned to NIST SP 800-61. Security incidents are classified, contained, eradicated, and recovered with defined SLAs.\",\"phases\":[{\"",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/patch-policy",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"cadence\":\"Monthly baseline patching; emergency patches within 24h of critical CVE disclosure.\",\"severitySlas\":{\"critical\":\"24h\",\"high\":\"72h\",\"medium\":\"14d\",\"low\":\"30d\"},\"process\":[\"CVE monitoring vi",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/encryption-policy",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"atRest\":\"AES-256-GCM for sensitive data (PII, legal records, agreement content). Database volumes encrypted at the storage layer.\",\"inTransit\":\"TLS 1.2+ enforced on all public endpoints; HSTS enable",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/soc-reports",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[{\"framework\":\"SOC 2 Type II\",\"status\":\"In progress\",\"lastAudit\":\"2026-Q1\",\"controls\":[\"Security\",\"Availability\",\"Confidentiality\"]},{\"framework\":\"ISO 27001\",\"status\":\"Certified\",\"lastAudit\":\"2025-11\"",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/faqs",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[{\"question\":\"Where do you store my card data?\",\"answer\":\"We never store cardholder data. Payments are processed by PCI-DSS compliant gateways (Stripe, Razorpay) via hosted checkout.\"},{\"question\":\"Ho",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/report",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/security-center/incidents",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"title must be shorter than or equal to 160 characters\",\"title must be a string\",\"description must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/incidents",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/incidents/public",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/security-center/incidents/:id",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/security-center/incidents/:id",
+      "controller": "legal\\security-center.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/events",
+      "controller": "modules\\analytics\\analytics-ingest.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"ok\":false,\"error\":\"invalid payload\"}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/top-dishes",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/churn",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/repeat-users",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/conversion",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/heatmap",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/peak-hours",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/restaurant/:id",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/platform",
+      "controller": "modules\\analytics\\analytics.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/assign/:orderId",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/batch-assign",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/reassign/:assignmentId",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/driver/:driverId/assignments",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/order/:orderId/assignments",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/:assignmentId/status",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/driver-assignment/:assignmentId/route",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/drivers/available",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/drivers/:driverId/score",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/eta/:orderId/:driverId",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/sla",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/sla",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/driver-assignment/fraud",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/drivers/:driverId/fraud",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/driver-assignment/fraud",
+      "controller": "modules\\driver-assignment\\driver-assignment.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/inventory",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/inventory/:id/stock",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/inventory/:id/wastage",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/low-stock/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/inventory/low-stock/notify/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/recipes",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/recipes/:id",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/batches",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/batches/:id/status",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/food-prep",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/kitchen/food-prep/:id/quality",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/avg-prep-time/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/late-prep/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/food-rejection/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/food-rejection/calculate/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/throughput/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/throughput/calculate/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/sla/record-all/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/sla/branch/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/sla/summary/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/kitchen/suppliers",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/suppliers/:id/inventory",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/consumption/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/kitchen/inventory/forecast/:branchId",
+      "controller": "modules\\kitchen\\kitchen.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/admin/dashboard",
+      "controller": "services\\admin\\admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/admin/stats",
+      "controller": "services\\admin\\admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/admin/orders",
+      "controller": "services\\admin\\admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users/ban",
+      "controller": "services\\admin\\admin.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/ai/recommendations",
+      "controller": "services\\ai\\ai.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/ai/chatbot",
+      "controller": "services\\ai\\ai.controller.ts",
+      "statusCode": 201,
+      "responseBody": "{\"reply\":\"Please provide a message so I can help you.\"}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/ai/forecast",
+      "controller": "services\\ai\\ai.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"predictedOrders\":55,\"busyHours\":[\"12:00\",\"13:00\",\"19:00\",\"20:00\"],\"confidence\":0.85}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 429,
+      "responseBody": "{\"error\":\"Too many requests\",\"message\":\"Rate limit exceeded. Please retry after the reset window.\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login/verify-mfa",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\",\"code must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/otp/verify",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\",\"code must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"fullName must be a string\",\"email must be an email\",\"password must be longer than or equal to 8 characters\",\"password must be a string\",\"phone must be a string\"],\"error\":\"Bad Request\",\"st",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh-token",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Missing refresh token\",\"error\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 201,
+      "responseBody": "{\"revoked\":true}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/auth/me",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/verify-reset-code",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\",\"code must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"email must be an email\",\"code must be a string\",\"password must be longer than or equal to 8 characters\",\"password must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 302,
+      "responseBody": "",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google/callback",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 302,
+      "responseBody": "",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/auth/facebook",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 302,
+      "responseBody": "",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/auth/facebook/callback",
+      "controller": "services\\auth\\auth.controller.ts",
+      "statusCode": 302,
+      "responseBody": "",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/setup",
+      "controller": "services\\auth\\mfa.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/enable",
+      "controller": "services\\auth\\mfa.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/mfa/disable",
+      "controller": "services\\auth\\mfa.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/plans",
+      "controller": "services\\customer\\customer-subscription.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/customer/subscription/subscribe",
+      "controller": "services\\customer\\customer-subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"userId must be a string\",\"planId must be a string\",\"billingCycle must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/customer/subscription/cancel",
+      "controller": "services\\customer\\customer-subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"userId must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/:userId",
+      "controller": "services\\customer\\customer-subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/customer/subscription/:userId/benefits",
+      "controller": "services\\customer\\customer-subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/delivery/pricing/calculate",
+      "controller": "services\\delivery\\delivery-pricing.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"restaurantId must be a string\",\"distanceKm must be a number conforming to the specified constraints\",\"durationMinutes must be a number conforming to the specified constraints\"],\"error\":\"B",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/delivery/pricing/rules",
+      "controller": "services\\delivery\\delivery-pricing.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/delivery/pricing/rules",
+      "controller": "services\\delivery\\delivery-pricing.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"name must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/delivery/pricing/rules/:ruleId",
+      "controller": "services\\delivery\\delivery-pricing.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/onboarding",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/documents",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/documents/:driverId",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/drivers/documents/:id/verify",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/onboarding/:id/status",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/incentives/calculate",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/drivers/incentives",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/drivers/incentives/:id/approve",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/drivers/incentives/pending",
+      "controller": "services\\delivery\\driver-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/shifts/start",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/shifts/end",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/shifts/:driverId",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/earnings",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/incentives/calculate",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/fleet/penalties",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/performance",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/performance/:driverId",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/fleet/schedule/:driverId",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/fleet/penalties/:id/approve",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/fleet/penalties/:id/waive",
+      "controller": "services\\driver-fleet\\driver-fleet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/user/:userId",
+      "controller": "services\\enterprise\\api-key.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/tenant/:tenantId",
+      "controller": "services\\enterprise\\api-key.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/enterprise/api-keys/:id/revoke",
+      "controller": "services\\enterprise\\api-key.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"revokedBy must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/enterprise/api-keys/:id/rate-limit",
+      "controller": "services\\enterprise\\api-key.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/accounting/journal",
+      "controller": "services\\finance\\accounting.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"entries must be an array\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/accounting/journal/reverse/:transactionId",
+      "controller": "services\\finance\\accounting.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"reversedBy must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/trial-balance",
+      "controller": "services\\finance\\accounting.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"startDate must be a string\",\"endDate must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/profit-loss",
+      "controller": "services\\finance\\accounting.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"startDate must be a string\",\"endDate must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/accounting/journal-entries",
+      "controller": "services\\finance\\accounting.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/:entityType/:entityId",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/:id",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/finance/bank-accounts/:id",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/:id/kyc",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"documents must be an object\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/:id/verify",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"verifiedBy must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/bank-accounts/:id/reject",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"reason must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/bank-accounts/kyc/pending",
+      "controller": "services\\finance\\bank-account.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/gst/report",
+      "controller": "services\\finance\\finance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/payments",
+      "controller": "services\\finance\\finance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/payouts",
+      "controller": "services\\finance\\finance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/driver",
+      "controller": "services\\finance\\finance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/reconciliation/full",
+      "controller": "services\\finance\\finance.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/platform-fee/calculate",
+      "controller": "services\\finance\\platform-fee.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"applicableTo must be a string\",\"amount must be a number conforming to the specified constraints\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/finance/platform-fee/:feeId",
+      "controller": "services\\finance\\platform-fee.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/settlements/:id",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/:id/process",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/:id/fail",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"reason must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/:id/retry",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/finance/settlements/from-payout/:payoutId",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/finance/settlements/summary/:restaurantId",
+      "controller": "services\\finance\\settlement.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"month must be a number conforming to the specified constraints\",\"year must be a number conforming to the specified constraints\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/gst/calculate/:orderId",
+      "controller": "services\\gst\\gst.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/gst/invoice/:orderId",
+      "controller": "services\\gst\\gst.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/gst/rate-summary/:orderId",
+      "controller": "services\\gst\\gst.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/gst/validate-gstin",
+      "controller": "services\\gst\\gst.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/coupons",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/coupons/apply",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/coupons",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/coupons/:id/analytics",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/loyalty/coupons/:id/deactivate",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/referrals/code",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/referrals/process",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/referrals/:userId",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/loyalty/cashback/process",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/loyalty/cashback/:userId",
+      "controller": "services\\loyalty\\loyalty.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/maps/eta",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"duration\":null,\"distance\":null,\"surgeMultiplier\":1}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/maps/surge-eta",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"duration\":null,\"distance\":null,\"surgeMultiplier\":1}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/maps/reroute",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":\"origin and destination are required\",\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/maps/heatmap",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/maps/surge-zones",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/maps/check-surge-zone",
+      "controller": "services\\maps\\maps.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"inSurgeZone\":false}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/:id/activate",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/:id/pause",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/:id",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/:id/analytics",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/:id/impression",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/:id/click",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/marketing/campaigns/:id/conversion",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"orderAmount must be a number conforming to the specified constraints\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/marketing/campaigns/platform/stats",
+      "controller": "services\\marketing\\campaign.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":\"startDate and endDate query parameters are required\",\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/menus/:restaurantId/items",
+      "controller": "services\\menu-customization\\menu-customization.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/menus/items/:itemId",
+      "controller": "services\\menu-customization\\menu-customization.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/menus/items/:itemId/addons",
+      "controller": "services\\menu-customization\\menu-customization.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/menus/categories/:restaurantId",
+      "controller": "services\\menu-customization\\menu-customization.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/devices/register",
+      "controller": "services\\notifications\\device.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/devices/unregister",
+      "controller": "services\\notifications\\device.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/queue",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/:id",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/recipient/:recipientId",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/:id/cancel",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/notification-queue/stats/overview",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/notification-queue/process",
+      "controller": "services\\notifications\\queue\\notification-queue.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/orders/health",
+      "controller": "services\\order\\order.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/orders/:id",
+      "controller": "services\\order\\order.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/payment-provider/stripe-connect/onboard",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payment-provider/stripe-connect/status",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/payment-provider/razorpay/settlement/onboard",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payment-provider/razorpay/settlement/status",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payment-provider/restaurant/payout-history",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payment-provider/restaurant/balance",
+      "controller": "services\\payment-provider\\payment-provider.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/:disputeId",
+      "controller": "services\\payments\\chargeback\\chargeback.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/order/:orderId",
+      "controller": "services\\payments\\chargeback\\chargeback.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/chargebacks/:disputeId/initiate-refund",
+      "controller": "services\\payments\\chargeback\\chargeback.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/chargebacks/stats/overview",
+      "controller": "services\\payments\\chargeback\\chargeback.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/payments/create-intent",
+      "controller": "services\\payments\\payments.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/payments/refund",
+      "controller": "services\\payments\\payments.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payments/gateways",
+      "controller": "services\\payments\\payments.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payments/gateway/config",
+      "controller": "services\\payments\\payments.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/payments/webhook/stats",
+      "controller": "services\\payments\\webhook\\webhook.controller.ts",
+      "statusCode": 200,
+      "responseBody": "{\"totalWebhooksReceived\":0,\"webhooksLast24h\":0,\"failedLast24h\":0,\"stripeWebhooksLast24h\":0,\"razorpayWebhooksLast24h\":0,\"chargebackCreatedLast24h\":0,\"chargebackClosedLast24h\":0}",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/refunds/request",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/refunds/:approvalId/approve",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/refunds/:approvalId/reject",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/refunds/:approvalId/process",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/refunds/:approvalId",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/refunds/order/:orderId",
+      "controller": "services\\refund\\refund.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/business/metrics",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/business/restaurants",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/business/restaurants/:id/menu",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/business/drivers/live",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/business/drivers/:id/location",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/business/drivers/:id/availability",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/business/dashboard",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/business/uptime",
+      "controller": "services\\restaurant\\business-engine.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/initialize/:restaurantId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/step/:onboardingId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant-onboarding/status/:restaurantId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/complete/:onboardingId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant-onboarding/reject/:onboardingId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/gst/:restaurantId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/pricing/:restaurantId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant-onboarding/payout/:restaurantId",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant-onboarding/analytics/overview",
+      "controller": "services\\restaurant\\onboarding.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/onboarding",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/onboarding/:id",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/onboarding/:id/step",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/onboarding/:id/complete",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/moderation",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/moderation/pending",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/moderation/:id/review",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/payout/history",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/payout/generate",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/payout/:id/process",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/branch",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/branch/:id",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurant/ops/branch/:id/status",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/branch/:id",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/commission",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/ops/commission/:restaurantId",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/ops/commission/calculate",
+      "controller": "services\\restaurant\\restaurant-ops.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/search",
+      "controller": "services\\restaurant\\restaurant.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/nearby",
+      "controller": "services\\restaurant\\restaurant.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurants/:slug",
+      "controller": "services\\restaurant\\restaurant.controller.ts",
+      "statusCode": 200,
+      "responseBody": "",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/restaurants/branch/:id/status",
+      "controller": "services\\restaurant\\restaurant.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/plans",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/subscribe",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"restaurantId must be a string\",\"planId must be a string\",\"billingCycle must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/upgrade",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"restaurantId must be a string\",\"newPlanId must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/restaurant/subscription/cancel",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"message\":[\"restaurantId must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/:restaurantId",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/restaurant/subscription/:restaurantId/feature/:featureKey",
+      "controller": "services\\restaurant\\subscription.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/order/:orderId",
+      "controller": "services\\review\\review.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/restaurant/:restaurantId",
+      "controller": "services\\review\\review.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/reviews/restaurant/:restaurantId/rating",
+      "controller": "services\\review\\review.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/search/trending",
+      "controller": "services\\search\\search.controller.ts",
+      "statusCode": 200,
+      "responseBody": "[]",
+      "status": "PASS",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/search/recommended",
+      "controller": "services\\search\\search.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/support/disputes",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/support/disputes",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/support/disputes/:id/review",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/support/refunds",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/support/refunds/:id/process",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/support/tickets/stats",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/:id/route",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/:id/escalate",
+      "controller": "services\\support\\support.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/admin/tenants/:id",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/admin/tenants/slug/:slug",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 404,
+      "responseBody": "{\"message\":\"Tenant not found\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/:id",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/admin/tenants/:id/suspend",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/admin/tenants/:id/activate",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/:id/branding",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/admin/tenants/:id/settings",
+      "controller": "services\\tenant\\tenant.controller.ts",
+      "statusCode": 400,
+      "responseBody": "{\"statusCode\":400,\"message\":\"Bad request: invalid or duplicate data\",\"error\":\"Bad Request\"}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/user/addresses",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "PASS (requires auth)",
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/user/addresses",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/user/addresses/:id",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/addresses/:id",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/user/payment-methods",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/user/payment-methods",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/payment-methods/:id",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/user/payment-methods/:id/set-default",
+      "controller": "services\\user\\user-profile.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/addresses/:id/default",
+      "controller": "services\\users\\address.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/addresses/:id",
+      "controller": "services\\users\\address.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/payment-methods/:id/default",
+      "controller": "services\\users\\payment-methods.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/payment-methods/:id",
+      "controller": "services\\users\\payment-methods.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/wallet/balance",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/wallet/transactions",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/credit",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/debit",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/compensate",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/process",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/confirm",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/cod/refund",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/wallet/prevent-duplicate",
+      "controller": "services\\wallet\\wallet.controller.ts",
+      "statusCode": 401,
+      "responseBody": "{\"message\":\"Unauthorized\",\"statusCode\":401}",
+      "status": "FAIL",
+      "requiresAuth": false
+    }
+  ]
+}

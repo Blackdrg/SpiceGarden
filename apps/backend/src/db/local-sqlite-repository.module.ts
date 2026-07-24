@@ -60,6 +60,13 @@ import {
   ComplianceAuditEntity,
   CookieRegistryEntity,
 } from '../legal/entities';
+import { RiskZoneEntity } from './entities/risk-zone.entity';
+import { RiskEventEntity } from './entities/risk-event.entity';
+import { RiskNotificationEntity } from './entities/risk-notification.entity';
+import { DriverIncidentEntity } from './entities/driver-incident.entity';
+import { FraudBlacklistEntity } from './entities/fraud-blacklist.entity';
+import { PaymentQrCodeEntity } from './entities/payment-qr.entity';
+import { GiftCardEntity } from './entities/gift-card.entity';
 
 const entities = [
   UserEntity, OrderEntity, SessionEntity, AuditLogEntity,
@@ -78,6 +85,13 @@ const entities = [
   DataExportEntity, RetentionPolicyEntity, DataRetentionJobEntity,
   SecurityIncidentEntity, GrievanceEntity, AgreementEntity,
   AgreementAcceptanceEntity, ComplianceAuditEntity, CookieRegistryEntity,
+  RiskZoneEntity,
+  RiskEventEntity,
+  RiskNotificationEntity,
+  DriverIncidentEntity,
+  FraudBlacklistEntity,
+  PaymentQrCodeEntity,
+  GiftCardEntity,
 ];
 
 const reviewStore = new Map<string, any>();

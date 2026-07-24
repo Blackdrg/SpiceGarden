@@ -81,6 +81,7 @@ services:
       retries: 5
     networks:
       - spicegarden-net
+    # mongosh retained as native MongoDB healthcheck tool (official mongo:7 image ships mongosh)
 
   # Prometheus - Metrics Collection
   prometheus:

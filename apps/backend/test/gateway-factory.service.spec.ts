@@ -107,8 +107,8 @@ describe('PaymentGatewayFactory', () => {
 
     const gateways = factory.getAvailableGateways();
 
-    expect(gateways).toContain('stripe');
-    expect(gateways).toContain('razorpay');
-    expect(gateways.length).toBe(2);
+    expect(gateways.map((g: any) => g.name)).toContain('stripe');
+    expect(gateways.map((g: any) => g.name)).toContain('razorpay');
+    expect(gateways.length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Query, UseGuards, Request, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CampaignService, CampaignStatus } from './campaign.service';
 import { CreateCampaignDto, RecordConversionDto } from './campaign.dto';
@@ -68,6 +68,14 @@ export class CampaignController {
   @Get('platform/stats')
   @ApiOperation({ summary: 'Get platform campaign stats' })
   async getPlatformStats(@Query() query: { startDate: string; endDate: string }) {
-    return this.campaignService.getPlatformCampaignStats(new Date(query.startDate), new Date(query.endDate));
+    if (!query.startDate || !query.endDate) {
+      throw new BadRequestException('startDate and endDate query parameters are required');
+    }
+    const start = new Date(query.startDate);
+    const end = new Date(query.endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new BadRequestException('Invalid date format for startDate or endDate');
+    }
+    return this.campaignService.getPlatformCampaignStats(start, end);
   }
 }

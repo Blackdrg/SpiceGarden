@@ -6,7 +6,7 @@ COPY apps/restaurant-dashboard/package*.json ./apps/restaurant-dashboard/
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/ui/package*.json ./packages/ui/
 COPY packages/api-types/package*.json ./packages/api-types/
-RUN rm -f package-lock.json && npm config set fetch-retries 5 && npm config set fetch-retry-mintimeout 20000 && npm config set fetch-retry-maxtimeout 120000 && npm install --legacy-peer-deps
+RUN npm config set fetch-retries 10 && npm config set fetch-retry-mintimeout 60000 && npm config set fetch-retry-maxtimeout 600000 && npm config set fetch-timeout 600000 && npm install --legacy-peer-deps
 COPY apps/restaurant-dashboard/ ./apps/restaurant-dashboard/
 COPY packages/shared/ ./packages/shared/
 COPY packages/ui/ ./packages/ui/
@@ -23,5 +23,5 @@ COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nodejs:nodejs /app/apps/restaurant-dashboard/package*.json ./apps/restaurant-dashboard/
 ENV NODE_ENV=production
 USER nodejs
-EXPOSE 3000
-CMD ["node", "node_modules/.bin/next", "start"]
+  EXPOSE 3003
+  CMD ["node", "node_modules/.bin/next", "start", "-p", "3003", "apps/restaurant-dashboard"]

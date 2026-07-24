@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import Store from 'electron-store';
 
+const electronApp = (app as any) || require('electron').app;
+
 export interface Secrets {
   jwtSecret: string;
   encryptionSecret: string;
@@ -18,22 +20,22 @@ export interface Secrets {
 
 export class StoreManager {
    private store: {
-     store: Record<string, unknown>;
-     set: (config: Record<string, unknown>) => void;
-   };
-   private secretsPath: string;
+      store: Record<string, unknown>;
+      set: (config: Record<string, unknown>) => void;
+    };
+    private secretsPath: string;
 
-  constructor() {
-    this.store = new Store({
-      name: 'launcher-config',
-      defaults: {
-        autoStart: false,
-        minimizeToTray: true,
-        theme: 'light'
-      }
-    });
-    this.secretsPath = path.join(app.getAppPath(), '..', '..', 'secrets');
-  }
+   constructor() {
+     this.store = new Store({
+       name: 'launcher-config',
+       defaults: {
+         autoStart: false,
+         minimizeToTray: true,
+         theme: 'light'
+       }
+     });
+     this.secretsPath = path.join(__dirname, '..', '..', 'secrets');
+   }
 
   getConfig(): Record<string, unknown> {
     return this.store.store;

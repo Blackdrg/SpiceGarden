@@ -1,3 +1,6 @@
+import { EmergencyIncidentEntity } from "./entities/emergency-incident.entity";
+import { EmergencyContactEntity } from "./entities/emergency-contact.entity";
+import { EmergencyIncidentTimelineEntity } from "./entities/emergency-incident-timeline.entity";
 import { AddressEntity } from "./entities/address.entity";
 import { AuditLogEntity } from "./entities/audit-log.entity";
 import { BatchEntity } from "./entities/batch.entity";
@@ -16,10 +19,13 @@ import { DriverDocumentEntity } from "./entities/driver-document.entity";
 import { DriverFraudEntity } from "./entities/driver-fraud.entity";
 import { DriverIncentiveEntity } from "./entities/driver-incentive.entity";
 import { DriverIssueEntity } from "./entities/driver-issue.entity";
+import { DriverIncidentEntity } from "./entities/driver-incident.entity";
 import { DriverPenaltyEntity } from "./entities/driver-penalty.entity";
 import { DriverScoreEntity } from "./entities/driver-score.entity";
 import { DriverShiftEntity } from "./entities/driver-shift.entity";
 import { FoodPrepEntity } from "./entities/food-prep.entity";
+import { FraudBlacklistEntity } from "./entities/fraud-blacklist.entity";
+import { GiftCardEntity } from "./entities/gift-card.entity";
 import { GSTDetailEntity } from "./entities/gst-detail.entity";
 import { HolidayScheduleEntity } from "./entities/holiday-schedule.entity";
 import { HSNSACEntity } from "./entities/hsn-sac.entity";
@@ -42,6 +48,7 @@ import { OrderItemEntity } from "./entities/order-item.entity";
 import { OtpEntity } from "./entities/otp.entity";
 import { PaymentDisputeEntity } from "./entities/payment-dispute.entity";
 import { PaymentMethodEntity } from "./entities/payment-method.entity";
+import { PaymentQrCodeEntity } from "./entities/payment-qr.entity";
 import { PaymentWebhookEntity } from "./entities/payment-webhook.entity";
 import { PayoutReportEntity } from "./entities/payout-report.entity";
 import { RecipeEntity } from "./entities/recipe.entity";
@@ -52,6 +59,9 @@ import { RestaurantEntity } from "./entities/restaurant.entity";
 import { RestaurantBranchEntity } from "./entities/restaurant-branch.entity";
 import { RestaurantGSTEntity } from "./entities/restaurant-gst.entity";
 import { RestaurantOnboardingEntity } from "./entities/restaurant-onboarding.entity";
+import { RiskEventEntity } from "./entities/risk-event.entity";
+import { RiskNotificationEntity } from "./entities/risk-notification.entity";
+import { RiskZoneEntity } from "./entities/risk-zone.entity";
 import { SessionEntity } from "./entities/session.entity";
 import { SLAAlertEntity } from "./entities/sla-alert.entity";
 import { StripeWebhookEntity } from "./entities/stripe-webhook.entity";
@@ -116,11 +126,17 @@ export const entities = [
   DriverFraudEntity,
   DriverIncentiveEntity,
   DriverIssueEntity,
+  EmergencyIncidentEntity,
+  EmergencyContactEntity,
+  EmergencyIncidentTimelineEntity,
+  DriverIncidentEntity,
   DriverPenaltyEntity,
   DriverScoreEntity,
   DriverShiftEntity,
   FoodPrepEntity,
+  FraudBlacklistEntity,
   GSTDetailEntity,
+  GiftCardEntity,
   HolidayScheduleEntity,
   HSNSACEntity,
   InventoryAlertEntity,
@@ -142,6 +158,7 @@ export const entities = [
   OtpEntity,
   PaymentDisputeEntity,
   PaymentMethodEntity,
+  PaymentQrCodeEntity,
   PaymentWebhookEntity,
   PayoutReportEntity,
   RecipeEntity,
@@ -152,6 +169,9 @@ export const entities = [
   RestaurantBranchEntity,
   RestaurantGSTEntity,
   RestaurantOnboardingEntity,
+  RiskEventEntity,
+  RiskNotificationEntity,
+  RiskZoneEntity,
   SessionEntity,
   SLAAlertEntity,
   StripeWebhookEntity,
