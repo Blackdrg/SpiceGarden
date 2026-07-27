@@ -200,7 +200,7 @@ services:
     ports:
       - "3002:3002"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://backend:3001
       - NODE_ENV=production
     depends_on:
       - backend
@@ -230,7 +230,7 @@ services:
     ports:
       - "3003:3003"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://backend:3001
       - NODE_ENV=production
     depends_on:
       - backend
@@ -258,7 +258,7 @@ services:
     ports:
       - "3004:3004"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://backend:3001
       - NODE_ENV=production
     depends_on:
       - backend
@@ -284,14 +284,14 @@ services:
       context: .
       dockerfile: ./infra/delivery-partner/Dockerfile
     ports:
-      - "3005:3000"
+      - "3005:3005"
     environment:
       - NODE_ENV=production
-      - API_URL=http://localhost:3001
+      - API_URL=http://backend:3001
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3005/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
       interval: 30s
       timeout: 10s
       retries: 3

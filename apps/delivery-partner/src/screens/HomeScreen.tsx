@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useReducer } from 'react';
 import { FlatList, Text, Pressable, View, StyleSheet } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,9 +27,17 @@ const StatusChip = ({ online }: { online: boolean }) => (
 
 export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Element {
   const [orders, setOrders] = useState<DeliveryOrder[]>([]);
-  const [online, setOnline] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [{ online, loading, error }, dispatch] = useReducer((
+    state: { online: boolean; loading: boolean; error: string | null },
+    action: { type: string; online?: boolean; error?: string }
+  ) => {
+    switch (action.type) {
+      case 'PROFILE_LOADED': return { ...state, online: action.online ?? state.online, loading: false };
+      case 'PROFILE_ERROR': return { ...state, error: action.error ?? state.error, loading: false };
+      case 'SET_ONLINE': return { ...state, online: action.online ?? state.online };
+      default: return state;
+    }
+  }, { online: false, loading: true, error: null });
 
   const onReceived = useCallback((order: DeliveryOrder) => {
     setOrders((prev) => (prev.some((o) => o.id === order.id) ? prev : [...prev, order]));
@@ -40,13 +48,10 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     deliveryApi
       .getProfile()
       .then((p) => {
-        if (active) setOnline(p.isOnline);
+        if (active) dispatch({ type: 'PROFILE_LOADED', online: p.isOnline });
       })
       .catch((e) => {
-        if (active) setError(e instanceof Error ? e.message : 'Failed to load profile');
-      })
-      .finally(() => {
-        if (active) setLoading(false);
+        if (active) dispatch({ type: 'PROFILE_ERROR', error: e instanceof Error ? e.message : 'Failed to load profile' });
       });
     deliveryApi.connectWebSocket(onReceived);
     return () => {

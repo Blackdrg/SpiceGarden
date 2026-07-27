@@ -12,5 +12,6 @@ module.exports = {
   testMatch: ['**/*.test.ts', '**/*.spec.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^expo-modules-core$': '<rootDir>/__mocks__/expo-modules-core.js',
   },
 };

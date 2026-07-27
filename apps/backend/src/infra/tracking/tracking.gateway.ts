@@ -77,6 +77,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly connectionAttempts = new Map<string, { count: number; resetAt: number }>();
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
+  private readonly driverLastSeen = new Map<string, number>();
   private readonly ackTimeoutMs: number;
   private readonly cleanupIntervals: NodeJS.Timeout[] = [];
 
@@ -239,6 +240,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       messageId,
     });
 
+    this.driverLastSeen.set(data.driverId, Date.now());
     this.checkOfflineTimeout(data.driverId);
     
     return { status: 'ok', messageId };
@@ -331,8 +333,22 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     );
   }
 
-  private checkOfflineTimeout(driverId: string) {
-    const timeout = 30000;
+  private checkOfflineTimeout(driverId: string): void {
+    const now = Date.now();
+    const lastSeen = this.driverLastSeen.get(driverId);
+    if (!lastSeen) return;
+
+    const offlineDuration = now - lastSeen;
+    const timeoutMs = 30000;
+
+    if (offlineDuration > timeoutMs) {
+      this.logger.warn(`Driver ${driverId} offline for ${Math.floor(offlineDuration / 1000)}s, marking unavailable`);
+      this.server.to(`driver:${driverId}`).emit('driver:status', {
+        driverId,
+        status: 'offline',
+        offlineDuration,
+      });
+    }
   }
 
   private async waitForAcknowledgement(roomOrTopic: string, data: any): Promise<any> {
@@ -397,8 +413,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     const conn = this.connectedClients.get(driverId);
     
     if (conn) {
-      const undelivered = Array.from(conn.acknowledgedMessages.values())
-        .filter(m => messageIds.includes(m.id) && !m.ack);
+    const messageIdSet = new Set(messageIds);
+    const undelivered = Array.from(conn.acknowledgedMessages.values())
+      .filter(m => messageIdSet.has(m.id) && !m.ack);
       
       queue.push(...undelivered);
       this.messageQueue.set(driverId, queue);

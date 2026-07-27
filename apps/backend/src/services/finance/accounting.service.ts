@@ -61,7 +61,7 @@ export class AccountingService {
     const savedEntry = await this.journalRepo.save(journalEntry);
 
     await this.dataSource.transaction(async manager => {
-      for (const entry of entries) {
+      await Promise.all(entries.map(async (entry) => {
         await manager.save(LedgerEntryEntity, {
           transactionId,
           account: entry.accountCode,
@@ -72,7 +72,7 @@ export class AccountingService {
           referenceId: entry.referenceId || undefined,
           description: entry.description,
         });
-      }
+      }));
     });
 
     return savedEntry;
@@ -90,7 +90,7 @@ export class AccountingService {
     const reversedEntries: JournalEntryEntity[] = [];
 
     await this.dataSource.transaction(async manager => {
-      for (const entry of entries) {
+      const reversalPromises = entries.map(async (entry) => {
         const reversed = manager.create(JournalEntryEntity, {
           transactionId: `REV-${transactionId}`,
           entryDate: new Date(),
@@ -108,8 +108,6 @@ export class AccountingService {
           reversedAt: new Date(),
         });
         const savedReversed = await manager.save(JournalEntryEntity, reversed);
-        reversedEntries.push(savedReversed);
-
         await manager.save(LedgerEntryEntity, {
           transactionId: `REV-${transactionId}`,
           account: entry.accountCode,
@@ -120,7 +118,10 @@ export class AccountingService {
           referenceId: entry.referenceId || undefined,
           description: `Reversal of ${entry.description}`,
         });
-      }
+        return savedReversed;
+      });
+
+      reversedEntries.push(...await Promise.all(reversalPromises));
 
       await manager.update(JournalEntryEntity, { transactionId }, { status: JournalEntryStatus.REVERSED, reversedBy, reversedAt: new Date() });
     });

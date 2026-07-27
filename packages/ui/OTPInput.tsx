@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
 interface OTPInputProps {
@@ -22,12 +22,9 @@ export const OTPInput = ({
   disabled = false,
   label,
 }: OTPInputProps) => {
-  const [otp, setOtp] = useState<string[]>(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(length).fill(null));
-
-  useEffect(() => {
-    setOtp(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  }, [value, length]);
+  const [otp, setOtp] = useState<string[]>(() => value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
+  const inputRefs = useRef<Array<HTMLInputElement | null>>(() => Array(length).fill(null));
+  const inputKeys = useMemo(() => Array.from({ length }, (_, i) => `otp-digit-${i}`), [length]);
 
   const handleChange = (index: number, digit: string) => {
     if (!/^\d*$/.test(digit)) return;
@@ -76,7 +73,7 @@ export const OTPInput = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: DESIGN_TOKENS.spacing[3] }}>
       {label && (
-        <label style={{
+        <label htmlFor="otp-input-0" style={{
           ...DESIGN_TOKENS.typography.smallLabel,
           color: error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.textPrimary,
         }}>
@@ -86,7 +83,8 @@ export const OTPInput = ({
       <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing[3], justifyContent: 'center' }}>
         {otp.map((digit, index) => (
           <input
-            key={index}
+            key={inputKeys[index]}
+            id={`otp-input-${index}`}
             ref={(el) => { inputRefs.current[index] = el; }}
             type="text"
             inputMode="numeric"

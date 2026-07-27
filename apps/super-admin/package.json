@@ -15,17 +15,17 @@
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.57.0",
+    "@sentry/nextjs": "^10.68.0",
     "@spicegarden/ui": "*",
     "@tanstack/react-query": "^5.101.0",
-    "next": "^15.5.18",
+    "next": "^15.5.21",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "recharts": "^2.12.0",
     "socket.io-client": "^4.7.0"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "15.5.18",
+    "@next/eslint-plugin-next": "15.5.21",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.0.0",

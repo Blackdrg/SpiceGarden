@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
@@ -66,7 +66,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
+    const id = Date.now().toString() + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
     const duration = toast.duration ?? 4000;
     const newToast: Toast = { ...toast, id, duration };
     setToasts((prev) => [...prev, newToast]);
@@ -82,8 +82,10 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  const contextValue = useMemo(() => ({ showToast, hideToast }), [showToast, hideToast]);
+
   return (
-    <ToastContext.Provider value={{ showToast, hideToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       <div style={{
         position: 'fixed',
@@ -125,6 +127,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               </span>
               {toast.actionLabel && toast.onAction && (
                 <button
+                  type="button"
                   onClick={toast.onAction}
                   style={{
                     marginTop: DESIGN_TOKENS.spacing[2],
@@ -146,6 +149,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               )}
             </div>
             <button
+              type="button"
               onClick={() => hideToast(toast.id)}
               aria-label="Dismiss notification"
               style={{
@@ -175,6 +179,20 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const bgColors: Record<ToastType, string> = {
+  success: DESIGN_TOKENS.colors.successLight,
+  error: DESIGN_TOKENS.colors.dangerLight,
+  warning: DESIGN_TOKENS.colors.warningLight,
+  info: DESIGN_TOKENS.colors.infoLight,
+};
+
+const borderColors: Record<ToastType, string> = {
+  success: DESIGN_TOKENS.colors.success,
+  error: DESIGN_TOKENS.colors.danger,
+  warning: DESIGN_TOKENS.colors.warning,
+  info: DESIGN_TOKENS.colors.info,
+};
+
 export const InlineAlert = ({
   type = 'info',
   message,
@@ -184,19 +202,6 @@ export const InlineAlert = ({
   message: string;
   onClose?: () => void;
 }) => {
-  const bgColors: Record<ToastType, string> = {
-    success: DESIGN_TOKENS.colors.successLight,
-    error: DESIGN_TOKENS.colors.dangerLight,
-    warning: DESIGN_TOKENS.colors.warningLight,
-    info: DESIGN_TOKENS.colors.infoLight,
-  };
-
-  const borderColors: Record<ToastType, string> = {
-    success: DESIGN_TOKENS.colors.success,
-    error: DESIGN_TOKENS.colors.danger,
-    warning: DESIGN_TOKENS.colors.warning,
-    info: DESIGN_TOKENS.colors.info,
-  };
 
   return (
     <div style={{
@@ -217,8 +222,9 @@ export const InlineAlert = ({
         {message}
       </span>
       {onClose && (
-        <button
-          onClick={onClose}
+      <button
+        type="button"
+        onClick={onClose}
           aria-label="Close alert"
           style={{
             border: 'none',

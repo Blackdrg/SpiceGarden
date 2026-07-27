@@ -52,22 +52,18 @@ export class RetentionService {
   ) {}
 
   async seedDefaults(): Promise<number> {
-    let created = 0;
-    for (const cfg of DEFAULT_POLICIES) {
-      const existing = await this.policyRepo.findOne({ where: { key: cfg.key } });
-      if (!existing) {
-        await this.policyRepo.save(
-          this.policyRepo.create({
-            ...cfg,
-            enabled: true,
-            legalHoldCapable: cfg.legalHoldCapable ?? false,
-            scope: cfg.scope || {},
-          } as any),
-        );
-        created++;
-      }
-    }
-    return created;
+    const existing = await this.policyRepo.find();
+    const existingKeys = new Set(existing.map((p) => p.key));
+    const toCreate = DEFAULT_POLICIES.filter((cfg) => !existingKeys.has(cfg.key));
+    await Promise.all(toCreate.map((cfg) => this.policyRepo.save(
+      this.policyRepo.create({
+        ...cfg,
+        enabled: true,
+        legalHoldCapable: cfg.legalHoldCapable ?? false,
+        scope: cfg.scope || {},
+      } as any),
+    )));
+    return toCreate.length;
   }
 
   async listPolicies(): Promise<RetentionPolicyEntity[]> {
@@ -181,15 +177,11 @@ export class RetentionService {
 
   async runAllEnabled(triggeredBy = 'scheduler'): Promise<DataRetentionJobEntity[]> {
     const policies = await this.policyRepo.find({ where: { enabled: true } });
-    const jobs: DataRetentionJobEntity[] = [];
-    for (const policy of policies) {
-      try {
-        jobs.push(await this.runPolicy(policy.key, triggeredBy));
-      } catch (error) {
-        this.logger.error(`Retention policy ${policy.key} failed`, error as Error);
-      }
-    }
-    return jobs;
+    const results = await Promise.all(policies.map((policy) => this.runPolicy(policy.key, triggeredBy).catch((error) => {
+      this.logger.error(`Retention policy ${policy.key} failed`, error as Error);
+      return null;
+    })));
+    return results.filter((r): r is DataRetentionJobEntity => r !== null);
   }
 
   async listJobs(filter?: { status?: RetentionJobStatus; limit?: number }): Promise<DataRetentionJobEntity[]> {

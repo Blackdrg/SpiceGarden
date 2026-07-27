@@ -138,16 +138,28 @@ export class PaymentService {
     amount: number,
     request?: Request
   ): Promise<void> {
-    // Check for rapid successive payments (basic implementation)
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     
     if (userId) {
-      // Simplified - would query actual payment/wallet transactions in production
-      // For now we'll skip the detailed check to avoid entity relationship issues
+      const wallet = await this.walletRepo.findOne({ where: { userId } });
+      if (wallet) {
+        const recentCount = await this.transactionRepo
+          .createQueryBuilder('t')
+          .where('t.walletId = :walletId', { walletId: wallet.id })
+          .andWhere('t.type = :type', { type: 'debit' })
+          .andWhere('t.createdAt >= :start', { start: oneHourAgo })
+          .getCount();
+
+        if (recentCount >= 5) {
+          this.logger.warn(`Suspicious payment pattern detected for user ${userId}: ${recentCount} payments in the last hour`);
+          throw new BadRequestException('Too many payment attempts. Please try again later.');
+        }
+      }
     }
 
-    // Additional IP-based checks could be added here
-    // For production, integrate with fraud detection services like Stripe Radar
+    if (amount > 10000) {
+      this.logger.warn(`High-value payment detected for user ${userId}: ${amount}`);
+    }
   }
 
   /**
@@ -228,7 +240,7 @@ export class PaymentService {
       const gateway = this.gatewayFactory.getGateway(gatewayName);
       
       // Get original payment
-      const paymentIntent = await gateway.confirmPayment(paymentId, userId); // Reuse confirm to get details
+      const paymentIntent = await gateway.fetchPaymentDetails(paymentId);
       
       // Validate refund amount
       const refundAmount = amount ?? (paymentIntent.amount / 100);

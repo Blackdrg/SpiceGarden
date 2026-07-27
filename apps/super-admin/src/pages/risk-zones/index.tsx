@@ -14,6 +14,47 @@ interface RiskZone {
   createdAt: string;
 }
 
+const getSeverityColor = (severity: string) => {
+  switch (severity) {
+    case 'critical': return DESIGN_TOKENS.colors.danger;
+    case 'high': return '#F97316';
+    case 'medium': return '#F59E0B';
+    default: return DESIGN_TOKENS.colors.success;
+  }
+};
+
+async function fetchRiskZones(severity: string): Promise<RiskZone[]> {
+  try {
+    const params = new URLSearchParams();
+    if (severity !== 'all') params.set('severity', severity);
+    const response = await fetch('/api/risk-zones?' + params.toString());
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch {
+    // fall through
+  }
+  return getDemoZones();
+}
+
+async function fetchRiskZoneStats() {
+  try {
+    const response = await fetch('/api/risk-zones/stats');
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        totalZones: data.totalZones || 0,
+        activeZones: data.activeZones || 0,
+        criticalZones: data.criticalZones || 0,
+        events24h: data.totalEvents24h || 0,
+      };
+    }
+  } catch {
+    // fall through
+  }
+  return { totalZones: 3, activeZones: 3, criticalZones: 1, events24h: 12 };
+}
+
 function RiskZonesPage() {
   const [zones, setZones] = useState<RiskZone[]>([]);
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
@@ -24,53 +65,31 @@ function RiskZonesPage() {
     events24h: 0,
   });
 
-  const loadRiskZones = useCallback(async () => {
+  const loadRiskData = useCallback(async (signal: { active: boolean }) => {
     try {
-      const params = new URLSearchParams();
-      if (selectedSeverity !== 'all') params.set('severity', selectedSeverity);
-      const response = await fetch('/api/risk-zones?' + params.toString());
-      if (response.ok) {
-        const data = await response.json();
-        setZones(data);
-      }
+      const zones = await fetchRiskZones(selectedSeverity);
+      if (!signal.active) return;
+      setZones(zones);
+      const stats = await fetchRiskZoneStats();
+      if (!signal.active) return;
+      setStats(stats);
     } catch {
-      // Use demo data for dashboard
-      setZones(getDemoZones());
+      if (signal.active) {
+        setZones(getDemoZones());
+        setStats({ totalZones: 3, activeZones: 3, criticalZones: 1, events24h: 12 });
+      }
     }
   }, [selectedSeverity]);
 
   useEffect(() => {
-    loadRiskZones();
-    loadStats();
-    const interval = setInterval(loadRiskZones, 30000);
-    return () => clearInterval(interval);
-  }, [selectedSeverity, loadRiskZones]);
-
-  const loadStats = async () => {
-    try {
-      const response = await fetch('/api/risk-zones/stats');
-      if (response.ok) {
-        const data = await response.json();
-        setStats({
-          totalZones: data.totalZones || 0,
-          activeZones: data.activeZones || 0,
-          criticalZones: data.criticalZones || 0,
-          events24h: data.totalEvents24h || 0,
-        });
-      }
-    } catch {
-      setStats({ totalZones: 3, activeZones: 3, criticalZones: 1, events24h: 12 });
-    }
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'critical': return DESIGN_TOKENS.colors.danger;
-      case 'high': return '#F97316';
-      case 'medium': return '#F59E0B';
-      default: return DESIGN_TOKENS.colors.success;
-    }
-  };
+    const signal = { active: true };
+    loadRiskData(signal);
+    const interval = setInterval(() => loadRiskData(signal), 30000);
+    return () => {
+      signal.active = false;
+      clearInterval(interval);
+    };
+  }, [loadRiskData]);
 
   return (
     <div>
@@ -110,6 +129,7 @@ function RiskZonesPage() {
           value={selectedSeverity}
           onChange={(e) => setSelectedSeverity(e.target.value)}
           className="filterSelect"
+          aria-label="Filter by severity"
         >
           <option value="all">All Severities</option>
           <option value="low">Low</option>
@@ -164,7 +184,7 @@ function RiskZonesPage() {
                     {zone.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td>{new Date(zone.createdAt).toLocaleDateString()}</td>
+                <td>{new Date(zone.createdAt).toLocaleDateString('en-US', { timeZone: 'UTC' })}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 4 }}>
                     <Button label={zone.isActive ? 'Deactivate' : 'Activate'} variant="secondary" size="sm" onClick={() => {}} />

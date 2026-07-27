@@ -889,15 +889,14 @@ const batch = await this.batchRepo.findOne({
       soldByMenuItemName.set(name, (soldByMenuItemName.get(name) || 0) + Number(item.quantity || 0));
     }
 
-    // Recipes map each dish to its standardized ingredient list.
-    const recipes = await this.recipeRepo.find({
-      where: { branch: { id: branchId }, isActive: true },
-    });
-
-    // Resolve inventory item metadata (name, unit, unit cost) for costing.
-    const inventoryItems = await this.inventoryRepo.find({
-      where: { branch: { id: branchId } },
-    });
+    const [recipes, inventoryItems] = await Promise.all([
+      this.recipeRepo.find({
+        where: { branch: { id: branchId }, isActive: true },
+      }),
+      this.inventoryRepo.find({
+        where: { branch: { id: branchId } },
+      }),
+    ]);
     const inventoryById = new Map(inventoryItems.map((i) => [i.id, i]));
 
     // Accumulate consumed quantity and cost per inventory item.

@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: spicegarden-cdn-ingress
   labels:
-    app: spicegarden-backend
+    app: spicegarden-static
     tier: cdn
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -26,6 +26,13 @@ spec:
     - host: cdn.spicegarden.com
       http:
         paths:
+          - path: /static/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: spicegarden-static
+                port:
+                  number: 80
           - path: /(.*)
             pathType: Prefix
             backend:

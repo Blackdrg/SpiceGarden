@@ -69,13 +69,15 @@ export class NotificationQueueService {
       take: 10 // Process in batches
     });
 
-for (const notification of notifications) {
-      try {
-        await this.processNotification(notification);
-    } catch (error: any) {
-        this.logger.error(`Failed to process notification ${notification.id}:`, error);
-      }
-    }
+    const results = await Promise.allSettled(
+      notifications.map(async (notification) => {
+        try {
+          await this.processNotification(notification);
+        } catch (error: any) {
+          this.logger.error(`Failed to process notification ${notification.id}:`, error);
+        }
+      }),
+    );
   }
 
   /**

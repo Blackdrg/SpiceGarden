@@ -25,7 +25,7 @@ const AuthScreen = () => {
 
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-  }, []);
+  }, [fadeAnim]);
 
   const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -83,9 +83,12 @@ const AuthScreen = () => {
         }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Authentication failed');
+      }
 
-       if (response.ok) {
+      const data = await response.json();
          await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, data.access_token);
          if (data.refresh_token) {
            await AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
@@ -96,11 +99,7 @@ const AuthScreen = () => {
            phone: isLogin ? '' : phone,
          }));
          navigation.replace('Main');
-       } else {
-         setError(data.message || (isLogin ? 'Login failed. Please check your credentials.' : 'Registration failed. Please try again.'));
-         shakeAnimation();
-       }
-    } catch (err) {
+     } catch (err) {
       setError('Network error. Please check your connection and try again.');
       shakeAnimation();
     } finally {

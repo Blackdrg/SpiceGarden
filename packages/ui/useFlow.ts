@@ -56,13 +56,13 @@ export const useFlow = ({ flowId, steps, onComplete, onError }: UseFlowOptions) 
       })
       onComplete?.()
     } else {
-      setCurrentStep(newStep)
+      setCurrentStep(prev => { if(prev<steps.length-1) return prev+1; return prev })
     }
   }, [currentStep, flowId, steps, onComplete])
 
   const back = useCallback(() => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(prev => Math.max(0, prev - 1))
     }
   }, [currentStep])
 

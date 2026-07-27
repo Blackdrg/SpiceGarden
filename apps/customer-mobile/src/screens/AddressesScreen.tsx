@@ -50,7 +50,7 @@ export const AddressesScreen = () => {
       setLoading(false);
       fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
     }
-  }, []);
+  }, [fadeAnim]);
 
   const saveAddresses = useCallback(async (newAddresses: Address[]) => {
     try {

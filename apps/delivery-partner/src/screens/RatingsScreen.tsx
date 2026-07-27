@@ -8,17 +8,17 @@ import { deliveryApi } from '../services/delivery-api.service';
 import type { ScreenProps } from '../types';
 
 const renderStars = (rating: number) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    stars.push(
+  const stars = Array.from({ length: 5 }, (_, i) => {
+    const idx = i + 1;
+    return (
       <Ionicons
-        key={`star-${i}`}
-        name={i <= Math.round(rating) ? 'star' : 'star-outline'}
+        key={`star-${idx}`}
+        name={idx <= Math.round(rating) ? 'star' : 'star-outline'}
         size={28}
-        color={i <= Math.round(rating) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.border}
+        color={idx <= Math.round(rating) ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.border}
       />
     );
-  }
+  });
   return stars;
 };
 

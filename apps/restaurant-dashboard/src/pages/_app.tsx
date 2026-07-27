@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { Provider, useSelector, useDispatch } from 'react-redux';
@@ -27,25 +27,32 @@ function AuthHydrator({ children }: { children: React.ReactNode }) {
   const hydrated = useSelector((state: ReturnType<typeof store.getState>) => state.auth.hydrated);
   const isLoginPage = router.pathname === '/login';
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch('/api/auth/me')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (cancelled) return;
-        if (data && data.user) {
+  const loadCurrentUser = useCallback(async (signal: { active: boolean }) => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (!signal.active) return;
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.user) {
           dispatch(setCredentials({ user: data.user }));
         } else {
           dispatch(setHydrated(true));
         }
-      })
-      .catch(() => {
-        if (!cancelled) dispatch(setHydrated(true));
-      });
-    return () => {
-      cancelled = true;
-    };
+      } else {
+        dispatch(setHydrated(true));
+      }
+    } catch {
+      if (signal.active) dispatch(setHydrated(true));
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    const signal = { active: true };
+    loadCurrentUser(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [loadCurrentUser]);
 
   if (!hydrated) {
     return null;
@@ -62,6 +69,15 @@ function AuthHydrator({ children }: { children: React.ReactNode }) {
     </>
   );
 }
+
+async function fetchCurrentUser(): Promise<any | null> {
+  try {
+    const res = await fetch("/api/auth/me");
+    if (res.ok) return await res.json();
+  } catch { /* ignore */ }
+  return null;
+}
+
 
 export default function RestaurantApp({ Component, pageProps }: AppProps) {
   useEffect(() => {

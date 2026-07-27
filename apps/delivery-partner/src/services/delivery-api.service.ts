@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secureSetItem, secureGetItem, secureRemoveItem } from './secure-storage.service';
 
 const getApiBaseUrl = (): string => {
   const apiUrl = globalThis.process?.env?.API_BASE_URL || globalThis.process?.env?.NEXT_PUBLIC_API_URL;
@@ -87,9 +88,9 @@ class DeliveryApiService {
     
     if (this.token && this.driverId) {
       await Promise.all([
-        AsyncStorage.setItem('driver_token', this.token),
-        AsyncStorage.setItem('driver_id', this.driverId),
-        ...(data.refresh_token ? [AsyncStorage.setItem('driver_refresh_token', data.refresh_token)] : []),
+        secureSetItem('driver_token', this.token),
+        secureSetItem('driver_id', this.driverId),
+        ...(data.refresh_token ? [secureSetItem('driver_refresh_token', data.refresh_token)] : []),
       ]);
     }
 
@@ -347,7 +348,7 @@ class DeliveryApiService {
 
   async getStoredToken(): Promise<string | null> {
     if (this.token) return this.token;
-    this.token = await AsyncStorage.getItem('driver_token');
+    this.token = await secureGetItem('driver_token');
     return this.token;
   }
 
@@ -357,7 +358,7 @@ class DeliveryApiService {
 
   async getStoredDriverId(): Promise<string | null> {
     if (this.driverId) return this.driverId;
-    this.driverId = await AsyncStorage.getItem('driver_id');
+    this.driverId = await secureGetItem('driver_id');
     return this.driverId;
   }
 
@@ -394,9 +395,9 @@ class DeliveryApiService {
   async logout(): Promise<void> {
     this.disconnectWebSocket();
     await Promise.all([
-      AsyncStorage.removeItem('driver_token'),
-      AsyncStorage.removeItem('driver_id'),
-      AsyncStorage.removeItem('driver_refresh_token'),
+      secureRemoveItem('driver_token'),
+      secureRemoveItem('driver_id'),
+      secureRemoveItem('driver_refresh_token'),
     ]);
     this.token = null;
     this.driverId = null;

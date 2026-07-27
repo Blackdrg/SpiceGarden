@@ -1,0 +1,1299 @@
+[1mReact Doctor[22m [2mv0.5.8[22m
+
+[32m✔[39m Select projects [2m›[22m spicegarden, @spicegarden/customer-mobile, @spicegarden/customer-web, @spicegarden/delivery-partner, @spicegarden/restaurant-dashboard, @spicegarden/super-admin
+[32m✔[39m Scanned 1303 files in 66.5s
+
+  [31m✖[39m [31mBugs: Raw text outside a Text component[39m [90m×38[39m
+    Your users hit a crash when raw ":" renders outside a
+    <Text> component on React Native.
+[2m    → Text outside a `<Text>` component crashes on React[22m
+[2m    Native. Wrap it like `<Text>{value}</Text>`.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rn-no-raw-text[39m
+
+[90m    apps/launcher/src/renderer/components/ServiceStatusCard.tsx:58[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 57 |[39m         [33m<[39m[33mdiv[39m className[33m=[39m[32m"port-info"[39m[33m>[39m                   [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 58 |[39m           [33m<[39m[33mspan[39m className[33m=[39m[32m"port-number"[39m[33m>[39m[33m:[39m{port}[33m<[39m[33m/[39m[33mspa[0m… [2m│[22m
+    [2m│[22m  [90m    |[39m                                         [31m[1m^[22m[39m             [2m│[22m
+    [2m│[22m  [90m 59 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m                                        [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:193-195[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 192 |[39m           [33m<[39m[33m/[39m[33msvg[39m[33m>[39m                                     [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 193 |[39m           [33m<[39m[33mh1[39m[33m>[39m[33mSpiceGarden[39m[33m<[39m[33m/[39m[33mh1[39m[33m>[39m                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 194 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m                                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 195 |[39m         [33m<[39m[33mp[39m className[33m=[39m[32m"subtitle"[39m[33m>[39m[33mEnterprise[39m [33mLauncher[0m… [2m│[22m
+    [2m│[22m  [90m 196 |[39m       [33m<[39m[33m/[39m[33mheader[39m[33m>[39m[0m                                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:206[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 205 |[39m           [33m<[39m[33mspan[39m[33m>[39m{error}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 206 |[39m           [33m<[39m[33mbutton[39m type[33m=[39m[32m"button"[39m className[33m=[39m[32m"btn btn-[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                                    [0m… [2m│[22m
+    [2m│[22m  [90m 207 |[39m             [33mRetry[39m[0m                                    [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:213[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 212 |[39m       [33m<[39m[33msection[39m className[33m=[39m[32m"quick-actions"[39m aria[33m-[39mlabel[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 213 |[39m         [33m<[39m[33mh2[39m id[33m=[39m[32m"quick-actions-heading"[39m[33m>[39m[33mQuick[39m [33mAction[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                        [31m[1m^[22m[39m             [2m│[22m
+    [2m│[22m  [90m 214 |[39m         [33m<[39m[33mdiv[39m className[33m=[39m[32m"action-buttons"[39m[33m>[39m[0m             [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:220[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 219 |[39m       [33m<[39m[33msection[39m className[33m=[39m[32m"services-section"[39m aria[33m-[39mla[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 220 |[39m         [33m<[39m[33mh2[39m id[33m=[39m[32m"services-heading"[39m[33m>[39m[33mServices[39m [33mStatus[39m[33m<[39m[33m/[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                   [31m[1m^[22m[39m                  [2m│[22m
+    [2m│[22m  [90m 221 |[39m         {loading [33m?[39m ([0m                                 [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:240[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 239 |[39m       [33m<[39m[33msection[39m className[33m=[39m[32m"system-monitor"[39m aria[33m-[39mlabe[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 240 |[39m         [33m<[39m[33mh2[39m id[33m=[39m[32m"monitor-heading"[39m[33m>[39m[33mSystem[39m [33mMonitor[39m[33m<[39m[33m/[39m[33mh2[39m[33m>[39m [2m│[22m
+    [2m│[22m  [90m     |[39m                                  [31m[1m^[22m[39m                   [2m│[22m
+    [2m│[22m  [90m 241 |[39m         {loading [33m?[39m ([0m                                 [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:257[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 256 |[39m               [33m<[39m[33mdiv[39m className[33m=[39m[32m"monitor-info"[39m[33m>[39m         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 257 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-label"[39m[33m>[39m[33mCPU[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                                 [31m[1m^[22m[39m    [2m│[22m
+    [2m│[22m  [90m 258 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-value"[39m ari[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:268[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 267 |[39m               [33m<[39m[33mdiv[39m className[33m=[39m[32m"monitor-info"[39m[33m>[39m         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 268 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-label"[39m[33m>[39m[33mRAM[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                                 [31m[1m^[22m[39m    [2m│[22m
+    [2m│[22m  [90m 269 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-value"[39m ari[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:279[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 278 |[39m               [33m<[39m[33mdiv[39m className[33m=[39m[32m"monitor-info"[39m[33m>[39m         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 279 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-label"[39m[33m>[39m[33mPla[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                                 [31m[1m^[22m[39m    [2m│[22m
+    [2m│[22m  [90m 280 |[39m                 [33m<[39m[33mspan[39m className[33m=[39m[32m"monitor-value"[39m[33m>[39m{sy[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:76[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 75 |[39m           fontWeight[33m:[39m [35m600[39m[33m,[39m                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 76 |[39m         }}[33m>[39m                                           [2m│[22m
+    [2m│[22m  [90m    |[39m            [31m[1m^[22m[39m                                          [2m│[22m
+    [2m│[22m  [90m 77 |[39m           ₹{price}[0m                                    [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:81[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 80 |[39m           [33m<[39m[33mdiv[39m style[33m=[39m{{ display[33m:[39m [32m'flex'[39m[33m,[39m alignItems[33m:[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 81 |[39m             [33m<[39m[33mspan[39m style[33m=[39m{{ color[33m:[39m [32m'#ffd700'[39m }}[33m>[39m★[33m<[39m[33m/[39m[33msp[0m… [2m│[22m
+    [2m│[22m  [90m    |[39m                                                [31m[1m^[22m[39m      [2m│[22m
+    [2m│[22m  [90m 82 |[39m             [33m<[39m[33mspan[39m style[33m=[39m{{ [33m...[39m[33mDESIGN_TOKENS[39m[33m.[39mtypograp[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:210[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 209 |[39m           color[33m:[39m [33mDESIGN_TOKENS[39m[33m.[39mcolors[33m.[39mprimary[33m,[39m       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 210 |[39m         }}[33m>[39m                                          [2m│[22m
+    [2m│[22m  [90m     |[39m            [31m[1m^[22m[39m                                         [2m│[22m
+    [2m│[22m  [90m 211 |[39m           ₹{price}[0m                                   [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:259[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 258 |[39m           fontWeight[33m:[39m [35m600[39m[33m,[39m                           [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 259 |[39m         }}[33m>[39m                                          [2m│[22m
+    [2m│[22m  [90m     |[39m            [31m[1m^[22m[39m                                         [2m│[22m
+    [2m│[22m  [90m 260 |[39m           ₹{price}[0m                                   [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:309[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 308 |[39m             color[33m:[39m [33mDESIGN_TOKENS[39m[33m.[39mcolors[33m.[39mtextSeconda[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 309 |[39m           }}[33m>[39m                                        [2m│[22m
+    [2m│[22m  [90m     |[39m              [31m[1m^[22m[39m                                       [2m│[22m
+    [2m│[22m  [90m 310 |[39m             [33mOn[39m the way[0m                               [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:320-321[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 319 |[39m           fontWeight[33m:[39m [35m600[39m[33m,[39m                           [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 320 |[39m         }}[33m>[39m                                          [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 321 |[39m           [33mETA[39m[33m:[39m {eta} min                             [2m│[22m
+    [2m│[22m  [90m 322 |[39m         [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m                                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:388[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 387 |[39m           }}[33m>[39m                                        [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 388 |[39m             {eta} min                                [2m│[22m
+    [2m│[22m  [90m     |[39m                  [31m[1m^[22m[39m                                   [2m│[22m
+    [2m│[22m  [90m 389 |[39m           [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m                                    [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:417[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 416 |[39m               }}                                     [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 417 |[39m             [33m>[39m                                        [2m│[22m
+    [2m│[22m  [90m     |[39m              [31m[1m^[22m[39m                                       [2m│[22m
+    [2m│[22m  [90m 418 |[39m               [33mContact[39m [33mDriver[39m[0m                         [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:435[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 434 |[39m               }}                                     [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 435 |[39m             [33m>[39m                                        [2m│[22m
+    [2m│[22m  [90m     |[39m              [31m[1m^[22m[39m                                       [2m│[22m
+    [2m│[22m  [90m 436 |[39m               [33mSupport[39m[0m                                [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:465[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 464 |[39m         color[33m:[39m [33mDESIGN_TOKENS[39m[33m.[39mcolors[33m.[39mtextPrimary[33m,[39m     [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 465 |[39m       }}[33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 466 |[39m         [33mRate[39m [33mYour[39m [33mOrder[39m[0m                              [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:483[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 482 |[39m             }}                                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 483 |[39m           [33m>[39m                                          [2m│[22m
+    [2m│[22m  [90m     |[39m            [31m[1m^[22m[39m                                         [2m│[22m
+    [2m│[22m  [90m 484 |[39m             ★[0m                                        [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:494[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 493 |[39m         display[33m:[39m [32m'block'[39m[33m,[39m                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 494 |[39m       }}[33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 495 |[39m         [33mYour[39m [33mReview[39m[0m                                  [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Cards.tsx:529[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 528 |[39m         }}                                           [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 529 |[39m       [33m>[39m                                              [2m│[22m
+    [2m│[22m  [90m     |[39m        [31m[1m^[22m[39m                                             [2m│[22m
+    [2m│[22m  [90m 530 |[39m         [33mSubmit[39m [33mReview[39m[0m                                [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/ErrorBoundary.tsx:80[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 79 |[39m       [33m...[39m[33mDESIGN_TOKENS[39m[33m.[39mtypography[33m.[39mheadingM[33m,[39m           [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 80 |[39m     }}[33m>[39m                                               [2m│[22m
+    [2m│[22m  [90m    |[39m        [31m[1m^[22m[39m                                              [2m│[22m
+    [2m│[22m  [90m 81 |[39m       [33mSomething[39m went wrong[0m                            [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/FlowManager.tsx:50-53[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 49 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m                                        [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 50 |[39m         [33m<[39m[33mh2[39m style[33m=[39m{{ margin[33m:[39m [35m0[39m[33m,[39m marginBottom[33m:[39m [33mDESIGN[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 51 |[39m           [33mFlow[39m [33mComplete[39m[33m![39m                              [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 52 |[39m         [33m<[39m[33m/[39m[33mh2[39m[33m>[39m                                         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 53 |[39m         [33m<[39m[33mp[39m style[33m=[39m{{ margin[33m:[39m [35m0[39m[33m,[39m [33m...[39m[33mDESIGN_TOKENS[39m[33m.[39mtypo[0m… [2m│[22m
+    [2m│[22m  [90m 54 |[39m           [33mYou[39m have successfully completed all steps[33m.[39m[0m  [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/FlowManager.tsx:79[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 78 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m                                        [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 79 |[39m         [33m<[39m[33mh2[39m style[33m=[39m{{ margin[33m:[39m [35m0[39m[33m,[39m marginBottom[33m:[39m [33mDESIGN[0m… [2m│[22m
+    [2m│[22m  [90m    |[39m                                                     [0m… [2m│[22m
+    [2m│[22m  [90m 80 |[39m           [33mError[39m[0m                                       [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/LoadingStates.tsx:130[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 129 |[39m         [33m...[39m[33mDESIGN_TOKENS[39m[33m.[39mtypography[33m.[39mheadingS[33m,[39m        [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 130 |[39m       }}[33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 131 |[39m         [33mConnection[39m [33mLost[39m[0m                              [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/LoadingStates.tsx:167[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 166 |[39m           aria[33m-[39mlabel[33m=[39m[32m"Retry connection"[39m              [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 167 |[39m         [33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 168 |[39m           [33mTry[39m [33mAgain[39m[0m                                  [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/LottieSuccessAnimation.tsx:58[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 57 |[39m       [33m<[39m[33m/[39m[33msvg[39m[33m>[39m                                          [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 58 |[39m       [33m<[39m[33mstyle[39m[33m>[39m{[32m`[39m                                       [2m│[22m
+    [2m│[22m  [90m    |[39m              [31m[1m^[22m[39m                                        [2m│[22m
+    [2m│[22m  [90m 59 |[39m [32m        @keyframes sg-check-pop {[39m[0m                     [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Modal.tsx:125[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 124 |[39m                 onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTar[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 125 |[39m               [33m>[39m                                      [2m│[22m
+    [2m│[22m  [90m     |[39m                [31m[1m^[22m[39m                                     [2m│[22m
+    [2m│[22m  [90m 126 |[39m                 ×[0m                                    [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Modal.tsx:133[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 132 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m                                         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 133 |[39m       [33m<[39m[33mstyle[39m[33m>[39m{[32m`[39m                                      [2m│[22m
+    [2m│[22m  [90m     |[39m              [31m[1m^[22m[39m                                       [2m│[22m
+    [2m│[22m  [90m 134 |[39m [32m        @keyframes sg-fade-in { from { opacity: 0; [0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Modal.tsx:250[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 249 |[39m             onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTarget[33m.[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 250 |[39m           [33m>[39m                                          [2m│[22m
+    [2m│[22m  [90m     |[39m            [31m[1m^[22m[39m                                         [2m│[22m
+    [2m│[22m  [90m 251 |[39m             [33mDone[39m[0m                                     [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Stepper.tsx:86[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 85 |[39m           onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTarget[33m.[39msty[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 86 |[39m         [33m>[39m                                             [2m│[22m
+    [2m│[22m  [90m    |[39m          [31m[1m^[22m[39m                                            [2m│[22m
+    [2m│[22m  [90m 87 |[39m           −[0m                                           [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Stepper.tsx:122[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 121 |[39m           onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTarget[33m.[39mst[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 122 |[39m         [33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 123 |[39m           [33m+[39m[0m                                          [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Toast.tsx:172[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 171 |[39m               onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTarge[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 172 |[39m             [33m>[39m                                        [2m│[22m
+    [2m│[22m  [90m     |[39m              [31m[1m^[22m[39m                                       [2m│[22m
+    [2m│[22m  [90m 173 |[39m               ×[0m                                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    packages/ui/Toast.tsx:246[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 245 |[39m           onMouseLeave[33m=[39m{(e) [33m=>[39m { e[33m.[39mcurrentTarget[33m.[39mst[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 246 |[39m         [33m>[39m                                            [2m│[22m
+    [2m│[22m  [90m     |[39m          [31m[1m^[22m[39m                                           [2m│[22m
+    [2m│[22m  [90m 247 |[39m           ×[0m                                          [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [33m⚠[39m [33mSecurity: Weak cryptography in security context[39m [90m×2[39m
+    Code uses weak hashes, deprecated ciphers, timing-unsafe
+    comparisons, or Math.random in a security-shaped context.
+[2m    → Use modern primitives, `crypto.randomBytes` / Web Crypto[22m
+[2m    randomness, and timing-safe comparisons for signatures,[22m
+[2m    digests, tokens, and auth material.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/insecure-crypto-risk[39m
+
+[90m    apps/customer-mobile/dist-web/_expo/static/js/web/index-4a2eb37e11dc92f7ed3b8c6ae073eb8a.js:114[39m
+
+[90m    dist-web/_expo/static/js/web/index-4a2eb37e11dc92f7ed3b8c6ae073eb8a.js:114[39m
+
+  [33m⚠[39m [33mSecurity: Build pipeline runs code near secrets[39m [90m×8[39m
+    The build or install pipeline can execute package lifecycle
+    code while CI secrets may be present.
+[2m    → Run dependency installs with scripts disabled before[22m
+[2m    exposing secrets, isolate untrusted build code, and move[22m
+[2m    signing/deploy authority into a narrow privileged step.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/build-pipeline-secret-boundary[39m
+
+[90m    .github/workflows/ci-cd.yml:32[39m
+
+[90m    .kilo/worktrees/check-expo-navigation-packages/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/check-sentry-node-usage/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/find-insecure-crypto-source/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/read-checkout-files/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/read-modal-tsx/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/read-otpinput-tsx/.github/workflows/ci-cd.yml:26[39m
+
+[90m    .kilo/worktrees/read-state-after-await-files/.github/workflows/ci-cd.yml:26[39m
+
+  [33m⚠[39m [33mPerformance: Independent awaits run sequentially[39m [90m×13[39m
+    These 3 sequential await statements run one after another
+    even though they look independent, so the page waits longer
+    than it needs to. Run them together with Promise.all()
+    instead
+[2m    → Use `const [a, b] = await Promise.all([fetchA(),[22m
+[2m    fetchB()])` so independent calls run at the same time[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/async-parallel[39m
+
+[90m    apps/backend/src/jobs/retention-job.ts:24[39m
+
+[90m    apps/backend/src/legal/consent.service.ts:140[39m
+
+[90m    apps/backend/src/legal/data-subject-request.service.ts:425[39m
+
+[90m    apps/backend/src/legal/dsr-processor-job.service.ts:34[39m
+
+[90m    apps/backend/src/modules/kitchen/kitchen.service.ts:203[39m
+
+[90m    apps/backend/src/services/auth/password-reset.service.ts:144[39m
+
+[90m    apps/backend/src/services/emergency/emergency.service.ts:103[39m
+
+[90m    apps/backend/src/services/emergency/emergency.service.ts:123[39m
+
+[90m    apps/backend/src/services/payments/payments.service.ts:54[39m
+
+[90m    apps/backend/src/services/privacy/data-privacy.service.ts:140[39m
+
+[90m    apps/backend/src/services/restaurant/business-engine.service.ts:190[39m
+
+[90m    apps/launcher/dist/main/docker-manager.js:150[39m
+
+[90m    apps/launcher/src/main/docker-manager.ts:144[39m
+
+  [33m⚠[39m [33mPerformance: await inside a loop[39m [90m×5[39m
+    This makes the for…of loop slow because each await runs one
+    after another, so collect the independent calls & run them
+    together with `await Promise.all(items.map(...))`
+[2m    → Collect the items, then use `await[22m
+[2m    Promise.all(items.map(...))` so independent work runs at[22m
+[2m    the same time[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/async-await-in-loop[39m
+
+[90m    apps/backend/src/modules/driver-assignment/dispatch-engine.service.ts:272[39m
+
+[90m    apps/backend/src/services/finance/accounting.service.ts:110[39m
+
+[90m    apps/backend/src/services/payments/qr/payment-qr.service.ts:178[39m
+
+[90m    apps/backend/src/services/payments/retry.service.ts:76[39m
+
+[90m    apps/backend/src/services/payments/webhook/webhook-retry.service.ts:132[39m
+
+  [33m⚠[39m [33mPerformance: setState reads a stale value[39m [90m×3[39m
+    You can lose this update because
+    setCurrentIndex(currentIndex + ...) reads a stale value.
+[2m    → Use the callback form: `setState(prev => prev + 1)` to[22m
+[2m    always read the latest value[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rerender-functional-setstate[39m
+
+[90m    apps/customer-mobile/src/screens/OnboardingScreen.tsx:74[39m
+
+[90m    packages/ui/useFlow.ts:65[39m
+
+[90m    src/screens/OnboardingScreen.tsx:74[39m
+
+  [33m⚠[39m [33mMaintainability: Component rendered by inline function call[39m [90m×3[39m
+    Your users lose state because "renderStars()" builds UI
+    from an inline call that React remounts, so pull it into
+    its own component instead.
+[2m    → Make it a named component so React preserves its identity[22m
+[2m    and does not remount its state.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-render-in-render[39m
+
+[90m    apps/delivery-partner/src/screens/RatingsScreen.tsx:74[39m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:215[39m
+
+[90m    src/screens/RatingsScreen.tsx:74[39m
+
+  [33m⚠[39m [33mBugs: Derived value copied into state[39m [90m×10[39m
+    "prefs" is only set here from other values, so storing it
+    costs an extra render.
+[2m    → Work out the value while rendering (or with useMemo if[22m
+[2m    it's expensive) instead of copying it into useState through[22m
+[2m    a useEffect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#updating-state-based-on-props-or-state[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-derived-state[39m
+
+[90m    apps/customer-mobile/src/screens/NotificationsScreen.tsx:70[39m
+
+[90m    apps/restaurant-dashboard/src/pages/gst-reports.tsx:74[39m
+
+[90m    apps/restaurant-dashboard/src/pages/payouts.tsx:42[39m
+
+[90m    apps/super-admin/src/pages/tenants.tsx:48[39m
+
+[90m    packages/ui/Dropdown.tsx:41[39m
+
+[90m    packages/ui/OTPInput.tsx:30[39m
+
+[90m    src/screens/NotificationsScreen.tsx:70[39m
+
+[90m    src/pages/gst-reports.tsx:74[39m
+
+[90m    src/pages/payouts.tsx:42[39m
+
+[90m    src/pages/tenants.tsx:48[39m
+
+  [33m⚠[39m [33mBugs: Multiple setState calls in one effect[39m [90m×2[39m
+    3 setState calls in one useEffect redraw your screen each
+    time they run together.
+[2m    → Combine related updates in `useReducer` so one effect[22m
+[2m    does not redraw the screen once per `setState` call.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-cascading-set-state[39m
+
+[90m    apps/delivery-partner/src/screens/HomeScreen.tsx:38[39m
+
+[90m    src/screens/HomeScreen.tsx:38[39m
+
+  [33m⚠[39m [33mPerformance: Array lookup inside a loop[39m [90m×4[39m
+    This scales poorly because `array.includes()` inside a loop
+    scans the whole list every time. Use a Set for
+    constant-time lookups.
+[2m    → Use a `Set` or `Map` when you check for the same items[22m
+[2m    over and over. `Array.includes`/`find` scans the whole list[22m
+[2m    each time[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/js-set-map-lookups[39m
+
+[90m    apps/backend/src/infra/secret-loader.service.ts:45[39m
+
+[90m    apps/backend/src/logging/logging.service.ts:22[39m
+
+[90m    apps/backend/src/services/restaurant/commission.service.ts:70[39m
+
+[90m    apps/backend/src/services/risk/risk-zone.service.ts:177[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-file[39m [90m×78[39m
+    Unused file is not reachable from any entry point, so it
+    adds maintenance surface without shipping any code.
+[2m    → Delete the file if it is truly unreachable, or import it[22m
+[2m    from an entry point.[22m
+
+[90m    apps/backend/test/integration/helpers/integration-test.helper.ts (test file)[39m
+
+[90m    apps/backend/test/jest-setup.integration.ts (test file)[39m
+
+[90m    apps/backend/test/jest-setup.js (test file)[39m
+
+[90m    apps/backend/test/load/10-users.js (test file)[39m
+
+[90m    apps/backend/test/load/1k-users.js (test file)[39m
+
+[90m    apps/backend/test/load/2.5k-users.js (test file)[39m
+
+[90m    apps/backend/test/load/250-users.js (test file)[39m
+
+[90m    apps/backend/test/load/50-users.js (test file)[39m
+
+[90m    apps/backend/test/load/5k-users.js (test file)[39m
+
+[90m    apps/backend/test/load/concurrent-users.js (test file)[39m
+
+[90m    apps/backend/test/load/db-bottleneck.js (test file)[39m
+
+[90m    apps/backend/test/load/db-stress.js (test file)[39m
+
+[90m    apps/backend/test/load/friday-dinner-rush.js (test file)[39m
+
+[90m    apps/backend/test/load/order-placement-stress.js (test file)[39m
+
+[90m    apps/backend/test/load/payment-spike.js (test file)[39m
+
+[90m    apps/backend/test/load/payment-stress.js (test file)[39m
+
+[90m    apps/backend/test/load/redis-saturation.js (test file)[39m
+
+[90m    apps/backend/test/load/redis-stress.js (test file)[39m
+
+[90m    apps/backend/test/load/security-stress.js (test file)[39m
+
+[90m    apps/backend/test/load/smoke-test.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-100k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-10k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-1k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-1m.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-20k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-500k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-50k.js (test file)[39m
+
+[90m    apps/backend/test/load/stage-5k.js (test file)[39m
+
+[90m    apps/backend/test/load/user-flow-10k.js (test file)[39m
+
+[90m    apps/backend/test/load/websocket-stress.js (test file)[39m
+
+[90m    apps/customer-mobile/src/screens/OnboardingScreen.tsx[39m
+
+[90m    infra/load-tests/libs/config.js[39m
+
+[90m    infra/load-tests/libs/scenarios.js[39m
+
+[90m    package/amp.js[39m
+
+[90m    package/babel.js[39m
+
+[90m    package/cache.js[39m
+
+[90m    package/client.js[39m
+
+[90m    package/compat/router.js[39m
+
+[90m    package/config.js[39m
+
+[90m    package/constants.js[39m
+
+[90m    package/experimental/testing/server.js[39m
+
+[90m    package/experimental/testmode/playwright.js[39m
+
+[90m    package/experimental/testmode/proxy.js[39m
+
+[90m    package/font/google/index.js[39m
+
+[90m    package/font/local/index.js[39m
+
+[90m    package/form.js[39m
+
+[90m    package/headers.js[39m
+
+[90m    package/jest.js[39m
+
+[90m    package/legacy/image.js[39m
+
+[90m    package/navigation.js[39m
+
+[90m    package/og.js[39m
+
+[90m    package/root-params.js[39m
+
+[90m    package/script.js[39m
+
+[90m    package/types.js[39m
+
+[90m    package/web-vitals.js[39m
+
+[90m    packages/ui/formatDate.js[39m
+
+[90m    packages/ui/icons/admin/AdminIcons.tsx[39m
+
+[90m    packages/ui/icons/commerce/BurgerIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/CartIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/DessertIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/DrinkIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/HealthyIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/OrderIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/PaymentIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/PizzaIcon.tsx[39m
+
+[90m    packages/ui/icons/commerce/WalletIcon.tsx[39m
+
+[90m    packages/ui/icons/delivery/DeliveryIcon.tsx[39m
+
+[90m    packages/ui/icons/kitchen/FireIcon.tsx[39m
+
+[90m    packages/ui/icons/kitchen/KitchenIcon.tsx[39m
+
+[90m    packages/ui/icons/navigation/HomeIcon.tsx[39m
+
+[90m    packages/ui/icons/navigation/ProfileIcon.tsx[39m
+
+[90m    packages/ui/icons/navigation/SearchIcon.tsx[39m
+
+[90m    packages/ui/icons/system/LocationIcon.tsx[39m
+
+[90m    packages/ui/icons/system/NotificationIcon.tsx[39m
+
+[90m    packages/ui/icons/system/RatingIcon.tsx[39m
+
+[90m    test-types.tsx[39m
+
+[90m    test-types2.tsx[39m
+
+[90m    src/screens/OnboardingScreen.tsx[39m
+
+  [33m⚠[39m [33mAccessibility: Role used instead of HTML tag[39m [90m×10[39m
+    Screen reader users get more reliable semantics from
+    `<address>` than `role="group"`, so use `<address>` instead.
+[2m    → Use the matching HTML element when one exists so browsers[22m
+[2m    and assistive tech get native semantics.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/prefer-tag-over-role[39m
+
+[90m    apps/customer-web/src/pages/cookie-preferences.tsx:109[39m
+
+[90m    apps/customer-web/src/pages/index.tsx:139[39m
+
+[90m    apps/launcher/src/renderer/components/ServiceStatusCard.tsx:41[39m
+
+[90m    packages/ui/Dropdown.tsx:84[39m
+
+[90m    packages/ui/Dropdown.tsx:133[39m
+
+[90m    packages/ui/Dropdown.tsx:153[39m
+
+[90m    packages/ui/LoadingStates.tsx:29[39m
+
+[90m    packages/ui/Stepper.tsx:57[39m
+
+[90m    src/pages/cookie-preferences.tsx:109[39m
+
+[90m    src/pages/index.tsx:139[39m
+
+  [33m⚠[39m [33mAccessibility: Interaction on static element[39m [90m×4[39m
+    Screen reader users can't tell this click handler is
+    interactive because it has no `role`, so add a `role` or
+    use a button or link.
+[2m    → Give clickable static elements a `role`, or use a button[22m
+[2m    or link.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-static-element-interactions[39m
+
+[90m    packages/ui/Card.tsx:84[39m
+
+[90m    packages/ui/Cards.tsx:33[39m
+
+[90m    packages/ui/Cards.tsx:172[39m
+
+[90m    packages/ui/Cards.tsx:219[39m
+
+  [33m⚠[39m [33mAccessibility: Text is too small[39m [90m×2[39m
+    Your users strain to read 11px text, so use at least 12px
+    for body text, & 16px is best.
+[2m    → Use at least 12px for body text, and 16px is best. Small[22m
+[2m    text is hard to read, especially on phones.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-tiny-text[39m
+
+[90m    packages/ui/Cards.tsx:91[39m
+
+[90m    packages/ui/Cards.tsx:115[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/circular-dependency[39m [90m×9[39m
+    Circular import cycle:
+    apps/backend/src/db/entities/gst-detail.entity.ts →
+    apps/backend/src/db/entities/order.entity.ts. Modules in
+    the cycle can observe partially initialized exports,
+    causing order-dependent bugs.
+[2m    → Break the cycle by extracting the shared code into a[22m
+[2m    third module that both files import.[22m
+
+[90m    apps/backend/src/db/entities/gst-detail.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/hsn-sac.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/inventory-item.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/menu-addon.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/menu-category.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/order-item.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/restaurant-branch.entity.ts[39m
+
+[90m    apps/backend/src/db/entities/restaurant-gst.entity.ts[39m
+
+  [33m⚠[39m [33mPerformance: State only used in handlers[39m [90m×2[39m
+    Each update to "deliveryAddressId" redraws your component
+    for nothing because this useState is set but never shown on
+    screen.
+[2m    → Use useRef instead of useState when the value is only set[22m
+[2m    and never shown on screen. `ref.current = ...` updates it[22m
+[2m    without redrawing the component.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rerender-state-only-in-handlers[39m
+
+[90m    apps/customer-mobile/src/screens/CheckoutScreen.tsx:234[39m
+
+[90m    src/screens/CheckoutScreen.tsx:234[39m
+
+  [33m⚠[39m [33mBugs: Event logic handled in an effect[39m [90m×8[39m
+    Faking an event handler with state plus a useEffect costs
+    an extra render & runs late.
+[2m    → Run the side effect in the event handler that triggers[22m
+[2m    it, instead of watching its state from a useEffect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#sharing-logic-between-event-handlers[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-event-handler[39m
+
+[90m    apps/customer-web/src/hooks/useOfflineQueue.ts:83[39m
+
+[90m    apps/customer-web/src/pages/profile.tsx:51[39m
+
+[90m    src/hooks/useOfflineQueue.ts:83[39m
+
+[90m    src/pages/profile.tsx:51[39m
+
+  [33m⚠[39m [33mPerformance: Animating layout properties[39m
+    Your users see janky, stuttering animation because "width"
+    relayouts the page every frame, so animate transform &
+    opacity instead.
+[2m    → Animate `transform` and `opacity` instead, since they're[22m
+[2m    cheap for the browser. For height, animate[22m
+[2m    `grid-template-rows` from `0fr` to `1fr`.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-layout-transition-inline[39m
+
+[90m    packages/ui/Cards.tsx:330[39m
+
+  [33m⚠[39m [33mBugs: Non-inlinable process.env access (Expo)[39m [90m×4[39m
+    Computed `process.env[...]` access isn't inlined by
+    babel-preset-expo and is `undefined` at runtime. Use static
+    `process.env.EXPO_PUBLIC_NAME`.
+[2m    → Read env vars with static dotted access[22m
+[2m    (`process.env.EXPO_PUBLIC_NAME`). Computed access and[22m
+[2m    destructuring aren't inlined by babel-preset-expo and[22m
+[2m    resolve to `undefined` at runtime.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/expo-no-non-inlined-env[39m
+
+[90m    apps/backend/src/infra/secret-loader.service.ts:46[39m
+
+[90m    apps/backend/src/infra/secret-loader.service.ts:62[39m
+
+[90m    apps/backend/src/main.ts:199[39m
+
+[90m    apps/backend/src/security/vault.service.ts:133[39m
+
+  [33m⚠[39m [33mBugs: State initialized from a mount effect[39m [90m×6[39m
+    Your users see an extra render with empty "isOnline"
+    because a useEffect sets its starting value.
+[2m    → Pass the initial value directly to useState() instead of[22m
+[2m    setting it from a mount-only useEffect. For SSR hydration,[22m
+[2m    prefer useSyncExternalStore().[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-initialize-state[39m
+
+[90m    apps/customer-web/src/hooks/useNetworkStatus.ts:11[39m
+
+[90m    apps/customer-web/src/hooks/useOfflineQueue.ts:48[39m
+
+[90m    apps/super-admin/src/components/LegalFooter.tsx:18[39m
+
+[90m    src/hooks/useNetworkStatus.ts:11[39m
+
+[90m    src/hooks/useOfflineQueue.ts:48[39m
+
+[90m    src/components/LegalFooter.tsx:18[39m
+
+  [33m⚠[39m [33mPerformance: Import from a barrel file[39m [90m×8[39m
+    Importing from an index file pulls in extra code. Import
+    directly from the source file instead.
+[2m    → Import from the direct path: `import { Button } from[22m
+[2m    './components/Button'` instead of `./components`[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-barrel-import[39m
+
+[90m    apps/backend/src/legal/agreement.service.ts:4[39m
+
+[90m    apps/backend/src/legal/consent.service.ts:4[39m
+
+[90m    apps/backend/src/legal/data-subject-request.service.ts:4[39m
+
+[90m    apps/backend/src/legal/dsr-processor-job.service.ts:5[39m
+
+[90m    apps/backend/src/legal/grievance.service.ts:4[39m
+
+[90m    apps/backend/src/legal/legal-document.service.ts:4[39m
+
+[90m    apps/backend/src/legal/retention.service.ts:4[39m
+
+[90m    apps/backend/src/legal/security-center.service.ts:4[39m
+
+  [33m⚠[39m [33mPerformance: useEffect setState flashes on mount[39m [90m×2[39m
+    This flashes for your users because useEffect(setState, [])
+    runs after the first paint, so use useSyncExternalStore, or
+    add suppressHydrationWarning
+[2m    → Use `useSyncExternalStore(subscribe, getSnapshot,[22m
+[2m    getServerSnapshot)` or add `suppressHydrationWarning` to[22m
+[2m    the element[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rendering-hydration-no-flicker[39m
+
+[90m    apps/super-admin/src/components/LegalFooter.tsx:17[39m
+
+[90m    src/components/LegalFooter.tsx:17[39m
+
+  [33m⚠[39m [33mPerformance: await before an early-return guard[39m [90m×2[39m
+    This await blocks the function before an early-return that
+    doesn't use the awaited value, so the skip path waits for
+    nothing. Move the await below the guard so it only runs
+    when you need the data
+[2m    → Move the `await` below the early-return guard so the skip[22m
+[2m    path stays fast and avoids unnecessary async work.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/async-defer-await[39m
+
+[90m    apps/backend/src/services/auth/otp.service.ts:151[39m
+
+[90m    apps/backend/src/services/payments/payment-hardening.service.ts:369[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-export[39m [90m×20[39m
+    Unused export: `BASE_URL` is exported but no module imports
+    it, so it expands the public surface and can mislead
+    callers about supported API.
+[2m    → Drop the `export` keyword (or remove the declaration) if[22m
+[2m    no other module uses this symbol.[22m
+
+[90m    apps/backend/test/load/common.js:6-7 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:84 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:92 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:133 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:158 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:200 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:215 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:230 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:333 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:345 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:357 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:369 (test file)[39m
+
+[90m    apps/backend/test/load/common.js:381 (test file)[39m
+
+[90m    apps/customer-web/src/hooks/useCookieConsent.ts:4[39m
+
+[90m    apps/customer-web/src/hooks/useCookieConsent.ts:25[39m
+
+[90m    apps/customer-web/src/hooks/useCookieConsent.ts:36[39m
+
+[90m    src/hooks/useCookieConsent.ts:4[39m
+
+[90m    src/hooks/useCookieConsent.ts:25[39m
+
+[90m    src/hooks/useCookieConsent.ts:36[39m
+
+  [33m⚠[39m [33mAccessibility: Tabindex on non-interactive element[39m [90m×2[39m
+    Keyboard users get stuck focusing this element they can't
+    act on because `tabIndex` makes it tabbable, so remove it.
+[2m    → Only add `tabIndex` to interactive elements or[22m
+[2m    interactive roles.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-noninteractive-tabindex[39m
+
+[90m    packages/ui/Modal.tsx:52[39m
+
+[90m    packages/ui/Modal.tsx:178[39m
+
+  [33m⚠[39m [33mBugs: Data passed to parent via effect[39m [90m×2[39m
+    Handing data back to a parent from a useEffect costs your
+    users an extra render.
+[2m    → Fetch the data in the parent and pass it down as a prop[22m
+[2m    (or return it from the hook), instead of handing it back up[22m
+[2m    through a prop callback in a useEffect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#passing-data-to-the-parent[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-pass-data-to-parent[39m
+
+[90m    packages/ui/Dropdown.tsx:41[39m
+
+[90m    packages/ui/OTPInput.tsx:30[39m
+
+  [33m⚠[39m [33mAccessibility: Handler on non-interactive element[39m [90m×2[39m
+    Keyboard & screen reader users can't trigger this
+    `<dialog>` because it isn't interactive, so use a button or
+    link or add an interactive role.
+[2m    → Put interactions on a button or link, or add an[22m
+[2m    interactive role.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-noninteractive-element-interactions[39m
+
+[90m    packages/ui/Modal.tsx:50[39m
+
+[90m    packages/ui/Modal.tsx:176[39m
+
+  [33m⚠[39m [33mBugs: Dynamic padding on contentContainerStyle[39m [90m×8[39m
+    Your users see rows jump when a changing paddingBottom on
+    contentContainerStyle shifts the whole list.
+[2m    → Use `contentInset={{ bottom: dynamicValue }}` so the OS[22m
+[2m    shifts the content instead of relaying it out, which avoids[22m
+[2m    the jump.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rn-scrollview-dynamic-padding[39m
+
+[90m    apps/customer-mobile/src/screens/OrderDetailsScreen.tsx:39[39m
+
+[90m    apps/customer-mobile/src/screens/TrackingScreen.tsx:26[39m
+
+[90m    apps/delivery-partner/src/components/Screen.tsx:55[39m
+
+[90m    apps/delivery-partner/src/screens/HomeScreen.tsx:179[39m
+
+[90m    src/screens/OrderDetailsScreen.tsx:39[39m
+
+[90m    src/screens/TrackingScreen.tsx:26[39m
+
+[90m    src/components/Screen.tsx:55[39m
+
+[90m    src/screens/HomeScreen.tsx:179[39m
+
+  [33m⚠[39m [33mAccessibility: Redundant ARIA role[39m [90m×2[39m
+    Screen reader users gain nothing from this `role` because
+    `<dialog>` already acts as a `dialog`, so remove it.
+[2m    → Remove redundant `role` attributes so assistive tech[22m
+[2m    reads the element's native semantics without extra noise.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-redundant-roles[39m
+
+[90m    packages/ui/Modal.tsx:53[39m
+
+[90m    packages/ui/Modal.tsx:179[39m
+
+  [33m⚠[39m [33mPerformance: Spread copy before sort()[39m
+    This wastes work because [...array].sort() copies the array
+    just to sort it, so use array.toSorted() to sort without
+    the extra copy (ES2023)
+[2m    → Use `array.toSorted()` (ES2023) instead of[22m
+[2m    `[...array].sort()` so you sort without copying the array[22m
+[2m    first[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/js-tosorted-immutable[39m
+
+[90m    src/components/legal/LegalDocumentPage.tsx:78[39m
+
+  [33m⚠[39m [33mMaintainability: Large inline style object rebuilds every render[39m [90m×39[39m
+    This inline style has 8 properties, which is hard to read &
+    rebuilds every render. Move it to a CSS class, CSS module,
+    or styled component.
+[2m    → Move the styles to a CSS class, CSS module, Tailwind[22m
+[2m    utilities, or a styled component. Big inline objects are[22m
+[2m    hard to read and rebuild on every update.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-inline-exhaustive-style[39m
+
+[90m    apps/delivery-partner/src/components/Screen.tsx:19[39m
+
+[90m    apps/super-admin/src/pages/compliance.tsx:169[39m
+
+[90m    apps/super-admin/src/pages/payment-analytics/index.tsx:59[39m
+
+[90m    packages/ui/Cards.tsx:38[39m
+
+[90m    packages/ui/Cards.tsx:177[39m
+
+[90m    packages/ui/Cards.tsx:224[39m
+
+[90m    packages/ui/Cards.tsx:502[39m
+
+[90m    packages/ui/Dropdown.tsx:91[39m
+
+[90m    packages/ui/Dropdown.tsx:116[39m
+
+[90m    packages/ui/Dropdown.tsx:134[39m
+
+[90m    packages/ui/Dropdown.tsx:159[39m
+
+[90m    packages/ui/ErrorBoundary.tsx:59[39m
+
+[90m    packages/ui/FlowManager.tsx:36[39m
+
+[90m    packages/ui/FlowManager.tsx:63[39m
+
+[90m    packages/ui/Input.tsx:77[39m
+
+[90m    packages/ui/LoadingStates.tsx:55[39m
+
+[90m    packages/ui/LoadingStates.tsx:93[39m
+
+[90m    packages/ui/LoadingStates.tsx:109[39m
+
+[90m    packages/ui/LoadingStates.tsx:146[39m
+
+[90m    packages/ui/Modal.tsx:55[39m
+
+[90m    packages/ui/Modal.tsx:76[39m
+
+[90m    packages/ui/Modal.tsx:108[39m
+
+[90m    packages/ui/Modal.tsx:181[39m
+
+[90m    packages/ui/Modal.tsx:200[39m
+
+[90m    packages/ui/Modal.tsx:235[39m
+
+[90m    packages/ui/OTPInput.tsx:107[39m
+
+[90m    packages/ui/SearchInput.tsx:22[39m
+
+[90m    packages/ui/SearchInput.tsx:45[39m
+
+[90m    packages/ui/Skeleton.tsx:50[39m
+
+[90m    packages/ui/Stepper.tsx:70[39m
+
+[90m    packages/ui/Stepper.tsx:106[39m
+
+[90m    packages/ui/Toast.tsx:90[39m
+
+[90m    packages/ui/Toast.tsx:106[39m
+
+[90m    packages/ui/Toast.tsx:132[39m
+
+[90m    packages/ui/Toast.tsx:155[39m
+
+[90m    packages/ui/Toast.tsx:229[39m
+
+[90m    src/components/Screen.tsx:19[39m
+
+[90m    src/pages/compliance.tsx:169[39m
+
+[90m    src/pages/payment-analytics/index.tsx:59[39m
+
+  [33m⚠[39m [33mPerformance: JSX element passed as a prop[39m [90m×2[39m
+    This child redraws every render because the prop gets brand
+    new JSX each time.
+[2m    → Move the JSX outside the component or wrap it in[22m
+[2m    `useMemo` so memoized children do not redraw every render.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/jsx-no-jsx-as-prop[39m
+
+[90m    apps/customer-mobile/src/screens/WalletScreen.tsx:136[39m
+
+[90m    src/screens/WalletScreen.tsx:136[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-dev-dependency[39m [90m×6[39m
+    Unused devDependency: `html-minifier-terser`
+    Unused devDependency: `react-doctor`
+[2m    → An unused devDependency adds install time and[22m
+[2m    supply-chain surface without being used; remove it from[22m
+[2m    package.json if it is genuinely unused.[22m
+
+  [33m⚠[39m [33mPerformance: .map().filter(Boolean) loops twice[39m
+    This loops over your list twice because
+    .map().filter(Boolean) makes two passes, so use .flatMap()
+    to change & drop items in one pass
+[2m    → Use `.flatMap(item => condition ? [value] : [])` to[22m
+[2m    change and drop items in one pass, instead of building a[22m
+[2m    throwaway array in between[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/js-flatmap-filter[39m
+
+[90m    apps/backend/src/security/cors-origin.ts:32[39m
+
+  [33m⚠[39m [33mBugs: Non-native JS navigator[39m [90m×2[39m
+    Users get JS-driven transitions and gestures from
+    @react-navigation/bottom-tabs, instead of platform-native
+    navigation behavior.
+[2m    → Use `@react-navigation/native-stack` (or `native-tabs` in[22m
+[2m    v7+) for real native transitions and gestures.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/rn-no-non-native-navigator[39m
+
+[90m    apps/customer-mobile/App.tsx:5[39m
+
+[90m    App.tsx:5[39m
+
+  [33m⚠[39m [33mMaintainability: React 19 API migration can break callers[39m [90m×6[39m
+    useContext is replaced by `use()` in React 19, which reads
+    context inside ifs & loops too, so switch to `import { use
+    } from 'react'`.
+[2m    → Pass `ref` as a normal prop on function components, since[22m
+[2m    `forwardRef` isn't needed in React 19. Replace[22m
+[2m    `useContext(X)` with `use(X)`. Only runs on React 19+[22m
+[2m    projects.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-react19-deprecated-apis[39m
+
+[90m    apps/super-admin/src/auth/useAuth.ts:1[39m
+
+[90m    packages/ui/Input.tsx:3[39m
+
+[90m    packages/ui/SearchInput.tsx:3[39m
+
+[90m    packages/ui/Toast.tsx:3[39m
+
+[90m    packages/ui/tokens.ts:209[39m
+
+[90m    src/auth/useAuth.ts:1[39m
+
+  [33m⚠[39m [33mPerformance: Transition duration too long[39m [90m×4[39m
+    Your users wait through a sluggish 1500ms transition, so
+    keep UI transitions under 1000ms & save longer ones for big
+    page-load animations.
+[2m    → Keep UI transitions under 1s. Use about 100 to 150ms for[22m
+[2m    instant feedback, 200 to 300ms for state changes, and 300[22m
+[2m    to 500ms for layout. Save longer ones for big page-load[22m
+[2m    animations.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-long-transition-duration[39m
+
+[90m    packages/ui/LoadingStates.tsx:194[39m
+
+[90m    packages/ui/LoadingStates.tsx:215[39m
+
+[90m    packages/ui/LoadingStates.tsx:225[39m
+
+[90m    packages/ui/LoadingStates.tsx:246[39m
+
+  [33m⚠[39m [33mBugs: Many related useState calls[39m [90m×29[39m
+    9 useState calls in "AuthScreen" can each trigger a
+    separate render.
+[2m    → Group related state in `useReducer` so one logical update[22m
+[2m    does not fan out into separate renders.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/prefer-useReducer[39m
+
+[90m    apps/customer-mobile/src/screens/AuthScreen.tsx:11[39m
+
+[90m    apps/customer-mobile/src/screens/CheckoutScreen.tsx:230[39m
+
+[90m    apps/customer-mobile/src/screens/ProfileScreen.tsx:22[39m
+
+[90m    apps/customer-mobile/src/screens/RestaurantScreen.tsx:23[39m
+
+[90m    apps/customer-mobile/src/screens/SearchScreen.tsx:26[39m
+
+[90m    apps/customer-mobile/src/screens/SupportScreen.tsx:30[39m
+
+[90m    apps/customer-web/src/pages/auth.tsx:10[39m
+
+[90m    apps/customer-web/src/pages/consent-dashboard.tsx:22[39m
+
+[90m    apps/customer-web/src/pages/legal/document/[type].tsx:33[39m
+
+[90m    apps/customer-web/src/pages/privacy-dashboard.tsx:24[39m
+
+[90m    apps/customer-web/src/pages/subscriptions.tsx:32[39m
+
+[90m    apps/delivery-partner/src/screens/KycScreen.tsx:18[39m
+
+[90m    apps/delivery-partner/src/screens/RatingsScreen.tsx:25[39m
+
+[90m    apps/launcher/src/renderer/pages/Dashboard.tsx:119[39m
+
+[90m    apps/restaurant-dashboard/src/pages/subscription.tsx:30[39m
+
+[90m    src/screens/AuthScreen.tsx:11[39m
+
+[90m    src/screens/CheckoutScreen.tsx:230[39m
+
+[90m    src/screens/ProfileScreen.tsx:22[39m
+
+[90m    src/screens/RestaurantScreen.tsx:23[39m
+
+[90m    src/screens/SearchScreen.tsx:26[39m
+
+[90m    src/screens/SupportScreen.tsx:30[39m
+
+[90m    src/pages/auth.tsx:10[39m
+
+[90m    src/pages/consent-dashboard.tsx:22[39m
+
+[90m    src/pages/legal/document/[type].tsx:33[39m
+
+[90m    src/pages/privacy-dashboard.tsx:24[39m
+
+[90m    src/pages/subscriptions.tsx:32[39m
+
+[90m    src/screens/KycScreen.tsx:18[39m
+
+[90m    src/screens/RatingsScreen.tsx:25[39m
+
+[90m    src/pages/subscription.tsx:30[39m
+
+  [33m⚠[39m [33mMaintainability: Multiple components in one file[39m [90m×12[39m
+    This file declares several components, so each component is
+    harder to find, test, and change.
+[2m    → Move secondary components into their own files so each[22m
+[2m    component stays easier to find, test, and change.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/no-multi-comp[39m
+
+[90m    apps/delivery-partner/src/components/Indicators.tsx:33[39m
+
+[90m    apps/delivery-partner/src/components/Indicators.tsx:107[39m
+
+[90m    apps/delivery-partner/src/components/Screen.tsx:64[39m
+
+[90m    apps/delivery-partner/src/components/Screen.tsx:96[39m
+
+[90m    packages/ui/LoadingStates.tsx:90[39m
+
+[90m    packages/ui/LoadingStates.tsx:181[39m
+
+[90m    packages/ui/Skeleton.tsx:68[39m
+
+[90m    packages/ui/Skeleton.tsx:95[39m
+
+[90m    src/components/Indicators.tsx:33[39m
+
+[90m    src/components/Indicators.tsx:107[39m
+
+[90m    src/components/Screen.tsx:64[39m
+
+[90m    src/components/Screen.tsx:96[39m
+
+  [33m⚠[39m [33mMaintainability: Non-component export in component file[39m [90m×2[39m
+    This file exports nothing, so Fast Refresh can't track the
+    component and local edits can full-reload.
+[2m    → Move non-component exports out of component files so Fast[22m
+[2m    Refresh can preserve component state instead of[22m
+[2m    full-reloading.[22m
+[90m    Curl with no cache & follow the canonical fix and false positive check recipe before fixing: https://react.doctor/docs/rules/react-doctor/only-export-components[39m
+
+[90m    test-types.tsx:3[39m
+
+[90m    test-types2.tsx:3[39m
+
+  [33m⚠[39m [33mCorrectness: react-doctor/expo-router-no-react-navigation[39m
+    As of SDK 56, expo-router is no longer compatible with
+    directly installed @react-navigation packages, so keeping
+    "@react-navigation/bottom-tabs",
+    "@react-navigation/native",
+    "@react-navigation/native-stack", "@react-navigation/stack"
+    can break routing or linking behavior after the SDK upgrade.
+[2m    → Remove these `@react-navigation/*` packages and replace[22m
+[2m    direct imports with their expo-router equivalents. See[22m
+[2m    https://docs.expo.dev/router/migrate/sdk-55-to-56/[22m
+
+[90m    package.json[39m
+
+
+[2m  ────────────────────────────────────────────────────────────[22m
+
+  [1mAll 365 issues[22m
+
+  [1mSecurity[22m [2m>[22m [33m[2m10 warnings[22m[39m
+  [1mBugs[22m [2m>[22m [31m38 errors[39m[2m, [22m[33m[2m71 warnings[22m[39m
+  [1mPerformance[22m [2m>[22m [33m[2m48 warnings[22m[39m
+  [1mAccessibility[22m [2m>[22m [33m[2m22 warnings[22m[39m
+  [1mMaintainability[22m [2m>[22m [33m[2m175 warnings[22m[39m
+  [1mCorrectness[22m [2m>[22m [33m[2m1 warning[22m[39m
+
+  [33m⚠[39m [1mMigration-scale change[22m[2m: sample before you sweep[22m
+    deslop/unused-file [90m×78 across 78 files[39m
+[2m    Fixing all of them at once is hard to review and prone to[22m
+[2m    subtle mistakes across the whole repo. Fix a representative[22m
+[2m    few first and confirm the recipe holds. Then get the code[22m
+[2m    owner's sign-off before changing the rest.[22m
+    [2mScope it down one area at a time:[22m [36mnpx react-doctor@latest <path>[39m
+
+  [33m┌─────┐[39m  [33m56[39m [2m/ 100[22m [33mCritical[39m
+  [33m│ • • │[39m  [33m████████████████████████████[39m[2m[33m▓▓▓▓▓▓[39m[22m[2m░░░░░░░░░░░░░░░░[22m
+  [33m│  ─  │[39m  React Doctor [2m(https://react.doctor)[22m
+  [33m└─────┘[39m
+
+[90m  You could improve [39m[33m+12%[39m[90m by fixing the top 3 issues[39m
+[90m  Full diagnostics written to C:\Users\mehta\AppData\Local\Temp\react-doctor-3c3de96f-9922-4f05-a2a4-287574c89620[39m
+
+  [33mspicegarden                      [39m  [33m 61[39m  [33mOK[39m  [31m38 errors[39m[2m, [22m[33m269 warnings[39m
+  [33m@spicegarden/customer-mobile     [39m  [33m 56[39m  [33mOK[39m  [33m17 warnings[39m
+  [33m@spicegarden/customer-web        [39m  [33m 73[39m  [33mOK[39m  [33m17 warnings[39m
+  [33m@spicegarden/delivery-partner    [39m  [33m 69[39m  [33mOK[39m  [33m12 warnings[39m
+  [33m@spicegarden/restaurant-dashboard[39m  [33m 73[39m  [33mOK[39m  [33m4 warnings[39m
+  [32m@spicegarden/super-admin         [39m  [32m 77[39m  [32mGreat[39m  [33m8 warnings[39m
+
+[2m  ────────────────────────────────────────────────────────────[22m
+
+  [1mShare:[22m [36mhttps://react.doctor/share?p=SpiceGarden&s=56&e=38&w=327&f=218[39m
+[2m  Tell others how you did on socials[22m
+
+  [1mDocs:[22m [36mhttps://react.doctor/docs[39m
+[2m  Learn more about fixing issues, setting up CI/CD, and[22m
+[2m  configuring rules with a config file[22m
+
+  [1mGitHub:[22m [36mhttps://github.com/millionco/react-doctor[39m
+[2m  Report issues and star the repository![22m

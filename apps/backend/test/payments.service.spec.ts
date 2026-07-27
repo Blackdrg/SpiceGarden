@@ -90,6 +90,7 @@ describe('PaymentService money-sensitive controls', () => {
       confirmPayment: jest.fn().mockReturnValue(Promise.resolve({ id: 'pi_1', amount: 2500, currency: 'usd', status: 'succeeded' })),
       refundPayment: jest.fn(),
       constructEvent: jest.fn(),
+      fetchPaymentDetails: jest.fn().mockReturnValue(Promise.resolve({ id: 'pi_1', amount: 2500, currency: 'usd' })),
     };
     const { service, auditService } = createPaymentService(gateway as any);
 

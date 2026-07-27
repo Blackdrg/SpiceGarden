@@ -38,32 +38,31 @@ const SearchScreen = () => {
   const skeletonData = useMemo(() => [1, 2, 3, 4, 5], []);
 
   useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-    slideAnim.value = withTiming(0, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-    loadRecentSearches();
-  }, []);
-
-  const loadRecentSearches = async () => {
-    try {
-      const recent = await AsyncStorage.getItem(STORAGE_KEYS.RECENT_SEARCHES);
-      if (recent) {
-        const parsed = safeParse<string[]>(recent);
-        if (parsed) setRecentSearches(parsed);
+    let cancelled = false;
+    const loadRecentSearches = async () => {
+      try {
+        const recent = await AsyncStorage.getItem(STORAGE_KEYS.RECENT_SEARCHES);
+        if (cancelled) return;
+        if (recent) {
+          const parsed = safeParse<string[]>(recent);
+          if (parsed) setRecentSearches(parsed);
+        }
+      } catch (e) {
+        if (!cancelled) console.error('Failed to load recent searches:', e);
       }
-    } catch (e) {
-      console.error('Failed to load recent searches:', e);
-    }
-  };
+    };
+
+    loadRecentSearches();
+    return () => { cancelled = true; };
+  }, [fadeAnim, slideAnim]);
 
   const saveRecentSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     
-    setRecentSearches(prev => {
-      const updated = [searchQuery, ...prev.filter(s => s !== searchQuery)].slice(0, 5);
-      AsyncStorage.setItem(STORAGE_KEYS.RECENT_SEARCHES, JSON.stringify(updated)).catch(() => undefined);
-      return updated;
-    });
-  }, []);
+    const updated = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
+    setRecentSearches(updated);
+    AsyncStorage.setItem(STORAGE_KEYS.RECENT_SEARCHES, JSON.stringify(updated)).catch(() => undefined);
+  }, [recentSearches]);
 
   const search = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {

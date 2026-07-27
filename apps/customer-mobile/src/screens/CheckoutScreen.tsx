@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming, withSequence } from 'react-native-reanimated';
@@ -11,6 +11,22 @@ import { safeGetItem } from '../utils/secure-storage';
 import { STORAGE_KEYS } from '../constants/storage.keys';
 import { API_BASE_URL } from '../constants/api';
 import { orderService } from '../services/order.service';
+
+async function checkCodRestriction(addressId: string, lat: number, lng: number): Promise<{ codAllowed: boolean; reason?: string } | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/risk/check-address`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ addressId, lat, lng }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 interface CartItem {
   id: string;
@@ -37,6 +53,180 @@ interface CheckoutScreenProps {
   route?: { params?: { cartItems?: CartItem[]; restaurantId?: string; restaurantName?: string } };
 }
 
+interface AddressSectionProps {
+  address: string;
+  onEdit: () => void;
+}
+
+const AddressSection = ({ address, onEdit }: AddressSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Delivery Address</Text>
+    <View style={styles.addressRow}>
+      <Text style={styles.addressText}>{address}</Text>
+      <Pressable style={styles.editButton} accessibilityLabel='Change address' accessibilityRole='button' onPress={onEdit}>
+        <Text style={styles.editButtonText}>Change</Text>
+      </Pressable>
+    </View>
+  </View>
+);
+
+interface ItemsSectionProps {
+  cartItems: CartItem[];
+}
+
+const ItemsSection = ({ cartItems }: ItemsSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Items ({cartItems.reduce((sum, i) => sum + i.quantity, 0)})</Text>
+    <View style={styles.itemsList}>
+      {cartItems.map(item => (
+        <View key={item.id} style={styles.itemRow}>
+          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.itemText}>×{item.quantity}</Text>
+          <Text style={styles.itemPrice}>₹{item.price * item.quantity}</Text>
+        </View>
+      ))}
+    </View>
+  </View>
+);
+
+interface PaymentMethodSectionProps {
+  paymentMethod: PaymentMethod;
+  setPaymentMethod: (method: PaymentMethod) => void;
+  codRestricted: boolean;
+  codRestrictionReason: string;
+}
+
+const PaymentMethodSection = ({ paymentMethod, setPaymentMethod, codRestricted, codRestrictionReason }: PaymentMethodSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Payment Method</Text>
+    <View style={styles.paymentOptions}>
+      {[
+        { key: 'card' as PaymentMethod, label: '₹ Card' },
+        { key: 'upi' as PaymentMethod, label: '₹ UPI' },
+        { key: 'cash' as PaymentMethod, label: '₹ Cash', disabled: codRestricted },
+      ].map((method) => (
+        <Pressable
+          key={method.key}
+          onPress={() => !method.disabled && setPaymentMethod(method.key)}
+          style={[
+            styles.paymentOption,
+            paymentMethod === method.key && styles.selectedPaymentOption,
+            method.disabled && styles.disabledPaymentOption,
+          ]}
+          accessibilityLabel={`Pay with ${method.key}`}
+          accessibilityRole='radio'
+          accessibilityState={{ checked: paymentMethod === method.key, disabled: method.disabled || false }}
+          disabled={method.disabled || false}
+        >
+          <Text style={[
+            styles.paymentOptionText,
+            method.disabled && styles.disabledPaymentText,
+          ]}>
+            {method.label}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+    {codRestricted ? (
+      <View style={styles.codRestrictionBanner}>
+        <Ionicons name="warning" size={16} color={DESIGN_TOKENS.colors.danger} />
+        <Text style={styles.codRestrictionText}>{codRestrictionReason}</Text>
+      </View>
+    ) : null}
+  </View>
+);
+
+interface TipSectionProps {
+  tip: number;
+  setTip: (tip: number) => void;
+}
+
+const TipSection = ({ tip, setTip }: TipSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Tip</Text>
+    <View style={styles.tipOptions}>
+      {[0, 30, 50, 100].map(tipAmount => (
+        <Pressable
+          key={tipAmount}
+          onPress={() => setTip(tipAmount)}
+          style={[styles.tipOption, tip === tipAmount && styles.selectedTipOption]}
+          accessibilityLabel={`Add ₹${tipAmount} tip`}
+          accessibilityRole='radio'
+          accessibilityState={{ checked: tip === tipAmount }}
+        >
+          <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}</Text>
+        </Pressable>
+      ))}
+    </View>
+  </View>
+);
+
+interface PromoCodeSectionProps {
+  promoCode: string;
+  setPromoCode: (code: string) => void;
+  applyPromo: () => void;
+  promoError: string;
+  promoMessage: string;
+}
+
+const PromoCodeSection = ({ promoCode, setPromoCode, applyPromo, promoError, promoMessage }: PromoCodeSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Promo Code</Text>
+    <View style={styles.promoRow}>
+      <TextInput
+        placeholder='Enter promo code'
+        value={promoCode}
+        onChangeText={setPromoCode}
+        style={styles.promoInput}
+        accessibilityLabel='Promo code input'
+      />
+      <Pressable onPress={applyPromo} style={styles.promoButton} accessibilityLabel='Apply promo' accessibilityRole='button'>
+        <Text style={styles.promoButtonText}>Apply</Text>
+      </Pressable>
+    </View>
+    {promoError && <Text style={styles.promoError}>{promoError}</Text>}
+    {promoMessage && <Text style={styles.promoSuccess}>{promoMessage}</Text>}
+  </View>
+);
+
+interface OrderSummarySectionProps {
+  subtotal: number;
+  tip: number;
+}
+
+const OrderSummarySection = ({ subtotal, tip }: OrderSummarySectionProps) => {
+  const tax = subtotal * 0.05;
+  const total = subtotal + 20 + tax + tip;
+
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Order Summary</Text>
+      <View style={styles.summaryRow}>
+        <Text style={styles.summaryLabel}>Item Total</Text>
+        <Text style={styles.summaryAmount}>₹{subtotal.toFixed(0)}</Text>
+      </View>
+      <View style={styles.summaryRow}>
+        <Text style={styles.summaryLabel}>Delivery Fee</Text>
+        <Text style={styles.summaryAmount}>₹20</Text>
+      </View>
+      <View style={styles.summaryRow}>
+        <Text style={styles.summaryLabel}>Taxes</Text>
+        <Text style={styles.summaryAmount}>₹{tax.toFixed(0)}</Text>
+      </View>
+      {tip > 0 && (
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Tip</Text>
+          <Text style={styles.summaryAmount}>₹{tip}</Text>
+        </View>
+      )}
+      <View style={styles.summaryRowTotal}>
+        <Text style={styles.summaryLabelTotal}>Total</Text>
+        <Text style={styles.summaryAmountTotal}>₹{total.toFixed(0)}</Text>
+      </View>
+    </View>
+  );
+};
+
 const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) => {
   const restaurantId = route?.params?.restaurantId || '';
   const restaurantName = route?.params?.restaurantName || 'Restaurant';
@@ -54,70 +244,74 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
   const fadeAnim = useSharedValue(0);
   const scaleAnim = useSharedValue(1);
 
-  useEffect(() => {
+  const runCodCheck = useCallback(async (signal: { cancelled: boolean }) => {
     if (!deliveryAddressId || paymentMethod !== 'cash') {
       setCodRestricted(false);
       setCodRestrictionReason('');
       return;
     }
 
-    let cancelled = false;
-    (async () => {
-      try {
-        const addressesJson = await safeGetItem(STORAGE_KEYS.ADDRESSES);
-        const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
-        const selected = addresses?.find((a) => a.id === deliveryAddressId);
-        if (selected?.lat && selected?.lng && !cancelled) {
-          const res = await fetch(`${API_BASE_URL}/risk/check-address`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ addressId: selected.id, lat: selected.lat, lng: selected.lng }),
-          });
-          if (res.ok && !cancelled) {
-            const data = await res.json();
-            if (!data.codAllowed) {
-              setCodRestricted(true);
-              setCodRestrictionReason(data.reason || 'COD is not available for this address due to safety restrictions');
-              setPaymentMethod('card');
-            } else {
-              setCodRestricted(false);
-              setCodRestrictionReason('');
-            }
-          }
+    try {
+      const addressesJson = await safeGetItem(STORAGE_KEYS.ADDRESSES);
+      if (signal.cancelled) return;
+      const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
+      const selected = addresses?.find((a) => a.id === deliveryAddressId);
+      if (selected?.lat && selected?.lng) {
+        const data = await checkCodRestriction(selected.id, selected.lat, selected.lng);
+        if (signal.cancelled || !data) return;
+        if (!data.codAllowed) {
+          setCodRestricted(true);
+          setCodRestrictionReason(data.reason || 'COD is not available for this address due to safety restrictions');
+          setPaymentMethod('card');
+        } else {
+          setCodRestricted(false);
+          setCodRestrictionReason('');
         }
-      } catch {
-        /* allow COD by default if check fails */
       }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+    } catch {
+      /* allow COD by default if check fails */
+    }
   }, [deliveryAddressId, paymentMethod]);
 
   useEffect(() => {
-    const loadAddress = async () => {
-      const addressesJson = await safeGetItem(STORAGE_KEYS.ADDRESSES);
-      const deviceAddress = await safeGetItem(STORAGE_KEYS.ADDRESS);
-      try {
-        const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
-        const selected =
-          (Array.isArray(addresses) && (addresses.find((a) => a.isDefault) || addresses[0])) || null;
-        if (selected) {
-          setDeliveryAddressId(selected.id);
-          setAddress(`${selected.label} - ${selected.address}`);
-          return;
-        }
-      } catch {
-        /* fall through to device address */
+    const signal = { cancelled: false };
+    runCodCheck(signal);
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [runCodCheck]);
+
+  const loadAddress = useCallback(async (signal: { cancelled: boolean }) => {
+    try {
+      const [addressesJson, deviceAddress] = await Promise.all([
+        safeGetItem(STORAGE_KEYS.ADDRESSES),
+        safeGetItem(STORAGE_KEYS.ADDRESS),
+      ]);
+      if (signal.cancelled) return;
+      const addresses = addressesJson ? (safeParse(addressesJson) as AddressEntry[] | undefined) : undefined;
+      const selected =
+        (Array.isArray(addresses) && (addresses.find((a) => a.isDefault) || addresses[0])) || null;
+      if (selected) {
+        setDeliveryAddressId(selected.id);
+        setAddress(`${selected.label} - ${selected.address}`);
+        return;
       }
       if (deviceAddress && deviceAddress.trim().length > 0) {
         setAddress(deviceAddress);
       }
-    };
-    loadAddress();
-    fadeAnim.value = withTiming(1, { duration: 300 });
+    } catch {
+      /* fall through */
+    }
   }, []);
+
+  useEffect(() => {
+    const signal = { cancelled: false };
+    loadAddress(signal);
+    fadeAnim.value = withTiming(1, { duration: 300 });
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [loadAddress, fadeAnim]);
 
   const handlePlaceOrder = async () => {
     setLoading(true);
@@ -126,8 +320,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
       withTiming(1, { duration: 150, easing: Easing.out(Easing.quad) })
     );
 
-    const subtotal = calculateSubtotal();
-    const tax = calculateTax();
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const tax = subtotal * 0.05;
     const grandTotal = subtotal + tax + tip;
 
     try {
@@ -174,24 +368,6 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
     }
   };
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
-
-  const calculateTax = (rate: number = 0.05) => {
-    return calculateSubtotal() * rate;
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const tax = calculateTax();
-    return subtotal + tax + tip - calculatePromoDiscount();
-  };
-
-  const calculatePromoDiscount = () => {
-    return 0;
-  };
-
   const applyPromo = () => {
     if (promoCode.trim() === '') {
       setPromoError('Enter a promo code');
@@ -213,6 +389,8 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
     );
   }
 
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   return (
     <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
       <View style={styles.container}>
@@ -223,134 +401,12 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
           <Text style={styles.headerText}>Checkout</Text>
         </View>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Delivery Address</Text>
-            <View style={styles.addressRow}>
-              <Text style={styles.addressText}>{address}</Text>
-              <Pressable style={styles.editButton} accessibilityLabel='Change address' accessibilityRole='button' onPress={() => navigation.navigate('Address')}>
-                <Text style={styles.editButtonText}>Change</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Items ({cartItems.reduce((sum, i) => sum + i.quantity, 0)})</Text>
-            <View style={styles.itemsList}>
-              {cartItems.map(item => (
-                <View key={item.id} style={styles.itemRow}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemText}>×{item.quantity}</Text>
-                  <Text style={styles.itemPrice}>₹{item.price * item.quantity}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Payment Method</Text>
-            <View style={styles.paymentOptions}>
-              {[
-                { key: 'card' as PaymentMethod, label: '₹ Card' },
-                { key: 'upi' as PaymentMethod, label: '₹ UPI' },
-                { key: 'cash' as PaymentMethod, label: '₹ Cash', disabled: codRestricted },
-              ].map((method) => (
-                <Pressable
-                  key={method.key}
-                  onPress={() => !method.disabled && setPaymentMethod(method.key)}
-                  style={[
-                    styles.paymentOption,
-                    paymentMethod === method.key && styles.selectedPaymentOption,
-                    method.disabled && styles.disabledPaymentOption,
-                  ]}
-                  accessibilityLabel={`Pay with ${method.key}`}
-                  accessibilityRole='radio'
-                  accessibilityState={{ checked: paymentMethod === method.key, disabled: method.disabled || false }}
-                  disabled={method.disabled || false}
-                >
-                  <Text style={[
-                    styles.paymentOptionText,
-                    method.disabled && styles.disabledPaymentText,
-                  ]}>
-                    {method.label}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            {codRestricted ? (
-              <View style={styles.codRestrictionBanner}>
-                <Ionicons name="warning" size={16} color={DESIGN_TOKENS.colors.danger} />
-                <Text style={styles.codRestrictionText}>{codRestrictionReason}</Text>
-              </View>
-            ) : null}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tip</Text>
-            <View style={styles.tipOptions}>
-              {[0, 30, 50, 100].map(tipAmount => (
-                <Pressable
-                  key={tipAmount}
-                  onPress={() => setTip(tipAmount)}
-                  style={[styles.tipOption, tip === tipAmount && styles.selectedTipOption]}
-                  accessibilityLabel={`Add ₹${tipAmount} tip`}
-                  accessibilityRole='radio'
-                  accessibilityState={{ checked: tip === tipAmount }}
-                >
-                  <Text style={styles.tipOptionText}>{tipAmount === 0 ? 'No tip' : `₹${tipAmount}`}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Promo Code</Text>
-            <View style={styles.promoRow}>
-              <TextInput
-                placeholder='Enter promo code'
-                value={promoCode}
-                onChangeText={setPromoCode}
-                style={styles.promoInput}
-                accessibilityLabel='Promo code input'
-              />
-              <Pressable onPress={applyPromo} style={styles.promoButton} accessibilityLabel='Apply promo' accessibilityRole='button'>
-                <Text style={styles.promoButtonText}>Apply</Text>
-              </Pressable>
-            </View>
-            {promoError && <Text style={styles.promoError}>{promoError}</Text>}
-            {promoMessage && <Text style={styles.promoSuccess}>{promoMessage}</Text>}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Order Summary</Text>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Item Total</Text>
-              <Text style={styles.summaryAmount}>₹{calculateSubtotal().toFixed(0)}</Text>
-            </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Delivery Fee</Text>
-              <Text style={styles.summaryAmount}>₹20</Text>
-            </View>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Taxes</Text>
-              <Text style={styles.summaryAmount}>₹{calculateTax().toFixed(0)}</Text>
-            </View>
-            {tip > 0 && (
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Tip</Text>
-                <Text style={styles.summaryAmount}>₹{tip}</Text>
-              </View>
-            )}
-            {calculatePromoDiscount() > 0 && (
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Promo Discount</Text>
-                <Text style={styles.summaryAmount}>-₹{calculatePromoDiscount().toFixed(0)}</Text>
-              </View>
-            )}
-            <View style={styles.summaryRowTotal}>
-              <Text style={styles.summaryLabelTotal}>Total</Text>
-              <Text style={styles.summaryAmountTotal}>₹{calculateTotal().toFixed(0)}</Text>
-            </View>
-          </View>
+          <AddressSection address={address} onEdit={() => navigation.navigate('Address')} />
+          <ItemsSection cartItems={cartItems} />
+          <PaymentMethodSection paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} codRestricted={codRestricted} codRestrictionReason={codRestrictionReason} />
+          <TipSection tip={tip} setTip={setTip} />
+          <PromoCodeSection promoCode={promoCode} setPromoCode={setPromoCode} applyPromo={applyPromo} promoError={promoError} promoMessage={promoMessage} />
+          <OrderSummarySection subtotal={subtotal} tip={tip} />
         </ScrollView>
         <Pressable
           onPress={handlePlaceOrder}
@@ -359,7 +415,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ navigation, route }) =>
           accessibilityRole='button'
           accessibilityState={{ disabled: loading }}
         >
-          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order • ₹${calculateTotal().toFixed(0)}`}</Text>
+          <Text style={styles.placeOrderButtonText}>{loading ? 'Processing...' : `Place Order • ₹${(subtotal + subtotal * 0.05 + tip).toFixed(0)}`}</Text>
         </Pressable>
       </View>
     </Animated.View>

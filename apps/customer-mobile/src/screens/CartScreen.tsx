@@ -43,6 +43,7 @@ const CartScreen = () => {
   const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
+    let cancelled = false;
     const loadCart = async () => {
       try {
         const userJson = await AsyncStorage.getItem(STORAGE_KEYS.USER);
@@ -55,17 +56,20 @@ const CartScreen = () => {
           }
         }
         const cart = await getCartSafe();
-        setCartItems(validateCart(cart) as CartItem[]);
+        if (!cancelled) setCartItems(validateCart(cart) as CartItem[]);
       } catch {
-        setError(STRINGS.cart.loading);
+        if (!cancelled) setError(STRINGS.cart.loading);
       } finally {
-        setLoading(false);
-        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        if (!cancelled) {
+          setLoading(false);
+          fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        }
       }
     };
 
     loadCart();
-  }, []);
+    return () => { cancelled = true; };
+  }, [fadeAnim]);
 
   const removeFromCart = useCallback((itemId: string) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);

@@ -269,7 +269,26 @@ describe('Legal Module Services', () => {
     });
 
     it('skips existing categories on seed', async () => {
-      policyRepo.findOne.mockResolvedValue({ id: 'existing' });
+      policyRepo.find.mockResolvedValue([
+        { id: 'e1', key: 'orders' },
+        { id: 'e2', key: 'invoices' },
+        { id: 'e3', key: 'chats' },
+        { id: 'e4', key: 'notifications' },
+        { id: 'e5', key: 'audit_logs' },
+        { id: 'e6', key: 'sessions' },
+        { id: 'e7', key: 'otp' },
+        { id: 'e8', key: 'driver_gps' },
+        { id: 'e9', key: 'restaurant_data' },
+        { id: 'e10', key: 'analytics' },
+        { id: 'e11', key: 'marketing' },
+        { id: 'e12', key: 'emails' },
+        { id: 'e13', key: 'payments' },
+        { id: 'e14', key: 'refunds' },
+        { id: 'e15', key: 'wallet' },
+        { id: 'e16', key: 'loyalty' },
+        { id: 'e17', key: 'support_tickets' },
+        { id: 'e18', key: 'deleted_accounts' },
+      ]);
       const created = await retention.seedDefaults();
       expect(created).toBe(0);
     });

@@ -23,5 +23,6 @@ COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nodejs:nodejs /app/apps/customer-web/package*.json ./apps/customer-web/
 ENV NODE_ENV=production
 USER nodejs
-  EXPOSE 3002
-  CMD ["node", "node_modules/.bin/next", "start", "-p", "3002", "apps/customer-web"]
+EXPOSE 3002
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD node -e "require('http').get('http://localhost:3002/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1))"
+CMD ["node", "node_modules/.bin/next", "start", "-p", "3002", "apps/customer-web"]

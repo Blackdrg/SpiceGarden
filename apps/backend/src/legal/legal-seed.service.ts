@@ -30,12 +30,10 @@ export class LegalSeedService implements OnModuleInit {
   }
 
   async seedAll(approverId = 'system'): Promise<{ created: number; published: number }> {
-    let created = 0;
-    let published = 0;
     const specs = this.documentSpecs();
-    for (const spec of specs) {
+    const results = await Promise.all(specs.map(async (spec) => {
       const existing = await this.documentService.getDocument(spec.type).catch(() => null);
-      if (existing) continue;
+      if (existing) return { created: false, published: false };
       const doc = await this.documentService.createDocument({
         type: spec.type,
         title: spec.title,
@@ -54,9 +52,10 @@ export class LegalSeedService implements OnModuleInit {
       });
       await this.documentService.approveVersion(version.id, approverId, 'Initial publication');
       await this.documentService.publishVersion(version.id, approverId);
-      created++;
-      published++;
-    }
+      return { created: true, published: true };
+    }));
+    const created = results.filter((r) => r.created).length;
+    const published = results.filter((r) => r.published).length;
     return { created, published };
   }
 

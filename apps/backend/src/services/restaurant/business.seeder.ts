@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { Logger } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
@@ -10,10 +11,11 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
 export class BusinessSeederService {
+  private readonly logger = new Logger(BusinessSeederService.name);
   constructor(private dataSource: DataSource) {}
 
   async seedAll(): Promise<void> {
-    console.log('[BusinessSeeder] Initializing business engine data...');
+    this.logger.log('Initializing business engine data...');
     
     const restaurantRepo = this.dataSource.getRepository(RestaurantEntity);
     const existingRestaurants = await restaurantRepo.count();
@@ -21,7 +23,7 @@ export class BusinessSeederService {
     if (existingRestaurants === 0) {
       await this.seedRestaurants();
     } else {
-      console.log('[BusinessSeeder] Restaurants already seeded');
+      this.logger.log('Restaurants already seeded');
     }
     
     const driverRepo = this.dataSource.getRepository(DriverEntity);
@@ -30,10 +32,10 @@ export class BusinessSeederService {
     if (existingDrivers === 0) {
       await this.seedDrivers();
     } else {
-      console.log('[BusinessSeeder] Drivers already seeded');
+      this.logger.log('Drivers already seeded');
     }
     
-    console.log('[BusinessSeeder] Business engine ready');
+    this.logger.log('Business engine ready');
   }
 
   private async seedRestaurants() {
@@ -116,7 +118,7 @@ export class BusinessSeederService {
       { id: randomUUID(), name: 'Caesar Salad', description: 'Romaine with parmesan', basePrice: 220, isVeg: false, spiceLevel: 0, category: savedGulshan[1] },
     ] as any);
 
-    console.log('[BusinessSeeder] Seeded 3 restaurants with menu items');
+    this.logger.log('Seeded 3 restaurants with menu items');
   }
 
   private async seedDrivers() {
@@ -125,31 +127,37 @@ export class BusinessSeederService {
 
     const driverNames = ['Raj Kumar', 'Amit Singh', 'Priya Sharma'];
 
-    for (let i = 0; i < 3; i++) {
-      const savedUser = await userRepo.save({
-        id: randomUUID(),
-        fullName: driverNames[i],
-        email: `${driverNames[i].toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
-        phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-        passwordHash: await argon2.hash('SpiceGarden@2024'),
-        role: UserRole.DELIVERY_PARTNER,
-        status: UserStatus.ACTIVE,
-      } as any) as unknown as UserEntity;
+    const savedUsers = await Promise.all(
+      Array.from({ length: 3 }, async (_, i) => {
+        return await userRepo.save({
+          id: randomUUID(),
+          fullName: driverNames[i],
+          email: `${driverNames[i].toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
+          phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+          passwordHash: await argon2.hash('SpiceGarden@2024'),
+          role: UserRole.DELIVERY_PARTNER,
+          status: UserStatus.ACTIVE,
+        } as any) as unknown as UserEntity;
+      }),
+    );
 
-      await driverRepo.save({
-        id: randomUUID(),
-        userId: savedUser.id,
-        licenseNumber: `DL${String(i + 1).padStart(3, '0')}`,
-        vehicleNumber: `CAR-${1000 + i}`,
-        vehicleType: 'motorcycle',
-        kycStatus: 'approved',
-        isOnline: true,
-        isAvailable: true,
-        currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
-        rating: 4.5 + Math.random() * 0.5,
-      } as any);
-    }
+    await Promise.all(
+      savedUsers.map((savedUser, i) =>
+        driverRepo.save({
+          id: randomUUID(),
+          userId: savedUser.id,
+          licenseNumber: `DL${String(i + 1).padStart(3, '0')}`,
+          vehicleNumber: `CAR-${1000 + i}`,
+          vehicleType: 'motorcycle',
+          kycStatus: 'approved',
+          isOnline: true,
+          isAvailable: true,
+          currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
+          rating: 4.5 + Math.random() * 0.5,
+        } as any),
+      ),
+    );
 
-    console.log('[BusinessSeeder] Seeded 3 drivers');
+    this.logger.log('Seeded 3 drivers');
   }
 }

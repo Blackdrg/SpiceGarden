@@ -215,13 +215,15 @@ export const walletService = {
   },
 };
 
+const walletCurrencyFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  minimumFractionDigits: 2,
+});
+
 export function formatWalletAmount(amount: number, currency = 'INR'): string {
   try {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 2,
-    }).format(Number(amount) || 0);
+    return walletCurrencyFormatter.format(Number(amount) || 0);
   } catch {
     return `₹${Number(amount) || 0}`;
   }

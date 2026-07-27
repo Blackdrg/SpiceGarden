@@ -216,10 +216,12 @@ class SpiceGardenLauncher {
   }
 
   private async getSystemInfo(): Promise<SystemInfo> {
-    const cpu = await si.cpu();
-    const mem = await si.mem();
-    const osInfo = await si.osInfo();
-    const load = await si.currentLoad();
+    const [cpu, mem, osInfo, load] = await Promise.all([
+      si.cpu(),
+      si.mem(),
+      si.osInfo(),
+      si.currentLoad(),
+    ]);
 
     return {
       cpu: {

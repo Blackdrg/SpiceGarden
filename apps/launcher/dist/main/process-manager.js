@@ -68,9 +68,10 @@ class ProcessManager {
         const dockerResult = await this.dockerManager.startInfrastructure();
         results['Infrastructure'] = dockerResult.success ? true : dockerResult.error || 'failed';
         await this.delay(5000);
-        for (const service of this.services.filter(s => s.type === 'node')) {
-            const result = await this.startService(service.name);
-            results[service.name] = result.success ? true : result.error || 'failed';
+        const nodeServices = this.services.filter(s => s.type === 'node');
+        const startResults = await Promise.all(nodeServices.map((service) => this.startService(service.name).catch((err) => ({ success: false, error: err.message }))));
+        for (let i = 0; i < nodeServices.length; i++) {
+            results[nodeServices[i].name] = startResults[i].success ? true : startResults[i].error || 'failed';
         }
         return { success: Object.values(results).every(r => r === true), results };
     }
@@ -94,8 +95,9 @@ class ProcessManager {
         return await this.startAll();
     }
     async getStatus() {
-        const statuses = [];
-        for (const service of this.services) {
+        const dockerStatuses = await this.dockerManager.getStatus();
+        const dockerStatusMap = new Map(dockerStatuses.map((s) => [s.name, s]));
+        return this.services.map((service) => {
             const status = {
                 name: service.name,
                 status: 'stopped',
@@ -107,15 +109,13 @@ class ProcessManager {
                 status.pid = proc.pid;
             }
             else if (service.type === 'docker') {
-                const dockerStatuses = await this.dockerManager.getStatus();
-                const dockerStatus = dockerStatuses.find(s => s.name === service.name.toLowerCase());
+                const dockerStatus = dockerStatusMap.get(service.name.toLowerCase());
                 if (dockerStatus) {
                     status.status = dockerStatus.status;
                 }
             }
-            statuses.push(status);
-        }
-        return statuses;
+            return status;
+        });
     }
     async startService(serviceName) {
         const service = this.services.find(s => s.name === serviceName);

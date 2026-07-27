@@ -89,13 +89,12 @@ export class EnvironmentManager {
   }
 
   async checkPorts(): Promise<{ port: number; available: boolean }[]> {
-    const results: { port: number; available: boolean }[] = [];
-    
-    for (const { port } of this.ports) {
-      results.push({ port, available: await this.isPortAvailable(port) });
-    }
-
-    return results;
+    return await Promise.all(
+      this.ports.map(async ({ port }) => ({
+        port,
+        available: await this.isPortAvailable(port),
+      })),
+    );
   }
 
    private isPortAvailable(port: number): Promise<boolean> {

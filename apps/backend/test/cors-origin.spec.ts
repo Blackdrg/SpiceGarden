@@ -32,7 +32,7 @@ describe('CORS origin normalization', () => {
 
     expect(getAllowedOrigins()).toEqual(['http://localhost:3002']);
     expect(isAllowedOrigin('http://evil.example')).toBe(false);
-    expect(isAllowedOrigin('null')).toBe(true);
+    expect(isAllowedOrigin('null')).toBe(false);
   });
 
   it('returns false when origin is undefined or empty', () => {

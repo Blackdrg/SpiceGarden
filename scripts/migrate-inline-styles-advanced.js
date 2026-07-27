@@ -48,6 +48,18 @@ function isSkippable(styleStr) {
   return /\.\.\.|\?|\(|\)/.test(styleStr);
 }
 
+function safeResolve(styleContent, tokens) {
+  const resolved = styleContent.replace(/DESIGN_TOKENS\.([a-zA-Z_][a-zA-Z0-9_.]*)/g, (_, path) => {
+    const parts = path.split('.');
+    let val = tokens;
+    for (const part of parts) {
+      val = val?.[part];
+    }
+    return JSON.stringify(val);
+  });
+  return JSON.parse(resolved);
+}
+
 function processFile(filePath) {
   let code = fs.readFileSync(filePath, 'utf8');
   const componentName = path.basename(filePath, path.extname(filePath));
@@ -62,11 +74,8 @@ function processFile(filePath) {
     if (isSkippable(styleContent)) continue; // complex – manual later
     let styleObj = {};
     try {
-      // Evaluate safely with placeholder tokens.
-      const func = new Function('DESIGN_TOKENS', 'return (' + styleContent + ')');
-      styleObj = func(DESIGN_TOKENS);
+      styleObj = safeResolve(styleContent, DESIGN_TOKENS);
     } catch (e) {
-      // Could not evaluate – skip for manual handling.
       continue;
     }
     const className = `${componentName}Inline${idx}`;

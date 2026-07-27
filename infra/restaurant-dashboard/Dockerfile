@@ -23,5 +23,6 @@ COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nodejs:nodejs /app/apps/restaurant-dashboard/package*.json ./apps/restaurant-dashboard/
 ENV NODE_ENV=production
 USER nodejs
-  EXPOSE 3003
-  CMD ["node", "node_modules/.bin/next", "start", "-p", "3003", "apps/restaurant-dashboard"]
+EXPOSE 3003
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD node -e "require('http').get('http://localhost:3003/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1))"
+CMD ["node", "node_modules/.bin/next", "start", "-p", "3003", "apps/restaurant-dashboard"]

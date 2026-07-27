@@ -422,7 +422,7 @@ export class OrderService {
     }
   }
 
-  async resolveStuckPreparingState(): Promise<Order[]> {
+  async resolveStuckPreparingState(): Promise<OrderEntity[]> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
     const stuckOrders = await this.orderRepo.find({
@@ -432,28 +432,34 @@ export class OrderService {
       },
     });
 
-    const resolvedOrders: Order[] = [];
+    const results = await Promise.allSettled(
+      stuckOrders.map(async (order) => {
+        try {
+          order.status = OrderStatus.RESTAURANT_ACCEPTED;
+          order.updatedAt = new Date();
 
-    for (const order of stuckOrders) {
-      try {
-        order.status = OrderStatus.RESTAURANT_ACCEPTED;
-        order.updatedAt = new Date();
+          const savedOrder = await this.orderRepo.save(order);
 
-        const savedOrder = await this.orderRepo.save(order);
-        resolvedOrders.push(savedOrder);
+          await this.notificationService.sendPush(
+            order.userId,
+            'Order Delayed',
+            `Your order #${order.orderNumber} is experiencing delays. We're working on it.`,
+            { orderId: order.id }
+          );
 
-        await this.notificationService.sendPush(
-          order.userId,
-          'Order Delayed',
-          `Your order #${order.orderNumber} is experiencing delays. We're working on it.`,
-          { orderId: order.id }
-        );
-      } catch (error) {
-        this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', { id: order.id, error }, 'OrderService');
-      }
-    }
+          return savedOrder;
+        } catch (error) {
+          this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', { id: order.id, error }, 'OrderService');
+          return null;
+        }
+      }),
+    );
 
-    return resolvedOrders;
+    const fulfilled = results
+      .filter((r): r is PromiseFulfilledResult<OrderEntity | null> => r.status === 'fulfilled')
+      .map((r) => r.value);
+
+    return fulfilled.filter((order): order is OrderEntity => order !== null);
   }
 
   async checkDuplicateOrder(userId: string, restaurantId: string, itemsHash: string, windowMinutes: number = 5): Promise<boolean> {

@@ -234,10 +234,7 @@ export class DeliveryPricingService {
       },
     ];
 
-    for (const ruleData of defaultRules) {
-      const rule = this.pricingRepo.create(ruleData);
-      await this.pricingRepo.save(rule);
-    }
+    await Promise.all(defaultRules.map((ruleData) => this.pricingRepo.save(this.pricingRepo.create(ruleData))));
 
     this.logger.log('Initialized default delivery pricing rules');
   }

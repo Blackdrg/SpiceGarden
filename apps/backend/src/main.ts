@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
-import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost } from "@nestjs/common";
+import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost, Logger } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
 import helmet from "helmet";
 import * as Sentry from '@sentry/node';
@@ -180,6 +180,9 @@ function installRateLimiters(app: NestExpressApplication, configService: ConfigS
   if (process.env.LOAD_TEST_MODE === 'true' && configService.get<string>('NODE_ENV') !== 'production') {
     return;
   }
+  app.use('/auth/forgot-password', createRateLimiter(configService, 'AUTH_PASSWORD_RESET', 3, 15 * 60 * 1000));
+  app.use('/auth/verify-reset-code', createRateLimiter(configService, 'AUTH_VERIFY_RESET', 5, 15 * 60 * 1000));
+  app.use('/auth/reset-password', createRateLimiter(configService, 'AUTH_RESET_PASSWORD', 3, 15 * 60 * 1000));
   app.use('/auth/otp', createRateLimiter(configService, 'AUTH_OTP', 3, 10 * 60 * 1000));
   app.use('/auth/', createRateLimiter(configService, 'AUTH', 5, 15 * 60 * 1000, true));
   app.use(/\/orders/, createRateLimiter(configService, 'ORDERS', 10, 15 * 60 * 1000));
@@ -202,6 +205,8 @@ function loadFileSecretsIntoEnv() {
   }
 }
 
+const logger = new Logger('Bootstrap');
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
@@ -210,12 +215,7 @@ async function bootstrap() {
 
   validateProductionEnvironment(configService);
 
-  if (configService.get<string>('NODE_ENV') === 'production') {
-    const server = app.getHttpAdapter().getInstance();
-    server.set('trust proxy', 1);
-  }
-
-const dsn = configService.get<string>("SENTRY_DSN");
+  const dsn = configService.get<string>("SENTRY_DSN");
    if (dsn) {
      // Dynamically import Sentry for newer API compatibility
      const sentry = await import('@sentry/node');
@@ -223,43 +223,8 @@ const dsn = configService.get<string>("SENTRY_DSN");
        dsn,
        tracesSampleRate: 1.0,
      });
-     app.use((sentry as any).setupExpressErrorHandler());
-   }
-
-  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
-  const sanitizeMiddleware = mongoSanitize();
-  const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      sanitizeMiddleware(req, res, next);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      // If we get a "Cannot set property" error, fall back to sanitizing individually
-      if (errorMessage.includes('Cannot set property') && errorMessage.includes('which has only a getter')) {
-        // Sanitize each property individually to avoid setting getters
-        if (req.body) {
-          req.body = mongoSanitize.sanitize(req.body);
-        }
-        if (req.params) {
-          req.params = mongoSanitize.sanitize(req.params);
-        }
-        if (req.query) {
-          // For query, we can't reassign the property but we can modify the object
-          // Create a sanitized version and copy properties
-          const sanitizedQuery = mongoSanitize.sanitize(req.query);
-          // Clear existing properties and add sanitized ones
-          Object.keys(req.query).forEach(key => {
-            delete req.query[key];
-          });
-          Object.keys(sanitizedQuery).forEach(key => {
-            req.query[key] = sanitizedQuery[key];
-          });
-        }
-        next();
-      } else {
-        next(error);
-      }
+      app.use((sentry as any).setupExpressErrorHandler());
     }
-  };
 
   app.set('trust proxy', getTrustProxySetting(configService));
   app.disable('x-powered-by');
@@ -292,6 +257,37 @@ const dsn = configService.get<string>("SENTRY_DSN");
   }));
   app.use(cookieParser());
   app.use(csrfProtection());
+
+  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
+  const sanitizeMiddleware = mongoSanitize();
+  const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      sanitizeMiddleware(req, res, next);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('Cannot set property') && errorMessage.includes('which has only a getter')) {
+        if (req.body) {
+          req.body = mongoSanitize.sanitize(req.body);
+        }
+        if (req.params) {
+          req.params = mongoSanitize.sanitize(req.params);
+        }
+        if (req.query) {
+          const sanitizedQuery = mongoSanitize.sanitize(req.query);
+          Object.keys(req.query).forEach(key => {
+            delete req.query[key];
+          });
+          Object.keys(sanitizedQuery).forEach(key => {
+            req.query[key] = sanitizedQuery[key];
+          });
+        }
+        next();
+      } else {
+        next(error);
+      }
+    }
+  };
+
   app.use(safeMongoSanitize);
   app.use(hpp());
   app.use(compression());
@@ -320,23 +316,34 @@ const dsn = configService.get<string>("SENTRY_DSN");
   });
 
   // Prometheus metrics endpoint
-  app.use("/metrics", async (_req: express.Request, res: express.Response) => {
+  const metricsToken = configService.get<string>('METRICS_TOKEN');
+  app.use("/metrics", async (req: express.Request, res: express.Response) => {
+    if (metricsToken) {
+      const auth = req.headers.authorization;
+      if (auth !== `Bearer ${metricsToken}`) {
+        return res.status(401).json({ message: 'Unauthorized', error: 'Invalid or missing metrics token' });
+      }
+    } else {
+      const clientIp = req.ip || req.connection.remoteAddress || '';
+      if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(clientIp) && req.hostname !== 'localhost') {
+        return res.status(403).json({ message: 'Forbidden', error: 'Metrics endpoint restricted to localhost in production' });
+      }
+    }
     res.set("Content-Type", metricsRegistry.contentType);
     res.send(await metricsRegistry.metrics());
   });
 
-  // Metrics middleware
-  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const start = Date.now();
-    res.on("finish", () => {
-      const duration = (Date.now() - start) / 1000;
-      const route = req.route?.path ? req.path : req.baseUrl || req.path;
-      httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
-      httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
-      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
-    });
-    next();
-  });
+      // Metrics middleware
+      app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+        const start = Date.now();
+        res.on("finish", () => {
+          const duration = (Date.now() - start) / 1000;
+          const route = req.route?.path ? req.path : req.baseUrl || req.path;
+          httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
+          httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
+        });
+        next();
+      });
 
 
   // Global validation pipe
@@ -368,30 +375,30 @@ const dsn = configService.get<string>("SENTRY_DSN");
   const shutdownGracePeriod = parseInt(configService.get<string>("SHUTDOWN_GRACE_PERIOD_MS", "10000"));
 
   process.on("SIGTERM", () => {
-    console.log(`SIGTERM received — shutting down gracefully within ${shutdownGracePeriod}ms`);
+    logger.log(`SIGTERM received — shutting down gracefully within ${shutdownGracePeriod}ms`);
     httpServer.close(() => {
-      console.log("HTTP server closed");
+      logger.log("HTTP server closed");
       process.exit(0);
     });
     setTimeout(() => {
-      console.error("Graceful shutdown timed out — forcing exit");
+      logger.error("Graceful shutdown timed out — forcing exit");
       process.exit(1);
     }, shutdownGracePeriod).unref();
   });
 
   process.on("SIGINT", () => {
-    console.log(`SIGINT received — shutting down gracefully within ${shutdownGracePeriod}ms`);
+    logger.log(`SIGINT received — shutting down gracefully within ${shutdownGracePeriod}ms`);
     httpServer.close(() => {
-      console.log("HTTP server closed");
+      logger.log("HTTP server closed");
       process.exit(0);
     });
     setTimeout(() => {
-      console.error("Graceful shutdown timed out — forcing exit");
+      logger.error("Graceful shutdown timed out — forcing exit");
       process.exit(1);
     }, shutdownGracePeriod).unref();
   });
 
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();

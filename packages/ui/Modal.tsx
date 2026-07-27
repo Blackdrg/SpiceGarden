@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
 interface ModalProps {
@@ -22,35 +22,35 @@ export const Modal = ({
   showCloseButton = true,
   closeOnOverlay = true,
 }: ModalProps) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      dialog.showModal();
+    } else {
+      dialog.close();
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
-  }, [onClose]);
-
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [isOpen, handleKeyDown]);
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => onClose();
+    dialog.addEventListener('close', handleClose);
+    return () => dialog.removeEventListener('close', handleClose);
+  }, [onClose]);
 
   if (!isOpen) return null;
 
   const maxWidth = size === 'sm' ? 420 : size === 'lg' ? 720 : 560;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={title ? 'modal-title' : undefined}
+    <dialog
+      ref={dialogRef}
+      tabIndex={0}
+      aria-label={title || 'Dialog'}
       style={{
         position: 'fixed',
         top: 0,
@@ -68,6 +68,7 @@ export const Modal = ({
         WebkitBackdropFilter: 'blur(4px)',
       }}
       onClick={closeOnOverlay ? onClose : undefined}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); } }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -100,6 +101,7 @@ export const Modal = ({
             </h2>
             {showCloseButton && (
               <button
+                type="button"
                 onClick={onClose}
                 aria-label="Close modal"
                 style={{
@@ -131,7 +133,7 @@ export const Modal = ({
         @keyframes sg-fade-in { from { opacity: 0; } to { opacity: 1; } }
         @keyframes sg-slide-up { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
       `}</style>
-    </div>
+    </dialog>
   );
 };
 
@@ -147,32 +149,33 @@ export const BottomSheet = ({
   showCloseButton = true,
   closeOnOverlay = true,
 }: BottomSheetProps) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      dialog.showModal();
+    } else {
+      dialog.close();
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
-  }, [onClose]);
-
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [isOpen, handleKeyDown]);
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => onClose();
+    dialog.addEventListener('close', handleClose);
+    return () => dialog.removeEventListener('close', handleClose);
+  }, [onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialogRef}
+      tabIndex={0}
+      aria-label={title || 'Bottom sheet'}
       style={{
         position: 'fixed',
         top: 0,
@@ -188,6 +191,7 @@ export const BottomSheet = ({
         WebkitBackdropFilter: 'blur(4px)',
       }}
       onClick={closeOnOverlay ? onClose : undefined}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); } }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -223,6 +227,7 @@ export const BottomSheet = ({
         {children}
         {showCloseButton && (
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close sheet"
             style={{
@@ -244,7 +249,7 @@ export const BottomSheet = ({
             Done
           </button>
         )}
-      </div>
-    </div>
+       </div>
+    </dialog>
   );
 };

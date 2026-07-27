@@ -1,6 +1,5 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from '../src/screens/AuthScreen';
 
@@ -12,11 +11,7 @@ describe('Customer Mobile Auth Integration', () => {
   });
 
   it('submits login credentials and stores the auth token', async () => {
-    const { getByPlaceholderText, getByText } = render(
-      <NavigationContainer>
-        <AuthScreen />
-      </NavigationContainer>,
-    );
+    const { getByPlaceholderText, getByText } = render(<AuthScreen />);
 
     fireEvent.changeText(getByPlaceholderText('Enter your email'), 'customer@example.com');
     fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password123');

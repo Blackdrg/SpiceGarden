@@ -61,19 +61,24 @@ spec:
             # Wait for all pods to be ready
             for i in 1 2 3 4 5 6; do
               host="redis-cluster-$((i-1)).redis-headless"
-              until redis-cli -h $host ping >/dev/null 2>&1; do
+              until redis-cli -a $REDIS_PASSWORD -h $host ping >/dev/null 2>&1; do
                 echo "Waiting for $host..."
                 sleep 5
               done
             done
             # Create cluster if not exists
-            if ! redis-cli -h redis-cluster-0 cluster nodes | grep -q "handshake\|fail"; then
+            if ! redis-cli -a $REDIS_PASSWORD -h redis-cluster-0 cluster nodes | grep -q "handshake\|fail"; then
               echo "Creating Redis cluster..."
-              redis-cli --cluster create \
+              redis-cli -a $REDIS_PASSWORD --cluster create \
                 $(for i in 0 1 2 3 4 5; do echo -n "redis-cluster-$i.redis-headless:6379 "; done) \
                 --cluster-replicas 1 --cluster-yes
             fi
         env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: spicegarden-secrets
+              key: redis-password
         - name: POD_NAMES
           value: "redis-cluster"
       containers:
@@ -132,6 +137,8 @@ spec:
           exec:
             command:
             - "redis-cli"
+            - "-a"
+            - "$(REDIS_PASSWORD)"
             - "ping"
           initialDelaySeconds: 30
           periodSeconds: 5
@@ -140,6 +147,8 @@ spec:
           exec:
             command:
             - "redis-cli"
+            - "-a"
+            - "$(REDIS_PASSWORD)"
             - "ping"
           initialDelaySeconds: 10
           periodSeconds: 5

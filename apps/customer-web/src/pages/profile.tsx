@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
 import { api } from '@spicegarden/shared/api';
 import { useMfaManagement } from '../hooks/useMfaManagement';
@@ -191,7 +192,7 @@ const ProfilePage: React.FC = () => {
                   <QrCodeIcon size={24} color={DESIGN_TOKENS.colors.primary} />
                   <span style={{ fontWeight: 600 }}>Scan QR Code</span>
                 </div>
-                <img src={qrCodeDataUrl} alt="MFA QR Code" className={styles.qrCode} />
+                <Image src={qrCodeDataUrl} alt="MFA QR Code" className={styles.qrCode} width={200} height={200} />
                 <p style={{ fontSize: '0.875rem', color: 'var(--color-textSecondary, #6B7280)', textAlign: 'center', marginBottom: '16px' }}>
                   Enter the 6-digit code from your authenticator app:
                 </p>

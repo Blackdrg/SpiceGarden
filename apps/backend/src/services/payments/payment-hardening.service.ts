@@ -33,7 +33,7 @@ interface ChargebackDispute {
 @Injectable()
 export class PaymentHardeningService {
   private readonly logger = new Logger(PaymentHardeningService.name);
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
 
   constructor(
     private configService: ConfigService,
@@ -42,13 +42,19 @@ export class PaymentHardeningService {
     private readonly idempotencyRepo: Repository<IdempotencyEntity>,
     @InjectRepository(PaymentValidationEventEntity)
     private readonly validationRepo: Repository<PaymentValidationEventEntity>,
-  ) {
-    this.stripe = new Stripe(
-      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
-      {
-        apiVersion: '2024-04-10',
+  ) {}
+
+  private getStripeInstance(): Stripe {
+    if (!this.stripe) {
+      const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
+      if (!secretKey) {
+        throw new Error('STRIPE_SECRET_KEY is not configured');
       }
-    );
+      this.stripe = new Stripe(secretKey, {
+        apiVersion: '2024-04-10',
+      });
+    }
+    return this.stripe;
   }
 
   async validatePayment(
@@ -309,7 +315,7 @@ export class PaymentHardeningService {
         return { valid: false, error: 'Payment method ID is required' };
       }
 
-      const paymentMethod = await this.stripe.paymentMethods.retrieve(paymentMethodId);
+      const paymentMethod = await this.getStripeInstance().paymentMethods.retrieve(paymentMethodId);
 
       if (paymentMethod.type !== 'card') {
         return { valid: false, error: 'Invalid payment method type' };
@@ -352,7 +358,7 @@ export class PaymentHardeningService {
     const webhookSecret = getRequiredSecret(this.configService, 'STRIPE_WEBHOOK_SECRET');
 
     try {
-      this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      this.getStripeInstance().webhooks.constructEvent(payload, signature, webhookSecret);
       return true;
     } catch (error) {
       return false;
@@ -376,7 +382,7 @@ export class PaymentHardeningService {
       return { status: 'won', reason: dispute.reason };
     }
 
-    const refund = await this.stripe.refunds.create({
+    const refund = await this.getStripeInstance().refunds.create({
       payment_intent: paymentIntentId,
       reason: 'duplicate',
     }).catch(() => null);
@@ -390,7 +396,7 @@ export class PaymentHardeningService {
   }
 
   async createPaymentRetry(paymentIntentId: string, retryAttempt: number): Promise<any> {
-    const existingIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+    const existingIntent = await this.getStripeInstance().paymentIntents.retrieve(paymentIntentId);
     if (!existingIntent) {
       throw new BadRequestException('Payment intent not found');
     }
@@ -400,7 +406,7 @@ export class PaymentHardeningService {
       throw new BadRequestException('Max retry attempts exceeded');
     }
 
-    const retryIntent = await this.stripe.paymentIntents.create({
+    const retryIntent = await this.getStripeInstance().paymentIntents.create({
       amount: existingIntent.amount,
       currency: existingIntent.currency,
       metadata: {

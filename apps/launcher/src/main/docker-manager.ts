@@ -47,14 +47,14 @@ export class DockerManager {
       { name: 'alertmanager', status: 'stopped', port: 9093 }
     ];
 
-    for (const service of services) {
-      const actualStatus = await this.getContainerStatus(service.name);
-      service.status = actualStatus.status;
-      service.containerId = actualStatus.containerId;
-      service.health = actualStatus.health;
-    }
+    const statuses = await Promise.all(
+      services.map(async (service) => {
+        const actualStatus = await this.getContainerStatus(service.name);
+        return { ...service, status: actualStatus.status, containerId: actualStatus.containerId, health: actualStatus.health };
+      }),
+    );
 
-    return services;
+    return statuses;
   }
 
   private async getContainerStatus(serviceName: string): Promise<{

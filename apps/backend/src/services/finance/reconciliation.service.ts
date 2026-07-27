@@ -27,14 +27,15 @@ export class ReconciliationService {
   ) {}
 
   async reconcilePayments(startDate: Date, endDate: Date): Promise<any> {
-    const orders = await this.orderRepo.find({
-      where: { createdAt: Between(startDate, endDate) },
-    });
-
-    const transactions = await this.transactionRepo.find({
-      where: { createdAt: Between(startDate, endDate) },
-      order: { createdAt: 'ASC' },
-    });
+    const [orders, transactions] = await Promise.all([
+      this.orderRepo.find({
+        where: { createdAt: Between(startDate, endDate) },
+      }),
+      this.transactionRepo.find({
+        where: { createdAt: Between(startDate, endDate) },
+        order: { createdAt: 'ASC' },
+      }),
+    ]);
 
     const ordersTotal = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
     const transactionsTotal = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
@@ -80,19 +81,20 @@ export class ReconciliationService {
   }
 
   async reconcilePayouts(restaurantId: string, startDate: Date, endDate: Date): Promise<any> {
-    const payouts = await this.payoutRepo.find({
-      where: {
-        restaurantId: restaurantId as any,
-        createdAt: Between(startDate, endDate),
-      },
-    });
-
-    const orders = await this.orderRepo.find({
-      where: {
-        restaurantId: restaurantId as any,
-        createdAt: Between(startDate, endDate),
-      },
-    });
+    const [payouts, orders] = await Promise.all([
+      this.payoutRepo.find({
+        where: {
+          restaurantId: restaurantId as any,
+          createdAt: Between(startDate, endDate),
+        },
+      }),
+      this.orderRepo.find({
+        where: {
+          restaurantId: restaurantId as any,
+          createdAt: Between(startDate, endDate),
+        },
+      }),
+    ]);
 
     const orderTotal = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
     const payoutTotal = payouts.reduce((sum, p) => sum + Number(p.netPayout), 0);
@@ -145,7 +147,7 @@ const orders = await this.orderRepo.find({
        relations: { gstDetail: true },
      });
 
-    const gstDetails = orders.filter(o => o.gstDetail).map(o => o.gstDetail!);
+    const gstDetails = orders.flatMap((o) => o.gstDetail ? [o.gstDetail] : []);
 
     return {
       restaurantId,

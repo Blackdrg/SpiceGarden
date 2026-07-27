@@ -1,7 +1,10 @@
 import { NestFactory } from "@nestjs/core";
+import { Logger } from "@nestjs/common";
 import { AppGrpcModule } from "./grpc/grpc-app.module";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import { join } from "path";
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppGrpcModule, {
@@ -21,7 +24,7 @@ async function bootstrap() {
   });
 
   await app.listen();
-  console.log("gRPC server listening on 0.0.0.0:50051");
+  logger.log("gRPC server listening on 0.0.0.0:50051");
 }
 
 bootstrap();

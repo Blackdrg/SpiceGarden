@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
@@ -31,42 +31,52 @@ const RestaurantScreen = () => {
 
   const fadeAnim = useSharedValue(0);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadData = useCallback(async (signal: { cancelled: boolean }) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const restaurantData = await restaurantService.getRestaurantBySlug(slug || restaurantId);
-        if (!restaurantData) {
-          setError('Restaurant not found');
-          setLoading(false);
-          return;
-        }
-
-        const branch = restaurantData.branches?.[0];
-        setRestaurant({
-          id: restaurantData.id,
-          name: restaurantData.name,
-          description: restaurantData.description,
-          address: branch?.address || '',
-          rating: 0,
-          deliveryTime: branch ? `${branch.openingTime} - ${branch.closingTime}` : '30-45 min',
-        });
-
-        const items = await restaurantService.getMenuItems(restaurantId);
-        setMenuItems(items);
-        setLoading(false);
-
-        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.standard, easing: Easing.out(Easing.quad) });
-      } catch (err) {
-        setError('Failed to load menu');
-        setLoading(false);
-        console.error('Failed to load restaurant data:', err);
+      const restaurantData = await restaurantService.getRestaurantBySlug(slug || restaurantId);
+      if (signal.cancelled) return;
+      if (!restaurantData) {
+        setError('Restaurant not found');
+        return;
       }
+
+      const branch = restaurantData.branches?.[0];
+      setRestaurant({
+        id: restaurantData.id,
+        name: restaurantData.name,
+        description: restaurantData.description,
+        address: branch?.address || '',
+        rating: 0,
+        deliveryTime: branch ? `${branch.openingTime} - ${branch.closingTime}` : '30-45 min',
+      });
+
+      const items = await restaurantService.getMenuItems(restaurantId);
+      if (signal.cancelled) return;
+      setMenuItems(items);
+
+      fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.standard, easing: Easing.out(Easing.quad) });
+    } catch (err) {
+      if (!signal.cancelled) {
+        setError('Failed to load menu');
+      }
+      console.error('Failed to load restaurant data:', err);
+    } finally {
+      if (!signal.cancelled) {
+        setLoading(false);
+      }
+    }
+  }, [slug, restaurantId, fadeAnim]);
+
+  useEffect(() => {
+    const signal = { cancelled: false };
+    loadData(signal);
+    return () => {
+      signal.cancelled = true;
     };
-    loadData();
-  }, [restaurantId, slug]);
+  }, [loadData, fadeAnim]);
 
   const addToCart = async (item: MenuItem) => {
     try {

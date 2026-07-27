@@ -50,9 +50,9 @@ export class AdminService {
         this.restaurantRepo.count({ where: { status: 'active' } }),
       ]);
 
-      const branches = await this.getBranchStats();
-      const revenueData = await this.getRevenueData();
-      const [disputeCount, refundCount] = await Promise.all([
+      const [branches, revenueData, disputeCount, refundCount] = await Promise.all([
+        this.getBranchStats(),
+        this.getRevenueData(),
         this.getDisputeCount(today),
         this.getRefundCount(today),
       ]);

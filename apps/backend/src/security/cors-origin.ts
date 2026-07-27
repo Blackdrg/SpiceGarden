@@ -36,9 +36,6 @@ export function getAllowedOrigins(): string[] {
 }
 
 export function isAllowedOrigin(origin?: string): boolean {
-  if (origin === 'null') {
-    return true;
-  }
   if (!origin) {
     return false;
   }

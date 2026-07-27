@@ -19,15 +19,15 @@ interface InputProps {
   className?: string;
 }
 
+const sizeStyles = {
+  sm: { padding: `${DESIGN_TOKENS.spacing[2]}px ${DESIGN_TOKENS.spacing[3]}px`, fontSize: 14, minHeight: 36, borderRadius: DESIGN_TOKENS.radius.md },
+  md: { padding: `${DESIGN_TOKENS.spacing[3]}px ${DESIGN_TOKENS.spacing[4]}px`, fontSize: 15, minHeight: 44, borderRadius: DESIGN_TOKENS.radius.lg },
+  lg: { padding: `${DESIGN_TOKENS.spacing[4]}px ${DESIGN_TOKENS.spacing[5]}px`, fontSize: 16, minHeight: 52, borderRadius: DESIGN_TOKENS.radius.lg },
+};
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, type = 'text', placeholder, value, error, helperText, onChange, id, startIcon, endIcon, fullWidth = true, inputSize = 'md', className, ...props }, ref) => {
-    const inputId = id || `input-${label?.toLowerCase().replace(/\s+/g, '-') || Math.random().toString(36).slice(2, 9)}`;
-
-    const sizeStyles = {
-      sm: { padding: `${DESIGN_TOKENS.spacing[2]}px ${DESIGN_TOKENS.spacing[3]}px`, fontSize: 14, minHeight: 36, borderRadius: DESIGN_TOKENS.radius.md },
-      md: { padding: `${DESIGN_TOKENS.spacing[3]}px ${DESIGN_TOKENS.spacing[4]}px`, fontSize: 15, minHeight: 44, borderRadius: DESIGN_TOKENS.radius.lg },
-      lg: { padding: `${DESIGN_TOKENS.spacing[4]}px ${DESIGN_TOKENS.spacing[5]}px`, fontSize: 16, minHeight: 52, borderRadius: DESIGN_TOKENS.radius.lg },
-    };
+    const inputId = id || `input-${label?.toLowerCase().replace(/\s+/g, '-') || ''}${Date.now().toString(36)}`;
 
     const currentSize = sizeStyles[inputSize];
 
@@ -84,8 +84,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                minHeight: currentSize.minHeight,
                ...DESIGN_TOKENS.typography.body,
                transition: `border-color ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}, box-shadow ${DESIGN_TOKENS.motion.micro}ms ${MOTION_EASING.easeOutSoft}`,
-              outline: 'none',
-              fontFamily: DESIGN_TOKENS.typography.fontFamily,
+               fontFamily: DESIGN_TOKENS.typography.fontFamily,
             }}
             onFocus={(e) => {
               e.currentTarget.style.boxShadow = `0 0 0 3px ${DESIGN_TOKENS.colors.primary}22`;

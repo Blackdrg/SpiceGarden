@@ -66,17 +66,15 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
       withTiming(direction, { duration: 150, easing: Easing.out(Easing.quad) }),
       withTiming(0, { duration: 200, easing: Easing.out(Easing.quad) })
     );
-  }, [currentIndex]);
+  }, [currentIndex, fadeAnim, slideAnim]);
 
   const handleNext = async () => {
-    setCurrentIndex((prev) => {
-      if (prev < onboardingSlides.length - 1) {
-        animateTransition(prev + 1);
-        return prev + 1;
-      }
+    if (currentIndex < onboardingSlides.length - 1) {
+      animateTransition(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
+    } else {
       completeOnboarding();
-      return prev;
-    });
+    }
   };
 
   const handleSkip = async () => {
@@ -94,13 +92,11 @@ const OnboardingScreen = ({ navigation }: { navigation: { replace: (screen: stri
   };
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => {
-      if (prev > 0) {
-        animateTransition(prev - 1);
-        return prev - 1;
-      }
-      return prev;
-    });
+    if (currentIndex > 0) {
+      const prev = currentIndex - 1;
+      animateTransition(prev);
+      setCurrentIndex(prev);
+    }
   };
 
   const currentSlide = onboardingSlides[currentIndex];

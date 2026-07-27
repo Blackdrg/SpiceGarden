@@ -1,9 +1,25 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import { Button, Card, DESIGN_TOKENS, Skeleton, SkeletonCard } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi, authApi, addressesApi } from '@spicegarden/shared/api';
+
+async function checkAddressRisk(addressId: string, lat: number, lng: number): Promise<{ codAllowed: boolean; reason?: string } | null> {
+  try {
+    const res = await fetch('/api/risk/check-address', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ addressId, lat, lng }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 import ProtectedRoute from '../components/ProtectedRoute';
 import { CreditCardIcon, SmartphoneIcon, BanknoteIcon, TagIcon } from 'lucide-react';
 import styles from './checkout.module.css';
@@ -105,6 +121,182 @@ function formatAddress(address: Address): string {
   return `${address.label} - ${address.addressLine}, ${address.city}, ${address.state} ${address.postalCode}`;
 }
 
+interface AddressSectionProps {
+  state: CheckoutState;
+  dispatch: React.Dispatch<{ type: string; payload?: unknown }>;
+  router: ReturnType<typeof useRouter>;
+}
+
+const AddressSection = ({ state, dispatch, router }: AddressSectionProps) => (
+  <div className={styles.section}>
+    <Card title="Delivery Address" variant="interactive" subtitle={state.address || 'No address selected'}>
+      {state.addressLoading ? (
+        <Skeleton height={40} borderRadius={DESIGN_TOKENS.radius.lg} />
+      ) : state.addresses.length === 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
+          <p style={{ margin: 0, fontSize: '0.9375rem' }}>No saved addresses found.</p>
+          <Button
+            label="Add Address"
+            variant="secondary"
+            size="sm"
+            onClick={() => router.push('/addresses')}
+          />
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
+          <select
+            aria-label="Select delivery address"
+            value={state.selectedAddressId || ''}
+            onChange={(e) => dispatch({ type: 'SET_SELECTED_ADDRESS', payload: e.target.value })}
+            className={styles.addressSelect}
+          >
+            {state.addresses.map((addr) => (
+              <option key={addr.id} value={addr.id}>
+                {formatAddress(addr)}
+              </option>
+            ))}
+          </select>
+          <Button
+            label="Manage Addresses"
+            variant="secondary"
+            size="sm"
+            onClick={() => router.push('/addresses')}
+          />
+        </div>
+      )}
+    </Card>
+  </div>
+);
+
+interface PaymentMethodSectionProps {
+  state: CheckoutState;
+  dispatch: React.Dispatch<{ type: string; payload?: unknown }>;
+}
+
+const PaymentMethodSection = ({ state, dispatch }: PaymentMethodSectionProps) => (
+  <div className={styles.section}>
+    <h3 className={styles.sectionTitle}>
+      <CreditCardIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+      Payment Method
+    </h3>
+    <div className={styles.paymentMethods}>
+      {[
+        { key: 'card', label: 'Card', icon: CreditCardIcon },
+        { key: 'upi', label: 'UPI', icon: SmartphoneIcon },
+        { key: 'cash', label: 'Cash', icon: BanknoteIcon },
+      ].map((method) => (
+        <button
+          key={method.key}
+          type="button"
+          className={`${styles.paymentMethodBtn} ${state.paymentMethod === method.key ? styles.paymentMethodBtnActive : ''}`}
+          onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: method.key })}
+        >
+          <method.icon size={18} />
+          {method.label}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+interface TipSectionProps {
+  state: CheckoutState;
+  dispatch: React.Dispatch<{ type: string; payload?: unknown }>;
+}
+
+const TipSection = ({ state, dispatch }: TipSectionProps) => (
+  <div className={styles.section}>
+    <h3 className={styles.sectionTitle}>Add a Tip</h3>
+    <div className={styles.tipOptions}>
+      {[0, 30, 50, 100].map((tip) => (
+        <button
+          key={tip}
+          type="button"
+          className={`${styles.tipBtn} ${state.tip === tip ? styles.tipBtnActive : ''}`}
+          onClick={() => dispatch({ type: 'SET_TIP', payload: tip })}
+        >
+          {tip === 0 ? 'No tip' : `₹${tip}`}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+interface PromoCodeSectionProps {
+  state: CheckoutState;
+  dispatch: React.Dispatch<{ type: string; payload?: unknown }>;
+  applyPromo: () => void;
+}
+
+const PromoCodeSection = ({ state, dispatch, applyPromo }: PromoCodeSectionProps) => (
+  <div className={styles.section}>
+    <h3 className={styles.sectionTitle}>
+      <TagIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
+      Promo Code
+    </h3>
+    <div className={styles.promoSection}>
+      <input
+        type="text"
+        placeholder="Enter promo code"
+        aria-label="Promo code"
+        value={state.promoCode}
+        onChange={(e) => dispatch({ type: 'SET_PROMO_CODE', payload: e.target.value })}
+        className={styles.promoInput}
+      />
+      <Button label="Apply" onClick={applyPromo} variant="secondary" />
+    </div>
+    {state.promoError && (
+      <p className={styles.promoError}>{state.promoError}</p>
+    )}
+    {state.promoSuccess && (
+      <p className={styles.promoSuccess}>{state.promoSuccess}</p>
+    )}
+    {state.orderError && (
+      <p className={styles.orderError}>{state.orderError}</p>
+    )}
+  </div>
+);
+
+interface OrderSummarySectionProps {
+  subtotal: number;
+  deliveryFee: number;
+  taxes: number;
+  state: CheckoutState;
+}
+
+const OrderSummarySection = ({ subtotal, deliveryFee, taxes, state }: OrderSummarySectionProps) => (
+  <div className={styles.summarySection}>
+    <Card title="Order Summary" variant="elevated">
+      <div className={styles.summaryRow}>
+        <span>Item Total</span>
+        <span style={{ fontWeight: 600 }}>₹{subtotal.toFixed(0)}</span>
+      </div>
+      <div className={styles.summaryRow}>
+        <span>Delivery Fee</span>
+        <span style={{ fontWeight: 600 }}>₹{deliveryFee}</span>
+      </div>
+      <div className={styles.summaryRow}>
+        <span>Taxes (5%)</span>
+        <span style={{ fontWeight: 600 }}>₹{taxes.toFixed(0)}</span>
+      </div>
+      <div className={styles.summaryRow}>
+        <span>Tip</span>
+        <span style={{ fontWeight: 600 }}>₹{state.tip}</span>
+      </div>
+      {state.promoDiscount > 0 && (
+        <div className={styles.summaryRow}>
+          <span>Promo Discount</span>
+          <span style={{ fontWeight: 600, color: DESIGN_TOKENS.colors.success }}>−₹{state.promoDiscount.toFixed(0)}</span>
+        </div>
+      )}
+      <div className={styles.summaryTotal}>
+        <span>Total</span>
+        <span style={{ color: DESIGN_TOKENS.colors.primary }}>₹{(subtotal + deliveryFee + taxes + state.tip - state.promoDiscount).toFixed(0)}</span>
+      </div>
+    </Card>
+  </div>
+);
+
 const CheckoutPage = () => {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -112,52 +304,54 @@ const CheckoutPage = () => {
   const restaurantId = useSelector((state: RootState) => state.cart.restaurantId);
   const [state, dispatch] = useReducer(checkoutReducer, initialCheckoutState);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const response = await addressesApi.list();
-        if (!active) return;
-        dispatch({ type: 'SET_ADDRESSES', payload: (response.data as Address[]) || [] });
-      } catch {
-        if (active) dispatch({ type: 'SET_ADDRESSES', payload: [] });
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
+  const loadAddresses = useCallback(async (signal: { active: boolean }) => {
+    try {
+      const response = await addressesApi.list();
+      if (!signal.active) return;
+      dispatch({ type: 'SET_ADDRESSES', payload: (response.data as Address[]) || [] });
+    } catch {
+      if (signal.active) dispatch({ type: 'SET_ADDRESSES', payload: [] });
+    }
+  }, [dispatch]);
 
   useEffect(() => {
+    const signal = { active: true };
+    loadAddresses(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [loadAddresses]);
+
+  const checkAddressRiskEffect = useCallback(async (signal: { active: boolean }) => {
     if (!state.selectedAddressId) return;
-    (async () => {
-      try {
-        const addresses = (await addressesApi.list()).data as Address[];
-        const address = addresses?.find((a: any) => a.id === state.selectedAddressId);
-        if (address?.lat && address?.lng) {
-          const res = await fetch('/api/risk/check-address', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ addressId: address.id, lat: address.lat, lng: address.lng }),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (!data.codAllowed) {
-              dispatch({ type: 'SET_PROMO_ERROR', payload: data.reason || 'COD is not available for this address due to safety restrictions' });
-              if (state.paymentMethod === 'cash') dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' });
-            }
-          }
+    try {
+      const addresses = (await addressesApi.list()).data as Address[];
+      if (!signal.active) return;
+      const address = addresses?.find((a: any) => a.id === state.selectedAddressId);
+      if (address?.lat && address?.lng) {
+        const data = await checkAddressRisk(address.id, address.lat, address.lng);
+        if (!signal.active || !data) return;
+        if (!data.codAllowed) {
+          dispatch({ type: 'SET_PROMO_ERROR', payload: data.reason || 'COD is not available for this address due to safety restrictions' });
+          if (state.paymentMethod === 'cash') dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' });
         }
-      } catch {
-        // allow COD by default if risk check fails
       }
-    })();
-  }, [state.selectedAddressId, state.paymentMethod]);
+    } catch {
+      // allow COD by default if risk check fails
+    }
+  }, [state.selectedAddressId, state.paymentMethod, dispatch]);
+
+  useEffect(() => {
+    const signal = { active: true };
+    checkAddressRiskEffect(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [checkAddressRiskEffect]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 20;
   const taxes = subtotal * 0.05;
-  const grandTotal = subtotal + deliveryFee + taxes + state.tip - state.promoDiscount;
 
   const applyPromo = async () => {
     if (!state.promoCode.trim()) {
@@ -217,7 +411,7 @@ const CheckoutPage = () => {
         deliveryFee,
         tax: taxes,
         tip: state.tip,
-        grandTotal
+        grandTotal: subtotal + deliveryFee + taxes + state.tip - state.promoDiscount
       };
 
       try {
@@ -266,142 +460,11 @@ const CheckoutPage = () => {
         </div>
       ) : (
         <>
-          <div className={styles.section}>
-            <Card title="Delivery Address" variant="interactive" subtitle={state.address || 'No address selected'}>
-              {state.addressLoading ? (
-                <Skeleton height={40} borderRadius={DESIGN_TOKENS.radius.lg} />
-              ) : state.addresses.length === 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
-                  <p style={{ margin: 0, fontSize: '0.9375rem' }}>No saved addresses found.</p>
-                  <Button
-                    label="Add Address"
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => router.push('/addresses')}
-                  />
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing[3] }}>
-                  <select
-                    aria-label="Select delivery address"
-                    value={state.selectedAddressId || ''}
-                    onChange={(e) => dispatch({ type: 'SET_SELECTED_ADDRESS', payload: e.target.value })}
-                    className={styles.addressSelect}
-                  >
-                    {state.addresses.map((addr) => (
-                      <option key={addr.id} value={addr.id}>
-                        {formatAddress(addr)}
-                      </option>
-                    ))}
-                  </select>
-                  <Button
-                    label="Manage Addresses"
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => router.push('/addresses')}
-                  />
-                </div>
-              )}
-            </Card>
-          </div>
-
-          <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>
-              <CreditCardIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
-              Payment Method
-            </h3>
-            <div className={styles.paymentMethods}>
-              {[
-                { key: 'card', label: 'Card', icon: CreditCardIcon },
-                { key: 'upi', label: 'UPI', icon: SmartphoneIcon },
-                { key: 'cash', label: 'Cash', icon: BanknoteIcon },
-              ].map((method) => (
-                <button
-                  key={method.key}
-                  type="button"
-                  className={`${styles.paymentMethodBtn} ${state.paymentMethod === method.key ? styles.paymentMethodBtnActive : ''}`}
-                  onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: method.key })}
-                >
-                  <method.icon size={18} />
-                  {method.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>Add a Tip</h3>
-            <div className={styles.tipOptions}>
-              {[0, 30, 50, 100].map((tip) => (
-                <button
-                  key={tip}
-                  type="button"
-                  className={`${styles.tipBtn} ${state.tip === tip ? styles.tipBtnActive : ''}`}
-                  onClick={() => dispatch({ type: 'SET_TIP', payload: tip })}
-                >
-                  {tip === 0 ? 'No tip' : `₹${tip}`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>
-              <TagIcon size={18} color={DESIGN_TOKENS.colors.textSecondary} />
-              Promo Code
-            </h3>
-            <div className={styles.promoSection}>
-              <input
-                type="text"
-                placeholder="Enter promo code"
-                aria-label="Promo code"
-                value={state.promoCode}
-                onChange={(e) => dispatch({ type: 'SET_PROMO_CODE', payload: e.target.value })}
-                className={styles.promoInput}
-              />
-              <Button label="Apply" onClick={applyPromo} variant="secondary" />
-            </div>
-            {state.promoError && (
-              <p className={styles.promoError}>{state.promoError}</p>
-            )}
-            {state.promoSuccess && (
-              <p className={styles.promoSuccess}>{state.promoSuccess}</p>
-            )}
-            {state.orderError && (
-              <p className={styles.orderError}>{state.orderError}</p>
-            )}
-          </div>
-
-          <div className={styles.summarySection}>
-            <Card title="Order Summary" variant="elevated">
-              <div className={styles.summaryRow}>
-                <span>Item Total</span>
-                <span style={{ fontWeight: 600 }}>₹{subtotal.toFixed(0)}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Delivery Fee</span>
-                <span style={{ fontWeight: 600 }}>₹{deliveryFee}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Taxes (5%)</span>
-                <span style={{ fontWeight: 600 }}>₹{taxes.toFixed(0)}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>Tip</span>
-                <span style={{ fontWeight: 600 }}>₹{state.tip}</span>
-              </div>
-              {state.promoDiscount > 0 && (
-                <div className={styles.summaryRow}>
-                  <span>Promo Discount</span>
-                  <span style={{ fontWeight: 600, color: DESIGN_TOKENS.colors.success }}>−₹{state.promoDiscount.toFixed(0)}</span>
-                </div>
-              )}
-              <div className={styles.summaryTotal}>
-                <span>Total</span>
-                <span style={{ color: DESIGN_TOKENS.colors.primary }}>₹{grandTotal.toFixed(0)}</span>
-              </div>
-            </Card>
-          </div>
+          <AddressSection state={state} dispatch={dispatch} router={router} />
+          <PaymentMethodSection state={state} dispatch={dispatch} />
+          <TipSection state={state} dispatch={dispatch} />
+          <PromoCodeSection state={state} dispatch={dispatch} applyPromo={applyPromo} />
+          <OrderSummarySection subtotal={subtotal} deliveryFee={deliveryFee} taxes={taxes} state={state} />
         </>
       )}
 

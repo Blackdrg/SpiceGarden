@@ -64,6 +64,55 @@ const POLICY_LINKS: PolicyLink[] = [
   },
 ];
 
+const handlePolicyPress = async (url: string) => {
+  try {
+    const fullUrl = `${API_BASE_URL}${url}`;
+    const canOpen = await Linking.canOpenURL(fullUrl);
+    if (canOpen) {
+      await Linking.openURL(fullUrl);
+    } else {
+      Toast.show('Unable to open this link', {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        backgroundColor: DESIGN_TOKENS.colors.warning,
+        textColor: 'white',
+      });
+    }
+  } catch {
+    Toast.show('Failed to open link', {
+      duration: Toast.durations.SHORT,
+      position: Toast.positions.BOTTOM,
+      backgroundColor: DESIGN_TOKENS.colors.danger,
+      textColor: 'white',
+    });
+  }
+};
+
+const LegalScreen = () => {
+  const navigation = useNavigation();
+  const [agreement, setAgreement] = useState<AgreementResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fadeAnim = useSharedValue(0);
+
+  async function fetchDriverAgreement(): Promise<AgreementResponse | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return (await response.json()) as AgreementResponse;
+  } catch {
+    return null;
+  }
+}
+
 const LegalScreen = () => {
   const navigation = useNavigation();
   const [agreement, setAgreement] = useState<AgreementResponse | null>(null);
@@ -73,56 +122,21 @@ const LegalScreen = () => {
   const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
-    const loadAgreement = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = (await response.json()) as AgreementResponse;
+    let active = true;
+    fetchDriverAgreement().then((data) => {
+      if (!active) return;
+      if (data) {
         setAgreement(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load legal document');
-      } finally {
-        setLoading(false);
-
-        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-      }
-    };
-
-    loadAgreement();
-  }, []);
-
-  const handlePolicyPress = async (url: string) => {
-    try {
-      const fullUrl = `${API_BASE_URL}${url}`;
-      const canOpen = await Linking.canOpenURL(fullUrl);
-      if (canOpen) {
-        await Linking.openURL(fullUrl);
       } else {
-        Toast.show('Unable to open this link', {
-          duration: Toast.durations.SHORT,
-          position: Toast.positions.BOTTOM,
-          backgroundColor: DESIGN_TOKENS.colors.warning,
-          textColor: 'white',
-        });
+        setError('Failed to load legal document');
       }
-    } catch {
-      Toast.show('Failed to open link', {
-        duration: Toast.durations.SHORT,
-        position: Toast.positions.BOTTOM,
-        backgroundColor: DESIGN_TOKENS.colors.danger,
-        textColor: 'white',
-      });
-    }
-  };
+      setLoading(false);
+      fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+    });
+    return () => {
+      active = false;
+    };
+  }, [fadeAnim]);
 
   if (loading) {
     return (

@@ -18,7 +18,7 @@ import { getRequiredSecret } from '../../../common/errors/missing-env.error';
 @Injectable()
 export class WebhookService {
   private readonly logger = new Logger(WebhookService.name);
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
 
   constructor(
     private configService: ConfigService,
@@ -35,13 +35,19 @@ export class WebhookService {
     private ledgerService: LedgerService,
     private paymentGatewayFactory: PaymentGatewayFactory,
     private chargebackService: ChargebackService,
-  ) {
-    this.stripe = new Stripe(
-      getRequiredSecret(this.configService, 'STRIPE_SECRET_KEY'),
-      {
-        apiVersion: '2024-04-10' as any,
+  ) {}
+
+  private getStripeInstance(): Stripe {
+    if (!this.stripe) {
+      const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
+      if (!secretKey) {
+        throw new Error('STRIPE_SECRET_KEY is not configured');
       }
-    );
+      this.stripe = new Stripe(secretKey, {
+        apiVersion: '2024-04-10' as any,
+      });
+    }
+    return this.stripe;
   }
 
   async processWebhook(payload: Buffer, signature: string, headers: any): Promise<any> {
@@ -139,7 +145,7 @@ export class WebhookService {
   private async verifyStripeWebhook(payload: Buffer, signature: string): Promise<any> {
     const webhookSecret = getRequiredSecret(this.configService, 'STRIPE_WEBHOOK_SECRET');
 
-    return this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      return this.getStripeInstance().webhooks.constructEvent(payload, signature, webhookSecret);
   }
 
   private async verifyRazorpayWebhook(payload: Buffer, signature: string): Promise<any> {
@@ -149,11 +155,13 @@ export class WebhookService {
       .createHmac('sha256', webhookSecret)
       .update(payload.toString())
       .digest('hex');
-    
-    if (generatedSignature !== signature) {
+
+    const expectedBuffer = Buffer.from(generatedSignature, 'hex');
+    const receivedBuffer = Buffer.from(signature, 'hex');
+    if (expectedBuffer.length !== receivedBuffer.length || !crypto.timingSafeEqual(expectedBuffer, receivedBuffer)) {
       throw new BadRequestException('Invalid Razorpay signature');
     }
-    
+
     return JSON.parse(payload.toString());
   }
 

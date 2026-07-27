@@ -17,6 +17,51 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-root-toast';
 
+const handleDataRequest = (type: 'access' | 'delete') => {
+  Alert.alert(
+    type === 'access' ? 'Request Data Access' : 'Request Data Deletion',
+    type === 'access'
+      ? 'We will send you a copy of all personal data we hold about you within 30 days.'
+      : 'This will permanently delete all your personal data from our systems. This action cannot be undone.',
+    [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: type === 'access' ? 'Request Access' : 'Delete My Data',
+        style: type === 'delete' ? 'destructive' : 'default',
+        onPress: () => {
+          Toast.show(type === 'access' ? 'Data access request submitted' : 'Data deletion request submitted', {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM,
+            backgroundColor: DESIGN_TOKENS.colors.success,
+            textColor: 'white',
+          });
+        },
+      },
+    ]
+  );
+};
+
+const handleExport = (format: 'json' | 'csv') => {
+  Alert.alert(
+    'Export Data',
+    `Your data will be exported in ${format.toUpperCase()} format. You will receive an email with the download link.`,
+    [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Export',
+        onPress: () => {
+          Toast.show(`Data export (${format.toUpperCase()}) initiated`, {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM,
+            backgroundColor: DESIGN_TOKENS.colors.info,
+            textColor: 'white',
+          });
+        },
+      },
+    ]
+  );
+};
+
 interface ConsentState {
   analytics: boolean;
   marketing: boolean;
@@ -31,6 +76,191 @@ interface PrivacyScreenProps {
     };
   };
 }
+
+interface ConsentSectionProps {
+  consent: ConsentState;
+}
+
+const ConsentSection = ({ consent }: ConsentSectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Consent Status</Text>
+    <View style={styles.consentCard}>
+      <View style={styles.consentSummary}>
+        <View style={[styles.statusDot, { backgroundColor: DESIGN_TOKENS.colors.success }]} />
+        <View>
+          <Text style={styles.consentStatusText}>Your privacy settings are active</Text>
+          <Text style={styles.consentSubtext}>
+            {consent.analytics || consent.marketing ? 'Some optional cookies are enabled' : 'Only necessary cookies are enabled'}
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+);
+
+interface PreferenceItemProps {
+  icon: string;
+  title: string;
+  description: string;
+  value: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+}
+
+const PreferenceItem = ({ icon, title, description, value, disabled, onToggle }: PreferenceItemProps) => (
+  <View style={styles.preferenceItem}>
+    <View style={styles.preferenceInfo}>
+      <View style={styles.preferenceHeader}>
+        <Ionicons name={icon as any} size={20} color={DESIGN_TOKENS.colors.textSecondary} />
+        <Text style={styles.preferenceTitle}>{title}</Text>
+      </View>
+      <Text style={styles.preferenceDescription}>{description}</Text>
+    </View>
+    <Switch
+      value={value}
+      onValueChange={onToggle}
+      trackColor={{
+        false: DESIGN_TOKENS.colors.border,
+        true: DESIGN_TOKENS.colors.primary + '66',
+      }}
+      thumbColor={DESIGN_TOKENS.colors.primary}
+      disabled={disabled}
+      accessible={true}
+      accessibilityLabel={`${title} cookies toggle`}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value, disabled: disabled || false }}
+    />
+  </View>
+);
+
+interface CookiePreferencesProps {
+  consent: ConsentState;
+  saving: boolean;
+  onToggle: (key: keyof ConsentState) => void;
+}
+
+const CookiePreferences = ({ consent, saving, onToggle }: CookiePreferencesProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Cookie Preferences</Text>
+    <View style={styles.preferencesCard}>
+      <PreferenceItem
+        icon="shield-checkmark-outline"
+        title="Necessary"
+        description="Required for the app to function properly"
+        value={consent.necessary}
+        disabled={true}
+        onToggle={() => onToggle('necessary')}
+      />
+      <View style={styles.preferenceDivider} />
+      <PreferenceItem
+        icon="bar-chart-outline"
+        title="Analytics"
+        description="Help us improve the app experience"
+        value={consent.analytics}
+        disabled={saving}
+        onToggle={() => onToggle('analytics')}
+      />
+      <View style={styles.preferenceDivider} />
+      <PreferenceItem
+        icon="megaphone-outline"
+        title="Marketing"
+        description="Personalized offers and recommendations"
+        value={consent.marketing}
+        disabled={saving}
+        onToggle={() => onToggle('marketing')}
+      />
+      <View style={styles.preferenceDivider} />
+      <PreferenceItem
+        icon="settings-outline"
+        title="Functional"
+        description="Enhanced functionality and personalization"
+        value={consent.functional}
+        disabled={saving}
+        onToggle={() => onToggle('functional')}
+      />
+    </View>
+  </View>
+);
+
+interface DataSubjectRequestProps {
+  onRequestAccess: () => void;
+  onRequestDelete: () => void;
+}
+
+const DataSubjectRequest = ({ onRequestAccess, onRequestDelete }: DataSubjectRequestProps) => (
+  <Pressable
+    style={styles.actionItem}
+    onPress={onRequestAccess}
+    accessibilityLabel="Request access to your data"
+    accessibilityRole="button"
+  >
+    <View style={[styles.actionIconContainer, { backgroundColor: DESIGN_TOKENS.colors.infoLight }]}>
+      <Ionicons name="download-outline" size={22} color={DESIGN_TOKENS.colors.info} />
+    </View>
+    <View style={styles.actionInfo}>
+      <Text style={styles.actionTitle}>Request Access</Text>
+      <Text style={styles.actionDescription}>Get a copy of your personal data</Text>
+    </View>
+    <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
+  </Pressable>
+);
+
+const DataSubjectRequestsSection = ({ onRequestAccess, onRequestDelete }: DataSubjectRequestProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Data Subject Requests</Text>
+    <View style={styles.actionsCard}>
+      <DataSubjectRequest onRequestAccess={onRequestAccess} onRequestDelete={onRequestDelete} />
+      <View style={styles.actionDivider} />
+      <Pressable
+        style={styles.actionItem}
+        onPress={onRequestDelete}
+        accessibilityLabel="Request deletion of your data"
+        accessibilityRole="button"
+      >
+        <View style={[styles.actionIconContainer, { backgroundColor: DESIGN_TOKENS.colors.dangerLight }]}>
+          <Ionicons name="trash-outline" size={22} color={DESIGN_TOKENS.colors.danger} />
+        </View>
+        <View style={styles.actionInfo}>
+          <Text style={[styles.actionTitle, { color: DESIGN_TOKENS.colors.danger }]}>Delete My Data</Text>
+          <Text style={styles.actionDescription}>Permanently remove all personal data</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
+      </Pressable>
+    </View>
+  </View>
+);
+
+interface ExportOptionsProps {
+  onExportJson: () => void;
+  onExportCsv: () => void;
+}
+
+const ExportOptions = ({ onExportJson, onExportCsv }: ExportOptionsProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Export Options</Text>
+    <View style={styles.exportCard}>
+      <Pressable
+        style={styles.exportButton}
+        onPress={onExportJson}
+        accessibilityLabel="Export data as JSON"
+        accessibilityRole="button"
+      >
+        <Ionicons name="document-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
+        <Text style={styles.exportButtonText}>Export as JSON</Text>
+      </Pressable>
+      <View style={styles.exportDivider} />
+      <Pressable
+        style={styles.exportButton}
+        onPress={onExportCsv}
+        accessibilityLabel="Export data as CSV"
+        accessibilityRole="button"
+      >
+        <Ionicons name="grid-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
+        <Text style={styles.exportButtonText}>Export as CSV</Text>
+      </Pressable>
+    </View>
+  </View>
+);
 
 const PrivacyScreen = () => {
   const navigation = useNavigation();
@@ -47,12 +277,13 @@ const PrivacyScreen = () => {
   const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
+    let cancelled = false;
     const loadConsent = async () => {
       try {
         const consentJson = await AsyncStorage.getItem('sg_consent');
         if (consentJson) {
           const savedConsent = JSON.parse(consentJson) as ConsentState;
-          setConsent({
+          if (!cancelled) setConsent({
             analytics: savedConsent.analytics ?? false,
             marketing: savedConsent.marketing ?? false,
             functional: savedConsent.functional ?? true,
@@ -60,16 +291,18 @@ const PrivacyScreen = () => {
           });
         }
       } catch (err) {
-        console.error('Failed to load consent:', err);
+        if (!cancelled) console.error('Failed to load consent:', err);
       } finally {
-        setLoading(false);
-
-        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        if (!cancelled) {
+          setLoading(false);
+          fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        }
       }
     };
 
     loadConsent();
-  }, []);
+    return () => { cancelled = true; };
+  }, [fadeAnim]);
 
   const handleToggle = async (key: keyof ConsentState) => {
     if (key === 'necessary') {
@@ -105,51 +338,6 @@ const PrivacyScreen = () => {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleDataRequest = (type: 'access' | 'delete') => {
-    Alert.alert(
-      type === 'access' ? 'Request Data Access' : 'Request Data Deletion',
-      type === 'access'
-        ? 'We will send you a copy of all personal data we hold about you within 30 days.'
-        : 'This will permanently delete all your personal data from our systems. This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: type === 'access' ? 'Request Access' : 'Delete My Data',
-          style: type === 'delete' ? 'destructive' : 'default',
-          onPress: () => {
-            Toast.show(type === 'access' ? 'Data access request submitted' : 'Data deletion request submitted', {
-              duration: Toast.durations.SHORT,
-              position: Toast.positions.BOTTOM,
-              backgroundColor: DESIGN_TOKENS.colors.success,
-              textColor: 'white',
-            });
-          },
-        },
-      ]
-    );
-  };
-
-  const handleExport = (format: 'json' | 'csv') => {
-    Alert.alert(
-      'Export Data',
-      `Your data will be exported in ${format.toUpperCase()} format. You will receive an email with the download link.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Export',
-          onPress: () => {
-            Toast.show(`Data export (${format.toUpperCase()}) initiated`, {
-              duration: Toast.durations.SHORT,
-              position: Toast.positions.BOTTOM,
-              backgroundColor: DESIGN_TOKENS.colors.info,
-              textColor: 'white',
-            });
-          },
-        },
-      ]
-    );
   };
 
   if (loading) {
@@ -189,190 +377,10 @@ const PrivacyScreen = () => {
             </View>
           )}
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Consent Status</Text>
-            <View style={styles.consentCard}>
-              <View style={styles.consentSummary}>
-                <View style={[styles.statusDot, { backgroundColor: DESIGN_TOKENS.colors.success }]} />
-                <View>
-                  <Text style={styles.consentStatusText}>Your privacy settings are active</Text>
-                  <Text style={styles.consentSubtext}>
-                    {consent.analytics || consent.marketing ? 'Some optional cookies are enabled' : 'Only necessary cookies are enabled'}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Cookie Preferences</Text>
-            <View style={styles.preferencesCard}>
-              <View style={styles.preferenceItem}>
-                <View style={styles.preferenceInfo}>
-                  <View style={styles.preferenceHeader}>
-                    <Ionicons name="shield-checkmark-outline" size={20} color={DESIGN_TOKENS.colors.textSecondary} />
-                    <Text style={styles.preferenceTitle}>Necessary</Text>
-                  </View>
-                  <Text style={styles.preferenceDescription}>Required for the app to function properly</Text>
-                </View>
-                <Switch
-                  value={consent.necessary}
-                  disabled={true}
-                  trackColor={{
-                    false: DESIGN_TOKENS.colors.border,
-                    true: DESIGN_TOKENS.colors.primary + '66',
-                  }}
-                  thumbColor={DESIGN_TOKENS.colors.primary}
-                  accessible={true}
-                  accessibilityLabel="Necessary cookies toggle"
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: consent.necessary, disabled: true }}
-                />
-              </View>
-
-              <View style={styles.preferenceDivider} />
-
-              <View style={styles.preferenceItem}>
-                <View style={styles.preferenceInfo}>
-                  <View style={styles.preferenceHeader}>
-                    <Ionicons name="bar-chart-outline" size={20} color={DESIGN_TOKENS.colors.textSecondary} />
-                    <Text style={styles.preferenceTitle}>Analytics</Text>
-                  </View>
-                  <Text style={styles.preferenceDescription}>Help us improve the app experience</Text>
-                </View>
-                <Switch
-                  value={consent.analytics}
-                  onValueChange={() => handleToggle('analytics')}
-                  trackColor={{
-                    false: DESIGN_TOKENS.colors.border,
-                    true: DESIGN_TOKENS.colors.primary + '66',
-                  }}
-                  thumbColor={DESIGN_TOKENS.colors.primary}
-                  disabled={saving}
-                  accessible={true}
-                  accessibilityLabel="Analytics cookies toggle"
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: consent.analytics, disabled: saving }}
-                />
-              </View>
-
-              <View style={styles.preferenceDivider} />
-
-              <View style={styles.preferenceItem}>
-                <View style={styles.preferenceInfo}>
-                  <View style={styles.preferenceHeader}>
-                    <Ionicons name="megaphone-outline" size={20} color={DESIGN_TOKENS.colors.textSecondary} />
-                    <Text style={styles.preferenceTitle}>Marketing</Text>
-                  </View>
-                  <Text style={styles.preferenceDescription}>Personalized offers and recommendations</Text>
-                </View>
-                <Switch
-                  value={consent.marketing}
-                  onValueChange={() => handleToggle('marketing')}
-                  trackColor={{
-                    false: DESIGN_TOKENS.colors.border,
-                    true: DESIGN_TOKENS.colors.primary + '66',
-                  }}
-                  thumbColor={DESIGN_TOKENS.colors.primary}
-                  disabled={saving}
-                  accessible={true}
-                  accessibilityLabel="Marketing cookies toggle"
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: consent.marketing, disabled: saving }}
-                />
-              </View>
-
-              <View style={styles.preferenceDivider} />
-
-              <View style={styles.preferenceItem}>
-                <View style={styles.preferenceInfo}>
-                  <View style={styles.preferenceHeader}>
-                    <Ionicons name="settings-outline" size={20} color={DESIGN_TOKENS.colors.textSecondary} />
-                    <Text style={styles.preferenceTitle}>Functional</Text>
-                  </View>
-                  <Text style={styles.preferenceDescription}>Enhanced functionality and personalization</Text>
-                </View>
-                <Switch
-                  value={consent.functional}
-                  onValueChange={() => handleToggle('functional')}
-                  trackColor={{
-                    false: DESIGN_TOKENS.colors.border,
-                    true: DESIGN_TOKENS.colors.primary + '66',
-                  }}
-                  thumbColor={DESIGN_TOKENS.colors.primary}
-                  disabled={saving}
-                  accessible={true}
-                  accessibilityLabel="Functional cookies toggle"
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: consent.functional, disabled: saving }}
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Data Subject Requests</Text>
-            <View style={styles.actionsCard}>
-              <Pressable
-                style={styles.actionItem}
-                onPress={() => handleDataRequest('access')}
-                accessibilityLabel="Request access to your data"
-                accessibilityRole="button"
-              >
-                <View style={[styles.actionIconContainer, { backgroundColor: DESIGN_TOKENS.colors.infoLight }]}>
-                  <Ionicons name="download-outline" size={22} color={DESIGN_TOKENS.colors.info} />
-                </View>
-                <View style={styles.actionInfo}>
-                  <Text style={styles.actionTitle}>Request Access</Text>
-                  <Text style={styles.actionDescription}>Get a copy of your personal data</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
-              </Pressable>
-
-              <View style={styles.actionDivider} />
-
-              <Pressable
-                style={styles.actionItem}
-                onPress={() => handleDataRequest('delete')}
-                accessibilityLabel="Request deletion of your data"
-                accessibilityRole="button"
-              >
-                <View style={[styles.actionIconContainer, { backgroundColor: DESIGN_TOKENS.colors.dangerLight }]}>
-                  <Ionicons name="trash-outline" size={22} color={DESIGN_TOKENS.colors.danger} />
-                </View>
-                <View style={styles.actionInfo}>
-                  <Text style={[styles.actionTitle, { color: DESIGN_TOKENS.colors.danger }]}>Delete My Data</Text>
-                  <Text style={styles.actionDescription}>Permanently remove all personal data</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={DESIGN_TOKENS.colors.textTertiary} />
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Export Options</Text>
-            <View style={styles.exportCard}>
-              <Pressable
-                style={styles.exportButton}
-                onPress={() => handleExport('json')}
-                accessibilityLabel="Export data as JSON"
-                accessibilityRole="button"
-              >
-                <Ionicons name="document-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
-                <Text style={styles.exportButtonText}>Export as JSON</Text>
-              </Pressable>
-              <View style={styles.exportDivider} />
-              <Pressable
-                style={styles.exportButton}
-                onPress={() => handleExport('csv')}
-                accessibilityLabel="Export data as CSV"
-                accessibilityRole="button"
-              >
-                <Ionicons name="grid-outline" size={20} color={DESIGN_TOKENS.colors.primary} />
-                <Text style={styles.exportButtonText}>Export as CSV</Text>
-              </Pressable>
-            </View>
-          </View>
+          <ConsentSection consent={consent} />
+          <CookiePreferences consent={consent} saving={saving} onToggle={handleToggle} />
+          <DataSubjectRequestsSection onRequestAccess={() => handleDataRequest('access')} onRequestDelete={() => handleDataRequest('delete')} />
+          <ExportOptions onExportJson={() => handleExport('json')} onExportCsv={() => handleExport('csv')} />
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>

@@ -99,8 +99,10 @@ export class ComplianceAdminController {
   @Get('retention-status')
   @ApiOperation({ summary: 'Retention policy status' })
   async retentionStatus() {
-    const policies = await this.retention.listPolicies();
-    const jobs = await this.retention.listJobs({ limit: 50 });
+    const [policies, jobs] = await Promise.all([
+      this.retention.listPolicies(),
+      this.retention.listJobs({ limit: 50 }),
+    ]);
     return { policies, recentJobs: jobs };
   }
 
@@ -108,10 +110,7 @@ export class ComplianceAdminController {
   @ApiOperation({ summary: 'Policy version registry' })
   async policyVersions(@Query('type') type?: string) {
     const docs = type ? [await this.documents.getDocument(type as any)] : await this.documents.listDocuments();
-    const versions = [];
-    for (const doc of docs) {
-      versions.push(...(await this.documents.listVersions(doc.id)));
-    }
+    const versions = (await Promise.all(docs.map((doc) => this.documents.listVersions(doc.id)))).flat();
     return versions;
   }
 

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spicegarden-production
+  labels:
+    name: spicegarden-production
+    environment: production
+    managed-by: kubectl
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spicegarden-staging
+  labels:
+    name: spicegarden-staging
+    environment: staging
+    managed-by: kubectl

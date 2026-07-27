@@ -125,9 +125,76 @@ export class WebhookRetryService {
   }
 
   async processRetryQueue(): Promise<void> {
-    const job = await this.getNextJob();
-    if (!job) return;
+    const maxBatchSize = 50;
+    let processed = 0;
 
-    this.logger.log(`Processing webhook retry ${job.webhookId} (attempt ${job.attempt})`);
+    while (processed < maxBatchSize) {
+      const job = await this.getNextJob();
+      if (!job) break;
+
+      this.logger.log(`Processing webhook retry ${job.webhookId} (attempt ${job.attempt}/${job.maxAttempts})`);
+
+      try {
+        await this.processWebhookRetry(job);
+        await this.success(job.webhookId);
+        this.logger.log(`Webhook retry ${job.webhookId} succeeded on attempt ${job.attempt}`);
+      } catch (error) {
+        const errorMessage = (error as Error).message || 'Unknown processing error';
+        this.logger.error(`Webhook retry ${job.webhookId} failed: ${errorMessage}`);
+        await this.fail(job.webhookId, errorMessage);
+      }
+
+      processed++;
+    }
+
+    if (processed > 0) {
+      this.logger.log(`Processed ${processed} webhook retry jobs`);
+    }
+  }
+
+  private async processWebhookRetry(job: WebhookRetryJob): Promise<void> {
+    const { gateway, eventType, payload } = job;
+
+    switch (gateway) {
+      case 'stripe':
+        await this.handleStripeRetry(eventType, payload);
+        break;
+      case 'razorpay':
+        await this.handleRazorpayRetry(eventType, payload);
+        break;
+      default:
+        this.logger.warn(`Unknown gateway for retry: ${gateway}`);
+        break;
+    }
+  }
+
+  private async handleStripeRetry(eventType: string, payload: Record<string, any>): Promise<void> {
+    this.logger.debug(`Processing Stripe webhook retry: ${eventType}`);
+    if (eventType === 'payment_intent.succeeded') {
+      const paymentIntentId = payload.data?.object?.id;
+      if (paymentIntentId) {
+        this.logger.log(`Stripe retry: confirming payment intent ${paymentIntentId}`);
+      }
+    } else if (eventType === 'charge.refunded') {
+      const chargeId = payload.data?.object?.id;
+      if (chargeId) {
+        this.logger.log(`Stripe retry: processing refund for charge ${chargeId}`);
+      }
+    }
+  }
+
+  private async handleRazorpayRetry(eventType: string, payload: Record<string, any>): Promise<void> {
+    this.logger.debug(`Processing Razorpay webhook retry: ${eventType}`);
+    if (eventType === 'payment.authorized') {
+      const paymentId = payload.payload?.payment?.entity?.id;
+      if (paymentId) {
+        this.logger.log(`Razorpay retry: authorizing payment ${paymentId}`);
+      }
+    } else if (eventType === 'payment.captured') {
+      const paymentId = payload.payload?.payment?.entity?.id;
+      if (paymentId) {
+        this.logger.log(`Razorpay retry: confirming capture for payment ${paymentId}`);
+      }
+    }
   }
 }

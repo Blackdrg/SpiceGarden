@@ -360,14 +360,15 @@ export class AnalyticsService {
   }
 
   async getPlatformAnalytics(): Promise<any> {
-    const topDishes = await this.getTopDishes(undefined);
-    const churn = await this.getChurnAnalysis(undefined);
-    const repeat = await this.getRepeatUsers(undefined);
-    const conversion = await this.getConversionRate(undefined);
-    const heatmap = await this.getDeliveryHeatmap(undefined);
-    const peakHours = await this.getPeakHours(undefined);
-
-    const activeBranches = await this.branchRepo.count({ where: { isOnline: true } });
+    const [topDishes, churn, repeat, conversion, heatmap, peakHours, activeBranches] = await Promise.all([
+      this.getTopDishes(undefined),
+      this.getChurnAnalysis(undefined),
+      this.getRepeatUsers(undefined),
+      this.getConversionRate(undefined),
+      this.getDeliveryHeatmap(undefined),
+      this.getPeakHours(undefined),
+      this.branchRepo.count({ where: { isOnline: true } }),
+    ]);
 
     return {
       platform: true,

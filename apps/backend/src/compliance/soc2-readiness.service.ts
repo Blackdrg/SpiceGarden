@@ -210,17 +210,13 @@ export class Soc2ReadinessService {
   private identifyGaps(controls: Soc2Control[]): string[] {
     const gaps: string[] = [];
 
-    controls
-      .filter(c => c.status === 'not_implemented')
-      .forEach(c => {
+    for (const c of controls) {
+      if (c.status === 'not_implemented') {
         gaps.push(`${c.id}: ${c.name} - Not implemented`);
-      });
-
-    controls
-      .filter(c => c.status === 'partial')
-      .forEach(c => {
+      } else if (c.status === 'partial') {
         gaps.push(`${c.id}: ${c.name} - Partially implemented, needs review`);
-      });
+      }
+    }
 
     return gaps;
   }

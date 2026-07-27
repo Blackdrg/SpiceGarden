@@ -98,25 +98,24 @@ export class ConsentService {
     });
     const saved = await this.consentRepo.save(consent);
 
-    for (const category of ALL_CATEGORIES) {
+    const logEntries = ALL_CATEGORIES.map((category) => {
       const granted = category === ConsentCategory.NECESSARY ? true : Boolean((consent as any)[category]);
-      await this.logRepo.save(
-        this.logRepo.create({
-          userId: consent.userId,
-          anonymousToken: consent.anonymousToken,
-          consentId: consent.id,
-          category,
-          granted,
-          region: consent.region,
-          consentVersion: consent.consentVersion,
-          action: input.anonymousToken ? 'anonymous_consent' : 'consent_set',
-          ipAddress: input.ipAddress,
-          userAgent: input.userAgent,
-          source: input.source || 'cookie_consent',
-          metadata: { method: input.method || 'banner' },
-        } as any),
-      );
-    }
+      return this.logRepo.create({
+        userId: consent.userId,
+        anonymousToken: consent.anonymousToken,
+        consentId: consent.id,
+        category,
+        granted,
+        region: consent.region,
+        consentVersion: consent.consentVersion,
+        action: input.anonymousToken ? 'anonymous_consent' : 'consent_set',
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+        source: input.source || 'cookie_consent',
+        metadata: { method: input.method || 'banner' },
+      } as any);
+    });
+    await Promise.all(logEntries.map((entry) => this.logRepo.save(entry)));
 
     await this.audit.record({
       action: 'consent_recorded',
@@ -211,13 +210,16 @@ export class ConsentService {
   async scanCookies(detected: { name: string; category?: ConsentCategory }[]): Promise<{ new: number; updated: number }> {
     let created = 0;
     let updated = 0;
-    for (const cookie of detected) {
+    const results = await Promise.all(detected.map(async (cookie) => {
       const existing = await this.registryRepo.findOne({ where: { name: cookie.name } });
-      const res = await this.upsertCookieRegistry({
+      await this.upsertCookieRegistry({
         name: cookie.name,
         category: cookie.category || ConsentCategory.NECESSARY,
         scanVersion: this.defaultVersion,
       });
+      return existing;
+    }));
+    for (const existing of results) {
       if (!existing) created++;
       else updated++;
     }

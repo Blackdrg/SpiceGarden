@@ -124,9 +124,7 @@ export class MenuModerationService {
     );
 
     const moderations = await this.moderationRepo.findBy({ id: In(moderationIds) });
-    for (const m of moderations) {
-      await this.itemRepo.update(m.menuItemId, { status: 'available' });
-    }
+    await Promise.all(moderations.map((m) => this.itemRepo.update(m.menuItemId, { status: 'available' })));
   }
 
   async getModerationStats(restaurantId?: string): Promise<any> {

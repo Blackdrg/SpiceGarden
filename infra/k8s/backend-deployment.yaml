@@ -74,14 +74,27 @@ spec:
               memory: "256Mi"
               cpu: "250m"
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "1Gi"
+              cpu: "1"
           volumeMounts:
             - name: tmp-volume
               mountPath: /tmp
       volumes:
         - name: tmp-volume
           emptyDir: {}
+---
+apiVersion: v1
+kind: PodDisruptionBudget
+metadata:
+  name: spicegarden-backend-pdb
+  labels:
+    app: spicegarden-backend
+spec:
+  minAvailable: 1
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: spicegarden-backend
 ---
 apiVersion: v1
 kind: Service

@@ -22,50 +22,66 @@ export const trackEvent = (event: AnalyticsEvent) => {
   }).catch(() => {})
 }
 
+function trackPageView(url: string) {
+  if (typeof window === 'undefined') return;
+  trackEvent({
+    event: 'page_view',
+    properties: { url },
+  });
+}
+
 export const useAnalytics = () => {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      trackEvent({ event: 'page_view', properties: { url: window.location.href } })
-    }
+    if (typeof window === 'undefined') return;
+    trackPageView(window.location.href);
   }, [])
+}
+
+function setupWebVitals(): () => void {
+  if (typeof window === 'undefined' || !('performance' in window)) return () => {};
+
+  const reportVital = (metric: { name: string; value: number }) => {
+    trackEvent({
+      event: 'web_vital',
+      properties: {
+        metric: metric.name,
+        value: metric.value,
+        path: window.location.pathname,
+      },
+    })
+  }
+
+  const observer = new PerformanceObserver((list) => {
+    list.getEntries().forEach((entry) => {
+      if (entry.entryType === 'largest-contentful-paint') {
+        reportVital({ name: 'LCP', value: entry.startTime })
+      }
+      if (entry.entryType === 'first-input') {
+        const firstInput = entry as PerformanceEventTiming
+        const inputDelay = firstInput.processingStart - firstInput.startTime
+        reportVital({ name: 'FID', value: inputDelay })
+      }
+    })
+  })
+
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] })
+
+  timeoutId = setTimeout(() => {
+    const cls = (window as any).cumulativeLayoutShift || 0
+    reportVital({ name: 'CLS', value: cls })
+  }, 5000)
+
+  return () => {
+    observer.disconnect()
+    if (timeoutId !== undefined) clearTimeout(timeoutId)
+  }
 }
 
 export const useWebVitals = () => {
   useEffect(() => {
-    if (typeof window === 'undefined' || !('performance' in window)) return
-
-    const reportVital = (metric: { name: string; value: number }) => {
-      trackEvent({
-        event: 'web_vital',
-        properties: {
-          metric: metric.name,
-          value: metric.value,
-          path: window.location.pathname,
-        },
-      })
-    }
-
-    const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'largest-contentful-paint') {
-          reportVital({ name: 'LCP', value: entry.startTime })
-        }
-        if (entry.entryType === 'first-input') {
-          const firstInput = entry as PerformanceEventTiming
-          const inputDelay = firstInput.processingStart - firstInput.startTime
-          reportVital({ name: 'FID', value: inputDelay })
-        }
-      })
-    })
-
-    observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] })
-
-    setTimeout(() => {
-      const cls = (window as any).cumulativeLayoutShift || 0
-      reportVital({ name: 'CLS', value: cls })
-    }, 5000)
-
-    return () => observer.disconnect()
+    return setupWebVitals();
   }, [])
 
   return null

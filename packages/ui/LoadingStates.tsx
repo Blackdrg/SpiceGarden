@@ -50,6 +50,7 @@ export const EmptyState = ({ title, description, icon, actionLabel, onAction, st
       )}
       {actionLabel && onAction && (
         <button
+          type="button"
           onClick={onAction}
           style={{
             marginTop: DESIGN_TOKENS.spacing[6],
@@ -140,6 +141,7 @@ export const NetworkError = ({ onRetry, message = 'Unable to connect. Please che
       </p>
       {onRetry && (
         <button
+          type="button"
           onClick={onRetry}
           style={{
             padding: `${DESIGN_TOKENS.spacing[3]}px ${DESIGN_TOKENS.spacing[6]}px`,

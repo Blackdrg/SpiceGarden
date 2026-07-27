@@ -5,23 +5,21 @@ import { ConfigModule } from '@nestjs/config';
 import { NotificationEntity } from '../db/entities/notification.entity';
 import { NotificationStatus } from '../db/entities/notification-status.enum';
 
-import {
-  LegalDocumentEntity,
-  LegalVersionEntity,
-  LegalAcceptanceEntity,
-  CookieConsentEntity,
-  ConsentLogEntity,
-  DataSubjectRequestEntity,
-  DataExportEntity,
-  RetentionPolicyEntity,
-  DataRetentionJobEntity,
-  SecurityIncidentEntity,
-  GrievanceEntity,
-  AgreementEntity,
-  AgreementAcceptanceEntity,
-  ComplianceAuditEntity,
-  CookieRegistryEntity,
-} from './entities';
+import { LegalDocumentEntity } from './entities/legal-document.entity';
+import { LegalVersionEntity } from './entities/legal-version.entity';
+import { LegalAcceptanceEntity } from './entities/legal-acceptance.entity';
+import { CookieConsentEntity } from './entities/cookie-consent.entity';
+import { ConsentLogEntity } from './entities/consent-log.entity';
+import { DataSubjectRequestEntity } from './entities/data-subject-request.entity';
+import { DataExportEntity } from './entities/data-export.entity';
+import { RetentionPolicyEntity } from './entities/retention-policy.entity';
+import { DataRetentionJobEntity } from './entities/data-retention-job.entity';
+import { SecurityIncidentEntity } from './entities/security-incident.entity';
+import { GrievanceEntity } from './entities/grievance.entity';
+import { AgreementEntity } from './entities/agreement.entity';
+import { AgreementAcceptanceEntity } from './entities/agreement-acceptance.entity';
+import { ComplianceAuditEntity } from './entities/compliance-audit.entity';
+import { CookieRegistryEntity } from './entities/cookie-registry.entity';
 
 import { LegalIntegrityService } from './integrity.service';
 import { ComplianceAuditService } from './compliance-audit.service';

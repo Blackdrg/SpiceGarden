@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { legalApi, ConsentRecord } from '@spicegarden/shared/api';
 
 export const CONSENT_STORAGE_KEY = 'sg_cookie_consent';
@@ -43,24 +43,20 @@ export function detectRegion(): string {
 }
 
 export function useCookieConsent() {
-  const [prefs, setPrefs] = useState<ConsentPreferences | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [bannerVisible, setBannerVisible] = useState(false);
-  const [region, setRegion] = useState('other');
-
-  useEffect(() => {
+  const [prefs, setPrefs] = useState<ConsentPreferences | null>(() => {
     const stored = getStoredConsent();
+    return stored ? stored.prefs : DEFAULT_CONSENT;
+  });
+  const [token, setToken] = useState<string | null>(() => {
+    const stored = getStoredConsent();
+    return stored?.token ?? null;
+  });
+  const [bannerVisible, setBannerVisible] = useState(() => {
     const detected = detectRegion();
-    setRegion(detected);
-    if (stored) {
-      setPrefs(stored.prefs);
-      setToken(stored.token);
-      setBannerVisible(false);
-    } else {
-      setPrefs(DEFAULT_CONSENT);
-      setBannerVisible(detected === 'eu' || detected === 'in');
-    }
-  }, []);
+    const stored = getStoredConsent();
+    return stored ? false : (detected === 'eu' || detected === 'in');
+  });
+  const [region, setRegion] = useState(() => detectRegion());
 
   const persist = useCallback((t: string, p: ConsentPreferences) => {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ token: t, prefs: p }));

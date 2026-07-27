@@ -20,6 +20,18 @@ function objToCss(styleObj) {
   }).join('\n');
 }
 
+function safeResolve(styleContent, tokens) {
+  const resolved = styleContent.replace(/DESIGN_TOKENS\.([a-zA-Z_][a-zA-Z0-9_.]*)/g, (_, path) => {
+    const parts = path.split('.');
+    let val = tokens;
+    for (const part of parts) {
+      val = val?.[part];
+    }
+    return JSON.stringify(val);
+  });
+  return JSON.parse(resolved);
+}
+
 function processFile(filePath) {
   const code = fs.readFileSync(filePath, 'utf8');
   const styleRegex = /style=\{\{([^}]+)\}\}/g; // simplistic: captures content inside double braces
@@ -30,14 +42,10 @@ function processFile(filePath) {
   while ((match = styleRegex.exec(code)) !== null) {
     const fullMatch = match[0];
     const styleContent = match[1];
-    // Attempt to evaluate the style object safely – we will use eval in a sandboxed way (NOTE: may fail for complex expressions).
     let styleObj = {};
     try {
-      // Replace DESIGN_TOKENS with a placeholder object to avoid reference errors.
       const placeholder = { DESIGN_TOKENS: { spacing: {}, colors: {}, radius: {} } };
-      const evalStr = '(' + styleContent + ')';
-      const func = new Function('DESIGN_TOKENS', 'return ' + evalStr);
-      styleObj = func(placeholder.DESIGN_TOKENS);
+      styleObj = safeResolve(styleContent, placeholder.DESIGN_TOKENS);
     } catch (e) {
       console.warn('Could not parse style object in', filePath, 'at', match.index);
       continue;

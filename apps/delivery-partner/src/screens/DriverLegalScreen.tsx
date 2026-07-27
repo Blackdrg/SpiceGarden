@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, Pressable, Linking, ActivityIndicator } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,30 +18,41 @@ const policyLinks = [
   { key: 'data_retention_policy', label: 'Data Retention Policy' },
 ];
 
+async function fetchDriverAgreement(): Promise<any | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`);
+    if (res.ok) {
+      return await res.json();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default function DriverLegalScreen(_props: ScreenProps): React.JSX.Element {
   const [agreement, setAgreement] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [accepted, setAccepted] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`);
-        if (res.ok) {
-          const data = await res.json();
-          if (active) setAgreement(data);
-        }
-      } catch {
-        // offline-friendly: UI still shows policy links
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+  const loadAgreement = useCallback(async (signal: { active: boolean }) => {
+    try {
+      const data = await fetchDriverAgreement();
+      if (!signal.active) return;
+      if (data) setAgreement(data);
+      setLoading(false);
+    } catch {
+      if (signal.active) setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    const signal = { active: true };
+    loadAgreement(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [loadAgreement]);
 
   const accept = async () => {
     try {

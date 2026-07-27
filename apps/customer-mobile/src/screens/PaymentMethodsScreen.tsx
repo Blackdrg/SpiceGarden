@@ -82,7 +82,7 @@ const PaymentMethodsScreen = () => {
   useEffect(() => {
     fetchPaymentMethods();
     fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-  }, [fetchPaymentMethods]);
+  }, [fetchPaymentMethods, fadeAnim]);
 
   const handleDeletePaymentMethod = useCallback(async (id: string) => {
     try {

@@ -183,10 +183,10 @@ export class LegalController {
   async requiredAcceptances(@Req() req: ExpressRequestWithUser) {
     const all = await this.documentService.listDocuments({ status: DocumentStatus.PUBLISHED });
     const required = all.filter((d) => d.requiresAcceptance);
-    const pending = [];
-    for (const doc of required) {
-      const ok = await this.documentService.hasAcceptedCurrent(req.user!.sub!, doc.type);
-      if (!ok) pending.push({ type: doc.type, title: doc.title, currentVersion: doc.currentVersion });
+    const results = await Promise.all(required.map((doc) => this.documentService.hasAcceptedCurrent(req.user!.sub!, doc.type)));
+    const pending: any[] = [];
+    for (let i = 0; i < required.length; i++) {
+      if (!results[i]) pending.push({ type: required[i].type, title: required[i].title, currentVersion: required[i].currentVersion });
     }
     return { pending };
   }

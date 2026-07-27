@@ -10,6 +10,8 @@ import { RetryService } from './retry.service';
 import { FraudHardeningService } from './fraud-hardening.service';
 import { IdempotencyService } from './idempotency.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
+import { RiskZoneService } from '../risk/risk-zone.service';
+import { RiskZoneModule } from '../risk/risk-zone.module';
 import { StripeGateway } from './gateways/stripe-gateway.service';
 import { RazorpayGateway } from './gateways/razorpay-gateway.service';
 import { GooglePayGateway } from './gateways/googlepay-gateway.service';
@@ -33,6 +35,7 @@ import { ChargebackModule } from './chargeback/chargeback.module';
     LedgerModule,
     GSTModule,
     ChargebackModule,
+    RiskZoneModule,
   ],
   providers: [
     PaymentService, 

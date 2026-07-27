@@ -4,6 +4,11 @@ import Head from 'next/head';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
+const formatCurrency = (value?: number) => {
+  if (typeof value !== 'number') return '₹0';
+  return `₹${value.toLocaleString('en-IN')}`;
+};
+
 interface PaymentStats {
   totalRevenue?: number;
   totalOrders?: number;
@@ -37,11 +42,6 @@ export default function PaymentAnalytics() {
     initialData: {},
   });
 
-  const formatCurrency = (value?: number) => {
-    if (typeof value !== 'number') return '₹0';
-    return `₹${value.toLocaleString('en-IN')}`;
-  };
-
   const codSuccessColor = typeof stats.codSuccessRate === 'number' && stats.codSuccessRate < 70 ? '#f04e31' : '#4ade80';
   const refundColor = typeof stats.refundAmount === 'number' && stats.refundAmount > 0 ? '#f04e31' : '#4ade80';
 
@@ -54,6 +54,7 @@ export default function PaymentAnalytics() {
           {['7d', '30d', '90d'].map((p) => (
             <button
               key={p}
+              type="button"
               onClick={() => setPeriod(p)}
               style={{
                 padding: '6px 14px',

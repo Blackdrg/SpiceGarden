@@ -116,10 +116,7 @@ export class TicketRoutingService {
     const unassignedTickets = await this.ticketRepo.find({
       where: { status: TicketStatus.OPEN } as any,
     });
-
-    for (const ticket of unassignedTickets) {
-      await this.routeTicket(ticket.id);
-    }
+    await Promise.all(unassignedTickets.map((ticket) => this.routeTicket(ticket.id)));
   }
 
   async getQueueStats(): Promise<any> {
@@ -144,10 +141,12 @@ export class TicketRoutingService {
   }
 
   private async getTicketsByPriority(): Promise<Record<string, number>> {
+    const priorities = Object.values(TicketPriority);
+    const countsArr = await Promise.all(priorities.map((priority) => this.ticketRepo.count({ where: { priority } } as any)));
     const counts: Record<string, number> = {};
-    for (const priority of Object.values(TicketPriority)) {
-      counts[priority] = await this.ticketRepo.count({ where: { priority } } as any);
-    }
+    priorities.forEach((priority, i) => {
+      counts[priority] = countsArr[i];
+    });
     return counts;
   }
 

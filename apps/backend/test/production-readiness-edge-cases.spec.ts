@@ -27,6 +27,7 @@ const gateway = {
   confirmPayment: jest.fn(),
   refundPayment: jest.fn(),
   constructEvent: jest.fn(),
+  fetchPaymentDetails: jest.fn(),
 };
 
 const configService = {
@@ -174,6 +175,7 @@ describe('Production-readiness backend edge coverage', () => {
     });
 
     it('rejects refund amounts above the original payment', async () => {
+      gateway.fetchPaymentDetails.mockResolvedValue({ id: 'pi_1', amount: 2500, currency: 'usd' });
       const service = new PaymentService(
         { get: jest.fn(() => 10000) } as any,
         auditService as any,

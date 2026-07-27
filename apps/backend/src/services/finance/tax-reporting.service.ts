@@ -43,9 +43,7 @@ export class TaxReportingService {
       },
     });
 
-    const gstDetails = orders
-      .filter(o => o.gstDetail)
-      .map(o => o.gstDetail!);
+    const gstDetails = orders.flatMap((o) => o.gstDetail ? [o.gstDetail] : []);
 
     const summary = {
       period: { month, year },
@@ -154,13 +152,13 @@ export class TaxReportingService {
   }
 
   async getMonthlyTaxSummary(restaurantId: string, months: number = 12): Promise<any[]> {
-    const summaries = [];
     const now = new Date();
-
-    for (let i = 0; i < months; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      summaries.push(await this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear()));
-    }
+    const summaries = await Promise.all(
+      Array.from({ length: months }, (_, i) => {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        return this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear());
+      }),
+    );
 
     return summaries;
   }

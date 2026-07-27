@@ -3,6 +3,8 @@
 import React from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
+const spiceLabels = { 1: 'Mild', 2: 'Medium', 3: 'Hot' };
+
 export interface FoodCardProps {
   image?: string;
   title: string;
@@ -26,11 +28,11 @@ export const FoodCard = ({
   onPress,
   style,
 }: FoodCardProps) => {
-  const spiceLabels = { 1: 'Mild', 2: 'Medium', 3: 'Hot' };
-  
+
   return (
     <div
       onClick={onPress}
+      onKeyDown={onPress ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPress?.(); } } : undefined}
       role={onPress ? 'button' : undefined}
       tabIndex={onPress ? 0 : undefined}
       style={{
@@ -94,7 +96,7 @@ export const FoodCard = ({
             {isVeg ? 'Veg' : 'Non-Veg'}
           </span>
         )}
-        {spiceLevel && (
+        {spiceLevel && spiceLevel > 0 && (
           <span style={{
             marginTop: 4,
             ...DESIGN_TOKENS.typography.caption,
@@ -169,9 +171,12 @@ export const MenuCard = ({
     return (
       <div
         onClick={onPress}
+        onKeyDown={onPress ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPress?.(); } } : undefined}
         role={onPress ? 'button' : undefined}
+        tabIndex={onPress ? 0 : undefined}
         style={{
           display: 'flex',
+          flex: 1,
           gap: DESIGN_TOKENS.spacing[3],
           backgroundColor: '#fff8f0',
           borderRadius: DESIGN_TOKENS.radius.xl,
@@ -214,6 +219,8 @@ export const MenuCard = ({
     <div
       onClick={onPress}
       role={onPress ? 'button' : undefined}
+      tabIndex={onPress ? 0 : undefined}
+      onKeyDown={onPress ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPress?.(); } } : undefined}
       style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -335,21 +342,21 @@ export interface TrackingCardProps {
   onSupport?: () => void;
 }
 
+const statusLabels = {
+  preparing: 'Preparing your order',
+  'picked-up': 'Picked up for delivery',
+  'on-the-way': 'On the way',
+  delivered: 'Delivered',
+};
+
+const statusColors = {
+  preparing: DESIGN_TOKENS.colors.warning,
+  'picked-up': DESIGN_TOKENS.colors.primary,
+  'on-the-way': DESIGN_TOKENS.colors.success,
+  delivered: DESIGN_TOKENS.colors.success,
+};
+
 export const TrackingCard = ({ status, eta, address, onContact, onSupport }: TrackingCardProps) => {
-  const statusLabels = {
-    preparing: 'Preparing your order',
-    'picked-up': 'Picked up for delivery',
-    'on-the-way': 'On the way',
-    delivered: 'Delivered',
-  };
-
-  const statusColors = {
-    preparing: DESIGN_TOKENS.colors.warning,
-    'picked-up': DESIGN_TOKENS.colors.primary,
-    'on-the-way': DESIGN_TOKENS.colors.success,
-    delivered: DESIGN_TOKENS.colors.success,
-  };
-
   return (
     <div style={{
       backgroundColor: DESIGN_TOKENS.colors.surface,
@@ -395,6 +402,7 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
         <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, marginTop: DESIGN_TOKENS.spacing[3] }}>
           {onContact && (
             <button
+              type="button"
               onClick={onContact}
               style={{
                 flex: 1,
@@ -412,6 +420,7 @@ export const TrackingCard = ({ status, eta, address, onContact, onSupport }: Tra
           )}
           {onSupport && (
             <button
+              type="button"
               onClick={onSupport}
               style={{
                 flex: 1,
@@ -461,6 +470,7 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
+            type="button"
             onClick={() => setRating(star)}
             aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
             style={{
@@ -476,7 +486,16 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
         ))}
       </div>
 
+      <label htmlFor="review-text" style={{
+        ...DESIGN_TOKENS.typography.smallLabel,
+        color: DESIGN_TOKENS.colors.textPrimary,
+        marginBottom: DESIGN_TOKENS.spacing[2],
+        display: 'block',
+      }}>
+        Your Review
+      </label>
       <textarea
+        id="review-text"
         placeholder="Your review..."
         value={review}
         onChange={(e) => setReview(e.target.value)}
@@ -494,6 +513,7 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
       />
 
       <button
+        type="button"
         onClick={() => onSubmit?.(rating, review)}
         disabled={rating === 0}
         style={{

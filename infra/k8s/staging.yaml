@@ -79,11 +79,11 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
               memory: "256Mi"
               cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
       volumes:
         - name: tmp-volume
           emptyDir: {}
@@ -102,6 +102,20 @@ spec:
     - port: 80
       targetPort: 3001
   type: ClusterIP
+---
+apiVersion: v1
+kind: PodDisruptionBudget
+metadata:
+  name: spicegarden-backend-staging-pdb
+  labels:
+    app: spicegarden-backend
+spec:
+  minAvailable: 1
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+      environment: staging
 ---
 apiVersion: v1
 kind: ConfigMap

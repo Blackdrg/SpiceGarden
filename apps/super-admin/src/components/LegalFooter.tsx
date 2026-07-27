@@ -11,6 +11,8 @@ const LEGAL_LINKS: LegalLink[] = [
 ];
 
 export function LegalFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer
       style={{
@@ -55,7 +57,7 @@ export function LegalFooter() {
           marginTop: 12,
         }}
       >
-        © {new Date().getFullYear()} SpiceGarden. All rights reserved.
+        © {year} SpiceGarden. All rights reserved.
       </div>
     </footer>
   );

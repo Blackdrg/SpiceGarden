@@ -44,7 +44,7 @@ export class DriverController {
   @Roles(UserRole.DELIVERY_PARTNER)
   @Permissions('deliveries:manage_assigned')
   async getProfile(@Request() req: { user: { id: string } }) {
-const driver = await this.driverRepo.findOne({
+    const driver = await this.driverRepo.findOne({
        where: { userId: req.user.id },
        relations: { user: true },
      });
@@ -58,7 +58,7 @@ const driver = await this.driverRepo.findOne({
     if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
       throw new ForbiddenException('Driver profile access denied');
     }
-const driver = await this.driverRepo.findOne({
+    const driver = await this.driverRepo.findOne({
        where: { id },
        relations: { user: true },
      });
@@ -72,10 +72,10 @@ const driver = await this.driverRepo.findOne({
     if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
       throw new ForbiddenException('Driver earnings access denied');
     }
-const assignments = await this.assignmentRepo.find({
-       where: { driver: { id } as any, status: 'delivered' } as any,
-       relations: { order: true },
-     });
+    const assignments = await this.assignmentRepo.find({
+      where: { driver: { id } as any, status: 'delivered' },
+      relations: { order: true },
+    });
 
     const totalEarnings = assignments.reduce((sum, a) => sum + (a.order?.grandTotal || 0), 0);
     const todayAssignments = assignments.filter(a => {
@@ -194,8 +194,8 @@ export class OrderDriverController {
       });
 
       const assignment = manager.create(DriverAssignmentEntity, {
-        order: { id } as any,
-        driver: { id: body.driverId } as any,
+        order: { id } as Partial<OrderEntity>,
+        driver: { id: body.driverId } as Partial<DriverEntity>,
         status: 'accepted',
         distance: 5,
         estimatedTimeMinutes: 30,
@@ -255,6 +255,13 @@ export class OrderDriverController {
       failed: OrderStatus.CANCELLED,
     };
 
+    const assignmentStatusMap: Record<string, DriverAssignmentEntity['status']> = {
+      pickedUp: 'picked_up',
+      onTheWay: 'picked_up',
+      delivered: 'delivered',
+      failed: 'failed',
+    };
+
     await this.orderRepo.update(id, { 
       status: statusMap[body.status] || OrderStatus.DELIVERED,
     });
@@ -264,7 +271,7 @@ export class OrderDriverController {
     });
     if (assignment) {
       await this.assignmentRepo.update(assignment.id, {
-        status: body.status as any,
+        status: assignmentStatusMap[body.status] || 'delivered',
         actualTimeMinutes: body.actualTimeMinutes,
       });
     }
@@ -304,7 +311,7 @@ export class OrderDriverController {
     @Param('id') id: string,
     @Body() body: VerifyOtpDto
   ) {
-const assignment = await this.assignmentRepo.findOne({
+    const assignment = await this.assignmentRepo.findOne({
        where: { order: { id } } as any,
        relations: { order: true },
      });

@@ -1,12 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { safeParse } from '../utils/safe-parse';
 import { STORAGE_KEYS, StorageKey } from '../constants/storage.keys';
 import { validateCart } from '../utils/validation';
 
 const CRASH_REPORT_KEY = 'spicegarden_crash_report';
+const SECURE_KEYS = new Set<StorageKey>([
+  STORAGE_KEYS.AUTH_TOKEN,
+  STORAGE_KEYS.REFRESH_TOKEN,
+]);
 
 export async function safeGetItem(key: StorageKey): Promise<string | null> {
   try {
+    if (SECURE_KEYS.has(key)) {
+      return SecureStore.getItemAsync(key);
+    }
     return await AsyncStorage.getItem(key);
   } catch (error) {
     securityLog('STORAGE_READ_FAIL', key, error);
@@ -16,14 +24,14 @@ export async function safeGetItem(key: StorageKey): Promise<string | null> {
 
 async function safeGetJSON<T>(key: StorageKey, fallback: T): Promise<T> {
   try {
-    const raw = await AsyncStorage.getItem(key);
+    const raw = await safeGetItem(key);
     if (!raw) return fallback;
     const parsed = safeParse(raw);
     return parsed as T;
   } catch (error) {
     securityLog('STORAGE_PARSE_FAIL', key, error);
     try {
-      await AsyncStorage.removeItem(key);
+      await safeRemoveItem(key);
     } catch {
       /* ignore cleanup failure */
     }
@@ -33,7 +41,11 @@ async function safeGetJSON<T>(key: StorageKey, fallback: T): Promise<T> {
 
 async function safeSetItem(key: StorageKey, value: string): Promise<void> {
   try {
-    await AsyncStorage.setItem(key, value);
+    if (SECURE_KEYS.has(key)) {
+      await SecureStore.setItemAsync(key, value);
+    } else {
+      await AsyncStorage.setItem(key, value);
+    }
   } catch (error) {
     securityLog('STORAGE_WRITE_FAIL', key, error);
   }
@@ -42,7 +54,7 @@ async function safeSetItem(key: StorageKey, value: string): Promise<void> {
 async function safeSetJSON(key: StorageKey, value: unknown): Promise<void> {
   try {
     const serialized = JSON.stringify(value);
-    await AsyncStorage.setItem(key, serialized);
+    await safeSetItem(key, serialized);
   } catch (error) {
     securityLog('STORAGE_SERIALIZE_FAIL', key, error);
   }
@@ -50,7 +62,11 @@ async function safeSetJSON(key: StorageKey, value: unknown): Promise<void> {
 
 async function safeRemoveItem(key: StorageKey): Promise<void> {
   try {
-    await AsyncStorage.removeItem(key);
+    if (SECURE_KEYS.has(key)) {
+      await SecureStore.deleteItemAsync(key);
+    } else {
+      await AsyncStorage.removeItem(key);
+    }
   } catch (error) {
     securityLog('STORAGE_REMOVE_FAIL', key, error);
   }
@@ -120,9 +136,11 @@ export async function saveCartSafe(cart: unknown[]): Promise<boolean> {
 }
 
 async function secureClearStorage(): Promise<void> {
-  const keysToRemove = Object.values(STORAGE_KEYS);
+  const asyncKeys = Object.values(STORAGE_KEYS).filter(key => !SECURE_KEYS.has(key));
+  const secureKeys = Object.values(STORAGE_KEYS).filter(key => SECURE_KEYS.has(key));
   try {
-    await AsyncStorage.multiRemove(keysToRemove);
+    await AsyncStorage.multiRemove(asyncKeys);
+    await Promise.all(secureKeys.map(key => SecureStore.deleteItemAsync(key)));
   } catch (error) {
     securityLog('STORAGE_CLEAR_FAIL', 'multi_remove', error);
   }

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
+import React, { createContext, useEffect, useMemo, useState, useCallback, use } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScreenName, RouteParams, Navigator, ScreenProps } from '../types';
 import SplashScreen from '../screens/SplashScreen';
@@ -23,7 +23,7 @@ import DriverLegalScreen from '../screens/DriverLegalScreen';
 const NavigatorContext = createContext<Navigator | null>(null);
 
 const useNavigation = (): Navigator => {
-  const ctx = useContext(NavigatorContext);
+  const ctx = use(NavigatorContext);
   if (!ctx) {
     throw new Error('useNavigation must be used within AppNavigator');
   }

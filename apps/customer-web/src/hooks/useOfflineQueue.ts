@@ -88,7 +88,7 @@ export const useOfflineQueue = () => {
   const enqueueRequest = useCallback(
     <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
       return new Promise<T>((resolve, reject) => {
-        const id = Math.random().toString(36).substr(2, 9);
+        const id = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
         const queuedRequest: QueuedRequest = {
           id,
           endpoint,

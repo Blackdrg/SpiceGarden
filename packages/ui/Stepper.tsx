@@ -3,6 +3,12 @@
 import React from 'react';
 import { DESIGN_TOKENS, MOTION_EASING } from './tokens';
 
+const sizeConfig = {
+  sm: { height: 32, btnWidth: 28, fontSize: 16 },
+  md: { height: 40, btnWidth: 36, fontSize: 18 },
+  lg: { height: 48, btnWidth: 44, fontSize: 20 },
+};
+
 interface StepperProps {
   value: number;
   onChange: (value: number) => void;
@@ -36,25 +42,19 @@ export const Stepper = ({
     }
   };
 
-  const sizeConfig = {
-    sm: { height: 32, btnWidth: 28, fontSize: 16 },
-    md: { height: 40, btnWidth: 36, fontSize: 18 },
-    lg: { height: 48, btnWidth: 44, fontSize: 20 },
-  };
-
   const config = sizeConfig[size];
 
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing[3] }}>
       {label && (
-        <label style={{
+        <label htmlFor="stepper-value" style={{
           ...DESIGN_TOKENS.typography.bodySmall,
           color: DESIGN_TOKENS.colors.textPrimary,
         }}>
           {label}
         </label>
       )}
-      <div style={{
+      <div id="stepper-value" role="group" aria-label={label || 'Stepper'} style={{
         display: 'inline-flex',
         alignItems: 'center',
         border: `1px solid ${DESIGN_TOKENS.colors.border}`,
@@ -63,6 +63,7 @@ export const Stepper = ({
         overflow: 'hidden',
       }}>
         <button
+          type="button"
           onClick={decrement}
           disabled={disabled || value <= min}
           aria-label="Decrease quantity"
@@ -98,6 +99,7 @@ export const Stepper = ({
           {value}
         </span>
         <button
+          type="button"
           onClick={increment}
           disabled={disabled || value >= max}
           aria-label="Increase quantity"

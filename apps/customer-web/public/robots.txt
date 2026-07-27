@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://spicegarden.com/sitemap.xml
+Sitemap: https://spicegarden.com/sitemap-restaurants.xml
+Sitemap: https://spicegarden.com/sitemap-cities.xml
+
+Host: https://spicegarden.com

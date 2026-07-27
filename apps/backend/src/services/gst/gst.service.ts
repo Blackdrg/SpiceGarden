@@ -79,38 +79,25 @@ export class GSTService {
         const itemTotal = item.unitPrice * item.quantity;
         totalTaxableValue += itemTotal;
 
-        // Determine GST rates based on HSN/SAC and location
-        let cgstRate = 0;
-        let sgstRate = 0;
-        let igstRate = 0;
-
-        // Get GST rate from HSN/SAC or use default
-        const gstRate = item.hsnSac?.gstRate || 18; // Default to 18% if not specified
-
-        // Determine if it's intra-state or inter-state supply
-        // Compare restaurant state with delivery address state
+        const gstRate = item.hsnSac?.gstRate || 18;
         const restaurantState = (restaurantGST as any)?.stateCode || 'XX';
         const customerState = (order as any)?.deliveryAddressStateCode || 'XX';
         const isIntraState = restaurantState === customerState || customerState === 'XX';
 
+        let cgstRate = 0;
+        let sgstRate = 0;
+        let igstRate = 0;
         if (isIntraState) {
-          // Intra-state supply: CGST + SGST
           cgstRate = gstRate / 2;
           sgstRate = gstRate / 2;
-          igstRate = 0;
         } else {
-          // Inter-state supply: IGST
-          cgstRate = 0;
-          sgstRate = 0;
           igstRate = gstRate;
         }
 
-        // Calculate tax amounts
         const cgstAmount = (itemTotal * cgstRate) / 100;
         const sgstAmount = (itemTotal * sgstRate) / 100;
         const igstAmount = (itemTotal * igstRate) / 100;
 
-        // Update item with tax details
         item.cgstRate = cgstRate;
         item.sgstRate = sgstRate;
         item.igstRate = igstRate;
@@ -120,14 +107,12 @@ export class GSTService {
         item.totalTax = cgstAmount + sgstAmount + igstAmount;
         item.totalAmount = itemTotal + item.totalTax;
 
-        // Save updated item
-        await this.orderItemRepo.save(item);
-
-        // Accumulate totals
         totalCGST += cgstAmount;
         totalSGST += sgstAmount;
         totalIGST += igstAmount;
       }
+
+      await Promise.all(order.items.map((item) => this.orderItemRepo.save(item)));
 
       const totalGstAmount = totalCGST + totalSGST + totalIGST;
       const totalAmount = totalTaxableValue + totalGstAmount;

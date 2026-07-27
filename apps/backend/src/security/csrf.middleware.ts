@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 export function csrfProtection() {
   return (req: Request, res: Response, next: NextFunction) => {
     const ignoredPaths = ['/api/webhook', '/payments/webhook', '/auth/login', '/auth/register'];
-    if (ignoredPaths.some(path => req.path.startsWith(path))) {
+    if (ignoredPaths.some(path => req.path === path || req.path.startsWith(`${path}/`))) {
       return next();
     }
 

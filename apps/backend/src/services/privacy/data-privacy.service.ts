@@ -125,8 +125,10 @@ export class DataPrivacyService {
       const user = await userRepo.findOne({ where: { id: userId } });
       if (!user) throw new NotFoundException('User not found');
 
-      const exportRequests = await exportRepo.find({ where: { userId, status: 'completed' } });
-      const deletionRequest = await deletionRepo.findOne({ where: { userId, status: 'pending' } });
+      const [exportRequests, deletionRequest] = await Promise.all([
+        exportRepo.find({ where: { userId, status: 'completed' } }),
+        deletionRepo.findOne({ where: { userId, status: 'pending' } }),
+      ]);
 
       if (!deletionRequest) throw new NotFoundException('Active deletion request not found');
 

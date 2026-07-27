@@ -1,10 +1,11 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
 export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
   private client: Redis | null = null;
+  private readonly logger = new Logger(RedisAdapter.name);
 
   constructor(private configService: ConfigService) {}
 
@@ -29,18 +30,17 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
 
       this.client = client;
       
-      client.on('connect', () => {
-        console.log(`Redis connected successfully at ${host}:${port}`);
-      });
+ client.on('connect', () => {
+         this.logger.log('Redis connected successfully');
+       });
 
-      client.on('error', (err: Error) => {
-        console.error('Redis connection error:', err);
-      });
+       client.on('error', (err: Error) => {
+         this.logger.error('Redis connection error', err.message);
+       });
 
-      await client.ping();
-      console.log('Redis ping successful');
+       await client.ping();
     } catch (e) {
-      console.warn('ioredis not installed or Redis unavailable, using fallback mode');
+      this.logger.warn('ioredis not installed or Redis unavailable, using fallback mode');
       this.client = null;
     }
   }
@@ -56,7 +56,7 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
     try {
       return await this.client.get(key);
     } catch (e) {
-      console.error('Redis GET error:', e);
+      this.logger.error('Redis GET error', e instanceof Error ? e.message : String(e));
       return null;
     }
   }
@@ -70,7 +70,7 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
         await this.client.set(key, value);
       }
     } catch (e) {
-      console.error('Redis SET error:', e);
+      this.logger.error('Redis SET error', e instanceof Error ? e.message : String(e));
     }
   }
 
@@ -79,7 +79,7 @@ export class RedisAdapter implements OnModuleInit, OnModuleDestroy {
     try {
       await this.client.del(key);
     } catch (e) {
-      console.error('Redis DEL error:', e);
+      this.logger.error('Redis DEL error', e instanceof Error ? e.message : String(e));
     }
   }
 

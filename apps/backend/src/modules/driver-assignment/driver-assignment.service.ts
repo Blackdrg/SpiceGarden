@@ -213,16 +213,17 @@ export class DriverAssignmentService {
     
     const acceptanceRate = 95;
     
-    // Cancellation rate from assignments
-    const cancelledAssignments = await this.assignmentRepo.count({
-      where: { 
-        driver: { id: driverId },
-        status: 'failed' // Assuming 'failed' means cancelled
-      }
-    });
-    const totalAssignments = await this.assignmentRepo.count({
-      where: { driver: { id: driverId } }
-    });
+    const [cancelledAssignments, totalAssignments] = await Promise.all([
+      this.assignmentRepo.count({
+        where: { 
+          driver: { id: driverId },
+          status: 'failed'
+        }
+      }),
+      this.assignmentRepo.count({
+        where: { driver: { id: driverId } }
+      }),
+    ]);
     const cancellationRate = totalAssignments > 0 
       ? (cancelledAssignments / totalAssignments) * 100 
       : 0;

@@ -506,14 +506,17 @@ export class DataSubjectRequestService {
       'support_tickets',
     ];
     const payload: Record<string, any> = { userId, exportedAt: new Date().toISOString(), sections: {} };
-    for (const table of tables) {
+    const entries = await Promise.all(tables.map(async (table) => {
       try {
         const repo = this.dataSource.getRepository(table);
         const rows = await repo.find({ where: { userId } as any, take: 1000 });
-        payload.sections[table] = rows;
+        return [table, rows] as const;
       } catch {
-        payload.sections[table] = [];
+        return [table, []] as const;
       }
+    }));
+    for (const [table, rows] of entries) {
+      payload.sections[table] = rows;
     }
     const signature = this.integrity.sign(payload);
     payload.integritySignature = signature;

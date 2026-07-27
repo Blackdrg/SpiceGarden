@@ -1,0 +1,3453 @@
+{
+  "apps": {
+    "customer-mobile": {
+      "total": 110,
+      "byRule": {
+        "no-vulnerable-react-server-components": [
+          {
+            "filePath": "package.json",
+            "line": 0,
+            "severity": "error",
+            "category": "Security",
+            "rule": "no-vulnerable-react-server-components",
+            "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint"
+          }
+        ],
+        "expo-gitignore": [
+          {
+            "filePath": "package.json",
+            "line": 0,
+            "severity": "warning",
+            "category": "Correctness",
+            "rule": "expo-gitignore",
+            "message": "The `.expo` directory is not ignored by Git  it holds machine-specific device history and dev-server settings that should not be committed"
+          }
+        ],
+        "rn-prefer-pressable": [
+          {
+            "filePath": "src/screens/RestaurantScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/components/EmptyState.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/components/OrderCard.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/components/OrderTabs.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/AuthScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/HistoryScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/ProfileScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-pressable",
+            "title": "Touchable components instead of Pressable",
+            "message": "Your users miss <Pressable>'s flexible press feedback when you use TouchableOpacity, which is old & frozen."
+          }
+        ],
+        "rn-prefer-reanimated": [
+          {
+            "filePath": "src/screens/RestaurantScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/AuthScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/ProfileScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/utils/navigation.ts",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-reanimated",
+            "title": "JS-thread animation instead of Reanimated",
+            "message": "Your users see stutter when Animated from react-native runs on the JS thread."
+          }
+        ],
+        "prefer-useReducer": [
+          {
+            "filePath": "src/screens/RestaurantScreen.tsx",
+            "line": 26,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "7 useState calls in \"RestaurantScreen\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/screens/AuthScreen.tsx",
+            "line": 7,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "9 useState calls in \"AuthScreen\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 27,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "8 useState calls in \"CheckoutScreen\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 26,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"MenuItemCustomizationScreen\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/screens/ProfileScreen.tsx",
+            "line": 22,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"ProfileScreen\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 24,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "7 useState calls in \"SearchScreen\" can each trigger a separate render."
+          }
+        ],
+        "rerender-lazy-ref-init": [
+          {
+            "filePath": "src/screens/RestaurantScreen.tsx",
+            "line": 35,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/RestaurantScreen.tsx",
+            "line": 36,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Map()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 33,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/AuthScreen.tsx",
+            "line": 19,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/AuthScreen.tsx",
+            "line": 20,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 36,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 37,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 25,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 52,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 53,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 54,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 37,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 37,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/ProfileScreen.tsx",
+            "line": 42,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 34,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 35,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/utils/navigation.ts",
+            "line": 43,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 28,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-lazy-ref-init",
+            "title": "Ref initializer runs on every render",
+            "message": "useRef(new Value()) rebuilds this value on every render & throws it away."
+          }
+        ],
+        "no-multi-comp": [
+          {
+            "filePath": "App.js",
+            "line": 30,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-multi-comp",
+            "title": "Multiple components in one file",
+            "message": "This file declares several components, so each component is harder to find, test, and change."
+          },
+          {
+            "filePath": "App.js",
+            "line": 50,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-multi-comp",
+            "title": "Multiple components in one file",
+            "message": "This file declares several components, so each component is harder to find, test, and change."
+          },
+          {
+            "filePath": "src/components/SkeletonLoader.tsx",
+            "line": 16,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-multi-comp",
+            "title": "Multiple components in one file",
+            "message": "This file declares several components, so each component is harder to find, test, and change."
+          },
+          {
+            "filePath": "src/components/SkeletonLoader.tsx",
+            "line": 31,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-multi-comp",
+            "title": "Multiple components in one file",
+            "message": "This file declares several components, so each component is harder to find, test, and change."
+          }
+        ],
+        "no-react19-deprecated-apis": [
+          {
+            "filePath": "src/constants/i18n.ts",
+            "line": 1,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-react19-deprecated-apis",
+            "title": "React 19 API migration can break callers",
+            "message": "useContext is replaced by `use()` in React 19, which reads context inside ifs & loops too, so switch to `import { use } from 'react'`."
+          }
+        ],
+        "js-hoist-intl": [
+          {
+            "filePath": "src/constants/i18n.ts",
+            "line": 40,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.NumberFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/constants/i18n.ts",
+            "line": 54,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.DateTimeFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/constants/i18n.ts",
+            "line": 72,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.DateTimeFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/utils/currency.js",
+            "line": 18,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.NumberFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/constants/i18n.js",
+            "line": 60,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.NumberFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/constants/i18n.js",
+            "line": 74,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.DateTimeFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/constants/i18n.js",
+            "line": 92,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.DateTimeFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          },
+          {
+            "filePath": "src/utils/currency.ts",
+            "line": 14,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-hoist-intl",
+            "title": "Intl formatter rebuilt each call",
+            "message": "This is slow because new Intl.NumberFormat() rebuilds on every call inside a function, so move it to the top of the file, or wrap it in useMemo"
+          }
+        ],
+        "only-export-components": [
+          {
+            "filePath": "src/components/EmptyState.tsx",
+            "line": 28,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "only-export-components",
+            "title": "Non-component export in component file",
+            "message": "This file exports non-components, so Fast Refresh can't safely preserve component state."
+          },
+          {
+            "filePath": "src/components/LoadingState.tsx",
+            "line": 23,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "only-export-components",
+            "title": "Non-component export in component file",
+            "message": "This file exports non-components, so Fast Refresh can't safely preserve component state."
+          },
+          {
+            "filePath": "src/components/OrderCard.tsx",
+            "line": 103,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "only-export-components",
+            "title": "Non-component export in component file",
+            "message": "This file exports non-components, so Fast Refresh can't safely preserve component state."
+          },
+          {
+            "filePath": "src/components/OrderTabs.tsx",
+            "line": 41,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "only-export-components",
+            "title": "Non-component export in component file",
+            "message": "This file exports non-components, so Fast Refresh can't safely preserve component state."
+          }
+        ],
+        "no-derived-state": [
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 60,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-derived-state",
+            "title": "Derived value copied into state",
+            "message": "\"prefs\" is only set here from other values, so storing it costs an extra render."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 62,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-derived-state",
+            "title": "Derived value copied into state",
+            "message": "\"addresses\" is only set here from other values, so storing it costs an extra render."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 53,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-derived-state",
+            "title": "Derived value copied into state",
+            "message": "\"item\" is only set here from other values, so storing it costs an extra render."
+          }
+        ],
+        "no-render-in-render": [
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 130,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 131,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 132,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 137,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 138,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/NotificationsScreen.tsx",
+            "line": 143,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderToggleRow()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 176,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderPaymentMethodIcon()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 181,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderPaymentMethodDetails()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          }
+        ],
+        "prefer-module-scope-pure-function": [
+          {
+            "filePath": "src/components/OrderCard.tsx",
+            "line": 16,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`getStatusColor` inside `OrderCard` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/RestaurantScreen.js",
+            "line": 77,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`handleAddToCart` inside `RestaurantScreen` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/hooks/useHaptics.ts",
+            "line": 2,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`impactAsync` inside `useHaptics` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/hooks/useHaptics.ts",
+            "line": 17,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`notificationAsync` inside `useHaptics` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/components/OrderCard.js",
+            "line": 42,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`getStatusColor` inside `OrderCard` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/CheckoutScreen.tsx",
+            "line": 103,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`calculatePromoDiscount` inside `CheckoutScreen` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 166,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`renderSkeleton` inside `SearchScreen` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 116,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`renderPaymentMethodIcon` inside `PaymentMethodsScreen` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/PaymentMethodsScreen.tsx",
+            "line": 129,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`renderPaymentMethodDetails` inside `PaymentMethodsScreen` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "rn-no-legacy-shadow-styles": [
+          {
+            "filePath": "src/components/OrderCard.tsx",
+            "line": 104,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-no-legacy-shadow-styles",
+            "title": "Legacy platform-specific shadow styles",
+            "message": "Shadow style \"elevation\" only work on one platform, so your users on the other see no shadow."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 250,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-no-legacy-shadow-styles",
+            "title": "Legacy platform-specific shadow styles",
+            "message": "Shadow style \"elevation\" only work on one platform, so your users on the other see no shadow."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 285,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-no-legacy-shadow-styles",
+            "title": "Legacy platform-specific shadow styles",
+            "message": "Shadow style \"elevation\" only work on one platform, so your users on the other see no shadow."
+          }
+        ],
+        "rn-style-prefer-boxshadow": [
+          {
+            "filePath": "src/components/OrderCard.tsx",
+            "line": 110,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-style-prefer-boxshadow",
+            "title": "Platform-specific shadow keys over boxShadow",
+            "message": "Your users on the other platform see no shadow when you use elevation."
+          },
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 255,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-style-prefer-boxshadow",
+            "title": "Platform-specific shadow keys over boxShadow",
+            "message": "Your users on the other platform see no shadow when you use elevation."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 285,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-style-prefer-boxshadow",
+            "title": "Platform-specific shadow keys over boxShadow",
+            "message": "Your users on the other platform see no shadow when you use elevation."
+          }
+        ],
+        "js-combine-iterations": [
+          {
+            "filePath": "src/utils/validation.ts",
+            "line": 59,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-combine-iterations",
+            "title": "Chained array iterations",
+            "message": "This loops over your list twice because .map().filter() makes two passes, so do it in one pass with .reduce() or a for...of loop"
+          },
+          {
+            "filePath": "src/utils/validation.js",
+            "line": 61,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-combine-iterations",
+            "title": "Chained array iterations",
+            "message": "This loops over your list twice because .map().filter() makes two passes, so do it in one pass with .reduce() or a for...of loop"
+          }
+        ],
+        "rerender-state-only-in-handlers": [
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 23,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-state-only-in-handlers",
+            "title": "State only used in handlers",
+            "message": "Each update to \"locationPermission\" redraws your component for nothing because this useState is set but never shown on screen."
+          },
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 34,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-state-only-in-handlers",
+            "title": "State only used in handlers",
+            "message": "Each update to \"user\" redraws your component for nothing because this useState is set but never shown on screen."
+          }
+        ],
+        "no-event-handler": [
+          {
+            "filePath": "src/screens/AddressesScreen.tsx",
+            "line": 148,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-event-handler",
+            "title": "Event logic handled in an effect",
+            "message": "Faking an event handler with state plus a useEffect costs an extra render & runs late."
+          }
+        ],
+        "rerender-functional-setstate": [
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 91,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-functional-setstate",
+            "title": "setState reads a stale value",
+            "message": "You can lose this update because setCurrentIndex(currentIndex + ...) reads a stale value."
+          },
+          {
+            "filePath": "src/screens/OnboardingScreen.tsx",
+            "line": 114,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-functional-setstate",
+            "title": "setState reads a stale value",
+            "message": "You can lose this update because setCurrentIndex(currentIndex - ...) reads a stale value."
+          },
+          {
+            "filePath": "src/screens/MenuItemCustomizationScreen.tsx",
+            "line": 133,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "rerender-functional-setstate",
+            "title": "setState reads a stale value",
+            "message": "You can lose this update because setQuantity(quantity + ...) reads a stale value."
+          }
+        ],
+        "rn-prefer-expo-image": [
+          {
+            "filePath": "src/screens/CartScreen.tsx",
+            "line": 2,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-prefer-expo-image",
+            "title": "react-native Image instead of expo-image",
+            "message": "Your users watch images reload often because Image from react-native has no caching."
+          }
+        ],
+        "prefer-module-scope-static-value": [
+          {
+            "filePath": "src/screens/ProfileScreen.js",
+            "line": 154,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`menuItems` inside `ProfileScreen` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/screens/ProfileScreen.tsx",
+            "line": 158,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`menuItems` inside `ProfileScreen` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "no-giant-component": [
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 24,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-giant-component",
+            "title": "Large component is hard to read and change",
+            "message": "Component \"SearchScreen\" is 307 lines long, which is hard to read & change. Split it into a few smaller components."
+          }
+        ],
+        "rn-list-data-mapped": [
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 269,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rn-list-data-mapped",
+            "title": "List data rebuilt every render",
+            "message": "Your users see every row redraw when <FlatList> gets a new data array each render."
+          }
+        ],
+        "no-array-index-as-key": [
+          {
+            "filePath": "src/screens/SearchScreen.tsx",
+            "line": 287,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-array-index-as-key",
+            "title": "Array index used as a key",
+            "message": "Your users can see & submit the wrong data when this list reorders or filters, so use a stable id like `key={item.id}`, not the array index \"index\"."
+          }
+        ]
+      },
+      "files": [
+        "App.js",
+        "package.json",
+        "src/components/EmptyState.tsx",
+        "src/components/LoadingState.tsx",
+        "src/components/OrderCard.js",
+        "src/components/OrderCard.tsx",
+        "src/components/OrderTabs.tsx",
+        "src/components/SkeletonLoader.tsx",
+        "src/constants/i18n.js",
+        "src/constants/i18n.ts",
+        "src/hooks/useHaptics.ts",
+        "src/screens/AddressesScreen.tsx",
+        "src/screens/AuthScreen.tsx",
+        "src/screens/CartScreen.tsx",
+        "src/screens/CheckoutScreen.tsx",
+        "src/screens/HistoryScreen.tsx",
+        "src/screens/MenuItemCustomizationScreen.tsx",
+        "src/screens/NotificationsScreen.tsx",
+        "src/screens/OnboardingScreen.tsx",
+        "src/screens/PaymentMethodsScreen.tsx",
+        "src/screens/ProfileScreen.js",
+        "src/screens/ProfileScreen.tsx",
+        "src/screens/RestaurantScreen.js",
+        "src/screens/RestaurantScreen.tsx",
+        "src/screens/SearchScreen.tsx",
+        "src/utils/currency.js",
+        "src/utils/currency.ts",
+        "src/utils/navigation.ts",
+        "src/utils/validation.js",
+        "src/utils/validation.ts"
+      ]
+    },
+    "customer-web": {
+      "total": 152,
+      "byRule": {
+        "no-vulnerable-react-server-components": [
+          {
+            "filePath": "package.json",
+            "line": 0,
+            "severity": "error",
+            "category": "Security",
+            "rule": "no-vulnerable-react-server-components",
+            "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint"
+          }
+        ],
+        "prefer-useReducer": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 17,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"AddressesPage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 17,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"PaymentMethodsPage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/profile.tsx",
+            "line": 8,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"ProfilePage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 15,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"SearchPage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/checkout.tsx",
+            "line": 12,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "9 useState calls in \"CheckoutPage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/reset-password.tsx",
+            "line": 7,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"ResetPasswordPage\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/tracking.tsx",
+            "line": 24,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"TrackingPage\" can each trigger a separate render."
+          }
+        ],
+        "nextjs-no-client-side-redirect": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 36,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 46,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/auth/callback.tsx",
+            "line": 30,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 35,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 45,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 36,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 46,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 51,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-client-side-redirect",
+            "title": "Client-side redirect for navigation",
+            "message": "router.push() in useEffect flashes the wrong page before redirecting."
+          }
+        ],
+        "no-fetch-in-effect": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 31,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 42,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 30,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 31,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          }
+        ],
+        "js-cache-storage": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 62,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-cache-storage",
+            "title": "Repeated localStorage reads",
+            "message": "This is slow because localStorage.getItem(\"sg_token:v1\") runs several times & re-parses the data each call, so read it once & reuse the value"
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 61,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-cache-storage",
+            "title": "Repeated localStorage reads",
+            "message": "This is slow because localStorage.getItem(\"sg_token:v1\") runs several times & re-parses the data each call, so read it once & reuse the value"
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 62,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-cache-storage",
+            "title": "Repeated localStorage reads",
+            "message": "This is slow because localStorage.getItem(\"sg_token:v1\") runs several times & re-parses the data each call, so read it once & reuse the value"
+          },
+          {
+            "filePath": "src/pages/checkout.tsx",
+            "line": 101,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-cache-storage",
+            "title": "Repeated localStorage reads",
+            "message": "This is slow because localStorage.getItem(\"sg_token\") runs several times & re-parses the data each call, so read it once & reuse the value"
+          }
+        ],
+        "no-inline-exhaustive-style": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 128,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 174,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 142,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 157,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 9 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/components/OfflineIndicator.tsx",
+            "line": 20,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 12 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/history.tsx",
+            "line": 217,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/components/OfflineIndicator.js",
+            "line": 19,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 12 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 209,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 95,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 128,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 175,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/profile.tsx",
+            "line": 122,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 57,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 9 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 149,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 167,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 54,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 91,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/wallet.tsx",
+            "line": 70,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 10 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          }
+        ],
+        "button-has-type": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 136,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 160,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 164,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 140,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 155,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/auth/callback.tsx",
+            "line": 47,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 109,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 170,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 107,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 113,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 119,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 130,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 136,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/notifications.tsx",
+            "line": 146,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 136,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 161,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 165,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/components/ErrorBoundary.tsx",
+            "line": 28,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          }
+        ],
+        "control-has-associated-label": [
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 177,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 183,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 189,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 195,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/addresses.tsx",
+            "line": 201,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 82,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 91,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 103,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/auth.tsx",
+            "line": 113,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 188,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 194,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 201,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/payment-methods.tsx",
+            "line": 210,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 74,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/checkout.tsx",
+            "line": 211,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/reset-password.tsx",
+            "line": 124,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/reset-password.tsx",
+            "line": 147,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/reset-password.tsx",
+            "line": 166,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          },
+          {
+            "filePath": "src/pages/reset-password.tsx",
+            "line": 176,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "control-has-associated-label",
+            "title": "Control missing accessible label",
+            "message": "Blind users can't tell what this control does because screen readers find no label, so add visible text, `aria-label`, or `aria-labelledby`."
+          }
+        ],
+        "effect-needs-cleanup": [
+          {
+            "filePath": "src/pages/history.tsx",
+            "line": 41,
+            "severity": "error",
+            "category": "Bugs",
+            "rule": "effect-needs-cleanup",
+            "title": "Effect subscription or timer never cleaned up",
+            "message": "`setTimeout` creates a timer in useEffect without returning cleanup. Return a cleanup function so it does not leak after unmount."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 47,
+            "severity": "error",
+            "category": "Bugs",
+            "rule": "effect-needs-cleanup",
+            "title": "Effect subscription or timer never cleaned up",
+            "message": "`setTimeout` creates a timer in useEffect without returning cleanup. Return a cleanup function so it does not leak after unmount."
+          }
+        ],
+        "click-events-have-key-events": [
+          {
+            "filePath": "src/pages/history.tsx",
+            "line": 227,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 119,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 147,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 184,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 221,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 219,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 159,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/subscriptions.tsx",
+            "line": 72,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/offers.tsx",
+            "line": 78,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 101,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          },
+          {
+            "filePath": "src/pages/wallet.tsx",
+            "line": 80,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          }
+        ],
+        "no-static-element-interactions": [
+          {
+            "filePath": "src/pages/history.tsx",
+            "line": 227,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 147,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          },
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 219,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 159,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 101,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          },
+          {
+            "filePath": "src/pages/wallet.tsx",
+            "line": 80,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          }
+        ],
+        "no-tiny-text": [
+          {
+            "filePath": "src/pages/history.tsx",
+            "line": 230,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 222,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 162,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 104,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/wallet.tsx",
+            "line": 83,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          }
+        ],
+        "no-adjust-state-on-prop-change": [
+          {
+            "filePath": "src/hooks/useAnimation.ts",
+            "line": 19,
+            "severity": "error",
+            "category": "Bugs",
+            "rule": "no-adjust-state-on-prop-change",
+            "title": "State synced to a prop inside an effect",
+            "message": "This effect adjusts state after a prop changes, so users briefly see the stale value."
+          },
+          {
+            "filePath": "src/hooks/useTracking.ts",
+            "line": 18,
+            "severity": "error",
+            "category": "Bugs",
+            "rule": "no-adjust-state-on-prop-change",
+            "title": "State synced to a prop inside an effect",
+            "message": "This effect adjusts state after a prop changes, so users briefly see the stale value."
+          }
+        ],
+        "prefer-module-scope-pure-function": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 85,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`renderCategoryIcon` inside `HomePage` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/subscriptions.tsx",
+            "line": 27,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`getStatusClass` inside `SubscriptionsPage` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/offers.tsx",
+            "line": 26,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`copyCode` inside `OffersPage` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/offers.tsx",
+            "line": 30,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`getDiscountText` inside `OffersPage` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/wallet.tsx",
+            "line": 21,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`handleWithdraw` inside `WalletPage` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "no-redundant-roles": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 98,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-redundant-roles",
+            "title": "Redundant ARIA role",
+            "message": "Screen reader users gain nothing from this `role` because `<header>` already acts as a `banner`, so remove it."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 216,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-redundant-roles",
+            "title": "Redundant ARIA role",
+            "message": "Screen reader users gain nothing from this `role` because `<nav>` already acts as a `navigation`, so remove it."
+          }
+        ],
+        "prefer-tag-over-role": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 122,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 135,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 188,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          },
+          {
+            "filePath": "src/pages/subscriptions.tsx",
+            "line": 76,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          },
+          {
+            "filePath": "src/pages/offers.tsx",
+            "line": 83,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          }
+        ],
+        "no-render-in-render": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 140,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-render-in-render",
+            "title": "Component rendered by inline function call",
+            "message": "Your users lose state because \"renderCategoryIcon()\" builds UI from an inline call that React remounts, so pull it into its own component instead."
+          }
+        ],
+        "rendering-hydration-mismatch-time": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 205,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rendering-hydration-mismatch-time",
+            "title": "Time or random value in JSX",
+            "message": "This can cause a hydration mismatch because Math.random() reached from JSX gives a different value on the server than in the browser. Move it into useEffect+useState to run only in the browser, or add suppressHydrationWarning to the parent if it's on purpose."
+          },
+          {
+            "filePath": "src/pages/profile.tsx",
+            "line": 225,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rendering-hydration-mismatch-time",
+            "title": "Time or random value in JSX",
+            "message": "This can cause a hydration mismatch because Date.now() reached from JSX gives a different value on the server than in the browser. Move it into useEffect+useState to run only in the browser, or add suppressHydrationWarning to the parent if it's on purpose."
+          }
+        ],
+        "interactive-supports-focus": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 221,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "interactive-supports-focus",
+            "title": "Interactive element not focusable",
+            "message": "Keyboard users can't focus this 'tab' because it can't receive focus, so add `tabIndex={0}` or `tabIndex={-1}`."
+          }
+        ],
+        "no-initialize-state": [
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 35,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-initialize-state",
+            "title": "State initialized from a mount effect",
+            "message": "Your users see an extra render with empty \"loading\" because a useEffect sets its starting value."
+          },
+          {
+            "filePath": "src/hooks/useMotion.ts",
+            "line": 14,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-initialize-state",
+            "title": "State initialized from a mount effect",
+            "message": "Your users see an extra render with empty \"prefersReducedMotion\" because a useEffect sets its starting value."
+          },
+          {
+            "filePath": "src/hooks/useNetworkStatus.ts",
+            "line": 21,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-initialize-state",
+            "title": "State initialized from a mount effect",
+            "message": "Your users see an extra render with empty \"isOnline\" because a useEffect sets its starting value."
+          }
+        ],
+        "prefer-module-scope-static-value": [
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 40,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`categories` inside `MenuPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/menu.tsx",
+            "line": 48,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`menuItems` inside `MenuPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/search.tsx",
+            "line": 50,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`filters` inside `SearchPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 133,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`statusLabels` inside `OrderDetailsPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 142,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`statusColors` inside `OrderDetailsPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 12,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`categories` inside `RestaurantPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/restaurant.tsx",
+            "line": 18,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`menuItems` inside `RestaurantPage` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "exhaustive-deps": [
+          {
+            "filePath": "src/hooks/useOfflineQueue.ts",
+            "line": 65,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "exhaustive-deps",
+            "title": "Missing effect dependencies",
+            "message": "`useCallback` can run with a stale `processQueue` & show your users old data."
+          },
+          {
+            "filePath": "src/hooks/useOfflineQueue.ts",
+            "line": 104,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "exhaustive-deps",
+            "title": "Missing effect dependencies",
+            "message": "`useCallback` can run with a stale `isProcessing, queue, simulateApiCall` & show your users old data."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 103,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "exhaustive-deps",
+            "title": "Missing effect dependencies",
+            "message": "`useEffect` can run with a stale `router.push` & show your users old data."
+          }
+        ],
+        "async-await-in-loop": [
+          {
+            "filePath": "src/hooks/useOfflineQueue.ts",
+            "line": 85,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "async-await-in-loop",
+            "title": "await inside a loop",
+            "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`"
+          },
+          {
+            "filePath": "src/hooks/useOfflineQueue.js",
+            "line": 64,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "async-await-in-loop",
+            "title": "await inside a loop",
+            "message": "This makes the forof loop slow because each await runs one after another, so collect the independent calls & run them together with `await Promise.all(items.map(...))`"
+          }
+        ],
+        "async-defer-await": [
+          {
+            "filePath": "src/hooks/useOfflineQueue.ts",
+            "line": 117,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "async-defer-await",
+            "title": "await before an early-return guard",
+            "message": "This await blocks the function before an early-return that doesn't use the awaited value, so the skip path waits for nothing. Move the await below the guard so it only runs when you need the data"
+          },
+          {
+            "filePath": "src/hooks/useOfflineQueue.js",
+            "line": 93,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "async-defer-await",
+            "title": "await before an early-return guard",
+            "message": "This await blocks the function before an early-return that doesn't use the awaited value, so the skip path waits for nothing. Move the await below the guard so it only runs when you need the data"
+          }
+        ],
+        "nextjs-no-img-element": [
+          {
+            "filePath": "src/pages/profile.tsx",
+            "line": 135,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-img-element",
+            "title": "Plain img ships unoptimized images",
+            "message": "Plain <img> ships unoptimized, oversized images."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 161,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-img-element",
+            "title": "Plain img ships unoptimized images",
+            "message": "Plain <img> ships unoptimized, oversized images."
+          },
+          {
+            "filePath": "src/pages/order-details.tsx",
+            "line": 184,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-img-element",
+            "title": "Plain img ships unoptimized images",
+            "message": "Plain <img> ships unoptimized, oversized images."
+          }
+        ],
+        "no-array-index-as-key": [
+          {
+            "filePath": "src/pages/subscriptions.tsx",
+            "line": 50,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-array-index-as-key",
+            "title": "Array index used as a key",
+            "message": "Your users can see & submit the wrong data when this list reorders or filters, so use a stable id like `key={item.id}`, not the array index \"i\"."
+          }
+        ],
+        "client-localstorage-no-version": [
+          {
+            "filePath": "src/redux/slices/authSlice.js",
+            "line": 20,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "client-localstorage-no-version",
+            "title": "Unversioned localStorage key",
+            "message": "localStorage.setItem(\"sg_user\", JSON.stringify(...)) has no version, so changing the data shape later crashes your users' saved sessions. Add one to the key (e.g. \"sg_user:v1\")."
+          },
+          {
+            "filePath": "src/redux/slices/authSlice.js",
+            "line": 35,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "client-localstorage-no-version",
+            "title": "Unversioned localStorage key",
+            "message": "localStorage.setItem(\"sg_user\", JSON.stringify(...)) has no version, so changing the data shape later crashes your users' saved sessions. Add one to the key (e.g. \"sg_user:v1\")."
+          },
+          {
+            "filePath": "src/redux/slices/authSlice.ts",
+            "line": 37,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "client-localstorage-no-version",
+            "title": "Unversioned localStorage key",
+            "message": "localStorage.setItem(\"sg_user\", JSON.stringify(...)) has no version, so changing the data shape later crashes your users' saved sessions. Add one to the key (e.g. \"sg_user:v1\")."
+          },
+          {
+            "filePath": "src/redux/slices/authSlice.ts",
+            "line": 52,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "client-localstorage-no-version",
+            "title": "Unversioned localStorage key",
+            "message": "localStorage.setItem(\"sg_user\", JSON.stringify(...)) has no version, so changing the data shape later crashes your users' saved sessions. Add one to the key (e.g. \"sg_user:v1\")."
+          }
+        ],
+        "jsx-no-constructed-context-values": [
+          {
+            "filePath": "src/contexts/NetworkStatusContext.js",
+            "line": 45,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "jsx-no-constructed-context-values",
+            "title": "Unstable context provider value",
+            "message": "Every reader of this context redraws on each render because you build its `value` inline."
+          },
+          {
+            "filePath": "src/contexts/NetworkStatusContext.tsx",
+            "line": 13,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "jsx-no-constructed-context-values",
+            "title": "Unstable context provider value",
+            "message": "Every reader of this context redraws on each render because you build its `value` inline."
+          }
+        ],
+        "no-cascading-set-state": [
+          {
+            "filePath": "src/hooks/useTracking.ts",
+            "line": 10,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-cascading-set-state",
+            "title": "Multiple setState calls in one effect",
+            "message": "7 setState calls in one useEffect redraw your screen each time they run together."
+          }
+        ],
+        "no-react19-deprecated-apis": [
+          {
+            "filePath": "src/contexts/NetworkStatusContext.tsx",
+            "line": 1,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-react19-deprecated-apis",
+            "title": "React 19 API migration can break callers",
+            "message": "useContext is replaced by `use()` in React 19, which reads context inside ifs & loops too, so switch to `import { use } from 'react'`."
+          }
+        ],
+        "no-effect-chain": [
+          {
+            "filePath": "src/pages/tracking.tsx",
+            "line": 48,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-effect-chain",
+            "title": "Effects chained together",
+            "message": "Your screen redraws several times from a single action because one useEffect changes \"orderId\", which sets off this one."
+          }
+        ],
+        "no-event-handler": [
+          {
+            "filePath": "src/pages/tracking.tsx",
+            "line": 49,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-event-handler",
+            "title": "Event logic handled in an effect",
+            "message": "Faking an event handler with state plus a useEffect costs an extra render & runs late."
+          }
+        ]
+      },
+      "files": [
+        "package.json",
+        "src/components/ErrorBoundary.tsx",
+        "src/components/OfflineIndicator.js",
+        "src/components/OfflineIndicator.tsx",
+        "src/contexts/NetworkStatusContext.js",
+        "src/contexts/NetworkStatusContext.tsx",
+        "src/hooks/useAnimation.ts",
+        "src/hooks/useMotion.ts",
+        "src/hooks/useNetworkStatus.ts",
+        "src/hooks/useOfflineQueue.js",
+        "src/hooks/useOfflineQueue.ts",
+        "src/hooks/useTracking.ts",
+        "src/pages/addresses.tsx",
+        "src/pages/auth.tsx",
+        "src/pages/auth/callback.tsx",
+        "src/pages/checkout.tsx",
+        "src/pages/history.tsx",
+        "src/pages/index.tsx",
+        "src/pages/menu.tsx",
+        "src/pages/notifications.tsx",
+        "src/pages/offers.tsx",
+        "src/pages/order-details.tsx",
+        "src/pages/payment-methods.tsx",
+        "src/pages/profile.tsx",
+        "src/pages/reset-password.tsx",
+        "src/pages/restaurant.tsx",
+        "src/pages/search.tsx",
+        "src/pages/subscriptions.tsx",
+        "src/pages/tracking.tsx",
+        "src/pages/wallet.tsx",
+        "src/redux/slices/authSlice.js",
+        "src/redux/slices/authSlice.ts"
+      ]
+    },
+    "restaurant-dashboard": {
+      "total": 33,
+      "byRule": {
+        "no-vulnerable-react-server-components": [
+          {
+            "filePath": "package.json",
+            "line": 0,
+            "severity": "error",
+            "category": "Security",
+            "rule": "no-vulnerable-react-server-components",
+            "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint"
+          }
+        ],
+        "button-has-type": [
+          {
+            "filePath": "src/pages/onboarding/pricing.tsx",
+            "line": 62,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/onboarding/gst.tsx",
+            "line": 69,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/onboarding/documents.tsx",
+            "line": 84,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 122,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 196,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 261,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 105,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/onboarding/menu.tsx",
+            "line": 124,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          }
+        ],
+        "label-has-associated-control": [
+          {
+            "filePath": "src/pages/onboarding/gst.tsx",
+            "line": 56,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 57,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 67,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 78,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 89,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 100,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/payout.tsx",
+            "line": 110,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 49,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 59,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 69,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 79,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          },
+          {
+            "filePath": "src/pages/onboarding/business.tsx",
+            "line": 93,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "label-has-associated-control",
+            "title": "Label missing associated control",
+            "message": "Screen reader users can't tell which input this label names because it's tied to none, so add `htmlFor` or wrap the input inside it."
+          }
+        ],
+        "no-giant-component": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 83,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-giant-component",
+            "title": "Large component is hard to read and change",
+            "message": "Component \"KitchenDashboard\" is 329 lines long, which is hard to read & change. Split it into a few smaller components."
+          }
+        ],
+        "prefer-useReducer": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 83,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "7 useState calls in \"KitchenDashboard\" can each trigger a separate render."
+          },
+          {
+            "filePath": "src/pages/onboarding/menu.tsx",
+            "line": 5,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "5 useState calls in \"OnboardingMenu\" can each trigger a separate render."
+          }
+        ],
+        "no-cascading-set-state": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 115,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-cascading-set-state",
+            "title": "Multiple setState calls in one effect",
+            "message": "3 setState calls in one useEffect redraw your screen each time they run together."
+          }
+        ],
+        "prefer-module-scope-static-value": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 170,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`statuses` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 171,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`statusLabels` inside `KitchenDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "prefer-module-scope-pure-function": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 183,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-pure-function",
+            "title": "Pure function rebuilt every render",
+            "message": "`tryPlay` inside `KitchenDashboard` uses no local state but is rebuilt on every render, so it wastes work & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "prefer-tag-over-role": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 239,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "prefer-tag-over-role",
+            "title": "Role used instead of HTML tag",
+            "message": "Screen reader users get more reliable semantics from `<button>` than `role=\"button\"`, so use `<button>` instead."
+          }
+        ],
+        "click-events-have-key-events": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 391,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "click-events-have-key-events",
+            "title": "Click handler missing keyboard handler",
+            "message": "Keyboard users can't trigger this click handler because there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or `onKeyPress`."
+          }
+        ],
+        "no-static-element-interactions": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 391,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-static-element-interactions",
+            "title": "Interaction on static element",
+            "message": "Screen reader users can't tell this click handler is interactive because it has no `role`, so add a `role` or use a button or link."
+          }
+        ],
+        "no-inline-exhaustive-style": [
+          {
+            "filePath": "src/pages/onboarding/index.tsx",
+            "line": 28,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          }
+        ],
+        "no-array-index-as-key": [
+          {
+            "filePath": "src/pages/onboarding/menu.tsx",
+            "line": 113,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-array-index-as-key",
+            "title": "Array index used as a key",
+            "message": "Your users can see & submit the wrong data when this list reorders or filters, so use a stable id like `key={item.id}`, not the array index \"idx\"."
+          }
+        ]
+      },
+      "files": [
+        "package.json",
+        "src/pages/index.tsx",
+        "src/pages/onboarding/business.tsx",
+        "src/pages/onboarding/documents.tsx",
+        "src/pages/onboarding/gst.tsx",
+        "src/pages/onboarding/index.tsx",
+        "src/pages/onboarding/menu.tsx",
+        "src/pages/onboarding/payout.tsx",
+        "src/pages/onboarding/pricing.tsx"
+      ]
+    },
+    "super-admin": {
+      "total": 48,
+      "byRule": {
+        "no-vulnerable-react-server-components": [
+          {
+            "filePath": "package.json",
+            "line": 0,
+            "severity": "error",
+            "category": "Security",
+            "rule": "no-vulnerable-react-server-components",
+            "message": "next@15.5.6 bundles the React Server Components runtime affected by the critical remote code execution vulnerability (CVE-2025-55182, CVSS 10.0)  an unauthenticated attacker can run arbitrary code on your server by sending a crafted payload to any Server Function or Server Action endpoint"
+          }
+        ],
+        "button-has-type": [
+          {
+            "filePath": "src/pages/loyalty/coupons.tsx",
+            "line": 85,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/overview.tsx",
+            "line": 79,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 228,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 652,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/penalties.tsx",
+            "line": 61,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 39,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "button-has-type",
+            "title": "Button missing explicit type",
+            "message": "Your users can submit the form by accident because a `<button>` with no `type` defaults to submit."
+          }
+        ],
+        "no-inline-exhaustive-style": [
+          {
+            "filePath": "src/pages/loyalty/coupons.tsx",
+            "line": 88,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 213,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 12 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 231,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 11 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 654,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/penalties.tsx",
+            "line": 63,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 42,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-inline-exhaustive-style",
+            "title": "Large inline style object rebuilds every render",
+            "message": "This inline style has 8 properties, which is hard to read & rebuilds every render. Move it to a CSS class, CSS module, or styled component."
+          }
+        ],
+        "js-combine-iterations": [
+          {
+            "filePath": "src/pages/loyalty/coupons.tsx",
+            "line": 100,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-combine-iterations",
+            "title": "Chained array iterations",
+            "message": "This loops over your list twice because .filter().map() makes two passes, so do it in one pass with .reduce() or a for...of loop"
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 325,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-combine-iterations",
+            "title": "Chained array iterations",
+            "message": "This loops over your list twice because .filter().map() makes two passes, so do it in one pass with .reduce() or a for...of loop"
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 564,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "js-combine-iterations",
+            "title": "Chained array iterations",
+            "message": "This loops over your list twice because .filter().map() makes two passes, so do it in one pass with .reduce() or a for...of loop"
+          }
+        ],
+        "nextjs-no-a-element": [
+          {
+            "filePath": "src/pages/loyalty/coupons.tsx",
+            "line": 114,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/top-dishes.tsx",
+            "line": 58,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/customers.tsx",
+            "line": 78,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/incentives.tsx",
+            "line": 6,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/penalties.tsx",
+            "line": 71,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/earnings.tsx",
+            "line": 6,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/loyalty/index.tsx",
+            "line": 19,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/shifts.tsx",
+            "line": 6,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/loyalty/referrals.tsx",
+            "line": 69,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 73,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 77,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 81,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 88,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "nextjs-no-a-element",
+            "title": "Plain anchor reloads internal Next.js links",
+            "message": "Plain <a> reloads the whole page for internal links, so Next.js loses client-side navigation and prefetching."
+          }
+        ],
+        "no-fetch-in-effect": [
+          {
+            "filePath": "src/pages/analytics/top-dishes.tsx",
+            "line": 18,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/analytics/customers.tsx",
+            "line": 29,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/driver-fleet/overview.tsx",
+            "line": 21,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/loyalty/referrals.tsx",
+            "line": 24,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          },
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 25,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-fetch-in-effect",
+            "title": "Data fetching inside an effect",
+            "message": "fetch() inside useEffect can race, double-fire, or leak. Use a data-fetching layer or Server Component instead."
+          }
+        ],
+        "prefer-dynamic-import": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 4,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "prefer-dynamic-import",
+            "title": "Heavy library loaded eagerly",
+            "message": "\"recharts\" ships extra code to your users up front & slows page load. Load it on demand with React.lazy() or next/dynamic."
+          }
+        ],
+        "no-giant-component": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 135,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "no-giant-component",
+            "title": "Large component is hard to read and change",
+            "message": "Component \"AdminDashboard\" is 489 lines long, which is hard to read & change. Split it into a few smaller components."
+          }
+        ],
+        "prefer-useReducer": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 135,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "prefer-useReducer",
+            "title": "Many related useState calls",
+            "message": "8 useState calls in \"AdminDashboard\" can each trigger a separate render."
+          }
+        ],
+        "prefer-module-scope-static-value": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 198,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`sevColor` inside `AdminDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 201,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`branchStatusColor` inside `AdminDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 204,
+            "severity": "warning",
+            "category": "Maintainability",
+            "rule": "prefer-module-scope-static-value",
+            "title": "Static value rebuilt every render",
+            "message": "`typeIcon` inside `AdminDashboard` uses no local state but is rebuilt every render, so it looks new each time & breaks memoized children. Move it to the top of the file, outside the component."
+          }
+        ],
+        "no-tiny-text": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 219,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 359,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 372,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 524,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          },
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 528,
+            "severity": "warning",
+            "category": "Accessibility",
+            "rule": "no-tiny-text",
+            "title": "Text is too small",
+            "message": "Your users strain to read 11px text, so use at least 12px for body text, & 16px is best."
+          }
+        ],
+        "rendering-hydration-mismatch-time": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 380,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "rendering-hydration-mismatch-time",
+            "title": "Time or random value in JSX",
+            "message": "This can cause a hydration mismatch because Date.now() reached from JSX gives a different value on the server than in the browser. Move it into useEffect+useState to run only in the browser, or add suppressHydrationWarning to the parent if it's on purpose."
+          }
+        ],
+        "no-layout-transition-inline": [
+          {
+            "filePath": "src/pages/index.tsx",
+            "line": 462,
+            "severity": "warning",
+            "category": "Performance",
+            "rule": "no-layout-transition-inline",
+            "title": "Animating layout properties",
+            "message": "Your users see janky, stuttering animation because \"width\" relayouts the page every frame, so animate transform & opacity instead."
+          }
+        ],
+        "no-cascading-set-state": [
+          {
+            "filePath": "src/pages/analytics/index.tsx",
+            "line": 25,
+            "severity": "warning",
+            "category": "Bugs",
+            "rule": "no-cascading-set-state",
+            "title": "Multiple setState calls in one effect",
+            "message": "3 setState calls in one useEffect redraw your screen each time they run together."
+          }
+        ]
+      },
+      "files": [
+        "package.json",
+        "src/pages/analytics/customers.tsx",
+        "src/pages/analytics/index.tsx",
+        "src/pages/analytics/top-dishes.tsx",
+        "src/pages/driver-fleet/earnings.tsx",
+        "src/pages/driver-fleet/incentives.tsx",
+        "src/pages/driver-fleet/overview.tsx",
+        "src/pages/driver-fleet/penalties.tsx",
+        "src/pages/driver-fleet/shifts.tsx",
+        "src/pages/index.tsx",
+        "src/pages/loyalty/coupons.tsx",
+        "src/pages/loyalty/index.tsx",
+        "src/pages/loyalty/referrals.tsx"
+      ]
+    },
+    "delivery-partner": {
+      "total": 52,
+      "byRule": {
+        "note": "No react-doctor-delivery-partner.json provided; 51 warnings + 1 security error per output.txt summary"
+      },
+      "files": []
+    }
+  },
+  "grandTotal": 343,
+  "allUniqueFiles": [
+    "App.js",
+    "package.json",
+    "src/components/EmptyState.tsx",
+    "src/components/ErrorBoundary.tsx",
+    "src/components/LoadingState.tsx",
+    "src/components/OfflineIndicator.js",
+    "src/components/OfflineIndicator.tsx",
+    "src/components/OrderCard.js",
+    "src/components/OrderCard.tsx",
+    "src/components/OrderTabs.tsx",
+    "src/components/SkeletonLoader.tsx",
+    "src/constants/i18n.js",
+    "src/constants/i18n.ts",
+    "src/contexts/NetworkStatusContext.js",
+    "src/contexts/NetworkStatusContext.tsx",
+    "src/hooks/useAnimation.ts",
+    "src/hooks/useHaptics.ts",
+    "src/hooks/useMotion.ts",
+    "src/hooks/useNetworkStatus.ts",
+    "src/hooks/useOfflineQueue.js",
+    "src/hooks/useOfflineQueue.ts",
+    "src/hooks/useTracking.ts",
+    "src/pages/addresses.tsx",
+    "src/pages/analytics/customers.tsx",
+    "src/pages/analytics/index.tsx",
+    "src/pages/analytics/top-dishes.tsx",
+    "src/pages/auth.tsx",
+    "src/pages/auth/callback.tsx",
+    "src/pages/checkout.tsx",
+    "src/pages/driver-fleet/earnings.tsx",
+    "src/pages/driver-fleet/incentives.tsx",
+    "src/pages/driver-fleet/overview.tsx",
+    "src/pages/driver-fleet/penalties.tsx",
+    "src/pages/driver-fleet/shifts.tsx",
+    "src/pages/history.tsx",
+    "src/pages/index.tsx",
+    "src/pages/loyalty/coupons.tsx",
+    "src/pages/loyalty/index.tsx",
+    "src/pages/loyalty/referrals.tsx",
+    "src/pages/menu.tsx",
+    "src/pages/notifications.tsx",
+    "src/pages/offers.tsx",
+    "src/pages/onboarding/business.tsx",
+    "src/pages/onboarding/documents.tsx",
+    "src/pages/onboarding/gst.tsx",
+    "src/pages/onboarding/index.tsx",
+    "src/pages/onboarding/menu.tsx",
+    "src/pages/onboarding/payout.tsx",
+    "src/pages/onboarding/pricing.tsx",
+    "src/pages/order-details.tsx",
+    "src/pages/payment-methods.tsx",
+    "src/pages/profile.tsx",
+    "src/pages/reset-password.tsx",
+    "src/pages/restaurant.tsx",
+    "src/pages/search.tsx",
+    "src/pages/subscriptions.tsx",
+    "src/pages/tracking.tsx",
+    "src/pages/wallet.tsx",
+    "src/redux/slices/authSlice.js",
+    "src/redux/slices/authSlice.ts",
+    "src/screens/AddressesScreen.tsx",
+    "src/screens/AuthScreen.tsx",
+    "src/screens/CartScreen.tsx",
+    "src/screens/CheckoutScreen.tsx",
+    "src/screens/HistoryScreen.tsx",
+    "src/screens/MenuItemCustomizationScreen.tsx",
+    "src/screens/NotificationsScreen.tsx",
+    "src/screens/OnboardingScreen.tsx",
+    "src/screens/PaymentMethodsScreen.tsx",
+    "src/screens/ProfileScreen.js",
+    "src/screens/ProfileScreen.tsx",
+    "src/screens/RestaurantScreen.js",
+    "src/screens/RestaurantScreen.tsx",
+    "src/screens/SearchScreen.tsx",
+    "src/utils/currency.js",
+    "src/utils/currency.ts",
+    "src/utils/navigation.ts",
+    "src/utils/validation.js",
+    "src/utils/validation.ts"
+  ]
+}

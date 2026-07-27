@@ -10,52 +10,57 @@ export class StructuredLogger implements LoggerService {
   }
 
   log(message: any, ...optionalParams: any[]) {
-    console.log(JSON.stringify({
+    const entry = JSON.stringify({
       level: 'info',
       message,
       context: this.context,
       timestamp: new Date().toISOString(),
       ...optionalParams,
-    }));
+    });
+    process.stdout.write(`${entry}\n`);
   }
 
   error(message: any, ...optionalParams: any[]) {
-    console.error(JSON.stringify({
+    const entry = JSON.stringify({
       level: 'error',
       message: sanitizeForLog(message),
       error: sanitizeForLog(optionalParams[0]),
       context: this.context,
       timestamp: new Date().toISOString(),
-    }));
+    });
+    process.stderr.write(`${entry}\n`);
   }
 
   warn(message: any, ...optionalParams: any[]) {
-    console.warn(JSON.stringify({
+    const entry = JSON.stringify({
       level: 'warn',
       message: sanitizeForLog(message),
       context: this.context,
       timestamp: new Date().toISOString(),
       ...optionalParams,
-    }));
+    });
+    process.stdout.write(`${entry}\n`);
   }
 
   debug?(message: any, ...optionalParams: any[]) {
-    console.debug(JSON.stringify({
+    const entry = JSON.stringify({
       level: 'debug',
       message,
       context: this.context,
       timestamp: new Date().toISOString(),
       ...optionalParams,
-    }));
+    });
+    process.stdout.write(`${entry}\n`);
   }
 
   verbose?(message: any, ...optionalParams: any[]) {
-    console.log(JSON.stringify({
+    const entry = JSON.stringify({
       level: 'verbose',
       message,
       context: this.context,
       timestamp: new Date().toISOString(),
       ...optionalParams,
-    }));
+    });
+    process.stdout.write(`${entry}\n`);
   }
 }

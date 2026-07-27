@@ -99,16 +99,11 @@ export class ComplianceAuditService {
 
   async scanForTampering(limit = 500): Promise<{ checked: number; tampered: number; ids: string[] }> {
     const records = await this.repo.find({ order: { createdAt: 'DESC' }, take: limit });
+    const results = await Promise.all(records.map(record => this.verifyIntegrity(record)));
     const tamperedIds: string[] = [];
-    for (const record of records) {
-      const ok = await this.verifyIntegrity(record);
-      if (!ok) {
-        tamperedIds.push(record.id);
-        if (!record.tampered) {
-          await this.repo.update(record.id, { tampered: true });
-        }
-      }
-    }
+    const tamperedRecords = records.filter((r, i) => !results[i] && !r.tampered);
+    await Promise.all(tamperedRecords.map(r => this.repo.update(r.id, { tampered: true })));
+    tamperedIds.push(...tamperedRecords.map(r => r.id));
     return { checked: records.length, tampered: tamperedIds.length, ids: tamperedIds };
   }
 }

@@ -98,10 +98,7 @@ export class ComplianceController {
   @Post('secrets/rotate')
   async rotateSecrets(@Query('secrets') secrets?: string) {
     const secretList = secrets ? secrets.split(',') : ['jwt_secret', 'encryption', 'db_password'];
-    const results = [];
-    for (const secret of secretList) {
-      results.push(await this.secretsService.rotateSecret(secret));
-    }
+    const results = await Promise.all(secretList.map((secret) => this.secretsService.rotateSecret(secret)));
     const allRotated = results.every((r) => r.rotated);
     return {
       success: allRotated,

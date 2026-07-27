@@ -81,7 +81,10 @@ describe('Delivery Partner API e2e flow', () => {
       expect.stringContaining('/auth/login'),
       expect.objectContaining({ method: 'POST' }),
     );
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith('driver_token', 'driver-token');
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('driver_id', 'driver-123');
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+      'sg_driver_data',
+      expect.stringContaining('"id":"driver-123"'),
+    );
   });
 });

@@ -32,9 +32,9 @@ export const Dropdown = ({
   fullWidth = true,
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<DropdownOption | null>(
-    options.find(opt => opt.value === value) || null
-  );
+   const [selected, setSelected] = useState<DropdownOption | null>(() =>
+     options.find(opt => opt.value === value) || null
+   );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export const Dropdown = ({
   return (
     <div ref={dropdownRef} style={{ marginBottom: error ? DESIGN_TOKENS.spacing[5] : DESIGN_TOKENS.spacing[4], width: fullWidth ? '100%' : undefined }}>
       {label && (
-        <label style={{
+        <label htmlFor="dropdown-select" style={{
           display: 'block',
           marginBottom: DESIGN_TOKENS.spacing[2],
           ...DESIGN_TOKENS.typography.smallLabel,
@@ -78,13 +78,15 @@ export const Dropdown = ({
           {label}
         </label>
       )}
-      <div
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        role="combobox"
-        aria-label={label || 'Dropdown'}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        tabIndex={disabled ? -1 : 0}
+       <div
+         id="dropdown-select"
+         onClick={() => !disabled && setIsOpen(!isOpen)}
+         role="combobox"
+         aria-label={label || 'Dropdown'}
+         aria-haspopup="listbox"
+         aria-expanded={isOpen}
+         aria-controls="dropdown-listbox"
+         tabIndex={disabled ? -1 : 0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); !disabled && setIsOpen(!isOpen); } }}
         style={{
           position: 'relative',
@@ -127,6 +129,7 @@ export const Dropdown = ({
         </span>
         {isOpen && (
           <div
+            id="dropdown-listbox"
             role="listbox"
             style={{
               position: 'absolute',
@@ -150,7 +153,9 @@ export const Dropdown = ({
                 role="option"
                 aria-selected={selected?.value === option.value}
                 aria-disabled={option.disabled}
+                tabIndex={option.disabled ? -1 : 0}
                 onClick={() => handleSelect(option)}
+                onKeyDown={(e) => { if (!option.disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleSelect(option); } }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

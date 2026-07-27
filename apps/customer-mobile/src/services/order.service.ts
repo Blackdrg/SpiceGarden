@@ -164,7 +164,7 @@ export const orderService = {
     }
 
     const reorderedItems: CartItem[] = order.items.map(item => ({
-      id: `${item.id || item.name}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      id: `${item.id || item.name}-${Date.now()}-${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`,
       name: String(item.name || '').slice(0, 200),
       price: Math.max(0, Number(item.price) || 0),
       quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),

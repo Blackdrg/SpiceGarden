@@ -4,16 +4,16 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
+const steps = [
+  { label: 'Order Confirmed', time: '2:30 PM', done: true, icon: 'checkmark-circle' },
+  { label: 'Preparing', time: '2:35 PM', done: true, icon: 'restaurant' },
+  { label: 'Picked Up', time: '2:50 PM', done: true, icon: 'car' },
+  { label: 'Delivered', time: '', done: false, icon: 'home' },
+];
+
 export default function TrackingScreen({ route }: any) {
   const navigation = useNavigation();
   const orderId = route?.params?.orderId;
-
-  const steps = [
-    { label: 'Order Confirmed', time: '2:30 PM', done: true, icon: 'checkmark-circle' },
-    { label: 'Preparing', time: '2:35 PM', done: true, icon: 'restaurant' },
-    { label: 'Picked Up', time: '2:50 PM', done: true, icon: 'car' },
-    { label: 'Delivered', time: '', done: false, icon: 'home' },
-  ];
 
   return (
     <View style={styles.container}>

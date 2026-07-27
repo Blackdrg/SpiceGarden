@@ -1,0 +1,6 @@
+setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const fadeAnim = useSharedValue(1);
+  const slideAnim = useSharedValue(0);
+  const scaleAnim = useSharedV

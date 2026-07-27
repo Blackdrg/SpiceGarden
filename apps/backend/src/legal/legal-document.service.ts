@@ -242,16 +242,14 @@ export class LegalDocumentService {
         where: { documentType: doc.type, withdrawn: false },
         take: 5000,
       });
-      const userIds = Array.from(new Set(acceptances.map((a) => a.userId).filter(Boolean)));
-      for (const userId of userIds) {
-        await this.notifications.notify({
-          userId,
-          event: 'policy_updated',
-          title: `${doc.title} updated`,
-          body: `We've updated ${doc.title} (v${version.version}). Please review the changes to stay compliant.`,
-          metadata: { type: doc.type, version: version.version },
-        });
-      }
+      const userIds = Array.from(new Set(acceptances.flatMap((a) => a.userId ? [a.userId] : [])));
+      await Promise.all(userIds.map((userId) => this.notifications.notify({
+        userId,
+        event: 'policy_updated',
+        title: `${doc.title} updated`,
+        body: `We've updated ${doc.title} (v${version.version}). Please review the changes to stay compliant.`,
+        metadata: { type: doc.type, version: version.version },
+      })));
     } catch (error) {
       this.logger.warn(`Policy update notification skipped: ${(error as Error).message}`);
     }

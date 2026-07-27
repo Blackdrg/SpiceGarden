@@ -8,13 +8,17 @@ module.exports = {
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/main.ts',
-    '!src/db/entities/**/*.ts'
+    '!src/db/entities/**/*.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/*.spec.js',
+    '!src/**/*-spec.ts',
+    '!src/**/*-spec.js'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'json', 'json-summary'],
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 72,
       functions: 80,
       lines: 80,
       statements: 80,

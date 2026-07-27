@@ -47,7 +47,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ userId
   };
 
   return (
-    <div className={styles.overlay} role="region" aria-label="Cookie consent">
+    <section className={styles.overlay} aria-label="Cookie consent">
       <Card variant="elevated" className={styles.card}>
         <h2 className={styles.title}>Your Privacy Choices</h2>
         <p className={styles.body}>
@@ -89,7 +89,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ userId
           )}
         </div>
       </Card>
-    </div>
+    </section>
   );
 };
 

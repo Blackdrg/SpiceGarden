@@ -331,10 +331,7 @@ export class SubscriptionService {
       },
     ];
 
-    for (const planData of plans) {
-      const plan = this.planRepo.create(planData);
-      await this.planRepo.save(plan);
-    }
+    await Promise.all(plans.map((planData) => this.planRepo.save(this.planRepo.create(planData))));
 
     this.logger.log('Initialized subscription plans');
   }

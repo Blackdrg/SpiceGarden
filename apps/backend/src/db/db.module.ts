@@ -2,6 +2,7 @@ import { Module, Global } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MongooseModule, getModelToken } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { Logger } from "@nestjs/common";
 import * as crypto from "crypto";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
 import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
@@ -13,6 +14,8 @@ const entitiesGlob: string[] =
 
 const localSqlite = process.env.LOCAL_DB === "sqlite";
 const localSqliteFile = process.env.LOCAL_DB === "sqlite-file";
+
+const logger = new Logger('DbModule');
 
 function localReviewModelProvider() {
   const store = new Map<string, any>();
@@ -87,10 +90,10 @@ const imports: any[] = useLocalSqlite
           uri: configService.get<string>("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
           connectionFactory: (connection: any) => {
             connection.on("error", (err: unknown) => {
-              console.error("MongoDB connection error:", err);
+              logger.error("MongoDB connection error", err instanceof Error ? err.message : String(err));
             });
             connection.on("connected", () => {
-              console.log("MongoDB connected successfully");
+              logger.log("MongoDB connected successfully");
             });
             return connection;
           },

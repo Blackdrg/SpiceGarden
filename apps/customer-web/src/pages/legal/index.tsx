@@ -60,7 +60,7 @@ const LegalCenterPage: React.FC = () => {
           <div className={styles.grid}>
             {docs.map((doc) => (
               <Link key={doc.type} href={`/legal/document/${doc.type}?language=${language}`} legacyBehavior passHref>
-                <a className={styles.cardLink}>
+                <a className={styles.cardLink} href={`/legal/document/${doc.type}?language=${language}`}>
                   <Card variant="default" className={styles.card}>
                     <h3 className={styles.cardTitle}>{doc.title}</h3>
                     <p className={styles.cardMeta}>Version {doc.currentVersion} · Updated {new Date(doc.lastUpdated).toLocaleDateString()}</p>

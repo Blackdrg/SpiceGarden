@@ -39,6 +39,12 @@ secrets/
 *.key
 *.pem
 
+# Keystores and signing files
+*.keystore
+*.jks
+*.p12
+*.pfx
+
 # Coverage
 coverage/
 *.lcov
@@ -57,6 +63,17 @@ out/
 .localrd.tmp
 .localreactdoctor.json
 loc-report.json
+test-types.tsx
+test-types2.tsx
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+playwright-report-audit/
+package/
+**/dist-web/
 
 # Next.js
 .next/

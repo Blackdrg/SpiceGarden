@@ -133,9 +133,9 @@ export class FraudHardeningService {
     if (!ipAddress) return false;
 
     const suspiciousPatterns = [
-      '10.',
-      '192.168.',
-      '172.16.',
+      '127.0.0.1',
+      '169.254.',
+      '0.0.0.0',
     ];
 
     return suspiciousPatterns.some(pattern => ipAddress.startsWith(pattern));

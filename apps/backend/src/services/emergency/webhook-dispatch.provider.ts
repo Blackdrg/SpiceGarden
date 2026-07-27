@@ -49,6 +49,20 @@ export class WebhookDispatchProvider implements IEmergencyDispatchProvider {
         }),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        return {
+          success: false,
+          message: `Webhook dispatch failed: ${response.status}`,
+          metadata: {
+            provider: this.name,
+            statusCode: response.status,
+            incidentId: data.incidentId,
+            error: errorText.substring(0, 200),
+          },
+        };
+      }
+
       const result = await response.text();
       this.logger.log(`Webhook dispatch for incident ${data.incidentNumber}: status=${response.status}`);
 

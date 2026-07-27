@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, MoreThanOrEqual } from 'typeorm';
+import * as crypto from 'crypto';
 import { EmergencyIncidentEntity, EmergencyIncidentStatus, EmergencySeverity } from '../../db/entities/emergency-incident.entity';
 import { EmergencyContactEntity } from '../../db/entities/emergency-contact.entity';
 import { EmergencyIncidentTimelineEntity } from '../../db/entities/emergency-incident-timeline.entity';
@@ -124,11 +125,14 @@ export class EmergencyService {
     await this.notifyDriverContacts(saved);
 
     const contacts = await this.contactRepo.find({ where: { driverId: dto.driverId } });
-    for (const contact of contacts.slice(0, 3)) {
+    const smsPromises: Promise<unknown>[] = [];
+    for (const contact of contacts) {
+      if (smsPromises.length >= 3) break;
       if (contact.phone && contact.verified) {
-        await this.notificationService.sendSMS(contact.phone, `EMERGENCY ALERT: Driver ${dto.driverId} has triggered SOS. Incident: ${incidentNumber}. Location: ${saved.latitude}, ${saved.longitude}`);
+        smsPromises.push(this.notificationService.sendSMS(contact.phone, `EMERGENCY ALERT: Driver ${dto.driverId} has triggered SOS. Incident: ${incidentNumber}. Location: ${saved.latitude}, ${saved.longitude}`));
       }
     }
+    await Promise.all(smsPromises);
 
     this.logger.warn(`SOS incident created: ${incidentNumber} for driver ${dto.driverId} severity=${severity}`);
     return saved;
@@ -336,11 +340,17 @@ export class EmergencyService {
     let totalResolutionTime = 0;
     let resolutionCount = 0;
 
-    for (const incident of allIncidents24h) {
-      const timelines = await this.timelineRepo.find({
+    const timelinePromises = allIncidents24h.map((incident) =>
+      this.timelineRepo.find({
         where: { incidentId: incident.id, event: 'incident_acknowledged' },
         take: 1,
-      });
+      }),
+    );
+    const timelinesResults = await Promise.all(timelinePromises);
+
+    for (let i = 0; i < allIncidents24h.length; i++) {
+      const incident = allIncidents24h[i];
+      const timelines = timelinesResults[i];
 
       if (timelines.length > 0) {
         const ackTime = timelines[0].timestamp.getTime() - incident.createdAt.getTime();
@@ -384,10 +394,9 @@ export class EmergencyService {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    const random = Math.floor(Math.random() * 9000) + 1000;
 
     if (now.getTime() >= this.sosCounter.resetAt) {
-      this.sosCounter.count = Math.floor(Math.random() * 100);
+      this.sosCounter.count = crypto.randomInt(0, 100);
       this.sosCounter.resetAt = now.getTime() + 60000;
     }
     this.sosCounter.count++;

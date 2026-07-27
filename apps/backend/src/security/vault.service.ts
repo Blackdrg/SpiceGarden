@@ -128,22 +128,23 @@ export class VaultService implements OnModuleInit {
       'RAZORPAY_WEBHOOK_SECRET',
     ];
 
-    const missing: string[] = [];
-    const valid: string[] = [];
-
-    for (const secret of requiredSecrets) {
+    const results = await Promise.all(requiredSecrets.map(async (secret) => {
       try {
         const value = await this.getSecret(secret, process.env[secret]);
         if (value && !value.includes('CHANGE_ME') && !value.includes('placeholder')) {
-          valid.push(secret);
-        } else {
-          missing.push(secret);
+          return { secret, valid: true as const };
         }
       } catch {
-        missing.push(secret);
+        // fallthrough
       }
-    }
+      return { secret, valid: false as const };
+    }));
 
+    const { missing, valid } = results.reduce<{ missing: string[]; valid: string[] }>((acc, r) => {
+      if (r.valid) acc.valid.push(r.secret);
+      else acc.missing.push(r.secret);
+      return acc;
+    }, { missing: [], valid: [] });
     return { missing, valid };
   }
 

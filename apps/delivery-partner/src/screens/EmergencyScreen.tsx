@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Pressable, Linking, StyleSheet, ScrollView } from 'react-native';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,50 +14,57 @@ interface RiskAlert {
   crimeCategory?: string;
 }
 
+const getSeverityColor = (severity: string) => {
+  switch (severity) {
+    case 'critical': return DESIGN_TOKENS.colors.danger;
+    case 'high': return '#F97316';
+    case 'medium': return '#F59E0B';
+    default: return DESIGN_TOKENS.colors.warning;
+  }
+};
+
+async function fetchRiskAlerts(): Promise<RiskAlert[]> {
+  try {
+    const response = await fetch('/api/risk/driver/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ driverId: 'current_driver', lat: 0, lng: 0 }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return [{
+        id: data.zone.id,
+        zoneName: data.zone.name,
+        riskScore: data.zone.riskScore,
+        severity: data.zone.severity,
+        reason: data.zone.reason || 'High risk area',
+        crimeCategory: data.zone.crimeCategory,
+      }];
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
+
 export default function EmergencyScreen(_props: ScreenProps): React.JSX.Element {
   const [riskAlerts, setRiskAlerts] = useState<RiskAlert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const loadingRef = useRef(true);
 
-  useEffect(() => {
-    loadRiskAlerts();
+  const loadRiskAlerts = useCallback(async (signal: { active: boolean }) => {
+    const alerts = await fetchRiskAlerts();
+    if (!signal.active) return;
+    setRiskAlerts(alerts);
+    loadingRef.current = false;
   }, []);
 
-  const loadRiskAlerts = async () => {
-    try {
-      const response = await fetch('/api/risk/driver/check', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driverId: 'current_driver', lat: 0, lng: 0 }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.inRiskZone && data.zone) {
-          setRiskAlerts([{
-            id: data.zone.id,
-            zoneName: data.zone.name,
-            riskScore: data.zone.riskScore,
-            severity: data.zone.severity,
-            reason: data.zone.reason || 'High risk area',
-            crimeCategory: data.zone.crimeCategory,
-          }]);
-        }
-      }
-    } catch {
-      // Use demo data if API fails
-      setRiskAlerts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'critical': return DESIGN_TOKENS.colors.danger;
-      case 'high': return '#F97316';
-      case 'medium': return '#F59E0B';
-      default: return DESIGN_TOKENS.colors.warning;
-    }
-  };
+  useEffect(() => {
+    const signal = { active: true };
+    loadRiskAlerts(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [loadRiskAlerts]);
 
   return (
     <Screen title="Emergency & Safety" navigation={_props.navigation}>

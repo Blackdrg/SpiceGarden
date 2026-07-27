@@ -106,16 +106,18 @@ export class ComplianceService {
       throw new NotFoundException('User not found');
     }
 
-    const orders = await this.orderRepo.find({
-      where: { userId },
-    });
-    const sessions = await this.sessionRepo.find({
-      where: { userId },
-    });
-    const auditLogs = await this.auditLogRepo.find({
-      where: { performedBy: userId },
-      take: 1000,
-    });
+    const [orders, sessions, auditLogs] = await Promise.all([
+      this.orderRepo.find({
+        where: { userId },
+      }),
+      this.sessionRepo.find({
+        where: { userId },
+      }),
+      this.auditLogRepo.find({
+        where: { performedBy: userId },
+        take: 1000,
+      }),
+    ]);
 
     return {
       user: {

@@ -2,28 +2,42 @@ import { useCallback, useEffect, useMemo, useState, ReactNode } from 'react';
 import { AuthContext } from './useAuth';
 import type { AuthUser, AuthContextValue, LoginResult } from './authTypes';
 
+
+async function fetchCurrentUser(): Promise<any | null> {
+  try {
+    const res = await fetch("/api/auth/me");
+    if (res.ok) return await res.json();
+  } catch { /* ignore */ }
+  return null;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch('/api/auth/me')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (cancelled) return;
-        if (data && data.user) {
+  const loadCurrentUser = useCallback(async (signal: { active: boolean }) => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (!signal.active) return;
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.user) {
           setUser(data.user as AuthUser);
         }
-        setHydrated(true);
-      })
-      .catch(() => {
-        if (!cancelled) setHydrated(true);
-      });
-    return () => {
-      cancelled = true;
-    };
+      }
+      setHydrated(true);
+    } catch {
+      if (signal.active) setHydrated(true);
+    }
   }, []);
+
+  useEffect(() => {
+    const signal = { active: true };
+    loadCurrentUser(signal);
+    return () => {
+      signal.active = false;
+    };
+  }, [loadCurrentUser]);
 
   const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {
     try {

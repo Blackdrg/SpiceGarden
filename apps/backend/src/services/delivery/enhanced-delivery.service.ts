@@ -361,14 +361,15 @@ export class EnhancedDeliveryService {
     const breakdown: { [key: string]: number } = {};
     let totalIncentive = 0;
 
+    const completedToday = await this.driverAssignmentRepo.count({
+      where: { status: 'delivered' as any },
+    });
+
     for (const rule of rules) {
       if (!rule.active) continue;
 
       switch (rule.type) {
         case 'bonus_per_order':
-          const completedToday = await this.driverAssignmentRepo.count({
-            where: { status: 'delivered' as any },
-          });
           if ((!rule.conditions.minDeliveries || completedToday >= rule.conditions.minDeliveries)) {
             breakdown[rule.id] = rule.value * completedToday;
             totalIncentive += breakdown[rule.id];

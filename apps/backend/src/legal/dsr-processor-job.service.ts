@@ -37,23 +37,23 @@ export class DsrProcessorJob {
         order: { slaDeadline: 'ASC' },
       });
 
-      for (const request of approved) {
-        try {
-          await this.dsrService.startProcessing(request.id);
-          await this.dsrService.complete(request.id);
-          this.logger.log(`DSR ${request.id} processed (type: ${request.type}, user: ${request.userId})`);
-        } catch (error) {
-          this.logger.error(`Failed to process DSR ${request.id}: ${(error as Error).message}`);
-          await this.audit.record({
-            action: 'dsr_processing_failed',
-            category: 'data_subject_request',
-            actorId: 'system',
-            entityType: 'data_subject_requests',
-            entityId: request.id,
-            metadata: { error: (error as Error).message },
-          });
-        }
-      }
+       await Promise.all(approved.map(async (request) => {
+         try {
+           await this.dsrService.startProcessing(request.id);
+           await this.dsrService.complete(request.id);
+           this.logger.log(`DSR ${request.id} processed (type: ${request.type}, user: ${request.userId})`);
+         } catch (error) {
+           this.logger.error(`Failed to process DSR ${request.id}: ${(error as Error).message}`);
+           await this.audit.record({
+             action: 'dsr_processing_failed',
+             category: 'data_subject_request',
+             actorId: 'system',
+             entityType: 'data_subject_requests',
+             entityId: request.id,
+             metadata: { error: (error as Error).message },
+           });
+         }
+       }));
 
       await this.processPendingExports();
       await this.checkSlaBreaches();
@@ -71,7 +71,7 @@ export class DsrProcessorJob {
       order: { createdAt: 'ASC' },
     });
 
-    for (const exportRecord of pendingExports) {
+    const results = await Promise.all(pendingExports.map(async (exportRecord) => {
       try {
         const content = await this.dsrService.generateExportContent(exportRecord.id);
         await this.dsrService.finalizeExport(exportRecord.id, {
@@ -83,12 +83,12 @@ export class DsrProcessorJob {
       } catch (error) {
         this.logger.error(`Failed to finalize export ${exportRecord.id}: ${(error as Error).message}`);
       }
-    }
+    }));
   }
 
   private async checkSlaBreaches() {
     const breached = await this.dsrService.findBreachedSlas();
-    for (const request of breached) {
+    await Promise.all(breached.map(async (request) => {
       await this.audit.record({
         action: 'dsr_sla_breached',
         category: 'data_subject_request',
@@ -98,6 +98,6 @@ export class DsrProcessorJob {
         metadata: { type: request.type, slaDeadline: request.slaDeadline?.toISOString() },
       });
       this.logger.warn(`DSR SLA breached for request ${request.id} (type: ${request.type})`);
-    }
+    }));
   }
 }

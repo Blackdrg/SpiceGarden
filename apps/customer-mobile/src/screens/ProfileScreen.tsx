@@ -42,33 +42,39 @@ const ProfileScreen = () => {
   const fadeAnim = useSharedValue(0);
 
   useEffect(() => {
+    let cancelled = false;
     const loadProfile = async () => {
       try {
         const userJson = await AsyncStorage.getItem('sg_user');
         if (userJson) {
           const user = safeParse(userJson) as { name?: string; email?: string; phone?: string };
-          setUserData({
-            fullName: user.name || '',
-            email: user.email || '',
-            phone: user.phone || '',
-          });
-          setEditFormData({
-            fullName: user.name || '',
-            email: user.email || '',
-            phone: user.phone || '',
-          });
+          if (!cancelled) {
+            setUserData({
+              fullName: user.name || '',
+              email: user.email || '',
+              phone: user.phone || '',
+            });
+            setEditFormData({
+              fullName: user.name || '',
+              email: user.email || '',
+              phone: user.phone || '',
+            });
+          }
         }
       } catch (error) {
-        console.error('Failed to load profile:', error);
+        if (!cancelled) console.error('Failed to load profile:', error);
       } finally {
-        setLoading(false);
-        
-        fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        if (!cancelled) {
+          setLoading(false);
+          
+          fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
+        }
       }
     };
 
     loadProfile();
-  }, []);
+    return () => { cancelled = true; };
+  }, [fadeAnim]);
 
   const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

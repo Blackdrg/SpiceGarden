@@ -46,23 +46,21 @@ import { BranchControlEntity } from './entities/branch-control.entity';
 import { HolidayScheduleEntity } from './entities/holiday-schedule.entity';
 import { NotificationAnalyticsEntity } from './entities/notification-analytics.entity';
 import { ReviewDocument, ReviewSchema } from './schemas/review.schema';
-import {
-  LegalDocumentEntity,
-  LegalVersionEntity,
-  LegalAcceptanceEntity,
-  CookieConsentEntity,
-  ConsentLogEntity,
-  DataSubjectRequestEntity,
-  DataExportEntity,
-  RetentionPolicyEntity,
-  DataRetentionJobEntity,
-  SecurityIncidentEntity,
-  GrievanceEntity,
-  AgreementEntity,
-  AgreementAcceptanceEntity,
-  ComplianceAuditEntity,
-  CookieRegistryEntity,
-} from '../legal/entities';
+import { LegalDocumentEntity } from '../legal/entities/legal-document.entity';
+import { LegalVersionEntity } from '../legal/entities/legal-version.entity';
+import { LegalAcceptanceEntity } from '../legal/entities/legal-acceptance.entity';
+import { CookieConsentEntity } from '../legal/entities/cookie-consent.entity';
+import { ConsentLogEntity } from '../legal/entities/consent-log.entity';
+import { DataSubjectRequestEntity } from '../legal/entities/data-subject-request.entity';
+import { DataExportEntity } from '../legal/entities/data-export.entity';
+import { RetentionPolicyEntity } from '../legal/entities/retention-policy.entity';
+import { DataRetentionJobEntity } from '../legal/entities/data-retention-job.entity';
+import { SecurityIncidentEntity } from '../legal/entities/security-incident.entity';
+import { GrievanceEntity } from '../legal/entities/grievance.entity';
+import { AgreementEntity } from '../legal/entities/agreement.entity';
+import { AgreementAcceptanceEntity } from '../legal/entities/agreement-acceptance.entity';
+import { ComplianceAuditEntity } from '../legal/entities/compliance-audit.entity';
+import { CookieRegistryEntity } from '../legal/entities/cookie-registry.entity';
 import { DeletionRequestEntity } from './entities/deletion-request.entity';
 import { DataExportRequestEntity } from './entities/data-export-request.entity';
 import { NotificationEntity } from './entities/notification.entity';

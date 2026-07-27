@@ -56,11 +56,17 @@ export class NotificationService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          registration_ids: devices.map((d: UserDeviceEntity) => d.fcmToken).filter(Boolean),
+          registration_ids: devices.flatMap((d: UserDeviceEntity) => d.fcmToken ? [d.fcmToken] : []),
           notification: { title, body },
           data: data || {},
         }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        this.logger.error(`FCM send failed for user ${userId}: ${errorText}`);
+        return { success: false, error: `FCM API error: ${response.status}` };
+      }
 
       const result = (await response.json()) as { message?: string; sid?: string };
       this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
@@ -95,11 +101,12 @@ export class NotificationService {
         }),
       });
 
-      const result = (await response.json()) as { message?: string; sid?: string };
       if (!response.ok) {
-        throw new InternalServerErrorException(result.message || 'Twilio API error');
+        const errorText = await response.text();
+        throw new InternalServerErrorException(errorText || 'Twilio API error');
       }
 
+      const result = (await response.json()) as { message?: string; sid?: string };
       this.logger.log(`SMS sent to ${phone}`);
       return { success: true, sid: result.sid };
     } catch (error) {
@@ -171,7 +178,7 @@ export class NotificationService {
     const devices = await this.userDeviceRepo.find({
       where: { userId, isActive: true },
     });
-    const apnsTokens = devices.filter((d: UserDeviceEntity) => d.apnsToken).map((d: UserDeviceEntity) => d.apnsToken!);
+    const apnsTokens = devices.flatMap((d: UserDeviceEntity) => d.apnsToken ? [d.apnsToken] : []);
 
     if (apnsTokens.length === 0) {
       return { success: false, reason: 'No active iOS devices' };

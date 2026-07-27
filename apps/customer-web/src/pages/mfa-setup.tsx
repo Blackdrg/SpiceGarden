@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import Image from 'next/image';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@spicegarden/ui';
 import { useMfaManagement } from '../hooks/useMfaManagement';
@@ -41,7 +42,7 @@ const MfaSetupPage: React.FC = () => {
             <Button label="Setup MFA" onClick={generateQrCode} disabled={isLoading} />
           ) : (
             <div style={styles.qrContainer}>
-              <img src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} />
+              <Image src={qrCodeDataUrl} alt="MFA QR Code" style={styles.qrCode} width={200} height={200} />
               <p>Enter the 6-digit code from your authenticator app:</p>
               <input
                 id="mfa-setup-code"

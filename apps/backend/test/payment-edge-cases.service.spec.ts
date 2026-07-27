@@ -263,7 +263,7 @@ describe('PaymentService', () => {
     it('should process refund successfully', async () => {
       const mockPayment = { id: 'pi_1', amount: 100000, currency: 'usd' } as any;
       const mockRefund = { id: 're_1', amount: 50000, currency: 'usd', status: 'succeeded' } as RefundResult;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
       mockGateway.refundPayment.mockResolvedValue(mockRefund);
 
       const result = await service.refundPayment('pi_1', 50, 'user-1', 'requested_by_customer');
@@ -280,7 +280,7 @@ describe('PaymentService', () => {
     it('should use full amount when amount is null', async () => {
       const mockPayment = { id: 'pi_1', amount: 100000, currency: 'usd' } as any;
       const mockRefund = { id: 're_1', amount: 100000, currency: 'usd', status: 'succeeded' } as RefundResult;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
       mockGateway.refundPayment.mockResolvedValue(mockRefund);
 
       await service.refundPayment('pi_1', null, 'user-1');
@@ -290,7 +290,7 @@ describe('PaymentService', () => {
 
     it('should throw when refund amount exceeds original', async () => {
       const mockPayment = { id: 'pi_1', amount: 5000, currency: 'usd' } as any;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
 
       await expect(service.refundPayment('pi_1', 100, 'user-1'))
         .rejects.toThrow(BadRequestException);
@@ -298,7 +298,7 @@ describe('PaymentService', () => {
 
     it('should throw when refund amount is zero', async () => {
       const mockPayment = { id: 'pi_1', amount: 5000, currency: 'usd' } as any;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
 
       await expect(service.refundPayment('pi_1', 0, 'user-1'))
         .rejects.toThrow('Refund amount must be greater than zero');
@@ -306,7 +306,7 @@ describe('PaymentService', () => {
 
     it('should throw when refund amount is negative', async () => {
       const mockPayment = { id: 'pi_1', amount: 5000, currency: 'usd' } as any;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
 
       await expect(service.refundPayment('pi_1', -50, 'user-1'))
         .rejects.toThrow('Refund amount must be greater than zero');
@@ -314,7 +314,7 @@ describe('PaymentService', () => {
 
     it('should log failed refund on error', async () => {
       const mockPayment = { id: 'pi_1', amount: 5000, currency: 'usd' } as any;
-      mockGateway.confirmPayment.mockResolvedValue(mockPayment);
+      mockGateway.fetchPaymentDetails.mockResolvedValue(mockPayment);
       mockGateway.refundPayment.mockRejectedValue(new Error('Refund declined'));
 
       await expect(service.refundPayment('pi_1', 50, 'user-1'))

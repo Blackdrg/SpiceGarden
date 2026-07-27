@@ -64,8 +64,6 @@ export class LegalNotificationService {
   }
 
   async notifyMany(event: LegalNotificationEvent, title: string, body: string, userIds: string[]): Promise<void> {
-    for (const userId of userIds) {
-      await this.notify({ userId, event, title, body });
-    }
+    await Promise.all(userIds.map((userId) => this.notify({ userId, event, title, body })));
   }
 }

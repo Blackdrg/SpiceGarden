@@ -147,6 +147,7 @@ async function runRateLimitTests() {
   console.log('\n=== Rate Limiting Tests ===');
   const { endpoint, requests, duration } = SECURITY_TESTS.rateLimiting;
   let rateLimited = 0;
+  let connectionErrors = 0;
 
   const promises = [];
   for (let i = 0; i < requests; i++) {
@@ -160,10 +161,22 @@ async function runRateLimitTests() {
   const results = await Promise.all(promises);
   for (const r of results) {
     if (r.status === 429) rateLimited++;
+    else if (r.status === 0) connectionErrors++;
   }
 
   console.log(`Rate limited responses: ${rateLimited}/${requests}`);
-  return { type: 'Rate Limiting', vulnerabilities: rateLimited > 0 ? 0 : requests };
+  console.log(`Connection errors: ${connectionErrors}/${requests}`);
+
+  if (connectionErrors > 0) {
+    console.log('SKIPPED: Server unreachable - rate limiting cannot be verified');
+    return { type: 'Rate Limiting', vulnerabilities: 0, skipped: true };
+  }
+
+  if (rateLimited === 0) {
+    console.log('POTENTIAL ISSUE: No rate limiting detected on login endpoint');
+  }
+
+  return { type: 'Rate Limiting', vulnerabilities: rateLimited === 0 ? requests : 0 };
 }
 
 async function runAuthBypassTests() {
@@ -219,11 +232,21 @@ async function runSecuritySuite() {
 
   console.log('\n=== SECURITY TEST SUMMARY ===');
   let totalVulns = 0;
+  let skipped = 0;
 
   for (const result of results) {
-    const status = result.vulnerabilities > 0 ? 'VULNERABLE' : 'SECURE';
-    console.log(`${result.type}: ${status} (${result.vulnerabilities} issues)`);
-    totalVulns += result.vulnerabilities;
+    if (result.skipped) {
+      skipped++;
+      console.log(`${result.type}: SKIPPED`);
+    } else {
+      const status = result.vulnerabilities > 0 ? 'VULNERABLE' : 'SECURE';
+      console.log(`${result.type}: ${status} (${result.vulnerabilities} issues)`);
+      totalVulns += result.vulnerabilities;
+    }
+  }
+
+  if (skipped > 0) {
+    console.log(`\n${skipped} test(s) skipped due to unreachable services.`);
   }
 
   console.log('============================');

@@ -99,11 +99,10 @@ class EnvironmentManager {
         return major >= 18;
     }
     async checkPorts() {
-        const results = [];
-        for (const { port } of this.ports) {
-            results.push({ port, available: await this.isPortAvailable(port) });
-        }
-        return results;
+        return await Promise.all(this.ports.map(async ({ port }) => ({
+            port,
+            available: await this.isPortAvailable(port),
+        })));
     }
     isPortAvailable(port) {
         return new Promise((resolve) => {

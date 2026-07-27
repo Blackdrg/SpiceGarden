@@ -239,6 +239,16 @@ spec:
           port: 6379
         - protocol: TCP
           port: 27017
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 587
+        - protocol: TCP
+          port: 465
 ---
 apiVersion: batch/v1
 kind: CronJob

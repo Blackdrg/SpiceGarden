@@ -128,10 +128,7 @@ export class PlatformFeeService {
       },
     ];
 
-    for (const feeData of fees) {
-      const fee = this.feeRepo.create(feeData);
-      await this.feeRepo.save(fee);
-    }
+    await Promise.all(fees.map((feeData) => this.feeRepo.save(this.feeRepo.create(feeData))));
 
     this.logger.log('Initialized default platform fees');
   }
