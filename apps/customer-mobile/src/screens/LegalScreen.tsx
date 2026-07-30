@@ -88,15 +88,7 @@ const handlePolicyPress = async (url: string) => {
   }
 };
 
-const LegalScreen = () => {
-  const navigation = useNavigation();
-  const [agreement, setAgreement] = useState<AgreementResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fadeAnim = useSharedValue(0);
-
-  async function fetchDriverAgreement(): Promise<AgreementResponse | null> {
+const fetchDriverAgreement = async (): Promise<AgreementResponse | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`, {
       headers: {
@@ -111,7 +103,7 @@ const LegalScreen = () => {
   } catch {
     return null;
   }
-}
+};
 
 const LegalScreen = () => {
   const navigation = useNavigation();
@@ -121,6 +113,7 @@ const LegalScreen = () => {
 
   const fadeAnim = useSharedValue(0);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let active = true;
     fetchDriverAgreement().then((data) => {
@@ -136,7 +129,7 @@ const LegalScreen = () => {
     return () => {
       active = false;
     };
-  }, [fadeAnim]);
+  }, [fetchDriverAgreement]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (

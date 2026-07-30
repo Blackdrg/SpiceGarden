@@ -73,6 +73,34 @@ const httpRequestDuration = new Histogram({
   registers: [metricsRegistry],
 });
 
+const queueFailuresCounter = new Counter({
+  name: "queue_failures_total",
+  help: "Total number of queue processing failures.",
+  labelNames: ["queue_name"] as const,
+  registers: [metricsRegistry],
+});
+
+const socketFailuresCounter = new Counter({
+  name: "socket_failures_total",
+  help: "Total number of socket connection failures.",
+  labelNames: ["namespace", "event"] as const,
+  registers: [metricsRegistry],
+});
+
+const paymentFailuresCounter = new Counter({
+  name: "payment_failures_total",
+  help: "Total number of payment processing failures.",
+  labelNames: ["provider", "error_type"] as const,
+  registers: [metricsRegistry],
+});
+
+const orderTotalGauge = new Counter({
+  name: "order_total",
+  help: "Total number of orders by status.",
+  labelNames: ["status"] as const,
+  registers: [metricsRegistry],
+});
+
 function getTrustProxySetting(configService: ConfigService): boolean {
   const value = configService.get<string>('TRUST_PROXY');
   if (value === undefined) {
@@ -104,6 +132,13 @@ function validateProductionEnvironment(configService: ConfigService): void {
     'RAZORPAY_KEY_SECRET',
     'RAZORPAY_WEBHOOK_SECRET',
     'CORS_ALLOWED_ORIGINS',
+    'SMTP_PASS',
+    'TWILIO_ACCOUNT_SID',
+    'TWILIO_AUTH_TOKEN',
+    'FCM_SERVER_KEY',
+    'SENDGRID_API_KEY',
+    'GOOGLE_MAPS_API_KEY',
+    'APP_URL',
   ], configService);
 
   const corsOrigins = configService.get<string>('CORS_ALLOWED_ORIGINS', '') || '';
@@ -400,5 +435,15 @@ async function bootstrap() {
 
   logger.log(`Application is running on: ${await app.getUrl()}`);
 }
+
+export {
+  metricsRegistry,
+  httpRequestCounter,
+  httpRequestDuration,
+  queueFailuresCounter,
+  socketFailuresCounter,
+  paymentFailuresCounter,
+  orderTotalGauge,
+};
 
 bootstrap();

@@ -131,3 +131,70 @@ global.window = {
 
 global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 global.cancelAnimationFrame = (id) => clearTimeout(id);
+
+jest.mock('@react-navigation/native', () => {
+  const React = require('react');
+  const Navigator = ({ children }) => {
+    const childArray = Array.isArray(children) ? children : [children];
+    const firstChild = childArray[0];
+    if (firstChild && firstChild.props && firstChild.props.component) {
+      return React.createElement(firstChild.props.component, firstChild.props);
+    }
+    return React.createElement(React.Fragment, null, children);
+  };
+  const Screen = () => null;
+  return {
+    useNavigation: () => ({ replace: jest.fn(), navigate: jest.fn(), goBack: jest.fn() }),
+    useRoute: () => ({ params: {} }),
+    NavigationContainer: ({ children }) => children,
+    createNavigatorFactory: () => ({ Navigator, Screen }),
+  };
+});
+
+jest.mock('@react-navigation/native-stack', () => {
+  const React = require('react');
+  const Navigator = ({ children }) => {
+    const childArray = Array.isArray(children) ? children : [children];
+    const firstChild = childArray[0];
+    if (firstChild && firstChild.props && firstChild.props.component) {
+      return React.createElement(firstChild.props.component, firstChild.props);
+    }
+    return React.createElement(React.Fragment, null, children);
+  };
+  const Screen = () => null;
+  return {
+    createNativeStackNavigator: () => ({ Navigator, Screen }),
+  };
+});
+
+jest.mock('@react-navigation/bottom-tabs', () => {
+  const React = require('react');
+  const Navigator = ({ children }) => {
+    const childArray = Array.isArray(children) ? children : [children];
+    const firstChild = childArray[0];
+    if (firstChild && firstChild.props && firstChild.props.component) {
+      return React.createElement(firstChild.props.component, firstChild.props);
+    }
+    return React.createElement(React.Fragment, null, children);
+  };
+  const Screen = () => null;
+  return {
+    createBottomTabNavigator: () => ({ Navigator, Screen }),
+  };
+});
+
+jest.mock('@react-navigation/stack', () => {
+  const React = require('react');
+  const Navigator = ({ children }) => {
+    const childArray = Array.isArray(children) ? children : [children];
+    const firstChild = childArray[0];
+    if (firstChild && firstChild.props && firstChild.props.component) {
+      return React.createElement(firstChild.props.component, firstChild.props);
+    }
+    return React.createElement(React.Fragment, null, children);
+  };
+  const Screen = () => null;
+  return {
+    createStackNavigator: () => ({ Navigator, Screen }),
+  };
+});

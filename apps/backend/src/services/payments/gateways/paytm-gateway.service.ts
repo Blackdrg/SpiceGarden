@@ -27,7 +27,7 @@ export class PaytmGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const transactionId = `paytm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `paytm_${Date.now()}_${crypto.randomBytes(9).toString('hex')}`;
 
     return {
       id: transactionId,

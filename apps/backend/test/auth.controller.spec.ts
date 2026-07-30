@@ -79,7 +79,9 @@ describe('AuthController account edge cases', () => {
   });
 
   it('rejects duplicate email registration with a conflict response', async () => {
-    userRepo.findOne.mockResolvedValue({ id: 'existing-user', email: 'test@example.com' });
+    authService.hashPassword.mockResolvedValue('hash');
+    userRepo.create.mockReturnValue({ email: 'test@example.com' });
+    userRepo.save.mockRejectedValue({ code: '23505' });
 
     await expect(controller.register({
       email: 'test@example.com',
@@ -88,9 +90,9 @@ describe('AuthController account edge cases', () => {
       fullName: 'Test User',
     }, { ip: '127.0.0.1' } as any, createMockRes())).rejects.toThrow(ConflictException);
 
-    expect(authService.hashPassword).not.toHaveBeenCalled();
-    expect(userRepo.create).not.toHaveBeenCalled();
-    expect(userRepo.save).not.toHaveBeenCalled();
+    expect(authService.hashPassword).toHaveBeenCalled();
+    expect(userRepo.create).toHaveBeenCalled();
+    expect(userRepo.save).toHaveBeenCalled();
     expect(authService.login).not.toHaveBeenCalled();
   });
 

@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -20,11 +20,11 @@ WORKDIR /app/apps/backend
 RUN npm run build
 
 # Stage 2: Production
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Install curl for healthcheck and create non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN groupadd -r nodejs && useradd -r -u 1001 -g nodejs nodejs
 
 # Set working directory
 WORKDIR /app
@@ -34,17 +34,17 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/dist ./dist
 
 # Change ownership to non-root user
-RUN chown -R nextjs:nodejs /app
+RUN chown -R nodejs:nodejs /app
 
 # Switch to non-root user
-USER nextjs
+USER nodejs
 
 # Expose port
 EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').request({host:'127.0.0.1',port:3001,path:'/health',method:'GET'}, res => res.statusCode === 200 ? process.exit(0) : process.exit(1)).on('error', e => process.exit(1)).end()"
+  CMD curl -f http://127.0.0.1:3001/health || exit 1
 
 # Start the application
 CMD ["node", "dist/src/main.js"]

@@ -2,7 +2,7 @@ import { UserRole } from '../shared/domain/user.interface';
 
 export const rolePermissions: Record<UserRole, string[]> = {
   [UserRole.CUSTOMER]: ['orders:read_own', 'orders:create', 'wallet:read_own', 'wallet:transact_own'],
-  [UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own'],
+  [UserRole.RESTAURANT]: ['restaurants:manage_own', 'orders:manage_assigned', 'kitchen:manage_own', 'menus:manage_own', 'analytics:read'],
   [UserRole.KITCHEN_STAFF]: ['kitchen:manage_own', 'orders:read_assigned'],
   [UserRole.DELIVERY_PARTNER]: ['deliveries:manage_assigned', 'orders:read_assigned'],
   [UserRole.DRIVER]: ['deliveries:manage_assigned', 'orders:read_assigned', 'risk:read_own'],

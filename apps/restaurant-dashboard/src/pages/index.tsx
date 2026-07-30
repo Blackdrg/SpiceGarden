@@ -205,8 +205,8 @@ export default function KitchenDashboard() {
         transports: ['websocket', 'polling'],
       });
 
-      socket.on('connect', () => console.log('[KDS] connected:', socket?.id));
-      socket.on('disconnect', () => console.log('[KDS] disconnected'));
+      socket.on('connect', () => {});
+      socket.on('disconnect', () => {});
       socket.on('newOrder', (order: Order) => dispatch({ type: 'order-received', order }));
       socket.on('inventoryAlert', (item: InventoryItem) => dispatch({ type: 'inventory-alert', item }));
     });

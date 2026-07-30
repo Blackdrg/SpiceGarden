@@ -14,7 +14,7 @@ log() {
 
 check_prerequisites() {
   log "Checking prerequisites..."
-  for cmd in kubectl helm aws; do
+  for cmd in kubectl helm openssl; do
     if ! command -v "$cmd" &> /dev/null; then
       log "ERROR: $cmd is not installed"
       exit 1
@@ -41,11 +41,20 @@ restore_from_backup() {
   kubectl apply -f infra/k8s/secrets.yaml -n "$namespace" --validate=false || true
   
   # Download backup
-  log "Downloading backup from S3..."
-  aws s3 cp "s3://spicegarden-backups-prod/$backup_file" "/tmp/$backup_file"
+  log "Downloading backup..."
+  aws s3 cp "s3://spicegarden-backups-prod/$backup_file" "/tmp/$backup_file" 2>/dev/null || cp "$backup_file" "/tmp/$backup_file"
+  
+  # Decrypt backup if encrypted
+  if [[ "$backup_file" == *.enc ]]; then
+    log "Decrypting backup..."
+    openssl aes-256-cbc -d -in "/tmp/$backup_file" -out "/tmp/${backup_file%.enc}" -k "${BACKUP_ENCRYPTION_KEY:-}"
+    BACKUP_FILE="${backup_file%.enc}"
+  else
+    BACKUP_FILE="$backup_file"
+  fi
   
   # Extract backup
-  tar -xzf "/tmp/$backup_file" -C /tmp
+  tar -xzf "/tmp/${BACKUP_FILE}" -C /tmp
   
   # Restore PostgreSQL
   log "Restoring PostgreSQL..."
@@ -58,7 +67,7 @@ restore_from_backup() {
   log "Restoring MongoDB..."
   kubectl run restore-mongo --image=mongo:7 \
     -n "$namespace" --restart=Never --command -- \
-    sh -c "mongorestore --host mongodb -d spicegarden --drop /tmp/mongo"
+    sh -c "mongorestore --host mongo -d spicegarden --drop /tmp/mongo"
   
   # Restore Redis
   log "Restoring Redis..."

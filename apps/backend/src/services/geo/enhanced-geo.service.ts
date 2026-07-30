@@ -145,10 +145,10 @@ return this.branchRepo
       .select([
         'branch',
         'restaurant',
-        `ST_DistanceSphere(branch.location, ST_MakePoint(:lng, :lat)) AS distance`,
+        `ST_DistanceSphere(ST_MakePoint(CAST(SUBSTRING(branch.location FROM '\\(([^ ]+)') AS float), CAST(SUBSTRING(branch.location FROM ' ([^)]+)') AS float)), ST_MakePoint(:lng, :lat)) AS distance`,
       ])
       .where(
-        `ST_DistanceSphere(branch.location, ST_MakePoint(:lng, :lat)) <= :radius`,
+        `ST_DistanceSphere(ST_MakePoint(CAST(SUBSTRING(branch.location FROM '\\(([^ ]+)') AS float), CAST(SUBSTRING(branch.location FROM ' ([^)]+)') AS float)), ST_MakePoint(:lng, :lat)) <= :radius`,
         { lng: customerLocation.lng, lat: customerLocation.lat, radius },
       )
       .andWhere('branch.isOnline = :isOnline', { isOnline: true })
@@ -208,12 +208,12 @@ async findAvailableDrivers(
       .createQueryBuilder('driver')
       .select([
         'driver',
-        `ST_DistanceSphere(driver.currentLocation, ST_MakePoint(:lng, :lat)) AS distance`,
+        `ST_DistanceSphere(ST_MakePoint(CAST(SUBSTRING(driver.currentLocation FROM '\\(([^ ]+)') AS float), CAST(SUBSTRING(driver.currentLocation FROM ' ([^)]+)') AS float)), ST_MakePoint(:lng, :lat)) AS distance`,
       ])
       .where('driver.isOnline = :isOnline', { isOnline: true })
       .andWhere('driver.isAvailable = :isAvailable', { isAvailable: true })
       .andWhere(
-        `ST_DistanceSphere(driver.currentLocation, ST_MakePoint(:lng, :lat)) <= :radius`,
+        `ST_DistanceSphere(ST_MakePoint(CAST(SUBSTRING(driver.currentLocation FROM '\\(([^ ]+)') AS float), CAST(SUBSTRING(driver.currentLocation FROM ' ([^)]+)') AS float)), ST_MakePoint(:lng, :lat)) <= :radius`,
         { lng: restaurantLocation.lng, lat: restaurantLocation.lat, radius },
       )
       .orderBy('distance', 'ASC')

@@ -132,23 +132,32 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: RegisterDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const existing = await this.userRepo.findOne({ where: { email: body.email } });
-    if (existing) {
-      throw new ConflictException('Email already registered');
-    }
-
-    const passwordHash = await this.authService.hashPassword(body.password);
-    const user = this.userRepo.create({
-      email: body.email,
-      phone: body.phone,
-      fullName: body.fullName,
-      passwordHash,
-      role: UserRole.CUSTOMER,
-      status: UserStatus.ACTIVE,
-    });
-    let savedUser: UserEntity;
     try {
-      savedUser = await this.userRepo.save(user);
+      const passwordHash = await this.authService.hashPassword(body.password);
+      const user = this.userRepo.create({
+        email: body.email,
+        phone: body.phone,
+        fullName: body.fullName,
+        passwordHash,
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+      });
+      const savedUser = await this.userRepo.save(user);
+      const deviceInfo = this.getDeviceInfo(body, req);
+      const tokens = await this.authService.login(savedUser, deviceInfo);
+      setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
+
+      return {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        user: {
+          id: savedUser.id,
+          email: savedUser.email,
+          fullName: savedUser.fullName,
+          role: savedUser.role,
+          status: savedUser.status,
+        },
+      };
     } catch (error: unknown) {
       const code = (error as { code?: string })?.code;
       if (code === '23505') {
@@ -156,21 +165,6 @@ export class AuthController {
       }
       throw error;
     }
-    const deviceInfo = this.getDeviceInfo(body, req);
-    const tokens = await this.authService.login(savedUser, deviceInfo);
-    setAuthCookies(res, tokens.access_token, tokens.refresh_token, this.configService);
-
-    return {
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      user: {
-        id: savedUser.id,
-        email: savedUser.email,
-        fullName: savedUser.fullName,
-        role: savedUser.role,
-        status: savedUser.status,
-      },
-    };
   }
 
   @Post('refresh-token')

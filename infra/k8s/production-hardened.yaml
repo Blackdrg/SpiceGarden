@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: backend
-          image: ghcr.io/spicegarden/backend:latest
+          image: "ghcr.io/spicegarden/backend:${IMAGE_TAG:-latest}"
           imagePullPolicy: Always
           ports:
             - containerPort: 3001
@@ -259,8 +259,8 @@ metadata:
 spec:
   schedule: "0 2 * * *"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 5
+  successfulJobsHistoryLimit: 30
+  failedJobsHistoryLimit: 10
   jobTemplate:
     spec:
       template:
@@ -276,9 +276,20 @@ spec:
                 - |
                   set -euo pipefail
                   BACKUP_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-                  BACKUP_FILE="/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz"
-                  tar -czf "$BACKUP_FILE" -C /backup/dumps postgres.sql mongo redis.rdb
-                  echo "Backup created: $BACKUP_FILE"
+                  tar -czf "/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz" -C /backup/dumps postgres.sql mongo redis.rdb
+                  if [ -n "${BACKUP_ENCRYPTION_KEY:-}" ]; then
+                    openssl aes-256-cbc -salt -in "/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz" -out "/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz.enc" -k "${BACKUP_ENCRYPTION_KEY}"
+                    rm "/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz"
+                    echo "Backup encrypted: /backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz.enc"
+                  else
+                    echo "Backup created: /backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz"
+                  fi
+                  if [ -n "${AWS_ACCESS_KEY_ID:-}" ] && [ -n "${AWS_SECRET_ACCESS_KEY:-}" ] && [ -n "${AWS_S3_BUCKET:-}" ]; then
+                    aws s3 cp "/backup/spicegarden_${BACKUP_TIMESTAMP}.tar.gz${BACKUP_ENCRYPTION_KEY:+.enc}" "s3://${AWS_S3_BUCKET}/backups/"
+                    echo "Backup uploaded to S3"
+                  else
+                    echo "S3 upload skipped: AWS credentials not configured"
+                  fi
               env:
                 - name: POSTGRES_USER
                   valueFrom:
@@ -300,6 +311,30 @@ spec:
                     secretKeyRef:
                       name: spicegarden-secrets
                       key: redis-password
+                - name: BACKUP_ENCRYPTION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: backup-encryption-key
+                      optional: true
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: aws-access-key-id
+                      optional: true
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: aws-secret-access-key
+                      optional: true
+                - name: AWS_S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: spicegarden-secrets
+                      key: aws-s3-bucket
+                      optional: true
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backup
@@ -337,7 +372,7 @@ spec:
               command: ["/bin/sh", "-c"]
               args:
                 - |
-                  mongodump --host mongodb -d spicegarden --out /dumps/mongo
+                  mongodump --host mongo -d spicegarden --out /dumps/mongo
                   mv /dumps/mongo/spicegarden/* /dumps/mongo/
                   rmdir /dumps/mongo/spicegarden
               volumeMounts:
@@ -387,37 +422,4 @@ spec:
       storage: 100Gi
   storageClassName: standard-backup
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: spicegarden-prod-ingress
-  labels:
-    app: spicegarden-backend
-    environment: production
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
-spec:
-  tls:
-    - hosts:
-        - api.spicegarden.com
-      secretName: spicegarden-prod-tls
-  rules:
-    - host: api.spicegarden.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: spicegarden-backend
-                port:
-                  number: 80
+apiVersion: batch/v1

@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: spicegarden-cdn-ingress
+  name: spicegarden-prod-ingress
   labels:
-    app: spicegarden-static
-    tier: cdn
+    app: spicegarden
+    environment: production
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -13,30 +13,66 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_cache_valid 200 1h;
-      proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-      proxy_cache_lock on;
-      add_header X-Cache-Status $upstream_cache_status;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
 spec:
   tls:
     - hosts:
-        - cdn.spicegarden.com
-      secretName: spicegarden-cdn-tls
+        - api.spicegarden.com
+        - www.spicegarden.com
+        - spicegarden.com
+        - restaurant.spicegarden.com
+        - admin.spicegarden.com
+      secretName: spicegarden-prod-tls
   rules:
-    - host: cdn.spicegarden.com
+    - host: api.spicegarden.com
       http:
         paths:
-          - path: /static/(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: spicegarden-static
-                port:
-                  number: 80
-          - path: /(.*)
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: spicegarden-backend
+                port:
+                  number: 80
+    - host: www.spicegarden.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-web
+                port:
+                  number: 80
+    - host: spicegarden.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-web
+                port:
+                  number: 80
+    - host: restaurant.spicegarden.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-dashboard
+                port:
+                  number: 80
+    - host: admin.spicegarden.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: super-admin
                 port:
                   number: 80

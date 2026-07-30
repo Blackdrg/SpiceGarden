@@ -29,12 +29,13 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
   const [orders, setOrders] = useState<DeliveryOrder[]>([]);
   const [{ online, loading, error }, dispatch] = useReducer((
     state: { online: boolean; loading: boolean; error: string | null },
-    action: { type: string; online?: boolean; error?: string }
+    action: { type: string; online?: boolean; error?: string; loading?: boolean }
   ) => {
     switch (action.type) {
       case 'PROFILE_LOADED': return { ...state, online: action.online ?? state.online, loading: false };
       case 'PROFILE_ERROR': return { ...state, error: action.error ?? state.error, loading: false };
       case 'SET_ONLINE': return { ...state, online: action.online ?? state.online };
+      case 'RETRY': return { ...state, loading: true, error: null };
       default: return state;
     }
   }, { online: false, loading: true, error: null });
@@ -43,16 +44,27 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
     setOrders((prev) => (prev.some((o) => o.id === order.id) ? prev : [...prev, order]));
   }, []);
 
+  const handleRetry = useCallback(async () => {
+    dispatch({ type: 'RETRY' });
+    try {
+      const p = await deliveryApi.getProfile();
+      dispatch({ type: 'PROFILE_LOADED', online: p.isOnline });
+    } catch (e) {
+      dispatch({ type: 'PROFILE_ERROR', error: e instanceof Error ? e.message : 'Failed to load profile' });
+    }
+  }, []);
+
   useEffect(() => {
     let active = true;
-    deliveryApi
-      .getProfile()
-      .then((p) => {
+    const fetchProfile = async () => {
+      try {
+        const p = await deliveryApi.getProfile();
         if (active) dispatch({ type: 'PROFILE_LOADED', online: p.isOnline });
-      })
-      .catch((e) => {
+      } catch (e) {
         if (active) dispatch({ type: 'PROFILE_ERROR', error: e instanceof Error ? e.message : 'Failed to load profile' });
-      });
+      }
+    };
+    fetchProfile();
     deliveryApi.connectWebSocket(onReceived);
     return () => {
       active = false;
@@ -62,7 +74,7 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
 
   const toggleOnline = useCallback(async () => {
     const next = !online;
-    setOnline(next);
+    dispatch({ type: 'SET_ONLINE', online: next });
     try {
       await deliveryApi.toggleOnline(next);
     } catch {
@@ -151,7 +163,7 @@ export default function HomeScreen({ navigation }: ScreenProps): React.JSX.Eleme
   if (error) {
     return (
       <Screen title="Order Queue" navigation={navigation}>
-        <ErrorState message={error} onRetry={() => { setError(null); setLoading(true); }} />
+        <ErrorState message={error} onRetry={handleRetry} />
       </Screen>
     );
   }

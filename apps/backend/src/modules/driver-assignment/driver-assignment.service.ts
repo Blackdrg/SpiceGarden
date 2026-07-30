@@ -161,7 +161,7 @@ export class DriverAssignmentService {
       .andWhere('driver.kycStatus = :status', { status: 'approved' })
       .andWhere('driver.isFraudSuspicious = :fraud', { fraud: false })
       .andWhere(
-        `ST_DistanceSphere(driver.currentLocation::geometry, ST_MakePoint(:lng, :lat)::geometry) <= :radius`,
+        `ST_DistanceSphere(ST_MakePoint(CAST(SUBSTRING(driver.currentLocation FROM '\\(([^ ]+)') AS float), CAST(SUBSTRING(driver.currentLocation FROM ' ([^)]+)') AS float)), ST_MakePoint(:lng, :lat)) <= :radius`,
         { lng, lat, radius }
       )
       .getMany();

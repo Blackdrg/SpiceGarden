@@ -8,6 +8,7 @@ export const options = {
         { duration: '15m', target: 5000 },
         { duration: '3m', target: 0 },
     ],
+    summaryTrendStats: ['avg', 'min', 'max', 'p(95)', 'p(99)'],
     thresholds: {
         'graceful_degradation_rate': ['rate>0.95'],
     },
@@ -19,7 +20,7 @@ const fallbackUsed = new Counter('fallback_used_total');
 
 export default function () {
     const rand = Math.random();
-    
+
     if (rand < 0.4) {
         simulateRedisOutage();
     } else if (rand < 0.6) {
@@ -29,7 +30,7 @@ export default function () {
     } else {
         simulateNetworkLatency();
     }
-    
+
     sleep(1);
 }
 

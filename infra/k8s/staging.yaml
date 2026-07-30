@@ -26,9 +26,12 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: backend
-          image: ghcr.io/spicegarden/backend:${IMAGE_TAG:-develop}
+          image: "ghcr.io/spicegarden/backend:${IMAGE_TAG:-develop}"
           imagePullPolicy: Always
           ports:
             - containerPort: 3001
@@ -87,6 +90,11 @@ spec:
       volumes:
         - name: tmp-volume
           emptyDir: {}
+      tolerations:
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
 ---
 apiVersion: v1
 kind: Service

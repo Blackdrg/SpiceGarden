@@ -101,8 +101,8 @@ export default function AdminDashboard() {
     import('socket.io-client').then(({ io }) => {
       if (cancelled) return;
       socket = io(SOCKET_URL, { path: '/socket.io/' });
-      socket.on('connect', () => console.log('[Admin] connected'));
-      socket.on('disconnect', () => console.log('[Admin] disconnected'));
+      socket.on('connect', () => {});
+      socket.on('disconnect', () => {});
       socket.on('statsUpdate', (stats: Partial<Stats>) => dispatch({ type: 'stats-updated', stats }));
       socket.on('newOrderGlobal', (order: LiveOrder) => dispatch({ type: 'new-order-global', order }));
       socket.on('kitchenUpdate', (branches: BranchStatus[]) => dispatch({ type: 'branches-updated', branches }));

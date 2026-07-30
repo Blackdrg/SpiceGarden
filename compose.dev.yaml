@@ -164,6 +164,7 @@ services:
       - FCM_SERVER_KEY=${FCM_SERVER_KEY}
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
       - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - LOAD_TEST_MODE=true
     depends_on:
       postgres:
         condition: service_healthy

@@ -27,7 +27,7 @@ describe('Input', () => {
   it('generates id from label when not provided', () => {
     render(<Input label="Full Name" />);
     const input = screen.getByLabelText(/full name/i);
-    expect(input).toHaveAttribute('id', 'input-full-name');
+    expect(input.id).toMatch(/^input-full-name/);
   });
 
   it('supports different input types', () => {

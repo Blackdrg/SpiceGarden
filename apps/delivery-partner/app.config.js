@@ -20,6 +20,16 @@ export default ({ config }) => ({
     config: {
       usesNonExemptEncryption: false,
     },
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription: 'SpiceGarden needs your location to receive nearby delivery orders and for live tracking.',
+      NSLocationAlwaysAndWhenInUseUsageDescription: 'SpiceGarden needs your location to receive nearby delivery orders and for live tracking.',
+      NSLocationAlwaysUsageDescription: 'SpiceGarden needs your location to receive nearby delivery orders and for live tracking.',
+      UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
+      NSUserNotificationUsageDescription: 'SpiceGarden sends notifications for new delivery orders and status updates.',
+    },
+    entitlements: {
+      'aps-environment': 'development',
+    },
   },
   android: {
     adaptiveIcon: {
@@ -47,4 +57,9 @@ export default ({ config }) => ({
       projectId: 'spicegarden-driver',
     },
   },
+  plugins: [
+    'expo-notifications',
+    'expo-location',
+    'expo-secure-store',
+  ],
 });

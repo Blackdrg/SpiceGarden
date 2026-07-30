@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 import { PaymentGateway } from '../gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
 
@@ -20,7 +21,7 @@ export class PhonePeGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const transactionId = `phonepe_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `phonepe_${Date.now()}_${crypto.randomBytes(9).toString('hex')}`;
     const amountInPaisa = Math.round(amount * 100);
 
     return {

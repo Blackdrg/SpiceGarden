@@ -26,13 +26,15 @@ spec:
           type: RuntimeDefault
       containers:
         - name: backend
-          image: spicegarden/backend:latest
+          image: "ghcr.io/spicegarden/backend:${IMAGE_TAG:-develop}"
           ports:
             - containerPort: 3001
               protocol: TCP
           envFrom:
             - secretRef:
                 name: spicegarden-secrets
+            - configMapRef:
+                name: spicegarden-config
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

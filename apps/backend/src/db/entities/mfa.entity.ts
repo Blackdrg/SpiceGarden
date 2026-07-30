@@ -12,10 +12,10 @@ export class MfaSecretEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @OneToOne(() => UserEntity)
+    @OneToOne(() => UserEntity, { nullable: true })
     @JoinColumn()
-    user!: UserEntity;
+    user?: UserEntity;
 
-    @Column()
-    secret!: string; // This should be encrypted
+    @Column({ nullable: true })
+    secret?: string;
 }

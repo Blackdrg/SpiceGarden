@@ -1,7 +1,7 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN apk add --no-cache python3 make g++ && npm config set fetch-retries 10 && npm config set fetch-retry-mintimeout 60000 && npm config set fetch-retry-maxtimeout 600000 && npm config set fetch-timeout 600000
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/* && npm config set fetch-retries 10 && npm config set fetch-retry-mintimeout 60000 && npm config set fetch-retry-maxtimeout 600000 && npm config set fetch-timeout 600000
 COPY apps/backend/package*.json ./apps/backend/
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/api-types/package*.json ./packages/api-types/
@@ -11,8 +11,8 @@ COPY packages/shared/ ./packages/shared/
 COPY packages/api-types/ ./packages/api-types/
 RUN npm --workspace @spicegarden/shared run build && npm --workspace @spicegarden/backend run build
 
-FROM node:20-alpine
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+FROM node:20-slim
+RUN groupadd -r nodejs && useradd -r -u 1001 -g nodejs nodejs
 WORKDIR /app
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/apps/backend/dist ./apps/backend/dist

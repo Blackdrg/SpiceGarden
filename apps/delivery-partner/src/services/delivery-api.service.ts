@@ -323,7 +323,6 @@ class DeliveryApiService {
     });
 
     this.socket.on('connect', () => {
-      console.log('WebSocket connected');
     });
 
     this.socket.on('orderAssigned', (order: DeliveryOrder) => {
@@ -335,7 +334,6 @@ class DeliveryApiService {
     });
 
     this.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected');
     });
   }
 

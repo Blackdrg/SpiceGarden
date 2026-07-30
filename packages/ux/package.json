@@ -1,0 +1,11 @@
+{
+  "name": "@spicegarden/ux",
+  "version": "0.0.0",
+  "private": true,
+  "description": "UX design specifications and documentation for SpiceGarden",
+  "scripts": {
+    "build": "echo 'UX package contains design documents only, no build step required'",
+    "lint": "echo 'No source files to lint'",
+    "test:unit": "echo 'No tests to run'"
+  }
+}

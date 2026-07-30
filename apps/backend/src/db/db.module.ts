@@ -4,6 +4,7 @@ import { MongooseModule, getModelToken } from "@nestjs/mongoose";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
 import * as crypto from "crypto";
+import { RedisAdapter } from "./redis.adapter";
 import { ReviewDocument, ReviewSchema } from "./schemas/review.schema";
 import { LocalSqliteRepositoryModule } from "./local-sqlite-repository.module";
 
@@ -74,12 +75,14 @@ const imports: any[] = useLocalSqlite
           synchronize: false,
           migrations: ["dist/db/migrations/*.js", "dist/src/db/migrations/*.js"],
           migrationsRun: true,
-          poolSize: configService.get<number>("DB_POOL_SIZE", 20),
+          poolSize: configService.get<number>("DB_POOL_SIZE", 30),
           connectionTimeoutMillis: 5000,
           idleTimeoutMillis: 30000,
           maxQueryExecutionTime: 1000,
           keepAlive: true,
           statementTimeout: 30000,
+          preparedStatementLimit: 20,
+          pgStatementMode: "auto",
           logging: configService.get<string>("DB_LOGGING", "false") === "true",
         }),
         inject: [ConfigService],
@@ -107,11 +110,12 @@ const imports: any[] = useLocalSqlite
 @Module({
   imports,
   providers: [
+    RedisAdapter,
     ...(useLocalSqlite ? [localReviewModelProvider()] : []),
   ],
   exports: useLocalSqlite
     ? [TypeOrmModule, LocalSqliteRepositoryModule, getModelToken(ReviewDocument.name)]
-    : [TypeOrmModule, MongooseModule],
+    : [TypeOrmModule, MongooseModule, RedisAdapter],
 })
 export class DbModule {}
 

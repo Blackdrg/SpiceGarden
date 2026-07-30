@@ -63,7 +63,7 @@
     "express-rate-limit": "^7.5.1",
     "helmet": "^7.2.0",
     "mongodb": "^7.3.0",
-    "mongoose": "^9.7.0",
+    "mongoose": "^9.8.1",
     "multer": "^2.2.0",
     "otplib": "^12.0.1",
     "react": "^19.2.8",

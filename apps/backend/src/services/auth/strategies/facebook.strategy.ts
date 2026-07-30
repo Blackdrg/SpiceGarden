@@ -8,11 +8,12 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(private configService: ConfigService) {
     const appId = configService.get<string>('FACEBOOK_APP_ID') || 'development-app-id';
     const appSecret = configService.get<string>('FACEBOOK_APP_SECRET') || 'development-app-secret';
-    
+    const callbackURL = configService.get<string>('FACEBOOK_CALLBACK_URL');
+
     super({
       clientID: appId,
       clientSecret: appSecret,
-      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL') || 'http://localhost:3001/auth/facebook/callback',
+      callbackURL: callbackURL || 'http://localhost:3001/auth/facebook/callback',
       profileFields: ['email', 'name', 'picture.type(large)'],
     });
   }

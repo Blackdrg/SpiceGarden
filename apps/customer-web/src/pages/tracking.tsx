@@ -68,9 +68,9 @@ const TrackingPage = () => {
         setOrderDetails(order);
         setDisplayOrderStatus(order.status || 'preparing');
         switch (order.status) {
-          case 'preparing': setDisplayEstimatedTime(10 + Math.floor(Math.random() * 10)); break;
-          case 'ready': setDisplayEstimatedTime(5 + Math.floor(Math.random() * 5)); break;
-          case 'pickedup': setDisplayEstimatedTime(8 + Math.floor(Math.random() * 12)); break;
+          case 'preparing': setDisplayEstimatedTime(15); break;
+          case 'ready': setDisplayEstimatedTime(8); break;
+          case 'pickedup': setDisplayEstimatedTime(10); break;
           case 'delivered': setDisplayEstimatedTime(0); break;
           default: setDisplayEstimatedTime(15);
         }

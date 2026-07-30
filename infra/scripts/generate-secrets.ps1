@@ -1,4 +1,4 @@
-$secretDir = "C:\Users\mehta\Desktop\SpiceGarden\secrets"
+$secretDir = Join-Path $PSScriptRoot "..\..\secrets"
 if (!(Test-Path $secretDir)) { New-Item -ItemType Directory -Path $secretDir }
 
 function New-Secret() {
@@ -26,6 +26,9 @@ function New-Secret() {
     @{ Name = "sentry_secret_key.txt"; Value = (New-Secret) }
     @{ Name = "sentry_system_secret.txt"; Value = (New-Secret) }
     @{ Name = "sentry_db_password.txt"; Value = (New-Secret) }
+    @{ Name = "mongo_password.txt"; Value = (New-Secret) }
+    @{ Name = "redis_password.txt"; Value = (New-Secret) }
+    @{ Name = "apns_bundle_id.txt"; Value = "com.spicegarden.app" }
 ) | ForEach-Object {
     $_.Value | Out-File -FilePath (Join-Path $secretDir $_.Name) -NoNewline
     $comment = $_.Comment

@@ -105,7 +105,7 @@ export class PasswordResetService {
       throw new UnauthorizedException('Invalid or expired reset code');
     }
 
-    if (otp.code !== code) {
+    if (!crypto.timingSafeEqual(Buffer.from(otp.code), Buffer.from(code))) {
       throw new UnauthorizedException('Invalid reset code');
     }
 
@@ -137,7 +137,7 @@ export class PasswordResetService {
       throw new UnauthorizedException('Invalid or expired reset code');
     }
 
-    if (otp.code !== code) {
+    if (!crypto.timingSafeEqual(Buffer.from(otp.code), Buffer.from(code))) {
       throw new UnauthorizedException('Invalid reset code');
     }
 

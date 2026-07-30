@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import { Rate } from 'k6/metrics';
 
 function randomChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -11,6 +11,7 @@ export const options = {
         { duration: '45m', target: 10000 },
         { duration: '3m', target: 0 },
     ],
+    summaryTrendStats: ['avg', 'min', 'max', 'p(95)', 'p(99)'],
     thresholds: {
         'http_req_success_rate': ['rate>0.99'],
         'http_req_duration': ['p(95)<500'],
@@ -19,11 +20,10 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 const httpSuccessRate = new Rate('http_req_success_rate');
-const httpDuration = new Trend('http_req_duration', true);
 
 export default function () {
     const rand = Math.random();
-    
+
     if (rand < 0.50) {
         runBrowse();
     } else if (rand < 0.80) {
@@ -31,7 +31,7 @@ export default function () {
     } else {
         runHealthCheck();
     }
-    
+
     sleep(randomInt(1, 3));
 }
 
@@ -39,7 +39,7 @@ function runBrowse() {
     const res = http.get(BASE_URL + '/restaurants');
     const success = check(res, { 'browse ok': (r) => r.status === 200 });
     httpSuccessRate.add(success);
-    httpDuration.add(res.timings.duration);
+    sleep(0);
 }
 
 function runSearch() {
@@ -47,5 +47,12 @@ function runSearch() {
     const res = http.get(BASE_URL + '/restaurants/search?q=' + query);
     const success = check(res, { 'search ok': (r) => r.status === 200 });
     httpSuccessRate.add(success);
-    httpDuration.add(res.timings.duration);
+    sleep(0);
+}
+
+function runHealthCheck() {
+    const res = http.get(BASE_URL + '/health');
+    const success = check(res, { 'health ok': (r) => r.status === 200 });
+    httpSuccessRate.add(success);
+    sleep(0);
 }

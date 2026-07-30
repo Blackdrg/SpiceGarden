@@ -135,7 +135,7 @@ export class QueueService implements OnModuleDestroy {
   private registerWorker(queueName: QueueName, processor: (job: Job) => Promise<void>): void {
     const worker = new Worker(queueName, processor, {
       connection: this.connection,
-      concurrency: Number(this.configService.get<number>('QUEUE_CONCURRENCY') || 5),
+       concurrency: Number(this.configService.get<number>('QUEUE_CONCURRENCY') || 10),
       lockDuration: 60000,
     });
 
