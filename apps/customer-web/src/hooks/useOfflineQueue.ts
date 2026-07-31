@@ -40,21 +40,27 @@ async function sendRequest(endpoint: string, options: RequestInit = {}): Promise
 }
 
 export const useOfflineQueue = () => {
-  const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const [queue, setQueue] = useState<QueuedRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const handleOnline = useCallback(() => {
+    setIsOnline(true);
+  }, []);
+
+  const handleOffline = useCallback(() => {
+    setIsOnline(false);
+  }, []);
+
   useEffect(() => {
-    setIsOnline(typeof navigator !== 'undefined' ? navigator.onLine : true);
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    setIsOnline(typeof navigator !== 'undefined' ? navigator.onLine : null);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [handleOnline, handleOffline]);
 
   const processQueue = useCallback(async () => {
     if (isProcessing || !isOnline) return;

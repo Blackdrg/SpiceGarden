@@ -20,5 +20,5 @@ COPY --from=builder --chown=nodejs:nodejs /app/packages/shared/package*.json ./p
 ENV NODE_ENV=production
 USER nodejs
 EXPOSE 3005
-HEALTHCHECK --interval=30s --timeout=10s --start-period: 40s --retries=3 CMD node -e "require('http').get('http://localhost:3005/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD node -e "require('http').get('http://localhost:3005/', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
 CMD ["npx", "expo", "start", "--web", "--port", "3005"]

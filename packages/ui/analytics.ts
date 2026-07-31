@@ -11,20 +11,24 @@ interface AnalyticsEvent {
 
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics'
 
-export const trackEvent = (event: AnalyticsEvent) => {
+const sendAnalyticsEvent = (event: AnalyticsEvent): void => {
   if (typeof window === 'undefined') return
 
-  fetch(ANALYTICS_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...event, timestamp: Date.now() }),
-    keepalive: true,
-  }).catch(() => {})
+  try {
+    const blob = new Blob([JSON.stringify({ ...event, timestamp: Date.now() })], { type: 'application/json' })
+    navigator.sendBeacon(ANALYTICS_ENDPOINT, blob)
+  } catch {
+    // silently ignore
+  }
+}
+
+export const trackEvent = (event: AnalyticsEvent) => {
+  sendAnalyticsEvent(event)
 }
 
 function trackPageView(url: string) {
   if (typeof window === 'undefined') return;
-  trackEvent({
+  sendAnalyticsEvent({
     event: 'page_view',
     properties: { url },
   });
@@ -41,7 +45,7 @@ function setupWebVitals(): () => void {
   if (typeof window === 'undefined' || !('performance' in window)) return () => {};
 
   const reportVital = (metric: { name: string; value: number }) => {
-    trackEvent({
+    sendAnalyticsEvent({
       event: 'web_vital',
       properties: {
         metric: metric.name,

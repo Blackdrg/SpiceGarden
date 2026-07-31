@@ -3,21 +3,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useWebVitals = exports.useAnalytics = exports.trackEvent = void 0;
 const react_1 = require("react");
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics';
-const trackEvent = (event) => {
+const sendAnalyticsEvent = (event) => {
     if (typeof window === 'undefined')
         return;
-    fetch(ANALYTICS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...event, timestamp: Date.now() }),
-        keepalive: true,
-    }).catch(() => { });
+    try {
+        const blob = new Blob([JSON.stringify({ ...event, timestamp: Date.now() })], { type: 'application/json' });
+        navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+    }
+    catch {
+        // silently ignore
+    }
+};
+const trackEvent = (event) => {
+    sendAnalyticsEvent(event);
 };
 exports.trackEvent = trackEvent;
 function trackPageView(url) {
     if (typeof window === 'undefined')
         return;
-    (0, exports.trackEvent)({
+    sendAnalyticsEvent({
         event: 'page_view',
         properties: { url },
     });
@@ -34,7 +38,7 @@ function setupWebVitals() {
     if (typeof window === 'undefined' || !('performance' in window))
         return () => { };
     const reportVital = (metric) => {
-        (0, exports.trackEvent)({
+        sendAnalyticsEvent({
             event: 'web_vital',
             properties: {
                 metric: metric.name,

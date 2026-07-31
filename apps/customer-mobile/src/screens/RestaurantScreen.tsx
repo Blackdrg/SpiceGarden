@@ -64,9 +64,7 @@ const RestaurantScreen = () => {
       }
       console.error('Failed to load restaurant data:', err);
     } finally {
-      if (!signal.cancelled) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   }, [slug, restaurantId, fadeAnim]);
 

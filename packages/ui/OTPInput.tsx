@@ -23,7 +23,10 @@ export const OTPInput = ({
   label,
 }: OTPInputProps) => {
   const [otp, setOtp] = useState<string[]>(() => value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(length).fill(null));
+  const inputRefs = useRef<Array<HTMLInputElement | null> | null>(null);
+  if (inputRefs.current === null) {
+    inputRefs.current = Array.from({ length }, () => null as HTMLInputElement | null);
+  }
   const inputKeys = useMemo(() => Array.from({ length }, (_, i) => `otp-digit-${i}`), [length]);
 
   const handleChange = (index: number, digit: string) => {
@@ -37,7 +40,7 @@ export const OTPInput = ({
     onChange?.(newValue);
 
     if (digit && index < length - 1) {
-      inputRefs.current[index + 1]?.focus();
+      inputRefs.current![index + 1]?.focus();
     }
 
     if (newValue.length === length && onComplete) {
@@ -47,13 +50,13 @@ export const OTPInput = ({
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+      inputRefs.current![index - 1]?.focus();
     }
     if (e.key === 'ArrowLeft' && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+      inputRefs.current![index - 1]?.focus();
     }
     if (e.key === 'ArrowRight' && index < length - 1) {
-      inputRefs.current[index + 1]?.focus();
+      inputRefs.current![index + 1]?.focus();
     }
   };
 
@@ -85,7 +88,7 @@ export const OTPInput = ({
           <input
             key={inputKeys[index]}
             id={`otp-input-${index}`}
-            ref={(el) => { inputRefs.current[index] = el; }}
+            ref={(el) => { inputRefs.current![index] = el; }}
             type="text"
             inputMode="numeric"
             maxLength={1}

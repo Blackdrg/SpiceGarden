@@ -191,7 +191,7 @@ export const LoadingState = ({ count = 3, variant = 'card', label }: LoadingStat
               backgroundColor: DESIGN_TOKENS.colors.elevated,
               borderRadius: DESIGN_TOKENS.radius.sm,
               width: `${Math.max(40, Math.min(100 - i * 8, 100))}%`,
-              animation: 'sg-pulse 1.5s ease-in-out infinite',
+              animation: 'sg-pulse 0.5s ease-in-out infinite',
               animationDelay: `${i * 0.1}s`,
             }}
           />
@@ -212,7 +212,7 @@ export const LoadingState = ({ count = 3, variant = 'card', label }: LoadingStat
                 height: 32,
                 borderRadius: DESIGN_TOKENS.radius.full,
                 backgroundColor: DESIGN_TOKENS.colors.elevated,
-                animation: 'sg-pulse 1.5s ease-in-out infinite',
+                animation: 'sg-pulse 0.5s ease-in-out infinite',
                 animationDelay: `${i * 0.1}s`,
               }}
             />
@@ -222,7 +222,7 @@ export const LoadingState = ({ count = 3, variant = 'card', label }: LoadingStat
                 backgroundColor: DESIGN_TOKENS.colors.elevated,
                 borderRadius: DESIGN_TOKENS.radius.sm,
                 flex: 1,
-                animation: 'sg-pulse 1.5s ease-in-out infinite',
+                animation: 'sg-pulse 0.5s ease-in-out infinite',
                 animationDelay: `${i * 0.1 + 0.05}s`,
               }}
             />
@@ -243,7 +243,7 @@ export const LoadingState = ({ count = 3, variant = 'card', label }: LoadingStat
             borderRadius: DESIGN_TOKENS.radius.xl,
             padding: DESIGN_TOKENS.spacing[5],
             backgroundColor: DESIGN_TOKENS.colors.surface,
-            animation: 'sg-pulse 1.5s ease-in-out infinite',
+            animation: 'sg-pulse 0.5s ease-in-out infinite',
             animationDelay: `${i * 0.1}s`,
           }}
         >

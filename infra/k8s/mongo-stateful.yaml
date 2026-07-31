@@ -39,6 +39,8 @@ spec:
   selector:
     app: mongo
 ---
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   name: mongo
   labels:

@@ -76,3 +76,12 @@ spec:
                 name: super-admin
                 port:
                   number: 80
+    - http:
+        paths:
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: spicegarden-static
+                port:
+                  number: 80

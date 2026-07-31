@@ -100,8 +100,8 @@ export class RefundService {
 
      this.logger.log(`Created refund request for order ${orderId}`);
 
-    // Notify relevant parties about the refund request
-    await this.notifyRefundRequest(savedApproval);
+    // Notify relevant parties about the refund request (non-blocking)
+    void this.notifyRefundRequest(savedApproval);
 
     return savedApproval;
   }
@@ -148,7 +148,7 @@ export class RefundService {
      this.logger.log(`Approved refund request by ${approverId}`);
 
      // Notify about approval
-    await this.notifyRefundApproval(savedApproval);
+    void this.notifyRefundApproval(savedApproval);
 
     return savedApproval;
   }
@@ -188,8 +188,8 @@ export class RefundService {
 
      this.logger.log(`Rejected refund request by ${approverId}`);
 
-     // Notify about rejection
-    await this.notifyRefundRejection(savedApproval);
+     // Notify about rejection (non-blocking)
+     void this.notifyRefundRejection(savedApproval);
 
     return savedApproval;
   }
@@ -285,8 +285,8 @@ export class RefundService {
         // /payments/refund endpoint), which uses the actual gateway currency.
         // Recording it again here would double-count the refund in the ledger.
 
-        // Notify about refund completion
-        await this.notifyRefundProcessed(savedRefund, order);
+// Notify about refund completion (non-blocking)
+        void this.notifyRefundProcessed(savedRefund, order);
 
        this.logger.log(`Processed refund for order ${order.id}`);
 

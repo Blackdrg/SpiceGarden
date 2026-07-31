@@ -1,4 +1,4 @@
-import React from 'react';
+import { createContext, useContext } from 'react';
 
 export const DESIGN_TOKENS = {
   colors: {
@@ -202,11 +202,11 @@ export const DARK_MODE_TOKENS = {
   },
 };
 
-export const ReducedMotionContext = React.createContext({
+export const ReducedMotionContext = createContext({
   prefersReduced: false,
 });
 
-export const useReducedMotion = () => React.useContext(ReducedMotionContext);
+export const useReducedMotion = () => useContext(ReducedMotionContext);
 
 export const generateCSSVariables = () => {
   const vars: Record<string, string> = {};

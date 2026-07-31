@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { Easing } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
@@ -7,16 +7,7 @@ import { DESIGN_TOKENS } from '@spicegarden/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { API_BASE_URL } from '../constants/api';
 import Toast from 'react-native-root-toast';
-
-interface AgreementResponse {
-  id: string;
-  type: string;
-  title: string;
-  content: string;
-  version: string;
-  effectiveDate: string;
-  lastUpdated: string;
-}
+import { useLegalDocument } from '../hooks/useLegalDocument';
 
 interface PolicyLink {
   id: string;
@@ -88,48 +79,9 @@ const handlePolicyPress = async (url: string) => {
   }
 };
 
-const fetchDriverAgreement = async (): Promise<AgreementResponse | null> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return (await response.json()) as AgreementResponse;
-  } catch {
-    return null;
-  }
-};
-
 const LegalScreen = () => {
   const navigation = useNavigation();
-  const [agreement, setAgreement] = useState<AgreementResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fadeAnim = useSharedValue(0);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    let active = true;
-    fetchDriverAgreement().then((data) => {
-      if (!active) return;
-      if (data) {
-        setAgreement(data);
-      } else {
-        setError('Failed to load legal document');
-      }
-      setLoading(false);
-      fadeAnim.value = withTiming(1, { duration: DESIGN_TOKENS.motion.page, easing: Easing.out(Easing.quad) });
-    });
-    return () => {
-      active = false;
-    };
-  }, [fetchDriverAgreement]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { agreement, loading, error, fadeAnim, retry } = useLegalDocument();
 
   if (loading) {
     return (
@@ -168,28 +120,7 @@ const LegalScreen = () => {
               <Text style={styles.errorMessage}>{error}</Text>
               <Pressable
                 style={styles.retryButton}
-                onPress={() => {
-                  setError(null);
-                  setLoading(true);
-                  const retry = async () => {
-                    try {
-                      const response = await fetch(`${API_BASE_URL}/agreements/current/driver/driver_agreement`, {
-                        headers: {
-                          'Content-Type': 'application/json',
-                          Accept: 'application/json',
-                        },
-                      });
-                      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                      const data = (await response.json()) as AgreementResponse;
-                      setAgreement(data);
-                    } catch (err) {
-                      setError(err instanceof Error ? err.message : 'Failed to load legal document');
-                    } finally {
-                      setLoading(false);
-                    }
-                  };
-                  retry();
-                }}
+                onPress={retry}
                 accessibilityLabel="Retry loading document"
                 accessibilityRole="button"
               >
@@ -202,7 +133,7 @@ const LegalScreen = () => {
                 <Text style={styles.agreementTitle}>{agreement.title}</Text>
                 <View style={styles.agreementMeta}>
                   <Text style={styles.agreementVersion}>Version {agreement.version}</Text>
-                  <Text style={styles.agreementDot}>•</Text>
+                  <Text style={styles.agreementDot}>â€¢</Text>
                   <Text style={styles.agreementDate}>Effective {agreement.effectiveDate}</Text>
                 </View>
               </View>

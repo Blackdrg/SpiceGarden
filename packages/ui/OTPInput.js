@@ -39,7 +39,10 @@ const react_1 = __importStar(require("react"));
 const tokens_1 = require("./tokens");
 const OTPInput = ({ length = 4, value = '', onChange, onComplete, error, disabled = false, label, }) => {
     const [otp, setOtp] = (0, react_1.useState)(() => value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-    const inputRefs = (0, react_1.useRef)(Array(length).fill(null));
+    const inputRefs = (0, react_1.useRef)(null);
+    if (inputRefs.current === null) {
+        inputRefs.current = Array.from({ length }, () => null);
+    }
     const inputKeys = (0, react_1.useMemo)(() => Array.from({ length }, (_, i) => `otp-digit-${i}`), [length]);
     const handleChange = (index, digit) => {
         if (!/^\d*$/.test(digit))

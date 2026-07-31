@@ -421,5 +421,3 @@ spec:
     requests:
       storage: 100Gi
   storageClassName: standard-backup
----
-apiVersion: batch/v1
