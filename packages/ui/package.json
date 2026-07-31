@@ -1,35 +1,35 @@
 {
-  "name": "@spicegarden/ui",
-  "version": "0.1.0",
-  "private": true,
-  "main": "index.js",
-  "module": "index.js",
-  "types": "index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "lint": "eslint .",
-    "test:unit": "jest --config jest.config.js",
-    "test:all": "npm run test:unit"
-  },
-  "dependencies": {
-    "lucide-react": "^1.17.0"
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^8.60.0",
-    "@typescript-eslint/parser": "^8.60.0",
-    "eslint": "^9.0.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.5.0",
-    "ts-jest": "^29.4.11",
-    "typescript": "^5.0.0"
-  }
+    "name":  "@spicegarden/ui",
+    "version":  "0.1.0",
+    "private":  true,
+    "main":  "dist/index.js",
+    "module":  "dist/index.js",
+    "types":  "dist/index.d.ts",
+    "exports":  {
+                    ".":  {
+                              "types":  "./dist/index.d.ts",
+                              "default":  "./dist/index.js"
+                          }
+                },
+    "scripts":  {
+                    "build":  "tsc",
+                    "lint":  "eslint .",
+                    "test:unit":  "jest --config jest.config.js",
+                    "test:all":  "npm run test:unit"
+                },
+    "dependencies":  {
+
+                     },
+    "devDependencies":  {
+                            "@testing-library/jest-dom":  "^6.9.1",
+                            "@testing-library/react":  "^16.3.2",
+                            "@types/jest":  "^29.5.14",
+                            "@typescript-eslint/eslint-plugin":  "^8.60.0",
+                            "@typescript-eslint/parser":  "^8.60.0",
+                            "eslint":  "^9.0.0",
+                            "jest":  "^29.7.0",
+                            "jest-environment-jsdom":  "^29.5.0",
+                            "ts-jest":  "^29.4.11",
+                            "typescript":  "^5.0.0"
+                        }
 }

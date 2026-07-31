@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "predev": "npm run build -w @spicegarden/ui",
     "dev": "concurrently -n backend,web,restaurant,admin -c blue,green,magenta,cyan \"npm run dev -w @spicegarden/backend\" \"npm run dev -w @spicegarden/customer-web\" \"npm run dev -w @spicegarden/restaurant-dashboard\" \"npm run dev -w @spicegarden/super-admin\"",
     "build": "npm run --workspaces build",
     "lint": "npm run --workspaces lint",

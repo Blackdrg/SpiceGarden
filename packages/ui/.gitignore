@@ -1,0 +1,7 @@
+# Build artifacts emitted by tsc - keep .ts/.tsx sources, ignore .js duplicates
+*.js
+!jest.config.js
+!__tests__/*.js
+!__tests__/*.tsx
+!__tests__/*.ts
+!__mocks__/*.js

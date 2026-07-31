@@ -75,5 +75,8 @@ playwright-report-audit/
 package/
 **/dist-web/
 
+# packages/ui build artifacts
+packages/ui/dist/
+
 # Next.js
 .next/

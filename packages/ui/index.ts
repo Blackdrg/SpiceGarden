@@ -14,7 +14,6 @@ export * from './Stepper';
 export * from './analytics';
 export * from './tokens';
 export { MOTION_EASING } from './tokens';
-export * from './icons';
 export * from './useFlow';
 export * from './FlowManager';
 export * from './ErrorBoundary';
