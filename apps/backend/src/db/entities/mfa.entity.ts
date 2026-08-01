@@ -4,6 +4,8 @@ import {
     Column,
     OneToOne,
     JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
@@ -16,6 +18,12 @@ export class MfaSecretEntity {
     @JoinColumn()
     user?: UserEntity;
 
-    @Column({ nullable: true })
-    secret?: string;
+    @Column({ nullable: false })
+    secret!: string;
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
 }

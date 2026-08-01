@@ -1,9 +1,22 @@
 # SpiceGarden Enterprise Platform
 ## Production Certification & Zero-Defect Completion Report
 
-**Date:** 2026-07-24  
-**Branch:** `feat/add-react-doctor`  
-**Certification Status:** ✅ **PRODUCTION LAUNCH APPROVED**
+> **⚠️ SELF-ASSESSMENT — NOT INDEPENDENTLY VERIFIED**
+>
+> This document is a self-assessment produced by an in-repository automation process. It is NOT an independent audit conclusion and must not be cited as evidence of production readiness or security compliance.
+>
+> Per the post-audit reconciliation methodology (see `docs/READINESS_METHODOLOGY.md`), three distinct readiness metrics exist:
+> - **Engineering Completion %** — code/test/lint coverage (self-reported, but backed by build/test artifacts)
+> - **Commercial/Launch Readiness %** — feature completeness for charging customers
+> - **Production Readiness** — operational/security/compliance maturity (requires independent third-party verification)
+>
+> The "100%" figure in this report refers only to the Engineering Completion metric as of the report date. It does NOT represent production readiness. See `FULL_STACK_AUDIT_REPORT.md` §25 for the reconciled scoring table, and the meta-audit remediation items (`docs/POST_AUDIT_REMEDIATION.md`) for outstanding Section 2 gaps requiring independent verification.
+>
+| Field | Value |
+|---|---|
+| **Date:** | 2026-07-24 |
+| **Branch:** | `feat/add-react-doctor` |
+| **Certification Status:** | ❌ **NOT APPROVED FOR PRODUCTION DEPLOYMENT (Self-Assessment Only)** |
 
 ---
 
@@ -465,9 +478,15 @@ node infra/scripts/verify-stack.js
 
 ### Certification Decision
 
-**The SpiceGarden Enterprise Platform is CERTIFIED for commercial production deployment.**
+**THIS REPORT IS A SELF-ASSESSMENT ONLY. It does NOT constitute production certification.**
 
-All critical, high, and medium priority issues have been resolved. All verification gates pass. The remaining items are accepted risks in development dependencies that do not affect production runtime security or functionality.
+The Engineering Completion metric shows 100% of scoped checklist items implemented as of 2026-07-24. However, per the post-audit reconciliation:
+
+1. **Production Readiness** cannot be self-certified — Section 2 of the meta-audit requires independent third-party verification (PCI DSS, SOC 2, GDPR/CCPA, ISO 27001, independent penetration test).
+2. **Commercial/Launch Readiness** at 95% may conflate engineering completeness with operational readiness; the three metrics must remain separate.
+3. Several security items (test credentials in `.env`, Sentry version drift, gRPC dead code) were flagged as requiring remediation after this report's date.
+
+**This document must be prefixed with "SELF-ASSESSMENT — NOT INDEPENDENTLY VERIFIED" in all future references.**
 
 ### Next Steps
 1. **Pre-deployment:** Rotate all .env secrets (JWT, DB passwords, Stripe keys)

@@ -1,0 +1,1058 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:350cc99d-9750-4c2a-92a6-04da49d81f81",
+  "createdAt": "2026-07-31T19:13:48.900Z",
+  "components": [
+    {
+      "type": "library",
+      "name": "@babel/generator",
+      "version": "7.29.7",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@babel/generator@7.29.7",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/babel/babel.git",
+        "directory": "packages/babel-generator"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@babel/parser",
+      "version": "7.29.7",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@babel/parser@7.29.7",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/babel/babel.git",
+        "directory": "packages/babel-parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@babel/traverse",
+      "version": "7.29.7",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@babel/traverse@7.29.7",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/babel/babel.git",
+        "directory": "packages/babel-traverse"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/core",
+      "version": "1.10.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@emnapi/core@1.10.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/toyobayashi/emnapi.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/runtime",
+      "version": "1.10.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@emnapi/runtime@1.10.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/toyobayashi/emnapi.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/wasi-threads",
+      "version": "1.2.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@emnapi/wasi-threads@1.2.1",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/toyobayashi/emnapi.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@napi-rs/wasm-runtime",
+      "version": "1.1.6",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@napi-rs/wasm-runtime@1.1.6",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/napi-rs/napi-rs.git",
+        "directory": "wasm-runtime"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@nestjs/common",
+      "version": "11.1.27",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@nestjs/common@11.1.27",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/nestjs/nest.git",
+        "directory": "packages/common"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@nestjs/core",
+      "version": "11.1.27",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@nestjs/core@11.1.27",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/nestjs/nest.git",
+        "directory": "packages/core"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@nestjs/swagger",
+      "version": "11.4.6",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@nestjs/swagger@11.4.6",
+      "repository": "https://github.com/nestjs/swagger"
+    },
+    {
+      "type": "library",
+      "name": "@nestjs/typeorm",
+      "version": "11.0.3",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@nestjs/typeorm@11.0.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/nestjs/typeorm"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@playwright/test",
+      "version": "1.61.1",
+      "licenses": "Apache-2.0",
+      "purl": "pkg:npm/@playwright/test@1.61.1",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/microsoft/playwright.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/api-types",
+      "version": "1.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/api-types@1.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/backend",
+      "version": "0.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/backend@0.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/customer-mobile",
+      "version": "1.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/customer-mobile@1.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/customer-web",
+      "version": "0.1.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/customer-web@0.1.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/delivery-partner",
+      "version": "1.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/delivery-partner@1.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/grpc-transport",
+      "version": "unknown",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/grpc-transport@unknown",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/proto",
+      "version": "1.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/proto@1.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/restaurant-dashboard",
+      "version": "0.1.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/restaurant-dashboard@0.1.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/shared",
+      "version": "0.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/shared@0.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/super-admin",
+      "version": "0.1.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/super-admin@0.1.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/ui",
+      "version": "0.1.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/ui@0.1.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@spicegarden/ux",
+      "version": "0.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/@spicegarden/ux@0.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "@tanstack/react-query",
+      "version": "5.101.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@tanstack/react-query@5.101.4",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TanStack/query.git",
+        "directory": "packages/react-query"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@testing-library/dom",
+      "version": "10.4.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@testing-library/dom@10.4.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/testing-library/dom-testing-library"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@testing-library/jest-dom",
+      "version": "6.9.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@testing-library/jest-dom@6.9.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/testing-library/jest-dom"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@tybys/wasm-util",
+      "version": "0.10.3",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@tybys/wasm-util@0.10.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/toyobayashi/wasm-util.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/aria-query",
+      "version": "5.0.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/aria-query@5.0.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/aria-query"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/babel__core",
+      "version": "7.20.5",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/babel__core@7.20.5",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/babel__core"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/babel__generator",
+      "version": "7.27.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/babel__generator@7.27.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/babel__generator"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/babel__template",
+      "version": "7.4.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/babel__template@7.4.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/babel__template"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/babel__traverse",
+      "version": "7.28.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/babel__traverse@7.28.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/babel__traverse"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/body-parser",
+      "version": "1.19.6",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/body-parser@1.19.6",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/body-parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/connect",
+      "version": "3.4.38",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/connect@3.4.38",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/connect"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/cookie-parser",
+      "version": "1.4.10",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/cookie-parser@1.4.10",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/cookie-parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/crypto-js",
+      "version": "4.2.2",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/crypto-js@4.2.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/crypto-js"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/d3-array",
+      "version": "3.2.2",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/d3-array@3.2.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/d3-array"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/d3-interpolate",
+      "version": "3.0.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/d3-interpolate@3.0.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/d3-interpolate"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/debug",
+      "version": "4.1.13",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/debug@4.1.13",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/debug"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/estree",
+      "version": "1.0.9",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/estree@1.0.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/estree"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/express-serve-static-core",
+      "version": "4.19.9",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/express-serve-static-core@4.19.9",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/express-serve-static-core"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/express",
+      "version": "4.17.25",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/express@4.17.25",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/express"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/fs-extra",
+      "version": "11.0.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/fs-extra@11.0.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/fs-extra"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/hammerjs",
+      "version": "2.0.46",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/hammerjs@2.0.46",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/hammerjs"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/http-errors",
+      "version": "2.0.5",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/http-errors@2.0.5",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/http-errors"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/istanbul-lib-coverage",
+      "version": "2.0.6",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/istanbul-lib-coverage@2.0.6",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/istanbul-lib-coverage"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/istanbul-lib-report",
+      "version": "3.0.3",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/istanbul-lib-report@3.0.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/istanbul-lib-report"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/istanbul-reports",
+      "version": "3.0.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/istanbul-reports@3.0.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/istanbul-reports"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/jest",
+      "version": "29.5.14",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/jest@29.5.14",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/jest"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/json-schema",
+      "version": "7.0.15",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/json-schema@7.0.15",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/json-schema"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/jsonwebtoken",
+      "version": "9.0.10",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/jsonwebtoken@9.0.10",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/jsonwebtoken"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/luxon",
+      "version": "3.7.2",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/luxon@3.7.2",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/luxon"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/ms",
+      "version": "2.1.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/ms@2.1.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/ms"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "26.1.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/node@26.1.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/node"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/pg",
+      "version": "8.20.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/pg@8.20.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/pg"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/qs",
+      "version": "6.15.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/qs@6.15.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/qs"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/range-parser",
+      "version": "1.2.7",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/range-parser@1.2.7",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/range-parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/react-dom",
+      "version": "19.2.3",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/react-dom@19.2.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/react-dom"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/react-test-renderer",
+      "version": "19.1.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/react-test-renderer@19.1.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/react-test-renderer"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/semver",
+      "version": "7.7.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/semver@7.7.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/semver"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/send",
+      "version": "0.17.6",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/send@0.17.6",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/send"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/serve-static",
+      "version": "1.15.10",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/serve-static@1.15.10",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/serve-static"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/validator",
+      "version": "13.15.10",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/validator@13.15.10",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/validator"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/yargs-parser",
+      "version": "21.0.3",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/yargs-parser@21.0.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/yargs-parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@types/yargs",
+      "version": "17.0.35",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@types/yargs@17.0.35",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/yargs"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@typescript-eslint/eslint-plugin",
+      "version": "8.63.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@typescript-eslint/eslint-plugin@8.63.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+        "directory": "packages/eslint-plugin"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@typescript-eslint/parser",
+      "version": "8.63.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@typescript-eslint/parser@8.63.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+        "directory": "packages/parser"
+      }
+    },
+    {
+      "type": "library",
+      "name": "@typescript-eslint/scope-manager",
+      "version": "8.63.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/@typescript-eslint/scope-manager@8.63.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+        "directory": "packages/scope-manager"
+      }
+    },
+    {
+      "type": "library",
+      "name": "bullmq",
+      "version": "5.81.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/bullmq@5.81.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/taskforcesh/bullmq.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "class-transformer",
+      "version": "0.5.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/class-transformer@0.5.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typestack/class-transformer.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "class-validator",
+      "version": "0.15.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/class-validator@0.15.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typestack/class-validator.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "electron",
+      "version": "42.6.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/electron@42.6.1",
+      "repository": "https://github.com/electron/electron"
+    },
+    {
+      "type": "library",
+      "name": "express-rate-limit",
+      "version": "7.5.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/express-rate-limit@7.5.1",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/express-rate-limit/express-rate-limit.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "glob",
+      "version": "10.5.0",
+      "licenses": "ISC",
+      "purl": "pkg:npm/glob@10.5.0",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/isaacs/node-glob.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "helmet",
+      "version": "7.2.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/helmet@7.2.0",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/helmetjs/helmet.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "html-minifier-terser",
+      "version": "7.2.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/html-minifier-terser@7.2.0",
+      "repository": "https://github.com/terser/html-minifier-terser.git"
+    },
+    {
+      "type": "library",
+      "name": "identity-obj-proxy",
+      "version": "3.0.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/identity-obj-proxy@3.0.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/keyanzhang/identity-obj-proxy.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "jest",
+      "version": "29.7.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/jest@29.7.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/jestjs/jest.git",
+        "directory": "packages/jest"
+      }
+    },
+    {
+      "type": "library",
+      "name": "lucide-react",
+      "version": "1.24.0",
+      "licenses": "ISC",
+      "purl": "pkg:npm/lucide-react@1.24.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/lucide-icons/lucide.git",
+        "directory": "packages/lucide-react"
+      }
+    },
+    {
+      "type": "library",
+      "name": "mongodb",
+      "version": "7.3.0",
+      "licenses": "Apache-2.0",
+      "purl": "pkg:npm/mongodb@7.3.0",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:mongodb/node-mongodb-native.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "mongoose",
+      "version": "9.8.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/mongoose@9.8.1",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/Automattic/mongoose.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "multer",
+      "version": "2.2.0",
+      "licenses": "MIT",
+      "purl": "pkg:npm/multer@2.2.0",
+      "repository": "expressjs/multer"
+    },
+    {
+      "type": "library",
+      "name": "otplib",
+      "version": "12.0.1",
+      "licenses": "MIT",
+      "purl": "pkg:npm/otplib@12.0.1",
+      "repository": "https://github.com/yeojz/otplib"
+    },
+    {
+      "type": "library",
+      "name": "postcss-selector-parser",
+      "version": "6.1.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/postcss-selector-parser@6.1.4",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/postcss/postcss-selector-parser.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.8",
+      "licenses": "MIT",
+      "purl": "pkg:npm/react-dom@19.2.8",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/react-dom"
+      }
+    },
+    {
+      "type": "library",
+      "name": "react-test-renderer",
+      "version": "19.2.8",
+      "licenses": "MIT",
+      "purl": "pkg:npm/react-test-renderer@19.2.8",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/react-test-renderer"
+      }
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.2.8",
+      "licenses": "MIT",
+      "purl": "pkg:npm/react@19.2.8",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/react"
+      }
+    },
+    {
+      "type": "library",
+      "name": "recharts",
+      "version": "2.15.4",
+      "licenses": "MIT",
+      "purl": "pkg:npm/recharts@2.15.4",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/recharts/recharts.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "spicegarden-launcher",
+      "version": "1.0.0",
+      "licenses": "UNKNOWN",
+      "purl": "pkg:npm/spicegarden-launcher@1.0.0",
+      "repository": null
+    },
+    {
+      "type": "library",
+      "name": "sqlite3",
+      "version": "6.0.1",
+      "licenses": "BSD-3-Clause",
+      "purl": "pkg:npm/sqlite3@6.0.1",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/TryGhost/node-sqlite3.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "ts-jest",
+      "version": "29.4.11",
+      "licenses": "MIT",
+      "purl": "pkg:npm/ts-jest@29.4.11",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kulshekhar/ts-jest.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "typeorm",
+      "version": "0.3.31",
+      "licenses": "MIT",
+      "purl": "pkg:npm/typeorm@0.3.31",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/typeorm/typeorm.git"
+      }
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "5.9.3",
+      "licenses": "Apache-2.0",
+      "purl": "pkg:npm/typescript@5.9.3",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/TypeScript.git"
+      }
+    }
+  ],
+  "metadata": {
+    "timestamp": "2026-07-31T19:13:48.900Z",
+    "tools": {
+      "service": [
+        {
+          "name": "SpiceGarden SBOM Generator",
+          "vendor": "SpiceGarden",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "name": "spicegarden",
+      "version": "0.0.0"
+    }
+  }
+}

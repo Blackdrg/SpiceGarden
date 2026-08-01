@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
+import { randomInt } from '../../../shared/random.utils';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { SurgeZoneEntity } from '../../db/entities/surge-zone.entity';
 
@@ -174,7 +175,7 @@ export class HeatmapService {
 
   private hashToGrid(hash: string, gridSize: number): string {
     // Simple hash-based grid for demo
-    return `${Math.floor(Math.random() / gridSize) * gridSize},${Math.floor(Math.random() / gridSize) * gridSize}`;
+    return `${randomInt(gridSize)},${randomInt(gridSize)}`;
   }
 
   private gridToCoords(hash: string): [number, number] {

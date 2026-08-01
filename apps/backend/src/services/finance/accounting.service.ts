@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { JournalEntryEntity, AccountType, JournalEntryStatus } from '../../db/entities/journal-entry.entity';
 import { LedgerEntryEntity } from '../../db/entities/ledger-entry.entity';
+import { randomString } from '../../../shared/random.utils';
 import { LedgerService } from '../../modules/ledger/ledger.service';
 
 @Injectable()
@@ -28,7 +29,7 @@ export class AccountingService {
     referenceType?: string;
     referenceId?: string;
   }>): Promise<JournalEntryEntity> {
-    const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `TXN-${Date.now()}-${randomString(9)}`;
     const entryDate = new Date();
 
     let totalDebit = 0;

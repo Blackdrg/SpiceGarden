@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from '../gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { randomString } from '../../../../shared/random.utils';
 
 @Injectable()
 export class GooglePayGateway implements PaymentGateway {
@@ -20,7 +21,7 @@ export class GooglePayGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const transactionId = `gpay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `gpay_${Date.now()}_${randomString(9)}`;
     const amountInPaisa = Math.round(amount * 100);
 
     return {

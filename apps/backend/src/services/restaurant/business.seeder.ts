@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
+import { randomInt, randomFloat } from '../../../shared/random.utils';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { MenuCategoryEntity } from '../../db/entities/menu-category.entity';
@@ -133,7 +134,7 @@ export class BusinessSeederService {
           id: randomUUID(),
           fullName: driverNames[i],
           email: `${driverNames[i].toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
-          phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+          phone: `+92${randomInt(9000000000) + 1000000000}`,
           passwordHash: await argon2.hash('SpiceGarden@2024'),
           role: UserRole.DELIVERY_PARTNER,
           status: UserStatus.ACTIVE,
@@ -153,7 +154,7 @@ export class BusinessSeederService {
           isOnline: true,
           isAvailable: true,
           currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
-          rating: 4.5 + Math.random() * 0.5,
+          rating: 4.5 + randomFloat(0.5),
         } as any),
       ),
     );

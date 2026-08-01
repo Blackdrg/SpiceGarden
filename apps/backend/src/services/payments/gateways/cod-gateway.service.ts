@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from './payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { randomString } from '../../../../shared/random.utils';
 
 function safeParse<T = any>(json: string): T | undefined {
   try {
@@ -21,7 +22,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const codPaymentId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const codPaymentId = `cod_${Date.now()}_${randomString(9)}`;
 
     const meta = metadata as Record<string, any> | undefined;
     return {

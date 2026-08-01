@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from '../gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { randomString } from '../../../../shared/random.utils';
 
 export interface NetBankingOptions {
   bankCode: string;
@@ -33,7 +34,7 @@ export class NetBankingGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const transactionId = `nb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `nb_${Date.now()}_${randomString(9)}`;
     const options = metadata.options as NetBankingOptions | undefined;
     const bankCode = options?.bankCode || 'HDFC';
     const bankName = options?.bankName || this.supportedBanks[bankCode] || 'Unknown Bank';

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Version, VERSION_NEUTRAL } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,8 +10,9 @@ export class AppController {
     return this.appService.getHealth();
   }
 
+  @Version(VERSION_NEUTRAL)
   @Get('health')
-  healthCheck() {
-    return { status: 'ok', timestamp: new Date().toISOString() };
+  async healthCheck() {
+    return this.appService.getHealth();
   }
 }

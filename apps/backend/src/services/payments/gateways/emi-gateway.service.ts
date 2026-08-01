@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from '../gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
+import { randomString } from '../../../../shared/random.utils';
 
 export interface EmiOptions {
   tenureMonths: number;
@@ -21,7 +22,7 @@ export class EmiGateway implements PaymentGateway {
     userId: string | null = null,
     metadata: any = {}
   ): Promise<PaymentIntent> {
-    const transactionId = `emi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const transactionId = `emi_${Date.now()}_${randomString(9)}`;
     const options = metadata.emiOptions as EmiOptions | undefined;
     const tenure = options?.tenureMonths || 3;
     const interestRate = options?.interestRate || 12;

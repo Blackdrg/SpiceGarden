@@ -1,104 +1,62 @@
 import { Injectable } from '@nestjs/common';
+import { Counter, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
 
-interface Counter {
-  inc(labels?: { [key: string]: string }): void;
-}
+const metricsRegistry = new Registry();
+collectDefaultMetrics({ register: metricsRegistry });
 
-interface Histogram {
-  startTimer(): { stop: () => number };
-  observe(value: number, labels?: { [key: string]: string }): void;
-}
+const httpRequestDuration = new Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status_code'] as const,
+  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+  registers: [metricsRegistry],
+});
+
+const queueFailuresCounter = new Counter({
+  name: 'queue_failures_total',
+  help: 'Total number of queue processing failures',
+  labelNames: ['queue_name'] as const,
+  registers: [metricsRegistry],
+});
+
+const socketFailuresCounter = new Counter({
+  name: 'socket_failures_total',
+  help: 'Total number of socket connection failures',
+  labelNames: ['namespace', 'event'] as const,
+  registers: [metricsRegistry],
+});
+
+const paymentFailuresCounter = new Counter({
+  name: 'payment_failures_total',
+  help: 'Total number of payment processing failures',
+  labelNames: ['provider', 'error_type'] as const,
+  registers: [metricsRegistry],
+});
 
 @Injectable()
 export class MetricsService {
-  private readonly httpRequestDuration: Map<string, { sum: number; count: number }> = new Map();
-  private readonly queueFailures: Map<string, number> = new Map();
-  private readonly socketFailures: Map<string, number> = new Map();
-  private readonly paymentFailures: Map<string, number> = new Map();
-
-  // Simulate a histogram for HTTP request duration
-  startTimer() {
-    const start = Date.now();
-    return {
-      stop: () => {
-        const end = Date.now();
-        return end - start;
-      },
-    };
+  startTimer(method: string, route: string, statusCode: number) {
+    const end = httpRequestDuration.startTimer({
+      method,
+      route,
+      status_code: String(statusCode),
+    });
+    return end;
   }
 
-  // Record HTTP request duration
-  observeHttpRequestDuration(
-    method: string,
-    route: string,
-    statusCode: number,
-    durationMs: number
-  ) {
-    const key = `${method}:${route}:${statusCode}`;
-    const current = this.httpRequestDuration.get(key) || { sum: 0, count: 0 };
-    current.sum += durationMs;
-    current.count += 1;
-    this.httpRequestDuration.set(key, current);
-  }
-
-  // Increment queue failures
   incrementQueueFailure(queueName: string) {
-    const current = this.queueFailures.get(queueName) || 0;
-    this.queueFailures.set(queueName, current + 1);
+    queueFailuresCounter.inc({ queue_name: queueName });
   }
 
-  // Increment socket failures
   incrementSocketFailure(namespace: string, event: string) {
-    const key = `${namespace}:${event}`;
-    const current = this.socketFailures.get(key) || 0;
-    this.socketFailures.set(key, current + 1);
+    socketFailuresCounter.inc({ namespace, event });
   }
 
-  // Increment payment failures
   incrementPaymentFailure(provider: string, errorType: string) {
-    const key = `${provider}:${errorType}`;
-    const current = this.paymentFailures.get(key) || 0;
-    this.paymentFailures.set(key, current + 1);
+    paymentFailuresCounter.inc({ provider, error_type: errorType });
   }
 
-  // Expose metrics in Prometheus format
   async getMetrics(): Promise<string> {
-    const lines: string[] = [];
-
-    // HTTP request duration
-    lines.push('# HELP http_request_duration_seconds Duration of HTTP requests in seconds');
-    lines.push('# TYPE http_request_duration_seconds histogram');
-    for (const [key, value] of this.httpRequestDuration.entries()) {
-      const [method, route, statusCode] = key.split(':');
-      const avg = value.count > 0 ? value.sum / value.count / 1000 : 0; // Convert ms to seconds
-      lines.push(
-        `http_request_duration_seconds{method="${method}",route="${route}",status_code="${statusCode}"} ${avg}`
-      );
-    }
-
-    // Queue failures
-    lines.push('# HELP queue_failures_total Total number of queue processing failures');
-    lines.push('# TYPE queue_failures_total counter');
-    for (const [queueName, count] of this.queueFailures.entries()) {
-      lines.push(`queue_failures_total{queue_name="${queueName}"} ${count}`);
-    }
-
-    // Socket failures
-    lines.push('# HELP socket_failures_total Total number of socket connection failures');
-    lines.push('# TYPE socket_failures_total counter');
-    for (const [key, count] of this.socketFailures.entries()) {
-      const [namespace, event] = key.split(':');
-      lines.push(`socket_failures_total{namespace="${namespace}",event="${event}"} ${count}`);
-    }
-
-    // Payment failures
-    lines.push('# HELP payment_failures_total Total number of payment processing failures');
-    lines.push('# TYPE payment_failures_total counter');
-    for (const [key, count] of this.paymentFailures.entries()) {
-      const [provider, errorType] = key.split(':');
-      lines.push(`payment_failures_total{provider="${provider}",error_type="${errorType}"} ${count}`);
-    }
-
-    return lines.join('\n');
+    return metricsRegistry.metrics();
   }
 }

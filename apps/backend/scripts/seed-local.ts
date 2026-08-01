@@ -1,6 +1,11 @@
 import argon2 from 'argon2';
 import { Client } from 'pg';
 
+if (process.env.NODE_ENV === 'production') {
+  console.error('[FATAL] seed-local.ts must not be run in production. Use a proper migration or seeding mechanism instead.');
+  process.exit(1);
+}
+
 const DB_CONFIG = {
   host: 'localhost',
   port: 5432,

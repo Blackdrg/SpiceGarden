@@ -11,21 +11,14 @@ export class LatencyMetricsInterceptor implements NestInterceptor {
     const method = request.method;
     const path = request.route?.path || request.path;
 
-    const startTime = Date.now();
+    const end = this.metricsService.startTimer(method, path, response.statusCode);
 
     response.on('finish', () => {
-      const durationMs = Date.now() - startTime;
       const statusCode = response.statusCode;
+      end({ method, route: path, status_code: String(statusCode) });
 
-      this.metricsService.observeHttpRequestDuration(
-        method,
-        path,
-        statusCode,
-        durationMs,
-      );
-
-      if (durationMs > 1000) {
-        this.metricsService.incrementPaymentFailure(method.toLowerCase(), 'high_latency');
+      if (response.statusCode >= 500) {
+        this.metricsService.incrementPaymentFailure(method.toLowerCase(), 'server_error');
       }
     });
 

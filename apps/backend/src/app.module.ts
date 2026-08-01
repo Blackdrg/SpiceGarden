@@ -59,6 +59,8 @@ import { PaymentQrModule } from './services/payments/qr/payment-qr.module';
 import { GiftCardModule } from './services/payments/gift-card.module';
 import { FraudBlacklistModule } from './services/payments/fraud-blacklist.module';
 import { EmergencyModule } from './services/emergency/emergency.module';
+import { MetricsService } from './metrics/metrics.service';
+import { LatencyMetricsInterceptor } from './metrics/latency-metrics.interceptor';
 
 @Module({
   imports: [
@@ -123,7 +125,7 @@ import { EmergencyModule } from './services/emergency/emergency.module';
     EmergencyModule,
   ],
   controllers: [AppController],
-  providers: [AppService, RetentionJob],
+  providers: [AppService, RetentionJob, MetricsService, LatencyMetricsInterceptor],
 })
 export class AppModule {}
 

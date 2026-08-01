@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
-import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost, Logger } from "@nestjs/common";
+import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost, Logger, VersioningType, VERSION_NEUTRAL } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
 import helmet from "helmet";
 import * as Sentry from '@sentry/node';
@@ -20,8 +20,8 @@ import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
-import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { MetricsService } from "./metrics/metrics.service";
 
 @Catch(QueryFailedError)
 class QueryFailedErrorFilter implements ExceptionFilter {
@@ -54,52 +54,6 @@ class QueryFailedErrorFilter implements ExceptionFilter {
     });
   }
 }
-
-const metricsRegistry = new Registry();
-collectDefaultMetrics({ register: metricsRegistry });
-
-const httpRequestCounter = new Counter({
-  name: "http_requests_total",
-  help: "Total HTTP requests by method, route, and status code.",
-  labelNames: ["method", "route", "status_code"] as const,
-  registers: [metricsRegistry],
-});
-
-const httpRequestDuration = new Histogram({
-  name: "http_request_duration_seconds",
-  help: "HTTP request duration in seconds.",
-  labelNames: ["method", "route", "status_code"] as const,
-  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
-  registers: [metricsRegistry],
-});
-
-const queueFailuresCounter = new Counter({
-  name: "queue_failures_total",
-  help: "Total number of queue processing failures.",
-  labelNames: ["queue_name"] as const,
-  registers: [metricsRegistry],
-});
-
-const socketFailuresCounter = new Counter({
-  name: "socket_failures_total",
-  help: "Total number of socket connection failures.",
-  labelNames: ["namespace", "event"] as const,
-  registers: [metricsRegistry],
-});
-
-const paymentFailuresCounter = new Counter({
-  name: "payment_failures_total",
-  help: "Total number of payment processing failures.",
-  labelNames: ["provider", "error_type"] as const,
-  registers: [metricsRegistry],
-});
-
-const orderTotalGauge = new Counter({
-  name: "order_total",
-  help: "Total number of orders by status.",
-  labelNames: ["status"] as const,
-  registers: [metricsRegistry],
-});
 
 function getTrustProxySetting(configService: ConfigService): boolean {
   const value = configService.get<string>('TRUST_PROXY');
@@ -246,6 +200,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+    prefix: 'v',
+  });
+
   loadFileSecretsIntoEnv();
 
   validateProductionEnvironment(configService);
@@ -364,21 +324,22 @@ async function bootstrap() {
         return res.status(403).json({ message: 'Forbidden', error: 'Metrics endpoint restricted to localhost in production' });
       }
     }
-    res.set("Content-Type", metricsRegistry.contentType);
-    res.send(await metricsRegistry.metrics());
+    const metricsService = app.get(MetricsService);
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.send(await metricsService.getMetrics());
   });
 
-      // Metrics middleware
-      app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const start = Date.now();
-        res.on("finish", () => {
-          const duration = (Date.now() - start) / 1000;
-          const route = req.route?.path ? req.path : req.baseUrl || req.path;
-          httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
-          httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
-        });
-        next();
-      });
+  // Metrics middleware
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const start = Date.now();
+    res.on("finish", () => {
+      const duration = (Date.now() - start) / 1000;
+      const route = req.route?.path ? req.path : req.baseUrl || req.path;
+      const metricsService = app.get(MetricsService);
+      metricsService.startTimer(req.method, route, res.statusCode);
+    });
+    next();
+  });
 
 
   // Global validation pipe
@@ -397,12 +358,12 @@ async function bootstrap() {
       app,
       new DocumentBuilder()
         .setTitle('SpiceGarden API')
-        .setDescription('Food delivery platform REST API')
+        .setDescription('Food delivery platform REST API — all routes are prefixed with /v1/')
         .setVersion('1.0')
         .addBearerAuth()
         .build(),
     );
-    SwaggerModule.setup('docs', app, document);
+    SwaggerModule.setup('v1/docs', app, document);
   }
 
   await app.listen(3001);
@@ -435,15 +396,5 @@ async function bootstrap() {
 
   logger.log(`Application is running on: ${await app.getUrl()}`);
 }
-
-export {
-  metricsRegistry,
-  httpRequestCounter,
-  httpRequestDuration,
-  queueFailuresCounter,
-  socketFailuresCounter,
-  paymentFailuresCounter,
-  orderTotalGauge,
-};
 
 bootstrap();

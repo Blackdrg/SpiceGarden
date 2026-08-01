@@ -50,7 +50,10 @@
     "test:load:docker:100k": "docker run --rm -i --add-host=host.docker.internal:host-gateway -e BASE_URL=http://host.docker.internal:3001 grafana/k6 run - < infra/load-tests/stage-6-100k.js",
     "test:load:docker:500k": "docker run --rm -i --add-host=host.docker.internal:host-gateway -e BASE_URL=http://host.docker.internal:3001 grafana/k6 run - < infra/load-tests/stage-7-500k.js",
     "test:load:docker:1m": "docker run --rm -i --add-host=host.docker.internal:host-gateway -e BASE_URL=http://host.docker.internal:3001 grafana/k6 run - < infra/load-tests/stage-8-1m.js",
-    "test:chaos": "kubectl apply -f test/chaos/"
+    "test:chaos": "kubectl apply -f test/chaos/",
+    "sbom:generate": "node infra/scripts/generate-sbom.js",
+    "sbom:licenses": "npx license-checker --summary --out sbom-licenses.json",
+    "sbom:deps": "npm ls --json --depth=0 > sbom-dependencies.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.27",

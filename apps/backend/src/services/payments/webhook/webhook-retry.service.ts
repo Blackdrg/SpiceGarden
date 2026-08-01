@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan, In } from 'typeorm';
 import { WebhookRetryQueueEntity } from '../../../db/entities/webhook-retry-queue.entity';
+import { randomFloat } from '../../../../shared/random.utils';
 
 export interface WebhookRetryJob {
   webhookId: string;
@@ -97,7 +98,7 @@ export class WebhookRetryService {
   private calculateDelay(attempt: number): number {
     const baseDelay = 60000;
     const delay = baseDelay * Math.pow(2, attempt - 1);
-    const jitter = delay * 0.1 * Math.random();
+    const jitter = delay * 0.1 * randomFloat(1);
     return Math.min(delay + jitter, 1800000);
   }
 

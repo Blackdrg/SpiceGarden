@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as Sentry from '@sentry/react-native';
 import { RootStackParamList, TabParamList } from './src/navigation/types';
 import { LocaleProvider } from './src/constants/i18n';
 import AuthScreen from './src/screens/AuthScreen';
@@ -22,6 +23,12 @@ import HistoryScreen from './src/screens/HistoryScreen';
 import PaymentMethodsScreen from './src/screens/PaymentMethodsScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import SupportScreen from './src/screens/SupportScreen';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+  debug: false,
+});
 
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');

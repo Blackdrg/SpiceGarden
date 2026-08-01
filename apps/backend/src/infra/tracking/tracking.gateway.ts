@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from '../../db/entities/notification.entity';
+import { randomString } from '../../../shared/random.utils';
 import { NotificationStatus } from '../../db/entities/notification-status.enum';
 import { isAllowedOrigin } from '../../security/cors-origin';
 
@@ -231,7 +232,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       return { error: 'Invalid location data' };
     }
 
-    const messageId = `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `loc_${Date.now()}_${randomString(9)}`;
     const topic = `tracking:${data.driverId}`;
     
     this.server.to(topic).emit('locationUpdate', {
@@ -252,7 +253,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       return { error: 'Invalid KDS update' };
     }
 
-    const messageId = `kds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `kds_${Date.now()}_${randomString(9)}`;
     const topic = `kds:${data.branchId}`;
     
     this.server.to(topic).emit('kdsUpdate', {
@@ -270,7 +271,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       return { error: 'Invalid driver event' };
     }
 
-    const messageId = `drv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `drv_${Date.now()}_${randomString(9)}`;
     const topic = `driver:${data.driverId}`;
     
     this.server.to(topic).emit('driverEvent', { 
@@ -283,7 +284,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   async publish(topic: string, data: any, requireAck: boolean = false): Promise<any> {
-    const messageId = `pub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `pub_${Date.now()}_${randomString(9)}`;
     
     if (requireAck) {
       return this.waitForAcknowledgement(`${topic}`, { ...data, messageId });
@@ -298,7 +299,7 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       return { error: 'Invalid room' };
     }
 
-    const messageId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `room_${Date.now()}_${randomString(9)}`;
     
     if (requireAck) {
       return this.waitForAcknowledgement(`room:${room}`, { ...data, messageId });

@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In, Like, MoreThanOrEqual } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
+import { randomString } from '../../../shared/random.utils';
 import { ConfigService } from '@nestjs/config';
 import { PaymentService } from '../payments/payments.service';
 import { NotificationService } from '../notifications/notification.service';
@@ -185,7 +186,7 @@ export class WalletService {
       userId,
       amount,
       `Compensation: ${reason}`,
-      `COMP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      `COMP-${Date.now()}-${randomString(9)}`
     );
   }
 

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { IdempotencyEntity } from './idempotency.entity';
+import { randomFloat } from '../../../shared/random.utils';
 
 export interface RetryConfig {
   maxAttempts: number;
@@ -52,7 +53,7 @@ export class RetryService {
   private calculateDelay(attempt: number, baseDelay: number, maxDelay: number, multiplier: number, jitter: number): number {
     const exponentialDelay = baseDelay * Math.pow(multiplier, attempt - 1);
     const cappedDelay = Math.min(exponentialDelay, maxDelay);
-    const jitterOffset = cappedDelay * jitter * Math.random();
+    const jitterOffset = cappedDelay * jitter * randomFloat(1);
     return Math.floor(cappedDelay + jitterOffset);
   }
 
