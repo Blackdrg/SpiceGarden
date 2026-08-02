@@ -1,0 +1,58 @@
+{
+  "policy": {
+    "description": "SpiceGarden log retention policy — roll over daily, keep 30 days, force merge after rollover",
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [
+          {
+            "rollover": {
+              "max_size": "1GB",
+              "max_age": "1d"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "warm",
+            "conditions": {
+              "min_index_age": "1d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "warm",
+        "actions": [
+          {
+            "force_merge": {
+              "max_num_segments": 1
+            }
+          },
+          {
+            "set_priority": {
+              "priority": 50
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "delete",
+            "conditions": {
+              "min_index_age": "30d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "delete",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -64,6 +64,10 @@ export class WebhookService {
         event = await this.verifyStripeWebhook(payload, signature);
       } else if (gateway === 'razorpay') {
         event = await this.verifyRazorpayWebhook(payload, signature);
+      } else if (gateway === 'phonepe') {
+        event = await this.verifyPhonePeWebhook(payload, signature);
+      } else if (gateway === 'paytm') {
+        event = await this.verifyPaytmWebhook(payload, signature);
       } else {
         throw new BadRequestException(`Unsupported payment gateway: ${gateway}`);
       }
@@ -134,11 +138,19 @@ export class WebhookService {
     if (headers['stripe-signature']) {
       return 'stripe';
     }
-    
+
     if (headers['x-razorpay-signature']) {
       return 'razorpay';
     }
-    
+
+    if (headers['x-verify']) {
+      return 'phonepe';
+    }
+
+    if (headers['paytm-checksum'] || headers['checksum']) {
+      return 'paytm';
+    }
+
     return null;
   }
 
@@ -165,6 +177,47 @@ export class WebhookService {
     return JSON.parse(payload.toString());
   }
 
+  private async verifyPhonePeWebhook(payload: Buffer, signature: string): Promise<any> {
+    const saltKey = getRequiredSecret(this.configService, 'PHONEPE_SALT_KEY');
+
+    const gateway = this.paymentGatewayFactory.getGateway('phonepe');
+    await gateway.constructEvent(payload, signature, saltKey);
+
+    const parsed = JSON.parse(payload.toString());
+    const eventData = parsed.data || {};
+    const eventStatus = eventData.status || parsed.code || 'PENDING';
+    let event = 'payment.authorizing';
+    if (eventStatus === 'COMPLETED' || eventStatus === 'SUCCESS') event = 'payment.authorized';
+    else if (eventStatus === 'FAILED' || eventStatus === 'FAILED') event = 'payment.failed';
+    else if (eventStatus === 'REFUNDED') event = 'payment.refunded';
+
+    return {
+      id: parsed.id || eventData.txnId || `phonepe_${Date.now()}`,
+      type: event,
+      data: { object: eventData },
+    };
+  }
+
+  private async verifyPaytmWebhook(payload: Buffer, signature: string): Promise<any> {
+    const merchantKey = getRequiredSecret(this.configService, 'PAYTM_MERCHANT_KEY');
+
+    const gateway = this.paymentGatewayFactory.getGateway('paytm');
+    await gateway.constructEvent(payload, signature, merchantKey);
+
+    const parsed = JSON.parse(payload.toString());
+    const body = parsed.body || parsed;
+    const resultStatus = body.resultInfo?.resultStatus || body.status || 'PENDING';
+    let event = 'payment.authorizing';
+    if (resultStatus === 'TXN_SUCCESS' || resultStatus === 'SUCCESS') event = 'payment.authorized';
+    else if (resultStatus === 'TXN_FAILED' || resultStatus === 'FAILED') event = 'payment.failed';
+
+    return {
+      id: parsed.id || body.orderId || `paytm_${Date.now()}`,
+      type: event,
+      data: { object: body },
+    };
+  }
+
   private mapEventToPaymentEvent(gateway: string, eventType: string): PaymentEventEntity['event'] {
     if (gateway === 'stripe') {
       switch (eventType) {
@@ -184,6 +237,22 @@ export class WebhookService {
         case 'refund.failed': return 'refund_failed';
         default: return 'payment_succeeded';
       }
+    } else if (gateway === 'phonepe') {
+      switch (eventType) {
+        case 'payment.authorized': return 'payment_succeeded';
+        case 'payment.failed': return 'payment_failed';
+        case 'payment.refunded': return 'refund_completed';
+        case 'payment.chargeback': return 'chargeback_received';
+        default: return 'payment_succeeded';
+      }
+    } else if (gateway === 'paytm') {
+      switch (eventType) {
+        case 'payment.authorized': return 'payment_succeeded';
+        case 'payment.failed': return 'payment_failed';
+        case 'refund.processed': return 'refund_completed';
+        case 'refund.failed': return 'refund_failed';
+        default: return 'payment_succeeded';
+      }
     }
     
     return 'payment_succeeded';
@@ -194,11 +263,15 @@ export class WebhookService {
       return await this.handleStripeEvent(event);
     } else if (gateway === 'razorpay') {
       return await this.handleRazorpayEvent(event);
+    } else if (gateway === 'phonepe') {
+      return await this.handlePhonePeEvent(event);
+    } else if (gateway === 'paytm') {
+      return await this.handlePaytmEvent(event);
     }
     
+
     throw new BadRequestException(`Unsupported gateway: ${gateway}`);
   }
-
   private async handleStripeEvent(event: Stripe.Event): Promise<any> {
     switch (event.type) {
       case 'payment_intent.succeeded':
@@ -235,11 +308,134 @@ export class WebhookService {
         return await this.handleRefundProcessed(event);
       case 'refund.failed':
         return await this.handleRefundFailed(event);
-      default:
+       default:
         this.logger.warn(`Unhandled Razorpay event type: ${event.event}`);
         return { received: true, unhandled: true };
     }
   }
+
+  private async handlePhonePeEvent(event: any): Promise<any> {
+    const obj = event.data?.object || event;
+    const orderId = obj.orderId || obj.order_id;
+    const userId = obj.userId || obj.user_id;
+    const eventData = { orderId, userId, amount: obj.amount, currency: obj.currency || 'INR' };
+
+    switch (event.type) {
+      case 'payment.authorized':
+        return await this.handlePhonePePaymentAuthorized(eventData);
+      case 'payment.failed':
+        return await this.handlePhonePePaymentFailed(eventData);
+      case 'payment.refunded':
+        return await this.handlePhonePeRefundProcessed(eventData);
+      default:
+        this.logger.warn(`Unhandled PhonePe event type: ${event.type}`);
+        return { received: true, unhandled: true };
+    }
+  }
+
+  private async handlePaytmEvent(event: any): Promise<any> {
+    const obj = event.data?.object || event;
+    const orderId = obj.orderId || obj.order_id;
+    const userId = obj.notes?.userId || obj.userId;
+    const eventData = { orderId, userId, amount: obj.amount, currency: obj.currency || 'INR' };
+
+    switch (event.type) {
+      case 'payment.authorized':
+        return await this.handlePaytmPaymentAuthorized(eventData);
+      case 'payment.failed':
+        return await this.handlePaytmPaymentFailed(eventData);
+      default:
+        this.logger.warn(`Unhandled Paytm event type: ${event.type}`);
+        return { received: true, unhandled: true };
+    }
+  }
+
+  private async handlePhonePePaymentAuthorized(data: any): Promise<any> {
+    if (data.orderId) {
+      const order = await this.orderRepo.findOne({ where: { id: data.orderId } });
+      if (order) {
+        order.paymentStatus = 'completed' as any;
+        await this.orderRepo.save(order);
+      }
+    }
+
+    await this.productionNotification.sendPaymentNotification(
+      data.userId || 'system',
+      data.orderId,
+      { type: 'payment_success', severity: 'low', amount: data.amount ? data.amount / 100 : 0, message: 'PhonePe payment authorized' },
+    );
+
+    this.logger.log(`PhonePe payment authorized for order ${data.orderId}`);
+    return { received: true, paymentConfirmed: true };
+  }
+
+  private async handlePhonePePaymentFailed(data: any): Promise<any> {
+    if (data.orderId) {
+      const order = await this.orderRepo.findOne({ where: { id: data.orderId } });
+      if (order) {
+        order.paymentStatus = 'failed' as any;
+        await this.orderRepo.save(order);
+      }
+    }
+
+    await this.productionNotification.sendPaymentNotification(
+      data.userId || 'system',
+      data.orderId,
+      { type: 'payment_failure', severity: 'high', amount: data.amount ? data.amount / 100 : 0, message: 'PhonePe payment failed' },
+    );
+
+    this.logger.warn(`PhonePe payment failed for order ${data.orderId}`);
+    return { received: true, paymentFailed: true };
+  }
+
+  private async handlePhonePeRefundProcessed(data: any): Promise<any> {
+    await this.productionNotification.sendPaymentNotification(
+      data.userId || 'system',
+      data.orderId,
+      { type: 'refund_completed', severity: 'medium', amount: data.amount ? data.amount / 100 : 0, message: 'PhonePe refund processed' },
+    );
+    this.logger.log(`PhonePe refund processed for order ${data.orderId}`);
+    return { received: true, refundProcessed: true };
+  }
+
+  private async handlePaytmPaymentAuthorized(data: any): Promise<any> {
+    if (data.orderId) {
+      const order = await this.orderRepo.findOne({ where: { id: data.orderId } });
+      if (order) {
+        order.paymentStatus = 'completed' as any;
+        await this.orderRepo.save(order);
+      }
+    }
+
+    await this.productionNotification.sendPaymentNotification(
+      data.userId || 'system',
+      data.orderId,
+      { type: 'payment_success', severity: 'low', amount: data.amount ? data.amount / 100 : 0, message: 'Paytm payment authorized' },
+    );
+
+    this.logger.log(`Paytm payment authorized for order ${data.orderId}`);
+    return { received: true, paymentConfirmed: true };
+  }
+
+  private async handlePaytmPaymentFailed(data: any): Promise<any> {
+    if (data.orderId) {
+      const order = await this.orderRepo.findOne({ where: { id: data.orderId } });
+      if (order) {
+        order.paymentStatus = 'failed' as any;
+        await this.orderRepo.save(order);
+      }
+    }
+
+    await this.productionNotification.sendPaymentNotification(
+      data.userId || 'system',
+      data.orderId,
+      { type: 'payment_failure', severity: 'high', amount: data.amount ? data.amount / 100 : 0, message: 'Paytm payment failed' },
+    );
+
+    this.logger.warn(`Paytm payment failed for order ${data.orderId}`);
+    return { received: true, paymentFailed: true };
+  }
+
 
   private async handlePaymentIntentSucceeded(event: Stripe.Event): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;

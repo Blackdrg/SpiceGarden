@@ -1,0 +1,11 @@
+name: SpiceGarden Driver
+short_description: Accept and manage delivery orders with real-time tracking.
+description: SpiceGarden Driver is the mobile app for delivery partners. Accept nearby orders, navigate to pickup and drop-off locations, track earnings, and manage delivery schedules efficiently.
+release_notes: "Bug fixes and performance improvements."
+icon: "./assets/icon.png"
+splash: "./assets/splash.png"
+privacy_policy_url: "https://spicegarden.com/privacy"
+terms_of_service_url: "https://spicegarden.com/terms"
+support_url: "https://spicegarden.com/support"
+developer: SpiceGarden Technologies
+developer_email: support@spicegarden.com

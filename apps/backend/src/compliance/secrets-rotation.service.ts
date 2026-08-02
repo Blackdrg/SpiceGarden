@@ -2,6 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 export interface SecretRotationResult {
   secretName: string;
@@ -15,9 +19,11 @@ export class SecretsRotationService {
   private readonly logger = new Logger(SecretsRotationService.name);
   private readonly rotationHistory: Map<string, Date[]> = new Map();
   private readonly rotationLogPath: string;
+  private readonly rotationScriptPath: string;
 
   constructor(private configService: ConfigService) {
     this.rotationLogPath = path.join(process.cwd(), 'secrets', 'rotation-history.json');
+    this.rotationScriptPath = path.join(process.cwd(), 'infra', 'scripts', 'secrets-rotation.ps1.js');
     this.loadRotationHistory();
   }
 
@@ -40,21 +46,30 @@ export class SecretsRotationService {
   }
 
   async validateRotationCapability(): Promise<{ canRotateAll: boolean; details: string[] }> {
-    const details: string[] = [];
     const secretsRequiringRotation = this.getSecretsRequiringRotation();
 
-    for (const secret of secretsRequiringRotation) {
-      const scriptPath = this.getRotationScriptPath(secret.name);
-      const hasRotationScript = fs.existsSync(scriptPath);
-      if (!hasRotationScript) {
-        details.push(`${secret.name}: Manual rotation required via Vault/K8s secrets`);
-      } else {
-        details.push(`${secret.name}: Rotation script available at ${scriptPath}`);
-      }
+    if (!fs.existsSync(this.rotationScriptPath)) {
+      return {
+        canRotateAll: false,
+        details: [`Rotation script not found at ${this.rotationScriptPath}`],
+      };
     }
 
+    const validationPromises = secretsRequiringRotation.map(async (secret) => {
+      try {
+        const { stdout } = await execAsync(`node "${this.rotationScriptPath}" validate`);
+        const validation = JSON.parse(stdout);
+        const hasScript = validation.rotationScript && validation.writeAccess;
+        return `${secret.name}: ${hasScript ? 'Rotation script available and writable' : 'Manual rotation required via Vault/K8s secrets'} (${this.rotationScriptPath})`;
+      } catch (error) {
+        return `${secret.name}: Validation failed - ${error instanceof Error ? error.message : 'unknown error'}`;
+      }
+    });
+
+    const details = await Promise.all(validationPromises);
+
     return {
-      canRotateAll: details.every(d => d.includes('available')),
+      canRotateAll: details.every(d => d.includes('available and writable')),
       details,
     };
   }
@@ -63,18 +78,41 @@ export class SecretsRotationService {
     try {
       this.logger.log(`Initiating rotation for ${secretName}`);
 
-      const newValue = this.generateSecureRandom();
-      const rotationTime = new Date();
+      if (!fs.existsSync(this.rotationScriptPath)) {
+        const errMsg = `Rotation script not found at ${this.rotationScriptPath}`;
+        this.logger.error(`Failed to rotate ${secretName}: ${errMsg}`);
+        return {
+          secretName,
+          rotated: false,
+          previousRotated: false,
+          error: errMsg,
+        };
+      }
 
+      const scriptResult = await execAsync(`node "${this.rotationScriptPath}" rotate ${secretName}`);
+      let rotationOutput;
+      try {
+        rotationOutput = JSON.parse(scriptResult.stdout);
+      } catch {
+        rotationOutput = { success: false, message: 'Invalid script output' };
+      }
+
+      if (!rotationOutput.success) {
+        const errMsg = rotationOutput.message || 'Script returned failure';
+        this.logger.error(`Failed to rotate ${secretName}: ${errMsg}`);
+        return {
+          secretName,
+          rotated: false,
+          previousRotated: false,
+          error: errMsg,
+        };
+      }
+
+      const rotationTime = new Date();
       this.recordRotation(secretName, rotationTime);
       await this.persistRotationHistory();
 
-      const scriptPath = this.getRotationScriptPath(secretName);
-      if (fs.existsSync(scriptPath)) {
-        this.logger.log(`Rotation script found at ${scriptPath} — manual execution required by operations team`);
-      }
-
-      this.logger.log(`Rotation recorded for ${secretName}. New value generated. Apply via Vault/K8s.`);
+      this.logger.log(`Rotation completed for ${secretName} via script`);
 
       return {
         secretName,
@@ -116,19 +154,6 @@ export class SecretsRotationService {
     const rotations = this.rotationHistory.get(secretName) || [];
     rotations.push(date);
     this.rotationHistory.set(secretName, rotations);
-  }
-
-  private getRotationScriptPath(secretName: string): string {
-    const scriptsDir = path.join(process.cwd(), 'infra', 'scripts');
-    const scriptMap: Record<string, string> = {
-      jwt_secret: path.join(scriptsDir, 'secrets-rotate-jwt.ps1'),
-      encryption: path.join(scriptsDir, 'secrets-rotate-encryption.ps1'),
-      db_password: path.join(scriptsDir, 'secrets-rotate-db.ps1'),
-      stripe: path.join(scriptsDir, 'secrets-rotate-payment.ps1'),
-      grafana: path.join(scriptsDir, 'secrets-rotate-grafana.ps1'),
-    };
-    const key = secretName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-    return scriptMap[key] || path.join(scriptsDir, `secrets-rotate-${secretName.toLowerCase()}.ps1`);
   }
 
   private persistRotationHistory(): void {

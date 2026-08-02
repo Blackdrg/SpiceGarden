@@ -1,4 +1,42 @@
-const originalConsoleError = console.error;
+// Mock Expo Notifications for test environment
+jest.mock('expo-notifications', () => ({
+  __esModule: true,
+  getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: 'mock-token' })),
+  addNotificationReceivedListener: jest.fn(),
+  addNotificationResponseReceivedListener: jest.fn(),
+  setNotificationHandler: jest.fn(),
+}));
+
+// Mock Expo Modules Core to provide platform information and native module stub
+jest.mock('expo-modules-core', () => ({
+  __esModule: true,
+  Platform: { OS: 'ios' },
+  requireNativeModule: jest.fn(() => ({})),
+}));
+
+// Mock Expo Secure Store for test environment
+jest.mock('expo-secure-store', () => ({
+  __esModule: true,
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+}));
+// duplicate expo-modules-core mock removed
+
+
+// Mock Sentry for React Native environment in tests
+jest.mock('@sentry/react-native', () => ({
+  __esModule: true,
+  init: jest.fn(),
+  captureException: jest.fn(),
+  captureMessage: jest.fn(),
+  captureEvent: jest.fn(),
+  setUser: jest.fn(),
+  setTag: jest.fn(),
+  setContext: jest.fn(),
+  addBreadcrumb: jest.fn(),
+  RNSentry: {},
+}));
 console.error = (...args) => {
   if (typeof args[0] === 'string' && args[0].includes('react-test-renderer is deprecated')) {
     return;

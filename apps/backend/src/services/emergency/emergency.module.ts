@@ -7,6 +7,7 @@ import { EmergencyContactEntity } from '../../db/entities/emergency-contact.enti
 import { EmergencyIncidentTimelineEntity } from '../../db/entities/emergency-incident-timeline.entity';
 import { RiskZoneEntity } from '../../db/entities/risk-zone.entity';
 import { RiskEventEntity } from '../../db/entities/risk-event.entity';
+import { DriverEntity } from '../../db/entities/driver.entity';
 import { EmergencyController } from './emergency.controller';
 import { EmergencyService } from './emergency.service';
 import { EmergencyGateway } from './emergency.gateway';
@@ -15,7 +16,6 @@ import { NotificationModule } from '../notifications/notification.module';
 import { RiskZoneModule } from '../risk/risk-zone.module';
 import { TrackingModule } from '../../infra/tracking/tracking.module';
 
-import { MockDispatchProvider } from './mock-dispatch.provider';
 import { WebhookDispatchProvider } from './webhook-dispatch.provider';
 
 @Module({
@@ -26,6 +26,7 @@ import { WebhookDispatchProvider } from './webhook-dispatch.provider';
       EmergencyIncidentTimelineEntity,
       RiskZoneEntity,
       RiskEventEntity,
+      DriverEntity,
     ]),
     AuditModule,
     NotificationModule,
@@ -33,7 +34,7 @@ import { WebhookDispatchProvider } from './webhook-dispatch.provider';
     TrackingModule,
   ],
   controllers: [EmergencyController],
-  providers: [EmergencyService, EmergencyGateway, MockDispatchProvider, WebhookDispatchProvider],
-  exports: [EmergencyService, EmergencyGateway, MockDispatchProvider, WebhookDispatchProvider],
+  providers: [EmergencyService, EmergencyGateway, WebhookDispatchProvider],
+  exports: [EmergencyService, EmergencyGateway, WebhookDispatchProvider],
 })
 export class EmergencyModule {}

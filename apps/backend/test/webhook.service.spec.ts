@@ -533,4 +533,176 @@ it('handles Razorpay refund.failed event', async () => {
 
     expect(result).toEqual({ received: true, processed: true });
   });
+
+  it('detects phonepe gateway from x-verify header', () => {
+    const gateway = (mocks.service as any).detectGatewayFromHeaders({ 'x-verify': 'sig_123' });
+    expect(gateway).toBe('phonepe');
+  });
+
+  it('detects paytm gateway from paytm-checksum header', () => {
+    const gateway = (mocks.service as any).detectGatewayFromHeaders({ 'paytm-checksum': 'checksum_123' });
+    expect(gateway).toBe('paytm');
+  });
+
+  it('detects paytm gateway from checksum header', () => {
+    const gateway = (mocks.service as any).detectGatewayFromHeaders({ 'checksum': 'checksum_123' });
+    expect(gateway).toBe('paytm');
+  });
+
+  it('verifies and processes a PhonePe payment.authorized webhook end-to-end', async () => {
+    const payload = JSON.stringify({
+      data: {
+        status: 'COMPLETED',
+        orderId: 'order-pp-1',
+        userId: 'user-1',
+        amount: 13800,
+        currency: 'INR',
+      },
+    });
+    const saltKey = 'phonepe_salt_key_test';
+    const signature = crypto.createHash('sha256').update(payload + saltKey).digest('hex') + '###1';
+
+    mocks.configService.get.mockImplementation((key: string, fallback: any) => {
+      if (key === 'PHONEPE_SALT_KEY') return saltKey;
+      if (key === 'RAZORPAY_WEBHOOK_SECRET') return 'razorpay_webhook_secret';
+      return fallback;
+    });
+
+    const phonePeGatewayMock = {
+      constructEvent: jest.fn(async (payloadBuffer: Buffer, sig: string, secretParam: string) => {
+        const [hashPart] = sig.split('###');
+        const expected = crypto.createHash('sha256').update(payloadBuffer.toString() + secretParam).digest('hex');
+        if (hashPart !== expected) {
+          throw new Error('Invalid PhonePe webhook signature');
+        }
+        return { data: { object: JSON.parse(payloadBuffer.toString()) } };
+      }),
+    };
+    (mocks.service as any).paymentGatewayFactory.getGateway.mockImplementation((name: string) =>
+      name === 'phonepe' ? phonePeGatewayMock : null
+    );
+
+    const order = { id: 'order-pp-1', paymentStatus: 'pending' };
+    mocks.orderRepo.findOne.mockResolvedValue(order);
+    mocks.orderRepo.save.mockResolvedValue(order);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1', gateway: 'phonepe', webhookId: 'evt_pp_1', eventType: 'payment.authorized', processedAt: new Date() });
+    mocks.webhookRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+
+    const result = await mocks.service.processWebhook(Buffer.from(payload), signature, { 'x-verify': signature });
+
+    expect(result).toEqual({ received: true, processed: true });
+    expect(order.paymentStatus).toBe('completed');
+    expect(mocks.productionNotification.sendPaymentNotification).toHaveBeenCalledWith('user-1', 'order-pp-1', expect.objectContaining({ type: 'payment_success' }));
+    expect(mocks.webhookRepo.save).toHaveBeenCalledWith(expect.objectContaining({ gateway: 'phonepe', webhookId: 'evt_pp_1' }));
+  });
+
+  it('rejects PhonePe webhook with invalid signature via processWebhook', async () => {
+    const payload = JSON.stringify({ data: { status: 'COMPLETED', orderId: 'order-1' } });
+    const saltKey = 'phonepe_salt_key_test';
+
+    mocks.configService.get.mockImplementation((key: string, fallback: any) => {
+      if (key === 'PHONEPE_SALT_KEY') return saltKey;
+      return fallback;
+    });
+
+    const phonePeGatewayMock = {
+      constructEvent: jest.fn(async () => {
+        throw new Error('Invalid PhonePe webhook signature');
+      }),
+    };
+    (mocks.service as any).paymentGatewayFactory.getGateway.mockImplementation((name: string) =>
+      name === 'phonepe' ? phonePeGatewayMock : null
+    );
+
+    await expect(mocks.service.processWebhook(Buffer.from(payload), 'bad_sig###1', { 'x-verify': 'bad_sig###1' }))
+      .rejects.toThrow('Webhook Error:');
+  });
+
+  it('verifies and processes a Paytm payment.authorized webhook end-to-end', async () => {
+    const payload = JSON.stringify({
+      body: {
+        resultInfo: { resultStatus: 'TXN_SUCCESS' },
+        orderId: 'order-ptm-1',
+        userId: 'user-1',
+        amount: 9900,
+        currency: 'INR',
+      },
+    });
+    const merchantKey = 'paytm_merchant_key_test';
+    const signature = crypto.createHash('sha256').update(payload + merchantKey).digest('base64');
+
+    mocks.configService.get.mockImplementation((key: string, fallback: any) => {
+      if (key === 'PAYTM_MERCHANT_KEY') return merchantKey;
+      if (key === 'RAZORPAY_WEBHOOK_SECRET') return 'razorpay_webhook_secret';
+      return fallback;
+    });
+
+    const paytmGatewayMock = {
+      constructEvent: jest.fn(async (payloadBuffer: Buffer, sig: string, secretParam: string) => {
+        const expected = crypto.createHash('sha256').update(payloadBuffer.toString() + secretParam).digest('base64');
+        if (sig !== expected) {
+          throw new Error('Invalid Paytm webhook signature');
+        }
+        const parsed = JSON.parse(payloadBuffer.toString());
+        return { data: { object: parsed.body || parsed } };
+      }),
+    };
+    (mocks.service as any).paymentGatewayFactory.getGateway.mockImplementation((name: string) =>
+      name === 'paytm' ? paytmGatewayMock : null
+    );
+
+    const order = { id: 'order-ptm-1', paymentStatus: 'pending' };
+    mocks.orderRepo.findOne.mockResolvedValue(order);
+    mocks.orderRepo.save.mockResolvedValue(order);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1', gateway: 'paytm', webhookId: 'evt_ptm_1', eventType: 'payment.authorized', processedAt: new Date() });
+    mocks.webhookRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+
+    const result = await mocks.service.processWebhook(Buffer.from(payload), signature, { 'paytm-checksum': signature });
+
+    expect(result).toEqual({ received: true, processed: true });
+    expect(order.paymentStatus).toBe('completed');
+    expect(mocks.productionNotification.sendPaymentNotification).toHaveBeenCalledWith('user-1', 'order-ptm-1', expect.objectContaining({ type: 'payment_success' }));
+    expect(mocks.webhookRepo.save).toHaveBeenCalledWith(expect.objectContaining({ gateway: 'paytm', webhookId: 'evt_ptm_1' }));
+  });
+
+  it('maps PhonePe payment.authorized event to payment_succeeded', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('phonepe', 'payment.authorized');
+    expect(mapped).toBe('payment_succeeded');
+  });
+
+  it('maps PhonePe payment.failed event to payment_failed', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('phonepe', 'payment.failed');
+    expect(mapped).toBe('payment_failed');
+  });
+
+  it('maps PhonePe payment.refunded event to refund_completed', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('phonepe', 'payment.refunded');
+    expect(mapped).toBe('refund_completed');
+  });
+
+  it('maps Paytm payment.authorized event to payment_succeeded', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('paytm', 'payment.authorized');
+    expect(mapped).toBe('payment_succeeded');
+  });
+
+  it('maps Paytm payment.failed event to payment_failed', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('paytm', 'payment.failed');
+    expect(mapped).toBe('payment_failed');
+  });
+
+  it('maps Paytm refund.processed event to refund_completed', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('paytm', 'refund.processed');
+    expect(mapped).toBe('refund_completed');
+  });
+
+  it('maps Paytm refund.failed event to refund_failed', () => {
+    const mapped = (mocks.service as any).mapEventToPaymentEvent('paytm', 'refund.failed');
+    expect(mapped).toBe('refund_failed');
+  });
 });

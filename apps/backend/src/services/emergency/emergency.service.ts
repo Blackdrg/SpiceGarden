@@ -7,6 +7,7 @@ import { EmergencyContactEntity } from '../../db/entities/emergency-contact.enti
 import { EmergencyIncidentTimelineEntity } from '../../db/entities/emergency-incident-timeline.entity';
 import { RiskZoneEntity } from '../../db/entities/risk-zone.entity';
 import { RiskEventEntity, RiskEventType, RiskEventSeverity } from '../../db/entities/risk-event.entity';
+import { DriverEntity } from '../../db/entities/driver.entity';
 import { RiskZoneService } from '../risk/risk-zone.service';
 import { AuditService } from '../../audit/audit.service';
 import { NotificationService } from '../notifications/notification.service';
@@ -14,6 +15,7 @@ import { TrackingGateway } from '../../infra/tracking/tracking.gateway';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { CreateSosDto, EmergencyLocationDto, UpdateIncidentStatusDto, CreateEmergencyContactDto, EmergencyIncidentFilterDto } from './emergency.dto';
+import { rankDrivers } from '../../common/driver-ranking.util';
 
 @Injectable()
 export class EmergencyService {
@@ -31,6 +33,8 @@ export class EmergencyService {
     private readonly riskZoneRepo: Repository<RiskZoneEntity>,
     @InjectRepository(RiskEventEntity)
     private readonly riskEventRepo: Repository<RiskEventEntity>,
+    @InjectRepository(DriverEntity)
+    private readonly driverRepo: Repository<DriverEntity>,
     private readonly riskZoneService: RiskZoneService,
     private readonly auditService: AuditService,
     private readonly notificationService: NotificationService,
@@ -461,5 +465,25 @@ export class EmergencyService {
     };
 
     return (allowed[from] || []).includes(to);
+  }
+
+  async rankNearestDrivers(
+    latitude: number,
+    longitude: number,
+    limit: number = 10
+  ): Promise<Array<{ driverId: string; distanceKm: number; rating: number; etaMinutes: number }>> {
+    const drivers = await this.driverRepo.find({
+      where: { isOnline: true, isAvailable: true, isFraudSuspicious: false },
+      select: ['id', 'currentLocation', 'rating', 'averageSpeed', 'fraudScore', 'totalDeliveries'],
+      take: 100,
+    });
+
+    const ranked = rankDrivers(drivers, null, null, latitude, longitude);
+    return ranked.slice(0, limit).map((d) => ({
+      driverId: d.driverId,
+      distanceKm: d.distanceKm,
+      rating: d.rating,
+      etaMinutes: d.etaMinutes,
+    }));
   }
 }

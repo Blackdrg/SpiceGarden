@@ -1,9 +1,14 @@
 import { createContext, ReactNode, use, useMemo } from 'react';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
-const NetworkStatusContext = createContext({
+interface NetworkStatusContextType {
+  isOnline: boolean | null;
+  lastOnline: Date | null;
+}
+
+const NetworkStatusContext = createContext<NetworkStatusContextType>({
    isOnline: true,
-   lastOnline: null as Date | null,
+   lastOnline: null,
 });
 
 export const NetworkStatusProvider = ({ children }: { children: ReactNode }) => {

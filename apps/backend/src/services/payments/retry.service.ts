@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { IdempotencyEntity } from './idempotency.entity';
-import { randomFloat } from '../../../shared/random.utils';
+import { randomFloat } from '../../shared/random.utils';
 
 export interface RetryConfig {
   maxAttempts: number;

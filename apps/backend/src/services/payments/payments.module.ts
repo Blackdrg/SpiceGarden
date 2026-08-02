@@ -8,6 +8,7 @@ import { PaymentsController } from './payments.controller';
 import { PaymentHardeningService } from './payment-hardening.service';
 import { RetryService } from './retry.service';
 import { FraudHardeningService } from './fraud-hardening.service';
+import { FraudBlacklistModule } from './fraud-blacklist.module';
 import { IdempotencyService } from './idempotency.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
 import { RiskZoneService } from '../risk/risk-zone.service';
@@ -36,6 +37,7 @@ import { ChargebackModule } from './chargeback/chargeback.module';
     GSTModule,
     ChargebackModule,
     RiskZoneModule,
+    FraudBlacklistModule,
   ],
   providers: [
     PaymentService, 

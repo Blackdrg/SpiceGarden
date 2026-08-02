@@ -4,6 +4,16 @@ route:
   group_interval: 5m
   repeat_interval: 3h
   receiver: 'slack-notifications'
+  routes:
+    - matchers:
+        - severity =~ "critical"
+      receiver: 'pagerduty-notifications'
+    - matchers:
+        - severity =~ "warning"
+      receiver: 'email-notifications'
+    - matchers:
+        - severity =~ "info"
+      receiver: 'email-notifications'
 
 receivers:
   - name: 'slack-notifications'
@@ -24,6 +34,15 @@ receivers:
     pagerduty_configs:
       - routing_key: '${PAGERDUTY_ROUTING_KEY}'
         severity: '{{ .GroupLabels.severity }}'
+
+  - name: 'email-notifications'
+    email_configs:
+      - to: 'oncall@spicegarden.com'
+        from: 'alerts@spicegarden.com'
+        smarthost: '${SMTP_HOST}:${SMTP_PORT}'
+        auth_username: '${SMTP_USERNAME}'
+        auth_password: '${SMTP_PASSWORD}'
+        send_resolved: true
 
 inhibit_rules:
   - source_match:

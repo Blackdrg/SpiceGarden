@@ -2,6 +2,7 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -80,6 +81,7 @@ export class EnhancedGeoService {
     @InjectRepository(OrderEntity)
     private readonly orderRepo: Repository<OrderEntity>,
     private readonly dataSource: DataSource,
+    private readonly configService: ConfigService,
   ) {}
 
   // Basic distance calculation (Haversine formula)
@@ -222,26 +224,13 @@ async findAvailableDrivers(
       .then((results) => results.map((r) => r.driver));
   }
 
-  // Calculate delivery route and ETA with traffic awareness
+  // Calculate delivery route and ETA with real traffic awareness
   async calculateDeliveryRoute(
     restaurantLocation: GeoPoint,
     customerLocation: GeoPoint,
     avoidCongestion: boolean = false
   ): Promise<ETAPrediction> {
-    // In a real implementation, we would fetch traffic data from a service like Google Maps
-    // For now, we'll simulate some traffic conditions
-    const trafficConditions: TrafficCondition[] = avoidCongestion ? [] : [
-      {
-        segment: {
-          start: { lat: restaurantLocation.lat, lng: restaurantLocation.lng },
-          end: customerLocation
-        },
-        congestionLevel: 'medium',
-        speedKmh: 20,
-        delayMinutes: 5
-      }
-    ];
-    
+    const trafficConditions = avoidCongestion ? [] : await this.getTrafficConditions(restaurantLocation, customerLocation);
     const distance = this.calculateDistance(restaurantLocation, customerLocation);
     return this.predictETA(distance, this.AVERAGE_SPEED_KMH, trafficConditions);
   }
@@ -429,34 +418,52 @@ const etaLeg = this.predictETA(distance, 30, trafficConditions);
     return totalDistance;
   }
 
-  // Get current traffic conditions for a route (would integrate with traffic API in production)
+  // Get current traffic conditions for a route using Google Maps Traffic API
   async getTrafficConditions(
     start: GeoPoint,
     end: GeoPoint
   ): Promise<TrafficCondition[]> {
-    // In production, this would call a traffic API like Google Maps Traffic API
-    // For now, we'll return simulated data
-    
-    const distance = this.calculateDistance(start, end);
-    
-    // Simulate traffic based on distance (longer routes = more likely to have traffic)
-    if (distance > 10) { // More than 10km
-      return [{
-        segment: { start, end },
-        congestionLevel: 'medium',
-        speedKmh: 25,
-        delayMinutes: Math.ceil(distance / 5) // 5 minutes per 10km
-      }];
-    } else if (distance > 5) { // More than 5km
-      return [{
-        segment: { start, end },
-        congestionLevel: 'low',
-        speedKmh: 30,
-        delayMinutes: Math.ceil(distance / 10) // 2 minutes per 10km
-      }];
+    const apiKey = this.configService.get<string>('GOOGLE_MAPS_API_KEY', '');
+    if (!apiKey) {
+      this.logger.warn('Google Maps API key not configured; traffic data unavailable');
+      return [];
     }
-    
-    return []; // No significant traffic
+
+    try {
+      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&departure_time=now&traffic_model=best_guess&key=${apiKey}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        this.logger.error(`Google Maps Traffic API error: ${response.status}`);
+        return [];
+      }
+
+      const data = (await response.json()) as any;
+      const route = data.routes?.[0];
+      if (!route?.legs?.[0]) {
+        return [];
+      }
+
+      const leg = route.legs[0];
+      const durationInTraffic = leg.duration_in_traffic?.value ?? leg.duration?.value ?? 0;
+      const durationWithoutTraffic = leg.duration?.value ?? 0;
+      const delaySeconds = durationInTraffic - durationWithoutTraffic;
+      const delayMinutes = Math.ceil(delaySeconds / 60);
+      const distanceKm = (leg.distance?.value ?? 0) / 1000;
+      const speedKmh = delayMinutes > 0 ? (distanceKm / (durationInTraffic / 3600)) : 30;
+
+      const congestionLevel: 'low' | 'medium' | 'high' | 'severe' =
+        delayMinutes > 15 ? 'severe' : delayMinutes > 8 ? 'high' : delayMinutes > 3 ? 'medium' : 'low';
+
+      return [{
+        segment: { start, end },
+        congestionLevel,
+        speedKmh: Math.round(speedKmh),
+        delayMinutes,
+      }];
+    } catch (error) {
+      this.logger.error('Google Maps Traffic API request failed:', error);
+      return [];
+    }
   }
 
   // Calculate ETA with real-time traffic updates

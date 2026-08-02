@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { JournalEntryEntity, AccountType, JournalEntryStatus } from '../../db/entities/journal-entry.entity';
 import { LedgerEntryEntity } from '../../db/entities/ledger-entry.entity';
-import { randomString } from '../../../shared/random.utils';
+import { randomString } from '../../shared/random.utils';
 import { LedgerService } from '../../modules/ledger/ledger.service';
 
 @Injectable()

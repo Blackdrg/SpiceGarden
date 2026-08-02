@@ -1,6 +1,20 @@
 import React from 'react'
 import * as Sentry from '@sentry/nextjs'
 
+const CONSENT_STORAGE_KEY = 'sg_cookie_consent'
+
+function hasSentryConsent(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY)
+    if (!raw) return false
+    const parsed = JSON.parse(raw)
+    return typeof parsed?.prefs?.performance === 'boolean' ? parsed.prefs.performance : false
+  } catch {
+    return false
+  }
+}
+
 interface ErrorBoundaryState {
   hasError: boolean
 }
@@ -16,7 +30,9 @@ class SentryErrorBoundary extends React.Component<React.PropsWithChildren<{}>, E
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    Sentry.captureException(error, { contexts: { react: errorInfo } })
+    if (hasSentryConsent()) {
+      Sentry.captureException(error, { contexts: { react: errorInfo } })
+    }
   }
 
   render() {

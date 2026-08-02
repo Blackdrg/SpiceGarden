@@ -1,6 +1,9 @@
 import { Injectable, Logger, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
+import { Cron } from '@nestjs/schedule';
+import * as fs from 'fs';
+import * as path from 'path';
 import { UserEntity } from '../db/entities/user.entity';
 import { SessionEntity } from '../db/entities/session.entity';
 import { AuditLogEntity } from '../db/entities/audit-log.entity';
@@ -58,6 +61,70 @@ export class ComplianceService {
     } catch (error) {
       this.logger.error('Error applying data retention policies', error);
       throw error;
+    }
+  }
+
+  async processPendingDeletionRequests(): Promise<{ processed: number; failed: number }> {
+    try {
+      this.logger.log('Processing pending deletion requests');
+      const now = new Date();
+      const pendingRequests = await this.deletionRequestRepo.find({
+        where: {
+          status: 'pending',
+          scheduledDeletionDate: LessThan(now),
+        },
+      });
+
+      const results = await Promise.all(
+        pendingRequests.map(async (request) => {
+          try {
+            await Promise.all([
+              this.userRepo.softDelete(request.userId),
+              this.sessionRepo.update({ userId: request.userId }, { isActive: false }),
+              this.deletionRequestRepo.update(request.id, {
+                status: 'completed',
+                completedAt: now,
+              }),
+            ]);
+            this.logger.log(`Completed deletion request ${request.id} for user ${request.userId} (${request.regulation})`);
+            return true;
+          } catch (error) {
+            this.logger.error(`Failed to process deletion request ${request.id}`, error);
+            await this.deletionRequestRepo.update(request.id, {
+              status: 'failed',
+            });
+            return false;
+          }
+        }),
+      );
+
+      let processed = 0;
+      let failed = 0;
+      for (const success of results) {
+        if (success) processed++;
+        else failed++;
+      }
+
+      this.logger.log(`Deletion request processing complete: processed=${processed}, failed=${failed}`);
+      return { processed, failed };
+    } catch (error) {
+      this.logger.error('Error processing pending deletion requests', error);
+      return { processed: 0, failed: 0 };
+    }
+  }
+
+  @Cron('0 0 2 * * *', {
+    name: 'compliance-scan',
+    timeZone: 'Asia/Kolkata',
+  })
+  async handleComplianceScan() {
+    this.logger.log('Starting scheduled compliance scan');
+    try {
+      const retention = await this.applyDataRetentionPolicies();
+      const processed = await this.processPendingDeletionRequests();
+      this.logger.log(`Compliance scan complete: retention=${JSON.stringify(retention)}, deletions=${JSON.stringify(processed)}`);
+    } catch (error) {
+      this.logger.error('Scheduled compliance scan failed', error);
     }
   }
 
@@ -283,11 +350,65 @@ async getRetentionStatistics(): Promise<any> {
         }
       }
 
-       return {
-         encryptedFields,
-         fieldsStatus,
-         isEncrypted: encryptedFields.length === piiFields.length,
-         verified: encryptedFields.length === piiFields.length,
-       };
-    }
-}
+        return {
+          encryptedFields,
+          fieldsStatus,
+          isEncrypted: encryptedFields.length === piiFields.length,
+          verified: encryptedFields.length === piiFields.length,
+        };
+     }
+
+     async verifyBackupIntegrity(): Promise<{ valid: boolean; recentBackups: number; latestBackup?: string; errors: string[] }> {
+       const backupDir = process.env.BACKUP_DIR || '/backup';
+       const errors: string[] = [];
+
+       try {
+         if (!fs.existsSync(backupDir)) {
+           errors.push('Backup directory does not exist');
+           return { valid: false, recentBackups: 0, errors };
+         }
+
+         const files = fs.readdirSync(backupDir).filter(f => f.endsWith('.tar.gz') || f.endsWith('.tar.gz.enc'));
+         const recentBackups = files.filter(f => {
+           const filePath = path.join(backupDir, f);
+           const stat = fs.statSync(filePath);
+           const ageDays = (Date.now() - stat.mtimeMs) / (1000 * 60 * 60 * 24);
+           return ageDays <= 7;
+         });
+
+         if (recentBackups.length === 0) {
+           errors.push('No backups found within the last 7 days');
+         }
+
+         let latestBackup: string | undefined;
+         if (files.length > 0) {
+           files.sort((a, b) => {
+             const statA = fs.statSync(path.join(backupDir, a));
+             const statB = fs.statSync(path.join(backupDir, b));
+             return statB.mtimeMs - statA.mtimeMs;
+           });
+           latestBackup = files[0];
+
+           const latestPath = path.join(backupDir, latestBackup);
+           const latestStat = fs.statSync(latestPath);
+           if (latestStat.size === 0) {
+             errors.push(`Latest backup ${latestBackup} is empty`);
+           }
+         }
+
+         return {
+           valid: errors.length === 0,
+           recentBackups: recentBackups.length,
+           latestBackup,
+           errors,
+         };
+       } catch (error) {
+         this.logger.error('Backup integrity verification failed', error);
+         return {
+           valid: false,
+           recentBackups: 0,
+           errors: [`Verification error: ${error instanceof Error ? error.message : 'unknown'}`],
+         };
+       }
+     }
+   }

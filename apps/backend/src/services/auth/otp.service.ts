@@ -175,4 +175,78 @@ export class OtpService {
       },
     };
   }
+
+  async requestDeliveryOtp(orderId: string, recipientPhone?: string, userId?: string): Promise<OtpRequestResult> {
+    if (!orderId) {
+      throw new BadRequestException('Order ID is required');
+    }
+
+    await this.otpRepo.update(
+      { orderId, type: OtpType.DELIVERY_CONFIRMATION, status: OtpStatus.PENDING },
+      { status: OtpStatus.EXPIRED },
+    );
+
+    const code = this.generateCode();
+    const expiresAt = new Date(Date.now() + this.getExpiryMs());
+
+    await this.otpRepo.save({
+      userId: userId || '',
+      orderId,
+      type: OtpType.DELIVERY_CONFIRMATION,
+      code,
+      status: OtpStatus.PENDING,
+      expiresAt,
+    });
+
+    const expiryMinutes = Math.round(this.getExpiryMs() / 60000);
+    if (recipientPhone && !recipientPhone.startsWith('social-')) {
+      await this.notificationService.sendSMS(
+        recipientPhone,
+        `Your SpiceGarden delivery OTP is: ${code}. Valid for ${expiryMinutes} minutes.`,
+      );
+    }
+
+    return { message: 'Delivery OTP generated and sent.' };
+  }
+
+  async verifyDeliveryOtp(orderId: string, code: string): Promise<{ valid: boolean }> {
+    if (!orderId || !code) {
+      throw new BadRequestException('Order ID and code are required');
+    }
+
+    const otp = await this.otpRepo.findOne({
+      where: {
+        orderId,
+        type: OtpType.DELIVERY_CONFIRMATION,
+        status: OtpStatus.PENDING,
+      },
+      order: { createdAt: 'DESC' },
+    });
+
+    if (!otp) {
+      throw new UnauthorizedException('Invalid or expired delivery code');
+    }
+
+    if (otp.expiresAt.getTime() <= Date.now()) {
+      await this.otpRepo.update(otp.id, { status: OtpStatus.EXPIRED });
+      throw new UnauthorizedException('Delivery code has expired');
+    }
+
+    const provided = Buffer.from(code);
+    const expected = Buffer.from(otp.code);
+    const matches =
+      provided.length === expected.length &&
+      crypto.timingSafeEqual(provided, expected);
+
+    if (!matches) {
+      throw new UnauthorizedException('Invalid or expired delivery code');
+    }
+
+    await this.otpRepo.update(otp.id, {
+      status: OtpStatus.VERIFIED,
+      verifiedAt: new Date(),
+    });
+
+    return { valid: true };
+  }
 }

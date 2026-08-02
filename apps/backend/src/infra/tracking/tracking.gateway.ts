@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from '../../db/entities/notification.entity';
-import { randomString } from '../../../shared/random.utils';
+import { randomString } from '../../shared/random.utils';
 import { NotificationStatus } from '../../db/entities/notification-status.enum';
 import { isAllowedOrigin } from '../../security/cors-origin';
 

@@ -9,18 +9,7 @@ import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
 import { DeliverySLAEntity } from '../../db/entities/delivery-sla.entity';
 import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 import { OrderStatus } from '../../shared/domain/order.interface';
-
-const EARTH_RADIUS_KM = 6371;
-
-function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const sinLat = Math.sin(dLat / 2);
-  const sinLng = Math.sin(dLng / 2);
-  const h = sinLat * sinLat + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sinLng * sinLng;
-  return EARTH_RADIUS_KM * 2 * Math.asin(Math.sqrt(h));
-}
+import { rankDrivers, haversineKm } from '../../common/driver-ranking.util';
 
 @Injectable()
 export class DispatchEngineService {
@@ -69,18 +58,27 @@ const order = await manager.findOne(OrderEntity, {
       }
 
       // 3. Find available drivers based on multiple criteria
-      const availableDrivers = await this.findOptimalDrivers(
-        order, 
-        branch,
-        manager
-      );
+      const drivers = await manager.find(DriverEntity, {
+        where: {
+          isOnline: true,
+          kycStatus: 'approved',
+          isFraudSuspicious: false
+        }
+      });
 
-      if (!availableDrivers || availableDrivers.length === 0) {
+      const originLat = branch?.location ? Number(branch.location.lat) : 0;
+      const originLng = branch?.location ? Number(branch.location.lng) : 0;
+      const maxDistance = branch?.location ? 10 : Infinity;
+      const requireLocation = !!branch?.location;
+      const ranked = rankDrivers(drivers, order, branch, originLat, originLng, maxDistance, requireLocation);
+
+      if (!ranked || ranked.length === 0) {
         throw new BadRequestException('No available drivers found');
       }
 
-      // 4. Select best driver based on scoring algorithm
-      const bestDriver = this.selectBestDriver(availableDrivers, order, branch);
+      // 4. Select best driver based on unified scoring algorithm
+      const bestRanked = ranked[0];
+      const bestDriver = drivers.find((d) => d.id === bestRanked.driverId) as DriverEntity;
 
       // 5. Create assignment
       const assignment = await this.createAssignment(
@@ -99,86 +97,6 @@ const order = await manager.findOne(OrderEntity, {
 
       return assignment;
     });
-  }
-
-  /**
-   * Find drivers that meet basic availability and qualification criteria
-   */
-  private async findOptimalDrivers(
-    order: OrderEntity,
-    branch: RestaurantBranchEntity,
-    manager: any
-  ): Promise<DriverEntity[]> {
-    // For now, we'll use a simple proximity-based search
-    // In reality, you'd want to get the restaurant location from branch
-    // This is a simplified version - you'd need to enhance based on your actual data model
-    
-    // Get drivers who are online and approved
-    const drivers = await manager.find(DriverEntity, {
-      where: {
-        isOnline: true,
-        kycStatus: 'approved',
-        isFraudSuspicious: false
-      }
-    });
-
-    // Filter by distance and other factors would go here
-    // For now, return all available drivers (in production, you'd filter by proximity)
-    return drivers;
-  }
-
-  /**
-   * Select the best driver based on multiple scoring factors
-   */
-  private selectBestDriver(
-    drivers: DriverEntity[],
-    order: OrderEntity,
-    branch: RestaurantBranchEntity
-  ): DriverEntity {
-    // Simple scoring algorithm - in reality this would be much more sophisticated
-    return drivers.reduce((best, current) => {
-      const bestScore = this.calculateDriverScore(best, order, branch);
-      const currentScore = this.calculateDriverScore(current, order, branch);
-      return currentScore > bestScore ? current : best;
-    }, drivers[0]);
-  }
-
-  /**
-   * Calculate a driver's suitability score for an order
-   */
-  private calculateDriverScore(
-    driver: DriverEntity,
-    order: OrderEntity,
-    branch: RestaurantBranchEntity
-  ): number {
-    let score = 0;
-
-    // Factor 1: Driver rating (0-5 scale, normalized to 0-1)
-    score += (driver.rating / 5) * 0.3;
-
-    // Factor 2: Fraud risk (inverted - lower risk is better)
-    score += ((100 - driver.fraudScore) / 100) * 0.2;
-
-    // Factor 3: Experience (based on total deliveries, normalized)
-    const experienceScore = Math.min(driver.totalDeliveries / 1000, 1); // Cap at 1000 deliveries
-    score += experienceScore * 0.2;
-
-    // Factor 4: Average speed (prefer reasonable speeds - not too slow or too fast)
-    const speedScore = 1 - Math.abs(driver.averageSpeed - 30) / 50; // Ideal around 30 km/h
-    score += Math.max(0, speedScore) * 0.15;
-
-    // Factor 5: Distance from restaurant (use actual location data when available)
-    const branchLoc = branch.location;
-    const driverLoc = driver.currentLocation;
-    let proximityScore = 0;
-    if (branchLoc && driverLoc) {
-      const distanceKm = haversineKm(driverLoc, branchLoc);
-      const maxDistance = 10;
-      proximityScore = Math.max(0, 1 - distanceKm / maxDistance);
-    }
-    score += proximityScore * 0.15;
-
-    return score;
   }
 
   /**

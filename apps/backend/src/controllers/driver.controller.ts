@@ -15,6 +15,7 @@ import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
 import { OrderStatus } from '../shared/domain/order.interface';
 import { NotificationService } from '../services/notifications/notification.service';
+import { WalletService } from '../services/wallet/wallet.service';
 import {
   AcceptOrderDto,
   RejectOrderDto,
@@ -35,9 +36,12 @@ export class DriverController {
     private assignmentRepo: Repository<DriverAssignmentEntity>,
     @InjectRepository(DriverIssueEntity)
     private issueRepo: Repository<DriverIssueEntity>,
+    @InjectRepository(OrderEntity)
+    private orderRepo: Repository<OrderEntity>,
     @InjectDataSource()
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
+    private walletService: WalletService,
   ) {}
 
   @Get('me')
@@ -178,6 +182,7 @@ export class OrderDriverController {
     private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
     private notificationService: NotificationService,
+    private walletService: WalletService,
   ) {}
 
   @Post(':id/accept')
@@ -309,19 +314,47 @@ export class OrderDriverController {
   @Post(':id/verify-otp')
   async verifyOTP(
     @Param('id') id: string,
-    @Body() body: VerifyOtpDto
+    @Body() body: VerifyOtpDto,
+    @Request() req: { user: { id: string; role: UserRole } }
   ) {
     const assignment = await this.assignmentRepo.findOne({
        where: { order: { id } } as any,
        relations: { order: true },
-     });
+      });
 
     if (!assignment || !assignment.order.otpCode) {
       return { valid: false };
     }
 
     const isValid = assignment.order.otpCode === body.otp;
-    return { valid: isValid };
+    if (!isValid) {
+      return { valid: false };
+    }
+
+    await this.orderRepo.update(assignment.order.id, {
+      status: OrderStatus.DELIVERED,
+      deliveredAt: new Date(),
+    });
+
+    if (assignment.order.paymentStatus === 'pending' && assignment.order.paymentIntentId?.startsWith('cod_')) {
+      try {
+        await this.walletService.confirmCODCollection(assignment.order.id, assignment.order.grandTotal, req.user.id);
+      } catch (error) {
+        this.trackingGateway.server.emit('order.status', {
+          orderId: assignment.order.id,
+          status: OrderStatus.DELIVERED,
+          deliveredAt: new Date(),
+        });
+      }
+    }
+
+    this.trackingGateway.server.emit('order.status', {
+      orderId: assignment.order.id,
+      status: OrderStatus.DELIVERED,
+      deliveredAt: new Date(),
+    });
+
+    return { valid: true, orderId: assignment.order.id, status: OrderStatus.DELIVERED };
   }
 
   @Post(':id/issues')

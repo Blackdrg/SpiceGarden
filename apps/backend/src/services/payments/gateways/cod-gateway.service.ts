@@ -1,8 +1,9 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PaymentGateway } from './payment-gateway.interface';
+import * as crypto from 'crypto';
+import { PaymentGateway } from '../gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../payment.types';
-import { randomString } from '../../../../shared/random.utils';
+import { randomString } from '../../../shared/random.utils';
 
 function safeParse<T = any>(json: string): T | undefined {
   try {
@@ -27,7 +28,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     const meta = metadata as Record<string, any> | undefined;
     return {
       id: codPaymentId,
-      amount,
+      amount: Math.round(amount * 100),
       currency: currency.toUpperCase(),
       status: 'pending',
       client_secret: codPaymentId,
@@ -76,7 +77,7 @@ export class CashOnDeliveryGateway implements PaymentGateway {
     userId: string,
     reason: string = 'requested_by_customer'
   ): Promise<RefundResult> {
-    this.logger.warn(`COD refund requested - no action taken. Amount: ${amount}, Payment: ${paymentId}`);
+    this.logger.warn(`COD refund requested - requires manual driver reconciliation. Amount: ${amount}, Payment: ${paymentId}`);
     return {
       id: `refund_${Date.now()}`,
       amount: amount || 0,

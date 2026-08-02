@@ -187,8 +187,8 @@ export class RazorpayGateway implements PaymentGateway {
         .update(payload.toString())
         .digest('hex');
 
-      const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
-      const signatureBuffer = Buffer.from(signature ?? '', 'utf8');
+      const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+      const signatureBuffer = Buffer.from(signature ?? '', 'hex');
       if (
         expectedBuffer.length !== signatureBuffer.length ||
         !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)

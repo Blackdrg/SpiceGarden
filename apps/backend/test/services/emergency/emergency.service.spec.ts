@@ -8,6 +8,7 @@ import { EmergencyContactEntity } from '../../../src/db/entities/emergency-conta
 import { EmergencyIncidentTimelineEntity } from '../../../src/db/entities/emergency-incident-timeline.entity';
 import { RiskZoneEntity } from '../../../src/db/entities/risk-zone.entity';
 import { RiskEventEntity } from '../../../src/db/entities/risk-event.entity';
+import { DriverEntity } from '../../../src/db/entities/driver.entity';
 import { AuditService } from '../../../src/audit/audit.service';
 import { NotificationService } from '../../../src/services/notifications/notification.service';
 import { RiskZoneService } from '../../../src/services/risk/risk-zone.service';
@@ -21,7 +22,8 @@ describe('EmergencyService', () => {
   let contactRepo: jest.Mocked<Repository<EmergencyContactEntity>>;
   let timelineRepo: jest.Mocked<Repository<EmergencyIncidentTimelineEntity>>;
   let riskZoneRepo: jest.Mocked<Repository<RiskZoneEntity>>;
-  let riskEventRepo: jest.Mocked<Repository<RiskEventEntity>>;
+   let riskEventRepo: jest.Mocked<Repository<RiskEventEntity>>;
+  let driverRepo: jest.Mocked<Repository<DriverEntity>>;
   let mockRiskZoneService: Partial<RiskZoneService>;
   let mockAuditService: Partial<AuditService>;
   let mockNotificationService: Partial<NotificationService>;
@@ -39,6 +41,7 @@ describe('EmergencyService', () => {
     timelineRepo = { create: jest.fn(), save: jest.fn(), find: jest.fn().mockResolvedValue([]) } as any;
     riskZoneRepo = { find: jest.fn(), findOne: jest.fn(), createQueryBuilder: jest.fn() } as any;
     riskEventRepo = { create: jest.fn(), save: jest.fn() } as any;
+    driverRepo = { find: jest.fn().mockResolvedValue([]), findOne: jest.fn() } as any;
 
     mockRiskZoneService = {
       isPointInRiskZone: jest.fn().mockResolvedValue(null),
@@ -61,7 +64,8 @@ describe('EmergencyService', () => {
         { provide: getRepositoryToken(EmergencyContactEntity), useValue: contactRepo },
         { provide: getRepositoryToken(EmergencyIncidentTimelineEntity), useValue: timelineRepo },
         { provide: getRepositoryToken(RiskZoneEntity), useValue: riskZoneRepo },
-        { provide: getRepositoryToken(RiskEventEntity), useValue: riskEventRepo },
+         { provide: getRepositoryToken(RiskEventEntity), useValue: riskEventRepo },
+         { provide: getRepositoryToken(DriverEntity), useValue: driverRepo },
         { provide: RiskZoneService, useValue: mockRiskZoneService },
         { provide: AuditService, useValue: mockAuditService },
         { provide: NotificationService, useValue: mockNotificationService },
@@ -215,5 +219,71 @@ describe('EmergencyService', () => {
     const result = await service.getIncidents({ status: 'open' } as any);
     expect(result).toBeDefined();
     expect(result.total).toBe(0);
+  });
+
+  describe('rankNearestDrivers', () => {
+    it('returns an empty array when no drivers are available', async () => {
+      driverRepo.find = jest.fn().mockResolvedValue([]);
+
+      const result = await service.rankNearestDrivers(19.076, 72.88, 5);
+      expect(result).toEqual([]);
+    });
+
+    it('ranks drivers by haversine distance from the incident', async () => {
+      driverRepo.find = jest.fn().mockResolvedValue([
+        { id: 'drv-1', currentLocation: { lat: 19.10, lng: 72.85 }, rating: 4.5, averageSpeed: 40, fraudScore: 0 } as any,
+        { id: 'drv-2', currentLocation: { lat: 19.076, lng: 72.883 }, rating: 4.2, averageSpeed: 40, fraudScore: 0 } as any,
+        { id: 'drv-3', currentLocation: { lat: 19.072, lng: 72.881 }, rating: 4.8, averageSpeed: 40, fraudScore: 0 } as any,
+      ]);
+
+      const result = await service.rankNearestDrivers(19.07, 72.88, 10);
+
+      expect(result).toHaveLength(3);
+      expect(result[0].driverId).toBe('drv-3');
+      expect(result[1].driverId).toBe('drv-2');
+      expect(result[2].driverId).toBe('drv-1');
+      expect(result[0].distanceKm).toBeLessThan(result[1].distanceKm);
+      for (const r of result) {
+        expect(r.distanceKm).toBeGreaterThan(0);
+        expect(r.etaMinutes).toBeGreaterThanOrEqual(1);
+        expect(r.rating).toBeDefined();
+      }
+    });
+
+    it('breaks ties by fraud score ascending', async () => {
+      driverRepo.find = jest.fn().mockResolvedValue([
+        { id: 'drv-fraud', currentLocation: { lat: 19.071, lng: 72.880 }, rating: 4.0, averageSpeed: 40, fraudScore: 7.5 } as any,
+        { id: 'drv-clean', currentLocation: { lat: 19.071, lng: 72.880 }, rating: 4.0, averageSpeed: 40, fraudScore: 1.0 } as any,
+      ]);
+
+      const result = await service.rankNearestDrivers(19.07, 72.88, 10);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].driverId).toBe('drv-clean');
+    });
+
+    it('respects the limit parameter', async () => {
+      driverRepo.find = jest.fn().mockResolvedValue([
+        { id: 'drv-1', currentLocation: { lat: 19.10, lng: 72.85 }, rating: 4.5, averageSpeed: 40, fraudScore: 0 } as any,
+        { id: 'drv-2', currentLocation: { lat: 19.076, lng: 72.883 }, rating: 4.2, averageSpeed: 40, fraudScore: 0 } as any,
+        { id: 'drv-3', currentLocation: { lat: 19.072, lng: 72.881 }, rating: 4.8, averageSpeed: 40, fraudScore: 0 } as any,
+      ]);
+
+      const result = await service.rankNearestDrivers(19.07, 72.88, 2);
+      expect(result).toHaveLength(2);
+      expect(result[0].driverId).toBe('drv-3');
+    });
+
+    it('excludes drivers without valid currentLocation', async () => {
+      driverRepo.find = jest.fn().mockResolvedValue([
+        { id: 'drv-nolocation', currentLocation: null, rating: 4.5, averageSpeed: 40, fraudScore: 0 } as any,
+        { id: 'drv-1', currentLocation: { lat: 19.08, lng: 72.87 }, rating: 4.2, averageSpeed: 40, fraudScore: 0 } as any,
+      ]);
+
+      const result = await service.rankNearestDrivers(19.07, 72.88, 10);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].driverId).toBe('drv-1');
+    });
   });
 });

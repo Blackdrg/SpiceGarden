@@ -1,10 +1,29 @@
 import * as Sentry from '@sentry/nextjs';
 
-const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN;
-if (dsn && !dsn.includes('[key]')) {
-  Sentry.init({
-    dsn,
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.1,
-  });
+const CONSENT_STORAGE_KEY = 'sg_cookie_consent'
+
+function hasSentryConsent(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY)
+    if (!raw) return false
+    const parsed = JSON.parse(raw)
+    return typeof parsed?.prefs?.performance === 'boolean' ? parsed.prefs.performance : false
+  } catch {
+    return false
+  }
 }
+
+export function initSentry(): void {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
+  if (!hasSentryConsent()) return
+  if (dsn && !dsn.includes('[key]')) {
+    Sentry.init({
+      dsn,
+      tracesSampleRate: 0.1,
+      profilesSampleRate: 0.1,
+    })
+  }
+}
+
+export default initSentry

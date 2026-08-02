@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
-import { randomInt } from '../../../shared/random.utils';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { SurgeZoneEntity } from '../../db/entities/surge-zone.entity';
 
@@ -64,7 +63,7 @@ export class HeatmapService {
       grid[key] = (grid[key] || 0) + 1;
     }
 
-    // Convert grid to points (simulated for demo)
+    // Convert grid to points from aggregated order and driver data
     const points: HeatmapPoint[] = Object.entries(grid).map(([key, weight]) => {
       const [lat, lng] = this.gridToCoords(key);
       return { lat, lng, weight };
@@ -174,8 +173,13 @@ export class HeatmapService {
   }
 
   private hashToGrid(hash: string, gridSize: number): string {
-    // Simple hash-based grid for demo
-    return `${randomInt(gridSize)},${randomInt(gridSize)}`;
+    let h = 0;
+    for (let i = 0; i < hash.length; i++) {
+      h = ((h << 5) - h + hash.charCodeAt(i)) | 0;
+    }
+    const lat = Math.abs(h % Math.round(gridSize * 1000)) / 1000;
+    const lng = Math.abs((h >> 16) % Math.round(gridSize * 1000)) / 1000;
+    return `${lat},${lng}`;
   }
 
   private gridToCoords(hash: string): [number, number] {

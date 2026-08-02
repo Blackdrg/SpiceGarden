@@ -11,16 +11,18 @@
       }
     },
     "production": {
+      "releaseChannel": "production",
       "android": {
         "buildType": "app-bundle",
-        "gradleCommand": ":app:assembleRelease",
         "gradleCommand": ":app:bundleRelease",
         "minSdkVersion": 24,
         "targetSdkVersion": 34,
-        "proguardEnabled": true
+        "proguardEnabled": true,
+        "autoIncrementVersionCode": true
       },
       "ios": {
-        "buildType": "release"
+        "buildType": "release",
+        "autoIncrementVersion": true
       }
     }
   },

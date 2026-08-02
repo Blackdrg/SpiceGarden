@@ -1,0 +1,1 @@
+INSERT INTO orders (id, "userId", "restaurantId", "branchId", "orderNumber", status, "paymentStatus", subtotal, tax, "deliveryFee", discount, tip, "grandTotal", "deliveryAddressId") VALUES ('550e8400-e29b-41d4-a716-446655440000', '33f08db8-0729-4429-8df7-7746e3c5820d', 'restaurant-123', 'branch-1', 'ORD-TEST-001', 'PLACED', 'PENDING', 150, 15, 20, 0, 0, 185, 'addr-1');

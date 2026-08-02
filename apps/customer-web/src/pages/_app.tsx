@@ -6,6 +6,7 @@ import { NetworkStatusProvider } from '../contexts/NetworkStatusContext';
 import { ToastProvider } from '@spicegarden/ui';
 import OfflineIndicator from '../components/OfflineIndicator';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { initSentry } from '../../sentry.client.config';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import Footer from '../components/Footer';
 import '../analytics';
@@ -19,6 +20,10 @@ const queryClient = new QueryClient();
 export default function App({ Component, pageProps }: AppProps) {
   const prefersReducedMotion = useMotion();
   const [animated, setAnimated] = useState(false);
+
+  useEffect(() => {
+    initSentry();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 50);

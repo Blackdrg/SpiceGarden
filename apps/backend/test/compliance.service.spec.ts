@@ -42,6 +42,7 @@ describe('ComplianceService', () => {
     userRepo = {
       findOne: jest.fn(),
       update: jest.fn(),
+      softDelete: jest.fn(),
       count: jest.fn(),
     } as any;
     sessionRepo = {
@@ -206,6 +207,75 @@ describe('ComplianceService', () => {
     });
   });
 
+  describe('Scheduled deletion processing', () => {
+    it('should process pending deletion requests past their scheduled date', async () => {
+      const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      deletionRepo.find.mockResolvedValue([
+        { id: 'req-1', userId: 'user-1', status: 'pending', scheduledDeletionDate: pastDate, regulation: 'gdpr' } as any,
+      ]);
+      userRepo.softDelete.mockResolvedValue(undefined as any);
+      sessionRepo.update.mockResolvedValue({ affected: 1 } as any);
+      deletionRepo.update.mockResolvedValue({ affected: 1 } as any);
+
+      const result = await service.processPendingDeletionRequests();
+
+      expect(result.processed).toBe(1);
+      expect(result.failed).toBe(0);
+      expect(userRepo.softDelete).toHaveBeenCalledWith('user-1');
+      expect(sessionRepo.update).toHaveBeenCalledWith({ userId: 'user-1' }, { isActive: false });
+    });
+
+    it('should skip requests not yet due', async () => {
+      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      deletionRepo.find.mockResolvedValue([] as any);
+
+      const result = await service.processPendingDeletionRequests();
+
+      expect(result.processed).toBe(0);
+      expect(result.failed).toBe(0);
+      expect(deletionRepo.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'pending',
+          }),
+        }),
+      );
+    });
+
+    it('should handle processing failures gracefully', async () => {
+      const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      deletionRepo.find.mockResolvedValue([
+        { id: 'req-1', userId: 'user-1', status: 'pending', scheduledDeletionDate: pastDate, regulation: 'gdpr' } as any,
+      ]);
+      userRepo.softDelete.mockRejectedValue(new Error('DB error'));
+      deletionRepo.update.mockResolvedValue({ affected: 1 } as any);
+
+      const result = await service.processPendingDeletionRequests();
+
+      expect(result.processed).toBe(0);
+      expect(result.failed).toBe(1);
+    });
+  });
+
+  describe('Scheduled compliance scan', () => {
+    it('should call retention and deletion processing', async () => {
+      sessionRepo.delete.mockResolvedValue({ affected: 3 } as any);
+      auditRepo.count.mockResolvedValue(5);
+      deletionRepo.find.mockResolvedValue([] as any);
+      userRepo.softDelete.mockResolvedValue(undefined as any);
+      sessionRepo.update.mockResolvedValue({ affected: 0 } as any);
+      deletionRepo.update.mockResolvedValue({ affected: 0 } as any);
+
+      jest.spyOn(service, 'applyDataRetentionPolicies').mockResolvedValue({ deletedSessions: 3, oldAuditLogs: 5 } as any);
+      jest.spyOn(service, 'processPendingDeletionRequests').mockResolvedValue({ processed: 0, failed: 0 } as any);
+
+      await service.handleComplianceScan();
+
+      expect(service.applyDataRetentionPolicies).toHaveBeenCalled();
+      expect(service.processPendingDeletionRequests).toHaveBeenCalled();
+    });
+  });
+
   describe('PII encryption verification', () => {
     it('should flag unencrypted PII fields', async () => {
       userRepo.findOne.mockResolvedValue({
@@ -225,8 +295,8 @@ describe('ComplianceService', () => {
       userRepo.findOne.mockResolvedValue({
         id: 'user-1',
         email: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
-        phone: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
-        fullName: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
+        phone: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
+        fullName: 'dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==.dGVzdGl2ZWJpdHR5LnRlc3RjdHR5LnRlc3R0YWdudA==',
       } as any);
 
       const result = await service.verifyPiiEncryption('user-1');

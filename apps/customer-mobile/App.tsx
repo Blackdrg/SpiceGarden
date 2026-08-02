@@ -1,9 +1,11 @@
-﻿import React from 'react';
-import { Text } from 'react-native';
+﻿import React, { useEffect, useRef } from 'react';
+import { Text, Linking } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Sentry from '@sentry/react-native';
+import * as Notifications from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList, TabParamList } from './src/navigation/types';
 import { LocaleProvider } from './src/constants/i18n';
 import AuthScreen from './src/screens/AuthScreen';
@@ -26,8 +28,16 @@ import SupportScreen from './src/screens/SupportScreen';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0,
   debug: false,
+});
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
 });
 
 if (typeof document !== 'undefined') {
@@ -94,9 +104,80 @@ function MainTabNavigator() {
 }
 
 export default function App() {
+  const notificationListener = useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
+  const responseListener = useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+
+    const checkSentryConsent = async () => {
+      try {
+        const consentJson = await AsyncStorage.getItem('sg_consent');
+        if (consentJson) {
+          const consent = JSON.parse(consentJson) as { analytics: boolean };
+          if (consent.analytics) {
+            Sentry.init({
+              dsn: process.env.SENTRY_DSN,
+              tracesSampleRate: 1.0,
+              debug: false,
+            });
+          }
+        }
+      } catch {
+        // Keep crash-only mode if consent check fails
+      }
+    };
+    checkSentryConsent();
+
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      console.log('Notification received:', notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('Notification response:', response);
+    });
+
+    const handleDeepLink = (event: { url: string }) => {
+      const { host, path, scheme } = Linking.parse(event.url);
+      console.log('Deep link received:', scheme, host, path);
+
+      if (host === 'pay') {
+        console.log('Navigating to payment flow from deep link');
+      } else if (host === 'cod') {
+        console.log('Navigating to COD confirmation from deep link');
+      }
+    };
+
+    const linkingListener = Linking.addEventListener('url', handleDeepLink);
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
+    return () => {
+      notificationListener.current?.remove();
+      responseListener.current?.remove();
+      linkingListener.remove();
+    };
+  }, []);
+
   return (
     <LocaleProvider>
       <AppNavigator />
     </LocaleProvider>
   );
+}
+
+async function registerForPushNotificationsAsync() {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') {
+    return;
+  }
+  const projectId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID || 'spicegarden-customer';
+  const pushToken = await Notifications.getExpoPushTokenAsync({ projectId });
+  console.log('Push token:', pushToken.data);
 }

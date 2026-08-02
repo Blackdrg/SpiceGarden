@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan, In } from 'typeorm';
 import { WebhookRetryQueueEntity } from '../../../db/entities/webhook-retry-queue.entity';
-import { randomFloat } from '../../../../shared/random.utils';
+import { randomFloat } from '../../../shared/random.utils';
 
 export interface WebhookRetryJob {
   webhookId: string;

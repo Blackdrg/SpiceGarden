@@ -2,13 +2,16 @@ import { DataSource } from 'typeorm';
 import { Logger } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { randomUUID } from 'crypto';
-import { randomInt, randomFloat } from '../../../shared/random.utils';
+import { randomInt, randomFloat } from '../../shared/random.utils';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { MenuCategoryEntity } from '../../db/entities/menu-category.entity';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { UserEntity } from '../../db/entities/user.entity';
+import { CouponEntity, CouponType, CouponStatus, CouponScope } from '../../db/entities/coupon.entity';
+import { RestaurantGSTEntity } from '../../db/entities/restaurant-gst.entity';
+import { HSNSACEntity } from '../../db/entities/hsn-sac.entity';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
 export class BusinessSeederService {
@@ -34,6 +37,22 @@ export class BusinessSeederService {
       await this.seedDrivers();
     } else {
       this.logger.log('Drivers already seeded');
+    }
+
+    const couponRepo = this.dataSource.getRepository(CouponEntity);
+    const existingCoupons = await couponRepo.count();
+    if (existingCoupons === 0) {
+      await this.seedCoupons();
+    } else {
+      this.logger.log('Coupons already seeded');
+    }
+
+    const gstRepo = this.dataSource.getRepository(RestaurantGSTEntity);
+    const existingGst = await gstRepo.count();
+    if (existingGst === 0) {
+      await this.seedTaxConfigs();
+    } else {
+      this.logger.log('Tax configs already seeded');
     }
     
     this.logger.log('Business engine ready');
@@ -160,5 +179,110 @@ export class BusinessSeederService {
     );
 
     this.logger.log('Seeded 3 drivers');
+  }
+
+  private async seedCoupons() {
+    const couponRepo = this.dataSource.getRepository(CouponEntity);
+    const restaurantRepo = this.dataSource.getRepository(RestaurantEntity);
+    const restaurants = await restaurantRepo.find();
+
+    const coupons = [
+      {
+        code: 'WELCOME10',
+        type: CouponType.PERCENTAGE,
+        scope: CouponScope.GLOBAL,
+        discountValue: 10,
+        minOrderAmount: 200,
+        maxDiscountAmount: 100,
+        usageLimit: 1000,
+        validFrom: new Date(),
+        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        applicableForNewUsers: true,
+      },
+      {
+        code: 'FLAT50',
+        type: CouponType.FIXED_AMOUNT,
+        scope: CouponScope.GLOBAL,
+        discountValue: 50,
+        minOrderAmount: 300,
+        maxDiscountAmount: 50,
+        usageLimit: 500,
+        validFrom: new Date(),
+        validUntil: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        applicableForNewUsers: false,
+      },
+      {
+        code: 'FREEDEL',
+        type: CouponType.FREE_DELIVERY,
+        scope: CouponScope.RESTAURANT,
+        restaurantId: restaurants[0]?.id,
+        discountValue: 0,
+        minOrderAmount: 150,
+        usageLimit: 200,
+        validFrom: new Date(),
+        validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        applicableForNewUsers: false,
+      },
+      {
+        code: 'BOGO25',
+        type: CouponType.BOGO,
+        scope: CouponScope.ITEM,
+        discountValue: 25,
+        minOrderAmount: 250,
+        usageLimit: 100,
+        validFrom: new Date(),
+        validUntil: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+        applicableForNewUsers: false,
+      },
+    ];
+
+    await couponRepo.save(coupons as any);
+    this.logger.log(`Seeded ${coupons.length} coupons`);
+  }
+
+  private async seedTaxConfigs() {
+    const gstRepo = this.dataSource.getRepository(RestaurantGSTEntity);
+    const hsnRepo = this.dataSource.getRepository(HSNSACEntity);
+    const restaurantRepo = this.dataSource.getRepository(RestaurantEntity);
+    const itemRepo = this.dataSource.getRepository(MenuItemEntity);
+    const restaurants = await restaurantRepo.find();
+    const items = await itemRepo.find({ relations: { category: true } });
+
+    const gstDetails = restaurants.map((restaurant, i) => ({
+      gstin: `27AAAAA${1000 + i}0A1Z5`,
+      legalNameOfBusiness: `${restaurant.name} Pvt Ltd`,
+      tradeName: restaurant.name,
+      address: `${100 + i} Main Street, Food City`,
+      stateCode: '27',
+      state: 'Maharashtra',
+      registrationDate: new Date('2024-01-01'),
+      isActive: true,
+      email: `gst@${restaurant.slug}.com`,
+      phone: `+91${9000000000 + i * 111111111}`,
+      restaurant: { id: restaurant.id } as any,
+    }));
+
+    await gstRepo.save(gstDetails as any);
+
+    const hsnCodes = [
+      { hsnCode: '1006', description: 'Rice', gstRate: 5 },
+      { hsnCode: '0202', description: 'Meat', gstRate: 5 },
+      { hsnCode: '1905', description: 'Bread', gstRate: 5 },
+      { hsnCode: '2106', description: 'Food preparations', gstRate: 18 },
+      { hsnCode: '2206', description: 'Beverages', gstRate: 18 },
+      { hsnCode: '3401', description: 'Soap', gstRate: 18 },
+    ];
+
+    for (const item of items) {
+      const hsn = hsnCodes[randomInt(hsnCodes.length)];
+      await hsnRepo.save({
+        hsnCode: hsn.hsnCode,
+        description: hsn.description,
+        gstRate: hsn.gstRate,
+        menuItem: { id: item.id } as any,
+      } as any);
+    }
+
+    this.logger.log(`Seeded ${gstDetails.length} restaurant GST records and ${items.length} HSN/SAC codes`);
   }
 }

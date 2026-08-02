@@ -115,30 +115,30 @@ export class RefundService {
      notes?: string
    ): Promise<RefundApprovalEntity> {
      // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
-     if (!approval) {
-       throw new NotFoundException(`Refund approval not found: ${approvalId}`);
+    const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId }, relations: { order: true } });
+      if (!approval) {
+        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
+      }
+
+      // Validate approver exists
+      const approver = await this.userRepo.findOne({ where: { id: approverId } });
+      if (!approver) {
+        throw new NotFoundException(`Approver not found: ${approverId}`);
+      }
+
+      // Check if already processed
+      if (approval.approvalStatus !== 'pending') {
+        throw new BadRequestException(`Refund request is already ${approval.approvalStatus}`);
+      }
+
+      // Check if manager approval is required and if approver is a manager
+     if (approval.requiresManagerApproval) {
+       // In a real system, we would check if the approver has manager role
+       // For now, we'll just note that manager approval was given
      }
 
-     // Validate approver exists
-     const approver = await this.userRepo.findOne({ where: { id: approverId } });
-     if (!approver) {
-       throw new NotFoundException(`Approver not found: ${approverId}`);
-     }
-
-     // Check if already processed
-     if (approval.approvalStatus !== 'pending') {
-       throw new BadRequestException(`Refund request is already ${approval.approvalStatus}`);
-     }
-
-     // Check if manager approval is required and if approver is a manager
-    if (approval.requiresManagerApproval) {
-      // In a real system, we would check if the approver has manager role
-      // For now, we'll just note that manager approval was given
-    }
-
-    // Update approval
-    approval.approvalStatus = 'approved';
+     // Update approval
+     approval.approvalStatus = 'approved';
     approval.approverId = approverId;
     approval.approvedAt = new Date();
     approval.approvalNotes = notes;
@@ -162,24 +162,24 @@ export class RefundService {
      reason: string
    ): Promise<RefundApprovalEntity> {
      // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
-     if (!approval) {
-       throw new NotFoundException(`Refund approval not found: ${approvalId}`);
-     }
+    const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId }, relations: { order: true } });
+      if (!approval) {
+        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
+      }
 
-     // Validate approver exists
-     const approver = await this.userRepo.findOne({ where: { id: approverId } });
-     if (!approver) {
-       throw new NotFoundException(`Approver not found: ${approverId}`);
-     }
+      // Validate approver exists
+      const approver = await this.userRepo.findOne({ where: { id: approverId } });
+      if (!approver) {
+        throw new NotFoundException(`Approver not found: ${approverId}`);
+      }
 
-     // Check if already processed
-     if (approval.approvalStatus !== 'pending') {
-       throw new BadRequestException(`Refund request is already ${approval.approvalStatus}`);
-     }
+      // Check if already processed
+      if (approval.approvalStatus !== 'pending') {
+        throw new BadRequestException(`Refund request is already ${approval.approvalStatus}`);
+      }
 
-     // Update approval
-     approval.approvalStatus = 'rejected';
+      // Update approval
+      approval.approvalStatus = 'rejected';
      approval.approverId = approverId;
      approval.approvedAt = new Date();
      approval.rejectionReason = reason;
@@ -203,7 +203,7 @@ export class RefundService {
     gatewayName?: string
   ): Promise<{ refund: RefundEntity; approval: RefundApprovalEntity }> {
     // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId }, relations: { order: true } });
      if (!approval) {
        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
      }

@@ -1,9 +1,10 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In, Like, MoreThanOrEqual } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
-import { randomString } from '../../../shared/random.utils';
+import { OrderEntity } from '../../db/entities/order.entity';
+import { randomString } from '../../shared/random.utils';
 import { ConfigService } from '@nestjs/config';
 import { PaymentService } from '../payments/payments.service';
 import { NotificationService } from '../notifications/notification.service';
@@ -15,16 +16,20 @@ export class WalletService {
 
   private readonly walletRepo: Repository<WalletEntity>;
   private readonly walletTransactionRepo: Repository<WalletTransactionEntity>;
+  private readonly orderRepo: Repository<OrderEntity>;
 
   constructor(
     @InjectDataSource()
     private readonly connection: DataSource,
+    @InjectRepository(OrderEntity)
+    private readonly orderRepository: Repository<OrderEntity>,
     private readonly configService: ConfigService,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
   ) {
     this.walletRepo = this.connection.getRepository(WalletEntity);
     this.walletTransactionRepo = this.connection.getRepository(WalletTransactionEntity);
+    this.orderRepo = this.orderRepository;
   }
 
   async getWallet(userId: string): Promise<WalletEntity> {
@@ -191,7 +196,6 @@ export class WalletService {
   }
 
   async processCODPayment(orderId: string, amount: string | number, userId: string): Promise<boolean> {
-    // Convert amount to number if it's a string
     const codAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
 
     if (isNaN(codAmount) || codAmount <= 0) {
@@ -199,27 +203,17 @@ export class WalletService {
     }
 
     try {
-      // In a real implementation, this would integrate with delivery partner app
-      // to confirm COD collection. For now, we'll simulate success.
-
-      // For COD, we don't debit the wallet immediately - we wait for confirmation
-      // from delivery that payment was collected
-
-      // Create a pending COD transaction record
       const wallet = await this.getWallet(userId);
 
       const transaction = this.walletTransactionRepo.create({
         walletId: wallet.id,
         amount: codAmount,
-        type: 'credit', // Will be credited upon successful COD collection
+        type: 'credit',
         description: `COD Payment Pending for Order #${orderId}`,
         referenceId: orderId,
       });
 
       await this.walletTransactionRepo.save(transaction);
-
-      // In production, this would trigger a notification to delivery partner
-      // to collect COD from customer
 
       return true;
     } catch (error) {
@@ -229,16 +223,20 @@ export class WalletService {
   }
 
   async confirmCODCollection(orderId: string, amount: string | number, userId: string): Promise<WalletTransactionEntity> {
-    // Confirm that COD was successfully collected from customer
     const codAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
 
     if (isNaN(codAmount) || codAmount <= 0) {
       throw new BadRequestException('Invalid COD amount');
     }
 
-    const wallet = await this.getWallet(userId);
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
 
-    // Find the pending COD transaction
+    const customerId = order.userId;
+    const wallet = await this.getWallet(customerId);
+
     const pendingTransaction = await this.walletTransactionRepo.findOne({
       where: {
         walletId: wallet.id,
@@ -252,22 +250,19 @@ export class WalletService {
       throw new NotFoundException('No pending COD transaction found for this order');
     }
 
-    // Update the transaction to reflect actual collection
     pendingTransaction.amount = codAmount;
     pendingTransaction.description = `COD Payment Collected for Order #${orderId}`;
-    // Note: We don't change type from credit to debit here because
-    // the wallet already received the funds when COD was confirmed
 
     const updatedTransaction = await this.walletTransactionRepo.save(pendingTransaction);
 
-    // Update wallet balance (add the COD amount)
-    wallet.balance += codAmount;
-    wallet.updatedAt = new Date();
-    await this.walletRepo.save(wallet);
+    await this.walletRepo.createQueryBuilder()
+      .update(WalletEntity)
+      .set({ balance: () => `balance + ${codAmount}`, updatedAt: new Date() })
+      .where('id = :id', { id: wallet.id })
+      .execute();
 
-    // Send notification
     await this.notificationService.sendPush(
-      userId,
+      customerId,
       'COD Payment Confirmed',
       `Your COD payment of ₹${codAmount} for order #${orderId} has been confirmed. Wallet balance: ₹${wallet.balance}`,
       { walletId: wallet.id }

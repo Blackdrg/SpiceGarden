@@ -248,4 +248,16 @@ describe('RazorpayGateway', () => {
 
     await expect(gateway.constructEvent(payload, 'invalid_signature', 'secret')).rejects.toThrow('Invalid webhook signature');
   });
+
+  it('computes signature buffer as binary hex, not UTF-8 characters', async () => {
+    const { gateway } = createGateway();
+    const payload = Buffer.from(JSON.stringify({ event: 'payment.captured', entity: { id: 'pay_123' } }));
+    const secret = 'razorpay_webhook_secret';
+
+    const hmac = require('crypto').createHmac('sha256', secret).update(payload.toString()).digest('hex');
+    const signature = hmac;
+
+    const result = await gateway.constructEvent(payload, signature, secret);
+    expect(result.data.object).toEqual({ id: 'pay_123' });
+  });
 });

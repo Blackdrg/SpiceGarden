@@ -1,0 +1,155 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: customer-web
+  namespace: spicegarden-production
+  labels:
+    app: customer-web
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: customer-web
+  namespace: spicegarden-production
+  labels:
+    app: customer-web
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: customer-web
+  namespace: spicegarden-production
+  labels:
+    app: customer-web
+subjects:
+  - kind: ServiceAccount
+    name: customer-web
+    namespace: spicegarden-production
+roleRef:
+  kind: Role
+  name: customer-web
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: restaurant-dashboard
+  namespace: spicegarden-production
+  labels:
+    app: restaurant-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: restaurant-dashboard
+  namespace: spicegarden-production
+  labels:
+    app: restaurant-dashboard
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: restaurant-dashboard
+  namespace: spicegarden-production
+  labels:
+    app: restaurant-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: restaurant-dashboard
+    namespace: spicegarden-production
+roleRef:
+  kind: Role
+  name: restaurant-dashboard
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: super-admin
+  namespace: spicegarden-production
+  labels:
+    app: super-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: super-admin
+  namespace: spicegarden-production
+  labels:
+    app: super-admin
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: super-admin
+  namespace: spicegarden-production
+  labels:
+    app: super-admin
+subjects:
+  - kind: ServiceAccount
+    name: super-admin
+    namespace: spicegarden-production
+roleRef:
+  kind: Role
+  name: super-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: delivery-partner
+  namespace: spicegarden-production
+  labels:
+    app: delivery-partner
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: delivery-partner
+  namespace: spicegarden-production
+  labels:
+    app: delivery-partner
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: delivery-partner
+  namespace: spicegarden-production
+  labels:
+    app: delivery-partner
+subjects:
+  - kind: ServiceAccount
+    name: delivery-partner
+    namespace: spicegarden-production
+roleRef:
+  kind: Role
+  name: delivery-partner
+  apiGroup: rbac.authorization.k8s.io

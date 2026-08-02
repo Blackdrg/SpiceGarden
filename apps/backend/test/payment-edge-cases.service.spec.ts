@@ -10,6 +10,9 @@ import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../src
 import { WalletEntity } from '../src/db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../src/db/entities/wallet-transaction.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { RetryService } from '../src/services/payments/retry.service';
+import { FraudHardeningService } from '../src/services/payments/fraud-hardening.service';
+import { FraudBlacklistService } from '../src/services/payments/fraud-blacklist.service';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -86,6 +89,13 @@ describe('PaymentService', () => {
       })),
     };
 
+    const retryService = {
+      executeWithRetry: jest.fn(async (op: () => Promise<any>) => {
+        const result = await op();
+        return { success: true, result, attempts: 1 };
+      }),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentService,
@@ -93,8 +103,11 @@ describe('PaymentService', () => {
         { provide: AuditService, useValue: auditService },
         { provide: LedgerService, useValue: ledgerService },
         { provide: ConfigService, useValue: configService },
+        { provide: RetryService, useValue: retryService },
         { provide: getRepositoryToken(WalletEntity), useValue: mockWalletRepo },
         { provide: getRepositoryToken(WalletTransactionEntity), useValue: mockWalletTransactionRepo },
+        { provide: FraudHardeningService, useValue: { checkPaymentFraud: jest.fn().mockResolvedValue({ allowed: true, riskScore: 0, reasons: [] }) } },
+        { provide: FraudBlacklistService, useValue: { isBlacklisted: jest.fn().mockResolvedValue(false) } },
       ],
     }).compile();
 

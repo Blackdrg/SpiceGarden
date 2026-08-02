@@ -11,8 +11,23 @@ interface AnalyticsEvent {
 
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics'
 
+const CONSENT_STORAGE_KEY = 'sg_cookie_consent'
+
+function hasAnalyticsConsent(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY)
+    if (!raw) return false
+    const parsed = JSON.parse(raw)
+    return typeof parsed?.prefs?.analytics === 'boolean' ? parsed.prefs.analytics : false
+  } catch {
+    return false
+  }
+}
+
 const sendAnalyticsEvent = (event: AnalyticsEvent): void => {
   if (typeof window === 'undefined') return
+  if (!hasAnalyticsConsent()) return
 
   try {
     const blob = new Blob([JSON.stringify({ ...event, timestamp: Date.now() })], { type: 'application/json' })

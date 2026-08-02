@@ -28,7 +28,10 @@ export default ({ config }) => ({
       NSUserNotificationUsageDescription: 'SpiceGarden sends notifications for new delivery orders and status updates.',
     },
     entitlements: {
-      'aps-environment': 'development',
+      'aps-environment': 'production',
+      // Matched customer app production entitlement so delivery-partner
+      // receives real APNs push notifications in release builds. Change
+      // back to 'development' only for dev/simulator builds.
     },
   },
   android: {
@@ -61,5 +64,25 @@ export default ({ config }) => ({
     'expo-notifications',
     'expo-location',
     'expo-secure-store',
+    [
+      'expo-linking',
+      {
+        schemes: ['spicegarden-driver'],
+        android: {
+          intentFilters: [
+            {
+              action: 'VIEW',
+              data: [
+                { scheme: 'spicegarden-driver', host: 'order' },
+              ],
+              categories: ['BROWSABLE', 'DEFAULT'],
+            },
+          ],
+        },
+        ios: {
+          universalLinks: ['https://spicegarden.com/driver-link'],
+        },
+      },
+    ],
   ],
 });

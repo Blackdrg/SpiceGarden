@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<privacymanifest xmlns="https://developer.apple.com/privacy/manifest">
+  <datausage>
+    <datatype name="ProductInteraction" required="false">
+      <purpose>Analytics</purpose>
+    </datatype>
+    <datatype name="PerformanceData" required="false">
+      <purpose>Analytics</purpose>
+    </datatype>
+    <datatype name="DeviceDiagnostic" required="false">
+      <purpose>Analytics</purpose>
+    </datatype>
+  </datausage>
+  <dataexport>
+    <dataexport destination="Server" type="AnalyticsData">
+      <purpose>Analytics</purpose>
+    </dataexport>
+  </dataexport>
+  <thirdparty>
+    <library name="expo-notifications" required="false">
+      <purpose>Push notifications for order updates and delivery tracking</purpose>
+    </library>
+    <library name="expo-location" required="false">
+      <purpose>Location access to show nearby restaurants and track orders</purpose>
+    </library>
+    <library name="expo-secure-store" required="false">
+      <purpose>Secure storage of authentication tokens</purpose>
+    </library>
+    <library name="react-native-sentry" required="false">
+      <purpose>Error tracking and crash reporting</purpose>
+    </library>
+  </thirdparty>
+</privacymanifest>

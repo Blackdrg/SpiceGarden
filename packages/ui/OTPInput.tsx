@@ -23,10 +23,11 @@ export const OTPInput = ({
   label,
 }: OTPInputProps) => {
   const [otp, setOtp] = useState<string[]>(() => value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  const inputRefs = useRef<Array<HTMLInputElement | null> | null>(null);
-  if (inputRefs.current === null) {
-    inputRefs.current = Array.from({ length }, () => null as HTMLInputElement | null);
-  }
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    setOtp(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
+  }, [value, length]);
   const inputKeys = useMemo(() => Array.from({ length }, (_, i) => `otp-digit-${i}`), [length]);
 
   const handleChange = (index: number, digit: string) => {

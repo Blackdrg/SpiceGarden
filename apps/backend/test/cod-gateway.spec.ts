@@ -16,7 +16,7 @@ describe('CashOnDeliveryGateway', () => {
     const result = await gateway.createPaymentIntent(150, 'inr', 'user-1', { orderId: 'ord-1' });
 
     expect(result.id).toMatch(/^cod_\d+_[a-z0-9]+$/);
-    expect(result.amount).toBe(150);
+    expect(result.amount).toBe(15000);
     expect(result.currency).toBe('INR');
     expect(result.status).toBe('pending');
     expect(result.client_secret).toBe(result.id);

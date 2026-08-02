@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../db/db-repositories.module';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { ComplianceService } from './compliance.service';
 import { ComplianceController } from './compliance.controller';
@@ -12,7 +13,7 @@ import { DataPrivacyService } from '../services/privacy/data-privacy.service';
 import { PaymentFraudFlagEntity } from '../services/payments/payment-fraud.entity';
 
 @Module({
-  imports: [DbRepositoriesModule, ConfigModule, TypeOrmModule.forFeature([PaymentFraudFlagEntity])],
+  imports: [DbRepositoriesModule, ConfigModule, TypeOrmModule.forFeature([PaymentFraudFlagEntity]), ScheduleModule.forRoot()],
   providers: [ComplianceService, Soc2ReadinessService, PciDssValidationService, SecretsRotationService, DataPrivacyService],
   controllers: [ComplianceController],
   exports: [ComplianceService, DataPrivacyService],

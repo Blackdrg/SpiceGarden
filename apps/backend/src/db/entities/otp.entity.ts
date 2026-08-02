@@ -7,6 +7,7 @@ export enum OtpType {
   LOGIN_2FA = 'login_2fa',
   LOGIN = 'login',
   PASSWORD_RESET = 'password_reset',
+  DELIVERY_CONFIRMATION = 'delivery_confirmation',
 }
 
 export enum OtpStatus {
@@ -26,6 +27,9 @@ export class OtpEntity {
 
   @ManyToOne(() => UserEntity)
   user!: UserEntity;
+
+  @Column({ nullable: true })
+  orderId!: string;
 
   @Column({ type: 'varchar', enum: OtpType })
   type!: OtpType;

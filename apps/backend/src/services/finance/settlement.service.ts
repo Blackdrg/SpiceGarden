@@ -1,10 +1,23 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, Between } from 'typeorm';
+import { Repository, DataSource, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { SettlementReportEntity, SettlementStatus, SettlementType } from '../../db/entities/settlement-report.entity';
 import { PayoutReportEntity, PayoutStatus } from '../../db/entities/payout-report.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { PaymentStatus } from '../../shared/domain/order.interface';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
+
+export interface ReconciliationReport {
+  gateway: string;
+  settlementDate: Date;
+  totalOrders: number;
+  totalOrderAmount: number;
+  totalSettledAmount: number;
+  settledCount: number;
+  unsettledOrders: Array<{ orderId: string; amount: number }>;
+  amountMismatch: number;
+  status: 'matched' | 'discrepancy';
+}
 
 @Injectable()
 export class SettlementService {
@@ -138,6 +151,69 @@ export class SettlementService {
       pendingSettlements,
       failedSettlements,
       settlements,
+    };
+  }
+
+  async reconcileGatewayPayments(
+    gateway: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<ReconciliationReport> {
+    const settlements = await this.settlementRepo.find({
+      where: {
+        gateway,
+        settlementDate: Between(startDate, endDate),
+        status: SettlementStatus.COMPLETED,
+      },
+    });
+
+    const settledRefIds = new Set<string>();
+    let totalSettledAmount = 0;
+    for (const s of settlements) {
+      totalSettledAmount += Number(s.netAmount);
+      if (s.transactions) {
+        for (const t of s.transactions) {
+          settledRefIds.add(t.referenceId);
+        }
+      }
+    }
+
+    const orders = await this.orderRepo.find({
+      where: {
+        paymentStatus: PaymentStatus.COMPLETED,
+        createdAt: Between(startDate, endDate),
+      },
+      select: ['id', 'grandTotal', 'paymentIntentId'],
+    });
+
+    const unsettledOrders: Array<{ orderId: string; amount: number }> = [];
+    let totalOrderAmount = 0;
+    for (const order of orders) {
+      totalOrderAmount += Number(order.grandTotal);
+      if (!settledRefIds.has(order.id)) {
+        unsettledOrders.push({ orderId: order.id, amount: Number(order.grandTotal) });
+      }
+    }
+
+    const settledCount = orders.length - unsettledOrders.length;
+    const amountMismatch = Math.abs(totalOrderAmount - totalSettledAmount);
+    const status = amountMismatch < 1 && unsettledOrders.length === 0 ? 'matched' : 'discrepancy';
+
+    this.logger.log(
+      `Reconciliation for gateway=${gateway}, period=${startDate.toISOString()} to ${endDate.toISOString()}: ` +
+      `orders=${orders.length}, settled=${settledCount}, unsettled=${unsettledOrders.length}, mismatch=${amountMismatch}`
+    );
+
+    return {
+      gateway,
+      settlementDate: endDate,
+      totalOrders: orders.length,
+      totalOrderAmount,
+      totalSettledAmount,
+      settledCount,
+      unsettledOrders,
+      amountMismatch,
+      status,
     };
   }
 }

@@ -151,4 +151,89 @@ describe('OtpService', () => {
     expect(result.access_token).toBeUndefined();
     expect(ctx.authService.login).not.toHaveBeenCalled();
   });
+
+  describe('requestDeliveryOtp', () => {
+    it('requires an orderId', async () => {
+      await expect(ctx.service.requestDeliveryOtp('')).rejects.toThrow(BadRequestException);
+    });
+
+    it('expires pending delivery OTPs before creating a new one', async () => {
+      await ctx.service.requestDeliveryOtp('order-1', '+15555555555', 'user-1');
+
+      expect(ctx.otpRepo.update).toHaveBeenCalledWith(
+        { orderId: 'order-1', type: OtpType.DELIVERY_CONFIRMATION, status: OtpStatus.PENDING },
+        { status: OtpStatus.EXPIRED },
+      );
+      expect(ctx.otpRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderId: 'order-1',
+          userId: 'user-1',
+          type: OtpType.DELIVERY_CONFIRMATION,
+          status: OtpStatus.PENDING,
+        }),
+      );
+    });
+
+    it('sends OTP via SMS when a recipient phone is provided', async () => {
+      await ctx.service.requestDeliveryOtp('order-2', '+15555555555');
+
+      expect(ctx.notificationService.sendSMS).toHaveBeenCalledWith(
+        '+15555555555',
+        expect.stringContaining('delivery OTP'),
+      );
+    });
+
+    it('does not send SMS when no recipient phone is provided', async () => {
+      await ctx.service.requestDeliveryOtp('order-3');
+
+      expect(ctx.notificationService.sendSMS).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('verifyDeliveryOtp', () => {
+    it('requires orderId and code', async () => {
+      await expect(ctx.service.verifyDeliveryOtp('', '123456')).rejects.toThrow(BadRequestException);
+      await expect(ctx.service.verifyDeliveryOtp('order-1', '')).rejects.toThrow(BadRequestException);
+    });
+
+    it('rejects when no pending delivery OTP exists', async () => {
+      ctx.otpRepo.findOne.mockResolvedValue(null);
+
+      await expect(ctx.service.verifyDeliveryOtp('order-1', '123456')).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('rejects an expired delivery OTP', async () => {
+      ctx.otpRepo.findOne.mockResolvedValue({
+        id: 'otp-1',
+        code: '123456',
+        expiresAt: new Date(Date.now() - 1000),
+      });
+
+      await expect(ctx.service.verifyDeliveryOtp('order-1', '123456')).rejects.toThrow('expired');
+      expect(ctx.otpRepo.update).toHaveBeenCalledWith('otp-1', { status: OtpStatus.EXPIRED });
+    });
+
+    it('rejects an incorrect delivery OTP', async () => {
+      ctx.otpRepo.findOne.mockResolvedValue({
+        id: 'otp-1',
+        code: '123456',
+        expiresAt: new Date(Date.now() + 60000),
+      });
+
+      await expect(ctx.service.verifyDeliveryOtp('order-1', '000000')).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('verifies a valid delivery OTP and marks it as verified', async () => {
+      ctx.otpRepo.findOne.mockResolvedValue({
+        id: 'otp-1',
+        code: '123456',
+        expiresAt: new Date(Date.now() + 60000),
+      });
+
+      const result = await ctx.service.verifyDeliveryOtp('order-1', '123456');
+
+      expect(result).toEqual({ valid: true });
+      expect(ctx.otpRepo.update).toHaveBeenCalledWith('otp-1', expect.objectContaining({ status: OtpStatus.VERIFIED }));
+    });
+  });
 });

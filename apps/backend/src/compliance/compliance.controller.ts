@@ -238,6 +238,14 @@ export class ComplianceController {
   @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('compliance:read')
+  @Get('backup-integrity')
+  async verifyBackupIntegrity() {
+    return this.complianceService.verifyBackupIntegrity();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('compliance:read')
   @Get('user/:userId/pii-verification')
   async verifyPiiEncryption(@Param('userId') userId: string) {
     const result = await this.complianceService.verifyPiiEncryption(userId);

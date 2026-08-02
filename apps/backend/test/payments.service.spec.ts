@@ -22,8 +22,12 @@ function createPaymentService(gateway: PaymentGateway) {
     }),
   };
 
+  const retryService: any = { executeWithRetry: jest.fn(async (op: () => Promise<any>) => { const result = await op(); return { success: true, result, attempts: 1 }; }) };
+  const fraudHardeningService: any = { checkPaymentFraud: jest.fn().mockReturnValue(Promise.resolve({ allowed: true, riskScore: 0, reasons: [] })) };
+  const fraudBlacklistService: any = { isBlacklisted: jest.fn().mockReturnValue(Promise.resolve(false)) };
+
   return {
-    service: new PaymentService(configService, auditService, ledgerService, gatewayFactory, walletRepo, transactionRepo) as any,
+    service: new PaymentService(configService, auditService, ledgerService, gatewayFactory, retryService, fraudHardeningService, fraudBlacklistService, walletRepo, transactionRepo) as any,
     auditService,
     ledgerService,
     gatewayFactory,

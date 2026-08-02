@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-backend-canary
+  labels:
+    app: spicegarden-backend
+    environment: production
+    variant: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+      variant: canary
+  template:
+    metadata:
+      labels:
+        app: spicegarden-backend
+        environment: production
+        variant: canary
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backend
+          image: "ghcr.io/spicegarden/backend:${CANARY_IMAGE_TAG:-latest}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3001
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: spicegarden-secrets
+            - configMapRef:
+                name: spicegarden-config
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=512"
+            - name: CANARY
+              value: "true"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spicegarden-backend-canary
+  labels:
+    app: spicegarden-backend
+    environment: production
+    variant: canary
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3001
+      targetPort: 3001
+      protocol: TCP
+  selector:
+    app: spicegarden-backend
+    variant: canary

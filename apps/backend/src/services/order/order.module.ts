@@ -12,9 +12,10 @@ import { PaymentServiceModule } from '../../services/payments/payments.module';
 import { NotificationModule } from '../../services/notifications/notification.module';
 import { GSTModule } from '../../services/gst/gst.module';
 import { LoggingModule } from '../../logging/logging.module';
+import { WalletModule } from '../../services/wallet/wallet.module';
 
 @Module({
-  imports: [DbRepositoriesModule, PaymentServiceModule, NotificationModule, GSTModule, LoggingModule],
+  imports: [DbRepositoriesModule, PaymentServiceModule, NotificationModule, GSTModule, LoggingModule, WalletModule],
   providers: [OrderService],
   controllers: [OrderController, OrderDriverController],
   exports: [OrderService],

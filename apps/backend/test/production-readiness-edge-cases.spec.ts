@@ -60,7 +60,9 @@ const paymentService = {
   refundPayment: jest.fn(),
 } as any;
 
-const retryService = {} as RetryService;
+const retryService = {
+  executeWithRetry: jest.fn(async (op: () => Promise<any>) => { const result = await op(); return { success: true, result, attempts: 1 }; }),
+} as unknown as RetryService;
 
 const idempotencyService = {
   validateOrCreate: jest.fn(),
@@ -74,6 +76,14 @@ const productionNotification = {
 const loggingService = {
   secureError: jest.fn(),
 } as unknown as LoggingService;
+
+const fraudHardeningService = {
+  checkPaymentFraud: jest.fn().mockResolvedValue({ allowed: true, riskScore: 0, reasons: [] }),
+} as any;
+
+const fraudBlacklistService = {
+  isBlacklisted: jest.fn().mockResolvedValue(false),
+} as any;
 
 function orderEntity(overrides: Partial<OrderModel> = {}): OrderModel {
   return {
@@ -129,6 +139,9 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        retryService as any,
+        fraudHardeningService,
+        fraudBlacklistService,
         { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
         { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
@@ -155,6 +168,9 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        retryService as any,
+        fraudHardeningService,
+        fraudBlacklistService,
         { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
         { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
@@ -181,6 +197,9 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        retryService as any,
+        fraudHardeningService,
+        fraudBlacklistService,
         { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
         { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
@@ -195,6 +214,9 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        retryService as any,
+        fraudHardeningService,
+        fraudBlacklistService,
         { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
         { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );

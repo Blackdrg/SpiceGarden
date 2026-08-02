@@ -5,6 +5,8 @@ export enum LegalDocumentType {
   REFUND_POLICY = 'refund_policy',
   CANCELLATION_POLICY = 'cancellation_policy',
   DELIVERY_POLICY = 'delivery_policy',
+  DELIVERY_SOP = 'delivery_sop',
+  ESCALATION_SOP = 'escalation_sop',
   COMMUNITY_GUIDELINES = 'community_guidelines',
   MERCHANT_AGREEMENT = 'merchant_agreement',
   DRIVER_AGREEMENT = 'driver_agreement',

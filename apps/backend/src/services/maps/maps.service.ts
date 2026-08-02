@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SurgeZoneEntity } from '../../db/entities/surge-zone.entity';
+import { ConfigService } from '@nestjs/config';
 
 export interface ETAResponse {
   duration: number; // minutes
@@ -26,15 +27,57 @@ export interface HeatmapPoint {
 
 @Injectable()
 export class MapsService {
-  constructor(
+  private readonly logger = new Logger(MapsService.name);
+
+constructor(
     @InjectRepository(SurgeZoneEntity)
     private surgeZoneRepo: Repository<SurgeZoneEntity>,
+    private configService: ConfigService,
   ) {}
 
+  private async googleMapsRequest<T>(endpoint: string, params: Record<string, string>): Promise<T | null> {
+    const apiKey = this.configService.get<string>('GOOGLE_MAPS_API_KEY', '');
+    if (!apiKey) {
+      this.logger.warn('Google Maps API key not configured; falling back to local ETA');
+      return null;
+    }
+
+    try {
+      const url = new URL(`https://maps.googleapis.com/maps/api/${endpoint}/json`);
+      for (const [key, value] of Object.entries(params)) {
+        url.searchParams.set(key, value);
+      }
+      const response = await fetch(url.toString());
+      if (!response.ok) return null;
+      const data = (await response.json()) as T;
+      return data;
+    } catch (error) {
+      this.logger.error(`Google Maps API error: ${endpoint}`, error);
+      return null;
+    }
+  }
+
   async calculateETA(origin: { lat: number; lng: number }, destination: { lat: number; lng: number }): Promise<ETAResponse> {
-    const surge = await this.calculateSurgeMultiplier(origin, destination);
+    const [surge, directions] = await Promise.all([
+      this.calculateSurgeMultiplier(origin, destination),
+      this.googleMapsRequest<{ routes?: Array<{ legs?: Array<{ distance?: { value: number }; duration?: { value: number } }> }> }>('directions', {
+        origin: `${origin.lat},${origin.lng}`,
+        destination: `${destination.lat},${destination.lng}`,
+        key: this.configService.get<string>('GOOGLE_MAPS_API_KEY', ''),
+      }),
+    ]);
+
+    if (directions?.routes?.[0]?.legs?.[0]) {
+      const leg = directions.routes[0].legs[0];
+      return {
+        duration: Math.round((leg.duration?.value ?? 0) / 60),
+        distance: leg.distance?.value ?? this.calculateDistance(origin, destination),
+        surgeMultiplier: surge,
+      };
+    }
+
     const distance = this.calculateDistance(origin, destination);
-    const duration = Math.round(distance / 80); // ~80 m/s average speed
+    const duration = Math.round(distance / 80);
 
     return {
       duration,
@@ -44,9 +87,28 @@ export class MapsService {
   }
 
   async calculateSurgeETA(origin: { lat: number; lng: number }, destination: { lat: number; lng: number }): Promise<ETAResponse> {
-    const surge = await this.calculateSurgeMultiplier(origin, destination);
+    const [surge, directions] = await Promise.all([
+      this.calculateSurgeMultiplier(origin, destination),
+      this.googleMapsRequest<{ routes?: Array<{ legs?: Array<{ distance?: { value: number }; duration_in_traffic?: { value: number }; duration?: { value: number } }> }> }>('directions', {
+        origin: `${origin.lat},${origin.lng}`,
+        destination: `${destination.lat},${destination.lng}`,
+        departure_time: 'now',
+        traffic_model: 'best_guess',
+        key: this.configService.get<string>('GOOGLE_MAPS_API_KEY', ''),
+      }),
+    ]);
+
+    if (directions?.routes?.[0]?.legs?.[0]) {
+      const leg = directions.routes[0].legs[0];
+      return {
+        duration: Math.round((leg.duration_in_traffic?.value ?? leg.duration?.value ?? 0) / 60),
+        distance: leg.distance?.value ?? this.calculateDistance(origin, destination),
+        surgeMultiplier: surge,
+      };
+    }
+
     const distance = this.calculateDistance(origin, destination);
-    const duration = Math.round(distance / 70); // ~70 m/s in traffic
+    const duration = Math.round(distance / 70);
 
     return {
       duration,
@@ -60,6 +122,29 @@ export class MapsService {
     destination: { lat: number; lng: number },
     waypoints?: { lat: number; lng: number }[]
   ): Promise<RerouteResponse> {
+    const apiKey = this.configService.get<string>('GOOGLE_MAPS_API_KEY', '');
+    const waypointStr = waypoints?.map(w => `${w.lat},${w.lng}`).join('|') || '';
+
+    const directions = await this.googleMapsRequest<{ routes?: Array<{ legs?: Array<{ distance?: { value: number }; duration?: { value: number } }>; overview_polyline?: { points: string } }> }>('directions', {
+      origin: `${origin.lat},${origin.lng}`,
+      destination: `${destination.lat},${destination.lng}`,
+      waypoints: waypointStr,
+      key: apiKey,
+    });
+
+    if (directions?.routes?.[0]) {
+      const route = directions.routes[0];
+      const leg = route.legs?.[0];
+      return {
+        routes: [{
+          coordinates: [origin, destination],
+          duration: Math.round((leg?.duration?.value ?? 0) / 60),
+          distance: leg?.distance?.value ?? this.calculateDistance(origin, destination),
+          trafficImpact: 0.2,
+        }],
+      };
+    }
+
     return {
       routes: [
         {

@@ -6,23 +6,27 @@ import { Repository } from 'typeorm';
 import { AuditService } from '../../audit/audit.service';
 import { LedgerService } from '../../modules/ledger/ledger.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
+import { RetryService } from './retry.service';
 import { Request } from 'express';
 import { PaymentGateway } from './gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from './payment.types';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
+import { FraudHardeningService } from './fraud-hardening.service';
+import { FraudBlacklistService } from './fraud-blacklist.service';
 
 @Injectable()
 export class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
-
-
 
   constructor(
     private configService: ConfigService,
     private auditService: AuditService,
     private ledgerService: LedgerService,
     private gatewayFactory: PaymentGatewayFactory,
+    private retryService: RetryService,
+    private fraudHardeningService: FraudHardeningService,
+    private fraudBlacklistService: FraudBlacklistService,
     @InjectRepository(WalletEntity)
     private readonly walletRepo: Repository<WalletEntity>,
     @InjectRepository(WalletTransactionEntity)
@@ -52,9 +56,20 @@ export class PaymentService {
       
       // Abuse prevention checks
       await this.validatePaymentLimits(userId ?? '', amount, request);
+      await this.checkPaymentFraud(userId ?? '', amount, undefined, metadata.orderId, request);
       
       // Create payment intent using selected gateway
-      const paymentIntent = await gateway.createPaymentIntent(amount, currency, userId ?? '', metadata);
+       const paymentIntent = await this.retryService.executeWithRetry(
+        () => gateway.createPaymentIntent(amount, currency, userId ?? '', metadata),
+        `createPaymentIntent:${gateway.getGatewayName()}`,
+        { userId: userId ?? undefined, orderId: metadata.orderId, paymentId: undefined }
+      ).then((result) => {
+        if (!result.success) {
+          this.logger.error(`Payment intent creation failed after ${result.attempts} attempts: ${result.error?.message}`);
+          throw result.error;
+        }
+        return result.result!;
+      });
 
       // Log successful payment intent creation
       await this.auditService.logPaymentEvent(
@@ -130,6 +145,40 @@ export class PaymentService {
     await this.checkSuspiciousPatterns(userId, amount, request);
   }
 
+  private extractIpAddress(request?: Request): string {
+    return request?.ip || request?.connection?.remoteAddress || '';
+  }
+
+  private async checkPaymentFraud(
+    userId: string,
+    amount: number,
+    paymentIntentId?: string,
+    orderId?: string,
+    request?: Request
+  ): Promise<void> {
+    if (!userId) return;
+
+    const ipAddress = this.extractIpAddress(request);
+
+    const blacklisted = await this.fraudBlacklistService.isBlacklisted('user', userId);
+    if (blacklisted) {
+      throw new BadRequestException('Payment blocked: user is blacklisted');
+    }
+
+    const fraudResult = await this.fraudHardeningService.checkPaymentFraud({
+      userId,
+      amount,
+      paymentIntentId,
+      orderId,
+      ipAddress,
+    });
+
+    if (!fraudResult.allowed) {
+      this.logger.warn(`Payment blocked for user ${userId}: risk=${fraudResult.riskScore}, reasons=${fraudResult.reasons.join(', ')}`);
+      throw new BadRequestException(`Payment blocked due to fraud risk: ${fraudResult.reasons.join('; ')}`);
+    }
+  }
+
   /**
    * Check for suspicious payment patterns
    */
@@ -175,7 +224,17 @@ export class PaymentService {
       const gateway = this.gatewayFactory.getGateway(gatewayName);
       
       // Retrieve payment intent from gateway
-      const paymentResult = await gateway.confirmPayment(paymentId, userId);
+       const paymentResult = await this.retryService.executeWithRetry(
+        () => gateway.confirmPayment(paymentId, userId),
+        `confirmPayment:${gateway.getGatewayName()}`,
+        { userId, paymentId }
+      ).then((result) => {
+        if (!result.success) {
+          this.logger.error(`Payment confirmation failed after ${result.attempts} attempts: ${result.error?.message}`);
+          throw result.error;
+        }
+        return result.result!;
+      });
       
       await this.auditService.logPaymentEvent(
         'payment_confirmed',
@@ -240,7 +299,16 @@ export class PaymentService {
       const gateway = this.gatewayFactory.getGateway(gatewayName);
       
       // Get original payment
-      const paymentIntent = await gateway.fetchPaymentDetails(paymentId);
+      const paymentIntent = await this.retryService.executeWithRetry(
+        () => gateway.fetchPaymentDetails(paymentId),
+        `refundFetchPayment:${gateway.getGatewayName()}`,
+        { userId, paymentId }
+      ).then((result) => {
+        if (!result.success) {
+          throw result.error;
+        }
+        return result.result!;
+      });
       
       // Validate refund amount
       const refundAmount = amount ?? (paymentIntent.amount / 100);
@@ -255,7 +323,17 @@ export class PaymentService {
       }
 
       // Create refund using selected gateway
-      const refund = await gateway.refundPayment(paymentId, amount, userId, reason);
+      const refund = await this.retryService.executeWithRetry(
+        () => gateway.refundPayment(paymentId, amount, userId, reason),
+        `refundPayment:${gateway.getGatewayName()}`,
+        { userId, paymentId }
+      ).then((result) => {
+        if (!result.success) {
+          this.logger.error(`Refund failed after ${result.attempts} attempts: ${result.error?.message}`);
+          throw result.error;
+        }
+        return result.result!;
+      });
 
       await this.auditService.logPaymentEvent(
         'payment_refunded',

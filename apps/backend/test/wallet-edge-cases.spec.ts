@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { WalletEntity } from '../src/db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../src/db/entities/wallet-transaction.entity';
+import { OrderEntity } from '../src/db/entities/order.entity';
 import { ConfigService } from '@nestjs/config';
 import { PaymentService } from '../src/services/payments/payments.service';
 import { NotificationService } from '../src/services/notifications/notification.service';
@@ -14,12 +15,19 @@ describe('WalletService Edge Cases', () => {
   let service: WalletService;
   let walletRepo: Repository<WalletEntity>;
   let walletTransactionRepo: Repository<WalletTransactionEntity>;
+  let orderRepo: Repository<OrderEntity>;
 
   const mockWalletRepo = {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      update: jest.fn().mockReturnThis(),
+      set: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      execute: jest.fn().mockResolvedValue({ affected: 1 }),
+    })),
   };
 
   const mockWalletTransactionRepo = {
@@ -27,6 +35,10 @@ describe('WalletService Edge Cases', () => {
     find: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
+  };
+
+  const mockOrderRepo = {
+    findOne: jest.fn(),
   };
 
   const buildManager = () => ({
@@ -53,6 +65,7 @@ describe('WalletService Edge Cases', () => {
     getRepository: jest.fn((entity: any) => {
       if (entity === WalletEntity) return mockWalletRepo;
       if (entity === WalletTransactionEntity) return mockWalletTransactionRepo;
+      if (entity === OrderEntity) return mockOrderRepo;
       return {};
     }),
   };
@@ -79,6 +92,7 @@ describe('WalletService Edge Cases', () => {
         WalletService,
         { provide: getRepositoryToken(WalletEntity), useValue: mockWalletRepo },
         { provide: getRepositoryToken(WalletTransactionEntity), useValue: mockWalletTransactionRepo },
+        { provide: getRepositoryToken(OrderEntity), useValue: mockOrderRepo },
         { provide: ConfigService, useValue: mockConfigService },
         { provide: PaymentService, useValue: mockPaymentService },
         { provide: NotificationService, useValue: mockNotificationService },
@@ -317,7 +331,8 @@ describe('WalletService Edge Cases', () => {
 
   describe('confirmCODCollection', () => {
     it('should credit wallet when a pending COD transaction is confirmed', async () => {
-      const wallet = { id: 'w1', userId: 'user1', balance: 0 } as WalletEntity;
+      const customerOrder = { id: 'order1', userId: 'customer-1' } as OrderEntity;
+      const wallet = { id: 'w1', userId: 'customer-1', balance: 0 } as WalletEntity;
       const pendingTransaction = {
         id: 't-cod-pending',
         walletId: 'w1',
@@ -327,23 +342,72 @@ describe('WalletService Edge Cases', () => {
         referenceId: 'order1',
       } as WalletTransactionEntity;
 
+      mockOrderRepo.findOne.mockResolvedValue(customerOrder);
       mockWalletRepo.findOne.mockResolvedValue(wallet);
       mockWalletTransactionRepo.findOne.mockResolvedValue(pendingTransaction);
       mockWalletTransactionRepo.save.mockResolvedValue({ ...pendingTransaction, description: 'COD Payment Collected for Order #order1' });
       mockWalletRepo.save.mockResolvedValue({ ...wallet, balance: 80 });
 
-      const result = await service.confirmCODCollection('order1', 80, 'user1');
+      const result = await service.confirmCODCollection('order1', 80, 'driver-1');
 
       expect(result.description).toBe('COD Payment Collected for Order #order1');
-      expect(mockWalletRepo.save).toHaveBeenCalledWith(expect.objectContaining({ balance: 80 }));
-      expect(mockNotificationService.sendPush).toHaveBeenCalled();
+      expect(mockWalletRepo.createQueryBuilder).toHaveBeenCalled();
+      expect(mockNotificationService.sendPush).toHaveBeenCalledWith(
+        'customer-1',
+        'COD Payment Confirmed',
+        expect.any(String),
+        { walletId: 'w1' }
+      );
     });
 
     it('should reject COD confirmation when no pending transaction exists', async () => {
-      mockWalletRepo.findOne.mockResolvedValue({ id: 'w1', userId: 'user1', balance: 0 } as WalletEntity);
+      const customerOrder = { id: 'order1', userId: 'customer-1' } as OrderEntity;
+      const wallet = { id: 'w1', userId: 'customer-1', balance: 0 } as WalletEntity;
+
+      mockOrderRepo.findOne.mockResolvedValue(customerOrder);
+      mockWalletRepo.findOne.mockResolvedValue(wallet);
       mockWalletTransactionRepo.findOne.mockResolvedValue(null);
 
-      await expect(service.confirmCODCollection('order1', 80, 'user1')).rejects.toThrow(NotFoundException);
+      await expect(service.confirmCODCollection('order1', 80, 'driver-1')).rejects.toThrow(NotFoundException);
+    });
+
+    it('should resolve customer wallet from orderId, not from delivery partner userId', async () => {
+      const customerOrder = { id: 'order1', userId: 'customer-42' } as OrderEntity;
+      const customerWallet = { id: 'w-customer', userId: 'customer-42', balance: 0 } as WalletEntity;
+      const dpWallet = { id: 'w-driver', userId: 'driver-1', balance: 500 } as WalletEntity;
+      const pendingTransaction = {
+        id: 't-cod-pending',
+        walletId: 'w-customer',
+        amount: 150,
+        type: 'credit',
+        description: 'COD Payment Pending for Order #order1',
+        referenceId: 'order1',
+      } as WalletTransactionEntity;
+
+      mockOrderRepo.findOne.mockResolvedValue(customerOrder);
+      mockWalletRepo.findOne.mockResolvedValue(customerWallet);
+      mockWalletTransactionRepo.findOne.mockResolvedValue(pendingTransaction);
+      mockWalletTransactionRepo.save.mockResolvedValue({ ...pendingTransaction, description: 'COD Payment Collected for Order #order1' });
+      mockWalletRepo.save.mockResolvedValue({ ...customerWallet, balance: 150 });
+
+      const result = await service.confirmCODCollection('order1', 150, 'driver-1');
+
+      expect(result.description).toBe('COD Payment Collected for Order #order1');
+      expect(mockOrderRepo.findOne).toHaveBeenCalledWith({ where: { id: 'order1' } });
+      expect(mockWalletRepo.findOne).toHaveBeenCalledWith({ where: { userId: 'customer-42' } });
+      expect(mockWalletRepo.createQueryBuilder).toHaveBeenCalled();
+      expect(mockNotificationService.sendPush).toHaveBeenCalledWith(
+        'customer-42',
+        'COD Payment Confirmed',
+        expect.stringContaining('150'),
+        { walletId: 'w-customer' }
+      );
+    });
+
+    it('should throw NotFoundException when order does not exist', async () => {
+      mockOrderRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.confirmCODCollection('nonexistent-order', 100, 'driver-1')).rejects.toThrow(NotFoundException);
     });
   });
 

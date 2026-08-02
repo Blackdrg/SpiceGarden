@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { Easing } from 'react-native';
 import { API_BASE_URL } from '../constants/api';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
@@ -18,7 +18,7 @@ interface UseLegalDocumentResult {
   agreement: AgreementResponse | null;
   loading: boolean;
   error: string | null;
-  fadeAnim: Animated.SharedValue<number>;
+  fadeAnim: SharedValue<number>;
   retry: () => void;
 }
 

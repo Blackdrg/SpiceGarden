@@ -16,12 +16,14 @@ export class PaymentWebhookController {
   async handleWebhook(
     @Req() req: RawBodyRequest<Request>,
     @HeadersDecorator('stripe-signature') stripeSignature?: string,
-    @HeadersDecorator('x-razorpay-signature') razorpaySignature?: string
+    @HeadersDecorator('x-razorpay-signature') razorpaySignature?: string,
+    @HeadersDecorator('x-verify') phonepeSignature?: string,
+    @HeadersDecorator('paytm-checksum') paytmSignature?: string,
+    @HeadersDecorator('checksum') paytmChecksum?: string
   ) {
     const rawBody = req.rawBody || Buffer.from(JSON.stringify(req.body));
     
-    // Determine which signature to use based on what's provided
-    const signature = stripeSignature || razorpaySignature;
+    const signature = stripeSignature || razorpaySignature || phonepeSignature || paytmSignature || paytmChecksum;
     if (!signature) {
       throw new BadRequestException('Missing webhook signature');
     }

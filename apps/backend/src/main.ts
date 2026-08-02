@@ -3,6 +3,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe, ExceptionFilter, Catch, ArgumentsHost, Logger, VersioningType, VERSION_NEUTRAL } from "@nestjs/common";
+import { AppDataSource } from "./db/data-source";
 import { QueryFailedError } from "typeorm";
 import helmet from "helmet";
 import * as Sentry from '@sentry/node';
@@ -22,6 +23,7 @@ import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.err
 import { csrfProtection } from "./security/csrf.middleware";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { MetricsService } from "./metrics/metrics.service";
+import { otelSDK } from "./observability/otel.setup";
 
 @Catch(QueryFailedError)
 class QueryFailedErrorFilter implements ExceptionFilter {
@@ -211,15 +213,20 @@ async function bootstrap() {
   validateProductionEnvironment(configService);
 
   const dsn = configService.get<string>("SENTRY_DSN");
-   if (dsn) {
-     // Dynamically import Sentry for newer API compatibility
-     const sentry = await import('@sentry/node');
-     (sentry as any).init({
-       dsn,
-       tracesSampleRate: 1.0,
-     });
-      app.use((sentry as any).setupExpressErrorHandler());
-    }
+    if (dsn) {
+      // Dynamically import Sentry for newer API compatibility
+      const sentry = await import('@sentry/node');
+      (sentry as any).init({
+        dsn,
+        tracesSampleRate: 1.0,
+      });
+       app.use((sentry as any).setupExpressErrorHandler());
+     }
+
+  if (configService.get<boolean>("OTEL_ENABLED", false)) {
+    otelSDK.start();
+    logger.log("OpenTelemetry SDK started");
+  }
 
   app.set('trust proxy', getTrustProxySetting(configService));
   app.disable('x-powered-by');
@@ -364,6 +371,10 @@ async function bootstrap() {
         .build(),
     );
     SwaggerModule.setup('v1/docs', app, document);
+  }
+
+  if (!AppDataSource.isInitialized) {
+    await AppDataSource.initialize();
   }
 
   await app.listen(3001);

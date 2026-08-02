@@ -33,6 +33,35 @@ const paymentFailuresCounter = new Counter({
   registers: [metricsRegistry],
 });
 
+const aiCallsCounter = new Counter({
+  name: 'ai_calls_total',
+  help: 'Total number of AI service calls',
+  labelNames: ['endpoint', 'status'] as const,
+  registers: [metricsRegistry],
+});
+
+const aiCallDuration = new Histogram({
+  name: 'ai_call_duration_seconds',
+  help: 'Duration of AI service calls in seconds',
+  labelNames: ['endpoint'] as const,
+  buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30],
+  registers: [metricsRegistry],
+});
+
+const aiTokensCounter = new Counter({
+  name: 'ai_tokens_total',
+  help: 'Total number of AI tokens processed',
+  labelNames: ['endpoint', 'direction'] as const,
+  registers: [metricsRegistry],
+});
+
+const aiErrorsCounter = new Counter({
+  name: 'ai_errors_total',
+  help: 'Total number of AI service errors',
+  labelNames: ['endpoint', 'error_type'] as const,
+  registers: [metricsRegistry],
+});
+
 @Injectable()
 export class MetricsService {
   startTimer(method: string, route: string, statusCode: number) {
@@ -54,6 +83,22 @@ export class MetricsService {
 
   incrementPaymentFailure(provider: string, errorType: string) {
     paymentFailuresCounter.inc({ provider, error_type: errorType });
+  }
+
+  incrementAiCall(endpoint: string, status: 'success' | 'error' | 'fallback') {
+    aiCallsCounter.inc({ endpoint, status });
+  }
+
+  recordAiCallDuration(endpoint: string, seconds: number) {
+    aiCallDuration.observe({ endpoint }, seconds);
+  }
+
+  incrementAiTokens(endpoint: string, direction: 'prompt' | 'completion') {
+    aiTokensCounter.inc({ endpoint, direction });
+  }
+
+  incrementAiError(endpoint: string, errorType: string) {
+    aiErrorsCounter.inc({ endpoint, error_type: errorType });
   }
 
   async getMetrics(): Promise<string> {

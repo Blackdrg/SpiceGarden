@@ -15,6 +15,9 @@ import { PaymentGatewayFactory } from '../gateway-factory.service';
 import { StripeGateway } from '../gateways/stripe-gateway.service';
 import { RazorpayGateway } from '../gateways/razorpay-gateway.service';
 
+import { PhonePeGateway } from '../gateways/phonepe-gateway.service';
+import { PaytmGateway } from '../gateways/paytm-gateway.service';
+
 @Module({
   imports: [
     DbRepositoriesModule,
@@ -22,7 +25,7 @@ import { RazorpayGateway } from '../gateways/razorpay-gateway.service';
     ChargebackModule,
     LedgerModule,
   ],
-  providers: [WebhookService, PaymentGatewayFactory, StripeGateway, RazorpayGateway],
+  providers: [WebhookService, PaymentGatewayFactory, StripeGateway, RazorpayGateway, PhonePeGateway, PaytmGateway],
   controllers: [PaymentWebhookController],
   exports: [WebhookService],
 })

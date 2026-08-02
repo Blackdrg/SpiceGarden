@@ -9,7 +9,9 @@ filebeat.inputs:
 output.opensearch:
   hosts: ["http://opensearch:9200"]
   index: "spicegarden-logs-%{+yyyy.MM.dd}"
-  setup.ilm.enabled: false
+  setup.ilm.enabled: true
+  setup.ilm.policy_name: "spicegarden-logs-policy"
+  setup.ilm.rollover_alias: "spicegarden-logs"
 
 setup.template.name: "spicegarden"
 setup.template.pattern: "spicegarden-*"
