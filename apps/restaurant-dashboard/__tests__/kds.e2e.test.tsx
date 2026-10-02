@@ -35,7 +35,7 @@ describe('Restaurant Dashboard KDS e2e flow', () => {
     fireEvent.click(servedButtons[0]);
     expect(screen.getAllByText(/DONE/i).length).toBeGreaterThanOrEqual(1);
 
-    const inventoryButtons = screen.getAllByRole('button', { name: /📦 Inventory/i });
+    const inventoryButtons = screen.getAllByRole('button', { name: /Inventory/i });
     fireEvent.click(inventoryButtons[0]);
     expect(screen.getByText(/Stock Levels/i)).toBeInTheDocument();
     expect(screen.getByText(/4 low/i)).toBeInTheDocument();

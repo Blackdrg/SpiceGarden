@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.5" serialNumber="urn:uuid:3e679e30-7f01-44bb-a292-628d689b91c1" version="1">
+  <metadata>
+    <timestamp>2026-09-29T23:30:00Z</timestamp>
+    <tools>
+      <tool>
+        <vendor>SpiceGarden Engineering</vendor>
+        <name>CycloneDX-Generator</name>
+        <version>1.0.0</version>
+      </tool>
+    </tools>
+    <component type="application">
+      <name>SpiceGarden</name>
+      <version>1.0.0-rc1</version>
+      <description>Enterprise Food Delivery Platform</description>
+      <licenses>
+        <license>
+          <name>Proprietary</name>
+        </license>
+      </licenses>
+    </component>
+  </metadata>
+  <components>
+    <component type="library">
+      <name>@nestjs/core</name>
+      <version>11.1.27</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/%40nestjs/core@11.1.27</purl>
+    </component>
+    <component type="library">
+      <name>typeorm</name>
+      <version>0.3.20</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/typeorm@0.3.20</purl>
+    </component>
+    <component type="library">
+      <name>argon2</name>
+      <version>0.40.0</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/argon2@0.40.0</purl>
+    </component>
+    <component type="library">
+      <name>ioredis</name>
+      <version>5.10.1</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/ioredis@5.10.1</purl>
+    </component>
+    <component type="library">
+      <name>bullmq</name>
+      <version>5.78.1</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/bullmq@5.78.1</purl>
+    </component>
+    <component type="library">
+      <name>socket.io</name>
+      <version>4.7.0</version>
+      <licenses><license><id>MIT</id></license></licenses>
+      <purl>pkg:npm/socket.io@4.7.0</purl>
+    </component>
+  </components>
+</bom>

@@ -26,14 +26,14 @@ type GeoPosition = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  idle: '✋ IDLE',
-  assigned: '📋 ASSIGNED',
-  navigating_to_pickup: '🛵 → PICKUP',
-  at_pickup: '🏪 AT PICKUP',
-  navigating_to_drop: '🛵 → CUSTOMER',
-  completed: '🏁 DONE',
-  failed: '❗ FAILED',
-  delayed: '⏰ DELAYED',
+  idle: 'IDLE',
+  assigned: 'ASSIGNED',
+  navigating_to_pickup: 'TO PICKUP',
+  at_pickup: 'AT PICKUP',
+  navigating_to_drop: 'TO CUSTOMER',
+  completed: 'DONE',
+  failed: 'FAILED',
+  delayed: 'DELAYED',
 };
 
 type DeliveryStatus = 'idle' | 'assigned' | 'navigating_to_pickup' | 'at_pickup' | 'navigating_to_drop' | 'completed' | 'failed' | 'delayed';
@@ -191,12 +191,12 @@ const VEHICLE = 'Bajaj Dominar 400 | DL8CAB 7890';
 const DEFAULT_OTP = '234567';
 
 const issueTypes = [
-  { icon: '🚧', label: 'Road Blocked', color: DESIGN_TOKENS.colors.warning },
-  { icon: '📵', label: 'No Response', color: DESIGN_TOKENS.colors.danger },
-  { icon: '🔋', label: 'Battery Low', color: DESIGN_TOKENS.colors.warning },
-  { icon: '🍽️', label: 'Food Stuck', color: DESIGN_TOKENS.colors.warning },
-  { icon: '⏰', label: 'Running Late', color: DESIGN_TOKENS.colors.warning },
-  { icon: '📍', label: 'Wrong Location', color: DESIGN_TOKENS.colors.danger },
+  { icon: '!', label: 'Road Blocked', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'No Response', color: DESIGN_TOKENS.colors.danger },
+  { icon: '!', label: 'Battery Low', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Food Stuck', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Running Late', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Wrong Location', color: DESIGN_TOKENS.colors.danger },
 ];
 
 function fmtTime(d?: Date) {
@@ -238,7 +238,7 @@ function DriverHeader({ isOnline, onToggleOnline }: { isOnline: boolean; onToggl
   return (
     <View style={styles.header}>
       <View>
-        <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
+        <Text style={styles.headerTitle}>SpiceGarden Driver</Text>
         <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
         <Text style={styles.vehicleTag}>{VEHICLE}</Text>
       </View>
@@ -280,7 +280,7 @@ function DriverTabBar({ activeScreen, onChange }: { activeScreen: 'home' | 'earn
           accessibilityRole="tab"
         >
           <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
-            {t === 'home' ? '🏠 Active' : '💰 Earnings'}
+            {t === 'home' ? 'Active' : 'Earnings'}
           </Text>
         </Pressable>
       ))}
@@ -311,15 +311,15 @@ function HomeScreen({ incomingOrder, activeDelivery, locationPermission, isOnlin
   const acceptOrder = () => {
     if (!incomingOrder) return;
     dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
-    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
+    Alert.alert('Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
   };
 
   const navigateTo = (destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
-      Alert.alert('🚗 Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
+      Alert.alert('Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
       dispatch({ type: 'ADD_LOG', payload: `Navigating → ${destination}` });
     } else {
-      Alert.alert('📍 Navigation', `Opening maps to ${destination}: ${addr}`);
+      Alert.alert('Navigation', `Opening maps to ${destination}: ${addr}`);
     }
   };
 
@@ -339,18 +339,18 @@ function HomeScreen({ incomingOrder, activeDelivery, locationPermission, isOnlin
     dispatch({ type: 'SET_OTP_ERROR', payload: '' });
     dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() }});
     dispatch({ type: 'ADD_LOG', payload: `OTP verified — picked up #${activeDelivery.orderNumber}` });
-    Alert.alert('✅ Pickup Confirmed', 'Navigate to customer now!');
+    Alert.alert('Pickup Confirmed', 'Navigate to customer now!');
   };
 
   const completeDelivery = () => {
     if (!activeDelivery) return;
     dispatch({ type: 'COMPLETE_DELIVERY', payload: { amount: activeDelivery.amount, incentive: activeDelivery.incentiveAmount, orderNumber: activeDelivery.orderNumber }});
-    Alert.alert('✅ Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
+    Alert.alert('Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
   };
 
   const handleFailedDelivery = (reason: string) => {
     dispatch({ type: 'ADD_LOG', payload: `Delivery failed: ${reason}` });
-    Alert.alert('❗ Delivery Failed', `Marked as ${reason}`, [
+    Alert.alert('Delivery Failed', `Marked as ${reason}`, [
       { text: 'OK', onPress: () => dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: null }) }
     ]);
   };

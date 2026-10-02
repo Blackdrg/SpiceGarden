@@ -29,15 +29,13 @@ let AnalyticsService = class AnalyticsService {
     userRepo;
     branchRepo;
     addressRepo;
-    dataSource;
-    constructor(orderRepo, orderItemRepo, menuItemRepo, userRepo, branchRepo, addressRepo, dataSource) {
+    constructor(orderRepo, orderItemRepo, menuItemRepo, userRepo, branchRepo, addressRepo) {
         this.orderRepo = orderRepo;
         this.orderItemRepo = orderItemRepo;
         this.menuItemRepo = menuItemRepo;
         this.userRepo = userRepo;
         this.branchRepo = branchRepo;
         this.addressRepo = addressRepo;
-        this.dataSource = dataSource;
     }
     async getTopDishes(restaurantId, period = 30) {
         const startDate = new Date();
@@ -331,6 +329,5 @@ exports.AnalyticsService = AnalyticsService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], AnalyticsService);

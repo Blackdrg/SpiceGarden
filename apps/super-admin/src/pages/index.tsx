@@ -140,31 +140,46 @@ export default function AdminDashboard() {
   );
 }
 
-const sidebarNavItems: { key: AdminTab; label: string; emoji: string }[] = [
-  { key: 'overview', label: 'Dashboard', emoji: '📊' },
-  { key: 'orders', label: 'Live Orders', emoji: '🛵' },
-  { key: 'branches', label: 'Kitchen Monitor', emoji: '🏪' },
-  { key: 'support', label: 'Support & Security', emoji: '🛡️' },
+import { DashboardIcon, DeliveryIcon, StoreIcon, ShieldIcon, Flame } from '@spicegarden/ui';
+
+type NavItem = {
+  key: AdminTab;
+  label: string;
+  Icon: React.ComponentType<{ size?: number; color?: string; className?: string }>;
+};
+
+const sidebarNavItems: NavItem[] = [
+  { key: 'overview', label: 'Dashboard', Icon: DashboardIcon },
+  { key: 'orders', label: 'Live Orders', Icon: DeliveryIcon },
+  { key: 'branches', label: 'Kitchen Monitor', Icon: StoreIcon },
+  { key: 'support', label: 'Support & Security', Icon: ShieldIcon },
 ];
 
 function Sidebar({ selectedTab, onSelectTab }: { selectedTab: AdminTab; onSelectTab: (tab: AdminTab) => void }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoSection}>
-        <div className={styles.logoText}>🌶️ SpiceGarden</div>
+        <div className={styles.logoText} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Flame size={20} color="#f04e31" /> SpiceGarden
+        </div>
         <div className={styles.adminText}>Super Admin</div>
       </div>
 
-      {sidebarNavItems.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          onClick={() => onSelectTab(tab.key)}
-          className={`${styles.navButton} ${selectedTab === tab.key ? styles.navButtonActive : styles.navButtonInactive}`}
-        >
-          <span className={styles.navEmoji}>{tab.emoji}</span> {tab.label}
-        </button>
-      ))}
+      {sidebarNavItems.map((tab) => {
+        const IconComponent = tab.Icon;
+        const isActive = selectedTab === tab.key;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onSelectTab(tab.key)}
+            className={`${styles.navButton} ${isActive ? styles.navButtonActive : styles.navButtonInactive}`}
+            style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+          >
+            <IconComponent size={18} color={isActive ? '#f04e31' : '#666'} /> {tab.label}
+          </button>
+        );
+      })}
 
       <div className={styles.footer}>
         <div className={styles.footerLabel}>Logged in as</div>
@@ -185,10 +200,10 @@ function DashboardHeader({ title, subtitle }: { title: string; subtitle: string 
 
 function dashboardTitle(tab: AdminTab) {
   const titles: Record<AdminTab, string> = {
-    overview: '📊 Platform Overview',
-    orders: '🛵 Live Orders',
-    branches: '🏪 Kitchen Monitoring',
-    support: '🛡️ Support & Security',
+    overview: 'Platform Overview',
+    orders: 'Live Orders',
+    branches: 'Kitchen Monitoring',
+    support: 'Support & Security',
   };
   return titles[tab];
 }

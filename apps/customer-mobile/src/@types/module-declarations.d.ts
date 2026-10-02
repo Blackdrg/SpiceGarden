@@ -54,10 +54,15 @@ declare module '@react-navigation/native' {
       stale: false;
     }>;
   };
-  export function useRoute(): {
+  export function useRoute<T = {
     params: Record<string, unknown>;
     name: string;
     key: string;
+  }>(): T;
+  export type RouteProp<ParamList extends object, RouteName extends keyof ParamList> = {
+    key: string;
+    name: RouteName;
+    params: ParamList[RouteName];
   };
   export type NavigationProp<RootParamList extends object = object> = unknown;
   export type ParamListBase = object;

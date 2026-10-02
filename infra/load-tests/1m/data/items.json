@@ -1,0 +1,802 @@
+[
+  {
+    "itemId": "item_0001",
+    "restaurantId": "rest_001",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 1",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0002",
+    "restaurantId": "rest_002",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 2",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0003",
+    "restaurantId": "rest_003",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 3",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0004",
+    "restaurantId": "rest_004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 4",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0005",
+    "restaurantId": "rest_005",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 5",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0006",
+    "restaurantId": "rest_006",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 6",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0007",
+    "restaurantId": "rest_007",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 7",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0008",
+    "restaurantId": "rest_008",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 8",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0009",
+    "restaurantId": "rest_009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 9",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0010",
+    "restaurantId": "rest_010",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 10",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0011",
+    "restaurantId": "rest_011",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 11",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0012",
+    "restaurantId": "rest_012",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 12",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0013",
+    "restaurantId": "rest_013",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 13",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0014",
+    "restaurantId": "rest_014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 14",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0015",
+    "restaurantId": "rest_015",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 15",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0016",
+    "restaurantId": "rest_016",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 16",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0017",
+    "restaurantId": "rest_017",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 17",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0018",
+    "restaurantId": "rest_018",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 18",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0019",
+    "restaurantId": "rest_019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 19",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0020",
+    "restaurantId": "rest_020",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 20",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0021",
+    "restaurantId": "rest_021",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 21",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0022",
+    "restaurantId": "rest_022",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 22",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0023",
+    "restaurantId": "rest_023",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 23",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0024",
+    "restaurantId": "rest_024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 24",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0025",
+    "restaurantId": "rest_025",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 25",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0026",
+    "restaurantId": "rest_001",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 26",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0027",
+    "restaurantId": "rest_002",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 27",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0028",
+    "restaurantId": "rest_003",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 28",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0029",
+    "restaurantId": "rest_004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 29",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0030",
+    "restaurantId": "rest_005",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 30",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0031",
+    "restaurantId": "rest_006",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 31",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0032",
+    "restaurantId": "rest_007",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 32",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0033",
+    "restaurantId": "rest_008",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 33",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0034",
+    "restaurantId": "rest_009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 34",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0035",
+    "restaurantId": "rest_010",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 35",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0036",
+    "restaurantId": "rest_011",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 36",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0037",
+    "restaurantId": "rest_012",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 37",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0038",
+    "restaurantId": "rest_013",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 38",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0039",
+    "restaurantId": "rest_014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 39",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0040",
+    "restaurantId": "rest_015",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 40",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0041",
+    "restaurantId": "rest_016",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 41",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0042",
+    "restaurantId": "rest_017",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 42",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0043",
+    "restaurantId": "rest_018",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 43",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0044",
+    "restaurantId": "rest_019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 44",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0045",
+    "restaurantId": "rest_020",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 45",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0046",
+    "restaurantId": "rest_021",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 46",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0047",
+    "restaurantId": "rest_022",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 47",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0048",
+    "restaurantId": "rest_023",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 48",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0049",
+    "restaurantId": "rest_024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 49",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0050",
+    "restaurantId": "rest_025",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 50",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0051",
+    "restaurantId": "rest_001",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 51",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0052",
+    "restaurantId": "rest_002",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 52",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0053",
+    "restaurantId": "rest_003",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 53",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0054",
+    "restaurantId": "rest_004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 54",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0055",
+    "restaurantId": "rest_005",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 55",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0056",
+    "restaurantId": "rest_006",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 56",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0057",
+    "restaurantId": "rest_007",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 57",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0058",
+    "restaurantId": "rest_008",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 58",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0059",
+    "restaurantId": "rest_009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 59",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0060",
+    "restaurantId": "rest_010",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 60",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0061",
+    "restaurantId": "rest_011",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 61",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0062",
+    "restaurantId": "rest_012",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 62",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0063",
+    "restaurantId": "rest_013",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 63",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0064",
+    "restaurantId": "rest_014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 64",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0065",
+    "restaurantId": "rest_015",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 65",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0066",
+    "restaurantId": "rest_016",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 66",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0067",
+    "restaurantId": "rest_017",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 67",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0068",
+    "restaurantId": "rest_018",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 68",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0069",
+    "restaurantId": "rest_019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 69",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0070",
+    "restaurantId": "rest_020",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 70",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0071",
+    "restaurantId": "rest_021",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 71",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0072",
+    "restaurantId": "rest_022",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 72",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0073",
+    "restaurantId": "rest_023",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 73",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0074",
+    "restaurantId": "rest_024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 74",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0075",
+    "restaurantId": "rest_025",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 75",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0076",
+    "restaurantId": "rest_001",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 76",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0077",
+    "restaurantId": "rest_002",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 77",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0078",
+    "restaurantId": "rest_003",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 78",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0079",
+    "restaurantId": "rest_004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 79",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0080",
+    "restaurantId": "rest_005",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 80",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0081",
+    "restaurantId": "rest_006",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 81",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0082",
+    "restaurantId": "rest_007",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 82",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0083",
+    "restaurantId": "rest_008",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 83",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0084",
+    "restaurantId": "rest_009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 84",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0085",
+    "restaurantId": "rest_010",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 85",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0086",
+    "restaurantId": "rest_011",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 86",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0087",
+    "restaurantId": "rest_012",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 87",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0088",
+    "restaurantId": "rest_013",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 88",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0089",
+    "restaurantId": "rest_014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 89",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0090",
+    "restaurantId": "rest_015",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 90",
+    "price": 465,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0091",
+    "restaurantId": "rest_016",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 91",
+    "price": 150,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0092",
+    "restaurantId": "rest_017",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 92",
+    "price": 185,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0093",
+    "restaurantId": "rest_018",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 93",
+    "price": 220,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0094",
+    "restaurantId": "rest_019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 94",
+    "price": 255,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0095",
+    "restaurantId": "rest_020",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 95",
+    "price": 290,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0096",
+    "restaurantId": "rest_021",
+    "tenantId": "tenant_delhi_spice",
+    "name": "Special Dish 96",
+    "price": 325,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0097",
+    "restaurantId": "rest_022",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Special Dish 97",
+    "price": 360,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0098",
+    "restaurantId": "rest_023",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Special Dish 98",
+    "price": 395,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0099",
+    "restaurantId": "rest_024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Special Dish 99",
+    "price": 430,
+    "isAvailable": true
+  },
+  {
+    "itemId": "item_0100",
+    "restaurantId": "rest_025",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Special Dish 100",
+    "price": 465,
+    "isAvailable": true
+  }
+]

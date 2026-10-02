@@ -1,0 +1,181 @@
+{
+  "release_baseline": {
+    "release_version": "v1.0.0-rc1",
+    "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+    "runtime": "Node.js 22 LTS",
+    "qualification_status": "FUNCTIONALLY QUALIFIED (RC1 SCOPE)",
+    "timestamp": "2026-09-30T13:57:44.772Z"
+  },
+  "metrics": [
+    {
+      "metric": "monorepo_workspaces_build",
+      "value": 12,
+      "unit": "workspaces",
+      "testId": "BUILD-ALL-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Local / CI Monorepo",
+      "evidence": "qa/build/BUILD_VALIDATION_REPORT.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "static_lint_errors",
+      "value": 0,
+      "unit": "errors",
+      "testId": "LINT-ALL-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "ESLint 8 / TS Strict",
+      "evidence": "qa/build/BUILD_VALIDATION_REPORT.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "backend_test_cases",
+      "value": 1122,
+      "unit": "tests",
+      "testId": "BACKEND-JEST-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Jest 29 / Node 22",
+      "evidence": "qa/backend/BACKEND_FULL_TEST_MATRIX.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "backend_statement_coverage",
+      "value": 91.28,
+      "unit": "percent",
+      "testId": "BACKEND-COV-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Jest Coverage Reporter",
+      "evidence": "qa/backend/BACKEND_FULL_TEST_MATRIX.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "frontend_functional_unit_tests",
+      "value": 92,
+      "unit": "tests",
+      "testId": "FRONT-UNIT-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Jest / RTL",
+      "evidence": "qa/reconciliation/FRONTEND_TEST_COUNT_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "frontend_chromium_browser_assertions",
+      "value": 148,
+      "unit": "assertions",
+      "testId": "PLAYWRIGHT-ROUTE-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Playwright Chromium 153",
+      "evidence": "qa/reconciliation/FRONTEND_TEST_COUNT_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "total_frontend_routes_verified",
+      "value": 44,
+      "unit": "routes",
+      "testId": "ROUTE-DISCOVERY-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Next.js 15 / Expo 56",
+      "evidence": "qa/discovery/SYSTEM_DISCOVERY_REPORT.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "responsive_viewport_checks",
+      "value": 396,
+      "unit": "checks",
+      "testId": "RESP-9VP-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Playwright (320px to 1920px)",
+      "evidence": "qa/ui/RESPONSIVE_FULL_MATRIX.csv",
+      "status": "PASS"
+    },
+    {
+      "metric": "interactive_controls_tested",
+      "value": 38,
+      "unit": "controls",
+      "testId": "CTRL-MASTER-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "DOM / Component Testing",
+      "evidence": "qa/ui/INTERACTIVE_CONTROL_MASTER_MATRIX.csv",
+      "status": "PASS"
+    },
+    {
+      "metric": "unintended_emoji_controls_after_remediation",
+      "value": 0,
+      "unit": "emojis",
+      "testId": "ICON-AUDIT-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Global Source & AST Scan",
+      "evidence": "qa/ui/GLOBAL_ICON_EMOJI_SCAN.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "performance_20k_vu_cached_p99",
+      "value": 215,
+      "unit": "milliseconds",
+      "testId": "PERF-002",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "k6 / 14 Replicas / Redis Cluster",
+      "evidence": "qa/reconciliation/PERFORMANCE_RESULT_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "performance_20k_vu_mixed_p99",
+      "value": 1840.2,
+      "unit": "milliseconds",
+      "testId": "PERF-001",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "k6 / 14 Replicas / PostgreSQL PgBouncer",
+      "evidence": "qa/reconciliation/PERFORMANCE_RESULT_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "pod_recovery_time_rto",
+      "value": 3.2,
+      "unit": "seconds",
+      "testId": "CHAOS-POD-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Kubernetes Cluster Failover",
+      "evidence": "qa/reconciliation/RECOVERY_RESULTS_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "full_dr_recovery_time_rto",
+      "value": 570,
+      "unit": "seconds",
+      "testId": "DR-FULL-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Cold Standby Restore Script",
+      "evidence": "qa/reconciliation/RECOVERY_RESULTS_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "full_dr_recovery_point_rpo",
+      "value": 720,
+      "unit": "seconds",
+      "testId": "DR-FULL-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Automated DB Backup Schedule",
+      "evidence": "qa/reconciliation/RECOVERY_RESULTS_RECONCILIATION.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "runtime_security_suite_findings",
+      "value": 0,
+      "unit": "findings",
+      "testId": "SEC-SUITE-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Security Assessment Runner",
+      "evidence": "qa/security/SECURITY_RUNTIME_REPORT.md",
+      "status": "PASS"
+    },
+    {
+      "metric": "active_p0_p1_defects",
+      "value": 0,
+      "unit": "defects",
+      "testId": "DEFECT-REG-01",
+      "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+      "environment": "Master Defect Register",
+      "evidence": "qa/final/DEFECT_REGISTER.md",
+      "status": "PASS"
+    }
+  ]
+}

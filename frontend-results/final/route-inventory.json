@@ -1,0 +1,402 @@
+{
+  "total_routes_discovered": 44,
+  "total_routes_tested": 44,
+  "routes": [
+    {
+      "application": "customer-web",
+      "route": "/",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/menu",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/search",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/restaurant",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/offers",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/auth",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/auth/callback",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/reset-password",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/cart",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/checkout",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/tracking",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/order-details",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/history",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/profile",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/addresses",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/payment-methods",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/wallet",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/subscriptions",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/notifications",
+      "authentication_required": true,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/legal/terms",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-web",
+      "route": "/legal/privacy",
+      "authentication_required": false,
+      "role": "public",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/",
+      "authentication_required": true,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/business",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/documents",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/gst",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/menu",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/pricing",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "restaurant-dashboard",
+      "route": "/onboarding/payout",
+      "authentication_required": false,
+      "role": "restaurant",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/analytics",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/analytics/customers",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/analytics/top-dishes",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/driver-fleet/overview",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/driver-fleet/earnings",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/driver-fleet/incentives",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/driver-fleet/penalties",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/driver-fleet/shifts",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/loyalty",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/loyalty/coupons",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "super-admin",
+      "route": "/loyalty/referrals",
+      "authentication_required": true,
+      "role": "admin",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "customer-mobile-web",
+      "route": "/",
+      "authentication_required": false,
+      "role": "customer",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "delivery-partner-web",
+      "route": "/",
+      "authentication_required": true,
+      "role": "delivery-partner",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    },
+    {
+      "application": "launcher-electron-renderer",
+      "route": "/",
+      "authentication_required": false,
+      "role": "desktop-operator",
+      "expected_status": 200,
+      "tested": true,
+      "result": "PASS"
+    }
+  ]
+}

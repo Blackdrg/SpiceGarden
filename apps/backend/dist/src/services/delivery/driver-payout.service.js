@@ -25,13 +25,11 @@ let DriverPayoutService = DriverPayoutService_1 = class DriverPayoutService {
     incentiveRepo;
     driverRepo;
     orderRepo;
-    dataSource;
     logger = new common_1.Logger(DriverPayoutService_1.name);
-    constructor(incentiveRepo, driverRepo, orderRepo, dataSource) {
+    constructor(incentiveRepo, driverRepo, orderRepo) {
         this.incentiveRepo = incentiveRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
-        this.dataSource = dataSource;
     }
     async calculateWeeklyIncentives(driverId, weekStart) {
         const weekEnd = new Date(weekStart);
@@ -140,9 +138,7 @@ exports.DriverPayoutService = DriverPayoutService = DriverPayoutService_1 = __de
     __param(0, (0, typeorm_1.InjectRepository)(driver_incentive_entity_1.DriverIncentiveEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __param(3, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], DriverPayoutService);

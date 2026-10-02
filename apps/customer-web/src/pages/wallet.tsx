@@ -1,5 +1,5 @@
 import { useState, CSSProperties } from 'react';
-import { Button, Card, DESIGN_TOKENS, useToast } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, useToast, HomeIcon, SearchIcon, WalletIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 
 const bottomNavStyle: CSSProperties = {
@@ -13,19 +13,18 @@ const bottomNavStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'space-around',
   alignItems: 'center',
+  zIndex: 100,
 };
 
 const navButtonStyle: CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
+  background: 'transparent',
+  border: 'none',
   display: 'flex',
-  justifyContent: 'space-around',
+  flexDirection: 'column',
   alignItems: 'center',
+  cursor: 'pointer',
+  padding: '4px 8px',
+  fontSize: '12px',
 };
 
 const WalletPage = () => {
@@ -96,22 +95,26 @@ const WalletPage = () => {
       {/* Bottom nav */}
       <nav style={bottomNavStyle}>
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'wallet', label: 'Wallet', icon: '💰' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
-          <button
-            type="button"
-            key={tab.key}
-            onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#999' }}
-          >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'wallet', label: 'Wallet', Icon: WalletIcon, path: '/wallet' },
+          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              type="button"
+              key={tab.key}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              style={{ ...navButtonStyle, color: isActive ? DESIGN_TOKENS.colors.primary : '#999' }}
+            >
+              <Icon size={20} color={isActive ? DESIGN_TOKENS.colors.primary : '#999'} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

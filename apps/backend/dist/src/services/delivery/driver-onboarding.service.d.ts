@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { DriverDocumentEntity, DocumentType, DocumentStatus } from '../../db/entities/driver-document.entity';
 import { UserEntity } from '../../db/entities/user.entity';
@@ -8,9 +8,8 @@ export declare class DriverOnboardingService {
     private documentRepo;
     private userRepo;
     private driverAssignmentRepo;
-    private dataSource;
     private readonly logger;
-    constructor(driverRepo: Repository<DriverEntity>, documentRepo: Repository<DriverDocumentEntity>, userRepo: Repository<UserEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, dataSource: DataSource);
+    constructor(driverRepo: Repository<DriverEntity>, documentRepo: Repository<DriverDocumentEntity>, userRepo: Repository<UserEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>);
     startOnboarding(userId: string, data: {
         licenseNumber?: string;
         vehicleNumber?: string;

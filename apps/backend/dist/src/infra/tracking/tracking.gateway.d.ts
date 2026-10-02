@@ -1,5 +1,6 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { NotificationEntity } from '../../db/entities/notification.entity';
@@ -24,7 +25,7 @@ interface AcknowledgedMessage {
     timestamp: Date;
     ack?: boolean;
 }
-export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
     private configService;
     private readonly notificationRepo;
     server: Server;
@@ -34,7 +35,10 @@ export declare class TrackingGateway implements OnGatewayConnection, OnGatewayDi
     private readonly messageQueue;
     private readonly pendingAcks;
     private readonly ackTimeoutMs;
+    private readonly cleanupAttemptsInterval;
+    private readonly cleanupQueueInterval;
     constructor(configService: ConfigService, notificationRepo: Repository<NotificationEntity>);
+    onModuleDestroy(): void;
     handleConnection(client: Socket): void;
     handleDisconnect(client: Socket): void;
     private isConnectionAllowed;

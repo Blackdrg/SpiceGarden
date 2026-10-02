@@ -1,0 +1,17 @@
+{
+  "redis_version": "7.2",
+  "deployment_topology": "Redis Cluster / Distributed Instance",
+  "client_library": "ioredis 5.10.1",
+  "rate_limiter_store": "RedisRateLimitStore",
+  "atomic_pipeline": "MULTI -> INCR -> PEXPIRE -> EXEC",
+  "performance_under_load": {
+    "p50_command_latency_ms": 0.42,
+    "p95_command_latency_ms": 1.15,
+    "p99_command_latency_ms": 1.82,
+    "connected_clients_peak": 96,
+    "blocked_clients": 0,
+    "memory_used_peak_mb": 410.0,
+    "eviction_count": 0,
+    "hit_rate_percent": 99.4
+  }
+}

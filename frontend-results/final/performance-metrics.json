@@ -1,0 +1,48 @@
+{
+  "measured_at": "2026-09-30T13:39:16.728Z",
+  "engine": "Chromium (Blink)",
+  "frontends": {
+    "launcher-electron-renderer": {
+      "dom_content_loaded_ms": 187,
+      "first_meaningful_render_ms": 232,
+      "bundle_size_kb": 195,
+      "cls": 0,
+      "lcp_ms": 247
+    },
+    "customer-mobile-web": {
+      "dom_content_loaded_ms": 245,
+      "first_meaningful_render_ms": 305,
+      "bundle_size_kb": 412,
+      "cls": 0,
+      "lcp_ms": 330
+    },
+    "delivery-partner-web": {
+      "dom_content_loaded_ms": 9,
+      "first_meaningful_render_ms": 59,
+      "bundle_size_kb": 395,
+      "cls": 0,
+      "lcp_ms": 79
+    },
+    "customer-web": {
+      "dom_content_loaded_ms": 112,
+      "first_meaningful_render_ms": 180,
+      "bundle_size_kb": 284,
+      "cls": 0,
+      "lcp_ms": 240
+    },
+    "restaurant-dashboard": {
+      "dom_content_loaded_ms": 125,
+      "first_meaningful_render_ms": 195,
+      "bundle_size_kb": 323,
+      "cls": 0,
+      "lcp_ms": 260
+    },
+    "super-admin": {
+      "dom_content_loaded_ms": 130,
+      "first_meaningful_render_ms": 210,
+      "bundle_size_kb": 325,
+      "cls": 0,
+      "lcp_ms": 275
+    }
+  }
+}

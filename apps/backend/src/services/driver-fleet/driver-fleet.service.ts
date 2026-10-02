@@ -21,7 +21,6 @@ export class DriverFleetService {
     @InjectRepository(DriverIncentiveEntity) private incentiveRepo: Repository<DriverIncentiveEntity>,
     @InjectRepository(OrderEntity) private orderRepo: Repository<OrderEntity>,
     @InjectRepository(DriverAssignmentEntity) private assignmentRepo: Repository<DriverAssignmentEntity>,
-    private dataSource: DataSource,
   ) {}
 
   async startShift(driverId: string): Promise<DriverShiftEntity> {

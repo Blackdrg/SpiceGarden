@@ -1,4 +1,4 @@
-{
+module.exports = {
   "configurations": {
     "android.emu.debug": {
       "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
@@ -38,4 +38,4 @@
       }
     }
   }
-}
+};

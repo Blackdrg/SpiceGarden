@@ -13,7 +13,6 @@ export class CommissionService {
     private commissionRepo: Repository<CommissionRuleEntity>,
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
-    private dataSource: DataSource,
   ) {}
 
   async createCommissionRule(restaurantId: string, ruleData: {

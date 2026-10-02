@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -68,7 +68,7 @@ interface SocketConnection {
   pingInterval: 10000,
   pingTimeout: 20000,
 })
-export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
   server!: Server;
 
@@ -78,6 +78,8 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
+  private readonly cleanupAttemptsInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly cleanupQueueInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private configService: ConfigService,
@@ -85,8 +87,29 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly notificationRepo: Repository<NotificationEntity>,
   ) {
     this.ackTimeoutMs = this.configService.get<number>('WS_ACK_TIMEOUT_MS', 5000);
-    setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
-    setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+    this.cleanupAttemptsInterval = setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+    if (this.cleanupAttemptsInterval && typeof this.cleanupAttemptsInterval.unref === 'function') {
+      this.cleanupAttemptsInterval.unref();
+    }
+    this.cleanupQueueInterval = setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+    if (this.cleanupQueueInterval && typeof this.cleanupQueueInterval.unref === 'function') {
+      this.cleanupQueueInterval.unref();
+    }
+  }
+
+  onModuleDestroy(): void {
+    if (this.cleanupAttemptsInterval) {
+      clearInterval(this.cleanupAttemptsInterval);
+    }
+    if (this.cleanupQueueInterval) {
+      clearInterval(this.cleanupQueueInterval);
+    }
+    for (const pending of this.pendingAcks.values()) {
+      if (pending.timeout) {
+        clearTimeout(pending.timeout);
+      }
+    }
+    this.pendingAcks.clear();
   }
 
   handleConnection(client: Socket) {

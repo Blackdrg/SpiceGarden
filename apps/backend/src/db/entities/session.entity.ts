@@ -22,6 +22,7 @@ export class SessionEntity {
   @Column()
   ipAddress!: string;
 
+  @Index('idx_user_sessions_refresh_token')
   @Column({ nullable: true })
   refreshToken!: string;
 

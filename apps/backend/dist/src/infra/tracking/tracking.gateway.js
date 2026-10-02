@@ -46,12 +46,34 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
     messageQueue = new Map();
     pendingAcks = new Map();
     ackTimeoutMs;
+    cleanupAttemptsInterval = null;
+    cleanupQueueInterval = null;
     constructor(configService, notificationRepo) {
         this.configService = configService;
         this.notificationRepo = notificationRepo;
         this.ackTimeoutMs = this.configService.get('WS_ACK_TIMEOUT_MS', 5000);
-        setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
-        setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+        this.cleanupAttemptsInterval = setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+        if (this.cleanupAttemptsInterval && typeof this.cleanupAttemptsInterval.unref === 'function') {
+            this.cleanupAttemptsInterval.unref();
+        }
+        this.cleanupQueueInterval = setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+        if (this.cleanupQueueInterval && typeof this.cleanupQueueInterval.unref === 'function') {
+            this.cleanupQueueInterval.unref();
+        }
+    }
+    onModuleDestroy() {
+        if (this.cleanupAttemptsInterval) {
+            clearInterval(this.cleanupAttemptsInterval);
+        }
+        if (this.cleanupQueueInterval) {
+            clearInterval(this.cleanupQueueInterval);
+        }
+        for (const pending of this.pendingAcks.values()) {
+            if (pending.timeout) {
+                clearTimeout(pending.timeout);
+            }
+        }
+        this.pendingAcks.clear();
     }
     handleConnection(client) {
         if (!this.isConnectionAllowed(client)) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, GiftIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import styles from './offers.module.css';
 
@@ -70,23 +70,26 @@ const OffersPage = () => {
 
       <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'offers', label: 'Offers', icon: '🎁', path: '/offers' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
-          <button
-            type="button"
-            key={tab.key}
-            className={getTabClass(tab.key)}
-            onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            aria-label={tab.label}
-          >
-            <span className={styles.tabIcon}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'offers', label: 'Offers', Icon: GiftIcon, path: '/offers' },
+          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          return (
+            <button
+              type="button"
+              key={tab.key}
+              className={getTabClass(tab.key)}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              aria-label={tab.label}
+            >
+              <span className={styles.tabIcon}><Icon size={20} color={activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#888'} /></span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

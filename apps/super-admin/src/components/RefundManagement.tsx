@@ -12,7 +12,7 @@ export function RefundManagement({
   onReject: (id: string) => void;
 }) {
   return (
-    <DashboardCard title="💸 Refund Management" sub="Recent requests">
+    <DashboardCard title="Refund Management" sub="Recent requests">
       {refunds.map((ticket) => (
         <div key={ticket.id} style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>

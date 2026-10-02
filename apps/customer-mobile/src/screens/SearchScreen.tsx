@@ -202,7 +202,7 @@ const SearchScreen = () => {
           <TextInput
             placeholder="Search restaurants, dishes..."
             value={query}
-            onChangeText={(text) => {
+            onChangeText={(text: string) => {
               setQuery(text);
               if (text.length > 2) {
                 search(text);
@@ -267,7 +267,7 @@ const SearchScreen = () => {
         {loading ? (
           <FlatList
             data={[1, 2, 3, 4, 5]}
-            keyExtractor={(item) => item.toString()}
+            keyExtractor={(item: any) => item.toString()}
             renderItem={renderSkeleton}
             ListFooterComponent={<View style={{ height: 80 }} />}
           />
@@ -306,7 +306,7 @@ const SearchScreen = () => {
         ) : (
           <FlatList
             data={results}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: any) => item.id}
             renderItem={renderSearchResult}
             ListEmptyComponent={
               <View style={styles.emptyState}>

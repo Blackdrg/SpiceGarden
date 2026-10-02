@@ -52,6 +52,7 @@ __decorate([
     __metadata("design:type", String)
 ], SessionEntity.prototype, "ipAddress", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_user_sessions_refresh_token'),
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], SessionEntity.prototype, "refreshToken", void 0);

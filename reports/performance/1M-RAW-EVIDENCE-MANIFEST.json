@@ -1,0 +1,38 @@
+{
+  "git_sha": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-10-02T20:07:18.454Z",
+  "audit_version": "v1.0.0-rc1",
+  "physical_evidence_files": [
+    "reports/performance/PRE-BREAKPOINT-BASELINE.md",
+    "reports/performance/BREAKPOINT-ANALYSIS.md",
+    "reports/performance/PHYSICAL-1M-EVIDENCE.md",
+    "reports/performance/LOAD-GENERATOR-CAPACITY.md",
+    "reports/performance/1M-FINAL-VALIDATION.md",
+    "reports/performance/1M-CAPACITY-MATRIX.json",
+    "reports/performance/1M-CAPACITY-MATRIX.csv",
+    "reports/performance/1M-CODE-QUALITY.md",
+    "reports/performance/1M-BOTTLENECKS.md",
+    "reports/performance/1M-REMEDIATION.md",
+    "reports/performance/1M-DATA-INTEGRITY.md",
+    "reports/performance/1M-FAILURE-INJECTION.md",
+    "reports/performance/1M-SECURITY.md",
+    "reports/performance/1M-INFRASTRUCTURE.md",
+    "reports/performance/1M-REPRODUCTION-RUNBOOK.md"
+  ],
+  "verified_test_suites": {
+    "unit_tests_passed": 1235,
+    "unit_tests_failed": 0,
+    "coverage_statements": 91.28,
+    "coverage_branches": 81.1,
+    "coverage_functions": 91.22,
+    "coverage_lines": 91.21
+  },
+  "reproduction_commands": {
+    "build": "npm run build",
+    "test_all": "npm test",
+    "backend_coverage": "npm run --prefix apps/backend test:cov",
+    "progressive_load": "node infra/scripts/run-load-tests.js",
+    "security_audit": "node infra/scripts/security-tests.js",
+    "penetration_tests": "node infra/scripts/penetration-tests.js"
+  }
+}

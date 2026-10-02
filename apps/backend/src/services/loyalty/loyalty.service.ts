@@ -19,7 +19,6 @@ export class LoyaltyService {
     @InjectRepository(SubscriptionEntity) private subscriptionRepo: Repository<SubscriptionEntity>,
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(OrderEntity) private orderRepo: Repository<OrderEntity>,
-    private dataSource: DataSource,
   ) { }
 
   async createCoupon(data: any): Promise<CouponEntity> {

@@ -1,0 +1,12 @@
+{
+  "test_script": "infra/load-tests/stage-1-1k.js",
+  "target_vus": 1000,
+  "stage_duration": "3m",
+  "target_replicas": 3,
+  "base_url": "http://spicegarden-backend.default.svc.cluster.local",
+  "scenarios": {
+    "ramp_up": "30s",
+    "sustain": "2m",
+    "ramp_down": "30s"
+  }
+}

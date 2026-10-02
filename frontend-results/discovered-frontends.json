@@ -1,0 +1,70 @@
+{
+  "applications": [
+    {
+      "name": "customer-web",
+      "path": "apps/customer-web",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "dev_command": "npm run dev",
+      "build_command": "npm run build",
+      "start_command": "npm run start",
+      "port": 3002,
+      "browser_testable": true,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "restaurant-dashboard",
+      "path": "apps/restaurant-dashboard",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "dev_command": "npm run dev",
+      "build_command": "npm run build",
+      "start_command": "npm run start",
+      "port": 3003,
+      "browser_testable": true,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "super-admin",
+      "path": "apps/super-admin",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "dev_command": "npm run dev",
+      "build_command": "npm run build",
+      "start_command": "npm run start",
+      "port": 3004,
+      "browser_testable": true,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "customer-mobile-web",
+      "path": "apps/customer-mobile",
+      "framework": "React Native Web / Expo 56",
+      "dev_command": "npm run start",
+      "build_command": "npm run build",
+      "start_command": "npx serve dist-web -p 3005",
+      "port": 3005,
+      "browser_testable": true,
+      "type": "Static SPA (Expo Web)"
+    },
+    {
+      "name": "delivery-partner-web",
+      "path": "apps/delivery-partner",
+      "framework": "React Native Web / Expo 56",
+      "dev_command": "npm run web",
+      "build_command": "npm run build",
+      "start_command": "npx expo start --web --port 3006",
+      "port": 3006,
+      "browser_testable": true,
+      "type": "Expo Web / SPA"
+    },
+    {
+      "name": "launcher-electron-renderer",
+      "path": "apps/launcher",
+      "framework": "React 19 / Webpack 5 (Electron Renderer)",
+      "dev_command": "npm run dev:renderer",
+      "build_command": "npm run build:renderer",
+      "start_command": "npx serve dist/renderer -p 3007",
+      "port": 3007,
+      "browser_testable": true,
+      "type": "Webpack Static Bundle"
+    }
+  ]
+}

@@ -17,7 +17,6 @@ export class AnalyticsService {
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @InjectRepository(RestaurantBranchEntity) private branchRepo: Repository<RestaurantBranchEntity>,
     @InjectRepository(AddressEntity) private addressRepo: Repository<AddressEntity>,
-    private dataSource: DataSource,
   ) {}
 
   async getTopDishes(restaurantId?: string, period = 30): Promise<any> {

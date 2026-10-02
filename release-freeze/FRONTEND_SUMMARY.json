@@ -1,0 +1,64 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "status": "QUALIFIED",
+  "total_frontends": 6,
+  "total_routes": 44,
+  "total_playwright_tests": 148,
+  "tests_passed": 148,
+  "tests_failed": 0,
+  "tests_blocked": 0,
+  "tests_skipped": 0,
+  "defects": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "browser_engine": "Chromium (Playwright Automation Engine)",
+  "accessibility_statement": "Automated WCAG 2.1 AA-oriented testing found zero critical and serious violations.",
+  "frontends": [
+    {
+      "name": "customer-web",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "routes_count": 21,
+      "status": "PASS"
+    },
+    {
+      "name": "restaurant-dashboard",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "routes_count": 8,
+      "status": "PASS"
+    },
+    {
+      "name": "super-admin",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "routes_count": 12,
+      "status": "PASS"
+    },
+    {
+      "name": "customer-mobile-web",
+      "framework": "React Native Web / Expo 56",
+      "routes_count": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "delivery-partner-web",
+      "framework": "React Native Web / Expo 56",
+      "routes_count": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "launcher-electron-renderer",
+      "framework": "React 19 / Webpack 5",
+      "routes_count": 1,
+      "status": "PASS"
+    }
+  ],
+  "core_user_journeys": [
+    { "name": "Customer Full Order Cycle", "status": "PASS" },
+    { "name": "Restaurant Kitchen Order Workflow", "status": "PASS" },
+    { "name": "Delivery Partner Assignment & Fulfillment", "status": "PASS" },
+    { "name": "Super Admin Platform Telemetry & Audit", "status": "PASS" }
+  ]
+}

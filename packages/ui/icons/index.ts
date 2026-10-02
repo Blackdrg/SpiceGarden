@@ -16,6 +16,21 @@ import { PizzaIcon } from './commerce/PizzaIcon';
 import { DrinkIcon } from './commerce/DrinkIcon';
 import { DessertIcon } from './commerce/DessertIcon';
 import { HealthyIcon } from './commerce/HealthyIcon';
+import {
+  DashboardIcon,
+  UsersIcon,
+  ShieldIcon,
+  HeadphonesIcon,
+  StoreIcon,
+  ClockIcon,
+  PackageIcon,
+  AlertCircleIcon,
+  CheckCircleIcon,
+  GiftIcon,
+  FileTextIcon,
+  VolumeIcon,
+  VolumeMuteIcon,
+} from './admin/AdminIcons';
 
 export {
   RatingIcon,
@@ -36,4 +51,17 @@ export {
   DrinkIcon,
   DessertIcon,
   HealthyIcon,
+  DashboardIcon,
+  UsersIcon,
+  ShieldIcon,
+  HeadphonesIcon,
+  StoreIcon,
+  ClockIcon,
+  PackageIcon,
+  AlertCircleIcon,
+  CheckCircleIcon,
+  GiftIcon,
+  FileTextIcon,
+  VolumeIcon,
+  VolumeMuteIcon,
 };

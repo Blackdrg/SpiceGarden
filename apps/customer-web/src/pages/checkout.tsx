@@ -203,9 +203,9 @@ const CheckoutPage = () => {
           <div style={{ margin: `${DESIGN_TOKENS.spacing.lg}px 0` }}>
             <h3>Payment Method</h3>
             <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, flexWrap: 'wrap' }}>
-              <Button label="💳 Card" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' })} variant={state.paymentMethod === 'card' ? 'primary' : 'secondary'} />
-              <Button label="💰 UPI" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'upi' })} variant={state.paymentMethod === 'upi' ? 'primary' : 'secondary'} />
-              <Button label="💵 Cash" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'cash' })} variant={state.paymentMethod === 'cash' ? 'primary' : 'secondary'} />
+              <Button label="Card" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'card' })} variant={state.paymentMethod === 'card' ? 'primary' : 'secondary'} />
+              <Button label="UPI" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'upi' })} variant={state.paymentMethod === 'upi' ? 'primary' : 'secondary'} />
+              <Button label="Cash" onClick={() => dispatch({ type: 'SET_PAYMENT_METHOD', payload: 'cash' })} variant={state.paymentMethod === 'cash' ? 'primary' : 'secondary'} />
             </div>
           </div>
 

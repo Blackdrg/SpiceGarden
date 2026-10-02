@@ -67,7 +67,7 @@ export default function OnboardingDocuments() {
                 <span className={
                   docs[doc.key].verified ? styles.statusVerified : docs[doc.key].uploaded ? styles.statusUploaded : styles.statusPending
                 }>
-                  {docs[doc.key].verified ? '✓ Verified' : docs[doc.key].uploaded ? '⏳ Uploaded' : 'Pending'}
+                  {docs[doc.key].verified ? 'Verified' : docs[doc.key].uploaded ? 'Uploaded' : 'Pending'}
                 </span>
               </div>
               <input

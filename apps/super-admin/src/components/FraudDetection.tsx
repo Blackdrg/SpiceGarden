@@ -7,11 +7,11 @@ export function FraudDetection({ tickets }: { tickets: DisputeTicket[] }) {
   const toast = useToast();
 
   return (
-    <DashboardCard title="🛡️ Fraud Detection" sub="Recent blocks">
+    <DashboardCard title="Fraud Detection" sub="Recent blocks">
       {tickets.map((ticket) => (
         <div key={ticket.id} style={{ padding: '12px', background: '#fff5f5', borderRadius: 8, marginBottom: 8, borderLeft: '4px solid #f04e31' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <strong style={{ color: '#f04e31' }}>🚫 {ticket.id}</strong>
+            <strong style={{ color: '#f04e31' }}>{ticket.id}</strong>
             <span style={{ color: '#999', fontSize: 12 }}>{ticket.createdAt}</span>
           </div>
           <p style={{ margin: '0 0 8px', fontSize: 13 }}>{ticket.description}</p>

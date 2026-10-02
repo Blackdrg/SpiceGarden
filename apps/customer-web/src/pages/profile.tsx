@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useCallback } from 'react';
-import { Button, Card } from '@spicegarden/ui';
+import { Button, Card, ProfileIcon } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -149,7 +149,7 @@ const ProfilePage = () => {
               className={styles.avatarImage}
             />
           ) : (
-            '👤'
+            <ProfileIcon size={40} color="#888" />
           )}
         </div>
         <h2 className={styles.profileName}>{state.isEditing ? state.editFormData.fullName : state.profileData?.fullName || 'User'}</h2>

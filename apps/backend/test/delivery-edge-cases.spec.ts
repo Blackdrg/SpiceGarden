@@ -12,12 +12,25 @@ import { OrderStatus, PaymentStatus } from '../src/shared/domain/order.interface
 describe('EnhancedDeliveryService Edge Cases', () => {
   let service: EnhancedDeliveryService;
 
+  const mockDataSource = {
+    manager: {
+      transaction: jest.fn((cb) => cb({
+        update: jest.fn().mockResolvedValue(undefined),
+        findOne: jest.fn().mockResolvedValue({}),
+        create: jest.fn().mockReturnValue({}),
+        save: jest.fn().mockResolvedValue({}),
+        increment: jest.fn(),
+      })),
+    },
+  };
+
   const mockDriverRepo = {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
     createQueryBuilder: jest.fn(),
+    manager: mockDataSource.manager,
   };
 
   const mockDriverQueryBuilder = {
@@ -53,18 +66,6 @@ describe('EnhancedDeliveryService Edge Cases', () => {
   const mockGeoService = {
     calculateDistance: jest.fn().mockReturnValue(5),
     predictETA: jest.fn().mockReturnValue({ eta: 20, distance: 5, duration: 15 }),
-  };
-
-  const mockDataSource = {
-    manager: {
-      transaction: jest.fn((cb) => cb({
-        update: jest.fn().mockResolvedValue(undefined),
-        findOne: jest.fn().mockResolvedValue({}),
-        create: jest.fn().mockReturnValue({}),
-        save: jest.fn().mockResolvedValue({}),
-        increment: jest.fn(),
-      })),
-    },
   };
 
   beforeEach(async () => {

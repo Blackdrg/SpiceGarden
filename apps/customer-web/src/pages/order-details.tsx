@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, KitchenIcon, BurgerIcon } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -140,7 +140,9 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
                 className={styles.restaurantImage}
               />
             ) : (
-              <div className={styles.restaurantPlaceholder}>🍽️</div>
+              <div className={styles.restaurantPlaceholder} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <KitchenIcon size={24} color="#f04e31" />
+              </div>
             )}
             <div>
               <h3 className={styles.restaurantTitle}>{order.restaurant.name}</h3>
@@ -165,7 +167,9 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
                        className={styles.itemImage}
                      />
                   ) : (
-                    <div className={styles.itemPlaceholder}>🍔</div>
+                    <div className={styles.itemPlaceholder} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BurgerIcon size={20} color="#f04e31" />
+                    </div>
                   )}
                   <div>
                     <div className={styles.itemName}>{item.name}</div>

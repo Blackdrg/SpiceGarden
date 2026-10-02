@@ -25,19 +25,16 @@ const order_entity_1 = require("../db/entities/order.entity");
 const driver_assignment_entity_1 = require("../db/entities/driver-assignment.entity");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
-const typeorm_3 = require("typeorm");
 const tracking_gateway_1 = require("../infra/tracking/tracking.gateway");
 const order_interface_1 = require("@/shared/domain/order.interface");
 const notification_service_1 = require("../services/notifications/notification.service");
 let DriverController = class DriverController {
     driverRepo;
     assignmentRepo;
-    dataSource;
     trackingGateway;
-    constructor(driverRepo, assignmentRepo, dataSource, trackingGateway) {
+    constructor(driverRepo, assignmentRepo, trackingGateway) {
         this.driverRepo = driverRepo;
         this.assignmentRepo = assignmentRepo;
-        this.dataSource = dataSource;
         this.trackingGateway = trackingGateway;
     }
     async getProfile(req) {
@@ -185,24 +182,20 @@ exports.DriverController = DriverController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
     __param(0, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
-    __param(2, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
-        typeorm_3.DataSource,
         tracking_gateway_1.TrackingGateway])
 ], DriverController);
 let OrderDriverController = class OrderDriverController {
     orderRepo;
     driverRepo;
     assignmentRepo;
-    dataSource;
     trackingGateway;
     notificationService;
-    constructor(orderRepo, driverRepo, assignmentRepo, dataSource, trackingGateway, notificationService) {
+    constructor(orderRepo, driverRepo, assignmentRepo, trackingGateway, notificationService) {
         this.orderRepo = orderRepo;
         this.driverRepo = driverRepo;
         this.assignmentRepo = assignmentRepo;
-        this.dataSource = dataSource;
         this.trackingGateway = trackingGateway;
         this.notificationService = notificationService;
     }
@@ -211,7 +204,7 @@ let OrderDriverController = class OrderDriverController {
         if (!order) {
             throw new Error('Order not found');
         }
-        await this.dataSource.manager.transaction(async (manager) => {
+        await this.orderRepo.manager.transaction(async (manager) => {
             await manager.update(order_entity_1.OrderEntity, id, {
                 driverId: body.driverId,
                 status: order_interface_1.OrderStatus.DRIVER_ASSIGNED,
@@ -353,11 +346,9 @@ exports.OrderDriverController = OrderDriverController = __decorate([
     __param(0, (0, typeorm_2.InjectRepository)(order_entity_1.OrderEntity)),
     __param(1, (0, typeorm_2.InjectRepository)(driver_entity_1.DriverEntity)),
     __param(2, (0, typeorm_2.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
-    __param(3, (0, typeorm_2.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         typeorm_1.Repository,
         typeorm_1.Repository,
-        typeorm_3.DataSource,
         tracking_gateway_1.TrackingGateway,
         notification_service_1.NotificationService])
 ], OrderDriverController);

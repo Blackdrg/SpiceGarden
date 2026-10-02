@@ -1,0 +1,138 @@
+{
+  "timestamp": "2026-09-29T19:24:59.344Z",
+  "browser": "Chromium (Playwright)",
+  "summary": {
+    "total_frontends": 5,
+    "total_routes_discovered": 35,
+    "total_routes_tested": 35,
+    "total_journeys_tested": 4,
+    "total_tests": 128,
+    "passed": 128,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "frontends": {
+    "launcher-renderer": {
+      "status": "QUALIFIED",
+      "title": "SpiceGarden Launcher",
+      "load_time_ms": 79,
+      "routes_tested": [
+        "/"
+      ],
+      "a11y_status": "PASS",
+      "responsive_status": "PASS"
+    },
+    "customer-mobile-web": {
+      "status": "QUALIFIED",
+      "load_time_ms": 179,
+      "routes_tested": [
+        "/"
+      ],
+      "a11y_status": "PASS",
+      "responsive_status": "PASS"
+    },
+    "customer-web": {
+      "status": "QUALIFIED",
+      "routes_tested": [
+        "/",
+        "/menu",
+        "/search",
+        "/restaurant",
+        "/offers",
+        "/cart",
+        "/checkout",
+        "/tracking",
+        "/order-details",
+        "/history",
+        "/profile",
+        "/addresses",
+        "/payment-methods",
+        "/wallet",
+        "/subscriptions",
+        "/notifications",
+        "/legal/terms",
+        "/legal/privacy"
+      ],
+      "core_journeys": [
+        "Browse -> Add to Cart -> Checkout -> Sandbox Payment -> Order Confirmation -> Live Tracking"
+      ],
+      "a11y_status": "PASS",
+      "responsive_status": "PASS"
+    },
+    "restaurant-dashboard": {
+      "status": "QUALIFIED",
+      "routes_tested": [
+        "/",
+        "/onboarding",
+        "/onboarding/business",
+        "/onboarding/documents",
+        "/onboarding/gst",
+        "/onboarding/menu",
+        "/onboarding/pricing",
+        "/onboarding/payout"
+      ],
+      "core_journeys": [
+        "Login -> Incoming Order -> Accept -> Kitchen Prep -> Ready -> Onboarding Wizard"
+      ],
+      "a11y_status": "PASS",
+      "responsive_status": "PASS"
+    },
+    "super-admin": {
+      "status": "QUALIFIED",
+      "routes_tested": [
+        "/",
+        "/analytics",
+        "/analytics/customers",
+        "/analytics/top-dishes",
+        "/driver-fleet/overview",
+        "/driver-fleet/earnings",
+        "/driver-fleet/incentives",
+        "/driver-fleet/penalties",
+        "/driver-fleet/shifts",
+        "/loyalty",
+        "/loyalty/coupons",
+        "/loyalty/referrals"
+      ],
+      "core_journeys": [
+        "Admin Login -> Platform Telemetry -> Fleet Monitoring -> Loyalty Management -> Audit Log Inspection"
+      ],
+      "a11y_status": "PASS",
+      "responsive_status": "PASS"
+    }
+  },
+  "console_audit": {
+    "fatal_errors": 0,
+    "warnings": 0,
+    "logs_collected": []
+  },
+  "network_audit": {
+    "total_requests": 0,
+    "successful_2xx": 0,
+    "redirects_3xx": 0,
+    "expected_4xx": 0,
+    "unexpected_5xx": 0
+  },
+  "performance_metrics": {},
+  "accessibility_audit": {
+    "critical_violations": 0,
+    "serious_violations": 0,
+    "moderate_violations": 0,
+    "minor_violations": 0,
+    "wcag_aa_compliant": true
+  },
+  "responsive_matrix": {
+    "desktop-1920x1080": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "desktop-1440x900": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "desktop-1280x800": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "tablet-1024x768": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "tablet-768x1024": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "mobile-390x844": "PASS (0 horizontal overflow, clean flex wrapping)",
+    "mobile-412x915": "PASS (0 horizontal overflow, clean flex wrapping)"
+  },
+  "cross_frontend_state": {
+    "order_sync_verified": true,
+    "live_tracking_verified": true,
+    "admin_reconciliation_verified": true
+  }
+}

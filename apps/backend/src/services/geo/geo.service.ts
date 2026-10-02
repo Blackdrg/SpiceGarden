@@ -35,7 +35,6 @@ export class GeoService {
     private readonly driverRepo: Repository<DriverEntity>,
     @InjectRepository(OrderEntity)
     private readonly orderRepo: Repository<OrderEntity>,
-    private readonly dataSource: DataSource,
   ) {}
 
   calculateDistance(point1: GeoPoint, point2: GeoPoint): number {

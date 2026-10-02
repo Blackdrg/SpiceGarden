@@ -1,0 +1,37 @@
+# SpiceGarden v1.0.0-rc1 — SHA-256 Checksums for Copyright Submission
+
+**Document Name:** SHA-256 Release & Source Checksum Ledger  
+**Release:** `v1.0.0-rc1`  
+**Git Baseline Commit:** `ca349e510d3c18a7517da7502f70ef15bd37fe77`  
+**Date:** 2026-09-30  
+**Status:** `VERIFIED`  
+
+---
+
+## 1. Frozen Release Artifact Checksums
+
+```text
+28ae0cc7b2f6e4d1d0db678f4730248256d116f943d104197d83961a67d68b90  package.json
+4d25961093d69ace3e7d70ad3b6e659e8483fad3066ea531c028feacc43a1a34  package-lock.json
+23649397d0a22fa87b0318ca529f324172da7740f71ddfd4de3146b801a71720  Dockerfile
+001c649f075182596fe7ec7b754876abd142284f0c33451aedbae4bbc95eea6c  infra/k8s/production-hardened.yaml
+b1fe62c51db9108aea64d2714a8f01271f6f7e1238fa442dae9fae447492c3b0  infra/k8s/backend-deployment.yaml
+9f5757c38a2192654548e67bbf7deefb01d3523c2973ede9faef1316ce5a4a96  legal/SBOM.json
+871233071bed12d5b31c5e69101962ee2e4dd5fe3f0e1bb0849717d82cb4e61a  legal/SBOM.xml
+0b156f137ffdec1b12da4f7a6bab1e2229a4570a67fc6a57b70922dc7d728759  legal/license-report.md
+7f9aeb51245f6c39ee38449c34d9d6f11fce8fa1a53293f0a2f051ba12481517  legal/chain-of-title.md
+166480e5c48664880e4c86eec2e7d8421f072eb1e45138467c74da049ba2c3f5  legal/IP-inventory.md
+539f95901e64eeeda63d6f3851fb8a16db268b14a6d732034681430eadc94dfb  legal/COPYRIGHT_OWNERSHIP_DECLARATION.md
+841769a96f601b6f650574d1b4eb7e43bdc12c8a9440fb2cc7fc1fa0efb3d07a  release-freeze/RELEASE_VERSION.txt
+e1fad4f3b2bcfe09e696d62f0fc48843b33667cb41afa0f7fe62b9a7f59f76db  release-freeze/GIT_COMMIT.txt
+f55697ccbbe298fbd04a4281c33529bb64560a815ccfadd90782757431b1b4ac  release-freeze/NODE_VERSION.txt
+369c2901cb88b0c900d8ea16ce9e4ec29bc94cde403f7505c60c5baa890ebc38  release-freeze/BUILD_MANIFEST.json
+2dda03bd4c383221b7822b60ee2e4cf1d2c3d327b773171aa51764b8d6d63c49  release-freeze/RELEASE_MANIFEST.json
+95d533355c3e2655a3667f6973e0ad31617be4792220cfdce39609bd1fa168b2  release-freeze/TEST_SUMMARY.json
+fd188511af334136d823d4336cd74d8a79b1f7e61b4fcd27cb56c446f7aaabda  release-freeze/PERFORMANCE_SUMMARY.json
+36c34745b8e058451c84d9ea3542788b367d445802d5e1f20f722e0217c740c8  release-freeze/FRONTEND_SUMMARY.json
+36080adc027cb42fa73e41dc3a38e680a2e86753fa198780910ba0363d5ae146  release-freeze/SECURITY_SUMMARY.json
+6af4c1920ac28e2423c87c8eb7cab2cb3b8e3592729023f547f7f79db2df8853  release-freeze/DR_SUMMARY.json
+3cd4a32977c9ad6e48acca0801cfba726385ada953849a88608272281cff176d  release-freeze/IP_SUMMARY.json
+d1552cf8328303bce071209e50288d4c4d21471adef8059f978328a30a1d333a  release-freeze/LICENSE_SUMMARY.json
+```

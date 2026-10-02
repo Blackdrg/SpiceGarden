@@ -1,0 +1,5 @@
+{
+  "disabledMs": 3,
+  "enabledMs": 109,
+  "recommendation": "DEBUG_METRICS_LOG=false in production"
+}

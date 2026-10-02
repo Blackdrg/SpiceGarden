@@ -50,8 +50,6 @@ export class EnhancedDeliveryService {
     @InjectRepository(DriverAssignmentEntity)
     private driverAssignmentRepo: Repository<DriverAssignmentEntity>,
     private geoService: GeoService,
-    @InjectDataSource()
-    private dataSource: DataSource,
   ) {
     this.initializeSurgeZones();
     this.initializeIncentiveRules();
@@ -124,7 +122,7 @@ export class EnhancedDeliveryService {
       throw new Error('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, orderId, {
         driverId,
         status: OrderStatus.DRIVER_ASSIGNED,
@@ -195,7 +193,7 @@ export class EnhancedDeliveryService {
       throw new Error('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, orderId, {
         status: OrderStatus.CANCELLED,
         paymentStatus: PaymentStatus.FAILED,
@@ -311,7 +309,7 @@ export class EnhancedDeliveryService {
   }
 
   async handleDriverNoShowAutomatic(driverId: string, orderId: string, assignmentId: string): Promise<void> {
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       const driver = await manager.findOne(DriverEntity, { where: { id: driverId } });
       if (driver) {
         await manager.update(DriverEntity, driverId, {

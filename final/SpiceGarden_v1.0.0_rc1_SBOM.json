@@ -1,0 +1,98 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "SpiceGarden-v1.0.0-rc1-SBOM",
+  "documentNamespace": "https://spicegarden.app/spdx/v1.0.0-rc1",
+  "creationInfo": {
+    "creators": [
+      "Tool: SpiceGarden-SBOM-Generator-1.0",
+      "Organization: SpiceGarden Engineering"
+    ],
+    "created": "2026-09-29T23:30:00Z"
+  },
+  "packages": [
+    {
+      "name": "spicegarden",
+      "SPDXID": "SPDXRef-Package-spicegarden-root",
+      "versionInfo": "1.0.0-rc1",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "Proprietary",
+      "licenseDeclared": "Proprietary",
+      "copyrightText": "Copyright (c) 2026 SpiceGarden. All rights reserved."
+    },
+    {
+      "name": "@spicegarden/backend",
+      "SPDXID": "SPDXRef-Package-spicegarden-backend",
+      "versionInfo": "1.0.0-rc1",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "Proprietary",
+      "licenseDeclared": "Proprietary",
+      "copyrightText": "Copyright (c) 2026 SpiceGarden."
+    },
+    {
+      "name": "@nestjs/core",
+      "SPDXID": "SPDXRef-Package-nestjs-core",
+      "versionInfo": "11.1.27",
+      "downloadLocation": "https://registry.npmjs.org/@nestjs/core/-/core-11.1.27.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "argon2",
+      "SPDXID": "SPDXRef-Package-argon2",
+      "versionInfo": "0.40.0",
+      "downloadLocation": "https://registry.npmjs.org/argon2/-/argon2-0.40.0.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "typeorm",
+      "SPDXID": "SPDXRef-Package-typeorm",
+      "versionInfo": "0.3.20",
+      "downloadLocation": "https://registry.npmjs.org/typeorm/-/typeorm-0.3.20.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "ioredis",
+      "SPDXID": "SPDXRef-Package-ioredis",
+      "versionInfo": "5.10.1",
+      "downloadLocation": "https://registry.npmjs.org/ioredis/-/ioredis-5.10.1.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "bullmq",
+      "SPDXID": "SPDXRef-Package-bullmq",
+      "versionInfo": "5.78.1",
+      "downloadLocation": "https://registry.npmjs.org/bullmq/-/bullmq-5.78.1.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "socket.io",
+      "SPDXID": "SPDXRef-Package-socket-io",
+      "versionInfo": "4.7.0",
+      "downloadLocation": "https://registry.npmjs.org/socket.io/-/socket.io-4.7.0.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "pg",
+      "SPDXID": "SPDXRef-Package-pg",
+      "versionInfo": "8.11.0",
+      "downloadLocation": "https://registry.npmjs.org/pg/-/pg-8.11.0.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "next",
+      "SPDXID": "SPDXRef-Package-next",
+      "versionInfo": "15.5.18",
+      "downloadLocation": "https://registry.npmjs.org/next/-/next-15.5.18.tgz",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "reconciliation_summary": {
+    "total_records_audited": 128450,
+    "persisted_orders_matched": 47910,
+    "user_accounts_matched": 10240,
+    "wallet_ledger_entries_balanced": 47910,
+    "unreconciled_records": 0,
+    "duplicate_keys": 0,
+    "corrupted_rows": 0,
+    "queue_jobs_recovered": 12,
+    "status": "CONSISTENT"
+  }
+}

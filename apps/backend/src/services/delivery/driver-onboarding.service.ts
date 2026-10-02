@@ -19,7 +19,6 @@ export class DriverOnboardingService {
     private userRepo: Repository<UserEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private driverAssignmentRepo: Repository<DriverAssignmentEntity>,
-    private dataSource: DataSource,
   ) {}
 
   async startOnboarding(userId: string, data: {

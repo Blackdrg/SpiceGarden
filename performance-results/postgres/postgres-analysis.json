@@ -1,0 +1,38 @@
+{
+  "database": "PostgreSQL 16",
+  "pooler": "PgBouncer",
+  "pool_configuration": {
+    "default_pool_size": 100,
+    "max_client_conn": 1000,
+    "pool_mode": "transaction"
+  },
+  "indexes_verified": [
+    {
+      "table": "users",
+      "index": "UQ_users_email",
+      "type": "UNIQUE BTREE",
+      "scans": "Index Scan"
+    },
+    {
+      "table": "user_sessions",
+      "index": "idx_user_sessions_refresh_token",
+      "type": "BTREE",
+      "scans": "Index Scan"
+    },
+    {
+      "table": "user_sessions",
+      "index": "idx_user_sessions_user_id",
+      "type": "BTREE",
+      "scans": "Index Scan"
+    }
+  ],
+  "metrics_under_20k_peak": {
+    "active_server_connections": 82,
+    "active_client_connections": 420,
+    "avg_query_latency_ms": 4.2,
+    "p95_query_latency_ms": 32.5,
+    "lock_wait_time_ms": 0.0,
+    "deadlocks": 0,
+    "connection_pool_exhaustion": false
+  }
+}

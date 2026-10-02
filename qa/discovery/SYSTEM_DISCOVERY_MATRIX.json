@@ -1,0 +1,258 @@
+{
+  "baseline": {
+    "release": "v1.0.0-rc1",
+    "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+    "runtime": "Node.js 22 LTS",
+    "timestamp": "2026-09-30T13:42:38.023Z"
+  },
+  "workspaces": [
+    {
+      "name": "@spicegarden/backend",
+      "path": "apps/backend",
+      "type": "Backend API / Microservices",
+      "port": 3001
+    },
+    {
+      "name": "@spicegarden/customer-web",
+      "path": "apps/customer-web",
+      "type": "Frontend Web (SSR/Next.js 15.5.18)",
+      "port": 3002
+    },
+    {
+      "name": "@spicegarden/restaurant-dashboard",
+      "path": "apps/restaurant-dashboard",
+      "type": "Frontend Web (SSR/Next.js 15.5.18)",
+      "port": 3003
+    },
+    {
+      "name": "@spicegarden/super-admin",
+      "path": "apps/super-admin",
+      "type": "Frontend Web (SSR/Next.js 15.5.18)",
+      "port": 3004
+    },
+    {
+      "name": "@spicegarden/customer-mobile",
+      "path": "apps/customer-mobile",
+      "type": "Frontend Mobile / Web SPA (React Native / Expo 56)",
+      "port": 3005
+    },
+    {
+      "name": "@spicegarden/delivery-partner",
+      "path": "apps/delivery-partner",
+      "type": "Frontend Mobile / Web SPA (React Native / Expo 56)",
+      "port": 3006
+    },
+    {
+      "name": "spicegarden-launcher",
+      "path": "apps/launcher",
+      "type": "Desktop App / Electron Renderer (Webpack 5 / React 19)",
+      "port": 3007
+    },
+    {
+      "name": "@spicegarden/api-types",
+      "path": "packages/api-types",
+      "type": "Shared TypeScript Definitions",
+      "port": null
+    },
+    {
+      "name": "@spicegarden/grpc-transport",
+      "path": "packages/grpc-transport",
+      "type": "gRPC Transport Layer",
+      "port": null
+    },
+    {
+      "name": "@spicegarden/proto",
+      "path": "packages/proto",
+      "type": "Protobuf Definitions",
+      "port": null
+    },
+    {
+      "name": "@spicegarden/shared",
+      "path": "packages/shared",
+      "type": "Shared Utilities & Helpers",
+      "port": null
+    },
+    {
+      "name": "@spicegarden/ui",
+      "path": "packages/ui",
+      "type": "Design System & Reusable Components",
+      "port": null
+    }
+  ],
+  "routes_summary": {
+    "total_applications": 6,
+    "total_routes": 44,
+    "by_app": {
+      "customer-web": 21,
+      "restaurant-dashboard": 8,
+      "super-admin": 12,
+      "customer-mobile-web": 1,
+      "delivery-partner-web": 1,
+      "launcher-electron-renderer": 1
+    }
+  },
+  "database_entities": [
+    "User",
+    "Session",
+    "Order",
+    "OrderItem",
+    "Restaurant",
+    "MenuItem",
+    "Driver",
+    "DriverShift",
+    "Payment",
+    "Refund",
+    "Wallet",
+    "Address",
+    "Review",
+    "SupportTicket",
+    "AuditLog",
+    "Coupon"
+  ],
+  "queues_and_workers": [
+    {
+      "name": "order-processing",
+      "purpose": "Order creation, validation and status transitions",
+      "concurrency": 5
+    },
+    {
+      "name": "driver-assignment",
+      "purpose": "Proximity driver matching and dispatch algorithms",
+      "concurrency": 3
+    },
+    {
+      "name": "notifications",
+      "purpose": "Async SMS, Push (FCM/APNs), and transactional Email delivery",
+      "concurrency": 10
+    },
+    {
+      "name": "ledger-reconciliation",
+      "purpose": "Wallet transactions, refund payouts, and financial accounting",
+      "concurrency": 2
+    },
+    {
+      "name": "data-retention",
+      "purpose": "GDPR/DPDP compliance log purging and audit archivals",
+      "concurrency": 1
+    }
+  ],
+  "websocket_gateways": [
+    {
+      "path": "/ws/orders",
+      "events": [
+        "order:created",
+        "order:status_updated",
+        "order:cancelled",
+        "order:ready"
+      ]
+    },
+    {
+      "path": "/ws/tracking",
+      "events": [
+        "driver:location_updated",
+        "driver:assigned",
+        "driver:arrived",
+        "driver:delivered"
+      ]
+    },
+    {
+      "path": "/ws/kds",
+      "events": [
+        "kds:new_ticket",
+        "kds:ticket_bumped",
+        "kds:prep_started",
+        "kds:inventory_alert"
+      ]
+    },
+    {
+      "path": "/ws/admin",
+      "events": [
+        "admin:alert",
+        "admin:metrics_tick",
+        "admin:fraud_detected"
+      ]
+    }
+  ],
+  "integrations": [
+    {
+      "provider": "Stripe",
+      "category": "Payment Processing",
+      "mode": "Direct API + Webhook (Idempotent)",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Razorpay",
+      "category": "Payment Processing",
+      "mode": "Standard Checkout + Webhook Validation",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Cash On Delivery (COD)",
+      "category": "Payment Processing",
+      "mode": "In-App OTP Verification Flow",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Google Maps API",
+      "category": "Geolocation & Routing",
+      "mode": "Geocoding, Distance Matrix, Polylines",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Twilio",
+      "category": "SMS / OTP Delivery",
+      "mode": "REST API with Fallback",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "SendGrid",
+      "category": "Transactional Email",
+      "mode": "Template-based SMTP/REST",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Firebase Cloud Messaging (FCM)",
+      "category": "Push Notifications (Android/Web)",
+      "mode": "HTTP v1 API",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "Apple Push Notification service (APNs)",
+      "category": "Push Notifications (iOS)",
+      "mode": "HTTP/2 JWT Token Auth",
+      "status": "CONFIGURED"
+    },
+    {
+      "provider": "S3 / MinIO Object Storage",
+      "category": "Media & Document Storage",
+      "mode": "Presigned URL & Multipart Upload",
+      "status": "CONFIGURED"
+    }
+  ],
+  "auth_roles": [
+    {
+      "role": "customer",
+      "description": "End consumer ordering food and tracking live deliveries"
+    },
+    {
+      "role": "restaurant",
+      "description": "Kitchen manager and branch staff handling KDS tickets and inventory"
+    },
+    {
+      "role": "driver",
+      "description": "Delivery rider managing shift, orders, live GPS, and OTP confirmation"
+    },
+    {
+      "role": "admin",
+      "description": "Support team and branch supervisor managing operations"
+    },
+    {
+      "role": "super-admin",
+      "description": "Platform executive accessing financial ledgers, fraud controls, and global settings"
+    },
+    {
+      "role": "desktop-operator",
+      "description": "System administrator using launcher electron application"
+    }
+  ]
+}

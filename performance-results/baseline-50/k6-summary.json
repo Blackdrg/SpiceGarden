@@ -1,0 +1,18 @@
+{
+  "stage": "baseline-50",
+  "vus": 50,
+  "duration_seconds": 65,
+  "http_reqs": 1420,
+  "http_req_failed_rate": 0.0,
+  "check_success_rate": 1.0,
+  "timings": {
+    "min_ms": 1.2,
+    "p50_ms": 42.1,
+    "p90_ms": 112.4,
+    "p95_ms": 185.3,
+    "p99_ms": 265.8,
+    "max_ms": 410.2
+  },
+  "event_loop_lag_p99_ms": 8.5,
+  "status": "PASS"
+}

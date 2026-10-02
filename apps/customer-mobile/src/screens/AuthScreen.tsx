@@ -159,7 +159,7 @@ const AuthScreen = () => {
             <TextInput
               placeholder="Enter your email"
               value={email}
-              onChangeText={(text) => {
+              onChangeText={(text: string) => {
                 setEmail(text);
                 if (emailError) validateEmail(text);
               }}
@@ -178,7 +178,7 @@ const AuthScreen = () => {
             <TextInput
               placeholder="Enter your password"
               value={password}
-              onChangeText={(text) => {
+              onChangeText={(text: string) => {
                 setPassword(text);
                 if (passwordError) validatePassword(text);
               }}

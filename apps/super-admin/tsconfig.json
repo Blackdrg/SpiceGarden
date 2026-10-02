@@ -27,7 +27,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "../lucide-react.d.ts"
+    "../../packages/ui/lucide-react.d.ts"
   ],
   "exclude": [
     "node_modules",

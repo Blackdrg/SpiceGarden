@@ -37,6 +37,9 @@ export class DatabaseFailoverService implements OnModuleInit, OnModuleDestroy {
     this.healthCheckInterval = setInterval(async () => {
       await this.performHealthCheck();
     }, 30000);
+    if (this.healthCheckInterval && typeof this.healthCheckInterval.unref === 'function') {
+      this.healthCheckInterval.unref();
+    }
   }
 
   private stopHealthCheck(): void {

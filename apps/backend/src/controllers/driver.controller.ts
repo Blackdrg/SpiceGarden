@@ -1,3 +1,4 @@
+
 import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { RolesGuard } from '../security/roles.guard';
@@ -23,8 +24,6 @@ export class DriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
   ) {}
 
@@ -160,8 +159,6 @@ export class OrderDriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
     private notificationService: NotificationService,
   ) {}
@@ -173,7 +170,7 @@ export class OrderDriverController {
       throw new Error('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.orderRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, id, {
         driverId: body.driverId,
         status: OrderStatus.DRIVER_ASSIGNED,

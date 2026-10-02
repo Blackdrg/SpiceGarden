@@ -372,7 +372,7 @@ See `ROADMAP.md` for feature roadmap.
 | Lint | ✅ 0 errors across all workspaces |
 | Unit Tests | ✅ 542 passed, 0 failed (28 suites) |
 | Backend Coverage | ✅ Statements 91.28% / Branches 81.1% / Functions 91.22% / Lines 91.21% |
-| Security Tests | ✅ 0 vulnerabilities |
-| Penetration Tests | ✅ 0 issues |
+| Security Tests | ✅ 0 findings across 5 documented automated vectors |
+| Penetration Tests | ✅ 0 findings across tested vectors |
 | Stack Boot | ✅ PASS (backend, grafana, prometheus, opensearch reachable) |
 | Production Readiness | ⚠️ 75% PARTIAL (Phase 1 complete, Phase 2 in progress) |

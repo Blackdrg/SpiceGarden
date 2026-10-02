@@ -3,15 +3,13 @@ import { DriverEntity } from '../db/entities/driver.entity';
 import { OrderEntity } from '../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../db/entities/driver-assignment.entity';
 import { Repository } from 'typeorm';
-import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
 import { NotificationService } from '../services/notifications/notification.service';
 export declare class DriverController {
     private driverRepo;
     private assignmentRepo;
-    private dataSource;
     private trackingGateway;
-    constructor(driverRepo: Repository<DriverEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, dataSource: DataSource, trackingGateway: TrackingGateway);
+    constructor(driverRepo: Repository<DriverEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, trackingGateway: TrackingGateway);
     getProfile(req: {
         user: {
             id: string;
@@ -65,10 +63,9 @@ export declare class OrderDriverController {
     private orderRepo;
     private driverRepo;
     private assignmentRepo;
-    private dataSource;
     private trackingGateway;
     private notificationService;
-    constructor(orderRepo: Repository<OrderEntity>, driverRepo: Repository<DriverEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, dataSource: DataSource, trackingGateway: TrackingGateway, notificationService: NotificationService);
+    constructor(orderRepo: Repository<OrderEntity>, driverRepo: Repository<DriverEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, trackingGateway: TrackingGateway, notificationService: NotificationService);
     acceptOrder(id: string, body: {
         driverId: string;
     }): Promise<{
@@ -87,7 +84,7 @@ export declare class OrderDriverController {
         failureReason?: string;
     }): Promise<{
         orderId: string;
-        status: "delivered" | "failed" | "pickedUp" | "onTheWay";
+        status: "failed" | "pickedUp" | "onTheWay" | "delivered";
     }>;
     verifyOTP(id: string, body: {
         otp: string;

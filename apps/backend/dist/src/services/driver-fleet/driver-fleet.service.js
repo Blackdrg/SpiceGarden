@@ -32,9 +32,8 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
     incentiveRepo;
     orderRepo;
     assignmentRepo;
-    dataSource;
     logger = new common_1.Logger(DriverFleetService_1.name);
-    constructor(driverRepo, shiftRepo, scoreRepo, penaltyRepo, incentiveRepo, orderRepo, assignmentRepo, dataSource) {
+    constructor(driverRepo, shiftRepo, scoreRepo, penaltyRepo, incentiveRepo, orderRepo, assignmentRepo) {
         this.driverRepo = driverRepo;
         this.shiftRepo = shiftRepo;
         this.scoreRepo = scoreRepo;
@@ -42,7 +41,6 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
         this.incentiveRepo = incentiveRepo;
         this.orderRepo = orderRepo;
         this.assignmentRepo = assignmentRepo;
-        this.dataSource = dataSource;
     }
     async startShift(driverId) {
         const driver = await this.driverRepo.findOne({ where: { id: driverId } });
@@ -242,6 +240,5 @@ exports.DriverFleetService = DriverFleetService = DriverFleetService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], DriverFleetService);

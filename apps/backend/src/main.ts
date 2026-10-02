@@ -1,3 +1,4 @@
+import './reflect-metadata';
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
@@ -8,7 +9,6 @@ import * as Sentry from '@sentry/node';
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
-import './reflect-metadata';
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
 import compression from "compression";
@@ -261,7 +261,9 @@ const dsn = configService.get<string>("SENTRY_DSN");
       const route = req.route?.path ? req.path : req.baseUrl || req.path;
       httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
       httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
-      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+      if (process.env.DEBUG_METRICS_LOG === 'true') {
+        console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+      }
     });
     next();
   });
@@ -275,6 +277,8 @@ const dsn = configService.get<string>("SENTRY_DSN");
       transform: true,
     })
   );
+
+  console.log(`[bootstrap] Node Runtime: ${process.version}, PID: ${process.pid}, UV_THREADPOOL_SIZE: ${process.env.UV_THREADPOOL_SIZE || 'default(4)'}`);
 
   await app.listen(3001);
 }

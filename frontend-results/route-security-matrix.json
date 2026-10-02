@@ -1,0 +1,92 @@
+{
+  "matrix": [
+    {
+      "route": "customer-web /",
+      "anonymous": "ALLOWED",
+      "customer": "ALLOWED",
+      "restaurant": "ALLOWED",
+      "delivery": "ALLOWED",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "customer-web /menu",
+      "anonymous": "ALLOWED",
+      "customer": "ALLOWED",
+      "restaurant": "ALLOWED",
+      "delivery": "ALLOWED",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "customer-web /cart",
+      "anonymous": "ALLOWED",
+      "customer": "ALLOWED",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "customer-web /checkout",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "ALLOWED",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "customer-web /profile",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "ALLOWED",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "restaurant-dashboard /",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "ALLOWED",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "restaurant-dashboard /onboarding",
+      "anonymous": "ALLOWED",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "ALLOWED",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "super-admin /",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "super-admin /analytics",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "super-admin /driver-fleet",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    },
+    {
+      "route": "super-admin /loyalty",
+      "anonymous": "BLOCKED/REDIRECT",
+      "customer": "BLOCKED/REDIRECT",
+      "restaurant": "BLOCKED/REDIRECT",
+      "delivery": "BLOCKED/REDIRECT",
+      "admin": "ALLOWED"
+    }
+  ]
+}

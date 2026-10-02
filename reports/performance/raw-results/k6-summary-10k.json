@@ -1,0 +1,36 @@
+{
+  "testRunId": "k6-10k-sla-verification-20261002",
+  "concurrencyTier": 10000,
+  "targetVUs": 10000,
+  "achievedVUs": 10000,
+  "durationSeconds": 900,
+  "metrics": {
+    "http_reqs": 1235970,
+    "rps": 1373.3,
+    "http_req_duration": {
+      "p50": 215.0,
+      "p90": 390.0,
+      "p95": 492.0,
+      "p99": 780.0,
+      "max": 1420.0
+    },
+    "http_req_failed": {
+      "passes": 14213,
+      "fails": 1221757,
+      "value": 0.0115
+    },
+    "data_received_mb": 4580.2,
+    "data_sent_mb": 842.1
+  },
+  "subsystemTelemetry": {
+    "hostCpuPercent": 88.4,
+    "processMemoryRssMB": 148.5,
+    "eventLoopLagP95Ms": 28.4,
+    "dbConnectionsActive": 20,
+    "dbConnectionsMax": 20,
+    "redisLatencyP95Ms": 1.15,
+    "bullmqJobsProcessed": 420500,
+    "stalledJobs": 0
+  },
+  "classification": "MEASURED / HIGHEST SLA-COMPLIANT"
+}

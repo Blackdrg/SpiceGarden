@@ -21,12 +21,12 @@ type ProfileScreen =
   | 'Logout';
 
 const MENU_ITEMS = [
-  { id: 'wallet', label: 'Wallet', icon: '💰', screen: 'Wallet' },
-  { id: 'orders', label: 'My Orders', icon: '📦', screen: 'History' },
-  { id: 'addresses', label: 'Addresses', icon: 'Location', screen: 'Addresses' },
-  { id: 'payment', label: 'Payment Methods', icon: '💳', screen: 'Payment' },
-  { id: 'notifications', label: 'Notifications', icon: '🔔', screen: 'Notifications' },
-  { id: 'support', label: 'Help & Support', icon: '❓', screen: 'Support' },
+  { id: 'wallet', label: 'Wallet', icon: 'W', screen: 'Wallet' },
+  { id: 'orders', label: 'My Orders', icon: 'O', screen: 'History' },
+  { id: 'addresses', label: 'Addresses', icon: 'A', screen: 'Addresses' },
+  { id: 'payment', label: 'Payment Methods', icon: 'P', screen: 'Payment' },
+  { id: 'notifications', label: 'Notifications', icon: 'N', screen: 'Notifications' },
+  { id: 'support', label: 'Help & Support', icon: '?', screen: 'Support' },
 ] as const;
 
 const ProfileScreen = () => {
@@ -196,7 +196,7 @@ const ProfileScreen = () => {
                 <TextInput
                   placeholder="Enter your full name"
                   value={editFormData.fullName}
-                  onChangeText={(text) => setEditFormData({ ...editFormData, fullName: text })}
+                  onChangeText={(text: string) => setEditFormData({ ...editFormData, fullName: text })}
                   style={styles.input}
                   accessibilityLabel="Full name"
                 />
@@ -206,7 +206,7 @@ const ProfileScreen = () => {
                 <TextInput
                   placeholder="Enter your email"
                   value={editFormData.email}
-                  onChangeText={(text) => {
+                  onChangeText={(text: string) => {
                     setEditFormData({ ...editFormData, email: text });
                     if (errors.email) validateEmail(text);
                   }}
@@ -222,7 +222,7 @@ const ProfileScreen = () => {
                 <TextInput
                   placeholder="Enter your phone number"
                   value={editFormData.phone}
-                  onChangeText={(text) => setEditFormData({ ...editFormData, phone: text })}
+                  onChangeText={(text: string) => setEditFormData({ ...editFormData, phone: text })}
                   keyboardType="phone-pad"
                   style={styles.input}
                   accessibilityLabel="Phone number"
@@ -254,7 +254,7 @@ const ProfileScreen = () => {
                 <View style={styles.profileInfo}>
                   <Text style={styles.profileName}>{userData.fullName || 'User Name'}</Text>
                   <Text style={styles.profileEmail}>{userData.email || 'email@example.com'}</Text>
-                  <Text style={styles.profilePhone}>📞 {userData.phone || '+91 XXXXX XXXXX'}</Text>
+                  <Text style={styles.profilePhone}>{userData.phone || '+91 XXXXX XXXXX'}</Text>
                 </View>
               </View>
 

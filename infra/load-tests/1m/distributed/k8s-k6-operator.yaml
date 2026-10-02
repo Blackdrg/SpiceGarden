@@ -1,0 +1,35 @@
+# infra/load-tests/1m/distributed/k8s-k6-operator.yaml
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: spicegarden-1m-distributed-run
+  namespace: load-testing
+spec:
+  parallelism: 40
+  script:
+    configMap:
+      name: spicegarden-1m-scenario-cm
+      file: scenario.js
+  arguments: --out json=/tmp/results.json
+  runner:
+    image: grafana/k6:latest
+    env:
+      - name: API_BASE_URL
+        value: "http://spicegarden-backend-ingress.spicegarden-prod.svc.cluster.local:3001"
+      - name: WS_BASE_URL
+        value: "ws://spicegarden-backend-ingress.spicegarden-prod.svc.cluster.local:3001"
+      - name: LOAD_TEST_RUN_ID
+        value: "run_1m_prod_cluster_qualification_20261002"
+    resources:
+      requests:
+        cpu: "4000m"
+        memory: "8Gi"
+      limits:
+        cpu: "8000m"
+        memory: "16Gi"
+    securityContext:
+      sysctls:
+        - name: net.ipv4.ip_local_port_range
+          value: "1024 65535"
+        - name: net.ipv4.tcp_tw_reuse
+          value: "1"

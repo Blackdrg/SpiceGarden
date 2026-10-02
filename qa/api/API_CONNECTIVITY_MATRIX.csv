@@ -1,0 +1,32 @@
+Endpoint,Method,Auth Required,Role,Request Validation,Response Schema,Status Code,Rate Limiting,DB Persistence,Status
+/auth/login,POST,No,Public,Strict Email/Password,JWT + UserDTO,200 OK / 401 Unauthorized,10 req/min,Yes (Session),PASS
+/auth/signup,POST,No,Public,Strict RegisterDTO,JWT + UserDTO,201 Created / 400 Bad Request,5 req/min,Yes (User),PASS
+/auth/refresh,POST,No,Public,Refresh Token Cookie,New JWT Access Token,200 OK / 401 Unauthorized,20 req/min,Yes (Session),PASS
+/auth/logout,POST,Yes,Authenticated,Bearer JWT,Success Message,200 OK,30 req/min,Yes (Revoke Session),PASS
+/auth/reset-password/request,POST,No,Public,Email Format,Reset Token Issued,200 OK,3 req/min,Yes (Reset Token),PASS
+/auth/reset-password/confirm,POST,No,Public,Token + New Password,Password Updated,200 OK,3 req/min,Yes (User),PASS
+/users/profile,GET,Yes,Customer/Admin,Bearer JWT,UserProfileDTO,200 OK / 401 Unauthorized,60 req/min,No (Cache/DB),PASS
+/users/profile,PUT,Yes,Customer/Admin,ProfileUpdateDTO,Updated ProfileDTO,200 OK / 400 Bad Request,20 req/min,Yes (User),PASS
+/users/addresses,GET,Yes,Customer,Bearer JWT,AddressListDTO,200 OK,60 req/min,No (DB Read),PASS
+/users/addresses,POST,Yes,Customer,AddressCreateDTO,AddressDTO,201 Created,20 req/min,Yes (Address),PASS
+/users/addresses/:id,DELETE,Yes,Customer,Address ID,Success,200 OK,20 req/min,Yes (Soft Delete),PASS
+/restaurants,GET,No,Public,Query Filter/Location,Paginated RestaurantListDTO,200 OK,120 req/min,No (Redis Cache),PASS
+/restaurants/:id,GET,No,Public,UUID param,RestaurantDetailDTO,200 OK / 404 Not Found,120 req/min,No (Redis Cache),PASS
+/restaurants/:id/menu,GET,No,Public,UUID param,MenuListDTO,200 OK,120 req/min,No (Redis Cache),PASS
+/orders,POST,Yes,Customer,OrderCreateDTO,OrderResponseDTO,201 Created / 400 Bad Request,15 req/min,Yes (Order & Items),PASS
+/orders,GET,Yes,Customer/Admin,Pagination params,Paginated OrderListDTO,200 OK,60 req/min,No (DB Read),PASS
+/orders/:id,GET,Yes,Customer/Restaurant/Admin,UUID param,OrderDetailDTO,200 OK / 404 Not Found,60 req/min,No (DB Read),PASS
+/orders/:id/cancel,POST,Yes,Customer/Admin,Reason DTO,Cancelled OrderDTO,200 OK / 400 Bad Request,10 req/min,Yes (Order Status),PASS
+/payments/intent,POST,Yes,Customer,PaymentIntentDTO,ClientSecret + IntentID,200 OK,20 req/min,Yes (Payment),PASS
+/payments/webhook/stripe,POST,No,Stripe Signature,Raw Webhook Body,Ack 200 OK,Unlimited (Signature Validated),Yes (Payment/Order),PASS
+/payments/webhook/razorpay,POST,No,Razorpay Signature,Raw Webhook Body,Ack 200 OK,Unlimited (Signature Validated),Yes (Payment/Order),PASS
+/driver/availability,POST,Yes,Driver,ShiftToggleDTO,ShiftStateDTO,200 OK,30 req/min,Yes (DriverShift),PASS
+/driver/location,POST,Yes,Driver,CoordinatesDTO,Ack,200 OK,120 req/min,Yes (Redis Geo),PASS
+/driver/orders/accept,POST,Yes,Driver,OrderID DTO,OrderAssignedDTO,200 OK / 409 Conflict,20 req/min,Yes (Order State),PASS
+/driver/orders/deliver,POST,Yes,Driver,OTPVerificationDTO,DeliveredDTO,200 OK / 400 Bad Request,10 req/min,Yes (Order & Ledger),PASS
+/kitchen/orders,GET,Yes,Restaurant,Branch ID,Active KDS OrdersDTO,200 OK,120 req/min,No (DB/Redis),PASS
+/kitchen/orders/:id/status,PUT,Yes,Restaurant,StatusTransitionDTO,Updated OrderDTO,200 OK / 400 Bad Request,60 req/min,Yes (Order Status),PASS
+/admin/stats,GET,Yes,Admin/SuperAdmin,Timeframe param,AdminStatsDTO,200 OK,30 req/min,No (Aggregation Cache),PASS
+/admin/fraud/rules,GET,Yes,SuperAdmin,Bearer JWT,FraudRuleListDTO,200 OK,20 req/min,No (DB Read),PASS
+/admin/refunds/approve,POST,Yes,Admin/SuperAdmin,RefundApprovalDTO,RefundSettledDTO,200 OK / 400 Bad Request,15 req/min,Yes (Refund & Ledger),PASS
+/health,GET,No,Public,None,HealthCheckDTO,200 OK,Unlimited,No (Liveness/Readiness),PASS

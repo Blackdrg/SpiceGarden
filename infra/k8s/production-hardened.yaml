@@ -45,6 +45,8 @@ spec:
               value: "production"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=512"
+            - name: UV_THREADPOOL_SIZE
+              value: "64"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

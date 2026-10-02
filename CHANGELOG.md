@@ -47,8 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - `npm audit` reports **31 moderate vulnerabilities** (0 high, 0 critical); all are dev toolchain-only
-- Security tests: **0 vulnerabilities** found (SQL injection, XSS, rate limiting, auth bypass, path traversal all pass)
-- Penetration tests: **0 issues** (port scan, security headers, CORS, HTTP methods all pass)
+- Security tests: **0 findings** across 5 documented automated vectors (SQL injection, XSS, rate limiting, auth bypass, path traversal all pass)
+- Penetration tests: **0 findings** across tested vectors (port scan, security headers, CORS, HTTP methods all pass)
 - CSRF protection enforced globally with header + cookie validation
 - HPP (HTTP Parameter Pollution) protection enabled
 - Mongo sanitization active with custom compatibility layer

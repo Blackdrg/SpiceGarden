@@ -172,7 +172,7 @@ export const AddressesScreen = () => {
 
         <FlatList
           data={addresses}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: any) => item.id}
           renderItem={renderAddressItem}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={

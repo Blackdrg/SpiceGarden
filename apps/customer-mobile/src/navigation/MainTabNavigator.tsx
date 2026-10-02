@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TabParamList } from './types';
 import HomeScreen from '../screens/HomeScreen';
+import SearchScreen from '../screens/SearchScreen';
 import CartScreen from '../screens/CartScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -17,7 +18,7 @@ function MainTabNavigator() {
           <Text style={{ color, fontSize: size }}>H</Text>
         )
       }} />
-      <Tab.Screen name="Search" component={HomeScreen} options={{
+      <Tab.Screen name="Search" component={SearchScreen} options={{
         tabBarLabel: 'Search',
         tabBarIcon: ({ color, size }: { color: string; size: number }) => (
           <Text style={{ color, fontSize: size }}>S</Text>

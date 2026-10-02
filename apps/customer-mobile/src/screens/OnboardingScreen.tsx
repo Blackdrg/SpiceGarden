@@ -41,7 +41,7 @@ const onboardingSlides: OnboardingSlide[] = [
     id: 'delivery',
     title: 'Lightning Fast Delivery',
     subtitle: 'Our drivers race against time to get your food to you ASAP',
-    icon: '🚀',
+    icon: 'Fast',
     backgroundColor: '#1e4620',
   },
 ];

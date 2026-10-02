@@ -17,8 +17,6 @@ export class DriverPayoutService {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(OrderEntity)
     private orderRepo: Repository<OrderEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
   ) {}
 
   async calculateWeeklyIncentives(driverId: string, weekStart: Date): Promise<any> {

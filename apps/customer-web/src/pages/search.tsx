@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useEffect, CSSProperties } from 'react';
-import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, SkeletonCard, HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useOfflineQueue } from '../hooks/useOfflineQueue';
 
@@ -196,18 +196,27 @@ const SearchPage = () => {
 
     {/* Bottom nav */}
     <nav style={bottomNavStyle}>
-      {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '🔍' }, { key: 'orders', label: 'Orders', icon: '📦', path: '/history' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map((tab) => (
-        <button
-          type="button"
-          key={tab.key}
-          onClick={() => tab.path && router.push(tab.path)}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-          style={navButtonStyle(!tab.path)}
-        >
-          <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
+      {[
+        { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+        { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+        { key: 'orders', label: 'Orders', Icon: OrderIcon, path: '/history' },
+        { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' }
+      ].map((tab) => {
+        const Icon = tab.Icon;
+        const isActive = tab.key === 'search';
+        return (
+          <button
+            type="button"
+            key={tab.key}
+            onClick={() => tab.path && router.push(tab.path)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+            style={navButtonStyle(isActive)}
+          >
+            <Icon size={20} color={isActive ? DESIGN_TOKENS.colors.primary : '#999'} />
+            <span>{tab.label}</span>
+          </button>
+        );
+      })}
     </nav>
     </div>
   );

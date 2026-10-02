@@ -64,7 +64,7 @@ describe('AuthService', () => {
       (argon2.hash as jest.Mock).mockResolvedValue('hashed-password');
       const result = await service.hashPassword('test-password');
       expect(result).toBe('hashed-password');
-      expect(argon2.hash).toHaveBeenCalledWith('test-password');
+      expect(argon2.hash).toHaveBeenCalledWith('test-password', expect.any(Object));
     });
   });
 

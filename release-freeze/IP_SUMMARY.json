@@ -1,0 +1,29 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "status": "DOCUMENTED",
+  "statement": "Documented chain of title complete based on supplied records; formal legal counsel review remains a separate diligence activity.",
+  "contributor_matrix": {
+    "total_contributors": 4,
+    "assigned_contributors": 4,
+    "unassigned_contributors": 0,
+    "contributor_agreements_status": "VERIFIED ON FILE"
+  },
+  "asset_categories": [
+    "Source Code (12 Workspaces)",
+    "Proprietary Algorithms (Matching, Dispatch, Surge Pricing)",
+    "Database Schemas & Migrations",
+    "Kubernetes & Infrastructure Automation",
+    "UI/UX Design Tokens & Component Library",
+    "Technical Documentation & Diligence Data Room"
+  ],
+  "registered_domains": [
+    "spicegarden.app",
+    "spicegarden.io",
+    "spicegarden.dev"
+  ],
+  "trademark_assets": [
+    "SpiceGarden Platform Brand Mark",
+    "SpiceGarden Logo Iconography"
+  ]
+}

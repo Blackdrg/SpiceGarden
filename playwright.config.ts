@@ -2,6 +2,16 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './apps',
+  testMatch: [
+    '**/customer-web/**/*.e2e.test.*',
+    '**/restaurant-dashboard/**/*.e2e.test.*',
+    '**/super-admin/**/*.e2e.test.*',
+  ],
+  testIgnore: [
+    '**/customer-mobile/**',
+    '**/delivery-partner/**',
+    '**/backend/**',
+  ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

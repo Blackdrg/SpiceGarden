@@ -1,0 +1,58 @@
+{
+  "manifest_version": "2.0.0",
+  "project": "SpiceGarden",
+  "release_candidate": "v1.0.0-rc1",
+  "commit_sha": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-10-03T01:52:00.000Z",
+  "authoritative_directory": "qa/performance/",
+  "evidence_files": [
+    {
+      "tier": "Control Baseline (1 VU)",
+      "classification": "MEASURED / SLA PASS",
+      "raw_log": "reports/performance/raw/baseline_control.json",
+      "summary_rps": 0.8,
+      "p95_ms": 4.5
+    },
+    {
+      "tier": "Level 1 (1,000 VUs)",
+      "classification": "MEASURED / SLA PASS",
+      "raw_log": "reports/performance/raw/level1_1k_vus.json",
+      "summary_rps": 238.0,
+      "p95_ms": 68.5
+    },
+    {
+      "tier": "Level 2 (5,000 VUs)",
+      "classification": "MEASURED / SLA PASS",
+      "raw_log": "reports/performance/raw/level2_5k_vus.json",
+      "summary_rps": 808.6,
+      "p95_ms": 312.0
+    },
+    {
+      "tier": "Level 3 (10,000 VUs)",
+      "classification": "MEASURED / SLA PASS (HIGHEST SLA COMPLIANT)",
+      "raw_log": "reports/performance/raw/level3_10k_vus.json",
+      "summary_rps": 1373.3,
+      "p95_ms": 492.0
+    },
+    {
+      "tier": "Level 4 (20,000 VU Target / 16,850 VUs Achieved)",
+      "classification": "MEASURED / DEGRADED — TARGET NOT REACHED",
+      "raw_log": "reports/performance/raw/level4_16850_vus.json",
+      "summary_rps": 1942.0,
+      "p95_ms": 960.0
+    },
+    {
+      "tier": "Level 5 (30,000 VU Target / 22,400 VUs Peak Observed)",
+      "classification": "OBSERVED / BLOCKED — HIGHEST PHYSICALLY OBSERVED CONCURRENCY BEFORE SINGLE-HOST WINDOWS RESOURCE EXHAUSTION",
+      "raw_log": "reports/performance/raw/level5_22400_peak.json",
+      "summary_rps": 2150.0,
+      "p95_ms": 1850.0
+    },
+    {
+      "tier": "Distributed Linux Fleet Stages (25K - 1M VUs)",
+      "classification": "MODELED / ARCHITECTED RUNBOOK",
+      "runbook": "qa/performance/1M-REPRODUCTION-RUNBOOK.md",
+      "sizing_matrix": "qa/performance/PHYSICAL-SCALE-MATRIX.json"
+    }
+  ]
+}

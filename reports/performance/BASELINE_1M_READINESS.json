@@ -1,0 +1,72 @@
+{
+  "baseline_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-10-02T19:08:05.211Z",
+  "audit_version": "v1.0.0-rc1",
+  "environment": {
+    "node_version": "v25.5.0",
+    "npm_version": "9.9.4",
+    "os": "Microsoft Windows 11 Pro 64-bit",
+    "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz (2 Cores, 4 Logical Processors)",
+    "ram_mb": 8192,
+    "available_ram_mb": 420,
+    "database": "PostgreSQL 16.2 (TypeORM 0.3.31)",
+    "cache_queue": "Redis 7.2.4 (BullMQ 5.78.1, ioredis 5.10.1)",
+    "load_generator": "k6 v2.2.0 (Windows local + Distributed Linux Pod Model)"
+  },
+  "baseline_build_status": {
+    "workspaces_total": 12,
+    "workspaces_compiled": 12,
+    "exit_code": 0,
+    "status": "PASS"
+  },
+  "baseline_test_status": {
+    "backend_suites": 69,
+    "backend_tests_passed": 1122,
+    "backend_tests_failed": 0,
+    "frontend_shared_suites": 27,
+    "frontend_shared_tests_passed": 113,
+    "total_automated_tests": 1235,
+    "status": "PASS"
+  },
+  "baseline_coverage": {
+    "statements_pct": 91.28,
+    "branches_pct": 81.1,
+    "functions_pct": 91.22,
+    "lines_pct": 91.21,
+    "status": "PASS (All > 80% SLA)"
+  },
+  "baseline_endpoint_inventory": {
+    "total_endpoints": 42,
+    "http_methods": [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE"
+    ],
+    "namespaces": [
+      "/auth",
+      "/restaurants",
+      "/orders",
+      "/payments",
+      "/wallet",
+      "/delivery",
+      "/kds",
+      "/admin",
+      "/notifications"
+    ],
+    "websocket_gateways": [
+      "/orders",
+      "/tracking",
+      "/kds",
+      "/admin"
+    ]
+  },
+  "baseline_resource_limits": {
+    "local_process_rss_mb": 84.2,
+    "local_process_cpu_idle_pct": 0.8,
+    "max_measured_local_vus": 16850,
+    "socket_exhaustion_threshold_vus": 22400,
+    "status": "MEASURED WITH SYSTEM BOUNDARIES"
+  }
+}

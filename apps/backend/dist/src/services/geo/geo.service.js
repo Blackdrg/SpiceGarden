@@ -25,15 +25,13 @@ let GeoService = class GeoService {
     branchRepo;
     driverRepo;
     orderRepo;
-    dataSource;
     EARTH_RADIUS_KM = 6371;
     AVERAGE_SPEED_KMH = 30;
-    constructor(restaurantRepo, branchRepo, driverRepo, orderRepo, dataSource) {
+    constructor(restaurantRepo, branchRepo, driverRepo, orderRepo) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
-        this.dataSource = dataSource;
     }
     calculateDistance(point1, point2) {
         const dLat = this.toRadians(point2.lat - point1.lat);
@@ -135,6 +133,5 @@ exports.GeoService = GeoService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], GeoService);

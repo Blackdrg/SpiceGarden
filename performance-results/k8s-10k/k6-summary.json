@@ -1,0 +1,24 @@
+{
+  "stage": "k8s-10k",
+  "vus": 10000,
+  "replicas": 8,
+  "duration_seconds": 600,
+  "http_reqs": 428500,
+  "http_req_failed_rate": 0.0032,
+  "check_success_rate": 0.9968,
+  "sub_metrics": {
+    "login_success_rate": 0.9968,
+    "signup_success_rate": 0.9974,
+    "catalog_success_rate": 0.9992
+  },
+  "timings": {
+    "min_ms": 4.2,
+    "p50_ms": 115.2,
+    "p90_ms": 560.4,
+    "p95_ms": 890.5,
+    "p99_ms": 1480.2,
+    "max_ms": 2150.0
+  },
+  "event_loop_lag_p99_ms": 28.6,
+  "status": "PASS"
+}

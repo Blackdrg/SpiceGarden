@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, Flame, PackageIcon, VolumeIcon, VolumeMuteIcon, AlertCircleIcon } from '@spicegarden/ui';
 import type { Socket } from 'socket.io-client';
 import styles from './index.module.css';
 
@@ -320,15 +320,18 @@ function DashboardHeader({
 }) {
   return (
     <div className={styles.headerBar}>
-      <h1 className={styles.headerTitle}>🔥 KITCHEN DISPLAY</h1>
+      <h1 className={styles.headerTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Flame size={22} color="#f04e31" /> KITCHEN DISPLAY
+      </h1>
       <div className={styles.headerControls}>
         <button
           type="button"
           onClick={() => audioEnabled ? onDismissSound() : onToggleAudio()}
           title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
           className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          {audioEnabled ? '🔊' : '🔇'}
+          {audioEnabled ? <VolumeIcon size={18} color="#fff" /> : <VolumeMuteIcon size={18} color="#aaa" />}
         </button>
         <div className={styles.orderCountBadge}>
           {orderCount} orders{activeSoundCount > 0 ? ` · ${activeSoundCount} alert${activeSoundCount === 1 ? '' : 's'}` : ''}
@@ -363,8 +366,9 @@ function SoundOverlay({ activeSounds }: { activeSounds: string[] }) {
           type="button"
           onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); }}
           className={styles.soundButton}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          🚨 NEW ORDER — Tap to dismiss
+          <AlertCircleIcon size={16} color="#fff" /> NEW ORDER — Tap to dismiss
         </button>
       ))}
     </div>
@@ -380,8 +384,10 @@ function TabBar({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab:
           key={tab}
           onClick={() => onTabChange(tab)}
           className={`${styles.tabButton} ${activeTab === tab ? styles.tabActive : styles.tabInactive}`}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          {tab === 'kitchen' ? '🔥 Kitchen' : '📦 Inventory'}
+          {tab === 'kitchen' ? <Flame size={16} color={activeTab === 'kitchen' ? '#f04e31' : '#666'} /> : <PackageIcon size={16} color={activeTab === 'inventory' ? '#f04e31' : '#666'} />}
+          {tab === 'kitchen' ? 'Kitchen' : 'Inventory'}
         </button>
       ))}
     </div>
@@ -542,7 +548,9 @@ function InventoryView({
   return (
     <div className={styles.inventoryContainer}>
       <div className={styles.inventoryHeader}>
-        <h3 className={styles.inventoryTitle}>📦 Stock Levels</h3>
+        <h3 className={styles.inventoryTitle} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <PackageIcon size={18} color="#f04e31" /> Stock Levels
+        </h3>
         <span className={styles.lowStockCount}>{inventory.filter((item) => item.inStock <= item.threshold).length} low</span>
       </div>
       <div className={styles.inventoryGrid}>
@@ -563,7 +571,7 @@ function InventoryView({
               <div className={`${styles.stockProgressFill} ${stockWidthClassName}`} />
               {isLow && (
                 <div className={styles.lowStockWarning}>
-                  &#9888; LOW STOCK — Restock urgently
+                  LOW STOCK — Restock urgently
                 </div>
               )}
             </div>
@@ -579,25 +587,29 @@ function InventoryView({
   );
 }
 
-const bottomNavItems: { key: Tab; label: string; emoji: string }[] = [
-  { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
-  { key: 'inventory', label: 'Inventory', emoji: '📦' },
+const bottomNavItems: { key: Tab; label: string; Icon: React.ComponentType<{ size?: number; color?: string }> }[] = [
+  { key: 'kitchen', label: 'Kitchen', Icon: Flame },
+  { key: 'inventory', label: 'Inventory', Icon: PackageIcon },
 ];
 
 function BottomNav({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab: Tab) => void }) {
   return (
     <nav className={styles.navBar}>
-      {bottomNavItems.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          onClick={() => onTabChange(tab.key)}
-          className={`${styles.navItem} ${activeTab === tab.key ? styles.navItemActive : styles.navItemInactive}`}
-        >
-          <span className={styles.navIcon}>{tab.emoji}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
+      {bottomNavItems.map((tab) => {
+        const Icon = tab.Icon;
+        const isActive = activeTab === tab.key;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onTabChange(tab.key)}
+            className={`${styles.navItem} ${isActive ? styles.navItemActive : styles.navItemInactive}`}
+          >
+            <span className={styles.navIcon}><Icon size={18} color={isActive ? '#f04e31' : '#888'} /></span>
+            <span>{tab.label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }

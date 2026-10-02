@@ -30,16 +30,14 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
     subscriptionRepo;
     userRepo;
     orderRepo;
-    dataSource;
     logger = new common_1.Logger(LoyaltyService_1.name);
-    constructor(couponRepo, couponUsageRepo, referralRepo, subscriptionRepo, userRepo, orderRepo, dataSource) {
+    constructor(couponRepo, couponUsageRepo, referralRepo, subscriptionRepo, userRepo, orderRepo) {
         this.couponRepo = couponRepo;
         this.couponUsageRepo = couponUsageRepo;
         this.referralRepo = referralRepo;
         this.subscriptionRepo = subscriptionRepo;
         this.userRepo = userRepo;
         this.orderRepo = orderRepo;
-        this.dataSource = dataSource;
     }
     async createCoupon(data) {
         const coupon = this.couponRepo.create();
@@ -277,6 +275,5 @@ exports.LoyaltyService = LoyaltyService = LoyaltyService_1 = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], LoyaltyService);

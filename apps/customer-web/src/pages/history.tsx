@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, SkeletonCard, HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@spicegarden/ui';
@@ -191,21 +191,31 @@ const HistoryPage = () => {
 
       {/* Bottom nav */}
       <nav className={styles.bottomNav}>
-        {[{ key: 'home', label: 'Home', icon: '🏠', path: '/' }, { key: 'search', label: 'Search', icon: '�??', path: '/search' }, { key: 'orders', label: 'Orders', icon: '📦' }, { key: 'account', label: 'Account', icon: '👤', path: '/profile' }].map(tab => (
-          <button
-            type="button"
-            key={tab.key}
-            onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            className={`${styles.navButton} ${getNavColorClass(tab.key)}`}
-          >
-            <span className={styles.navIcon}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+        {[
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'orders', label: 'Orders', Icon: OrderIcon, path: '/history' },
+          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          const isActive = tab.key === 'orders';
+          return (
+            <button
+              type="button"
+              key={tab.key}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              className={`${styles.navButton} ${getNavColorClass(tab.key)}`}
+            >
+              <span className={styles.navIcon}><Icon size={20} color={isActive ? DESIGN_TOKENS.colors.primary : '#888'} /></span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );
 };
 
 export default HistoryPage;
+

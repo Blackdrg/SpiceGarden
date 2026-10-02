@@ -1,0 +1,45 @@
+{
+  "hpa_configuration": {
+    "min_replicas": 3,
+    "max_replicas": 20,
+    "target_cpu_utilization_percent": 70,
+    "target_memory_utilization_percent": 80
+  },
+  "scaling_events": [
+    {
+      "timestamp": "2026-09-29T22:35:00Z",
+      "stage": "1k_ramp",
+      "from_replicas": 3,
+      "to_replicas": 3,
+      "cpu_utilization": "48%",
+      "status": "STABLE"
+    },
+    {
+      "timestamp": "2026-09-29T22:38:00Z",
+      "stage": "5k_ramp",
+      "from_replicas": 3,
+      "to_replicas": 5,
+      "cpu_utilization": "74%",
+      "scale_latency_seconds": 45,
+      "status": "SCALED"
+    },
+    {
+      "timestamp": "2026-09-29T22:42:00Z",
+      "stage": "10k_ramp",
+      "from_replicas": 5,
+      "to_replicas": 8,
+      "cpu_utilization": "76%",
+      "scale_latency_seconds": 58,
+      "status": "SCALED"
+    },
+    {
+      "timestamp": "2026-09-29T22:47:00Z",
+      "stage": "20k_ramp",
+      "from_replicas": 8,
+      "to_replicas": 14,
+      "cpu_utilization": "78%",
+      "scale_latency_seconds": 65,
+      "status": "SCALED"
+    }
+  ]
+}

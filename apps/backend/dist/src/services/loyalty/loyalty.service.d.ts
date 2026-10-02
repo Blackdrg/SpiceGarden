@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { CouponEntity } from '../../db/entities/coupon.entity';
@@ -12,9 +12,8 @@ export declare class LoyaltyService {
     private subscriptionRepo;
     private userRepo;
     private orderRepo;
-    private dataSource;
     private readonly logger;
-    constructor(couponRepo: Repository<CouponEntity>, couponUsageRepo: Repository<CouponUsageEntity>, referralRepo: Repository<ReferralEntity>, subscriptionRepo: Repository<SubscriptionEntity>, userRepo: Repository<UserEntity>, orderRepo: Repository<OrderEntity>, dataSource: DataSource);
+    constructor(couponRepo: Repository<CouponEntity>, couponUsageRepo: Repository<CouponUsageEntity>, referralRepo: Repository<ReferralEntity>, subscriptionRepo: Repository<SubscriptionEntity>, userRepo: Repository<UserEntity>, orderRepo: Repository<OrderEntity>);
     createCoupon(data: any): Promise<CouponEntity>;
     applyCoupon(code: string, userId: string, orderAmount: number, orderId?: string): Promise<any>;
     generateReferralCode(userId: string): Promise<ReferralEntity>;

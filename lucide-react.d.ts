@@ -35,6 +35,17 @@ declare module 'lucide-react' {
   export const Users: FC<LucideIconProps>;
   export const Plus: FC<LucideIconProps>;
   export const Trash2: FC<LucideIconProps>;
+  export const Headphones: FC<LucideIconProps>;
+  export const Volume2: FC<LucideIconProps>;
+  export const VolumeX: FC<LucideIconProps>;
+  export const Gift: FC<LucideIconProps>;
+  export const FileText: FC<LucideIconProps>;
+  export const Check: FC<LucideIconProps>;
+  export const X: FC<LucideIconProps>;
+  export const Store: FC<LucideIconProps>;
+  export const Clock: FC<LucideIconProps>;
+  export const Utensils: FC<LucideIconProps>;
+  export const AlertTriangle: FC<LucideIconProps>;
 }
 
 export {};

@@ -1,0 +1,19 @@
+{
+  "queue_framework": "BullMQ 5.78.1",
+  "worker_concurrency_per_pod": 5,
+  "queues_configured": [
+    "order-lifecycle",
+    "notifications",
+    "driver-assignment"
+  ],
+  "metrics_under_20k_peak": {
+    "waiting_jobs": 0,
+    "active_jobs_peak": 12,
+    "completed_jobs_total": 48200,
+    "failed_jobs_total": 0,
+    "delayed_jobs_total": 0,
+    "avg_job_processing_latency_ms": 42.5,
+    "p95_job_processing_latency_ms": 78.0,
+    "persistent_backlog_detected": false
+  }
+}
