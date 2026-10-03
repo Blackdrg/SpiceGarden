@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as path from 'path';
 import { AppController } from './app.controller';
@@ -32,6 +32,7 @@ import { DriverFleetModule } from './services/driver-fleet/driver-fleet.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { ReviewServiceModule } from './services/review/review.module';
 import { UserProfileModule } from './services/user/user-profile.module';
+import { MenuCustomizationModule } from './services/menu-customization/menu-customization.module';
 import { ApisModule } from './apis.module';
 
 @Module({
@@ -49,6 +50,7 @@ import { ApisModule } from './apis.module';
     OrderServiceModule,
     PaymentServiceModule,
     RestaurantServiceModule,
+    MenuCustomizationModule,
     SearchServiceModule,
     DeliveryServiceModule,
     DriverOpsModule,
