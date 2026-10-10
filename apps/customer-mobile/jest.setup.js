@@ -77,7 +77,7 @@ jest.mock('react-native', () => ({
     OS: 'ios',
     select: (specs) => specs?.default || specs?.ios || specs?.android,
   },
-}));
+}), { virtual: true });
 
 global.__fbBatchedBridgeConfig = {
   remoteModuleConfig: [],
@@ -99,7 +99,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     removeItem: jest.fn(),
     clear: jest.fn(),
   },
-}));
+}), { virtual: true });
 
 global.document = {
   title: '',
