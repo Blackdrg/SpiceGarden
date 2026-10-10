@@ -17,9 +17,9 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node", "jest"],
+    "types": ["react", "node", "jest"],
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "App.tsx"],
   "exclude": ["node_modules", "dist"]
 }

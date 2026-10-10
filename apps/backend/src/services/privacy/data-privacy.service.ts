@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EncryptionService } from '../../security/encryption.service';
-import { Repository, DataSource, LessThan } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { SessionEntity } from '../../db/entities/session.entity';
@@ -116,7 +116,7 @@ export class DataPrivacyService {
   }
 
   async processProtectedDeletion(userId: string): Promise<void> {
-    const result = await this.dataSource.transaction(async (manager) => {
+    const result = await this.dataSource.transaction(async (manager: EntityManager) => {
       const userRepo = manager.getRepository(UserEntity);
       const orderRepo = manager.getRepository(OrderEntity);
       const exportRepo = manager.getRepository(DataExportRequestEntity);
