@@ -183,7 +183,10 @@ export class RazorpayGateway implements PaymentGateway {
         .update(payload.toString())
         .digest('hex');
 
-      if (expectedSignature !== signature) {
+      const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+      const signatureBuffer = Buffer.from(signature, 'utf8');
+
+      if (expectedBuffer.length !== signatureBuffer.length || !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)) {
         throw new Error('Invalid webhook signature');
       }
 
