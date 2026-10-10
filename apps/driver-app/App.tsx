@@ -27,10 +27,15 @@ const DriverApp = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [route, setRoute] = useState<Location[]>([]);
-  const [watchId, setWatchId] = useState<number | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [eta, setEta] = useState(0);
   const mapRef = useRef<MapView>(null);
+  const orderRef = useRef<Order | null>(null);
+  const watchIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    orderRef.current = order;
+  }, [order]);
 
   useEffect(() => {
     requestLocationPermission();
@@ -39,34 +44,41 @@ const DriverApp = () => {
     });
     setSocket(socketInstance);
 
-    socketInstance.on('connect', () => {
+    const handleConnect = () => {
       console.log('Connected to tracking server');
-    });
+    };
 
-    socketInstance.on('orderAssigned', (data: Order) => {
+    const handleOrderAssigned = (data: Order) => {
       setOrder(data);
       Alert.alert('New Order', `Order #${data.id} assigned. Tap to accept.`);
-    });
+    };
 
-    socketInstance.on('etaUpdate', (data: { orderId: string; etaMinutes: number }) => {
-      if (data.orderId === order?.id) {
+    const handleEtaUpdate = (data: { orderId: string; etaMinutes: number }) => {
+      if (data.orderId === orderRef.current?.id) {
         setEta(data.etaMinutes);
       }
-    });
+    };
+
+    socketInstance.on('connect', handleConnect);
+    socketInstance.on('orderAssigned', handleOrderAssigned);
+    socketInstance.on('etaUpdate', handleEtaUpdate);
 
     return () => {
+      socketInstance.off('connect', handleConnect);
+      socketInstance.off('orderAssigned', handleOrderAssigned);
+      socketInstance.off('etaUpdate', handleEtaUpdate);
       socketInstance.disconnect();
-      if (watchId !== null && Platform.OS === 'android') {
-        Geolocation.clearWatch(watchId);
+      if (watchIdRef.current !== null && Platform.OS === 'android') {
+        Geolocation.clearWatch(watchIdRef.current);
       }
     };
   }, []);
 
   useEffect(() => {
-    if (location && order && isOnline) {
+    if (location && order && isOnline && socket) {
       // Send location update every 5 seconds
       const interval = setInterval(() => {
-        socket?.emit('updateLocation', {
+        socket.emit('updateLocation', {
           driverId: 'driver-' + Date.now(), // In real app, use actual driver ID
           lat: location.latitude,
           lng: location.longitude,
@@ -78,7 +90,7 @@ const DriverApp = () => {
 
       return () => clearInterval(interval);
     }
-  }, [location, order, isOnline]);
+  }, [location, order, isOnline, socket]);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -105,7 +117,7 @@ const DriverApp = () => {
   };
 
   const startLocationTracking = () => {
-    Geolocation.watchPosition(
+    const id = Geolocation.watchPosition(
       (position) => {
         const { latitude, longitude, accuracy, speed, heading } = position.coords;
         setLocation({
@@ -127,6 +139,7 @@ const DriverApp = () => {
         fastestInterval: 2000,
       }
     );
+    watchIdRef.current = id;
   };
 
   const goOnline = () => {

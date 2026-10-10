@@ -81,12 +81,13 @@ const NetworkError = ({ onRetry, message = 'Unable to connect. Please check your
 exports.NetworkError = NetworkError;
 const LoadingState = ({ count = 3, variant = 'card' }) => {
     if (variant === 'text') {
+        const widths = ['85%', '70%', '95%', '60%', '80%'];
         return (react_1.default.createElement("div", { style: { padding: tokens_1.DESIGN_TOKENS.spacing.md } }, Array.from({ length: count }).map((_, i) => (react_1.default.createElement("div", { key: i, style: {
                 height: '16px',
                 backgroundColor: tokens_1.DESIGN_TOKENS.colors.elevated,
                 borderRadius: tokens_1.DESIGN_TOKENS.radius.sm,
                 marginBottom: tokens_1.DESIGN_TOKENS.spacing.xs,
-                width: `${Math.random() * 40 + 60}%`,
+                width: widths[i % widths.length],
                 animation: 'pulse 1.5s ease-in-out infinite',
             } })))));
     }

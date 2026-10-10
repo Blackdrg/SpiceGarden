@@ -103,6 +103,9 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     data: data || {},
                 }),
             });
+            if (!response.ok) {
+                throw new Error(`FCM API error: HTTP ${response.status}`);
+            }
             const result = (await response.json());
             this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
             return { success: true, result };
@@ -133,10 +136,10 @@ let NotificationService = NotificationService_1 = class NotificationService {
                     Body: message,
                 }),
             });
-            const result = (await response.json());
             if (!response.ok) {
-                throw new Error(result.message || 'Twilio API error');
+                throw new Error(`Twilio API error: HTTP ${response.status}`);
             }
+            const result = (await response.json());
             this.logger.log(`SMS sent to ${phone}`);
             return { success: true, sid: result.sid };
         }

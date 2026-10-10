@@ -143,15 +143,17 @@ let DriverAssignmentService = class DriverAssignmentService {
             a.actualTimeMinutes <= a.estimatedTimeMinutes * 1.2).length;
         const onTimeDeliveryRate = (onTimeDeliveries / totalDeliveries) * 100;
         const acceptanceRate = 95;
-        const cancelledAssignments = await this.assignmentRepo.count({
-            where: {
-                driver: { id: driverId },
-                status: 'failed'
-            }
-        });
-        const totalAssignments = await this.assignmentRepo.count({
-            where: { driver: { id: driverId } }
-        });
+        const [cancelledAssignments, totalAssignments] = await Promise.all([
+            this.assignmentRepo.count({
+                where: {
+                    driver: { id: driverId },
+                    status: 'failed'
+                }
+            }),
+            this.assignmentRepo.count({
+                where: { driver: { id: driverId } }
+            })
+        ]);
         const cancellationRate = totalAssignments > 0
             ? (cancelledAssignments / totalAssignments) * 100
             : 0;

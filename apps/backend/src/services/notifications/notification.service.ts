@@ -62,6 +62,10 @@ export class NotificationService {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`FCM API error: HTTP ${response.status}`);
+      }
+
       const result = (await response.json()) as { message?: string; sid?: string };
       this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
       return { success: true, result };
@@ -95,10 +99,11 @@ export class NotificationService {
         }),
       });
 
-      const result = (await response.json()) as { message?: string; sid?: string };
       if (!response.ok) {
-        throw new Error(result.message || 'Twilio API error');
+        throw new Error(`Twilio API error: HTTP ${response.status}`);
       }
+
+      const result = (await response.json()) as { message?: string; sid?: string };
 
       this.logger.log(`SMS sent to ${phone}`);
       return { success: true, sid: result.sid };

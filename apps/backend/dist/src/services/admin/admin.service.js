@@ -47,7 +47,7 @@ let AdminService = class AdminService {
             where = { ...where, restaurantId: branchId };
         }
         try {
-            const [ordersToday, totalRevenue, activeDrivers, activeRestaurants] = await Promise.all([
+            const [ordersToday, totalRevenue, activeDrivers, activeRestaurants, branches, revenueData, disputeCount, refundCount,] = await Promise.all([
                 this.orderRepo.count({ where }),
                 this.orderRepo.createQueryBuilder('order')
                     .select('SUM(order.grandTotal)', 'total')
@@ -55,10 +55,8 @@ let AdminService = class AdminService {
                     .getRawOne(),
                 this.driverRepo.count({ where: { isOnline: true } }),
                 this.restaurantRepo.count({ where: { status: 'active' } }),
-            ]);
-            const branches = await this.getBranchStats();
-            const revenueData = await this.getRevenueData();
-            const [disputeCount, refundCount] = await Promise.all([
+                this.getBranchStats(),
+                this.getRevenueData(),
                 this.getDisputeCount(today),
                 this.getRefundCount(today),
             ]);

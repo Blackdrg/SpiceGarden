@@ -228,6 +228,9 @@ let ProductionMapsService = ProductionMapsService_1 = class ProductionMapsServic
     }
     async _callGoogleGeocode(address, apiKey) {
         const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+        if (!res.ok) {
+            throw new Error(`Google Maps HTTP error: ${res.status}`);
+        }
         const data = (await res.json());
         if (data.status !== 'OK' || !data.results || data.results.length === 0) {
             throw new Error(`Google Maps API error: ${data.status}`);
@@ -248,6 +251,9 @@ let ProductionMapsService = ProductionMapsService_1 = class ProductionMapsServic
     }
     async _callMapboxGeocode(address, accessToken) {
         const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${accessToken}`);
+        if (!res.ok) {
+            throw new Error(`Mapbox HTTP error: ${res.status}`);
+        }
         const data = (await res.json());
         if (!data.features || data.features.length === 0) {
             throw new Error('Mapbox No Results');

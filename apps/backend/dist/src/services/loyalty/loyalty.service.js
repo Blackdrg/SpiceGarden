@@ -179,16 +179,18 @@ let LoyaltyService = LoyaltyService_1 = class LoyaltyService {
         };
     }
     async getReferralHistory(userId) {
-        const sent = await this.referralRepo.find({
-            where: { referrerId: userId },
-            order: { createdAt: 'DESC' },
-            take: 100,
-        });
-        const received = await this.referralRepo.find({
-            where: { refereeId: userId },
-            order: { createdAt: 'DESC' },
-            take: 100,
-        });
+        const [sent, received] = await Promise.all([
+            this.referralRepo.find({
+                where: { referrerId: userId },
+                order: { createdAt: 'DESC' },
+                take: 100,
+            }),
+            this.referralRepo.find({
+                where: { refereeId: userId },
+                order: { createdAt: 'DESC' },
+                take: 100,
+            }),
+        ]);
         return {
             totalSent: sent.length,
             totalCompleted: sent.filter(r => r.status === 'completed').length,

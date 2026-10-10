@@ -40,21 +40,23 @@ let PayoutService = PayoutService_1 = class PayoutService {
         this.connection = connection;
     }
     async generatePayoutReport(restaurantId, periodStart, periodEnd) {
-        const orders = await this.orderRepo.find({
-            where: {
-                restaurantId,
-                status: order_interface_1.OrderStatus.DELIVERED,
-                createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
-            },
-            relations: { gstDetail: true },
-        });
+        const [orders, commissionRules] = await Promise.all([
+            this.orderRepo.find({
+                where: {
+                    restaurantId,
+                    status: order_interface_1.OrderStatus.DELIVERED,
+                    createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
+                },
+                relations: { gstDetail: true },
+            }),
+            this.commissionRepo.find({
+                where: {
+                    restaurantId,
+                    status: commission_rule_entity_1.CommissionStatus.ACTIVE,
+                },
+            }),
+        ]);
         const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
-        const commissionRules = await this.commissionRepo.find({
-            where: {
-                restaurantId,
-                status: commission_rule_entity_1.CommissionStatus.ACTIVE,
-            },
-        });
         let platformCommission = grossSales * 0.15;
         if (commissionRules.length > 0) {
             const applicableRule = commissionRules[0];

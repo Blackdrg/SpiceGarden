@@ -31,14 +31,17 @@ export class CustomerSupportService {
     description: string,
     evidence?: any,
   ): Promise<DisputeEntity> {
-    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    const [order, existingDispute] = await Promise.all([
+      this.orderRepo.findOne({ where: { id: orderId } }),
+      this.disputeRepo.findOne({
+        where: { orderId: orderId as any, status: DisputeStatus.RAISED } as any,
+      }),
+    ]);
+
     if (!order) {
       throw new NotFoundException('Order not found');
     }
 
-    const existingDispute = await this.disputeRepo.findOne({
-      where: { orderId: orderId as any, status: DisputeStatus.RAISED } as any,
-    });
     if (existingDispute) {
       throw new BadRequestException('Dispute already exists for this order');
     }

@@ -75,6 +75,10 @@ export class ProductionFCMProvider {
           }),
         });
 
+        if (!response.ok) {
+          throw new Error(`FCM request failed with HTTP ${response.status}`);
+        }
+
         const resData = (await response.json()) as any;
         if (resData && resData.results) {
           totalSuccess += resData.success || 0;

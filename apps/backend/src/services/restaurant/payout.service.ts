@@ -32,23 +32,24 @@ export class PayoutService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<PayoutReportEntity> {
-    const orders = await this.orderRepo.find({
-      where: {
-        restaurantId,
-        status: OrderStatus.DELIVERED,
-        createdAt: Between(periodStart, periodEnd),
-      },
-      relations: { gstDetail: true },
-    });
+    const [orders, commissionRules] = await Promise.all([
+      this.orderRepo.find({
+        where: {
+          restaurantId,
+          status: OrderStatus.DELIVERED,
+          createdAt: Between(periodStart, periodEnd),
+        },
+        relations: { gstDetail: true },
+      }),
+      this.commissionRepo.find({
+        where: {
+          restaurantId,
+          status: CommissionStatus.ACTIVE,
+        },
+      }),
+    ]);
 
     const grossSales = orders.reduce((sum: number, o: OrderEntity) => sum + Number(o.grandTotal), 0);
-
-    const commissionRules = await this.commissionRepo.find({
-      where: {
-        restaurantId,
-        status: CommissionStatus.ACTIVE,
-      },
-    });
 
     let platformCommission = grossSales * 0.15;
     if (commissionRules.length > 0) {

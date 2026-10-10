@@ -108,8 +108,10 @@ let DataPrivacyService = DataPrivacyService_1 = class DataPrivacyService {
             const user = await userRepo.findOne({ where: { id: userId } });
             if (!user)
                 throw new Error('User not found');
-            const exportRequests = await exportRepo.find({ where: { userId, status: 'completed' } });
-            const deletionRequest = await deletionRepo.findOne({ where: { userId, status: 'pending' } });
+            const [exportRequests, deletionRequest] = await Promise.all([
+                exportRepo.find({ where: { userId, status: 'completed' } }),
+                deletionRepo.findOne({ where: { userId, status: 'pending' } }),
+            ]);
             if (!deletionRequest)
                 throw new Error('Active deletion request not found');
             if (exportRequests.length === 0) {

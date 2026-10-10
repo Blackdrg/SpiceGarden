@@ -6,12 +6,21 @@ const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/a
 const trackEvent = (event) => {
     if (typeof window === 'undefined')
         return;
-    fetch(ANALYTICS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...event, timestamp: Date.now() }),
-        keepalive: true,
-    }).catch(() => { });
+    const payload = JSON.stringify({ ...event, timestamp: Date.now() });
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+        return;
+    }
+    try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', ANALYTICS_ENDPOINT, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(payload);
+    }
+    catch {
+        // ignore
+    }
 };
 exports.trackEvent = trackEvent;
 const useAnalytics = () => {
@@ -49,11 +58,14 @@ const useWebVitals = () => {
             });
         });
         observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
             const cls = window.cumulativeLayoutShift || 0;
             reportVital({ name: 'CLS', value: cls });
         }, 5000);
-        return () => observer.disconnect();
+        return () => {
+            clearTimeout(timerId);
+            observer.disconnect();
+        };
     }, []);
     return null;
 };
