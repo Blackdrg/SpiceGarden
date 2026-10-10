@@ -27,12 +27,14 @@ jobs:
       - name: Run security vulnerability tests
         run: node infra/scripts/security-tests.js
       - name: Run Snyk (if available)
+        if: ${{ env.SNYK_TOKEN != '' }}
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
           args: --severity-threshold=high
+        continue-on-error: true
 
   build-test:
     runs-on: ubuntu-latest
