@@ -105,6 +105,7 @@
     "@types/pg": "^8.10.9",
     "@types/qs": "^6.9.15",
     "@types/range-parser": "^1.2.7",
+    "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@types/react-test-renderer": "^19.0.0",
     "@types/semver": "^7.5.6",
