@@ -1,11 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useReducedMotion = exports.ReducedMotionContext = exports.DARK_MODE_TOKENS = exports.MOTION_EASING = exports.DESIGN_TOKENS = void 0;
-const react_1 = __importDefault(require("react"));
-exports.DESIGN_TOKENS = {
+import React from 'react';
+export const DESIGN_TOKENS = {
     colors: {
         primary: '#FF5A1F',
         secondary: '#111827',
@@ -72,12 +66,12 @@ exports.DESIGN_TOKENS = {
         premiumFloat: '0 8px 24px rgba(255,90,31,0.25)',
     },
 };
-exports.MOTION_EASING = {
+export const MOTION_EASING = {
     easeOutSoft: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
     easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
     springSmooth: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
 };
-exports.DARK_MODE_TOKENS = {
+export const DARK_MODE_TOKENS = {
     colors: {
         primary: '#FF5A1F',
         secondary: '#F9FAFB',
@@ -90,8 +84,7 @@ exports.DARK_MODE_TOKENS = {
         border: '#333333',
     },
 };
-exports.ReducedMotionContext = react_1.default.createContext({
+export const ReducedMotionContext = React.createContext({
     prefersReduced: false,
 });
-const useReducedMotion = () => react_1.default.useContext(exports.ReducedMotionContext);
-exports.useReducedMotion = useReducedMotion;
+export const useReducedMotion = () => React.useContext(ReducedMotionContext);

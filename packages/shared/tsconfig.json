@@ -13,6 +13,8 @@
     "rootDir": ".",
     "jsx": "preserve",
     "declaration": true,
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
+    "ignoreDeprecations": "5.0",
     "types": ["node", "jest"]
   },
   "include": ["index.ts", "analytics.ts", "api.ts", "constants.ts", "types.ts"],

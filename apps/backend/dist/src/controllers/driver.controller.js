@@ -26,7 +26,7 @@ const driver_assignment_entity_1 = require("../db/entities/driver-assignment.ent
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const tracking_gateway_1 = require("../infra/tracking/tracking.gateway");
-const order_interface_1 = require("../shared/domain/order.interface");
+const order_interface_1 = require("@/shared/domain/order.interface");
 const notification_service_1 = require("../services/notifications/notification.service");
 let DriverController = class DriverController {
     driverRepo;

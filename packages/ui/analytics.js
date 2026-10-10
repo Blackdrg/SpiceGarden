@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useWebVitals = exports.useAnalytics = exports.trackEvent = void 0;
-const react_1 = require("react");
+import { useEffect } from 'react';
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics';
 const eventQueue = [];
 let isFlushing = false;
@@ -30,7 +27,7 @@ const flushQueue = () => {
     }
     isFlushing = false;
 };
-const trackEvent = (event) => {
+export const trackEvent = (event) => {
     if (typeof window === 'undefined')
         return;
     eventQueue.push(event);
@@ -41,21 +38,19 @@ const trackEvent = (event) => {
         setTimeout(flushQueue, 0);
     }
 };
-exports.trackEvent = trackEvent;
-const useAnalytics = () => {
-    (0, react_1.useEffect)(() => {
+export const useAnalytics = () => {
+    useEffect(() => {
         if (typeof window !== 'undefined') {
-            (0, exports.trackEvent)({ event: 'page_view', properties: { url: window.location.href } });
+            trackEvent({ event: 'page_view', properties: { url: window.location.href } });
         }
     }, []);
 };
-exports.useAnalytics = useAnalytics;
-const useWebVitals = () => {
-    (0, react_1.useEffect)(() => {
+export const useWebVitals = () => {
+    useEffect(() => {
         if (typeof window === 'undefined' || !('performance' in window))
             return;
         const reportVital = (metric) => {
-            (0, exports.trackEvent)({
+            trackEvent({
                 event: 'web_vital',
                 properties: {
                     metric: metric.name,
@@ -88,4 +83,3 @@ const useWebVitals = () => {
     }, []);
     return null;
 };
-exports.useWebVitals = useWebVitals;
