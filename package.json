@@ -171,6 +171,8 @@
     "tough-cookie": "^4.1.4",
     "@types/react": "^19.2.0",
     "typeorm": "0.3.31",
+    "uuid": "^11.1.1",
+    "compression": "^1.8.2",
     "next": "15.5.27",
     "axios": "1.20.0",
     "wait-on": {

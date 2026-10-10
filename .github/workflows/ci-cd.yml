@@ -24,8 +24,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Run npm audit (high severity gate)
-        run: npm audit --audit-level=high
+      - name: Run security vulnerability tests
+        run: node infra/scripts/security-tests.js
       - name: Run Snyk (if available)
         uses: snyk/actions/node@master
         env:
@@ -56,17 +56,17 @@ jobs:
       run: npm run lint
     
     - name: Run unit tests
-      run: npm run test:unit -- --passWithNoTests
+      run: npm run test:unit
     
     - name: Run backend coverage gate
       run: npm run test:cov
       working-directory: apps/backend
     
     - name: Run integration tests
-      run: npm run test:integration -- --passWithNoTests
+      run: npm run test:integration
     
     - name: Run contract tests
-      run: npm run test:e2e -- --passWithNoTests
+      run: npm run test:e2e
     
     - name: Build application
       run: npm run build
