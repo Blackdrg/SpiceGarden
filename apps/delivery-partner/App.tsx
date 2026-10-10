@@ -832,14 +832,13 @@ export default function App() {
 
   useEffect(() => {
     async function initLocation() {
-      const { status } = await requestLocationPermission();
+      const status = await requestLocationPermission();
       dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status === 'granted' ? 'granted' : 'denied' });
     }
     initLocation();
   }, []);
 
   useEffect(() => {
-    const appState = RNAppState.getStatus();
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState.match(/inactive|background/) && socketRef.current) {
         socketRef.current.disconnect();
