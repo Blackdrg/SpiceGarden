@@ -22,6 +22,8 @@ export const Stepper = ({
   label,
   disabled = false,
 }: StepperProps) => {
+  const stepperId = label ? `stepper-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : 'stepper-control';
+
   const increment = () => {
     if (!disabled && value < max) {
       onChange(value + step);
@@ -37,20 +39,28 @@ export const Stepper = ({
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.md }}>
       {label && (
-        <label style={{
-          ...DESIGN_TOKENS.typography.body,
-          color: DESIGN_TOKENS.colors.textPrimary,
-        }}>
+        <label
+          htmlFor={stepperId}
+          style={{
+            ...DESIGN_TOKENS.typography.body,
+            color: DESIGN_TOKENS.colors.textPrimary,
+          }}
+        >
           {label}
         </label>
       )}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        border: `1px solid ${DESIGN_TOKENS.colors.border}`,
-        borderRadius: DESIGN_TOKENS.radius.input,
-        backgroundColor: disabled ? DESIGN_TOKENS.colors.elevated : DESIGN_TOKENS.colors.surface,
-      }}>
+      <div
+        id={stepperId}
+        role="group"
+        aria-label={label || 'Stepper'}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          border: `1px solid ${DESIGN_TOKENS.colors.border}`,
+          borderRadius: DESIGN_TOKENS.radius.input,
+          backgroundColor: disabled ? DESIGN_TOKENS.colors.elevated : DESIGN_TOKENS.colors.surface,
+        }}
+      >
         <button
           onClick={decrement}
           disabled={disabled || value <= min}

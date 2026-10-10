@@ -1,0 +1,227 @@
+[
+  {
+    "restaurantId": "rest_001",
+    "tenantId": "tenant_delhi_spice",
+    "name": "SpiceGarden Kitchen 1",
+    "cuisine": "North Indian",
+    "lat": 28.6139,
+    "lng": 77.209,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_002",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "SpiceGarden Kitchen 2",
+    "cuisine": "South Indian",
+    "lat": 28.623900000000003,
+    "lng": 77.21900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_003",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "SpiceGarden Kitchen 3",
+    "cuisine": "Mughlai",
+    "lat": 28.6339,
+    "lng": 77.229,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "SpiceGarden Kitchen 4",
+    "cuisine": "Biryani",
+    "lat": 28.643900000000002,
+    "lng": 77.239,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_005",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "SpiceGarden Kitchen 5",
+    "cuisine": "Street Food",
+    "lat": 28.6539,
+    "lng": 77.24900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_006",
+    "tenantId": "tenant_delhi_spice",
+    "name": "SpiceGarden Kitchen 6",
+    "cuisine": "North Indian",
+    "lat": 28.6639,
+    "lng": 77.259,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_007",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "SpiceGarden Kitchen 7",
+    "cuisine": "South Indian",
+    "lat": 28.6739,
+    "lng": 77.269,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_008",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "SpiceGarden Kitchen 8",
+    "cuisine": "Mughlai",
+    "lat": 28.6839,
+    "lng": 77.279,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "SpiceGarden Kitchen 9",
+    "cuisine": "Biryani",
+    "lat": 28.6939,
+    "lng": 77.289,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_010",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "SpiceGarden Kitchen 10",
+    "cuisine": "Street Food",
+    "lat": 28.7039,
+    "lng": 77.299,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_011",
+    "tenantId": "tenant_delhi_spice",
+    "name": "SpiceGarden Kitchen 11",
+    "cuisine": "North Indian",
+    "lat": 28.713900000000002,
+    "lng": 77.309,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_012",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "SpiceGarden Kitchen 12",
+    "cuisine": "South Indian",
+    "lat": 28.7239,
+    "lng": 77.319,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_013",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "SpiceGarden Kitchen 13",
+    "cuisine": "Mughlai",
+    "lat": 28.733900000000002,
+    "lng": 77.32900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "SpiceGarden Kitchen 14",
+    "cuisine": "Biryani",
+    "lat": 28.7439,
+    "lng": 77.339,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_015",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "SpiceGarden Kitchen 15",
+    "cuisine": "Street Food",
+    "lat": 28.7539,
+    "lng": 77.349,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_016",
+    "tenantId": "tenant_delhi_spice",
+    "name": "SpiceGarden Kitchen 16",
+    "cuisine": "North Indian",
+    "lat": 28.7639,
+    "lng": 77.35900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_017",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "SpiceGarden Kitchen 17",
+    "cuisine": "South Indian",
+    "lat": 28.7739,
+    "lng": 77.369,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_018",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "SpiceGarden Kitchen 18",
+    "cuisine": "Mughlai",
+    "lat": 28.783900000000003,
+    "lng": 77.379,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "SpiceGarden Kitchen 19",
+    "cuisine": "Biryani",
+    "lat": 28.7939,
+    "lng": 77.38900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_020",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "SpiceGarden Kitchen 20",
+    "cuisine": "Street Food",
+    "lat": 28.803900000000002,
+    "lng": 77.399,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_021",
+    "tenantId": "tenant_delhi_spice",
+    "name": "SpiceGarden Kitchen 21",
+    "cuisine": "North Indian",
+    "lat": 28.8139,
+    "lng": 77.409,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_022",
+    "tenantId": "tenant_mumbai_curry",
+    "name": "SpiceGarden Kitchen 22",
+    "cuisine": "South Indian",
+    "lat": 28.823900000000002,
+    "lng": 77.419,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_023",
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "SpiceGarden Kitchen 23",
+    "cuisine": "Mughlai",
+    "lat": 28.8339,
+    "lng": 77.429,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "SpiceGarden Kitchen 24",
+    "cuisine": "Biryani",
+    "lat": 28.8439,
+    "lng": 77.43900000000001,
+    "isOpen": true
+  },
+  {
+    "restaurantId": "rest_025",
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "SpiceGarden Kitchen 25",
+    "cuisine": "Street Food",
+    "lat": 28.8539,
+    "lng": 77.449,
+    "isOpen": true
+  }
+]

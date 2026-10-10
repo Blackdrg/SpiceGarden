@@ -37,8 +37,8 @@ let DeliveryService = class DeliveryService {
     driverScoreRepo;
     driverFraudRepo;
     geoService;
-    dataSource;
-    constructor(driverRepo, walletRepo, transactionRepo, orderRepo, batchRepo, driverAssignmentRepo, driverScoreRepo, driverFraudRepo, geoService, dataSource) {
+    connection;
+    constructor(driverRepo, walletRepo, transactionRepo, orderRepo, batchRepo, driverAssignmentRepo, driverScoreRepo, driverFraudRepo, geoService, connection) {
         this.driverRepo = driverRepo;
         this.walletRepo = walletRepo;
         this.transactionRepo = transactionRepo;
@@ -48,7 +48,7 @@ let DeliveryService = class DeliveryService {
         this.driverScoreRepo = driverScoreRepo;
         this.driverFraudRepo = driverFraudRepo;
         this.geoService = geoService;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async registerDriver(userId, data) {
         const driver = this.driverRepo.create({

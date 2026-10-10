@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -20,7 +20,7 @@ WORKDIR /app/apps/backend
 RUN npm run build
 
 # Stage 2: Production
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
@@ -29,10 +29,9 @@ RUN adduser -S nextjs -u 1001
 # Set working directory
 WORKDIR /app
 
-# Copy only necessary files from builder
-COPY --from=builder /app/apps/backend/dist ./dist
-COPY --from=builder /app/apps/backend/package*.json ./
+# Copy only backend dependencies and dist from builder
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/backend/dist ./dist
 
 # Change ownership to non-root user
 RUN chown -R nextjs:nodejs /app

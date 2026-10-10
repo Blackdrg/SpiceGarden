@@ -84,7 +84,15 @@ let SecretLoaderService = SecretLoaderService_1 = class SecretLoaderService {
         for (const [secretName, envVarName] of Object.entries(secretFiles)) {
             const filePath = path.join(this.secretsDir, `${secretName}.txt`);
             if (fs.existsSync(filePath)) {
-                const value = fs.readFileSync(filePath, 'utf8').trim();
+                const buffer = fs.readFileSync(filePath);
+                let value = '';
+                if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+                    value = buffer.toString('utf16le');
+                }
+                else {
+                    value = buffer.toString('utf8');
+                }
+                value = value.replace(/^\uFEFF/, '').trim();
                 if (value && !value.includes('CHANGE_ME')) {
                     process.env[envVarName] = value;
                     this.logger.debug(`Loaded secret: ${envVarName}`);
@@ -98,7 +106,15 @@ let SecretLoaderService = SecretLoaderService_1 = class SecretLoaderService {
             if (key.endsWith('_FILE') && value) {
                 const filePath = value;
                 if (fs.existsSync(filePath)) {
-                    const secretValue = fs.readFileSync(filePath, 'utf8').trim();
+                    const buffer = fs.readFileSync(filePath);
+                    let secretValue = '';
+                    if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+                        secretValue = buffer.toString('utf16le');
+                    }
+                    else {
+                        secretValue = buffer.toString('utf8');
+                    }
+                    secretValue = secretValue.replace(/^\uFEFF/, '').trim();
                     const envVarName = key.replace('_FILE', '');
                     process.env[envVarName] = secretValue;
                     this.logger.debug(`Loaded ${envVarName} from ${filePath}`);
@@ -113,7 +129,15 @@ let SecretLoaderService = SecretLoaderService_1 = class SecretLoaderService {
         const secretsDir = process.env.SECRETS_DIR || path.join(process.cwd(), 'secrets');
         const filePath = path.join(secretsDir, `${secretName}.txt`);
         if (fs.existsSync(filePath)) {
-            const value = fs.readFileSync(filePath, 'utf8').trim();
+            const buffer = fs.readFileSync(filePath);
+            let value = '';
+            if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+                value = buffer.toString('utf16le');
+            }
+            else {
+                value = buffer.toString('utf8');
+            }
+            value = value.replace(/^\uFEFF/, '').trim();
             if (value && !value.includes('CHANGE_ME')) {
                 return value;
             }

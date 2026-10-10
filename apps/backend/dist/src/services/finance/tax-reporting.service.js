@@ -28,15 +28,15 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
     restaurantRepo;
     restaurantGstRepo;
     orderItemRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(TaxReportingService_1.name);
-    constructor(orderRepo, gstDetailRepo, restaurantRepo, restaurantGstRepo, orderItemRepo, dataSource) {
+    constructor(orderRepo, gstDetailRepo, restaurantRepo, restaurantGstRepo, orderItemRepo, connection) {
         this.orderRepo = orderRepo;
         this.gstDetailRepo = gstDetailRepo;
         this.restaurantRepo = restaurantRepo;
         this.restaurantGstRepo = restaurantGstRepo;
         this.orderItemRepo = orderItemRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async generateGSTReport(restaurantId, month, year) {
         const startDate = new Date(year, month - 1, 1);
@@ -143,13 +143,9 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
         };
     }
     async getMonthlyTaxSummary(restaurantId, months = 12) {
-        const summaries = [];
         const now = new Date();
-        for (let i = 0; i < months; i++) {
-            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            summaries.push(await this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear()));
-        }
-        return summaries;
+        const monthDates = Array.from({ length: months }, (_, i) => new Date(now.getFullYear(), now.getMonth() - i, 1));
+        return Promise.all(monthDates.map((date) => this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear())));
     }
 };
 exports.TaxReportingService = TaxReportingService;

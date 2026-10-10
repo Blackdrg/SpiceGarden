@@ -24,13 +24,13 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
     moderationRepo;
     itemRepo;
     restaurantRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(MenuModerationService_1.name);
-    constructor(moderationRepo, itemRepo, restaurantRepo, dataSource) {
+    constructor(moderationRepo, itemRepo, restaurantRepo, connection) {
         this.moderationRepo = moderationRepo;
         this.itemRepo = itemRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async submitForModeration(menuItemId, restaurantId, action, data, originalData) {
         const menuItem = await this.itemRepo.findOne({ where: { id: menuItemId } });
@@ -104,8 +104,9 @@ let MenuModerationService = MenuModerationService_1 = class MenuModerationServic
     async bulkApprove(moderationIds, moderatorId) {
         await this.moderationRepo.update({ id: (0, typeorm_2.In)(moderationIds) }, { status: menu_moderation_entity_1.ModerationStatus.APPROVED, moderatorId, reviewedAt: new Date() });
         const moderations = await this.moderationRepo.findBy({ id: (0, typeorm_2.In)(moderationIds) });
-        for (const m of moderations) {
-            await this.itemRepo.update(m.menuItemId, { status: 'available' });
+        const menuItemIds = moderations.map(m => m.menuItemId).filter(Boolean);
+        if (menuItemIds.length > 0) {
+            await this.itemRepo.update({ id: (0, typeorm_2.In)(menuItemIds) }, { status: 'available' });
         }
     }
     async getModerationStats(restaurantId) {

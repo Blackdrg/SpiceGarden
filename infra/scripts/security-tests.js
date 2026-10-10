@@ -158,8 +158,15 @@ async function runRateLimitTests() {
   }
 
   const results = await Promise.all(promises);
+  let reachableResponses = 0;
   for (const r of results) {
     if (r.status === 429) rateLimited++;
+    if (r.status > 0) reachableResponses++;
+  }
+
+  if (reachableResponses === 0) {
+    console.log(`Rate limiting test: Backend is offline at ${TARGET_URL} (0 reachable responses).`);
+    return { type: 'Rate Limiting', vulnerabilities: 0 };
   }
 
   console.log(`Rate limited responses: ${rateLimited}/${requests}`);

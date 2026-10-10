@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "name": "Backend Pod Termination (SIGKILL on 2 pods)",
+    "target": "NestJS / EKS",
+    "impact": "ALB drained connections; surviving pods absorbed traffic; 0 lost requests",
+    "recoveryTimeSec": 1.2,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 2,
+    "name": "Multiple Pod Eviction (50% Pod Eviction)",
+    "target": "EKS Nodes",
+    "impact": "HPA triggered urgent pod creation; system stabilized within 12s",
+    "recoveryTimeSec": 12,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 3,
+    "name": "Zero-Downtime Rolling Deployment (v1.0.0 -> v1.0.1)",
+    "target": "CI/CD K8s",
+    "impact": "Rolling update with maxSurge=25%, maxUnavailable=0; 0 dropped connections",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 4,
+    "name": "HPA Scale-Out Event (Surge to 96 Pods)",
+    "target": "HPA Autoscaler",
+    "impact": "Horizontal Pod Autoscaler scaled 6 -> 96 pods under 45s without latency breach",
+    "recoveryTimeSec": 45,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 5,
+    "name": "HPA Scale-In Cooldown",
+    "target": "HPA Autoscaler",
+    "impact": "Graceful pod shutdown after 300s stabilization window; 0 premature terminations",
+    "recoveryTimeSec": 300,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 6,
+    "name": "Redis Degradation (30% Cache Read Dropout)",
+    "target": "Redis Cluster",
+    "impact": "Seamless fallback to PostgreSQL read replica; latency increased by +4.2ms only",
+    "recoveryTimeSec": 0.5,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 7,
+    "name": "PostgreSQL Connection Pressure (Max Pool Saturation)",
+    "target": "PostgreSQL Pool",
+    "impact": "Pool queueing active; lock wait timeouts prevented backend crash",
+    "recoveryTimeSec": 2.1,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 8,
+    "name": "Temporary DB Unavailability / Network Partition",
+    "target": "Database Tier",
+    "impact": "Circuit breaker opened; returned graceful 503 with Retry-After; zero state corruption",
+    "recoveryTimeSec": 3.5,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 9,
+    "name": "Network Latency Injection (+50ms, +200ms)",
+    "target": "VPC Network",
+    "impact": "HTTP timeouts bounded at 5000ms; client retries handled with exponential backoff",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 10,
+    "name": "BullMQ Queue-Worker Interruption",
+    "target": "BullMQ Workers",
+    "impact": "Stalled job lock auto-renewed or re-queued; zero duplicated or dropped jobs",
+    "recoveryTimeSec": 4.8,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "id": 11,
+    "name": "Load Generator Host Failure (1 of 8 Hosts Died)",
+    "target": "Load Generation",
+    "impact": "Remaining 7 load generators continued; backend sustained traffic without anomalies",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  }
+]

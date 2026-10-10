@@ -1,0 +1,66 @@
+{
+  "diagnostic_timestamp": "2026-10-03T13:03:22.036Z",
+  "git_commit_sha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "host_environment": {
+    "os": "Windows 11 Enterprise / Pro",
+    "os_version": "10.0.26100",
+    "architecture": "x64",
+    "platform": "win32"
+  },
+  "toolchain": {
+    "terraform": {
+      "status": "AVAILABLE",
+      "version": "1.16.4",
+      "binary_path": "C:\\Users\\mehta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Hashicorp.Terraform_Microsoft.Winget.Source_8wekyb3d8bbwe\\terraform.exe",
+      "verified": true
+    },
+    "kubectl": {
+      "status": "AVAILABLE",
+      "client_version": "v1.36.1",
+      "kustomize_version": "v5.8.1",
+      "binary_path": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\kubectl.exe",
+      "verified": true
+    },
+    "k6": {
+      "status": "AVAILABLE",
+      "version": "v2.2.0 (commit/00a9a1b7f5, go1.26.5, windows/amd64)",
+      "binary_path": "C:\\Program Files\\k6\\k6.exe",
+      "verified": true
+    },
+    "node": {
+      "status": "AVAILABLE",
+      "version": "v25.5.0",
+      "binary_path": "C:\\Program Files\\node.exe",
+      "verified": true
+    },
+    "npm": {
+      "status": "AVAILABLE",
+      "version": "9.9.4",
+      "binary_path": "C:\\Program Files\\npm.ps1",
+      "verified": true
+    },
+    "docker": {
+      "status": "CLIENT_AVAILABLE_ENGINE_STOPPED",
+      "client_version": "29.7.2",
+      "engine_status": "STOPPED",
+      "verified": true
+    },
+    "aws_cli": {
+      "status": "UNCONFIGURED",
+      "credentials_available": false,
+      "config_file_exists": false,
+      "verified": true
+    },
+    "helm": {
+      "status": "MANAGED_VIA_TERRAFORM_PROVIDER",
+      "terraform_provider_helm_version": "2.17.0",
+      "verified": true
+    }
+  },
+  "iac_verification": {
+    "terraform_fmt": "PASS (Exit code 0)",
+    "terraform_init": "PASS (Exit code 0, AWS v5.100.0, Kubernetes v2.38.0, Helm v2.17.0 initialized)",
+    "terraform_validate": "PASS (Success! The configuration is valid.)",
+    "terraform_plan_auth_probe": "BLOCKED_ON_CREDENTIALS (Error: No valid credential sources found)"
+  }
+}

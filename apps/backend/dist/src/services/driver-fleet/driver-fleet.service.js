@@ -32,9 +32,8 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
     incentiveRepo;
     orderRepo;
     assignmentRepo;
-    dataSource;
     logger = new common_1.Logger(DriverFleetService_1.name);
-    constructor(driverRepo, shiftRepo, scoreRepo, penaltyRepo, incentiveRepo, orderRepo, assignmentRepo, dataSource) {
+    constructor(driverRepo, shiftRepo, scoreRepo, penaltyRepo, incentiveRepo, orderRepo, assignmentRepo) {
         this.driverRepo = driverRepo;
         this.shiftRepo = shiftRepo;
         this.scoreRepo = scoreRepo;
@@ -42,7 +41,6 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
         this.incentiveRepo = incentiveRepo;
         this.orderRepo = orderRepo;
         this.assignmentRepo = assignmentRepo;
-        this.dataSource = dataSource;
     }
     async startShift(driverId) {
         const driver = await this.driverRepo.findOne({ where: { id: driverId } });
@@ -160,7 +158,7 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
         return this.penaltyRepo.save(penalty);
     }
     async getPerformanceRanking(driverId) {
-        let query = this.scoreRepo.createQueryBuilder('score');
+        let query = this.scoreRepo.createQueryBuilder('score').leftJoinAndSelect('score.driver', 'driver');
         if (driverId) {
             query = query.where('score.driverId = :driverId', { driverId });
         }
@@ -170,7 +168,7 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
             .getMany();
         const rankings = scores.map((s, idx) => ({
             rank: idx + 1,
-            driverId: s.driver.id,
+            driverId: s.driver?.id || s.driverId || '',
             overallScore: s.overallScore,
             onTimeRate: s.onTimeDeliveryRate,
             acceptanceRate: s.acceptanceRate,
@@ -182,8 +180,8 @@ let DriverFleetService = DriverFleetService_1 = class DriverFleetService {
         return {
             rankings,
             totalDrivers: rankings.length,
-            driverRank,
-            percentile: driverRank ? Math.round((1 - driverRank / rankings.length) * 100) : null,
+            driverRank: driverRank && driverRank > 0 ? driverRank : null,
+            percentile: driverRank && driverRank > 0 ? Math.round((1 - driverRank / rankings.length) * 100) : null,
         };
     }
     async getDriverSchedule(driverId, days = 14) {
@@ -242,6 +240,5 @@ exports.DriverFleetService = DriverFleetService = DriverFleetService_1 = __decor
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], DriverFleetService);

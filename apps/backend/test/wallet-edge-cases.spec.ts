@@ -17,6 +17,7 @@ describe('WalletService Edge Cases', () => {
 
   const mockWalletRepo = {
     findOne: jest.fn(),
+    find: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
   };
@@ -37,6 +38,17 @@ describe('WalletService Edge Cases', () => {
         create: jest.fn(),
       })),
     },
+    transaction: jest.fn((cb) => cb({
+      findOne: jest.fn(),
+      update: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    })),
+    getRepository: jest.fn((entity: any) => {
+      if (entity === WalletEntity) return mockWalletRepo;
+      if (entity === WalletTransactionEntity) return mockWalletTransactionRepo;
+      return {};
+    }),
   };
 
   const mockPaymentService = {
@@ -168,7 +180,7 @@ describe('WalletService Edge Cases', () => {
     it('should throw Insufficient balance error when balance too low', async () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 10 } as WalletEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -183,7 +195,7 @@ describe('WalletService Edge Cases', () => {
     it('should prevent negative balance after debit', async () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 50 } as WalletEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -199,7 +211,7 @@ describe('WalletService Edge Cases', () => {
       const wallet = { id: 'w1', userId: 'user1', balance: 200 } as WalletEntity;
       const transaction = { id: 't1', amount: 50 } as WalletTransactionEntity;
       
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(wallet),
           update: jest.fn().mockResolvedValue(undefined),
@@ -363,7 +375,7 @@ describe('WalletService Edge Cases', () => {
 
   describe('debitWalletWithLock - error cases', () => {
     it('should throw BadRequestException when wallet not found in transaction', async () => {
-      mockDataSource.manager.transaction.mockImplementation(async (cb) => {
+      mockDataSource.transaction.mockImplementation(async (cb) => {
         return cb({
           findOne: jest.fn().mockResolvedValue(null),
           save: jest.fn(),
@@ -464,13 +476,35 @@ describe('WalletService Edge Cases', () => {
 
   describe('reconcilePayments', () => {
     it('should return reconciliation summary', async () => {
+      mockWalletRepo.find.mockResolvedValue([{ id: 'w1', userId: 'u1', balance: 100 }]);
+      mockWalletTransactionRepo.find.mockResolvedValue([
+        { id: 't1', walletId: 'w1', type: 'credit', amount: 150 },
+        { id: 't2', walletId: 'w1', type: 'debit', amount: 50 },
+      ]);
+
       const result = await service.reconcilePayments();
 
-      expect(result).toEqual({
-        totalProcessed: 0,
-        successful: 0,
-        failed: 0,
-        discrepancies: [],
+      expect(result.totalProcessed).toBe(2);
+      expect(result.successful).toBe(2);
+      expect(result.failed).toBe(0);
+      expect(result.discrepancies).toHaveLength(0);
+    });
+
+    it('should detect balance discrepancies', async () => {
+      mockWalletRepo.find.mockResolvedValue([{ id: 'w1', userId: 'u1', balance: 50 }]);
+      mockWalletTransactionRepo.find.mockResolvedValue([
+        { id: 't1', walletId: 'w1', type: 'credit', amount: 150 },
+        { id: 't2', walletId: 'w1', type: 'debit', amount: 50 },
+      ]);
+
+      const result = await service.reconcilePayments();
+
+      expect(result.totalProcessed).toBe(2);
+      expect(result.discrepancies).toHaveLength(1);
+      expect(result.discrepancies[0]).toEqual({
+        orderId: 'w1',
+        expected: 100,
+        actual: 50,
       });
     });
   });

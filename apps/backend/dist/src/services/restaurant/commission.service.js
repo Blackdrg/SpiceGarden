@@ -22,12 +22,10 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let CommissionService = CommissionService_1 = class CommissionService {
     commissionRepo;
     restaurantRepo;
-    dataSource;
     logger = new common_1.Logger(CommissionService_1.name);
-    constructor(commissionRepo, restaurantRepo, dataSource) {
+    constructor(commissionRepo, restaurantRepo) {
         this.commissionRepo = commissionRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
     }
     async createCommissionRule(restaurantId, ruleData) {
         const restaurant = await this.restaurantRepo.findOne({ where: { id: restaurantId } });
@@ -110,6 +108,5 @@ exports.CommissionService = CommissionService = CommissionService_1 = __decorate
     __param(0, (0, typeorm_1.InjectRepository)(commission_rule_entity_1.CommissionRuleEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(restaurant_entity_1.RestaurantEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], CommissionService);

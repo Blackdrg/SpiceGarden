@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import styles from './subscriptions.module.css';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -67,11 +67,13 @@ const SubscriptionsPage = () => {
 
       <nav className={styles.bottomNav} aria-label="Main navigation">
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'subs', label: 'Subs', icon: '⭐', path: '/subscriptions' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'subs', label: 'Subs', Icon: OrderIcon, path: '/subscriptions' },
+          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          return (
             <button
               type="button"
               key={tab.key}
@@ -80,10 +82,11 @@ const SubscriptionsPage = () => {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
               aria-label={tab.label}
             >
-            <span className={styles.navIcon}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+              <span className={styles.navIcon}><Icon size={20} color={activeTab === tab.key ? DESIGN_TOKENS.colors.primary : '#888'} /></span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

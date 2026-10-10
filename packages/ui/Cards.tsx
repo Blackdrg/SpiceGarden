@@ -31,6 +31,12 @@ export const FoodCard = ({
   return (
     <div
       onClick={onPress}
+      onKeyDown={(e) => {
+        if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onPress();
+        }
+      }}
       role={onPress ? 'button' : undefined}
       tabIndex={onPress ? 0 : undefined}
       style={{
@@ -169,7 +175,14 @@ export const MenuCard = ({
     return (
       <div
         onClick={onPress}
+        onKeyDown={(e) => {
+          if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            onPress();
+          }
+        }}
         role={onPress ? 'button' : undefined}
+        tabIndex={onPress ? 0 : undefined}
         style={{
           display: 'flex',
           gap: DESIGN_TOKENS.spacing.md,
@@ -213,7 +226,14 @@ export const MenuCard = ({
   return (
     <div
       onClick={onPress}
+      onKeyDown={(e) => {
+        if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onPress();
+        }
+      }}
       role={onPress ? 'button' : undefined}
+      tabIndex={onPress ? 0 : undefined}
       style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -476,8 +496,20 @@ export const ReviewCard = ({ orderId, onSubmit }: ReviewCardProps) => {
         ))}
       </div>
 
+      <label
+        htmlFor="rating-card-review"
+        style={{
+          display: 'block',
+          marginBottom: DESIGN_TOKENS.spacing.xs,
+          ...DESIGN_TOKENS.typography.smallLabel,
+          color: DESIGN_TOKENS.colors.textPrimary,
+        }}
+      >
+        Write a review (optional)
+      </label>
       <textarea
-        placeholder="Your review..."
+        id="rating-card-review"
+        placeholder="Share details of your experience..."
         value={review}
         onChange={(e) => setReview(e.target.value)}
         style={{

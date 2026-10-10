@@ -4,9 +4,9 @@ import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 export declare class BranchManagementService {
     private branchRepo;
     private restaurantRepo;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(branchRepo: Repository<RestaurantBranchEntity>, restaurantRepo: Repository<RestaurantEntity>, dataSource: DataSource);
+    constructor(branchRepo: Repository<RestaurantBranchEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: DataSource);
     createBranch(restaurantId: string, branchData: {
         branchName: string;
         address: string;

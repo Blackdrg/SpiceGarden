@@ -71,12 +71,13 @@ describe('DeliveryService core delivery logic', () => {
       predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
     };
 
-    (jest as any).useFakeTimers('modern');
-    (jest as any).setSystemTime(new Date('2026-06-24T02:30:00.000Z').getTime());
+    (jest as any).useFakeTimers();
+    (jest as any).setSystemTime(new Date(2026, 5, 24, 8, 30, 0).getTime());
 
     const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
 
     expect(result.trafficFactor).toBe(1.5);
+    (jest as any).useRealTimers();
   });
 
   it('returns 1.3 traffic factor during lunch rush hours', () => {
@@ -85,12 +86,13 @@ describe('DeliveryService core delivery logic', () => {
       predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
     };
 
-    (jest as any).useFakeTimers('modern');
-    (jest as any).setSystemTime(new Date('2026-06-24T07:30:00.000Z').getTime());
+    (jest as any).useFakeTimers();
+    (jest as any).setSystemTime(new Date(2026, 5, 24, 13, 0, 0).getTime());
 
     const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
 
     expect(result.trafficFactor).toBe(1.3);
+    (jest as any).useRealTimers();
   });
 
   it('returns 1.7 traffic factor during evening rush hours', () => {
@@ -99,12 +101,13 @@ describe('DeliveryService core delivery logic', () => {
       predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
     };
 
-    (jest as any).useFakeTimers('modern');
-    (jest as any).setSystemTime(new Date('2026-06-24T12:30:00.000Z').getTime());
+    (jest as any).useFakeTimers();
+    (jest as any).setSystemTime(new Date(2026, 5, 24, 18, 0, 0).getTime());
 
     const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
 
     expect(result.trafficFactor).toBe(1.7);
+    (jest as any).useRealTimers();
   });
 
   it('returns 1.0 traffic factor during normal hours', () => {
@@ -113,12 +116,13 @@ describe('DeliveryService core delivery logic', () => {
       predictETA: jest.fn().mockReturnValue({ distance: 5, duration: 10 }),
     };
 
-    (jest as any).useFakeTimers('modern');
-    (jest as any).setSystemTime(new Date('2026-06-24T05:30:00.000Z').getTime());
+    (jest as any).useFakeTimers();
+    (jest as any).setSystemTime(new Date(2026, 5, 24, 11, 0, 0).getTime());
 
     const result = service.calculateTrafficAwareRoute({ lat: 0, lng: 0 }, { lat: 0, lng: 1 });
 
     expect(result.trafficFactor).toBe(1.0);
+    (jest as any).useRealTimers();
   });
 
   it('registers drivers with pending KYC and zero-balance wallet', async () => {

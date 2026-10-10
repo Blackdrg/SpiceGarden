@@ -36,6 +36,7 @@ __decorate([
     __metadata("design:type", Number)
 ], MenuCategoryEntity.prototype, "sortOrder", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_menu_categories_branch_id'),
     (0, typeorm_1.ManyToOne)(() => restaurant_branch_entity_1.RestaurantBranchEntity, (branch) => branch.categories),
     __metadata("design:type", restaurant_branch_entity_1.RestaurantBranchEntity)
 ], MenuCategoryEntity.prototype, "branch", void 0);

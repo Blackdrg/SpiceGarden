@@ -1,0 +1,229 @@
+
+> spicegarden@0.0.0 test:unit
+> npm run --workspaces --if-present test:unit
+
+
+> @spicegarden/backend@0.0.0 test:unit
+> jest --runInBand test/order.service.spec.ts test/kitchen.service.spec.ts test/delivery.service.spec.ts
+
+node.exe : PASS test/order.service.spec.ts (14.092 s)
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS test/order...c.ts (14.092 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS test/delivery.service.spec.ts
+PASS test/kitchen.service.spec.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       32 passed, 32 total
+Snapshots:   0 total
+Time:        18.95 s
+Ran all test suites matching 
+/test\\order.service.spec.ts|test\\kitchen.service.spec.ts|test\\delivery.service.spec.ts/i.
+
+> @spicegarden/customer-mobile@1.0.0 test:unit
+> jest --config jest.config.js __tests__ --runInBand
+
+PASS __tests__/mobile-navigation.test.js (7.738 s)
+PASS __tests__/screens/HomeScreen.test.js
+PASS __tests__/screens/CartScreen.test.js
+PASS __tests__/e2e-flow.test.js (9.07 s)
+  ? Console
+
+    console.error
+      react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+
+    [0m [90m 27 |[39m
+     [90m 28 |[39m   it([32m'completes login and opens the authenticated cart screen'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 29 |[39m     [36mconst[39m { getByPlaceholderText[33m,[39m getByText } [33m=[39m 
+render(
+     [90m    |[39m                                                       [31m[1m^[22m[39m
+     [90m 30 |[39m       [33m<[39m[33mErrorBoundary[39m[33m>[39m
+     [90m 31 |[39m         [33m<[39m[33mApp[39m [33m/[39m[33m>[39m
+     [90m 32 |[39m       [33m<[39m[33m/[39m[33mErrorBoundary[39m[33m>[39m[33m,[39m[0m
+
+      at Object.<anonymous>.process.env.NODE_ENV.exports.create 
+(../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17337:17)
+      at create (../../node_modules/@testing-library/react-native/src/render-act.ts:15:29)
+      at callback (../../node_modules/@testing-library/react-native/src/act.ts:31:24)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:814:22)
+      at actImplementation (../../node_modules/@testing-library/react-native/src/act.ts:30:25)
+      at renderWithAct (../../node_modules/@testing-library/react-native/src/render-act.ts:13:11)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:69:33)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:44:10)
+      at Object.<anonymous> (__tests__/e2e-flow.test.js:29:55)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+PASS __tests__/auth-flow.integration.test.js
+  ? Console
+
+    console.error
+      react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m   it([32m'submits login credentials and stores the auth token'[39m[33m,[39m [36masync[39m 
+() [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m     [36mconst[39m { getByPlaceholderText[33m,[39m getByText } [33m=[39m 
+render(
+     [90m    |[39m                                                       [31m[1m^[22m[39m
+     [90m 16 |[39m       [33m<[39m[33mNavigationContainer[39m[33m>[39m
+     [90m 17 |[39m         [33m<[39m[33mAuthScreen[39m [33m/[39m[33m>[39m
+     [90m 18 |[39m       [33m<[39m[33m/[39m[33mNavigationContainer[39m[33m>[39m[33m,[39m[0m
+
+      at Object.<anonymous>.process.env.NODE_ENV.exports.create 
+(../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17337:17)
+      at create (../../node_modules/@testing-library/react-native/src/render-act.ts:15:29)
+      at callback (../../node_modules/@testing-library/react-native/src/act.ts:31:24)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:814:22)
+      at actImplementation (../../node_modules/@testing-library/react-native/src/act.ts:30:25)
+      at renderWithAct (../../node_modules/@testing-library/react-native/src/render-act.ts:13:11)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:69:33)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:44:10)
+      at Object.<anonymous> (__tests__/auth-flow.integration.test.js:15:55)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+PASS __tests__/App.test.js
+  ? Console
+
+    console.error
+      react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+
+    [0m [90m  9 |[39m describe([32m'App'[39m[33m,[39m () [33m=>[39m {
+     [90m 10 |[39m     it([32m'renders the auth screen'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 11 |[39m         [36mconst[39m { getByText } [33m=[39m ([35m0[39m[33m,[39m 
+react_native_1[33m.[39mrender)([33m<[39m[33mApp_1[39m[33m.[39m[36mdefault[39m 
+[33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m                                                        [31m[1m^[22m[39m
+     [90m 12 |[39m         expect(getByText([35m/SpiceGarden/i[39m))[33m.[39mtoBeTruthy()[33m;[39m
+     [90m 13 |[39m     })[33m;[39m
+     [90m 14 |[39m })[33m;[39m[0m
+
+      at Object.<anonymous>.process.env.NODE_ENV.exports.create 
+(../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:17337:17)
+      at create (../../node_modules/@testing-library/react-native/src/render-act.ts:15:29)
+      at callback (../../node_modules/@testing-library/react-native/src/act.ts:31:24)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:814:22)
+      at actImplementation (../../node_modules/@testing-library/react-native/src/act.ts:30:25)
+      at renderWithAct (../../node_modules/@testing-library/react-native/src/render-act.ts:13:11)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:69:33)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:44:10)
+      at Object.<anonymous> (__tests__/App.test.js:11:56)
+
+
+Test Suites: 6 passed, 6 total
+Tests:       33 passed, 33 total
+Snapshots:   0 total
+Time:        19.147 s
+Ran all test suites matching /__tests__/i.
+
+> @spicegarden/customer-web@0.1.0 test:unit
+> jest --testPathPatterns=__tests__ --runInBand
+
+   next-swc build: wasm build @next/swc-wasm-nodejs
+ ? Attempted to load @next/swc-win32-x64-msvc, but an error occurred: 
+\\?\C:\Users\mehta\Desktop\SpiceGarden\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node is not a 
+valid Win32 application.
+\\?\C:\Users\mehta\Desktop\SpiceGarden\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node
+
+Test Suites: 3 passed, 3 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        8.871 s
+Ran all test suites matching __tests__.
+
+> @spicegarden/delivery-partner@1.0.0 test:unit
+> jest --config jest.config.js --runInBand
+
+PASS src/services/__tests/delivery-flow.e2e.test.ts
+PASS src/services/__tests/storage.integration.test.ts
+PASS src/services/__tests/delivery-api.service.test.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        4.835 s
+Ran all test suites.
+
+> spicegarden-launcher@1.0.0 test:unit
+> jest --config jest.config.js --runInBand
+
+PASS src/main/__tests__/environment-manager.test.ts (6.673 s)
+  EnvironmentManager
+    v accepts the current Node.js major version (10 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        7.645 s
+Ran all test suites.
+
+> @spicegarden/restaurant-dashboard@0.1.0 test:unit
+> jest --testPathPatterns=__tests__ --runInBand
+
+
+Test Suites: 3 passed, 3 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        9.829 s
+Ran all test suites matching __tests__.
+
+> @spicegarden/super-admin@0.1.0 test:unit
+> jest --testPathPatterns=__tests__ --runInBand
+
+   next-swc build: wasm build @next/swc-wasm-nodejs
+ ? Attempted to load @next/swc-win32-x64-msvc, but an error occurred: 
+\\?\C:\Users\mehta\Desktop\SpiceGarden\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node is not a 
+valid Win32 application.
+\\?\C:\Users\mehta\Desktop\SpiceGarden\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node
+
+Test Suites: 4 passed, 4 total
+Tests:       23 passed, 23 total
+Snapshots:   0 total
+Time:        9.033 s
+Ran all test suites matching __tests__.
+
+> @spicegarden/shared@0.0.0 test:unit
+> jest --config jest.config.js
+
+PASS __tests__/constants.test.ts (9.457 s)
+PASS __tests__/api.test.ts (9.818 s)
+
+Test Suites: 2 passed, 2 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        12.262 s
+Ran all test suites.
+
+> @spicegarden/ui@0.1.0 test:unit
+> jest --config jest.config.js
+
+(node:10860) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative 
+instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS __tests__/useFlow.test.tsx
+(node:5452) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative 
+instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS __tests__/Button.test.tsx
+(node:22220) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative 
+instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS __tests__/LoadingStates.test.tsx
+PASS __tests__/ButtonRegression.test.tsx
+PASS __tests__/Input.test.tsx
+
+Test Suites: 5 passed, 5 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        9.463 s
+Ran all test suites.
+

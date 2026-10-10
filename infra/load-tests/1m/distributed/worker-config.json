@@ -1,0 +1,17 @@
+{
+  "workerFleet": {
+    "totalNodes": 40,
+    "instanceType": "c6i.2xlarge",
+    "vCPUPerNode": 8,
+    "memoryPerNodeGB": 16,
+    "targetVUsPerNode": 25000,
+    "totalVUsCapacity": 1000000,
+    "networkBandwidthPerNodeGbps": 12.5,
+    "osKernelTuning": {
+      "net.ipv4.ip_local_port_range": "1024 65535",
+      "net.ipv4.tcp_tw_reuse": 1,
+      "fs.file-max": 2097152,
+      "nofile_limit": 1048576
+    }
+  }
+}

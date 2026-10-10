@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
@@ -20,10 +20,9 @@ export declare class GeoService {
     private readonly branchRepo;
     private readonly driverRepo;
     private readonly orderRepo;
-    private readonly dataSource;
     private readonly EARTH_RADIUS_KM;
     private readonly AVERAGE_SPEED_KMH;
-    constructor(restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>, dataSource: DataSource);
+    constructor(restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, driverRepo: Repository<DriverEntity>, orderRepo: Repository<OrderEntity>);
     calculateDistance(point1: GeoPoint, point2: GeoPoint): number;
     predictETA(distance: number, speedKmh?: number): ETAPrediction;
     findNearbyBranches(customerLocation: GeoPoint, radiusInKm?: number, limit?: number): Promise<BranchWithDistance[]>;

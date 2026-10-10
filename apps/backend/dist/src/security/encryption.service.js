@@ -45,22 +45,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EncryptionService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const CryptoJS = __importStar(require("crypto-js"));
+const crypto = __importStar(require("crypto"));
 const missing_env_error_1 = require("../common/errors/missing-env.error");
 let EncryptionService = class EncryptionService {
     configService;
-    secretKey;
+    key;
     constructor(configService) {
         this.configService = configService;
-        this.secretKey = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'ENCRYPTION_SECRET');
+        const secret = (0, missing_env_error_1.getRequiredSecret)(this.configService, 'ENCRYPTION_SECRET');
+        const salt = crypto.randomBytes(16);
+        this.key = crypto.scryptSync(secret, salt, 32);
     }
     encrypt(text) {
-        return CryptoJS.AES.encrypt(text, this.secretKey).toString();
+        const iv = crypto.randomBytes(12);
+        const cipher = crypto.createCipheriv('aes-256-gcm', this.key, iv);
+        const plaintext = Buffer.from(text, 'utf-8');
+        const ciphertext = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+        const authTag = cipher.getAuthTag();
+        return `${iv.toString('base64')}.${ciphertext.toString('base64')}.${Buffer.from(authTag).toString('base64')}`;
     }
-    decrypt(ciphertext) {
+    decrypt(payload) {
         try {
-            const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
-            return bytes.toString(CryptoJS.enc.Utf8);
+            const [ivB64, ciphertextB64, tagB64] = payload.split('.');
+            if (!ivB64 || !ciphertextB64 || !tagB64)
+                throw new Error('Invalid payload format');
+            const iv = Buffer.from(ivB64, 'base64');
+            const ciphertext = Buffer.from(ciphertextB64, 'base64');
+            const authTag = Buffer.from(tagB64, 'base64');
+            const decipher = crypto.createDecipheriv('aes-256-gcm', this.key, iv);
+            decipher.setAuthTag(authTag);
+            const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+            return plaintext.toString('utf-8');
         }
         catch {
             throw new Error('Decryption failed');
@@ -89,7 +104,7 @@ let EncryptionService = class EncryptionService {
                     decrypted[field] = this.decrypt(value);
                 }
                 catch (error) {
-                    const errMsg = error instanceof Error ? error.message : 'any';
+                    const errMsg = error instanceof Error ? error.message : 'unknown';
                     throw new Error(`Failed to decrypt field ${field}: ${errMsg}`);
                 }
             }

@@ -14,9 +14,7 @@ export class AiService {
   ) {}
 
   async getRecommendations(userId: string) {
-    // Advanced collaborative filtering logic (enhanced stub)
-    // 1. Get user's recent orders to find preferred categories
-const recentOrders = await this.orderRepo.find({
+    const recentOrders = await this.orderRepo.find({
        where: { userId },
        relations: { 
          items: { 
@@ -38,7 +36,6 @@ const recentOrders = await this.orderRepo.find({
       });
     });
 
-    // 2. Suggest top-rated items from these categories that the user hasn't ordered recently
     if (preferredCategoryIds.size > 0) {
       return this.menuRepo.find({
         where: { category: { id: Array.from(preferredCategoryIds)[0] } as any },
@@ -46,7 +43,6 @@ const recentOrders = await this.orderRepo.find({
       });
     }
 
-    // 3. Fallback to trending items
     return this.menuRepo.find({ take: 5, order: { createdAt: 'DESC' } });
   }
 

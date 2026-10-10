@@ -1,23 +1,43 @@
-﻿
+
 import { Global, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { NotificationService } from './notification.service';
 import { ProductionNotificationService } from './production-notification.service';
-import { UserDeviceEntity } from '../../db/entities/user-device.entity';
-import { NotificationEntity } from '../../db/entities/notification.entity';
+import { ProductionSMSProvider } from './production-sms.provider';
+import { ProductionFCMProvider } from './production-fcm.provider';
+import { ProductionAPNsProvider } from './production-apns.provider';
+import { NotificationPreferencesService } from './notification-preferences.service';
+import { NotificationEngineService } from './notification-engine.service';
 import { NotificationQueueModule } from './queue/notification-queue.module';
 import { DeviceController } from './device.controller';
+import { NotificationPreferencesController } from './notification-preferences.controller';
 
 @Global()
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
     NotificationQueueModule,
   ],
-  providers: [NotificationService, ProductionNotificationService],
-  controllers: [DeviceController],
-  exports: [NotificationService, ProductionNotificationService],
+  providers: [
+    NotificationService,
+    ProductionNotificationService,
+    ProductionSMSProvider,
+    ProductionFCMProvider,
+    ProductionAPNsProvider,
+    NotificationPreferencesService,
+    NotificationEngineService,
+  ],
+  controllers: [DeviceController, NotificationPreferencesController],
+  exports: [
+    NotificationService,
+    ProductionNotificationService,
+    ProductionSMSProvider,
+    ProductionFCMProvider,
+    ProductionAPNsProvider,
+    NotificationPreferencesService,
+    NotificationEngineService,
+  ],
 })
 export class NotificationModule {}
 

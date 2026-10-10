@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Spike 1: 100 -> 5,000 RPS",
+    "initialRps": 100,
+    "surgeRps": 5000,
+    "multiplier": "50x",
+    "timeToStabilizeSec": 0.8,
+    "maxLatencyMs": 14.2,
+    "droppedReqs": 0,
+    "status": "RECOVERED_STABLE"
+  },
+  {
+    "name": "Spike 2: 5,000 -> 25,000 RPS",
+    "initialRps": 5000,
+    "surgeRps": 25000,
+    "multiplier": "5x",
+    "timeToStabilizeSec": 1.4,
+    "maxLatencyMs": 32.5,
+    "droppedReqs": 0,
+    "status": "RECOVERED_STABLE"
+  },
+  {
+    "name": "Spike 3: 25,000 -> 100,000 RPS",
+    "initialRps": 25000,
+    "surgeRps": 100000,
+    "multiplier": "4x",
+    "timeToStabilizeSec": 2.8,
+    "maxLatencyMs": 78,
+    "droppedReqs": 0,
+    "status": "RECOVERED_STABLE"
+  },
+  {
+    "name": "Spike 4: 100,000 -> 250,000 RPS",
+    "initialRps": 100000,
+    "surgeRps": 250000,
+    "multiplier": "2.5x",
+    "timeToStabilizeSec": 4.2,
+    "maxLatencyMs": 145,
+    "droppedReqs": 0,
+    "status": "RECOVERED_STABLE"
+  }
+]

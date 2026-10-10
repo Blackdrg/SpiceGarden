@@ -20,35 +20,20 @@ let MenuCustomizationController = class MenuCustomizationController {
     constructor(menuService) {
         this.menuService = menuService;
     }
-    async getMenuItems(restaurantId, category) {
-        return this.menuService.getMenuItems(restaurantId, category);
+    async getItemAddons(itemId) {
+        return this.menuService.getItemAddons(itemId);
     }
     async getItemDetails(itemId) {
         return this.menuService.getItemDetails(itemId);
     }
-    async getItemAddons(itemId) {
-        return this.menuService.getItemAddons(itemId);
-    }
     async getCategories(restaurantId) {
         return this.menuService.getCategories(restaurantId);
     }
+    async getMenuItems(restaurantId, category) {
+        return this.menuService.getMenuItems(restaurantId, category);
+    }
 };
 exports.MenuCustomizationController = MenuCustomizationController;
-__decorate([
-    (0, common_1.Get)(':restaurantId/items'),
-    __param(0, (0, common_1.Param)('restaurantId')),
-    __param(1, (0, common_1.Query)('category')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], MenuCustomizationController.prototype, "getMenuItems", null);
-__decorate([
-    (0, common_1.Get)('items/:itemId'),
-    __param(0, (0, common_1.Param)('itemId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], MenuCustomizationController.prototype, "getItemDetails", null);
 __decorate([
     (0, common_1.Get)('items/:itemId/addons'),
     __param(0, (0, common_1.Param)('itemId')),
@@ -57,12 +42,27 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MenuCustomizationController.prototype, "getItemAddons", null);
 __decorate([
+    (0, common_1.Get)('items/:itemId'),
+    __param(0, (0, common_1.Param)('itemId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MenuCustomizationController.prototype, "getItemDetails", null);
+__decorate([
     (0, common_1.Get)('categories/:restaurantId'),
     __param(0, (0, common_1.Param)('restaurantId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MenuCustomizationController.prototype, "getCategories", null);
+__decorate([
+    (0, common_1.Get)(':restaurantId/items'),
+    __param(0, (0, common_1.Param)('restaurantId')),
+    __param(1, (0, common_1.Query)('category')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], MenuCustomizationController.prototype, "getMenuItems", null);
 exports.MenuCustomizationController = MenuCustomizationController = __decorate([
     (0, common_1.Controller)('menus'),
     __metadata("design:paramtypes", [menu_customization_service_1.MenuCustomizationService])

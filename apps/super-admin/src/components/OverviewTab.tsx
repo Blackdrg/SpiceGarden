@@ -64,7 +64,7 @@ export function OverviewTab({
         </DashboardCard>
       </div>
 
-      <DashboardCard title="🚨 System Alerts">
+      <DashboardCard title="System Alerts">
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           {nonOperationalBranches.map((branch) => (
             <div key={branch.name} style={{ flex: 1, padding: '12px 16px', background: '#fff5f5', borderLeft: `4px solid ${branchColor(branch.status)}`, borderRadius: 6, minWidth: 220 }}>
@@ -80,7 +80,7 @@ export function OverviewTab({
       </DashboardCard>
 
       <div style={{ marginTop: 24 }}>
-        <DashboardCard title="📍 Delivery Heatmap" sub={`SpiceGarden service area — ${heatmapData.length > 0 ? `${heatmapData.length} data points` : 'computing…'}`}>
+        <DashboardCard title="Delivery Heatmap" sub={`SpiceGarden service area — ${heatmapData.length > 0 ? `${heatmapData.length} data points` : 'computing…'}`}>
           {heatmapData.length > 0 ? (
             <div>
               <DeliveryHeatmap data={heatmapData} />

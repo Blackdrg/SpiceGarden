@@ -77,6 +77,12 @@ let RefundService = RefundService_1 = class RefundService {
         if (existingApproval) {
             throw new common_1.BadRequestException('There is already a pending refund request for this order');
         }
+        if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
+            throw new common_1.BadRequestException('Refund amount must be a positive number');
+        }
+        if (typeof order.grandTotal === 'number' && order.grandTotal > 0 && amount > order.grandTotal) {
+            throw new common_1.BadRequestException('Refund amount cannot exceed order grand total');
+        }
         const managerApprovalThreshold = this.configService.get('REFUND_MANAGER_APPROVAL_THRESHOLD', 1000);
         const requiresManagerApproval = amount >= managerApprovalThreshold;
         const refundApproval = this.refundApprovalRepo.create({
@@ -95,7 +101,10 @@ let RefundService = RefundService_1 = class RefundService {
         return savedApproval;
     }
     async approveRefundRequest(approvalId, approverId, notes) {
-        const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+        const approval = await this.refundApprovalRepo.findOne({
+            where: { id: approvalId },
+            relations: { order: true }
+        });
         if (!approval) {
             throw new common_1.NotFoundException(`Refund approval not found: ${approvalId}`);
         }
@@ -118,7 +127,10 @@ let RefundService = RefundService_1 = class RefundService {
         return savedApproval;
     }
     async rejectRefundRequest(approvalId, approverId, reason) {
-        const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+        const approval = await this.refundApprovalRepo.findOne({
+            where: { id: approvalId },
+            relations: { order: true }
+        });
         if (!approval) {
             throw new common_1.NotFoundException(`Refund approval not found: ${approvalId}`);
         }
@@ -139,7 +151,10 @@ let RefundService = RefundService_1 = class RefundService {
         return savedApproval;
     }
     async processRefund(approvalId, processedBy, gatewayName) {
-        const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+        const approval = await this.refundApprovalRepo.findOne({
+            where: { id: approvalId },
+            relations: { order: true }
+        });
         if (!approval) {
             throw new common_1.NotFoundException(`Refund approval not found: ${approvalId}`);
         }
@@ -153,9 +168,13 @@ let RefundService = RefundService_1 = class RefundService {
         if (approval.approvalStatus !== 'approved') {
             throw new common_1.BadRequestException(`Refund request is not approved (current status: ${approval.approvalStatus})`);
         }
-        const order = await this.orderRepo.findOne({ where: { id: approval.order.id } });
+        const orderIdToFind = approval.order?.id;
+        if (!orderIdToFind) {
+            throw new common_1.NotFoundException('Associated order not found on approval');
+        }
+        const order = await this.orderRepo.findOne({ where: { id: orderIdToFind } });
         if (!order) {
-            throw new common_1.NotFoundException(`Order not found: ${approval.order.id}`);
+            throw new common_1.NotFoundException(`Order not found: ${orderIdToFind}`);
         }
         if (order.paymentStatus === 'refunded') {
             throw new common_1.BadRequestException('Order has already been refunded');
@@ -256,12 +275,12 @@ let RefundService = RefundService_1 = class RefundService {
     }
     async notifyRefundRequest(approval) {
         try {
-            await this.productionNotification.sendPaymentNotification('system', approval.order.paymentIntentId || `refund-request-${approval.id}`, {
+            await this.productionNotification.sendPaymentNotification('system', approval.order?.paymentIntentId || `refund-request-${approval.id}`, {
                 type: 'refund_initiated',
                 severity: 'medium',
-                orderId: approval.order.id,
+                orderId: approval.order?.id || '',
                 amount: approval.refundAmount,
-                message: `New refund request of ${approval.refundAmount} for order #${approval.order.id}. Reason: ${approval.reason}`,
+                message: `New refund request of ${approval.refundAmount} for order #${approval.order?.id || 'unknown'}. Reason: ${approval.reason}`,
                 metadata: {
                     approvalId: approval.id,
                     requestedBy: approval.requestedBy,
@@ -276,12 +295,12 @@ let RefundService = RefundService_1 = class RefundService {
     }
     async notifyRefundApproval(approval) {
         try {
-            await this.productionNotification.sendPaymentNotification('system', approval.order.paymentIntentId || `refund-approval-${approval.id}`, {
+            await this.productionNotification.sendPaymentNotification('system', approval.order?.paymentIntentId || `refund-approval-${approval.id}`, {
                 type: 'refund_initiated',
                 severity: 'medium',
-                orderId: approval.order.id,
+                orderId: approval.order?.id || '',
                 amount: approval.refundAmount,
-                message: `Refund request approved for ${approval.refundAmount} for order #${approval.order.id}`,
+                message: `Refund request approved for ${approval.refundAmount} for order #${approval.order?.id || 'unknown'}`,
                 metadata: {
                     approvalId: approval.id,
                     approverId: approval.approverId
@@ -294,12 +313,12 @@ let RefundService = RefundService_1 = class RefundService {
     }
     async notifyRefundRejection(approval) {
         try {
-            await this.productionNotification.sendPaymentNotification(approval.requestedBy, approval.order.paymentIntentId || `refund-rejection-${approval.id}`, {
+            await this.productionNotification.sendPaymentNotification(approval.requestedBy, approval.order?.paymentIntentId || `refund-rejection-${approval.id}`, {
                 type: 'refund_initiated',
                 severity: 'medium',
-                orderId: approval.order.id,
+                orderId: approval.order?.id || '',
                 amount: 0,
-                message: `Your refund request for order #${approval.order.id} has been rejected. Reason: ${approval.rejectionReason}`,
+                message: `Your refund request for order #${approval.order?.id || 'unknown'} has been rejected. Reason: ${approval.rejectionReason}`,
                 metadata: {
                     approvalId: approval.id,
                     rejectionReason: approval.rejectionReason

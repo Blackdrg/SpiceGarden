@@ -10,7 +10,8 @@ declare module '@react-navigation/native' {
 }
 
 declare module '@react-navigation/native-stack' {
-  import React from 'react';
+  import type { ParamListBase } from '@react-navigation/native';
+  import type { TypedNavigator } from '@react-navigation/core';
   export type NativeStackRouteProp<ParamList extends object, RouteName extends keyof ParamList> = {
     key: string;
     name: RouteName;
@@ -26,26 +27,25 @@ declare module '@react-navigation/native-stack' {
     navigation: NativeStackNavigationProp<ParamList, RouteName>;
     route: NativeStackRouteProp<ParamList, RouteName>;
   };
-  export const createStackNavigator: () => {
-    Navigator: React.FC<{ screenOptions?: any; children?: React.ReactNode }>;
-    Screen: React.FC<{ name: string; component: React.FC; options?: any }>;
-  };
+  export type NativeStackNavigationOptions = {};
+  export type NativeStackNavigationEventMap = {};
+  export const createNativeStackNavigator: <ParamList extends ParamListBase>() => TypedNavigator<ParamList, any, NativeStackNavigationOptions, NativeStackNavigationEventMap, any>;
 }
 
 declare module '@react-navigation/bottom-tabs' {
-  import React from 'react';
-  export const createBottomTabNavigator: () => {
-    Navigator: React.FC<{ screenOptions?: any; children?: React.ReactNode }>;
-    Screen: React.FC<{ name: string; component: React.FC; options?: any }>;
-  };
+  import type { ParamListBase } from '@react-navigation/native';
+  import type { TypedNavigator } from '@react-navigation/core';
+  export type BottomTabNavigationOptions = {};
+  export type BottomTabNavigationEventMap = {};
+  export const createBottomTabNavigator: <ParamList extends ParamListBase>() => TypedNavigator<ParamList, any, BottomTabNavigationOptions, BottomTabNavigationEventMap, any>;
 }
 
 declare module '@react-navigation/stack' {
-  import React from 'react';
-  export const createStackNavigator: () => {
-    Navigator: React.FC<{ screenOptions?: any; children?: React.ReactNode }>;
-    Screen: React.FC<{ name: string; component: React.FC; options?: any }>;
-  };
+  import type { ParamListBase } from '@react-navigation/native';
+  import type { TypedNavigator } from '@react-navigation/core';
+  export type StackNavigationOptions = {};
+  export type StackNavigationEventMap = {};
+  export const createStackNavigator: <ParamList extends ParamListBase>() => TypedNavigator<ParamList, any, StackNavigationOptions, StackNavigationEventMap, any>;
   export interface StackNavigationProp<ParamList extends {}> {
     navigate: (name: string, params?: any) => void;
     replace: (name: string) => void;

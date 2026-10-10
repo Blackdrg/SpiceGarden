@@ -37,6 +37,7 @@ __decorate([
     __metadata("design:type", String)
 ], PaymentDisputeEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_payment_disputes_order_id'),
     (0, typeorm_1.ManyToOne)(() => order_entity_1.OrderEntity),
     __metadata("design:type", order_entity_1.OrderEntity)
 ], PaymentDisputeEntity.prototype, "order", void 0);
@@ -69,6 +70,7 @@ __decorate([
     __metadata("design:type", Object)
 ], PaymentDisputeEntity.prototype, "evidence", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_payment_disputes_status'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], PaymentDisputeEntity.prototype, "status", void 0);

@@ -24,40 +24,53 @@ interface Order {
 const DriverApp = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [isOnline, setIsOnline] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(true);
+  const isAvailableRef = useRef(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [route, setRoute] = useState<Location[]>([]);
-  const [watchId, setWatchId] = useState<number | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [eta, setEta] = useState(0);
   const mapRef = useRef<MapView>(null);
+  const orderRef = useRef<Order | null>(null);
+  const watchIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    orderRef.current = order;
+  }, [order]);
 
   useEffect(() => {
     requestLocationPermission();
     const socketInstance = io('http://localhost:3001', {
       transports: ['websocket'],
     });
-    setSocket(socketInstance);
+    socketRef.current = socketInstance;
 
-    socketInstance.on('connect', () => {
+    const handleConnect = () => {
       console.log('Connected to tracking server');
-    });
+    };
 
-    socketInstance.on('orderAssigned', (data: Order) => {
+    const handleOrderAssigned = (data: Order) => {
       setOrder(data);
       Alert.alert('New Order', `Order #${data.id} assigned. Tap to accept.`);
-    });
+    };
 
-    socketInstance.on('etaUpdate', (data: { orderId: string; etaMinutes: number }) => {
-      if (data.orderId === order?.id) {
+    const handleEtaUpdate = (data: { orderId: string; etaMinutes: number }) => {
+      if (data.orderId === orderRef.current?.id) {
         setEta(data.etaMinutes);
       }
-    });
+    };
+
+    socketInstance.on('connect', handleConnect);
+    socketInstance.on('orderAssigned', handleOrderAssigned);
+    socketInstance.on('etaUpdate', handleEtaUpdate);
 
     return () => {
+      socketInstance.off('connect', handleConnect);
+      socketInstance.off('orderAssigned', handleOrderAssigned);
+      socketInstance.off('etaUpdate', handleEtaUpdate);
       socketInstance.disconnect();
-      if (watchId !== null && Platform.OS === 'android') {
-        Geolocation.clearWatch(watchId);
+      socketRef.current = null;
+      if (watchIdRef.current !== null && Platform.OS === 'android') {
+        Geolocation.clearWatch(watchIdRef.current);
       }
     };
   }, []);
@@ -66,7 +79,7 @@ const DriverApp = () => {
     if (location && order && isOnline) {
       // Send location update every 5 seconds
       const interval = setInterval(() => {
-        socket?.emit('updateLocation', {
+        socketRef.current?.emit('updateLocation', {
           driverId: 'driver-' + Date.now(), // In real app, use actual driver ID
           lat: location.latitude,
           lng: location.longitude,
@@ -105,7 +118,7 @@ const DriverApp = () => {
   };
 
   const startLocationTracking = () => {
-    Geolocation.watchPosition(
+    const id = Geolocation.watchPosition(
       (position) => {
         const { latitude, longitude, accuracy, speed, heading } = position.coords;
         setLocation({
@@ -127,31 +140,32 @@ const DriverApp = () => {
         fastestInterval: 2000,
       }
     );
+    watchIdRef.current = id;
   };
 
   const goOnline = () => {
     setIsOnline(true);
-    setIsAvailable(true);
-    socket?.emit('driverOnline', { driverId: 'driver-' + Date.now() });
+    isAvailableRef.current = true;
+    socketRef.current?.emit('driverOnline', { driverId: 'driver-' + Date.now() });
   };
 
   const goOffline = () => {
     setIsOnline(false);
-    setIsAvailable(false);
-    socket?.emit('driverOffline', { driverId: 'driver-' + Date.now() });
+    isAvailableRef.current = false;
+    socketRef.current?.emit('driverOffline', { driverId: 'driver-' + Date.now() });
   };
 
   const acceptOrder = () => {
     if (order) {
       setOrder({ ...order, status: 'picked_up' });
-      socket?.emit('orderAccepted', { orderId: order.id });
+      socketRef.current?.emit('orderAccepted', { orderId: order.id });
     }
   };
 
   const updateDeliveryStatus = (status: Order['status']) => {
     if (order) {
       setOrder({ ...order, status });
-      socket?.emit('deliveryStatusUpdate', { orderId: order.id, status });
+      socketRef.current?.emit('deliveryStatusUpdate', { orderId: order.id, status });
     }
   };
 

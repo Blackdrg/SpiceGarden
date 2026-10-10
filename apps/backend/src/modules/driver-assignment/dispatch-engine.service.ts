@@ -10,6 +10,18 @@ import { DeliverySLAEntity } from '../../db/entities/delivery-sla.entity';
 import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 import { OrderStatus } from '../../shared/domain/order.interface';
 
+const EARTH_RADIUS_KM = 6371;
+
+function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const h = sinLat * sinLat + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sinLng * sinLng;
+  return EARTH_RADIUS_KM * 2 * Math.asin(Math.sqrt(h));
+}
+
 @Injectable()
 export class DispatchEngineService {
   constructor(
@@ -155,9 +167,16 @@ const order = await manager.findOne(OrderEntity, {
     const speedScore = 1 - Math.abs(driver.averageSpeed - 30) / 50; // Ideal around 30 km/h
     score += Math.max(0, speedScore) * 0.15;
 
-    // Factor 5: Distance from restaurant (would need actual location data)
-    // For now, we'll add a placeholder - in reality you'd calculate actual distance
-    score += 0.15; // Placeholder for proximity score
+    // Factor 5: Distance from restaurant (use actual location data when available)
+    const branchLoc = branch.location;
+    const driverLoc = driver.currentLocation;
+    let proximityScore = 0;
+    if (branchLoc && driverLoc) {
+      const distanceKm = haversineKm(driverLoc, branchLoc);
+      const maxDistance = 10;
+      proximityScore = Math.max(0, 1 - distanceKm / maxDistance);
+    }
+    score += proximityScore * 0.15;
 
     return score;
   }
@@ -172,10 +191,16 @@ const order = await manager.findOne(OrderEntity, {
     assignmentType: 'single' | 'batch' | 'stacked',
     manager: any
   ): Promise<DriverAssignmentEntity> {
-    // In a real implementation, you would:
-    // 1. Calculate actual distance between restaurant and delivery location
-    // 2. Estimate time based on distance, traffic, etc.
-    // 3. Get actual route data from GPS/mapping service
+    const driverLoc = driver.currentLocation;
+    const branchLoc = branch.location;
+    let distanceKm = 5.0;
+    let estimatedMinutes = 30;
+
+    if (driverLoc && branchLoc) {
+      distanceKm = haversineKm(driverLoc, branchLoc);
+      const avgSpeedKmh = Math.max(driver.averageSpeed, 15);
+      estimatedMinutes = Math.round((distanceKm / avgSpeedKmh) * 60);
+    }
 
     const assignment = manager.create(DriverAssignmentEntity, {
       driver,
@@ -183,8 +208,8 @@ const order = await manager.findOne(OrderEntity, {
       branch,
       assignmentType,
       status: 'assigned',
-      distance: 5.0, // Placeholder - would be calculated
-      estimatedTimeMinutes: 30, // Placeholder - would be calculated
+      distance: Math.round(distanceKm * 100) / 100,
+      estimatedTimeMinutes: estimatedMinutes,
       isPriority: false,
       retryCount: 0
     });
@@ -221,15 +246,25 @@ const order = await manager.findOne(OrderEntity, {
       const assignments = [];
 
       for (const order of orders) {
+        const driverLoc = driver.currentLocation;
+        const branchLoc = branch.location;
+        let distanceKm = 5.0;
+        let estimatedMinutes = 30;
+        if (driverLoc && branchLoc) {
+          distanceKm = haversineKm(driverLoc, branchLoc);
+          const avgSpeedKmh = Math.max(driver.averageSpeed, 15);
+          estimatedMinutes = Math.round((distanceKm / avgSpeedKmh) * 60);
+        }
+
         const assignment = manager.create(DriverAssignmentEntity, {
           driver,
           order,
           branch,
           assignmentType: 'batch',
-          batchId: `batch_${Date.now()}`, // Simple batch ID generation
+          batchId: `batch_${Date.now()}`,
           status: 'assigned',
-          distance: 5.0, // Placeholder
-          estimatedTimeMinutes: 30, // Placeholder
+          distance: Math.round(distanceKm * 100) / 100,
+          estimatedTimeMinutes: estimatedMinutes,
           isPriority: false,
           retryCount: 0
         });

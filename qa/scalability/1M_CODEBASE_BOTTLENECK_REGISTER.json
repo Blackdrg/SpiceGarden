@@ -1,0 +1,79 @@
+{
+  "audit_version": "1.0.0",
+  "target_concurrency": "1,000,000 VUs",
+  "timestamp": "2026-10-03T19:45:00Z",
+  "bottlenecks": [
+    {
+      "id": "BOT-001",
+      "component": "WebSockets / Socket.IO",
+      "symptom": "Multi-pod message broadcast isolation",
+      "root_cause": "Default in-memory IoAdapter limited events to single pod instances",
+      "severity": "CRITICAL",
+      "code_location": "apps/backend/src/infra/tracking/redis-io.adapter.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Implemented RedisIoAdapter with @socket.io/redis-adapter and ioredis pub/sub",
+      "status": "REMEDIATED"
+    },
+    {
+      "id": "BOT-002",
+      "component": "Payments / Idempotency",
+      "symptom": "Concurrent duplicate request race condition under network retries",
+      "root_cause": "Unhandled unique constraint rejection on concurrent insert before complete()",
+      "severity": "HIGH",
+      "code_location": "apps/backend/src/services/payments/idempotency.service.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Added catch handler for unique constraint collisions to reload existing record and return deduplicated response",
+      "status": "REMEDIATED"
+    },
+    {
+      "id": "BOT-003",
+      "component": "Wallet / Financial Balance",
+      "symptom": "Lost update / overdraft race condition during simultaneous debits across multiple pods",
+      "root_cause": "Non-atomic find-modify-save sequence without conditional SQL decrement",
+      "severity": "HIGH",
+      "code_location": "apps/backend/src/services/wallet/wallet.service.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Implemented atomic conditional query builder decrement with WHERE balance >= :amount",
+      "status": "REMEDIATED"
+    },
+    {
+      "id": "BOT-004",
+      "component": "Inventory / Stock Management",
+      "symptom": "Hot-row contention and potential overselling under high concurrency flash checkouts",
+      "root_cause": "In-memory stock decrement prone to lost updates across horizontal replicas",
+      "severity": "HIGH",
+      "code_location": "apps/backend/src/modules/kitchen/kitchen.service.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Constructed atomic update query with conditional non-negative stock invariant",
+      "status": "REMEDIATED"
+    },
+    {
+      "id": "BOT-005",
+      "component": "Kubernetes / Pod Health Probes",
+      "symptom": "Cascading pod restarts during upstream database latency spikes",
+      "root_cause": "Liveness probe coupled to database queries instead of decoupled event-loop responsiveness",
+      "severity": "MEDIUM",
+      "code_location": "apps/backend/src/app.controller.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Introduced dedicated /liveness, /readiness, and /startup endpoints in AppController and updated K8s manifests",
+      "status": "REMEDIATED"
+    },
+    {
+      "id": "BOT-006",
+      "component": "Lifecycle / Rolling Deployment",
+      "symptom": "Dropped in-flight HTTP requests and unclosed DB/Redis handles during pod termination",
+      "root_cause": "app.enableShutdownHooks() was missing in main.ts bootstrap",
+      "severity": "MEDIUM",
+      "code_location": "apps/backend/src/main.ts",
+      "classification": "SCALE-BLOCKING (Fixed)",
+      "remediation": "Enabled application shutdown hooks and graceful module destroy lifecycle handlers",
+      "status": "REMEDIATED"
+    }
+  ],
+  "verification_status": {
+    "total_bottlenecks_identified": 6,
+    "total_remediated": 6,
+    "scale_blocking_remaining": 0,
+    "overall_readiness_score": 100
+  }
+}

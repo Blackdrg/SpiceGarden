@@ -18,8 +18,8 @@ export declare class DeliveryService {
     private driverScoreRepo;
     private driverFraudRepo;
     private geoService;
-    private dataSource;
-    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, dataSource: DataSource);
+    private connection;
+    constructor(driverRepo: Repository<DriverEntity>, walletRepo: Repository<WalletEntity>, transactionRepo: Repository<WalletTransactionEntity>, orderRepo: Repository<OrderEntity>, batchRepo: Repository<BatchEntity>, driverAssignmentRepo: Repository<DriverAssignmentEntity>, driverScoreRepo: Repository<DriverScoreEntity>, driverFraudRepo: Repository<DriverFraudEntity>, geoService: GeoService, connection: DataSource);
     registerDriver(userId: string, data: any): Promise<DriverEntity[]>;
     updateLocation(driverId: string, lat: number, lng: number): Promise<import("typeorm").UpdateResult>;
     findAvailableDrivers(lat: number, lng: number, radiusInKm?: number): Promise<DriverEntity[]>;

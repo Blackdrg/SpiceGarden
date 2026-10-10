@@ -29,10 +29,11 @@ export const Dropdown = ({
   disabled = false,
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<DropdownOption | null>(
-    options.find(opt => opt.value === value) || null
-  );
+  const [selected, setSelected] = useState<DropdownOption | null>(() => {
+    return options.find(opt => opt.value === value) || null;
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownId = label ? `dropdown-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : 'custom-dropdown';
 
   useEffect(() => {
     setSelected(options.find(opt => opt.value === value) || null);
@@ -57,23 +58,31 @@ export const Dropdown = ({
   };
 
   return (
-    <div ref={dropdownRef} style={{ marginBottom: label ? DESIGN_TOKENS.spacing.sm : 0 }}>
+    <div ref={dropdownRef} style={{ position: 'relative', marginBottom: label ? DESIGN_TOKENS.spacing.sm : 0 }}>
       {label && (
-        <label style={{
-          display: 'block',
-          marginBottom: DESIGN_TOKENS.spacing.xs,
-          ...DESIGN_TOKENS.typography.smallLabel,
-          color: DESIGN_TOKENS.colors.textPrimary,
-        }}>
+        <label
+          htmlFor={dropdownId}
+          style={{
+            display: 'block',
+            marginBottom: DESIGN_TOKENS.spacing.xs,
+            ...DESIGN_TOKENS.typography.smallLabel,
+            color: DESIGN_TOKENS.colors.textPrimary,
+          }}
+        >
           {label}
         </label>
       )}
-      <div
+      <button
+        type="button"
+        id={dropdownId}
+        disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         aria-label={label || 'Dropdown'}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         style={{
+          width: '100%',
+          textAlign: 'left',
           position: 'relative',
           padding: `${DESIGN_TOKENS.spacing.md}px`,
           borderRadius: `${DESIGN_TOKENS.radius.input}px`,
@@ -81,6 +90,7 @@ export const Dropdown = ({
           backgroundColor: disabled ? DESIGN_TOKENS.colors.elevated : DESIGN_TOKENS.colors.surface,
           cursor: disabled ? 'not-allowed' : 'pointer',
           fontFamily: DESIGN_TOKENS.typography.fontFamily,
+          display: 'block',
         }}
       >
         <span style={{
@@ -98,8 +108,11 @@ export const Dropdown = ({
         }}>
           ▼
         </span>
-        {isOpen && (
-          <div style={{
+      </button>
+      {isOpen && (
+        <div
+          role="listbox"
+          style={{
             position: 'absolute',
             top: '100%',
             left: 0,
@@ -112,27 +125,34 @@ export const Dropdown = ({
             zIndex: 1000,
             maxHeight: 200,
             overflowY: 'auto',
-          }}>
-            {options.map((option) => (
-              <div
-                key={option.value}
-                onClick={() => handleSelect(option)}
-                role="option"
-                aria-selected={selected?.value === option.value}
-                style={{
-                  padding: `${DESIGN_TOKENS.spacing.md}px`,
-                  cursor: option.disabled ? 'not-allowed' : 'pointer',
-                  backgroundColor: selected?.value === option.value ? DESIGN_TOKENS.colors.elevated : 'transparent',
-                  color: option.disabled ? DESIGN_TOKENS.colors.textSecondary : DESIGN_TOKENS.colors.textPrimary,
-                  opacity: option.disabled ? 0.5 : 1,
-                }}
-              >
-                {option.label}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+          }}
+        >
+          {options.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              onClick={() => handleSelect(option)}
+              role="option"
+              disabled={option.disabled}
+              aria-selected={selected?.value === option.value}
+              style={{
+                width: '100%',
+                textAlign: 'left',
+                border: 'none',
+                display: 'block',
+                padding: `${DESIGN_TOKENS.spacing.md}px`,
+                cursor: option.disabled ? 'not-allowed' : 'pointer',
+                backgroundColor: selected?.value === option.value ? DESIGN_TOKENS.colors.elevated : 'transparent',
+                color: option.disabled ? DESIGN_TOKENS.colors.textSecondary : DESIGN_TOKENS.colors.textPrimary,
+                opacity: option.disabled ? 0.5 : 1,
+                outline: 'none',
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
       {error && (
         <span role="alert" style={{
           ...DESIGN_TOKENS.typography.smallLabel,

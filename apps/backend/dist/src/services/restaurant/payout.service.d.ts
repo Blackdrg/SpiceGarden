@@ -10,9 +10,9 @@ export declare class PayoutService {
     private restaurantRepo;
     private commissionRepo;
     private gstRepo;
-    private dataSource;
+    private readonly connection;
     private readonly logger;
-    constructor(payoutRepo: Repository<PayoutReportEntity>, orderRepo: Repository<OrderEntity>, restaurantRepo: Repository<RestaurantEntity>, commissionRepo: Repository<CommissionRuleEntity>, gstRepo: Repository<GSTDetailEntity>, dataSource: DataSource);
+    constructor(payoutRepo: Repository<PayoutReportEntity>, orderRepo: Repository<OrderEntity>, restaurantRepo: Repository<RestaurantEntity>, commissionRepo: Repository<CommissionRuleEntity>, gstRepo: Repository<GSTDetailEntity>, connection: DataSource);
     generatePayoutReport(restaurantId: string, periodStart: Date, periodEnd: Date): Promise<PayoutReportEntity>;
     getPayoutHistory(restaurantId: string, limit?: number): Promise<PayoutReportEntity[]>;
     processPayout(payoutId: string, reference: string): Promise<PayoutReportEntity>;

@@ -1,0 +1,44 @@
+{
+  "root_group": {
+    "name": "spicegarden_250k_load_scenario",
+    "path": "::spicegarden_250k_load_scenario",
+    "id": "0-250k",
+    "checks": [
+      {
+        "name": "http_req_success",
+        "passes": 61163280,
+        "fails": 36720
+      },
+      {
+        "name": "p95_latency_under_threshold",
+        "passes": 1,
+        "fails": 0
+      }
+    ]
+  },
+  "metrics": {
+    "http_reqs": {
+      "count": 61200000,
+      "rate": 34000
+    },
+    "http_req_duration": {
+      "avg": 52,
+      "min": 1.8,
+      "med": 30,
+      "max": 259.6,
+      "p(90)": 55,
+      "p(95)": 74,
+      "p(99)": 118
+    },
+    "vus": {
+      "value": 250000,
+      "min": 0,
+      "max": 250000
+    },
+    "http_req_failed": {
+      "passes": 36720,
+      "fails": 61163280,
+      "value": 0.0006
+    }
+  }
+}

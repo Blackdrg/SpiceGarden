@@ -1,17 +1,16 @@
 // Test kitchen.service.spec.ts - Using isolated tests that don't import actual services
 
+jest.mock('@nestjs/testing', () => ({
+  Test: {
+    createTestingModule: jest.fn().mockImplementation(() => ({
+      compile: jest.fn().mockResolvedValue({
+        get: jest.fn().mockImplementation(() => ({})),
+      }),
+    })),
+  },
+}));
+
 describe('Kitchen Service - Isolated Unit Tests', () => {
-  beforeAll(() => {
-    jest.mock('@nestjs/testing', () => ({
-      Test: {
-        createTestingModule: jest.fn().mockImplementation(() => ({
-          compile: jest.fn().mockResolvedValue({
-            get: jest.fn().mockImplementation(() => ({})),
-          }),
-        })),
-      },
-    }));
-  });
 
   describe('Inventory Management Logic', () => {
     it('should calculate total cost from stock and unit cost', () => {

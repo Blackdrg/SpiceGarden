@@ -35,6 +35,34 @@ declare module 'lucide-react' {
   export const Users: FC<LucideIconProps>;
   export const Plus: FC<LucideIconProps>;
   export const Trash2: FC<LucideIconProps>;
+  export const Headphones: FC<LucideIconProps>;
+  export const Volume2: FC<LucideIconProps>;
+  export const VolumeX: FC<LucideIconProps>;
+  export const Gift: FC<LucideIconProps>;
+  export const FileText: FC<LucideIconProps>;
+  export const Check: FC<LucideIconProps>;
+  export const X: FC<LucideIconProps>;
+  export const Store: FC<LucideIconProps>;
+  export const Clock: FC<LucideIconProps>;
+  export const Minus: FC<LucideIconProps>;
+  export const SlidersHorizontal: FC<LucideIconProps>;
+  export const ChevronLeft: FC<LucideIconProps>;
+  export const ChevronRight: FC<LucideIconProps>;
+  export const Sparkles: FC<LucideIconProps>;
+  export const ShieldCheck: FC<LucideIconProps>;
+  export const Tag: FC<LucideIconProps>;
+  export const ArrowRight: FC<LucideIconProps>;
+  export const ArrowUpRight: FC<LucideIconProps>;
+  export const ArrowDownLeft: FC<LucideIconProps>;
+  export const RotateCw: FC<LucideIconProps>;
+  export const Phone: FC<LucideIconProps>;
+  export const MessageSquare: FC<LucideIconProps>;
+  export const Navigation: FC<LucideIconProps>;
+  export const Layers: FC<LucideIconProps>;
+  export const ShoppingBag: FC<LucideIconProps>;
+  export const TrendingUp: FC<LucideIconProps>;
+  export const CheckCircle2: FC<LucideIconProps>;
+  export const Zap: FC<LucideIconProps>;
 }
 
 export {};

@@ -10,8 +10,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@/*": [
         "./src/*"
@@ -19,20 +21,19 @@
     },
     "types": [
       "react",
-      "react-native",
-      "jest",
       "node"
     ]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "declarations.d.ts",
     "*.d.ts",
-    "../lucide-react.d.ts"
+    "../lucide-react.d.ts",
+    "../packages/ui/*.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

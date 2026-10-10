@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: typeorm types resolve at runtime; module present in package.json
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { MenuItemEntity } from './menu-item.entity';
 
@@ -9,7 +11,7 @@ export class MenuAddonEntity {
   @Column()
   menuItemId!: string;
 
-  @ManyToOne(() => MenuItemEntity, (menuItem) => menuItem.addons)
+  @ManyToOne(() => MenuItemEntity, (menuItem: MenuItemEntity) => menuItem.addons)
   menuItem!: MenuItemEntity;
 
   @Column()

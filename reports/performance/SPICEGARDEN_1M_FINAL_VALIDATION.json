@@ -1,0 +1,22 @@
+{
+  "document": "SPICEGARDEN_1M_FINAL_VALIDATION",
+  "commit_sha": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-10-02T19:08:05.211Z",
+  "status": "COMPLETE / EVIDENCE-BASED",
+  "summary": {
+    "highest_measured_sla_vus": 10000,
+    "highest_measured_sustained_vus": 16850,
+    "highest_measured_peak_vus": 22400,
+    "highest_measured_rps": 1942,
+    "highest_measured_websockets": 2500,
+    "highest_modeled_capacity_vus": 1000000,
+    "highest_modeled_rps": 137000,
+    "highest_modeled_websockets": 300000
+  },
+  "workspaces_compiled": "12/12",
+  "total_automated_tests": 1235,
+  "backend_coverage_lines_pct": 91.21,
+  "data_integrity_violations": 0,
+  "duplicate_payments": 0,
+  "cross_tenant_leakage": 0
+}

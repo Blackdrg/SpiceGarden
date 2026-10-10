@@ -1,0 +1,110 @@
+{
+  "manifest_version": "1.0.0",
+  "project": "SpiceGarden",
+  "release": "v1.0.0-rc1",
+  "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "snapshot_date": "2026-09-30",
+  "target_runtime": "Node.js 22 LTS",
+  "classification": "Literary Work - Computer Programme",
+  "workspaces_count": 12,
+  "workspaces": [
+    {
+      "name": "apps/backend",
+      "type": "Backend API Service (NestJS)",
+      "primary_language": "TypeScript",
+      "modules_count": 69,
+      "test_suites_count": 69,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/customer-web",
+      "type": "Client Web Application (Next.js)",
+      "primary_language": "TypeScript / React",
+      "routes_count": 12,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/customer-mobile",
+      "type": "Mobile Application (React Native / Expo)",
+      "primary_language": "TypeScript / React Native",
+      "routes_count": 8,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/restaurant-dashboard",
+      "type": "Merchant Web Application (Next.js)",
+      "primary_language": "TypeScript / React",
+      "routes_count": 9,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/delivery-partner",
+      "type": "Driver Partner Mobile Application (React Native / Expo)",
+      "primary_language": "TypeScript / React Native",
+      "routes_count": 6,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/super-admin",
+      "type": "Administrative Operations Web Application (Next.js)",
+      "primary_language": "TypeScript / React",
+      "routes_count": 7,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "apps/desktop-launcher",
+      "type": "Desktop Operator Wrapper (Electron)",
+      "primary_language": "TypeScript / Electron",
+      "routes_count": 2,
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "packages/shared-types",
+      "type": "Shared Data Contracts & Interfaces",
+      "primary_language": "TypeScript",
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "packages/ui",
+      "type": "Shared UI Component Library & Tokens",
+      "primary_language": "TypeScript / React / CSS",
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "packages/database",
+      "type": "Database Entities, Migrations & Seeds",
+      "primary_language": "TypeScript / SQL",
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "packages/config",
+      "type": "Environment & Configuration Utilities",
+      "primary_language": "TypeScript",
+      "status": "QUALIFIED"
+    },
+    {
+      "name": "packages/utils",
+      "type": "Algorithmic & Calculation Helpers",
+      "primary_language": "TypeScript",
+      "status": "QUALIFIED"
+    }
+  ],
+  "source_integrity_hashes": {
+    "release_manifest_sha256": "2dda03bd4c383221b7822b60ee2e4cf1d2c3d327b773171aa51764b8d6d63c49",
+    "build_manifest_sha256": "369c2901cb88b0c900d8ea16ce9e4ec29bc94cde403f7505c60c5baa890ebc38",
+    "sbom_json_sha256": "9f5757c38a2192654548e67bbf7deefb01d3523c2973ede9faef1316ce5a4a96",
+    "license_report_sha256": "0b156f137ffdec1b12da4f7a6bab1e2229a4570a67fc6a57b70922dc7d728759",
+    "ip_inventory_sha256": "166480e5c48664880e4c86eec2e7d8421f072eb1e45138467c74da049ba2c3f5",
+    "copyright_declaration_sha256": "539f95901e64eeeda63d6f3851fb8a16db268b14a6d732034681430eadc94dfb"
+  },
+  "licensing_summary": {
+    "copyleft_dependencies": 0,
+    "permissive_dependencies_percent": 100.0,
+    "top_licenses": {
+      "MIT": "92.4%",
+      "Apache-2.0": "5.4%",
+      "BSD": "1.7%",
+      "ISC": "0.5%"
+    }
+  }
+}

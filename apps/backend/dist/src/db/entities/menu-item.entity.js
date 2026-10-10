@@ -36,6 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], MenuItemEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_menu_items_name'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], MenuItemEntity.prototype, "name", void 0);
@@ -60,10 +61,12 @@ __decorate([
     __metadata("design:type", Number)
 ], MenuItemEntity.prototype, "spiceLevel", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_menu_items_status'),
     (0, typeorm_1.Column)({ default: 'available' }),
     __metadata("design:type", String)
 ], MenuItemEntity.prototype, "status", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_menu_items_category_id'),
     (0, typeorm_1.ManyToOne)(() => menu_category_entity_1.MenuCategoryEntity, (category) => category.items),
     __metadata("design:type", menu_category_entity_1.MenuCategoryEntity)
 ], MenuItemEntity.prototype, "category", void 0);

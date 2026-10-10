@@ -1,0 +1,12 @@
+{
+  "audit_timestamp": "2026-10-03T13:03:22.041Z",
+  "git_commit_sha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "status": "BLOCKED_EXTERNAL",
+  "reason": "AWS credentials unavailable in host environment",
+  "aws_account_id": null,
+  "aws_region": null,
+  "caller_arn": null,
+  "iam_permissions_verified": false,
+  "service_quotas_verified": false,
+  "terraform_validation_status": "VALIDATED_LOCAL_CODE"
+}

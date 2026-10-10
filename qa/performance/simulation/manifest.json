@@ -1,0 +1,20 @@
+{
+  "benchmarkTitle": "SpiceGarden 500K Simulation Manifest",
+  "gitSha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "randomSeed": "0x5P1CE64RDEN_500K_SIM",
+  "generatedAt": "2026-10-03T09:01:35.127Z",
+  "hashes": {
+    "summary.json": "912fc3ce6b36d791440e3d9ecd25557316a8c47b9b904d65f24e32702d7f5818",
+    "tiers.json": "14377c81ed7625f4da0d55c0ef61aa6e2f86be2d04a40d5941752b45d4df40de",
+    "scenarios.json": "42333decd416d5d7c359cfbb6ac0619011c26d167fa8a8a013d8a9e3eabaf8e5",
+    "errors.json": "1590265da096e46c4e8a5d194eabf6d00771ca01701476fe2a9bd27dd4e5601d",
+    "latency.json": "c4d5acd3a85e150c75419537278650756e89ba4eaa182acfdee7a3553fc6d8ec",
+    "resources.json": "c24e29b25ff8df7629eb442f27ad53edd9788f779cf91d3c036ebd7792f0f2a1",
+    "websocket.json": "f54f1b4cc497430b3da293ad0b14f8f170eead07d52da1a9c0f76a07b915925a",
+    "queues.json": "f1164264b120b818578a7310da1cabd8c5bd019c3825ef31f9410ddabd01dbb8",
+    "database.json": "5065a2cdce37555970c78ca491c3a0045e2d0fa6321a3699c9546ec8ae21a065",
+    "redis.json": "78b3f443f924303c3dd5120ee7992639047b37b09ebc973213790e65a5919557",
+    "business-invariants.json": "5cd04e2e2e40f7f3104d05b0b0ec3f032e6ddb6d51b2f4e90d741637ee5d4b49",
+    "failure-injection.json": "05a1c002090083c93925bb80eae414458e767bf8cc5a1856d99bc49601876df9"
+  }
+}

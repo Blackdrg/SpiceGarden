@@ -10,9 +10,9 @@ export declare class TaxReportingService {
     private restaurantRepo;
     private restaurantGstRepo;
     private orderItemRepo;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(orderRepo: Repository<OrderEntity>, gstDetailRepo: Repository<GSTDetailEntity>, restaurantRepo: Repository<RestaurantEntity>, restaurantGstRepo: Repository<RestaurantGSTEntity>, orderItemRepo: Repository<OrderItemEntity>, dataSource: DataSource);
+    constructor(orderRepo: Repository<OrderEntity>, gstDetailRepo: Repository<GSTDetailEntity>, restaurantRepo: Repository<RestaurantEntity>, restaurantGstRepo: Repository<RestaurantGSTEntity>, orderItemRepo: Repository<OrderItemEntity>, connection: DataSource);
     generateGSTReport(restaurantId: string, month: number, year: number): Promise<any>;
     private getHSNBreakdown;
     exportGSTR1(restaurantId: string, month: number, year: number): Promise<any[]>;

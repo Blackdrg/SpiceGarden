@@ -22,22 +22,21 @@ const wallet_transaction_entity_1 = require("../../db/entities/wallet-transactio
 const config_1 = require("@nestjs/config");
 const payments_service_1 = require("../payments/payments.service");
 const notification_service_1 = require("../notifications/notification.service");
-const typeorm_3 = require("typeorm");
 let WalletService = WalletService_1 = class WalletService {
-    walletRepo;
-    walletTransactionRepo;
+    connection;
     configService;
-    dataSource;
     paymentService;
     notificationService;
     logger = new common_1.Logger(WalletService_1.name);
-    constructor(walletRepo, walletTransactionRepo, configService, dataSource, paymentService, notificationService) {
-        this.walletRepo = walletRepo;
-        this.walletTransactionRepo = walletTransactionRepo;
+    walletRepo;
+    walletTransactionRepo;
+    constructor(connection, configService, paymentService, notificationService) {
+        this.connection = connection;
         this.configService = configService;
-        this.dataSource = dataSource;
         this.paymentService = paymentService;
         this.notificationService = notificationService;
+        this.walletRepo = this.connection.getRepository(wallet_entity_1.WalletEntity);
+        this.walletTransactionRepo = this.connection.getRepository(wallet_transaction_entity_1.WalletTransactionEntity);
     }
     async getWallet(userId) {
         let wallet = await this.walletRepo.findOne({ where: { userId } });
@@ -80,9 +79,26 @@ let WalletService = WalletService_1 = class WalletService {
         if (wallet.balance < amount) {
             throw new common_1.BadRequestException('Insufficient wallet balance');
         }
-        wallet.balance -= amount;
-        wallet.updatedAt = new Date();
-        await this.walletRepo.save(wallet);
+        if (typeof this.walletRepo.createQueryBuilder === 'function') {
+            const updateResult = await this.walletRepo
+                .createQueryBuilder()
+                .update(wallet_entity_1.WalletEntity)
+                .set({
+                balance: () => `balance - ${amount}`,
+                updatedAt: new Date(),
+            })
+                .where('id = :id AND balance >= :amount', { id: wallet.id, amount })
+                .execute();
+            if (!updateResult.affected || updateResult.affected === 0) {
+                throw new common_1.BadRequestException('Insufficient wallet balance');
+            }
+            wallet.balance -= amount;
+        }
+        else {
+            wallet.balance -= amount;
+            wallet.updatedAt = new Date();
+            await this.walletRepo.save(wallet);
+        }
         const transaction = this.walletTransactionRepo.create({
             walletId: wallet.id,
             amount,
@@ -100,7 +116,7 @@ let WalletService = WalletService_1 = class WalletService {
         if (amount <= 0) {
             throw new common_1.BadRequestException('Amount must be greater than zero');
         }
-        return this.dataSource.manager.transaction(async (manager) => {
+        return this.connection.transaction(async (manager) => {
             const wallet = await manager.findOne(wallet_entity_1.WalletEntity, { where: { userId } });
             if (!wallet) {
                 throw new common_1.BadRequestException('Wallet not found');
@@ -162,7 +178,7 @@ let WalletService = WalletService_1 = class WalletService {
             where: {
                 walletId: wallet.id,
                 referenceId: orderId,
-                description: (0, typeorm_3.Like)(`%COD Payment Pending%`),
+                description: (0, typeorm_2.Like)(`%COD Payment Pending%`),
             },
             order: { createdAt: 'DESC' },
         });
@@ -188,7 +204,7 @@ let WalletService = WalletService_1 = class WalletService {
             where: {
                 walletId: wallet.id,
                 referenceId: orderId,
-                description: (0, typeorm_3.Like)(`%COD Payment Collected%`),
+                description: (0, typeorm_2.Like)(`%COD Payment Collected%`),
             },
             order: { createdAt: 'DESC' },
         });
@@ -214,15 +230,16 @@ let WalletService = WalletService_1 = class WalletService {
         };
     }
     async preventDoublePayment(userId, orderId, amount) {
+        const wallet = await this.getWallet(userId);
         const recentTransactions = await this.walletTransactionRepo.find({
             where: {
-                walletId: (await this.getWallet(userId)).id,
+                walletId: wallet.id,
                 referenceId: orderId,
-                createdAt: new Date(Date.now() - 300000),
+                createdAt: (0, typeorm_2.MoreThanOrEqual)(new Date(Date.now() - 300000)),
             },
         });
         if (recentTransactions.length > 0) {
-            const successfulTransactions = recentTransactions.filter(t => t.description.toLowerCase().includes('confirmed') ||
+            const successfulTransactions = recentTransactions.filter((t) => t.description.toLowerCase().includes('confirmed') ||
                 t.description.toLowerCase().includes('completed'));
             if (successfulTransactions.length > 0) {
                 this.logger.warn(`Potential duplicate payment detected for user ${userId}, order ${orderId}`);
@@ -232,24 +249,44 @@ let WalletService = WalletService_1 = class WalletService {
         return true;
     }
     async reconcilePayments() {
-        return {
-            totalProcessed: 0,
-            successful: 0,
-            failed: 0,
-            discrepancies: [],
-        };
+        const wallets = await this.walletRepo.find({ take: 1000, order: { createdAt: 'DESC' } });
+        const totalProcessed = 0;
+        const discrepancies = [];
+        if (wallets.length === 0) {
+            return { totalProcessed: 0, successful: 0, failed: 0, discrepancies: [] };
+        }
+        const walletIds = wallets.map((w) => w.id);
+        const transactions = await this.walletTransactionRepo.find({
+            where: { walletId: (0, typeorm_2.In)(walletIds) },
+        });
+        const transactionsByWallet = new Map();
+        for (const txn of transactions) {
+            const existing = transactionsByWallet.get(txn.walletId) || [];
+            existing.push(txn);
+            transactionsByWallet.set(txn.walletId, existing);
+        }
+        for (const wallet of wallets) {
+            const walletTxns = transactionsByWallet.get(wallet.id) || [];
+            const expectedBalance = walletTxns.reduce((sum, tx) => sum + (tx.type === 'credit' ? tx.amount : -tx.amount), 0);
+            const actualBalance = Number(wallet.balance);
+            if (Math.abs(expectedBalance - actualBalance) > 0.01) {
+                discrepancies.push({
+                    orderId: wallet.id,
+                    expected: expectedBalance,
+                    actual: actualBalance,
+                });
+            }
+        }
+        const totalTxnCount = transactions.length;
+        return { totalProcessed: totalTxnCount, successful: totalTxnCount, failed: 0, discrepancies };
     }
 };
 exports.WalletService = WalletService;
 exports.WalletService = WalletService = WalletService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(wallet_entity_1.WalletEntity)),
-    __param(1, (0, typeorm_1.InjectRepository)(wallet_transaction_entity_1.WalletTransactionEntity)),
-    __param(3, (0, typeorm_1.InjectDataSource)()),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
+    __param(0, (0, typeorm_1.InjectDataSource)()),
+    __metadata("design:paramtypes", [typeorm_2.DataSource,
         config_1.ConfigService,
-        typeorm_2.DataSource,
         payments_service_1.PaymentService,
         notification_service_1.NotificationService])
 ], WalletService);

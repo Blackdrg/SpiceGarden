@@ -3,6 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { NotificationStatus } from './notification-status.enum';
 
 @Entity('notifications')
+@Index('idx_notifications_recipient_id', ['recipientId'])
+@Index('idx_notifications_status', ['status'])
+@Index('idx_notifications_recipient_status', ['recipientId', 'status'])
+@Index('idx_notifications_next_attempt', ['nextAttemptAt'])
+@Index('idx_notifications_created_at', ['createdAt'])
 export class NotificationEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

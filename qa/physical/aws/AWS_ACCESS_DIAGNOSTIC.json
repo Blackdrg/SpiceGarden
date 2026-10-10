@@ -1,0 +1,33 @@
+{
+  "diagnostic_timestamp": "2026-10-03T13:03:22.038Z",
+  "git_commit_sha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "aws_sts_probe": {
+    "status": "BLOCKED",
+    "error_type": "CREDENTIALS_MISSING",
+    "reason": "No AWS credentials found in ~/.aws/credentials, ~/.aws/config, or process environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN)",
+    "aws_directory_inspected": "C:\\Users\\mehta\\.aws",
+    "aws_directory_files": [],
+    "configured_profiles": []
+  },
+  "terraform_aws_provider_probe": {
+    "status": "BLOCKED",
+    "error_message": "Error: No valid credential sources found with provider[\"registry.terraform.io/hashicorp/aws\"]. Failed to refresh cached credentials, no EC2 IMDS role found."
+  },
+  "resolution_path": {
+    "required_action": "User / Account Administrator must provide active AWS credentials or SSO authentication",
+    "commands": [
+      "aws configure",
+      "aws sso login --profile <profile-name>"
+    ],
+    "required_iam_permissions": [
+      "ec2:*",
+      "eks:*",
+      "rds:*",
+      "elasticache:*",
+      "elasticloadbalancing:*",
+      "iam:CreateRole",
+      "iam:PassRole",
+      "iam:AttachRolePolicy"
+    ]
+  }
+}

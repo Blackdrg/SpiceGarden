@@ -1,0 +1,7 @@
+{
+  "generator_count": 1,
+  "per_node_vus": 22400,
+  "per_node_cpu_avg": "100.0%",
+  "per_node_mem_avg": "7.4GB / 8GB",
+  "socket_status": "WSAENOBUFS EXHAUSTION"
+}

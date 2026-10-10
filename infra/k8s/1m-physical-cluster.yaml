@@ -1,0 +1,253 @@
+# infra/k8s/1m-physical-cluster.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spicegarden-prod
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spicegarden-1m-config
+  namespace: spicegarden-prod
+data:
+  NODE_ENV: "production"
+  PORT: "3001"
+  ENABLE_METRICS: "true"
+  DB_POOL_MAX: "25"
+  REDIS_CLUSTER_MODE: "true"
+  UV_THREADPOOL_SIZE: "64"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-pgbouncer
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-pgbouncer
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: spicegarden-pgbouncer
+  template:
+    metadata:
+      labels:
+        app: spicegarden-pgbouncer
+    spec:
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:latest
+          ports:
+            - containerPort: 6432
+          env:
+            - name: DB_USER
+              value: "spiceadmin"
+            - name: DB_PASSWORD
+              value: "SpiceGardenSecure2026!Key"
+            - name: DB_HOST
+              value: "spicegarden-1m-aurora-cluster.cluster-custom.us-east-1.rds.amazonaws.com"
+            - name: DB_NAME
+              value: "spicegarden"
+            - name: POOL_MODE
+              value: "transaction"
+            - name: MAX_CLIENT_CONN
+              value: "10000"
+            - name: DEFAULT_POOL_SIZE
+              value: "50"
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-service
+  namespace: spicegarden-prod
+spec:
+  ports:
+    - port: 6432
+      targetPort: 6432
+  selector:
+    app: spicegarden-pgbouncer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-backend-1m
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-backend
+    tier: api
+spec:
+  replicas: 160
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 20%
+      maxUnavailable: 5%
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+  template:
+    metadata:
+      labels:
+        app: spicegarden-backend
+        tier: api
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                      - backend-workload
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - spicegarden-backend
+                topologyKey: "kubernetes.io/hostname"
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: "topology.kubernetes.io/zone"
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: spicegarden-backend
+      containers:
+        - name: backend
+          image: ghcr.io/spicegarden/backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+              name: http
+          envFrom:
+            - configMapRef:
+                name: spicegarden-1m-config
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://spiceadmin:SpiceGardenSecure2026!Key@pgbouncer-service:6432/spicegarden"
+            - name: REDIS_HOST
+              value: "spicegarden-1m-redis.cluster-custom.us-east-1.cache.amazonaws.com"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: JWT_SECRET
+              value: "SpiceGarden-1M-HighSecurityJwtSecret2026"
+          resources:
+            requests:
+              cpu: "1500m"
+              memory: "2Gi"
+            limits:
+              cpu: "3500m"
+              memory: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 3001
+            initialDelaySeconds: 2
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spicegarden-backend-service
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3001
+      protocol: TCP
+      name: http
+  selector:
+    app: spicegarden-backend
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spicegarden-alb-ingress
+  namespace: spicegarden-prod
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "10"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "3"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: spicegarden-backend-service
+                port:
+                  number: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: spicegarden-backend-pdb
+  namespace: spicegarden-prod
+spec:
+  minAvailable: 140
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: spicegarden-backend-hpa
+  namespace: spicegarden-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spicegarden-backend-1m
+  minReplicas: 160
+  maxReplicas: 240
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75

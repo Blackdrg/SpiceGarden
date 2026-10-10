@@ -30,8 +30,7 @@
       ]
     },
     "types": [
-      "jest",
-      "@testing-library/jest-dom"
+      "jest"
     ]
   },
   "include": [
@@ -39,7 +38,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../lucide-react.d.ts"
+    "../../packages/ui/lucide-react.d.ts"
   ],
   "exclude": [
     "node_modules"

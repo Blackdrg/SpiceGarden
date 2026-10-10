@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, Animated, Easing } from '
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DESIGN_TOKENS } from '@spicegarden/ui';
+import { API_URL } from '../constants/api';
 
 const AuthScreen = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -48,8 +49,6 @@ const AuthScreen = () => {
       setPasswordError('');
     }
   };
-
-  const API_URL = 'http://localhost:3001';
 
   const handleSubmit = async () => {
     setError('');
@@ -160,7 +159,7 @@ const AuthScreen = () => {
             <TextInput
               placeholder="Enter your email"
               value={email}
-              onChangeText={(text) => {
+              onChangeText={(text: string) => {
                 setEmail(text);
                 if (emailError) validateEmail(text);
               }}
@@ -179,7 +178,7 @@ const AuthScreen = () => {
             <TextInput
               placeholder="Enter your password"
               value={password}
-              onChangeText={(text) => {
+              onChangeText={(text: string) => {
                 setPassword(text);
                 if (passwordError) validatePassword(text);
               }}

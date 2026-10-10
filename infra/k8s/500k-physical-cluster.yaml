@@ -1,0 +1,343 @@
+# infra/k8s/500k-physical-cluster.yaml
+# ==============================================================================
+# SpiceGarden 500K Physical Cluster Deployment Specification
+# Target Architecture: 20x c6i.4xlarge nodes, 160-240 backend pods, 8 PgBouncer pods,
+# Redis 6-shard cluster, BullMQ workers, and Kernel Sysctl DaemonSet
+# ==============================================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spicegarden-prod
+  labels:
+    environment: production
+    scalability-tier: 500k-physical
+---
+# 1. DaemonSet for Node Kernel & Network Tuning
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: spicegarden-node-sysctl-tuner
+  namespace: spicegarden-prod
+spec:
+  selector:
+    matchLabels:
+      name: node-sysctl-tuner
+  template:
+    metadata:
+      labels:
+        name: node-sysctl-tuner
+    spec:
+      hostNetwork: true
+      hostPID: true
+      containers:
+        - name: sysctl-tuner
+          image: busybox:1.36
+          securityContext:
+            privileged: true
+          command:
+            - sh
+            - -c
+            - |
+              sysctl -w fs.file-max=2097152
+              sysctl -w net.core.somaxconn=65535
+              sysctl -w net.core.netdev_max_backlog=100000
+              sysctl -w net.ipv4.ip_local_port_range="1024 65535"
+              sysctl -w net.ipv4.tcp_tw_reuse=1
+              sysctl -w net.ipv4.tcp_fin_timeout=15
+              sysctl -w net.core.rmem_max=16777216
+              sysctl -w net.core.wmem_max=16777216
+              sysctl -w net.ipv4.tcp_max_syn_backlog=65535
+              while true; do sleep 3600; done
+      tolerations:
+        - operator: Exists
+---
+# 2. ConfigMap for High-Scale Backend Environment
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spicegarden-500k-config
+  namespace: spicegarden-prod
+data:
+  NODE_ENV: "production"
+  PORT: "3001"
+  LOG_LEVEL: "warn"
+  ENABLE_METRICS: "true"
+  DB_POOL_MAX: "25"
+  DB_POOL_MIN: "5"
+  REDIS_CLUSTER_MODE: "true"
+  REDIS_HOST: "spicegarden-1m-redis.cluster-custom.us-east-1.cache.amazonaws.com"
+  REDIS_PORT: "6379"
+  DB_HOST: "pgbouncer-service"
+  DB_PORT: "6432"
+  DB_NAME: "spicegarden"
+  UV_THREADPOOL_SIZE: "64"
+  BULLMQ_CONCURRENCY: "50"
+---
+# 3. 8-Pod PgBouncer Transaction Pooling Cluster
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-pgbouncer
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-pgbouncer
+spec:
+  replicas: 8
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: spicegarden-pgbouncer
+  template:
+    metadata:
+      labels:
+        app: spicegarden-pgbouncer
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values: [spicegarden-pgbouncer]
+                topologyKey: topology.kubernetes.io/zone
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:latest
+          ports:
+            - containerPort: 6432
+          env:
+            - name: DB_USER
+              value: "spiceadmin"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spicegarden-secrets
+                  key: DB_PASSWORD
+            - name: DB_HOST
+              value: "spicegarden-1m-aurora-cluster.cluster-custom.us-east-1.rds.amazonaws.com"
+            - name: DB_NAME
+              value: "spicegarden"
+            - name: POOL_MODE
+              value: "transaction"
+            - name: MAX_CLIENT_CONN
+              value: "10000"
+            - name: DEFAULT_POOL_SIZE
+              value: "50"
+            - name: RESERVE_POOL_SIZE
+              value: "20"
+            - name: MAX_DB_CONNECTIONS
+              value: "400"
+            - name: QUERY_WAIT_TIMEOUT
+              value: "15"
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-service
+  namespace: spicegarden-prod
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6432
+      targetPort: 6432
+  selector:
+    app: spicegarden-pgbouncer
+---
+# 4. Backend Deployment (160 to 240 Pods)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-backend-500k
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-backend
+    tier: api
+spec:
+  replicas: 160
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 5%
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+  template:
+    metadata:
+      labels:
+        app: spicegarden-backend
+        tier: api
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: spicegarden-backend
+      containers:
+        - name: backend
+          image: ghcr.io/spicegarden/backend:production
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: spicegarden-500k-config
+            - secretRef:
+                name: spicegarden-secrets
+          resources:
+            requests:
+              cpu: "1500m"
+              memory: "1.5Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# 5. PodDisruptionBudget for Backend
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: backend-500k-pdb
+  namespace: spicegarden-prod
+spec:
+  minAvailable: 80%
+  selector:
+    matchLabels:
+      app: spicegarden-backend
+---
+# 6. Horizontal Pod Autoscaler (160 to 240 Pods)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-500k-hpa
+  namespace: spicegarden-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spicegarden-backend-500k
+  minReplicas: 160
+  maxReplicas: 240
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 65
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 15
+        - type: Pods
+          value: 20
+          periodSeconds: 15
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+---
+# 7. BullMQ Background Worker Deployment (30 Pods)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spicegarden-bullmq-worker
+  namespace: spicegarden-prod
+  labels:
+    app: spicegarden-bullmq-worker
+    tier: background-worker
+spec:
+  replicas: 30
+  selector:
+    matchLabels:
+      app: spicegarden-bullmq-worker
+  template:
+    metadata:
+      labels:
+        app: spicegarden-bullmq-worker
+        tier: background-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/spicegarden/backend:production
+          command: ["node", "dist/main-worker.js"]
+          envFrom:
+            - configMapRef:
+                name: spicegarden-500k-config
+            - secretRef:
+                name: spicegarden-secrets
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+---
+# 8. Cluster Service for Backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: spicegarden-backend-service
+  namespace: spicegarden-prod
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3001
+  selector:
+    app: spicegarden-backend

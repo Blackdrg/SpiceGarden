@@ -32,7 +32,6 @@ __decorate([
     __metadata("design:type", String)
 ], UserDeviceEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], UserDeviceEntity.prototype, "userId", void 0);
@@ -77,5 +76,6 @@ __decorate([
     __metadata("design:type", Date)
 ], UserDeviceEntity.prototype, "updatedAt", void 0);
 exports.UserDeviceEntity = UserDeviceEntity = __decorate([
-    (0, typeorm_1.Entity)('user_devices')
+    (0, typeorm_1.Entity)('user_devices'),
+    (0, typeorm_1.Index)('idx_user_devices_user_active', ['userId', 'isActive'])
 ], UserDeviceEntity);

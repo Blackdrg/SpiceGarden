@@ -98,5 +98,11 @@ __decorate([
     __metadata("design:type", Date)
 ], DriverAssignmentEntity.prototype, "updatedAt", void 0);
 exports.DriverAssignmentEntity = DriverAssignmentEntity = __decorate([
-    (0, typeorm_1.Entity)('driver_assignments')
+    (0, typeorm_1.Entity)('driver_assignments'),
+    (0, typeorm_1.Index)('idx_driver_assignments_driver', ['driver']),
+    (0, typeorm_1.Index)('idx_driver_assignments_order', ['order']),
+    (0, typeorm_1.Index)('idx_driver_assignments_status', ['status']),
+    (0, typeorm_1.Index)('idx_driver_assignments_driver_status', ['driver', 'status']),
+    (0, typeorm_1.Index)('idx_driver_assignments_branch', ['branch']),
+    (0, typeorm_1.Index)('idx_driver_assignments_created_at', ['createdAt'])
 ], DriverAssignmentEntity);

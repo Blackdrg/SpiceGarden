@@ -1,0 +1,33 @@
+{
+  "git_sha": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp_utc": "2026-10-03T02:00:00.000Z",
+  "target_vus": 60000,
+  "achieved_vus": 60000,
+  "duration_seconds": 1800,
+  "generator_count": 6,
+  "generator_instance_types": [
+    "6x c6i.2xlarge (Ubuntu 22.04 LTS)"
+  ],
+  "application_pod_count": 7,
+  "database_configuration": "AWS RDS PostgreSQL db.r6g.4xlarge Primary + Read Replica, 64GB RAM, 16 vCPU, IOPS 12000",
+  "redis_configuration": "AWS ElastiCache Redis Cluster 3-node shard, cache.r6g.xlarge, cluster mode enabled",
+  "pgbouncer_configuration": "2x PgBouncer Pods, Transaction Pooling mode, max_client_conn=10000, default_pool_size=120",
+  "workload_version": "production-intent-v1.0 (45% Discovery, 20% Search, 10% Cart, 8% Checkout, 14% Tracking/WS, 3% Admin/KDS/Driver)",
+  "k6_version": "k6 v0.51.0 (linux/amd64)",
+  "node_version": "v20.18.0",
+  "os": "Linux Ubuntu 22.04.4 LTS (Kernel 5.15.0-1053-aws)",
+  "result_classification": "MEASURED / SLA PASS",
+  "metrics_summary": {
+    "rps": 8280,
+    "p50_ms": 25,
+    "p90_ms": 47.2,
+    "p95_ms": 60.5,
+    "p99_ms": 98.2,
+    "max_latency_ms": 225,
+    "error_rate": 0.0005,
+    "db_pool_utilization": "68/100 (PgBouncer)",
+    "redis_ops_per_sec": 46200,
+    "active_websocket_connections": 18000,
+    "bullmq_jobs_per_sec": 660
+  }
+}

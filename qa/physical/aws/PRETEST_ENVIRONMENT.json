@@ -1,0 +1,45 @@
+{
+  "audit_timestamp": "2026-10-03T13:03:22.040Z",
+  "git_commit_sha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "status": "PHYSICAL_VALIDATION_BLOCKED",
+  "reason": "AWS credentials unavailable on host / External AWS authorization required",
+  "infrastructure": {
+    "eks_cluster": {
+      "status": "UNPROVISIONED",
+      "cluster_name": "spicegarden-1m-eks-cluster",
+      "active_nodes": 0,
+      "active_pods": 0
+    },
+    "alb": {
+      "status": "UNPROVISIONED",
+      "alb_name": "spicegarden-1m-alb",
+      "active_targets": 0
+    },
+    "aurora_postgresql": {
+      "status": "UNPROVISIONED",
+      "cluster_identifier": "spicegarden-1m-aurora-cluster",
+      "writer_instance": "spicegarden-1m-writer",
+      "reader_instances": 0
+    },
+    "elasticache_redis": {
+      "status": "UNPROVISIONED",
+      "replication_group_id": "spicegarden-1m-redis",
+      "active_shards": 0,
+      "active_nodes": 0
+    },
+    "load_generators": {
+      "status": "UNPROVISIONED",
+      "generator_fleet_target": 40,
+      "active_ec2_generators": 0,
+      "local_host_concurrency_ceiling": 22400
+    }
+  },
+  "toolchain_verification": {
+    "terraform_installed": true,
+    "terraform_version": "1.16.4",
+    "terraform_syntax_valid": true,
+    "kubectl_available": true,
+    "k6_available": true,
+    "node_available": true
+  }
+}

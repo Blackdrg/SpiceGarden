@@ -6,7 +6,7 @@ export class NotificationPreferenceEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_notification_preferences_user_id')
   @Column()
   userId!: string;
 

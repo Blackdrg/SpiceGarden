@@ -1,0 +1,92 @@
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 32px 24px;
+}
+.maxWidth {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  color: #64748b;
+  margin-bottom: 32px;
+  font-size: 15px;
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.docCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+.docCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.docLabel {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 14px;
+}
+.requiredMark {
+  color: #ef4444;
+  margin-left: 6px;
+}
+.statusVerified {
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+}
+.statusUploaded {
+  font-size: 12px;
+  font-weight: 600;
+  color: #d97706;
+}
+.statusPending {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+.fileInput {
+  font-size: 13px;
+  color: #475569;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+.backButton {
+  padding: 10px 20px;
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  flex: 1;
+  transition: all 0.15s ease;
+}
+.backButton:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.continueButton {
+  flex: 1;
+}

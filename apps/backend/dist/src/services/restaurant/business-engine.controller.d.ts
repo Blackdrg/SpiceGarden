@@ -3,7 +3,7 @@ export declare class BusinessEngineController {
     private readonly businessEngine;
     constructor(businessEngine: BusinessEngineService);
     getMetrics(): Promise<BusinessMetrics>;
-    getRestaurants(): Promise<import("../../db/entities/restaurant.entity").RestaurantEntity[]>;
+    getRestaurants(): Promise<import("../../db/entities").RestaurantEntity[]>;
     getMenu(restaurantId: string): Promise<{
         id: string;
         name: string;

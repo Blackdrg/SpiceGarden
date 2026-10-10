@@ -25,7 +25,7 @@ export declare class UserProfileController {
     private readonly profileService;
     constructor(profileService: UserProfileService);
     getAddresses(req: any): Promise<import("../../db/entities/address.entity").AddressEntity[]>;
-    createAddress(req: any, body: AddressCreateBody): Promise<import("../../db/entities/address.entity").AddressEntity>;
+    createAddress(req: any, body: AddressCreateBody): Promise<any>;
     updateAddress(req: any, id: string, body: Partial<AddressCreateBody>): Promise<import("../../db/entities/address.entity").AddressEntity>;
     deleteAddress(req: any, id: string): Promise<{
         success: boolean;

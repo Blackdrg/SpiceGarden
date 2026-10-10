@@ -22,10 +22,47 @@ function createResponse(): MockRes {
   } as MockRes;
 }
 
+const mockAdminStats = {
+  stats: {
+    revenue: 45200,
+    totalOrders: 124,
+    onlineDrivers: 18,
+    fraudAlerts: 3,
+    complaints: 0,
+    refunds: 0,
+    activeRestaurants: 5,
+  },
+  branches: [
+    { name: 'Sector 17 Kitchen', status: 'operational' },
+    { name: 'Sector 35 Kitchen', status: 'delayed' },
+  ],
+};
+
+const mockAdminOrders = [
+  { id: 'ORD-001', branch: { branchName: 'Sector 17 Branch' }, status: 'RESTAURANT_ACCEPTED', estimatedTimeMinutes: 15, createdAt: new Date() },
+  { id: 'ORD-003', branch: { branchName: 'Sector 35 Branch' }, status: 'READY', estimatedTimeMinutes: 15, createdAt: new Date() },
+];
+
+const originalFetch = global.fetch;
+
+beforeEach(() => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(mockAdminStats),
+    } as Response),
+  ) as jest.Mock;
+});
+
+afterEach(() => {
+  global.fetch = originalFetch;
+  jest.clearAllMocks();
+});
+
 describe('Super Admin API integration', () => {
-  it('serves platform statistics and risk signals', () => {
+  it('serves platform statistics and risk signals', async () => {
     const res = createResponse();
-    adminStatsHandler({} as NextApiRequest, res as unknown as NextApiResponse);
+    await adminStatsHandler({ query: {} } as NextApiRequest, res as unknown as NextApiResponse);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual(
@@ -44,9 +81,14 @@ describe('Super Admin API integration', () => {
     );
   });
 
-  it('serves admin order oversight queue', () => {
+  it('serves admin order oversight queue', async () => {
     const res = createResponse();
-    ordersHandler({} as NextApiRequest, res as unknown as NextApiResponse);
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockAdminOrders),
+    } as Response);
+
+    await ordersHandler({ query: {} } as NextApiRequest, res as unknown as NextApiResponse);
 
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);

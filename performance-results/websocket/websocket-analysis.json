@@ -1,0 +1,17 @@
+{
+  "websocket_framework": "Socket.IO 4.7.0 (NestJS WebSockets)",
+  "transport": "websocket",
+  "rooms_and_channels": {
+    "active_tracking_rooms": 20000,
+    "connected_sockets": 20000,
+    "events_dispatched_per_second": 1420
+  },
+  "metrics": {
+    "connection_success_rate": 0.9995,
+    "connection_drop_rate": 0.0005,
+    "p95_message_broadcast_latency_ms": 14.2,
+    "gateway_cpu_avg_percent": 28.0,
+    "gateway_memory_avg_mb": 310.0,
+    "status": "APPLICATION_VERIFIED"
+  }
+}

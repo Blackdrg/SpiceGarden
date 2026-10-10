@@ -15,22 +15,35 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const stripe_gateway_service_1 = require("./gateways/stripe-gateway.service");
 const razorpay_gateway_service_1 = require("./gateways/razorpay-gateway.service");
+const cod_gateway_service_1 = require("./gateways/cod-gateway.service");
 let PaymentGatewayFactory = PaymentGatewayFactory_1 = class PaymentGatewayFactory {
     configService;
     stripeGatewayInstance;
     razorpayGatewayInstance;
+    codGatewayInstance;
     logger = new common_1.Logger(PaymentGatewayFactory_1.name);
     stripeGateway;
     razorpayGateway;
+    codGateway;
     defaultGateway;
-    constructor(configService, stripeGatewayInstance, razorpayGatewayInstance) {
+    constructor(configService, stripeGatewayInstance, razorpayGatewayInstance, codGatewayInstance) {
         this.configService = configService;
         this.stripeGatewayInstance = stripeGatewayInstance;
         this.razorpayGatewayInstance = razorpayGatewayInstance;
+        this.codGatewayInstance = codGatewayInstance;
         this.stripeGateway = this.stripeGatewayInstance;
         this.razorpayGateway = this.razorpayGatewayInstance;
+        this.codGateway = this.codGatewayInstance;
         const primaryGateway = this.configService.get('PAYMENT_PRIMARY_GATEWAY', 'stripe');
-        this.defaultGateway = primaryGateway === 'razorpay' ? this.razorpayGateway : this.stripeGateway;
+        if (primaryGateway === 'cod') {
+            this.defaultGateway = this.codGateway;
+        }
+        else if (primaryGateway === 'razorpay') {
+            this.defaultGateway = this.razorpayGateway;
+        }
+        else {
+            this.defaultGateway = this.stripeGateway;
+        }
         this.logger.log(`Payment gateway factory initialized with default gateway: ${this.defaultGateway.getGatewayName()}`);
     }
     getGateway(gatewayName) {
@@ -38,17 +51,20 @@ let PaymentGatewayFactory = PaymentGatewayFactory_1 = class PaymentGatewayFactor
             return this.defaultGateway;
         }
         switch (gatewayName.toLowerCase()) {
+            case 'cod':
+            case 'cash_on_delivery':
+                return this.codGateway;
             case 'stripe':
                 return this.stripeGateway;
             case 'razorpay':
                 return this.razorpayGateway;
             default:
-                this.logger.warn(`any payment gateway: ${gatewayName}, falling back to default`);
+                this.logger.warn(`Unknown payment gateway: ${gatewayName}, falling back to default`);
                 return this.defaultGateway;
         }
     }
     getAvailableGateways() {
-        return ['stripe', 'razorpay'];
+        return ['stripe', 'razorpay', 'cod'];
     }
 };
 exports.PaymentGatewayFactory = PaymentGatewayFactory;
@@ -56,5 +72,6 @@ exports.PaymentGatewayFactory = PaymentGatewayFactory = PaymentGatewayFactory_1 
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService,
         stripe_gateway_service_1.StripeGateway,
-        razorpay_gateway_service_1.RazorpayGateway])
+        razorpay_gateway_service_1.RazorpayGateway,
+        cod_gateway_service_1.CashOnDeliveryGateway])
 ], PaymentGatewayFactory);

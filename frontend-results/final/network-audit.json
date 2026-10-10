@@ -1,0 +1,11 @@
+{
+  "total_requests": 142,
+  "successful_2xx": 138,
+  "redirects_3xx": 2,
+  "expected_4xx": 2,
+  "unexpected_4xx": 0,
+  "unexpected_5xx": 0,
+  "timeouts": 0,
+  "network_failures": 0,
+  "requests_by_frontend": {}
+}

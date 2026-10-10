@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EncryptionService } from '../../security/encryption.service';
-import { Repository, DataSource, LessThan } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { UserEntity } from '../../db/entities/user.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
+import { SessionEntity } from '../../db/entities/session.entity';
+import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 import { DataExportRequestEntity } from '../../db/entities/data-export-request.entity';
 import { DeletionRequestEntity } from '../../db/entities/deletion-request.entity';
 
@@ -41,8 +43,8 @@ export class DataPrivacyService {
   async getUserData(userId: string): Promise<any> {
     const user = this.dataSource.getRepository(UserEntity).findOne({ where: { id: userId } });
     const orders = this.dataSource.getRepository(OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
-    const sessions = this.dataSource.getRepository(OrderEntity).find({ where: { userId } });
-    const auditLogs = this.dataSource.getRepository(OrderEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 1000 });
+    const sessions = this.dataSource.getRepository(SessionEntity).find({ where: { userId }, order: { createdAt: 'DESC' }, take: 100 });
+    const auditLogs = this.dataSource.getRepository(AuditLogEntity).find({ where: { performedBy: userId }, order: { timestamp: 'DESC' }, take: 1000 });
 
     const [u, o, s, a] = await Promise.all([user, orders, sessions, auditLogs]);
 
@@ -114,7 +116,7 @@ export class DataPrivacyService {
   }
 
   async processProtectedDeletion(userId: string): Promise<void> {
-    const result = await this.dataSource.transaction(async (manager) => {
+    const result = await this.dataSource.transaction(async (manager: any) => {
       const userRepo = manager.getRepository(UserEntity);
       const orderRepo = manager.getRepository(OrderEntity);
       const exportRepo = manager.getRepository(DataExportRequestEntity);
@@ -123,8 +125,10 @@ export class DataPrivacyService {
       const user = await userRepo.findOne({ where: { id: userId } });
       if (!user) throw new Error('User not found');
 
-      const exportRequests = await exportRepo.find({ where: { userId, status: 'completed' } });
-      const deletionRequest = await deletionRepo.findOne({ where: { userId, status: 'pending' } });
+      const [exportRequests, deletionRequest] = await Promise.all([
+        exportRepo.find({ where: { userId, status: 'completed' } }),
+        deletionRepo.findOne({ where: { userId, status: 'pending' } }),
+      ]);
 
       if (!deletionRequest) throw new Error('Active deletion request not found');
 

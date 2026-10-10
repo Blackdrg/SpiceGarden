@@ -26,14 +26,14 @@ type GeoPosition = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  idle: '✋ IDLE',
-  assigned: '📋 ASSIGNED',
-  navigating_to_pickup: '🛵 → PICKUP',
-  at_pickup: '🏪 AT PICKUP',
-  navigating_to_drop: '🛵 → CUSTOMER',
-  completed: '🏁 DONE',
-  failed: '❗ FAILED',
-  delayed: '⏰ DELAYED',
+  idle: 'IDLE',
+  assigned: 'ASSIGNED',
+  navigating_to_pickup: 'TO PICKUP',
+  at_pickup: 'AT PICKUP',
+  navigating_to_drop: 'TO CUSTOMER',
+  completed: 'DONE',
+  failed: 'FAILED',
+  delayed: 'DELAYED',
 };
 
 type DeliveryStatus = 'idle' | 'assigned' | 'navigating_to_pickup' | 'at_pickup' | 'navigating_to_drop' | 'completed' | 'failed' | 'delayed';
@@ -97,6 +97,40 @@ type AppAction =
   | { type: 'COMPLETE_DELIVERY'; payload: { amount: number; incentive?: number; orderNumber: string } }
   | { type: 'ACCEPT_ORDER'; payload: Order };
 
+interface DetailRowProps {
+  label: string;
+  value: string;
+}
+
+function DetailRow({ label, value }: DetailRowProps) {
+  return (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomColor: '#f1f5f9', borderBottomWidth: 1 }}>
+      <Text style={{ color: '#64748b', fontSize: 13, flex: 1 }}>{label}</Text>
+      <Text style={{ color: '#0f172a', fontSize: 13, fontWeight: '600', flex: 2, textAlign: 'right' }}>{value}</Text>
+    </View>
+  );
+}
+
+interface EarnRowProps {
+  label: string;
+  value: string;
+  pct: number;
+}
+
+function EarnRow({ label, value, pct }: EarnRowProps) {
+  return (
+    <View style={{ marginBottom: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+        <Text style={{ color: '#64748b', fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: '#0f172a', fontSize: 13, fontWeight: '600' }}>{value}</Text>
+      </View>
+      <View style={{ height: 6, backgroundColor: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
+        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 3 }} />
+      </View>
+    </View>
+  );
+}
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_ONLINE':
@@ -157,12 +191,12 @@ const VEHICLE = 'Bajaj Dominar 400 | DL8CAB 7890';
 const DEFAULT_OTP = '234567';
 
 const issueTypes = [
-  { icon: '🚧', label: 'Road Blocked', color: DESIGN_TOKENS.colors.warning },
-  { icon: '📵', label: 'No Response', color: DESIGN_TOKENS.colors.danger },
-  { icon: '🔋', label: 'Battery Low', color: DESIGN_TOKENS.colors.warning },
-  { icon: '🍽️', label: 'Food Stuck', color: DESIGN_TOKENS.colors.warning },
-  { icon: '⏰', label: 'Running Late', color: DESIGN_TOKENS.colors.warning },
-  { icon: '📍', label: 'Wrong Location', color: DESIGN_TOKENS.colors.danger },
+  { icon: '!', label: 'Road Blocked', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'No Response', color: DESIGN_TOKENS.colors.danger },
+  { icon: '!', label: 'Battery Low', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Food Stuck', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Running Late', color: DESIGN_TOKENS.colors.warning },
+  { icon: '!', label: 'Wrong Location', color: DESIGN_TOKENS.colors.danger },
 ];
 
 function fmtTime(d?: Date) {
@@ -200,183 +234,102 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub: st
   );
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DriverHeader({ isOnline, onToggleOnline }: { isOnline: boolean; onToggleOnline: (value: boolean) => void }) {
   return (
-    <View style={{ flexDirection: 'row', paddingVertical: 3 }}>
-      <Text style={{ color: '#888', minWidth: 100, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: '#fff', flex: 1, fontSize: 12 }}>{value}</Text>
+    <View style={styles.header}>
+      <View>
+        <Text style={styles.headerTitle}>SpiceGarden Driver</Text>
+        <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
+        <Text style={styles.vehicleTag}>{VEHICLE}</Text>
+      </View>
+    <View style={styles.onlineToggle}>
+      <Text style={isOnline ? styles.onlineText : styles.offlineText}>
+        {isOnline ? '● ONLINE' : '● OFFLINE'}
+      </Text>
+      <Switch
+        value={isOnline}
+        onValueChange={onToggleOnline}
+        trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
+        thumbColor="white"
+        accessibilityLabel="Toggle online status"
+      />
+    </View>
     </View>
   );
 }
 
-function EarnRow({ label, value, pct }: { label: string; value: string; pct: number }) {
+function DriverStats({ earnings }: { earnings: DailyEarnings }) {
   return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: '#ccc', fontSize: 13 }}>{label}</Text>
-        <Text style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 13 }}>{value}</Text>
-      </View>
-      <View style={{ height: 6, borderRadius: 3, backgroundColor: '#333', overflow: 'hidden' }}>
-        <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#4caf50', borderRadius: 3 }} />
-      </View>
+    <View style={styles.statsRow}>
+      <StatCard label="Today" value={`₹${earnings.today}`} sub={`${earnings.ordersToday} orders`} />
+      <StatCard label="Pending" value={`₹${earnings.pending}`} sub="to be credited" />
+      <StatCard label="Bonus" value={`₹${earnings.bonus}`} sub="weekly" />
     </View>
   );
 }
 
-export default function DriverApp() {
-  const { width: SCREEN_W } = useWindowDimensions();
-  const [state, dispatch] = useReducer(appReducer, {
-    isOnline: false,
-    incomingOrder: null,
-    activeDelivery: null,
-    earnings: { today: 1450, pending: 350, bonus: 200, ordersToday: 8 },
-    shift: null,
-    deliveryOtp: '',
-    otpError: '',
-    log: [],
-    expandedIssue: false,
-    activeScreen: 'home' as const,
-    locationPermission: 'pending' as const,
-  });
-  const locationWatchId = useRef<number | null>(null);
-  const socketRef = useRef<Socket | null>(null);
+function DriverTabBar({ activeScreen, onChange }: { activeScreen: 'home' | 'earnings'; onChange: (screen: 'home' | 'earnings') => void }) {
+  return (
+    <View style={styles.tabRow}>
+      {(['home', 'earnings'] as const).map((t) => (
+        <Pressable
+          key={t}
+          onPress={() => onChange(t)}
+          style={[styles.tab, activeScreen === t && styles.tabActive]}
+          accessibilityLabel={`Switch to ${t} screen`}
+          accessibilityRole="tab"
+        >
+          <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
+            {t === 'home' ? 'Active' : 'Earnings'}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
 
-  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    requestLocationPermission()
-      .then((status) => {
-        if (!cancelled) dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status });
-        if (status === 'granted') return getCurrentLocation({ accuracy: Location.Accuracy.Highest });
-        throw new Error('Location permission denied');
-      })
-      .then(() => {
-        if (!cancelled) dispatch({ type: 'ADD_LOG', payload: 'Current location initialized' });
-      })
-      .catch((error: Error) => {
-        if (!cancelled) {
-          dispatch({ type: 'SET_LOCATION_PERMISSION', payload: 'denied' });
-          dispatch({ type: 'ADD_LOG', payload: `Location error: ${error.message}` });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!state.isOnline || state.locationPermission !== 'granted') {
-      return;
-    }
-
-    let watcher: Awaited<ReturnType<typeof watchLocation>> | null = null;
-
-    watchLocation(
-      (location: LocationPoint) => {
-        socketRef.current?.emit('driverLocationUpdate', {
-          driverId: 'current',
-          location: {
-            lat: location.lat,
-            lng: location.lng,
-          },
-        });
-      },
-      (error) => dispatch({ type: 'ADD_LOG', payload: `Location watch error: ${error.message}` }),
-      {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 10,
-      }
-    ).then((activeWatcher) => {
-      watcher = activeWatcher;
-    }).catch((error: Error) => {
-      dispatch({ type: 'ADD_LOG', payload: `Location watch setup error: ${error.message}` });
-    });
-
-    return () => {
-      watcher?.remove();
-    };
-  }, [state.isOnline, state.locationPermission]);
-
-  useEffect(() => {
-    const s: Socket = io('http://localhost:3001', {
-      path: '/socket.io/',
-      transports: ['websocket', 'polling'],
-    });
-    socketRef.current = s;
-
-    s.on('connect', () => dispatch({ type: 'ADD_LOG', payload: 'Connected to backend' }));
-    s.on('disconnect', () => dispatch({ type: 'ADD_LOG', payload: 'Disconnected' }));
-    s.on('orderAssigned', (order: Order) => {
-      if (state.isOnline) dispatch({ type: 'ACCEPT_ORDER', payload: order });
-    });
-    s.on('orderRerouted', (data: { orderId: string; reason: string }) => {
-      if (activeDelivery?.id === data.orderId) {
-        dispatch({ type: 'ADD_LOG', payload: `Re-routed: ${data.reason}` });
-        Alert.alert('🚗 Re-routing', `New destination: ${data.reason}`);
-      }
-    });
-    s.on('shiftReminder', (data: { shiftType: string; endTime: string }) => {
-      dispatch({ type: 'ADD_LOG', payload: `Shift reminder: ${data.shiftType} ends at ${data.endTime}` });
-      Alert.alert('Shift Update', `Your ${data.shiftType} shift ends at ${data.endTime}`);
-      dispatch({ type: 'SET_SHIFT', payload: { isActive: true, type: data.shiftType, endTime: data.endTime }});
-    });
-
-    return () => { s.disconnect(); };
-  }, [state.isOnline, activeDelivery?.id]);
-
-  useEffect(() => {
-    const appStateHandler = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && state.isOnline) {
-        BackgroundTimer.start();
-      } else if (nextAppState === 'active') {
-        BackgroundTimer.stopBackgroundTimer();
-      }
-    };
-
-    const subscription = RNAppState.addEventListener('change', appStateHandler);
-    return () => subscription.remove();
-  }, [state.isOnline]);
-
-  useEffect(() => {
-    if (!state.isOnline) return;
-    const socket = socketRef.current;
-    socket?.emit('driverOnline', { name: DRIVER_NAME, vehicle: VEHICLE });
-    dispatch({ type: 'ADD_LOG', payload: 'Went online — awaiting orders' });
-    return () => { socket?.emit('driverOffline'); };
-  }, [state.isOnline]);
-
-  const acceptOrder = useCallback(() => {
-    if (!incomingOrder) return;
-    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
-    Alert.alert('🎉 Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
-  }, [incomingOrder]);
-
-  const rejectOrder = useCallback(() => {
+function HomeScreen({ incomingOrder, activeDelivery, locationPermission, isOnline, deliveryOtp, otpError, log, expandedIssue, dispatch, socketRef, SCREEN_W }: {
+  incomingOrder: Order | null;
+  activeDelivery: Order | null;
+  locationPermission: 'granted' | 'denied' | 'pending';
+  isOnline: boolean;
+  deliveryOtp: string;
+  otpError: string;
+  log: string[];
+  expandedIssue: boolean;
+  dispatch: React.Dispatch<AppAction>;
+  socketRef: React.RefObject<Socket | null>;
+  SCREEN_W: number;
+}) {
+  const rejectOrder = () => {
     if (!incomingOrder) return;
     dispatch({ type: 'SET_INCOMING_ORDER', payload: null });
     dispatch({ type: 'ADD_LOG', payload: `Rejected #${incomingOrder.orderNumber}` });
     socketRef.current?.emit('orderRejected', { orderId: incomingOrder.id, reason: 'declined_by_driver' });
-  }, [incomingOrder]);
+  };
 
-  const navigateTo = useCallback((destination: string, addr: string, location?: { lat: number; lng: number }) => {
+  const acceptOrder = () => {
+    if (!incomingOrder) return;
+    dispatch({ type: 'ACCEPT_ORDER', payload: incomingOrder });
+    Alert.alert('Order Accepted', `Heading to ${incomingOrder.restaurant.name}`);
+  };
+
+  const navigateTo = (destination: string, addr: string, location?: { lat: number; lng: number }) => {
     if (location) {
-      Alert.alert('🚗 Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
+      Alert.alert('Navigation', `Opening maps to ${destination}: ${addr}.\n(In production, this opens Google Maps.)`);
       dispatch({ type: 'ADD_LOG', payload: `Navigating → ${destination}` });
     } else {
-      Alert.alert('📍 Navigation', `Opening maps to ${destination}: ${addr}`);
+      Alert.alert('Navigation', `Opening maps to ${destination}: ${addr}`);
     }
-  }, []);
+  };
 
-  const confirmPickup = useCallback(() => {
+  const confirmPickup = () => {
     if (!activeDelivery) return;
     dispatch({ type: 'SET_DELIVERY_OTP', payload: DEFAULT_OTP });
     dispatch({ type: 'ADD_LOG', payload: `Arrived at pickup: ${activeDelivery.restaurant.name}` });
-  }, [activeDelivery]);
+  };
 
-  const verifyOtpAndPickup = useCallback(() => {
+  const verifyOtpAndPickup = () => {
     if (!activeDelivery) return;
     if (deliveryOtp !== activeDelivery.otp) {
       dispatch({ type: 'SET_OTP_ERROR', payload: 'Invalid OTP — ask the customer' });
@@ -386,401 +339,352 @@ export default function DriverApp() {
     dispatch({ type: 'SET_OTP_ERROR', payload: '' });
     dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: { ...activeDelivery, status: 'navigating_to_drop' as const, pickedUpAt: new Date() }});
     dispatch({ type: 'ADD_LOG', payload: `OTP verified — picked up #${activeDelivery.orderNumber}` });
-    Alert.alert('✅ Pickup Confirmed', 'Navigate to customer now!');
-  }, [activeDelivery, deliveryOtp]);
+    Alert.alert('Pickup Confirmed', 'Navigate to customer now!');
+  };
 
-  const completeDelivery = useCallback(() => {
+  const completeDelivery = () => {
     if (!activeDelivery) return;
     dispatch({ type: 'COMPLETE_DELIVERY', payload: { amount: activeDelivery.amount, incentive: activeDelivery.incentiveAmount, orderNumber: activeDelivery.orderNumber }});
-    Alert.alert('✅ Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
-  }, [activeDelivery]);
+    Alert.alert('Delivered!', `+₹${activeDelivery.amount + (activeDelivery.incentiveAmount || 0)} added to today's earnings`);
+  };
 
-  const handleFailedDelivery = useCallback((reason: string) => {
-    if (!activeDelivery) return;
+  const handleFailedDelivery = (reason: string) => {
     dispatch({ type: 'ADD_LOG', payload: `Delivery failed: ${reason}` });
-    Alert.alert('❗ Delivery Failed', `Marked as ${reason}`, [
+    Alert.alert('Delivery Failed', `Marked as ${reason}`, [
       { text: 'OK', onPress: () => dispatch({ type: 'SET_ACTIVE_DELIVERY', payload: null }) }
     ]);
-  }, [activeDelivery]);
+  };
 
-  const reportIssue = useCallback((label: string) => {
+  const reportIssue = (label: string) => {
     dispatch({ type: 'ADD_LOG', payload: `Issue reported: ${label}` });
     socketRef.current?.emit('driverIssue', { orderId: activeDelivery?.id, issue: label });
     Alert.alert('Issue Reported', `${label} — Support has been notified.`);
     dispatch({ type: 'SET_EXPANDED_ISSUE', payload: false });
-  }, [activeDelivery]);
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: DESIGN_TOKENS.colors.background }}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>🛵 SpiceGarden Driver</Text>
-          <Text style={styles.subtitle}>{DRIVER_NAME}</Text>
-          <Text style={styles.vehicleTag}>{VEHICLE}</Text>
-          {activeDelivery && (
-            <Text style={styles.STATUS_LABEL}>{STATUS_LABEL[activeDelivery.status]}</Text>
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {incomingOrder ? (
+        <View style={styles.incomingCard}>
+          <View style={styles.alertBanner}>
+            <Text style={styles.alertBannerText}>🚨 NEW ORDER ARRIVED</Text>
+          </View>
+
+          <View style={styles.cardTitleRow}>
+            <Text style={styles.cardTitle}>#{incomingOrder.orderNumber}</Text>
+            <Text style={styles.amountBadge}>+₹{incomingOrder.amount}</Text>
+            <Text style={styles.timeInfo}>{fmtTime(incomingOrder.createdAt)} ({timeAgo(incomingOrder.createdAt)})</Text>
+          </View>
+
+          <DetailRow label="Pick up from:" value={`${incomingOrder.restaurant.name} (${incomingOrder.restaurant.address})`} />
+          <DetailRow label="Deliver to:" value={`${incomingOrder.customer.address}`} />
+          <DetailRow label="Distance:" value={`${incomingOrder.distanceKm} km`} />
+          <DetailRow label="Order OTP:" value={`${incomingOrder.otp}`} />
+          {incomingOrder.surgeMultiplier && incomingOrder.surgeMultiplier > 1 && (
+            <DetailRow label="Surge:" value={`${incomingOrder.surgeMultiplier}x`} />
           )}
-          {shift && (
-            <Text style={styles.shiftTag}>📅 {shift.type} shift • Ends: {shift.endTime}</Text>
+
+          <View style={styles.actionRow}>
+            <Pressable
+              style={[styles.btnSecondary, styles.btnReject]}
+              onPress={rejectOrder}
+              accessibilityLabel="Reject order"
+              accessibilityRole="button"
+            >
+              <Text style={styles.btnText}>Reject</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btnSecondary, styles.btnAccept]}
+              onPress={acceptOrder}
+              accessibilityLabel="Accept order"
+              accessibilityRole="button"
+            >
+              <Text style={styles.btnText}>✅ Accept</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
+      {!incomingOrder && activeDelivery ? (
+        <View style={styles.activeCard}>
+          <Text style={styles.cardTitle}>🚚 Active Delivery</Text>
+
+          <View style={styles.progressContainer}>
+            {['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'].map((s, i) => {
+              const currentStatus = activeDelivery.status;
+              const steps = ['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'];
+              const activeIdx = steps.indexOf(currentStatus);
+              const past = i <= activeIdx;
+              return (
+                <React.Fragment key={s}>
+                  <View style={{ alignItems: 'center', flex: 1 }}>
+                    <View style={[styles.progressDot, past ? styles.progressDotActive : styles.progressDotInactive]}>
+                      {past ? <Text style={styles.progressDotText}>✓</Text> : <Text style={[styles.progressDotText, { color: '#666' }]}>{i + 1}</Text>}
+                    </View>
+                    <Text style={[styles.progressLabel, past && { color: '#fff', fontWeight: 'bold' }]}>
+                      {s === 'navigating_to_pickup' ? '→Pickup' : s === 'navigating_to_drop' ? '→Drop' : s.replace('_', ' ')}
+                    </Text>
+                  </View>
+                  {i < 4 && <View style={[styles.progressLine, activeIdx >= i && styles.progressLineActive]} />}
+                </React.Fragment>
+              );
+            })}
+          </View>
+
+          <View style={styles.contextCards}>
+            <View style={styles.contextCard}>
+              <Text style={styles.contextLabel}>🏪 PICKUP</Text>
+              <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
+              <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
+              <Pressable
+                style={styles.navInlineBtn}
+                onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+                accessibilityLabel="Navigate to pickup"
+              >
+                <Text style={styles.navInlineText}>📍</Text>
+              </Pressable>
+            </View>
+            <View style={styles.contextCard}>
+              <Text style={styles.contextLabel}>📍 DROP</Text>
+              <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
+              <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
+              <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
+              <Pressable
+                style={styles.navInlineBtn}
+                onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
+                accessibilityLabel="Navigate to customer"
+              >
+                <Text style={styles.navInlineText}>📍</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {activeDelivery.status === 'assigned' && (
+            <Pressable
+              style={styles.navBtn}
+              onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+              accessibilityLabel="Navigate to pickup location"
+              accessibilityRole="button"
+            >
+              <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
+            </Pressable>
           )}
-        </View>
-        <View style={styles.onlineToggle}>
-          <Text style={isOnline ? styles.onlineText : styles.offlineText}>
-            {isOnline ? '● ONLINE' : '● OFFLINE'}
-          </Text>
-<Switch 
-             value={state.isOnline} 
-             onValueChange={(value) => dispatch({ type: 'SET_ONLINE', payload: value })}
-             trackColor={{ false: '#555', true: DESIGN_TOKENS.colors.success }}
-             thumbColor="white"
-             accessibilityLabel="Toggle online status"
-           />
-        </View>
-      </View>
 
-      <View style={styles.statsRow}>
-        <StatCard label="Today" value={`₹${earnings.today}`} sub={`${earnings.ordersToday} orders`} />
-        <StatCard label="Pending" value={`₹${earnings.pending}`} sub="to be credited" />
-        <StatCard label="Bonus" value={`₹${earnings.bonus}`} sub="weekly" />
-      </View>
+          {activeDelivery.status === 'navigating_to_pickup' && (
+            <>
+              <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
+                <Text style={styles.navBtnText}>🏪 I'm at Restaurant</Text>
+              </Pressable>
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
+              >
+                <Text style={styles.navBtnText}>📍 Open Navigation</Text>
+              </Pressable>
+            </>
+          )}
 
-      <View style={styles.tabRow}>
-        {(['home', 'earnings'] as const).map((t) => (
-          <Pressable
-            key={t}
-            onPress={() => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: t })}
-            style={[styles.tab, activeScreen === t && styles.tabActive]}
-            accessibilityLabel={`Switch to ${t} screen`}
-            accessibilityRole="tab"
-          >
-            <Text style={[styles.tabLabel, activeScreen === t && styles.tabLabelActive]}>
-              {t === 'home' ? '🏠 Active' : '💰 Earnings'}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-
-      {activeScreen === 'home' && (
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {incomingOrder ? (
-            <View style={styles.incomingCard}>
-              <View style={styles.alertBanner}>
-                <Text style={styles.alertBannerText}>🚨 NEW ORDER ARRIVED</Text>
+          {activeDelivery.status === 'at_pickup' && (
+            <View style={{ gap: 10 }}>
+              <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center' }}>
+                Verify OTP with staff / customer before leaving
+              </Text>
+              <View style={styles.otpRow}>
+                {Array.from({ length: 6 }, (_, i) => (
+                  <View key={i} style={styles.otpSlot}>
+                    <Text style={styles.otpChar}>({deliveryOtp[i] || '—'})</Text>
+                  </View>
+                ))}
               </View>
-
-              <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>#{incomingOrder.orderNumber}</Text>
-                <Text style={styles.amountBadge}>+₹{incomingOrder.amount}</Text>
-                <Text style={styles.timeInfo}>{fmtTime(incomingOrder.createdAt)} ({timeAgo(incomingOrder.createdAt)})</Text>
-              </View>
-
-              <DetailRow label="Pick up from:" value={`${incomingOrder.restaurant.name} (${incomingOrder.restaurant.address})`} />
-              <DetailRow label="Deliver to:" value={`${incomingOrder.customer.address}`} />
-              <DetailRow label="Distance:" value={`${incomingOrder.distanceKm} km`} />
-              <DetailRow label="Order OTP:" value={`${incomingOrder.otp}`} />
-              {incomingOrder.surgeMultiplier && incomingOrder.surgeMultiplier > 1 && (
-                <DetailRow label="Surge:" value={`${incomingOrder.surgeMultiplier}x`} />
-              )}
+              <Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
+                <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
+              </Pressable>
+              {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
 
               <View style={styles.actionRow}>
-                <Pressable 
-                  style={[styles.btnSecondary, styles.btnReject]} 
-                  onPress={rejectOrder}
-                  accessibilityLabel="Reject order"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.btnText}>Reject</Text>
+                <Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
+                  <Text style={styles.btnText}>Clear</Text>
                 </Pressable>
-                <Pressable 
-                  style={[styles.btnSecondary, styles.btnAccept]} 
-                  onPress={acceptOrder}
-                  accessibilityLabel="Accept order"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.btnText}>✅ Accept</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
-
-          {!incomingOrder && activeDelivery ? (
-            <View style={styles.activeCard}>
-              <Text style={styles.cardTitle}>🚚 Active Delivery</Text>
-
-              <View style={styles.progressContainer}>
-                {['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'].map((s, i) => {
-                  const currentStatus = activeDelivery.status;
-                  const steps = ['assigned','navigating_to_pickup','at_pickup','navigating_to_drop','completed'];
-                  const activeIdx = steps.indexOf(currentStatus);
-                  const past = i <= activeIdx;
-                  return (
-                    <React.Fragment key={s}>
-                      <View style={{ alignItems: 'center', flex: 1 }}>
-                        <View style={[styles.progressDot, past ? styles.progressDotActive : styles.progressDotInactive]}>
-                          {past ? <Text style={styles.progressDotText}>✓</Text> : <Text style={[styles.progressDotText, { color: '#666' }]}>{i + 1}</Text>}
-                        </View>
-                        <Text style={[styles.progressLabel, past && { color: '#fff', fontWeight: 'bold' }]}>
-                          {s === 'navigating_to_pickup' ? '→Pickup' : s === 'navigating_to_drop' ? '→Drop' : s.replace('_', ' ')}
-                        </Text>
-                      </View>
-                      {i < 4 && <View style={[styles.progressLine, activeIdx >= i && styles.progressLineActive]} />}
-                    </React.Fragment>
-                  );
-                })}
-              </View>
-
-              <View style={styles.contextCards}>
-                <View style={styles.contextCard}>
-                  <Text style={styles.contextLabel}>🏪 PICKUP</Text>
-                  <Text style={styles.contextName}>{activeDelivery.restaurant.name}</Text>
-                  <Text style={styles.contextAddr}>{activeDelivery.restaurant.address}</Text>
-                  <Pressable
-                    style={styles.navInlineBtn}
-                    onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                    accessibilityLabel="Navigate to pickup"
-                  >
-                    <Text style={styles.navInlineText}>📍</Text>
-                  </Pressable>
-                </View>
-                <View style={styles.contextCard}>
-                  <Text style={styles.contextLabel}>📍 DROP</Text>
-                  <Text style={styles.contextName}>{activeDelivery.customer.name}</Text>
-                  <Text style={styles.contextAddr}>{activeDelivery.customer.address}</Text>
-                  <Text style={styles.contextPhone}>📞 {activeDelivery.customer.phone}</Text>
-                  <Pressable
-                    style={styles.navInlineBtn}
-                    onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
-                    accessibilityLabel="Navigate to customer"
-                  >
-                    <Text style={styles.navInlineText}>📍</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {activeDelivery.status === 'assigned' && (
-                <Pressable
-                  style={styles.navBtn}
-                  onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                  accessibilityLabel="Navigate to pickup location"
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.navBtnText}>📍 Navigate to Pickup</Text>
-                </Pressable>
-              )}
-
-              {activeDelivery.status === 'navigating_to_pickup' && (
-                <>
-                  <Pressable style={styles.arriveBtn} onPress={confirmPickup}>
-                    <Text style={styles.navBtnText}>🏪 I&#39;m at Restaurant</Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.navBtn}
-                    onPress={() => navigateTo('restaurant', activeDelivery.restaurant.address, activeDelivery.restaurant.location)}
-                  >
-                    <Text style={styles.navBtnText}>📍 Open Navigation</Text>
-                  </Pressable>
-                </>
-              )}
-
-              {activeDelivery.status === 'at_pickup' && (
-                <View style={{ gap: 10 }}>
-                  <Text style={{ color: '#aaa', fontSize: 13, textAlign: 'center' }}>
-                    Verify OTP with staff / customer before leaving
-                  </Text>
-                  <View style={styles.otpRow}>
-                    {Array.from({ length: 6 }, (_, i) => (
-                      <View key={i} style={styles.otpSlot}>
-                        <Text style={styles.otpChar}>({deliveryOtp[i] || '—'})</Text>
-                      </View>
-                    ))}
-                  </View>
-<Pressable style={[styles.btnSecondary, { backgroundColor: DESIGN_TOKENS.colors.warning, flex: 1 }]} onPress={() => dispatch({ type: 'SET_DELIVERY_OTP', payload: activeDelivery.otp })}>
-                     <Text style={styles.btnText}>📋 Auto-fill OTP</Text>
-                   </Pressable>
-                   {otpError ? <Text style={styles.otpError}>{otpError}</Text> : null}
-
-                  <View style={styles.actionRow}>
-<Pressable style={[styles.btnSecondary, styles.btnReject]} onPress={() => dispatch({ type: 'SET_OTP_ERROR', payload: '' })}>
-                       <Text style={styles.btnText}>Clear</Text>
-                     </Pressable>
-                    <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
-                      <Text style={styles.btnText}>✅ Confirm OTP</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              )}
-
-              {activeDelivery.status === 'navigating_to_drop' && (
-                <View style={{ gap: 10 }}>
-                  <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
-                  <Pressable
-                    style={styles.navBtn}
-                    onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
-                  >
-                    <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
-                  </Pressable>
-                  <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
-                  <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
-                  <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
-                  <Pressable style={styles.completeBtn} onPress={completeDelivery}>
-                    <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
-                  </Pressable>
-                  <Pressable 
-                    style={styles.failBtn} 
-                    onPress={() => handleFailedDelivery('customer_unavailable')}
-                  >
-                    <Text style={styles.failBtnText}>❗ Mark Failed</Text>
-                  </Pressable>
-                </View>
-              )}
-            </View>
-          ) : null}
-
-{!state.incomingOrder && !activeDelivery && (
-             <View style={styles.idleCard}>
-               <Text style={styles.idleIcon}>⏳</Text>
-               <Text style={styles.idleText}>
-                 {state.isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
-               </Text>
-               {state.isOnline && locationPermission === 'denied' && (
-                 <Text style={styles.locationWarning}>Location permission required for delivery</Text>
-               )}
-               {state.isOnline && (
-                 <Pressable
-                   style={styles.btnAccept}
-                   onPress={() => {
-                     const demo = demoIncoming();
-                     dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
-                     dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
-                   }}
-                 >
-                   <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
-                 </Pressable>
-               )}
-             </View>
-           )}
-
-           {activeDelivery && (
-             <View style={styles.issueSection}>
-               <Pressable
-                 onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !state.expandedIssue })}
-                 style={styles.issueToggle}
-                 accessibilityLabel="Report an issue"
-                 accessibilityRole="button"
-               >
-                 <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
-                 <Text style={styles.issueChevron}>{state.expandedIssue ? '▲' : '▼'}</Text>
-               </Pressable>
-               {state.expandedIssue && (
-                 <View style={styles.issueGrid}>
-                   {issueTypes.map((issue) => (
-                     <Pressable
-                       key={issue.label}
-                        style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
-                       onPress={() => reportIssue(issue.label)}
-                     >
-                       <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
-                       <Text style={styles.issueLabel}>{issue.label}</Text>
-                     </Pressable>
-                   ))}
-                 </View>
-               )}
-            </View>
-          )}
-
-{state.log.length > 0 && (
-             <View style={styles.logCard}>
-               <Text style={styles.logTitle}>📋 Recent Activity</Text>
-               {state.log.map((entry, i) => (
-                 <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
-                   {entry}
-                 </Text>
-               ))}
-             </View>
-           )}
-         </ScrollView>
-       )}
-
-       {state.activeScreen === 'earnings' && (
-         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-           <View style={styles.earnBigCard}>
-             <Text style={styles.earnLabel}>Today&#39;s Earnings</Text>
-             <Text style={styles.earnAmount}>₹{state.earnings.today}</Text>
-             <Text style={styles.earnSub}>{state.earnings.ordersToday} deliveries completed</Text>
-           </View>
-
-           <View style={styles.earnGrid}>
-             <StatCard label="Pending" value={`₹${state.earnings.pending}`} sub="yet to credit" />
-             <StatCard label="Weekly Bonus" value={`₹${state.earnings.bonus}`} sub="on-time reward" />
-             <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
-             <StatCard label="Acceptance" value="97%" sub="this month" />
-           </View>
-
-           <View style={styles.card}>
-             <Text style={styles.cardTitle}>🏆 Performance</Text>
-             <Text style={styles.cardSubtitle}>This week</Text>
-             <View style={{ gap: 8 }}>
-               <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
-               <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
-               <EarnRow label="Acceptance rate" value="97%" pct={97} />
-               <EarnRow label="Completed orders" value="42 / week" pct={88} />
-             </View>
-           </View>
-
-           {state.shift && (
-             <View style={styles.card}>
-               <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
-              <Text style={styles.cardSubtitle}>Current shift</Text>
-              <View style={styles.shiftInfo}>
-                <Text style={styles.shiftInfoText}>Type: {state.shift!.type}</Text>
-                <Text style={styles.shiftInfoText}>Ends: {state.shift!.endTime}</Text>
-                <Pressable style={styles.shiftEndBtn}>
-                  <Text style={styles.shiftEndText}>End Shift Early</Text>
+                <Pressable style={[styles.btnSecondary, styles.btnAccept]} onPress={verifyOtpAndPickup}>
+                  <Text style={styles.btnText}>✅ Confirm OTP</Text>
                 </Pressable>
               </View>
             </View>
           )}
-        </ScrollView>
+
+          {activeDelivery.status === 'navigating_to_drop' && (
+            <View style={{ gap: 10 }}>
+              <Text style={styles.etaText}>ETA: {activeDelivery.etaMinutes || 15} mins</Text>
+              <Pressable
+                style={styles.navBtn}
+                onPress={() => navigateTo('customer', activeDelivery.customer.address, activeDelivery.customer.location)}
+              >
+                <Text style={styles.navBtnText}>📍 Navigate to Customer</Text>
+              </Pressable>
+              <DetailRow label="Customer:" value={`${activeDelivery.customer.name}`} />
+              <DetailRow label="Address:" value={`${activeDelivery.customer.address}`} />
+              <DetailRow label="Phone:" value={`${activeDelivery.customer.phone}`} />
+              <Pressable style={styles.completeBtn} onPress={completeDelivery}>
+                <Text style={styles.navBtnText}>🏁 Mark Delivered</Text>
+              </Pressable>
+              <Pressable
+                style={styles.failBtn}
+                onPress={() => handleFailedDelivery('customer_unavailable')}
+              >
+                <Text style={styles.failBtnText}>❗ Mark Failed</Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      ) : null}
+
+      {!incomingOrder && !activeDelivery && (
+        <View style={styles.idleCard}>
+          <Text style={styles.idleIcon}>⏳</Text>
+          <Text style={styles.idleText}>
+            {isOnline ? 'Waiting for orders…' : 'Go online to receive orders'}
+          </Text>
+          {isOnline && locationPermission === 'denied' && (
+            <Text style={styles.locationWarning}>Location permission required for delivery</Text>
+          )}
+          {isOnline && (
+            <Pressable
+              style={styles.btnAccept}
+              onPress={() => {
+                const demo = demoIncoming();
+                dispatch({ type: 'SET_INCOMING_ORDER', payload: demo });
+                dispatch({ type: 'ADD_LOG', payload: 'Demo order injected' });
+              }}
+            >
+              <Text style={styles.btnText}>⚡ Demo Incoming Order</Text>
+            </Pressable>
+          )}
+        </View>
       )}
-    </View>
+
+      {activeDelivery && (
+        <View style={styles.issueSection}>
+          <Pressable
+            onPress={() => dispatch({ type: 'SET_EXPANDED_ISSUE', payload: !expandedIssue })}
+            style={styles.issueToggle}
+            accessibilityLabel="Report an issue"
+            accessibilityRole="button"
+          >
+            <Text style={styles.issueToggleText}>⚠️ Report an Issue</Text>
+            <Text style={styles.issueChevron}>{expandedIssue ? '▲' : '▼'}</Text>
+          </Pressable>
+          {expandedIssue && (
+            <View style={styles.issueGrid}>
+              {issueTypes.map((issue) => (
+                <Pressable
+                  key={issue.label}
+                  style={[styles.issueBtn, { width: (SCREEN_W - 52) / 4 }]}
+                  onPress={() => reportIssue(issue.label)}
+                >
+                  <Text style={{ fontSize: 22 }}>{issue.icon}</Text>
+                  <Text style={styles.issueLabel}>{issue.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
+
+      {log.length > 0 && (
+        <View style={styles.logCard}>
+          <Text style={styles.logTitle}>📋 Recent Activity</Text>
+          {log.map((entry, i) => (
+            <Text key={`${entry}-${i}`} style={[styles.logEntry, i === 0 && styles.logEntryNew]}>
+              {entry}
+            </Text>
+          ))}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
+function EarningsScreen({ earnings, shift }: { earnings: DailyEarnings; shift: ShiftInfo | null }) {
+  return (
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.earnBigCard}>
+        <Text style={styles.earnLabel}>Today's Earnings</Text>
+        <Text style={styles.earnAmount}>₹{earnings.today}</Text>
+        <Text style={styles.earnSub}>{earnings.ordersToday} deliveries completed</Text>
+      </View>
+
+      <View style={styles.earnGrid}>
+        <StatCard label="Pending" value={`₹${earnings.pending}`} sub="yet to credit" />
+        <StatCard label="Weekly Bonus" value={`₹${earnings.bonus}`} sub="on-time reward" />
+        <StatCard label="Rating" value="⭐ 4.8" sub="lifetime" />
+        <StatCard label="Acceptance" value="97%" sub="this month" />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>🏆 Performance</Text>
+        <Text style={styles.cardSubtitle}>This week</Text>
+        <View style={{ gap: 8 }}>
+          <EarnRow label="On-time deliveries" value="184 / 190" pct={97} />
+          <EarnRow label="Customer rating" value="4.8 / 5.0" pct={96} />
+          <EarnRow label="Acceptance rate" value="97%" pct={97} />
+          <EarnRow label="Completed orders" value="42 / week" pct={88} />
+        </View>
+      </View>
+
+      {shift && (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>📅 Shift Schedule</Text>
+          <Text style={styles.cardSubtitle}>Current shift</Text>
+          <View style={styles.shiftInfo}>
+            <Text style={styles.shiftInfoText}>Type: {shift.type}</Text>
+            <Text style={styles.shiftInfoText}>Ends: {shift.endTime}</Text>
+            <Pressable style={styles.shiftEndBtn}>
+              <Text style={styles.shiftEndText}>End Shift Early</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#121212' },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
-    padding: 16, backgroundColor: '#1a1a1a', borderBottomWidth: 1, borderBottomColor: '#333',
+    padding: 16, backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e2e8f0',
   },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary },
-  subtitle: { color: '#888', fontSize: 13, marginTop: 2 },
-  vehicleTag: { color: '#555', fontSize: 11, marginTop: 1 },
+  subtitle: { color: '#64748b', fontSize: 13, marginTop: 2 },
+  vehicleTag: { color: '#94a3b8', fontSize: 11, marginTop: 1 },
   shiftTag: { color: DESIGN_TOKENS.colors.warning, fontSize: 11, marginTop: 4 },
-  STATUS_LABEL: { color: '#fff', fontSize: 14, marginTop: 4 },
+  STATUS_LABEL: { color: '#0f172a', fontSize: 14, marginTop: 4 },
   onlineToggle: { flexDirection: 'row', alignItems: 'center' },
   onlineText: { color: DESIGN_TOKENS.colors.success, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
   offlineText: { color: DESIGN_TOKENS.colors.danger, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
 
   statsRow: { flexDirection: 'row', padding: 12, gap: 10 },
   statCard: {
-    flex: 1, backgroundColor: '#1e1e1e', borderRadius: 10, padding: 12,
-    alignItems: 'center',
+    flex: 1, backgroundColor: '#ffffff', borderRadius: 12, padding: 12,
+    alignItems: 'center', borderWidth: 1, borderColor: '#e2e8f0',
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
   },
-  statLabel: { fontSize: 11, color: '#888', textTransform: 'uppercase' },
-  statValue: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginVertical: 2 },
-  statSub: { fontSize: 11, color: '#555' },
+  statLabel: { fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: '600' },
+  statValue: { fontSize: 18, fontWeight: 'bold', color: '#0f172a', marginVertical: 2 },
+  statSub: { fontSize: 11, color: '#94a3b8' },
 
-  tabRow: { flexDirection: 'row', paddingHorizontal: 12, gap: 8, backgroundColor: '#161616' },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 6, alignItems: 'center' },
-  tabActive: { backgroundColor: '#2a2a4a', borderBottomWidth: 2, borderBottomColor: DESIGN_TOKENS.colors.primary },
-  tabLabel: { color: '#666', fontSize: 13 },
+  tabRow: { flexDirection: 'row', paddingHorizontal: 12, gap: 8, backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e2e8f0' },
+  tab: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
+  tabActive: { backgroundColor: 'rgba(255, 90, 31, 0.08)', borderBottomWidth: 2, borderBottomColor: DESIGN_TOKENS.colors.primary },
+  tabLabel: { color: '#64748b', fontSize: 13 },
   tabLabelActive: { color: DESIGN_TOKENS.colors.primary, fontWeight: 'bold' },
 
   content: { flex: 1 },
 
   incomingCard: {
-    margin: 14, backgroundColor: '#1e1a1a', borderRadius: 14,
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.primary, overflow: 'hidden',
+    margin: 14, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1.5, borderColor: DESIGN_TOKENS.colors.primary, overflow: 'hidden',
+    shadowColor: '#ff5a1f', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 2,
   },
   alertBanner: {
     backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 8, alignItems: 'center',
@@ -788,16 +692,18 @@ const styles = StyleSheet.create({
   alertBannerText: { color: 'white', fontWeight: 'bold', fontSize: 13, letterSpacing: 1.5 },
 
   activeCard: {
-    margin: 14, backgroundColor: '#1a1e1a', borderRadius: 14,
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.success, padding: 16,
+    margin: 14, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1.5, borderColor: DESIGN_TOKENS.colors.success, padding: 16,
+    shadowColor: '#10b981', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 2,
   },
 
   idleCard: {
-    margin: 20, backgroundColor: '#1a1e2e', borderRadius: 14,
-    borderWidth: 1, borderColor: '#2a3a5a', alignItems: 'center', padding: 32,
+    margin: 20, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1, borderColor: '#e2e8f0', alignItems: 'center', padding: 32,
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1,
   },
   idleIcon: { fontSize: 48, marginBottom: 12 },
-  idleText: { color: '#666', marginBottom: 20, fontSize: 15 },
+  idleText: { color: '#64748b', marginBottom: 20, fontSize: 15 },
   locationWarning: { color: DESIGN_TOKENS.colors.danger, fontSize: 12, marginTop: 8 },
 
   progressContainer: {
@@ -808,27 +714,27 @@ const styles = StyleSheet.create({
     width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', zIndex: 2,
   },
   progressDotActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-  progressDotInactive: { backgroundColor: '#333' },
+  progressDotInactive: { backgroundColor: '#e2e8f0' },
   progressDotText: { fontSize: 11, color: 'white', fontWeight: 'bold' },
-  progressLine: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 4 },
+  progressLine: { flex: 1, height: 3, backgroundColor: '#e2e8f0', marginHorizontal: 4 },
   progressLineActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-  progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
-  etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+  progressLabel: { fontSize: 10, textAlign: 'center', color: '#64748b', marginTop: 3, maxWidth: 50 },
+  etaText: { color: '#059669', fontSize: 14, textAlign: 'center', marginBottom: 8, fontWeight: 'bold' },
 
   contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
   contextCard: {
-    flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
+    flex: 1, backgroundColor: '#f8fafc', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
-  contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
-  contextAddr: { fontSize: 12, color: '#aaa' },
-  contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
+  contextLabel: { fontSize: 10, color: '#64748b', textTransform: 'uppercase', marginBottom: 4, fontWeight: '700' },
+  contextName: { fontSize: 14, fontWeight: 'bold', color: '#0f172a', marginBottom: 2 },
+  contextAddr: { fontSize: 12, color: '#64748b' },
+  contextPhone: { fontSize: 12, color: '#059669', marginTop: 4, fontWeight: '600' },
   navInlineBtn: { position: 'absolute', right: 8, top: 8 },
   navInlineText: { fontSize: 16 },
 
-  btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
-  btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-  navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
+  btnSecondary: { backgroundColor: '#f1f5f9', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4, borderWidth: 1, borderColor: '#e2e8f0' },
+  btnText: { color: '#0f172a', fontSize: 14, fontWeight: 'bold' },
+  navBtn: { backgroundColor: '#2563eb', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
   navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 
   arriveBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
@@ -838,67 +744,134 @@ const styles = StyleSheet.create({
 
   otpRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 12 },
   otpSlot: {
-    width: 40, height: 48, borderRadius: 6, backgroundColor: '#1e1e1e',
-    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#444',
+    width: 40, height: 48, borderRadius: 8, backgroundColor: '#f8fafc',
+    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#cbd5e1',
   },
   otpChar: { fontSize: 18, fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary },
   otpError: { color: DESIGN_TOKENS.colors.danger, textAlign: 'center', fontSize: 13 },
 
   issueSection: {
-    marginHorizontal: 14, marginBottom: 14, backgroundColor: '#1e1a1a',
-    borderRadius: 10, borderWidth: 1, borderColor: '#333',
+    marginHorizontal: 14, marginBottom: 14, backgroundColor: '#ffffff',
+    borderRadius: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
   issueToggle: {
     flexDirection: 'row', justifyContent: 'space-between', padding: 14,
-    alignItems: 'center', backgroundColor: '#2a1a1a',
-    borderTopLeftRadius: 10, borderTopRightRadius: 10,
-    borderBottomWidth: 1, borderBottomColor: '#333',
+    alignItems: 'center', backgroundColor: '#fff7ed',
+    borderTopLeftRadius: 12, borderTopRightRadius: 12,
+    borderBottomWidth: 1, borderBottomColor: '#ffedd5',
   },
-  issueToggleText: { color: DESIGN_TOKENS.colors.warning, fontWeight: 'bold', fontSize: 14 },
-  issueChevron: { color: DESIGN_TOKENS.colors.warning, fontSize: 12, marginLeft: 8 },
+  issueToggleText: { color: '#ea580c', fontWeight: 'bold', fontSize: 14 },
+  issueChevron: { color: '#ea580c', fontSize: 12, marginLeft: 8 },
   issueGrid: { flexDirection: 'row', flexWrap: 'wrap', padding: 10, gap: 8 },
   issueBtn: {
-    backgroundColor: '#2a2a2a', borderRadius: 8,
-    alignItems: 'center', paddingVertical: 10,
+    backgroundColor: '#f8fafc', borderRadius: 8,
+    alignItems: 'center', paddingVertical: 10, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  issueLabel: { color: '#ccc', fontSize: 11, marginTop: 4, textAlign: 'center' },
+  issueLabel: { color: '#475569', fontSize: 11, marginTop: 4, textAlign: 'center', fontWeight: '500' },
 
   logCard: {
-    margin: 14, padding: 14, backgroundColor: '#1a1e2a',
-    borderRadius: 10, borderWidth: 1, borderColor: '#2a3a5a',
+    margin: 14, padding: 14, backgroundColor: '#ffffff',
+    borderRadius: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  logTitle: { color: '#aaa', fontSize: 12, marginBottom: 8, fontWeight: 'bold', textTransform: 'uppercase' },
-  logEntry: { color: '#666', fontSize: 11, fontFamily: 'monospace', paddingVertical: 1 },
-  logEntryNew: { color: DESIGN_TOKENS.colors.success },
+  logTitle: { color: '#64748b', fontSize: 12, marginBottom: 8, fontWeight: 'bold', textTransform: 'uppercase' },
+  logEntry: { color: '#64748b', fontSize: 11, fontFamily: 'monospace', paddingVertical: 1 },
+  logEntryNew: { color: DESIGN_TOKENS.colors.success, fontWeight: 'bold' },
 
   earnBigCard: {
-    margin: 14, padding: 24, borderRadius: 14, alignItems: 'center',
-    backgroundColor: '#1e3a1e',
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.success,
+    margin: 14, padding: 24, borderRadius: 16, alignItems: 'center',
+    backgroundColor: '#ecfdf5',
+    borderWidth: 1.5, borderColor: '#a7f3d0',
   },
-  earnLabel: { color: '#888', fontSize: 14, textTransform: 'uppercase' },
-  earnAmount: { fontSize: 48, fontWeight: 'bold', color: DESIGN_TOKENS.colors.success, marginVertical: 8 },
-  earnSub: { color: '#aaa', fontSize: 14 },
+  earnLabel: { color: '#047857', fontSize: 14, textTransform: 'uppercase', fontWeight: '700' },
+  earnAmount: { fontSize: 48, fontWeight: 'bold', color: '#059669', marginVertical: 8 },
+  earnSub: { color: '#065f46', fontSize: 14 },
   earnGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14, gap: 10, paddingBottom: 14 },
 
   card: {
-    margin: 14, padding: 16, backgroundColor: '#1e1e1e', borderRadius: 12, borderWidth: 1, borderColor: '#333',
+    margin: 14, padding: 16, backgroundColor: '#ffffff', borderRadius: 14, borderWidth: 1, borderColor: '#e2e8f0',
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
   },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  cardSubtitle: { fontSize: 13, color: '#888', marginBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#0f172a' },
+  cardSubtitle: { fontSize: 13, color: '#64748b', marginBottom: 12 },
   shiftInfo: { gap: 8 },
-  shiftInfoText: { color: '#ccc', fontSize: 14 },
+  shiftInfoText: { color: '#475569', fontSize: 14 },
   shiftEndBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, padding: 8, borderRadius: 6, alignItems: 'center', marginTop: 8 },
   shiftEndText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
   cardTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   amountBadge: {
-    backgroundColor: '#1e3a1e', color: DESIGN_TOKENS.colors.success,
+    backgroundColor: '#ecfdf5', color: '#059669',
     paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, fontSize: 16, fontWeight: 'bold',
+    borderWidth: 1, borderColor: '#a7f3d0',
   },
 
   actionRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnAccept: { backgroundColor: DESIGN_TOKENS.colors.primary, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
-  timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },
+  timeInfo: { color: '#64748b', fontSize: 12, marginTop: 4 },
 
 });
+
+const INITIAL_STATE: AppState = {
+  isOnline: false,
+  incomingOrder: null,
+  activeDelivery: null,
+  earnings: { today: 0, pending: 0, bonus: 0, ordersToday: 0 },
+  shift: null,
+  deliveryOtp: '',
+  otpError: '',
+  log: [],
+  expandedIssue: false,
+  activeScreen: 'home',
+  locationPermission: 'pending',
+};
+
+export default function App() {
+  const SCREEN_W = useWindowDimensions().width;
+  const [state, dispatch] = useReducer(appReducer, INITIAL_STATE);
+  const socketRef = useRef<Socket | null>(null);
+
+  useEffect(() => {
+    async function initLocation() {
+      const status = await requestLocationPermission();
+      dispatch({ type: 'SET_LOCATION_PERMISSION', payload: status === 'granted' ? 'granted' : 'denied' });
+    }
+    initLocation();
+  }, []);
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState.match(/inactive|background/) && socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+    const subscription = RNAppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, []);
+
+  const { isOnline, incomingOrder, activeDelivery, earnings, shift, deliveryOtp, otpError, log, expandedIssue, activeScreen, locationPermission } = state;
+
+  return (
+    <View style={styles.container}>
+      <DriverHeader isOnline={isOnline} onToggleOnline={(v) => dispatch({ type: 'SET_ONLINE', payload: v })} />
+      <DriverStats earnings={earnings} />
+      <DriverTabBar activeScreen={activeScreen} onChange={(s) => dispatch({ type: 'SET_ACTIVE_SCREEN', payload: s })} />
+      {activeScreen === 'home' ? (
+        <HomeScreen
+          incomingOrder={incomingOrder}
+          activeDelivery={activeDelivery}
+          locationPermission={locationPermission}
+          isOnline={isOnline}
+          deliveryOtp={deliveryOtp}
+          otpError={otpError}
+          log={log}
+          expandedIssue={expandedIssue}
+          dispatch={dispatch}
+          socketRef={socketRef}
+          SCREEN_W={SCREEN_W}
+        />
+      ) : (
+        <EarningsScreen earnings={earnings} shift={shift} />
+      )}
+    </View>
+  );
+}

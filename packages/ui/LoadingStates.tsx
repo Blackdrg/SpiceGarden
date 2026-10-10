@@ -136,6 +136,7 @@ export interface LoadingStateProps {
 
 export const LoadingState = ({ count = 3, variant = 'card' }: LoadingStateProps) => {
   if (variant === 'text') {
+    const widths = ['85%', '70%', '95%', '60%', '80%'];
     return (
       <div style={{ padding: DESIGN_TOKENS.spacing.md }}>
         {Array.from({ length: count }).map((_, i) => (
@@ -146,7 +147,7 @@ export const LoadingState = ({ count = 3, variant = 'card' }: LoadingStateProps)
               backgroundColor: DESIGN_TOKENS.colors.elevated,
               borderRadius: DESIGN_TOKENS.radius.sm,
               marginBottom: DESIGN_TOKENS.spacing.xs,
-              width: `${Math.random() * 40 + 60}%`,
+              width: widths[i % widths.length],
               animation: 'pulse 1.5s ease-in-out infinite',
             }}
           />

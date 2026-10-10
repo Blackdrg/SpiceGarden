@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,6 +21,8 @@ const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
 const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
 const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
 const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+const MAX_ACK_MESSAGES_PER_CLIENT = 500;
+const MSG_QUEUE_TTL_MS = Number(process.env.WS_MSG_QUEUE_TTL_MS || 60000);
 
 export enum SocketNamespace {
   TRACKING = '/tracking',
@@ -66,7 +68,7 @@ interface SocketConnection {
   pingInterval: 10000,
   pingTimeout: 20000,
 })
-export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
   server!: Server;
 
@@ -76,6 +78,8 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   private readonly messageQueue = new Map<string, AcknowledgedMessage[]>();
   private readonly pendingAcks = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
   private readonly ackTimeoutMs: number;
+  private readonly cleanupAttemptsInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly cleanupQueueInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private configService: ConfigService,
@@ -83,6 +87,29 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly notificationRepo: Repository<NotificationEntity>,
   ) {
     this.ackTimeoutMs = this.configService.get<number>('WS_ACK_TIMEOUT_MS', 5000);
+    this.cleanupAttemptsInterval = setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+    if (this.cleanupAttemptsInterval && typeof this.cleanupAttemptsInterval.unref === 'function') {
+      this.cleanupAttemptsInterval.unref();
+    }
+    this.cleanupQueueInterval = setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+    if (this.cleanupQueueInterval && typeof this.cleanupQueueInterval.unref === 'function') {
+      this.cleanupQueueInterval.unref();
+    }
+  }
+
+  onModuleDestroy(): void {
+    if (this.cleanupAttemptsInterval) {
+      clearInterval(this.cleanupAttemptsInterval);
+    }
+    if (this.cleanupQueueInterval) {
+      clearInterval(this.cleanupQueueInterval);
+    }
+    for (const pending of this.pendingAcks.values()) {
+      if (pending.timeout) {
+        clearTimeout(pending.timeout);
+      }
+    }
+    this.pendingAcks.clear();
   }
 
   handleConnection(client: Socket) {
@@ -181,6 +208,12 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     if (!conn) return { error: 'Not connected' };
 
     data.timestamp = new Date();
+    if (conn.acknowledgedMessages.size >= MAX_ACK_MESSAGES_PER_CLIENT) {
+      const oldestKey = conn.acknowledgedMessages.keys().next().value;
+      if (oldestKey) {
+        conn.acknowledgedMessages.delete(oldestKey);
+      }
+    }
     conn.acknowledgedMessages.set(data.id, data);
 
     if (data.ack) {
@@ -326,11 +359,42 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   private cleanupPendingAcks(clientId: string) {
-    for (const [messageId, pending] of this.pendingAcks.entries()) {
-      clearTimeout(pending.timeout);
-      pending.reject(new Error('Client disconnected'));
+    const conn = this.connectedClients.get(clientId);
+    if (!conn) return;
+    for (const [messageId, message] of conn.acknowledgedMessages.entries()) {
+      if (!message.ack) {
+        conn.acknowledgedMessages.delete(messageId);
+      }
+      const pending = this.pendingAcks.get(messageId);
+      if (pending) {
+        clearTimeout(pending.timeout);
+        this.pendingAcks.delete(messageId);
+      }
     }
-    this.pendingAcks.clear();
+  }
+
+  private cleanupStaleConnectionAttempts(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.connectionAttempts.entries()) {
+      if (now >= entry.resetAt) {
+        this.connectionAttempts.delete(key);
+      }
+    }
+  }
+
+  private cleanupStaleMessageQueue(): void {
+    const now = Date.now();
+    for (const [driverId, queue] of this.messageQueue.entries()) {
+      const filtered = queue.filter((msg) => {
+        if (!msg.timestamp) return false;
+        return now - msg.timestamp.getTime() < MSG_QUEUE_TTL_MS;
+      });
+      if (filtered.length === 0) {
+        this.messageQueue.delete(driverId);
+      } else {
+        this.messageQueue.set(driverId, filtered);
+      }
+    }
   }
 
   async getQueuedMessages(driverId: string): Promise<AcknowledgedMessage[]> {
@@ -342,8 +406,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     const conn = this.connectedClients.get(driverId);
     
     if (conn) {
+      const messageIdSet = new Set(messageIds);
       const undelivered = Array.from(conn.acknowledgedMessages.values())
-        .filter(m => messageIds.includes(m.id) && !m.ack);
+        .filter(m => messageIdSet.has(m.id) && !m.ack);
       
       queue.push(...undelivered);
       this.messageQueue.set(driverId, queue);

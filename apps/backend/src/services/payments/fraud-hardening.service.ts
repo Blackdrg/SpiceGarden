@@ -31,7 +31,7 @@ export class FraudHardeningService {
     private auditService: AuditService,
     @InjectRepository(PaymentFraudFlagEntity)
     private readonly fraudFlagRepo: Repository<PaymentFraudFlagEntity>,
-  ) {}
+  ) { }
 
   async checkPaymentFraud(context: FraudCheckContext): Promise<FraudCheckResult> {
     const reasons: string[] = [];
@@ -133,9 +133,9 @@ export class FraudHardeningService {
     if (!ipAddress) return false;
 
     const suspiciousPatterns = [
-      '10.', 
+      '10.',
       '192.168.',
-      '172.16.', 
+      '172.16.',
     ];
 
     return suspiciousPatterns.some(pattern => ipAddress.startsWith(pattern));
@@ -189,7 +189,7 @@ export class FraudHardeningService {
 
   private determineFlagType(riskScore: number, reasons: string[]): PaymentFraudFlagEntity['flagType'] {
     const reasonsStr = reasons.join(' ').toLowerCase();
-    
+
     if (reasonsStr.includes('velocity') || reasonsStr.includes('transactions')) {
       return 'velocity_abuse';
     }
@@ -202,7 +202,7 @@ export class FraudHardeningService {
     if (reasonsStr.includes('ip')) {
       return 'suspicious_pattern';
     }
-    
+
     return 'other';
   }
 
@@ -238,7 +238,7 @@ export class FraudHardeningService {
         .where('f.isBlocked = :blocked', { blocked: true })
         .andWhere('f.blockedAt >= :since', { since: twentyFourHoursAgo })
         .getRawOne()
-        .then(r => Number(r?.count || 0)),
+        .then((r: any) => Number(r?.count || 0)),
       this.fraudFlagRepo.count({
         where: { createdAt: MoreThanOrEqual(twentyFourHoursAgo) }
       }),

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
 import { DriverEntity } from './driver.entity';
 
 export enum DocumentType {
@@ -17,7 +17,7 @@ export enum DocumentStatus {
 }
 
 @Entity('driver_documents')
-export class DriverDocumentEntity {
+export class DriverDocumentEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

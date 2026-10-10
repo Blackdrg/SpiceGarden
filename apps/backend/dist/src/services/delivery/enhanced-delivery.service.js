@@ -29,17 +29,15 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
     batchRepo;
     driverAssignmentRepo;
     geoService;
-    dataSource;
     logger = new common_1.Logger(EnhancedDeliveryService_1.name);
     surgeZones = new Map();
     incentiveRules = new Map();
-    constructor(driverRepo, orderRepo, batchRepo, driverAssignmentRepo, geoService, dataSource) {
+    constructor(driverRepo, orderRepo, batchRepo, driverAssignmentRepo, geoService) {
         this.driverRepo = driverRepo;
         this.orderRepo = orderRepo;
         this.batchRepo = batchRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
         this.geoService = geoService;
-        this.dataSource = dataSource;
         this.initializeSurgeZones();
         this.initializeIncentiveRules();
     }
@@ -101,7 +99,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (!order) {
             throw new Error('Order not found');
         }
-        await this.dataSource.manager.transaction(async (manager) => {
+        await this.driverRepo.manager.transaction(async (manager) => {
             await manager.update(order_entity_1.OrderEntity, orderId, {
                 driverId,
                 status: order_interface_1.OrderStatus.DRIVER_ASSIGNED,
@@ -155,14 +153,14 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (!order) {
             throw new Error('Order not found');
         }
-        await this.dataSource.manager.transaction(async (manager) => {
+        await this.driverRepo.manager.transaction(async (manager) => {
             await manager.update(order_entity_1.OrderEntity, orderId, {
                 status: order_interface_1.OrderStatus.CANCELLED,
                 paymentStatus: order_interface_1.PaymentStatus.FAILED,
             });
             const driver = await manager.findOne(driver_entity_1.DriverEntity, { where: { id: driverId } });
             if (driver && reasonDetails !== 'customer_unavailable') {
-                const newFailureCount = driver.failureCount + 1;
+                const newFailureCount = (driver.failureCount || 0) + 1;
                 await manager.update(driver_entity_1.DriverEntity, driverId, {
                     failureCount: newFailureCount,
                     isFraudSuspicious: newFailureCount >= 3,
@@ -184,7 +182,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (recentNoShows >= 2) {
             await this.driverRepo.update(driverId, {
                 isFraudSuspicious: true,
-                fraudFlags: { ...driver.fraudFlags, noShowRisk: 0.8 },
+                fraudFlags: { ...(driver.fraudFlags || {}), noShowRisk: 0.8 },
             });
             this.logger.warn(`Driver ${driverId} flagged for no-shows`);
         }
@@ -245,7 +243,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         return { suspicious, reason: suspicious ? 'Route deviation exceeds threshold' : undefined };
     }
     async handleDriverNoShowAutomatic(driverId, orderId, assignmentId) {
-        await this.dataSource.manager.transaction(async (manager) => {
+        await this.driverRepo.manager.transaction(async (manager) => {
             const driver = await manager.findOne(driver_entity_1.DriverEntity, { where: { id: driverId } });
             if (driver) {
                 await manager.update(driver_entity_1.DriverEntity, driverId, {
@@ -283,14 +281,14 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         const rules = this.incentiveRules.get('default') || [];
         const breakdown = {};
         let totalIncentive = 0;
+        const completedToday = await this.driverAssignmentRepo.count({
+            where: { status: 'delivered' },
+        });
         for (const rule of rules) {
             if (!rule.active)
                 continue;
             switch (rule.type) {
                 case 'bonus_per_order':
-                    const completedToday = await this.driverAssignmentRepo.count({
-                        where: { status: 'delivered' },
-                    });
                     if ((!rule.conditions.minDeliveries || completedToday >= rule.conditions.minDeliveries)) {
                         breakdown[rule.id] = rule.value * completedToday;
                         totalIncentive += breakdown[rule.id];
@@ -326,11 +324,9 @@ exports.EnhancedDeliveryService = EnhancedDeliveryService = EnhancedDeliveryServ
     __param(1, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(batch_entity_1.BatchEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(driver_assignment_entity_1.DriverAssignmentEntity)),
-    __param(5, (0, typeorm_1.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        geo_service_1.GeoService,
-        typeorm_2.DataSource])
+        geo_service_1.GeoService])
 ], EnhancedDeliveryService);

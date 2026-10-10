@@ -1,17 +1,18 @@
-import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { OrderEntity } from '../../db/entities/order.entity';
-import { UserEntity } from '../../db/entities/user.entity';
-import { DriverEntity } from '../../db/entities/driver.entity';
 import { AuditLogEntity } from '../../db/entities/audit-log.entity';
 export declare class AdminService {
+    private readonly connection;
     private readonly orderRepo;
     private readonly userRepo;
     private readonly driverRepo;
     private readonly auditRepo;
-    constructor(orderRepo: Repository<OrderEntity>, userRepo: Repository<UserEntity>, driverRepo: Repository<DriverEntity>, auditRepo: Repository<AuditLogEntity>);
+    private readonly branchRepo;
+    private readonly restaurantRepo;
+    constructor(connection: DataSource);
     getDashboardStats(branchId?: string): Promise<{
         stats: {
-            revenue: any;
+            revenue: number;
             orders: number;
             driversOnline: number;
             complaints: number;
@@ -26,15 +27,17 @@ export declare class AdminService {
             orders: number;
         }[];
         branches: {
-            name: string;
+            name: any;
             status: string;
             orderCount: number;
             avgPrepMins: number;
             driversAssigned: number;
         }[];
-        tickets: never[];
     }>;
-    private generateMockRevenueData;
+    private getDisputeCount;
+    private getRefundCount;
+    private getBranchStats;
+    private getRevenueData;
     logAction(action: string, userId: string, entityType: string, entityId: string, metadata: any): Promise<AuditLogEntity>;
     getAllOrders(page?: number, limit?: number): Promise<OrderEntity[]>;
     banUser(userId: string, reason: string): Promise<{

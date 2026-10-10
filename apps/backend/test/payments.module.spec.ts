@@ -29,7 +29,7 @@ describe('Payment Module Integration', () => {
     const { PaymentGatewayFactory } = await import('../src/services/payments/gateway-factory.service');
     expect(PaymentGatewayFactory.prototype.getGateway).toBeDefined();
     expect(PaymentGatewayFactory.prototype.getAvailableGateways).toBeDefined();
-    expect(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay']);
+    expect(PaymentGatewayFactory.prototype.getAvailableGateways()).toEqual(['stripe', 'razorpay', 'cod']);
   });
 
   it('.env.example has all payment config variables', async () => {

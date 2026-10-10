@@ -12,9 +12,9 @@ export declare class RestaurantOpsService {
     private itemRepo;
     private categoryRepo;
     private userRepo;
-    private dataSource;
+    private readonly connection;
     private readonly logger;
-    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, itemRepo: Repository<MenuItemEntity>, categoryRepo: Repository<MenuCategoryEntity>, userRepo: Repository<UserEntity>, dataSource: DataSource);
+    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, branchRepo: Repository<RestaurantBranchEntity>, itemRepo: Repository<MenuItemEntity>, categoryRepo: Repository<MenuCategoryEntity>, userRepo: Repository<UserEntity>, connection: DataSource);
     startOnboarding(userId: string, restaurantData: {
         name: string;
         slug: string;

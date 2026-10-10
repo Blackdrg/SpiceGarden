@@ -3,7 +3,7 @@
     "target": "es2022",
     "lib": ["es2022", "dom", "dom.iterable"],
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "jsx": "react-native",
     "strict": true,
     "noEmit": true,
@@ -13,11 +13,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
+    "types": ["react", "node", "jest"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@spicegarden/ui": ["../../packages/ui/src/index.ts", "../../packages/ui/index.ts", "../../packages/ui"]
     },
-    "types": ["react-native", "jest", "node"]
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "App.tsx",
+    "declarations.d.ts",
+    "*.d.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

@@ -18,8 +18,8 @@ import { OrdersTab } from '../components/OrdersTab';
 import { OverviewTab } from '../components/OverviewTab';
 import { SupportTab } from '../components/SupportTab';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const SOCKET_URL = 'http://localhost:3001';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
 
 async function fetchStats(): Promise<{ stats?: Stats; revenueData?: Record<string, unknown>[]; branches?: BranchStatus[]; tickets?: DisputeTicket[] } | null> {
   try {
@@ -140,35 +140,83 @@ export default function AdminDashboard() {
   );
 }
 
-const sidebarNavItems: { key: AdminTab; label: string; emoji: string }[] = [
-  { key: 'overview', label: 'Dashboard', emoji: '📊' },
-  { key: 'orders', label: 'Live Orders', emoji: '🛵' },
-  { key: 'branches', label: 'Kitchen Monitor', emoji: '🏪' },
-  { key: 'support', label: 'Support & Security', emoji: '🛡️' },
+import Link from 'next/link';
+import { DashboardIcon, DeliveryIcon, StoreIcon, ShieldIcon, Flame, GiftIcon, UserIcon } from '@spicegarden/ui';
+
+type NavItem = {
+  key: AdminTab;
+  label: string;
+  Icon: React.ComponentType<{ size?: number; color?: string; className?: string }>;
+};
+
+const sidebarNavItems: NavItem[] = [
+  { key: 'overview', label: 'Platform Overview', Icon: DashboardIcon },
+  { key: 'orders', label: 'Live Orders', Icon: DeliveryIcon },
+  { key: 'branches', label: 'Kitchen Monitor', Icon: StoreIcon },
+  { key: 'support', label: 'Support & Security', Icon: ShieldIcon },
 ];
 
 function Sidebar({ selectedTab, onSelectTab }: { selectedTab: AdminTab; onSelectTab: (tab: AdminTab) => void }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoSection}>
-        <div className={styles.logoText}>🌶️ SpiceGarden</div>
-        <div className={styles.adminText}>Super Admin</div>
+        <div className={styles.logoText}>
+          <Flame size={20} color="#ff5a1f" /> SpiceGarden
+        </div>
+        <div className={styles.adminText}>Super Admin Hub</div>
       </div>
 
-      {sidebarNavItems.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          onClick={() => onSelectTab(tab.key)}
-          className={`${styles.navButton} ${selectedTab === tab.key ? styles.navButtonActive : styles.navButtonInactive}`}
-        >
-          <span className={styles.navEmoji}>{tab.emoji}</span> {tab.label}
-        </button>
-      ))}
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, padding: '0 8px', marginBottom: 4 }}>
+        Core Monitoring
+      </div>
+
+      {sidebarNavItems.map((tab) => {
+        const IconComponent = tab.Icon;
+        const isActive = selectedTab === tab.key;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onSelectTab(tab.key)}
+            className={`${styles.navButton} ${isActive ? styles.navButtonActive : styles.navButtonInactive}`}
+            style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+          >
+            <IconComponent size={18} color={isActive ? '#ff5a1f' : '#94a3b8'} /> {tab.label}
+          </button>
+        );
+      })}
+
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, padding: '0 8px', marginTop: 14, marginBottom: 4 }}>
+        Management Modules
+      </div>
+
+      <Link
+        href="/analytics"
+        className={styles.navButton}
+        style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+      >
+        <DashboardIcon size={18} color="#94a3b8" /> Deep Analytics
+      </Link>
+
+      <Link
+        href="/driver-fleet/overview"
+        className={styles.navButton}
+        style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+      >
+        <DeliveryIcon size={18} color="#94a3b8" /> Fleet &amp; Drivers
+      </Link>
+
+      <Link
+        href="/loyalty/coupons"
+        className={styles.navButton}
+        style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+      >
+        <GiftIcon size={18} color="#94a3b8" /> Coupons &amp; Loyalty
+      </Link>
 
       <div className={styles.footer}>
         <div className={styles.footerLabel}>Logged in as</div>
-        <div className={styles.footerName}>Super Admin</div>
+        <div className={styles.footerName}>Super Admin Master</div>
       </div>
     </aside>
   );
@@ -185,10 +233,10 @@ function DashboardHeader({ title, subtitle }: { title: string; subtitle: string 
 
 function dashboardTitle(tab: AdminTab) {
   const titles: Record<AdminTab, string> = {
-    overview: '📊 Platform Overview',
-    orders: '🛵 Live Orders',
-    branches: '🏪 Kitchen Monitoring',
-    support: '🛡️ Support & Security',
+    overview: 'Platform Overview',
+    orders: 'Live Orders',
+    branches: 'Kitchen Monitoring',
+    support: 'Support & Security',
   };
   return titles[tab];
 }
@@ -230,7 +278,7 @@ function DeliveryHeatmap({ data }: { data: HeatmapPoint[] }) {
         const bv = Math.round(30);
         return (
           <div
-            key={i}
+            key={key}
             title={avg > 0.4 ? `High demand zone (intensity: ${avg.toFixed(2)})` : ''}
             style={{ backgroundColor: `rgba(${r},${g},${bv},${Math.max(0.06, avg)})`, borderRadius: 1 }}
           />

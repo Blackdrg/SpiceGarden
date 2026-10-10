@@ -1,8 +1,8 @@
 import React, { useReducer } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, KitchenIcon, BurgerIcon } from '@spicegarden/ui';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { ordersApi } from '@spicegarden/shared/api';
 import { useQuery } from '@tanstack/react-query';
@@ -78,8 +78,8 @@ interface OrderDetailsPageProps {
   orderId: string;
 }
 
-const fetchOrder = async (orderId: string, token: string | null): Promise<Order> => {
-  const data = await ordersApi.get(orderId, token || '').then(res => res.data);
+const fetchOrder = async (orderId: string): Promise<Order> => {
+  const data = await ordersApi.get(orderId).then(res => res.data);
   return data as Order;
 };
 
@@ -88,8 +88,8 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const { data: order, isLoading: loading, error: fetchError } = useQuery({
-    queryKey: ['order', orderId, user?.token],
-    queryFn: () => fetchOrder(orderId, user?.token || null),
+    queryKey: ['order', orderId],
+    queryFn: () => fetchOrder(orderId),
   });
 
   const error = fetchError instanceof Error ? 'Failed to load order details. Please try again later.' : null;
@@ -140,7 +140,9 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
                 className={styles.restaurantImage}
               />
             ) : (
-              <div className={styles.restaurantPlaceholder}>🍽️</div>
+              <div className={styles.restaurantPlaceholder} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <KitchenIcon size={24} color="#f04e31" />
+              </div>
             )}
             <div>
               <h3 className={styles.restaurantTitle}>{order.restaurant.name}</h3>
@@ -165,7 +167,9 @@ const OrderDetailsPage = ({ orderId }: OrderDetailsPageProps) => {
                        className={styles.itemImage}
                      />
                   ) : (
-                    <div className={styles.itemPlaceholder}>🍔</div>
+                    <div className={styles.itemPlaceholder} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BurgerIcon size={20} color="#f04e31" />
+                    </div>
                   )}
                   <div>
                     <div className={styles.itemName}>{item.name}</div>

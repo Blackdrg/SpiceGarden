@@ -34,7 +34,7 @@ export class DeliveryService {
     private driverFraudRepo: Repository<DriverFraudEntity>,
     private geoService: GeoService,
     @InjectDataSource()
-    private dataSource: DataSource
+    private connection: DataSource
   ) {}
 
   async registerDriver(userId: string, data: any) {

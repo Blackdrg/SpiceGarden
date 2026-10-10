@@ -12,6 +12,6 @@ export declare class RazorpayGateway implements PaymentGateway {
     fetchPaymentDetails(paymentId: string): Promise<PaymentIntent>;
     confirmPayment(paymentId: string, userId: string): Promise<PaymentResult>;
     refundPayment(paymentId: string, amount: number | null | undefined, userId: string, reason?: string): Promise<RefundResult>;
-    constructEvent(payload: Buffer, signature: string, secret: string): Promise<GatewayEvent>;
+    constructEvent(payload: any, signature: string, secret: string): Promise<GatewayEvent>;
     getGatewayName(): string;
 }

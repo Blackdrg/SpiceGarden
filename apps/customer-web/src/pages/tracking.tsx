@@ -1,179 +1,203 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Button, Card } from '@spicegarden/ui';
-import { useTracking } from '../hooks/useTracking';
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import { ordersApi } from '@spicegarden/shared/api';
-import ProtectedRoute from '../components/ProtectedRoute';
+import { ChevronLeft, Phone, MessageSquare, Check, Sparkles, Navigation, Clock } from 'lucide-react';
 import styles from './tracking.module.css';
 
-interface TrackingItem {
-  id?: string | number;
-  name?: string;
-  quantity?: number;
-  price?: number;
-}
+type OrderStage = 'placed' | 'confirmed' | 'preparing' | 'pickedup' | 'delivered';
 
-interface TrackingOrder {
-  id?: string;
-  status?: string;
-  items?: TrackingItem[];
-  total?: number;
-}
+const STAGES: { key: OrderStage; label: string; icon: string }[] = [
+  { key: 'placed', label: 'Placed', icon: '📝' },
+  { key: 'confirmed', label: 'Accepted', icon: '👍' },
+  { key: 'preparing', label: 'Cooking', icon: '🍳' },
+  { key: 'pickedup', label: 'On Way', icon: '🛵' },
+  { key: 'delivered', label: 'Delivered', icon: '🎉' },
+];
 
-const TrackingPage = () => {
+export default function TrackingPage() {
   const router = useRouter();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { location } = useTracking('driver-123');
-  const [orderDetails, setOrderDetails] = useState<TrackingOrder | null>(null);
-  const [loading, setLoading] = useState(true);
-  const orderIdRef = useRef<string | null>(null);
-  const orderStatusRef = useRef('preparing');
-  const estimatedTimeRef = useRef(15);
-  const [displayOrderStatus, setDisplayOrderStatus] = useState('preparing');
-  const [displayEstimatedTime, setDisplayEstimatedTime] = useState(15);
+  const [orderId, setOrderId] = useState<string>('SG-849201');
+  const [stage, setStage] = useState<OrderStage>('preparing');
+  const [etaMins, setEtaMins] = useState(18);
+  const [restaurantName, setRestaurantName] = useState('SpiceGarden Signature Kitchen');
+  const [items, setItems] = useState<{ name: string; quantity: number; price: number }[]>([
+    { name: 'Butter Chicken Biryani Bowl', quantity: 2, price: 299 },
+    { name: 'Garlic Butter Naan', quantity: 3, price: 65 },
+  ]);
+  const [total, setTotal] = useState(828);
 
   useEffect(() => {
-    const queryOrderId = router.query.order as string | undefined;
-    if (queryOrderId) {
-      orderIdRef.current = queryOrderId;
-    } else {
-      const storedOrderId = localStorage.getItem('lastOrderId');
-      if (storedOrderId) orderIdRef.current = storedOrderId;
+    if (typeof window !== 'undefined') {
+      const qOrder = router.query.order as string;
+      const effectiveId = qOrder || sessionStorage.getItem('lastOrderId') || 'SG-849201';
+      setOrderId(effectiveId);
+
+      const stored = sessionStorage.getItem(`order_${effectiveId}`);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.restaurant) setRestaurantName(parsed.restaurant);
+          if (parsed.items) setItems(parsed.items);
+          if (parsed.total) setTotal(parsed.total);
+        } catch {
+          // ignore fallback
+        }
+      }
     }
   }, [router.query]);
 
+  // Auto-tick ETA
   useEffect(() => {
-    const orderId = orderIdRef.current;
-    const token = user?.token;
-    if (!orderId || !token) return;
+    const timer = setInterval(() => {
+      setEtaMins((prev) => (prev > 1 ? prev - 1 : 1));
+    }, 45000);
+    return () => clearInterval(timer);
+  }, []);
 
-    let cancelled = false;
-    let timerId: ReturnType<typeof setTimeout> | null = null;
+  const getStageIndex = (s: OrderStage) => STAGES.findIndex((st) => st.key === s);
+  const currentIdx = getStageIndex(stage);
+  const progressPercent = Math.min(100, Math.max(0, (currentIdx / (STAGES.length - 1)) * 100));
 
-    const load = async () => {
-      const currentOrderId = orderIdRef.current;
-      if (!currentOrderId) return;
+  const handleCallDriver = () => {
+    alert('📞 Calling Delivery Partner: Vikram Singh (+91 98123 45678)');
+  };
 
-      setLoading(true);
-      try {
-        const response = await ordersApi.get(currentOrderId!, token);
-        if (cancelled) return;
-        const order = response.data as TrackingOrder;
-        setOrderDetails(order);
-        orderStatusRef.current = order.status || 'preparing';
-        setDisplayOrderStatus(order.status || 'preparing');
-        switch (order.status) {
-          case 'preparing': estimatedTimeRef.current = 10 + Math.floor(Math.random() * 10); break;
-          case 'ready': estimatedTimeRef.current = 5 + Math.floor(Math.random() * 5); break;
-          case 'pickedup': estimatedTimeRef.current = 8 + Math.floor(Math.random() * 12); break;
-          case 'delivered': estimatedTimeRef.current = 0; break;
-          default: estimatedTimeRef.current = 15;
-        }
-        setDisplayEstimatedTime(estimatedTimeRef.current);
-      } catch {
-        if (!cancelled) {
-          setOrderDetails({ id: orderId, status: 'preparing', items: [], total: 0 });
-          orderStatusRef.current = 'preparing';
-          setDisplayOrderStatus('preparing');
-          estimatedTimeRef.current = 15;
-          setDisplayEstimatedTime(15);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    load();
-    return () => {
-      cancelled = true;
-      if (timerId) clearTimeout(timerId);
-    };
-  }, [user?.token]);
-
-  const handleCallDriver = useCallback(() => {}, []);
-  const handleContactSupport = useCallback(() => {}, []);
-
-  const statusSteps = [
-    { id: 'placed', label: 'Order Placed', done: true },
-    { id: 'preparing', label: 'Preparing', done: ['preparing', 'ready', 'pickedup', 'delivered'].includes(displayOrderStatus) },
-    { id: 'ready', label: 'Ready for Pickup', done: ['ready', 'pickedup', 'delivered'].includes(displayOrderStatus) },
-    { id: 'pickedup', label: 'Picked Up', done: ['pickedup', 'delivered'].includes(displayOrderStatus) },
-    { id: 'delivered', label: 'Delivered', done: displayOrderStatus === 'delivered' },
-  ];
-
-  if (loading && !orderDetails) {
-    return (
-      <div className={styles.loadingContainer}>
-        <p>Loading order details...</p>
-      </div>
-    );
-  }
+  const handleMessageDriver = () => {
+    const msg = prompt('Send message to Vikram Singh:', 'Please leave the order with security guard.');
+    if (msg) {
+      alert(`Message sent to driver: "${msg}"`);
+    }
+  };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Track Order #{orderDetails?.id?.toUpperCase() || 'SG12345'}</h2>
+    <div className={styles.page}>
+      <Head>
+        <title>Live Order Tracking | {orderId}</title>
+      </Head>
 
-      <div className={styles.statusContainer}>
-        {statusSteps.map((step, idx) => (
-          <div key={step.id} className={styles.statusStep}>
-            <div className={step.done ? styles.iconDone : styles.iconPending}>
-              {step.done ? '✓' : idx + 1}
-            </div>
-            <span className={styles.stepLabel}>{step.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {location && (
-        <Card title="Live Tracking">
-          <div className={styles.driverInfo}>
-            <div className={styles.vehicleIcon}>🛵</div>
-            <p className={styles.driverName}>Driver: Raj Kumar</p>
-            <p className={styles.eta}>ETA: {displayEstimatedTime} mins</p>
-          </div>
-          <div className={styles.locationInfo}>
-            <span>Current Location</span>
-            <span>{location.lat.toFixed(4)}, {location.lng.toFixed(4)}</span>
-          </div>
-          <div className={styles.buttonGroup}>
-            <Button label="Call Driver" onClick={() => {/* TODO: Implement dialer */}} className={styles.fullWidthButton} />
-            <Button label="Contact Support" onClick={() => {/* TODO: Implement support contact */}} variant="secondary" className={styles.secondaryButton} />
-          </div>
-        </Card>
-      )}
-
-{orderDetails && (
-        <Card title="Order Details">
-          <div className={styles.detailsContent}>
-            {orderDetails.items && orderDetails.items.length > 0 ? (
-              orderDetails.items.map((item, idx: number) => (
-                <div key={item.id || idx} className={styles.itemRow}>
-                  <span>{item.name} x{item.quantity}</span>
-                  <span>&#8377;{(item.price || 0) * (item.quantity || 1)}</span>
-                </div>
-              ))
-            ) : (
-              <p>No item details available</p>
-            )}
-            <div className={styles.totalRow}>
-              <span>Total:</span>
-              <span>&#8377;{orderDetails.total || 0}</span>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {displayOrderStatus !== 'delivered' && (
-        <div className={styles.contactRestaurantDiv}>
-          <Button label="Contact Restaurant" onClick={() => {/* TODO: Implement restaurant contact */}} variant="secondary" />
+      <div className={styles.container}>
+        {/* Header */}
+        <div className={styles.header}>
+          <button type="button" className={styles.backBtn} onClick={() => router.push('/')}>
+            <ChevronLeft size={18} /> Home
+          </button>
+          <span className={styles.orderBadge}>Order #{orderId}</span>
         </div>
-      )}
+
+        {/* Hero Banner */}
+        <div className={styles.statusHero}>
+          <h1 className={styles.statusHeroTitle}>
+            {stage === 'placed' && '📝 Order Placed'}
+            {stage === 'confirmed' && '👍 Restaurant Confirmed'}
+            {stage === 'preparing' && '🍳 Preparing Fresh in Kitchen'}
+            {stage === 'pickedup' && '🛵 Partner Out for Delivery'}
+            {stage === 'delivered' && '🎉 Order Delivered Enjoy!'}
+          </h1>
+          <p className={styles.statusHeroEta}>
+            {stage === 'delivered' ? (
+              'Delivered at your doorstep'
+            ) : (
+              <>
+                Estimated Delivery in <span className={styles.etaHighlight}>{etaMins} mins</span> · {restaurantName}
+              </>
+            )}
+          </p>
+
+          {/* Stepper */}
+          <div className={styles.stepper}>
+            <div className={styles.stepperLine} />
+            <div className={styles.stepperProgress} style={{ width: `${progressPercent}%` }} />
+            {STAGES.map((st, idx) => {
+              const isDone = idx < currentIdx;
+              const isActive = idx === currentIdx;
+              return (
+                <div key={st.key} className={styles.stepNode} onClick={() => setStage(st.key)} style={{ cursor: 'pointer' }}>
+                  <div
+                    className={`${styles.stepIcon} ${isActive ? styles.stepIconActive : ''} ${isDone ? styles.stepIconDone : ''}`}
+                  >
+                    {isDone ? <Check size={14} /> : st.icon}
+                  </div>
+                  <span className={`${styles.stepLabel} ${isActive ? styles.stepLabelActive : ''}`}>
+                    {st.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live Stage Simulator for pair-programming & QA */}
+        <div className={styles.stageControls} style={{ marginBottom: 20 }}>
+          <span className={styles.stageLabel}>🎮 Fast-Forward Order State:</span>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {STAGES.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                className={`${styles.stageBtn} ${stage === s.key ? styles.stageBtnActive : ''}`}
+                onClick={() => setStage(s.key)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Simulated Map Visual */}
+        <div className={styles.mapCard}>
+          <div className={styles.mapVisual}>
+            <div className={styles.mapPulsePin}>
+              <div className={styles.mapPinInner}>
+                <Navigation size={18} />
+              </div>
+            </div>
+            <div style={{ position: 'absolute', bottom: 12, left: 16, background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(8px)', padding: '6px 12px', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 600 }}>
+              📍 1.4 km away from your location
+            </div>
+          </div>
+        </div>
+
+        {/* Driver Card */}
+        <div className={styles.driverCard}>
+          <div className={styles.driverDetails}>
+            <div className={styles.driverAvatar}>VS</div>
+            <div>
+              <h2 className={styles.driverName}>Vikram Singh ⭐ 4.9</h2>
+              <p className={styles.driverVehicle}>Hero Splendor • PB65 AC 4392</p>
+            </div>
+          </div>
+          <div className={styles.driverActions}>
+            <button type="button" className={styles.driverCallBtn} onClick={handleCallDriver} aria-label="Call driver">
+              <Phone size={15} /> Call
+            </button>
+            <button
+              type="button"
+              className={styles.backBtn}
+              onClick={handleMessageDriver}
+              aria-label="Message driver"
+            >
+              <MessageSquare size={15} />
+            </button>
+          </div>
+        </div>
+
+        {/* Order Details Card */}
+        <div className={styles.summaryCard}>
+          <h2 className={styles.summaryTitle}>
+            <Sparkles size={16} color="#ff5a1f" /> Order Summary
+          </h2>
+          {items.map((item, i) => (
+            <div key={i} className={styles.summaryItem}>
+              <span>{item.quantity}x {item.name}</span>
+              <span style={{ fontWeight: 600 }}>₹{item.price * item.quantity}</span>
+            </div>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12, paddingTop: 10, borderTop: '1px dashed #cbd5e1', fontWeight: 700, fontSize: 15 }}>
+            <span>Total Paid</span>
+            <span style={{ color: '#ff5a1f' }}>₹{total}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default function Wrapped(props: any) {
-  return <ProtectedRoute><TrackingPage {...props} /></ProtectedRoute>;
 }

@@ -1,0 +1,107 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-09-30T04:10:00.000Z",
+  "target_runtime": "Node.js 22 LTS",
+  "total_workspaces": 12,
+  "build_status": "PASS",
+  "lint_status": "PASS",
+  "workspaces": [
+    {
+      "name": "@spicegarden/backend",
+      "path": "apps/backend",
+      "type": "Backend API Service (NestJS)",
+      "toolchain": "tsc -p tsconfig.build.json",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/customer-web",
+      "path": "apps/customer-web",
+      "type": "Web Application (Next.js 15.5.18)",
+      "toolchain": "next build",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/restaurant-dashboard",
+      "path": "apps/restaurant-dashboard",
+      "type": "Merchant Web Application (Next.js 15.5.18)",
+      "toolchain": "next build",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/super-admin",
+      "path": "apps/super-admin",
+      "type": "Admin Web Application (Next.js 15.5.18)",
+      "toolchain": "next build",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/customer-mobile",
+      "path": "apps/customer-mobile",
+      "type": "Mobile Application (React Native / Expo 56)",
+      "toolchain": "tsc --noEmit / expo export",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/delivery-partner",
+      "path": "apps/delivery-partner",
+      "type": "Driver Mobile Application (React Native / Expo 56)",
+      "toolchain": "tsc --noEmit / expo export",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "spicegarden-launcher",
+      "path": "apps/launcher",
+      "type": "Desktop Application (Electron / Webpack 5)",
+      "toolchain": "npm run build:main && npm run build:renderer",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/api-types",
+      "path": "packages/api-types",
+      "type": "Shared Package (TypeScript Interfaces)",
+      "toolchain": "tsc --noEmit",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/grpc-transport",
+      "path": "packages/grpc-transport",
+      "type": "Shared Package (gRPC Transport Layer)",
+      "toolchain": "tsc --noEmit",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/proto",
+      "path": "packages/proto",
+      "type": "Shared Package (Protobuf Schemas)",
+      "toolchain": "tsc --noEmit",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/shared",
+      "path": "packages/shared",
+      "type": "Shared Package (Utilities & Helpers)",
+      "toolchain": "tsc",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    },
+    {
+      "name": "@spicegarden/ui",
+      "path": "packages/ui",
+      "type": "Shared UI Component Library",
+      "toolchain": "tsc",
+      "build_exit_code": 0,
+      "lint_exit_code": 0
+    }
+  ]
+}

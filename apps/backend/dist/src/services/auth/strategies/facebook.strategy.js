@@ -17,10 +17,12 @@ const passport_facebook_1 = require("passport-facebook");
 let FacebookStrategy = class FacebookStrategy extends (0, passport_1.PassportStrategy)(passport_facebook_1.Strategy, 'facebook') {
     configService;
     constructor(configService) {
+        const appId = configService.get('FACEBOOK_APP_ID') || 'development-app-id';
+        const appSecret = configService.get('FACEBOOK_APP_SECRET') || 'development-app-secret';
         super({
-            clientID: configService.get('FACEBOOK_APP_ID'),
-            clientSecret: configService.get('FACEBOOK_APP_SECRET'),
-            callbackURL: configService.get('FACEBOOK_CALLBACK_URL'),
+            clientID: appId,
+            clientSecret: appSecret,
+            callbackURL: configService.get('FACEBOOK_CALLBACK_URL') || 'http://localhost:3001/auth/facebook/callback',
             profileFields: ['email', 'name', 'picture.type(large)'],
         });
         this.configService = configService;

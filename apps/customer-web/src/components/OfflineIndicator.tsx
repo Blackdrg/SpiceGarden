@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@spicegarden/ui';
 import { useNetworkStatusContext } from '../contexts/NetworkStatusContext';
 import styles from './OfflineIndicator.module.css';

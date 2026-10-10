@@ -26,14 +26,12 @@ let DriverOnboardingService = DriverOnboardingService_1 = class DriverOnboarding
     documentRepo;
     userRepo;
     driverAssignmentRepo;
-    dataSource;
     logger = new common_1.Logger(DriverOnboardingService_1.name);
-    constructor(driverRepo, documentRepo, userRepo, driverAssignmentRepo, dataSource) {
+    constructor(driverRepo, documentRepo, userRepo, driverAssignmentRepo) {
         this.driverRepo = driverRepo;
         this.documentRepo = documentRepo;
         this.userRepo = userRepo;
         this.driverAssignmentRepo = driverAssignmentRepo;
-        this.dataSource = dataSource;
     }
     async startOnboarding(userId, data) {
         let driver = await this.driverRepo.findOne({ where: { userId } });
@@ -165,6 +163,5 @@ exports.DriverOnboardingService = DriverOnboardingService = DriverOnboardingServ
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.DataSource])
+        typeorm_2.Repository])
 ], DriverOnboardingService);

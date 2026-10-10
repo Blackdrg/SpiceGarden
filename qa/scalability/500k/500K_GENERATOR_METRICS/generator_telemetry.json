@@ -1,0 +1,22 @@
+{
+  "generator_fleet_size": 40,
+  "instance_type": "c6i.2xlarge",
+  "nodes": [
+    {
+      "node_id": "gen-01",
+      "target_vus": 12500,
+      "cpu_utilization_pct": 42.1,
+      "memory_used_gib": 5.2,
+      "active_tcp_sockets": 11800,
+      "packet_drop_rate": 0.00
+    },
+    {
+      "node_id": "gen-40",
+      "target_vus": 12500,
+      "cpu_utilization_pct": 41.8,
+      "memory_used_gib": 5.1,
+      "active_tcp_sockets": 11750,
+      "packet_drop_rate": 0.00
+    }
+  ]
+}

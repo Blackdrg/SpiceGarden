@@ -1,0 +1,53 @@
+
+> spicegarden@0.0.0 lint
+> npm run --workspaces lint
+
+
+> @spicegarden/backend@0.0.0 lint
+> eslint .
+
+
+> @spicegarden/customer-mobile@1.0.0 lint
+> eslint .
+
+
+> @spicegarden/customer-web@0.1.0 lint
+> eslint src
+
+
+> @spicegarden/delivery-partner@1.0.0 lint
+> eslint .
+
+
+> spicegarden-launcher@1.0.0 lint
+> eslint .
+
+
+> @spicegarden/restaurant-dashboard@0.1.0 lint
+> eslint src
+
+
+> @spicegarden/super-admin@0.1.0 lint
+> eslint src
+
+
+> @spicegarden/api-types@1.0.0 lint
+> eslint .
+
+
+> @spicegarden/grpc-transport@1.0.0 lint
+> eslint .
+
+
+> @spicegarden/proto@1.0.0 lint
+> eslint .
+
+
+> @spicegarden/shared@0.0.0 lint
+> eslint .
+
+
+> @spicegarden/ui@0.1.0 lint
+> eslint .
+
+

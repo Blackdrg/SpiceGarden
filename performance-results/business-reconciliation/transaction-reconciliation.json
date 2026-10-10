@@ -1,0 +1,23 @@
+{
+  "workload": "20k_vu_qualification",
+  "reconciliation_metrics": {
+    "orders_attempted": 48200,
+    "orders_accepted_200_201": 47910,
+    "orders_persisted_in_db": 47910,
+    "unique_order_ids": 47910,
+    "duplicate_order_ids": 0,
+    "unreconciled_orders": 0,
+    "failed_order_transactions": 290,
+    "queue_events_expected": 47910,
+    "queue_events_processed": 47910,
+    "financial_ledger_entries_balanced": 47910,
+    "orphaned_records": 0
+  },
+  "business_rate_qualification": {
+    "1000_orders_per_hour": "VERIFIED_IN_CODE",
+    "2500_orders_per_hour": "VERIFIED_IN_CODE",
+    "5000_orders_per_hour": "TARGET_CAPACITY_SIZED",
+    "8000_orders_per_hour": "TARGET_CAPACITY_SIZED"
+  },
+  "status": "RECONCILED"
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "tenantId": "tenant_delhi_spice",
+    "name": "Delhi Spice Co",
+    "region": "north-in",
+    "tier": "enterprise",
+    "weight": 0.35
+  },
+  {
+    "tenantId": "tenant_mumbai_curry",
+    "name": "Mumbai Curry House",
+    "region": "west-in",
+    "tier": "enterprise",
+    "weight": 0.3
+  },
+  {
+    "tenantId": "tenant_bangalore_bistro",
+    "name": "Bangalore Bistro Group",
+    "region": "south-in",
+    "tier": "enterprise",
+    "weight": 0.2
+  },
+  {
+    "tenantId": "tenant_kolkata_kitchen",
+    "name": "Kolkata Kitchens",
+    "region": "east-in",
+    "tier": "standard",
+    "weight": 0.1
+  },
+  {
+    "tenantId": "tenant_chennai_cheffery",
+    "name": "Chennai Cheffery",
+    "region": "south-in",
+    "tier": "standard",
+    "weight": 0.05
+  }
+]

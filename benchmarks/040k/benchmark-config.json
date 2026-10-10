@@ -1,0 +1,50 @@
+{
+  "tier": "040k",
+  "target_vus": 40000,
+  "ramp_up": "5m",
+  "steady_state": "20m",
+  "ramp_down": "5m",
+  "scenarios": {
+    "browse_catalog": {
+      "share": "45%",
+      "target_vus": 18000
+    },
+    "search_filter": {
+      "share": "20%",
+      "target_vus": 8000
+    },
+    "cart_coupons": {
+      "share": "10%",
+      "target_vus": 4000
+    },
+    "checkout_orders": {
+      "share": "8%",
+      "target_vus": 3200
+    },
+    "tracking_sync": {
+      "share": "14%",
+      "target_vus": 5600
+    },
+    "kds_orders": {
+      "share": "1.5%",
+      "target_vus": 600
+    },
+    "driver_broadcast": {
+      "share": "1.0%",
+      "target_vus": 400
+    },
+    "admin_analytics": {
+      "share": "0.5%",
+      "target_vus": 200
+    }
+  },
+  "thresholds": {
+    "http_req_duration": [
+      "p(95)<500",
+      "p(99)<1500"
+    ],
+    "http_req_failed": [
+      "rate<0.02"
+    ]
+  }
+}

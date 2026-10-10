@@ -6,7 +6,7 @@ export class WebhookRetryQueueEntity {
   id!: string;
 
   @Column()
-  @Index()
+  @Index('idx_webhook_retry_queue_webhook_id')
   webhookId!: string;
 
   @Column()

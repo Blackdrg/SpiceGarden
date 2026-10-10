@@ -13,7 +13,7 @@ const stripe_connect_service_1 = require("./stripe-connect.service");
 const razorpay_settlement_service_1 = require("./razorpay-settlement.service");
 const driver_payout_provider_service_1 = require("./driver-payout-provider.service");
 const payment_provider_controller_1 = require("./payment-provider.controller");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 let PaymentProviderModule = class PaymentProviderModule {
 };
 exports.PaymentProviderModule = PaymentProviderModule;
@@ -21,7 +21,7 @@ exports.PaymentProviderModule = PaymentProviderModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule,
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
         ],
         providers: [
             stripe_connect_service_1.StripeConnectService,

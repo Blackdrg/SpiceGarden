@@ -29,34 +29,33 @@ const HomeScreen = () => {
       setLoading(true);
       setError(null);
       
-      // Directly set restaurants data (removed fake API delay)
       setRestaurants([
         {
           id: 'rest-001',
-          name: 'Burger King',
-          description: 'Flame-grilled burgers & fries',
-          rating: 4.2,
-          deliveryTime: '25-30 min',
-          distance: '3.2 km',
-          image: 'https://example.com/burger-king.jpg',
+          name: 'SpiceGarden Signature Kitchen',
+          description: 'Awadhi & Mughlai • Handi Biryani • Kebabs',
+          rating: 4.9,
+          deliveryTime: '20-25 min',
+          distance: '1.2 km',
+          image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop&q=80',
         },
         {
           id: 'rest-002',
-          name: 'Pizza Hut',
-          description: 'Freshly baked pizzas',
-          rating: 4.5,
-          deliveryTime: '30-35 min',
-          distance: '2.1 km',
-          image: 'https://example.com/pizza-hut.jpg',
+          name: 'Punjab Grill & Curry House',
+          description: 'North Indian • Butter Chicken • Dal Makhani',
+          rating: 4.8,
+          deliveryTime: '25-30 min',
+          distance: '2.4 km',
+          image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&auto=format&fit=crop&q=80',
         },
         {
           id: 'rest-003',
-          name: 'Subway',
-          description: 'Fresh made sandwiches',
-          rating: 4.0,
-          deliveryTime: '15-20 min',
+          name: 'Artisan Woodfired Pizzeria',
+          description: 'Italian Sourdough Pizzas • Burrata & Pasta',
+          rating: 4.8,
+          deliveryTime: '20-25 min',
           distance: '1.8 km',
-          image: 'https://example.com/subway.jpg',
+          image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop&q=80',
         },
       ]);
       setLoading(false);

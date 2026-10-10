@@ -36,9 +36,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("./reflect-metadata");
+const dotenv = __importStar(require("dotenv"));
+const path = __importStar(require("path"));
+dotenv.config({ path: [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), '../../.env'), path.resolve(__dirname, '../../../.env')] });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
-const local_dev_module_1 = require("./local-dev.module");
 const config_1 = require("@nestjs/config");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
@@ -46,15 +49,27 @@ const hpp_1 = __importDefault(require("hpp"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express = __importStar(require("express"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const compression_1 = __importDefault(require("compression"));
 const cors_origin_1 = require("./security/cors-origin");
 const redis_rate_limit_store_1 = require("./security/redis-rate-limit.store");
 const missing_env_error_1 = require("./common/errors/missing-env.error");
 const csrf_middleware_1 = require("./security/csrf.middleware");
 const prom_client_1 = require("prom-client");
-const Sentry = __importStar(require("@sentry/node"));
+process.on('uncaughtException', (err) => {
+    if (err?.code === 'ECONNRESET' || err?.code === 'EPIPE' || err?.code === 'ETIMEDOUT') {
+        return;
+    }
+    console.error('[UNCAUGHT_EXCEPTION]', err);
+});
+process.on('unhandledRejection', (reason) => {
+    if (reason?.code === 'ECONNRESET' || reason?.code === 'EPIPE') {
+        return;
+    }
+    console.error('[UNHANDLED_REJECTION]', reason);
+});
 const metricsRegistry = new prom_client_1.Registry();
 (0, prom_client_1.collectDefaultMetrics)({ register: metricsRegistry });
-const sentry = Sentry;
 const httpRequestCounter = new prom_client_1.Counter({
     name: "http_requests_total",
     help: "Total HTTP requests by method, route, and status code.",
@@ -151,8 +166,7 @@ function installRateLimiters(app, configService) {
     app.use('/api/', createRateLimiter(configService, 'API', 100, 15 * 60 * 1000));
 }
 async function bootstrap() {
-    const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-    const app = await core_1.NestFactory.create(localMode ? local_dev_module_1.LocalDevModule : app_module_1.AppModule, { rawBody: true });
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
     const configService = app.get(config_1.ConfigService);
     validateProductionEnvironment(configService);
     if (configService.get('NODE_ENV') === 'production') {
@@ -161,13 +175,12 @@ async function bootstrap() {
     }
     const dsn = configService.get("SENTRY_DSN");
     if (dsn) {
+        const sentry = await Promise.resolve().then(() => __importStar(require('@sentry/node')));
         sentry.init({
             dsn,
             tracesSampleRate: 1.0,
         });
-        sentry.Handlers?.requestHandler && app.use((req, res, next) => sentry.Handlers.requestHandler(req, res, next));
-        sentry.Handlers?.tracingHandler && app.use((req, res, next) => sentry.Handlers.tracingHandler(req, res, next));
-        sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
+        app.use(sentry.setupExpressErrorHandler());
     }
     const sanitizeMiddleware = (0, express_mongo_sanitize_1.default)();
     const safeMongoSanitize = (req, res, next) => {
@@ -218,7 +231,7 @@ async function bootstrap() {
                 fontSrc: ["'self'", 'https:', 'data:'],
                 objectSrc: ["'none'"],
                 frameAncestors: ["'none'"],
-                upgradeInsecureRequests: [],
+                upgradeInsecureRequests: [''],
             },
         },
         hsts: {
@@ -227,9 +240,11 @@ async function bootstrap() {
             preload: true,
         },
     }));
+    app.use((0, cookie_parser_1.default)());
     app.use((0, csrf_middleware_1.csrfProtection)());
     app.use(safeMongoSanitize);
     app.use((0, hpp_1.default)());
+    app.use((0, compression_1.default)());
     installRateLimiters(app, configService);
     app.use((req, res, next) => {
         const dangerousMethods = ['TRACE', 'TRACK', 'DEBUG', 'CONNECT'];
@@ -240,6 +255,13 @@ async function bootstrap() {
     });
     app.use(express.json({ limit: configService.get('BODY_SIZE_LIMIT', "10kb") }));
     app.use(express.urlencoded({ limit: configService.get('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+    const requestTimeout = configService.get('REQUEST_TIMEOUT_MS', 30000);
+    app.use((req, res, next) => {
+        res.setTimeout(requestTimeout, () => {
+            res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+        });
+        next();
+    });
     app.use("/metrics", async (_req, res) => {
         res.set("Content-Type", metricsRegistry.contentType);
         res.send(await metricsRegistry.metrics());
@@ -251,7 +273,9 @@ async function bootstrap() {
             const route = req.route?.path ? req.path : req.baseUrl || req.path;
             httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
             httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
-            console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+            if (process.env.DEBUG_METRICS_LOG === 'true') {
+                console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+            }
         });
         next();
     });
@@ -260,6 +284,26 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
         transform: true,
     }));
+    app.enableShutdownHooks();
+    const { RedisIoAdapter } = await Promise.resolve().then(() => __importStar(require('./infra/tracking/redis-io.adapter')));
+    const redisIoAdapter = new RedisIoAdapter(app, configService);
+    await redisIoAdapter.connectToRedis();
+    app.useWebSocketAdapter(redisIoAdapter);
+    if (process.env.LOAD_TEST_MODE === 'true' || process.env.LOCAL_DB === 'sqlite') {
+        try {
+            const { DataSource } = await Promise.resolve().then(() => __importStar(require('typeorm')));
+            const dataSource = app.get(DataSource, { strict: false });
+            if (dataSource) {
+                const { BusinessSeederService } = await Promise.resolve().then(() => __importStar(require('./services/restaurant/business.seeder')));
+                const seeder = new BusinessSeederService(dataSource);
+                await seeder.seedAll();
+            }
+        }
+        catch (err) {
+            console.warn('[Bootstrap] Auto-seeding skipped or failed:', err?.message || String(err));
+        }
+    }
+    console.log(`[bootstrap] Node Runtime: ${process.version}, PID: ${process.pid}, UV_THREADPOOL_SIZE: ${process.env.UV_THREADPOOL_SIZE || 'default(4)'}`);
     await app.listen(3001);
 }
 bootstrap();

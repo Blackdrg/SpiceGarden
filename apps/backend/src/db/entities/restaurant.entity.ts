@@ -1,8 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { RestaurantBranchEntity } from './restaurant-branch.entity';
 import { RestaurantGSTEntity } from './restaurant-gst.entity';
 
 @Entity('restaurants')
+@Index('idx_restaurants_slug', ['slug'])
+@Index('idx_restaurants_status', ['status'])
+@Index('idx_restaurants_created_at', ['createdAt'])
 export class RestaurantEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

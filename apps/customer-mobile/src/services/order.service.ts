@@ -59,12 +59,18 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, retries = 
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const error = new Error(`HTTP error! status: ${response.status}`);
+        (error as any).status = response.status;
+        // Do not retry client auth failures
+        if (response.status === 401 || response.status === 403) {
+          throw error;
+        }
+        throw error;
       }
 
       return response;
-    } catch (error) {
-      if (attempt >= retries) {
+    } catch (error: any) {
+      if (error?.status === 401 || error?.status === 403 || attempt >= retries) {
         throw error;
       }
 
@@ -113,7 +119,7 @@ export const orderService = {
 
     try {
       const response = await fetchWithRetry(
-        `${getBackendUrl()}/api/orders?page=${page}&limit=${limit}`
+        `${getBackendUrl()}/orders?page=${page}&limit=${limit}`
       );
 
       const data: { orders: Order[]; total: number } = await response.json();
@@ -126,7 +132,10 @@ export const orderService = {
         total: data.total || 0,
         hasMore: orders.length === limit,
       };
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.status === 401 || error?.status === 403) {
+        throw error;
+      }
       console.warn('Failed to fetch orders from API, using cache fallback:', error);
 
       if (cachedOrders) {
@@ -146,7 +155,7 @@ export const orderService = {
   async fetchOrderById(orderId: string): Promise<Order | null> {
     try {
       const response = await fetchWithRetry(
-        `${getBackendUrl()}/api/orders/${orderId}`
+        `${getBackendUrl()}/orders/${orderId}`
       );
       return response.json();
     } catch (error) {

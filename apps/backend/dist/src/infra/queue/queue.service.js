@@ -44,9 +44,22 @@ let QueueService = QueueService_1 = class QueueService {
             maxRetriesPerRequest: null,
             enableReadyCheck: false,
         });
-        this.registerWorker(queues_1.QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+        if (this.configService.get('DISABLE_BULLMQ') !== 'true') {
+            try {
+                this.registerWorker(queues_1.QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+            }
+            catch (err) {
+                this.logger.warn(`BullMQ worker initialization skipped: ${err.message}`);
+            }
+        }
     }
     async enqueue(queueName, data, options = {}) {
+        if (this.configService.get('DISABLE_BULLMQ') === 'true') {
+            if (queueName === queues_1.QUEUE_NAMES.ORDER_LIFECYCLE) {
+                setImmediate(() => this.orderProcessor.processOrderLifecycle(data, { id: 'mock-job', data }));
+            }
+            return { id: 'mock-job', data };
+        }
         const queue = this.getQueue(queueName);
         const jobOptions = {
             attempts: options.attempts ?? 3,
@@ -84,7 +97,7 @@ let QueueService = QueueService_1 = class QueueService {
         if (existing) {
             return existing;
         }
-        const queue = new bullmq_1.Queue(queueName, { connection: this.connection });
+        const queue = new bullmq_1.Queue(queueName, { connection: this.connection, skipVersionCheck: true });
         this.queues.set(queueName, queue);
         return queue;
     }
@@ -105,6 +118,7 @@ let QueueService = QueueService_1 = class QueueService {
     registerWorker(queueName, processor) {
         const worker = new bullmq_1.Worker(queueName, processor, {
             connection: this.connection,
+            skipVersionCheck: true,
             concurrency: Number(this.configService.get('QUEUE_CONCURRENCY') || 5),
             lockDuration: 60000,
         });

@@ -13,70 +13,70 @@ export declare const ReviewSchema: import("mongoose").Schema<ReviewDocument, imp
     _id: import("mongoose").Types.ObjectId;
 }> & {
     __v: number;
-}, "id"> & {
+}, "id"> & import("mongoose").HydratedDocumentOverrides<{
     id: string;
-}, {
+}>, {
     restaurantId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
-    orderId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
-        _id: import("mongoose").Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & {
-        id: string;
-    }> | undefined;
+    }>> | undefined;
     userId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
+    }>> | undefined;
     rating?: import("mongoose").SchemaDefinitionProperty<number, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
+    }>> | undefined;
     _id?: import("mongoose").SchemaDefinitionProperty<import("mongoose").Types.ObjectId, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
+    }>> | undefined;
+    orderId?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     comment?: import("mongoose").SchemaDefinitionProperty<string, ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
+    }>> | undefined;
     images?: import("mongoose").SchemaDefinitionProperty<string[], ReviewDocument, Document<unknown, {}, ReviewDocument, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ReviewDocument & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
         __v: number;
-    }, "id"> & {
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
-    }> | undefined;
+    }>> | undefined;
 }, ReviewDocument>;

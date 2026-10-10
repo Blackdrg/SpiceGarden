@@ -27,12 +27,12 @@ __decorate([
     __metadata("design:type", String)
 ], AuditLogEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_audit_logs_action'),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], AuditLogEntity.prototype, "action", void 0);
 __decorate([
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_audit_logs_performed_by'),
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], AuditLogEntity.prototype, "performedBy", void 0);

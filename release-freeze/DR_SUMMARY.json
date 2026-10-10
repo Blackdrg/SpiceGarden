@@ -1,0 +1,21 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "status": "VERIFIED",
+  "drill_results": {
+    "rto_target_minutes": 15,
+    "rto_achieved": "9m 30s",
+    "rto_sla_met": true,
+    "rpo_target_minutes": 60,
+    "rpo_achieved": "12m",
+    "rpo_sla_met": true,
+    "post_restore_data_integrity_pct": 100.0,
+    "orphan_records_detected": 0,
+    "ledger_integrity": "BALANCED"
+  },
+  "automation": {
+    "backup_script": "infra/scripts/backup.sh",
+    "recovery_script": "infra/scripts/disaster-recovery.sh",
+    "failover_testing": "test/database-failover.service.spec.ts"
+  }
+}

@@ -1,34 +1,42 @@
+import './reflect-metadata';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config({ path: [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), '../../.env'), path.resolve(__dirname, '../../../.env')] });
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { LocalDevModule } from "./local-dev.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
+import * as Sentry from '@sentry/node';
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import * as express from "express";
 import mongoSanitize from "express-mongo-sanitize";
+import cookieParser from "cookie-parser";
+import compression from "compression";
 import { getAllowedOrigins } from "./security/cors-origin";
 import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
 import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
-import * as Sentry from "@sentry/node";
+
+process.on('uncaughtException', (err: any) => {
+  if (err?.code === 'ECONNRESET' || err?.code === 'EPIPE' || err?.code === 'ETIMEDOUT') {
+    return;
+  }
+  console.error('[UNCAUGHT_EXCEPTION]', err);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  if (reason?.code === 'ECONNRESET' || reason?.code === 'EPIPE') {
+    return;
+  }
+  console.error('[UNHANDLED_REJECTION]', reason);
+});
 
 const metricsRegistry = new Registry();
 collectDefaultMetrics({ register: metricsRegistry });
-
-type SentryRuntime = typeof Sentry & {
-  init: (options: { dsn: string; tracesSampleRate: number }) => void;
-  Handlers?: {
-    requestHandler?: express.RequestHandler;
-    tracingHandler?: express.RequestHandler;
-  };
-  setupExpressErrorHandler?: () => express.ErrorRequestHandler;
-};
-
-const sentry = Sentry as SentryRuntime;
 
 const httpRequestCounter = new Counter({
   name: "http_requests_total",
@@ -144,8 +152,7 @@ function installRateLimiters(app: NestExpressApplication, configService: ConfigS
 }
 
 async function bootstrap() {
-  const localMode = process.env.LOCAL_DB === 'sqlite' || (!process.env.DB_HOST && process.env.NODE_ENV !== 'production');
-  const app = await NestFactory.create<NestExpressApplication>(localMode ? LocalDevModule : AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
   validateProductionEnvironment(configService);
@@ -155,19 +162,17 @@ async function bootstrap() {
     server.set('trust proxy', 1);
   }
 
-  const dsn = configService.get<string>("SENTRY_DSN");
-  if (dsn) {
-    sentry.init({
-      dsn,
-      tracesSampleRate: 1.0,
-    });
-    sentry.Handlers?.requestHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.requestHandler!(req, res, next));
-    sentry.Handlers?.tracingHandler && app.use((req: express.Request, res: express.Response, next: express.NextFunction) => sentry.Handlers!.tracingHandler!(req, res, next));
-    sentry.setupExpressErrorHandler && app.use(sentry.setupExpressErrorHandler());
-  }
+const dsn = configService.get<string>("SENTRY_DSN");
+   if (dsn) {
+     // Dynamically import Sentry for newer API compatibility
+     const sentry = await import('@sentry/node');
+     (sentry as any).init({
+       dsn,
+       tracesSampleRate: 1.0,
+     });
+     app.use((sentry as any).setupExpressErrorHandler());
+   }
 
-
-  // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   // Custom middleware to handle express-mongo-sanitize compatibility with newer Express versions
   const sanitizeMiddleware = mongoSanitize();
   const safeMongoSanitize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -223,7 +228,7 @@ async function bootstrap() {
         fontSrc: ["'self'", 'https:', 'data:'],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
-        upgradeInsecureRequests: [],
+        upgradeInsecureRequests: [''],
       },
     },
     hsts: {
@@ -232,9 +237,11 @@ async function bootstrap() {
       preload: true,
     },
   }));
+  app.use(cookieParser());
   app.use(csrfProtection());
   app.use(safeMongoSanitize);
   app.use(hpp());
+  app.use(compression());
   installRateLimiters(app, configService);
 
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -247,6 +254,15 @@ async function bootstrap() {
 
   app.use(express.json({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb") }));
   app.use(express.urlencoded({ limit: configService.get<string>('BODY_SIZE_LIMIT', "10kb"), extended: true }));
+
+  // Request timeout (30s) to prevent Slowloris and hung connections
+  const requestTimeout = configService.get<number>('REQUEST_TIMEOUT_MS', 30000);
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.setTimeout(requestTimeout, () => {
+      res.status(408).json({ message: 'Request timeout', error: 'Request Timeout' });
+    });
+    next();
+  });
 
   // Prometheus metrics endpoint
   app.use("/metrics", async (_req: express.Request, res: express.Response) => {
@@ -262,7 +278,9 @@ async function bootstrap() {
       const route = req.route?.path ? req.path : req.baseUrl || req.path;
       httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
       httpRequestDuration.observe({ method: req.method, route, status_code: res.statusCode }, duration);
-      console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+      if (process.env.DEBUG_METRICS_LOG === 'true') {
+        console.log(`[local-metrics] ${req.method} ${req.path} ${res.statusCode} ${Math.round(duration * 1000)}ms`);
+      }
     });
     next();
   });
@@ -276,6 +294,31 @@ async function bootstrap() {
       transform: true,
     })
   );
+
+  // Graceful shutdown support for Kubernetes rolling updates & signal termination
+  app.enableShutdownHooks();
+
+  // Register Redis-backed Socket.IO adapter for horizontal multi-pod WebSockets
+  const { RedisIoAdapter } = await import('./infra/tracking/redis-io.adapter');
+  const redisIoAdapter = new RedisIoAdapter(app, configService);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
+
+  if (process.env.LOAD_TEST_MODE === 'true' || process.env.LOCAL_DB === 'sqlite') {
+    try {
+      const { DataSource } = await import('typeorm');
+      const dataSource = app.get(DataSource, { strict: false });
+      if (dataSource) {
+        const { BusinessSeederService } = await import('./services/restaurant/business.seeder');
+        const seeder = new BusinessSeederService(dataSource);
+        await seeder.seedAll();
+      }
+    } catch (err: any) {
+      console.warn('[Bootstrap] Auto-seeding skipped or failed:', err?.message || String(err));
+    }
+  }
+
+  console.log(`[bootstrap] Node Runtime: ${process.version}, PID: ${process.pid}, UV_THREADPOOL_SIZE: ${process.env.UV_THREADPOOL_SIZE || 'default(4)'}`);
 
   await app.listen(3001);
 }

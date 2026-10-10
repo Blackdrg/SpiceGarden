@@ -246,4 +246,62 @@ export class ChargebackService {
       netLoss: (totalChargedBackAmount?.total || 0) - (totalDisputedAmount?.total || 0)
     };
   }
+
+  async initiateRefundForWonDispute(disputeId: string, processedBy: string, gateway?: string): Promise<PaymentDisputeEntity> {
+    const dispute = await this.disputeRepo.findOne({
+      where: { disputeId },
+      relations: { order: true }
+    });
+
+    if (!dispute) {
+      throw new NotFoundException(`Chargeback dispute ${disputeId} not found`);
+    }
+
+    if (dispute.status !== 'won') {
+      throw new BadRequestException(`Cannot initiate refund for dispute with status: ${dispute.status}. Only won disputes are eligible for refund.`);
+    }
+
+    if (dispute.isRefundedToCustomer) {
+      this.logger.warn(`Refund already initiated for dispute ${disputeId}`);
+      return dispute;
+    }
+
+    const now = new Date();
+    dispute.isRefundedToCustomer = true;
+    dispute.refundedAt = now;
+    dispute.refundedBy = processedBy;
+
+    if (gateway) {
+      (dispute as any).gateway = gateway;
+    }
+
+    const updatedDispute = await this.disputeRepo.save(dispute);
+
+    if (dispute.orderId) {
+      await this.orderRepo.update(dispute.orderId, { paymentIntentId: '' });
+    }
+
+    if (dispute.order) {
+      await this.productionNotification.sendPaymentNotification(
+        dispute.order.userId,
+        `refund-${disputeId}`,
+        {
+          type: 'payment_success',
+          severity: 'medium',
+          orderId: dispute.order.id,
+          amount: dispute.disputedAmount,
+          message: `Your refund of ${dispute.currency} ${dispute.disputedAmount.toFixed(2)} for dispute ${disputeId} has been processed.`,
+          metadata: {
+            disputeId: disputeId,
+            refundedBy: processedBy,
+            refundedAt: now.toISOString(),
+            gateway: gateway || 'stripe'
+          }
+        }
+      );
+    }
+
+    this.logger.log(`Refund initiated for won dispute ${disputeId} by ${processedBy}`);
+    return updatedDispute as unknown as PaymentDisputeEntity;
+  }
 }

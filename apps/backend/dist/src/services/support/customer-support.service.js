@@ -28,24 +28,26 @@ let CustomerSupportService = CustomerSupportService_1 = class CustomerSupportSer
     orderRepo;
     walletService;
     paymentService;
-    dataSource;
+    connection;
     logger = new common_1.Logger(CustomerSupportService_1.name);
-    constructor(disputeRepo, refundRepo, orderRepo, walletService, paymentService, dataSource) {
+    constructor(disputeRepo, refundRepo, orderRepo, walletService, paymentService, connection) {
         this.disputeRepo = disputeRepo;
         this.refundRepo = refundRepo;
         this.orderRepo = orderRepo;
         this.walletService = walletService;
         this.paymentService = paymentService;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async raiseDispute(orderId, customerId, type, description, evidence) {
-        const order = await this.orderRepo.findOne({ where: { id: orderId } });
+        const [order, existingDispute] = await Promise.all([
+            this.orderRepo.findOne({ where: { id: orderId } }),
+            this.disputeRepo.findOne({
+                where: { orderId: orderId, status: dispute_entity_1.DisputeStatus.RAISED },
+            }),
+        ]);
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
-        const existingDispute = await this.disputeRepo.findOne({
-            where: { orderId: orderId, status: dispute_entity_1.DisputeStatus.RAISED },
-        });
         if (existingDispute) {
             throw new common_1.BadRequestException('Dispute already exists for this order');
         }

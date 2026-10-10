@@ -1,33 +1,56 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useWebVitals = exports.useAnalytics = exports.trackEvent = void 0;
-const react_1 = require("react");
+import { useEffect } from 'react';
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics';
-const trackEvent = (event) => {
+const eventQueue = [];
+let isFlushing = false;
+const flushQueue = () => {
+    if (typeof window === 'undefined' || eventQueue.length === 0 || isFlushing)
+        return;
+    isFlushing = true;
+    const events = eventQueue.splice(0);
+    for (const event of events) {
+        const payload = JSON.stringify({ ...event, timestamp: Date.now() });
+        if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+            const blob = new Blob([payload], { type: 'application/json' });
+            navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+        }
+        else {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', ANALYTICS_ENDPOINT, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(payload);
+            }
+            catch {
+                // ignore
+            }
+        }
+    }
+    isFlushing = false;
+};
+export const trackEvent = (event) => {
     if (typeof window === 'undefined')
         return;
-    fetch(ANALYTICS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...event, timestamp: Date.now() }),
-        keepalive: true,
-    }).catch(() => { });
+    eventQueue.push(event);
+    if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(flushQueue);
+    }
+    else {
+        setTimeout(flushQueue, 0);
+    }
 };
-exports.trackEvent = trackEvent;
-const useAnalytics = () => {
-    (0, react_1.useEffect)(() => {
+export const useAnalytics = () => {
+    useEffect(() => {
         if (typeof window !== 'undefined') {
-            (0, exports.trackEvent)({ event: 'page_view', properties: { url: window.location.href } });
+            trackEvent({ event: 'page_view', properties: { url: window.location.href } });
         }
     }, []);
 };
-exports.useAnalytics = useAnalytics;
-const useWebVitals = () => {
-    (0, react_1.useEffect)(() => {
+export const useWebVitals = () => {
+    useEffect(() => {
         if (typeof window === 'undefined' || !('performance' in window))
             return;
         const reportVital = (metric) => {
-            (0, exports.trackEvent)({
+            trackEvent({
                 event: 'web_vital',
                 properties: {
                     metric: metric.name,
@@ -49,12 +72,14 @@ const useWebVitals = () => {
             });
         });
         observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
             const cls = window.cumulativeLayoutShift || 0;
             reportVital({ name: 'CLS', value: cls });
         }, 5000);
-        return () => observer.disconnect();
+        return () => {
+            clearTimeout(timerId);
+            observer.disconnect();
+        };
     }, []);
     return null;
 };
-exports.useWebVitals = useWebVitals;

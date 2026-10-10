@@ -110,5 +110,7 @@ __decorate([
     __metadata("design:type", Date)
 ], ReferralEntity.prototype, "updatedAt", void 0);
 exports.ReferralEntity = ReferralEntity = __decorate([
-    (0, typeorm_1.Entity)('referrals')
+    (0, typeorm_1.Entity)('referrals'),
+    (0, typeorm_1.Index)('idx_referrals_referrer_id', ['referrerId']),
+    (0, typeorm_1.Index)('idx_referrals_referee_id', ['refereeId'])
 ], ReferralEntity);

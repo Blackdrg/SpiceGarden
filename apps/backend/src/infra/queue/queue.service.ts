@@ -46,7 +46,13 @@ export class QueueService implements OnModuleDestroy {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
     });
-    this.registerWorker(QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+    if (this.configService.get<string>('DISABLE_BULLMQ') !== 'true') {
+      try {
+        this.registerWorker(QUEUE_NAMES.ORDER_LIFECYCLE, async (job) => this.orderProcessor.processOrderLifecycle(job.data, job));
+      } catch (err) {
+        this.logger.warn(`BullMQ worker initialization skipped: ${(err as Error).message}`);
+      }
+    }
   }
 
   async enqueue<TData extends Record<string, unknown> = Record<string, unknown>>(
@@ -54,6 +60,12 @@ export class QueueService implements OnModuleDestroy {
     data: TData,
     options: QueueEnqueueOptions = {},
   ): Promise<Job<TData>> {
+    if (this.configService.get<string>('DISABLE_BULLMQ') === 'true') {
+      if (queueName === QUEUE_NAMES.ORDER_LIFECYCLE) {
+        setImmediate(() => this.orderProcessor.processOrderLifecycle(data as any, { id: 'mock-job', data } as any));
+      }
+      return { id: 'mock-job', data } as any;
+    }
     const queue = this.getQueue(queueName);
     const jobOptions: JobsOptions = {
       attempts: options.attempts ?? 3,
@@ -101,7 +113,7 @@ export class QueueService implements OnModuleDestroy {
       return existing;
     }
 
-    const queue = new Queue(queueName, { connection: this.connection });
+    const queue = new Queue(queueName, { connection: this.connection, skipVersionCheck: true } as any);
     this.queues.set(queueName, queue);
     return queue;
   }
@@ -126,9 +138,10 @@ export class QueueService implements OnModuleDestroy {
   private registerWorker(queueName: QueueName, processor: (job: Job) => Promise<void>): void {
     const worker = new Worker(queueName, processor, {
       connection: this.connection,
+      skipVersionCheck: true,
       concurrency: Number(this.configService.get<number>('QUEUE_CONCURRENCY') || 5),
       lockDuration: 60000,
-    });
+    } as any);
 
     worker.on('completed', (job) => {
       this.logger.log(`Queue job completed: ${queueName}:${job.id}`);

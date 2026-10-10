@@ -1,0 +1,83 @@
+[
+  {
+    "claim": "Monorepo Build & TypeScript Integrity",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_CODE",
+    "evidence": ["qa/final/FINAL_REMEDIATION_REPORT.md", "qa/final/FINAL_TEST_EXECUTION.md"],
+    "environment": "Local Node.js v20+ / npm workspaces",
+    "workload": "12/12 Workspaces Full Build",
+    "limitations": "None"
+  },
+  {
+    "claim": "Monorepo Unit, Integration, and E2E Test Suite",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_CODE",
+    "evidence": ["qa/final/FINAL_TEST_EXECUTION.md"],
+    "environment": "Local Jest Runner",
+    "workload": "98 test suites, 1246 tests, 0 failures",
+    "limitations": "None"
+  },
+  {
+    "claim": "Backend Code Coverage Thresholds",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_CODE",
+    "evidence": ["qa/final/FINAL_TEST_EXECUTION.md"],
+    "environment": "Jest Coverage Tool",
+    "workload": "Statements 91.28%, Branches >80%, Functions >90%, Lines >90%",
+    "limitations": "None"
+  },
+  {
+    "claim": "Automated Security Assessment",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_AUTOMATED",
+    "evidence": ["qa/final/FINAL_SECURITY_STATUS.md", "qa/final/SECURITY_EVIDENCE_BOUNDARY.md"],
+    "environment": "Local Automated Security Test Suite",
+    "workload": "SQLi, XSS, Rate Limiting, Auth Bypass, Path Traversal, Port Scan, Headers",
+    "limitations": "Zero observed failures across documented automated security test vectors; third-party external penetration audit is unexecuted."
+  },
+  {
+    "claim": "Financial & Inventory Concurrency Safety",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_CODE",
+    "evidence": ["qa/final/FINAL_REMEDIATION_REPORT.md"],
+    "environment": "Jest Concurrency & Idempotency Harness",
+    "workload": "Simultaneous checkout, duplicate webhooks, race conditions",
+    "limitations": "Live banking clearing requires active merchant credentials."
+  },
+  {
+    "claim": "Local Physical Host Load Ladder",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_PHYSICAL",
+    "evidence": ["qa/final/FINAL_PERFORMANCE_STATUS.md"],
+    "environment": "Windows 11 Dev Laptop (2-Core i3, 8GB RAM)",
+    "workload": "100-500 VUs / 845.19 - 1,278.63 RPS (0.00% error, P95 351.70ms)",
+    "limitations": "Single-host Windows OS ephemeral TCP socket limits (WSAENOBUFS 10055) at 1,000+ VUs."
+  },
+  {
+    "claim": "Historical Multi-Core Stress Rig",
+    "status": "VERIFIED_PASS",
+    "classification": "PROVEN_PHYSICAL",
+    "evidence": ["qa/final/FINAL_PERFORMANCE_STATUS.md"],
+    "environment": "Dedicated Workstation Stress Rig",
+    "workload": "10,000 - 22,400 VUs / 1,373.30 - 2,150.00 RPS (1.15% - 10.60% error rate)",
+    "limitations": "Demonstrated host breaking point under extreme concurrency."
+  },
+  {
+    "claim": "500K Distributed Physical Clean Benchmark",
+    "status": "READY_NOT_EXECUTED",
+    "classification": "BLOCKED_EXTERNAL",
+    "evidence": ["qa/scalability/500k/FINAL_500K_STATUS.md", "qa/scalability/500k/500K_CLAIM_REGISTER.json"],
+    "environment": "Target AWS EKS & 40x c6i.2xlarge Linux Load Fleet",
+    "workload": "500,000 Active VUs / ~270,000 RPS Target",
+    "limitations": "Live distributed cloud execution is BLOCKED_EXTERNAL pending AWS infrastructure provisioning."
+  },
+  {
+    "claim": "AWS Cloud Production Capacity (585K RPS / 1M VU)",
+    "status": "THEORETICAL_MODEL_READY",
+    "classification": "MODEL_ONLY",
+    "evidence": ["qa/final/FINAL_AWS_STATUS.md", "qa/final/FINAL_PERFORMANCE_STATUS.md"],
+    "environment": "Target AWS EKS Architecture (160 Pods, Aurora 16xl, ElastiCache 6-shard)",
+    "workload": "Modeled 585,000 RPS / 1,000,000 Concurrency",
+    "limitations": "AWS PHYSICAL VALIDATION: BLOCKED_EXTERNAL (Requires active AWS cloud deployment)."
+  }
+]

@@ -23,28 +23,45 @@ let ReviewService = class ReviewService {
         this.reviewModel = reviewModel;
     }
     async create(userId, restaurantId, orderId, rating, comment, images) {
+        if (typeof rating !== 'number' || !Number.isFinite(rating) || rating < 1 || rating > 5) {
+            throw new common_1.BadRequestException('Rating must be a number between 1 and 5');
+        }
+        if (!restaurantId || typeof restaurantId !== 'string') {
+            throw new common_1.BadRequestException('Invalid restaurantId');
+        }
+        if (!orderId || typeof orderId !== 'string') {
+            throw new common_1.BadRequestException('Invalid orderId');
+        }
         const createdReview = new this.reviewModel({
             userId,
             restaurantId,
             orderId,
             rating,
-            comment,
-            images,
+            comment: comment ? String(comment).slice(0, 1000) : undefined,
+            images: Array.isArray(images) ? images.slice(0, 5) : [],
         });
         return createdReview.save();
     }
     async findByOrder(orderId) {
+        if (!orderId || typeof orderId !== 'string')
+            return null;
         return this.reviewModel.findOne({ orderId }).exec();
     }
     async findByRestaurant(restaurantId) {
+        if (!restaurantId || typeof restaurantId !== 'string')
+            return [];
         return this.reviewModel.find({ restaurantId }).exec();
     }
     async getAverageRating(restaurantId) {
+        if (!restaurantId || typeof restaurantId !== 'string')
+            return 0;
         const result = await this.reviewModel.aggregate([
             { $match: { restaurantId } },
             { $group: { _id: null, avgRating: { $avg: '$rating' } } },
         ]);
-        return result.length > 0 ? result[0].avgRating : 0;
+        return result.length > 0 && typeof result[0]?.avgRating === 'number'
+            ? Math.round(result[0].avgRating * 10) / 10
+            : 0;
     }
 };
 exports.ReviewService = ReviewService;

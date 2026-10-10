@@ -7,7 +7,7 @@ const createMockConfigService = (ackTimeout = 5000): ConfigService => ({
   get: jest.fn().mockReturnValue(ackTimeout),
 } as unknown as ConfigService);
 
-const createMockRepo = <T = any>(): Repository<T> => ({
+const createMockRepo = (): any => ({
   find: jest.fn(),
   findOne: jest.fn(),
   save: jest.fn(),
@@ -15,7 +15,7 @@ const createMockRepo = <T = any>(): Repository<T> => ({
   delete: jest.fn(),
   create: jest.fn(),
   count: jest.fn(),
-}) as unknown as Repository<T>;
+}) as unknown as Repository<any>;
 
 const buildGateway = (ackTimeout = 5000) => {
   const gateway = new TrackingGateway(
@@ -295,7 +295,7 @@ describe('TrackingGateway unit tests', () => {
       (gateway as any).connectedClients.set('c1', {
         id: 'c1',
         namespace: '/tracking',
-        acknowledgedMessages: new Map(),
+        acknowledgedMessages: new Map([['msg-1', { id: 'msg-1', event: 'test', ack: false, timestamp: new Date() }]]),
       });
       (gateway as any).pendingAcks.set('msg-1', { resolve: jest.fn(), reject: jest.fn(), timeout: 1 });
 

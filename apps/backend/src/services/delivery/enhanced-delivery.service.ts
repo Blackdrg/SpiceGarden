@@ -50,8 +50,6 @@ export class EnhancedDeliveryService {
     @InjectRepository(DriverAssignmentEntity)
     private driverAssignmentRepo: Repository<DriverAssignmentEntity>,
     private geoService: GeoService,
-    @InjectDataSource()
-    private dataSource: DataSource,
   ) {
     this.initializeSurgeZones();
     this.initializeIncentiveRules();
@@ -124,7 +122,7 @@ export class EnhancedDeliveryService {
       throw new Error('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, orderId, {
         driverId,
         status: OrderStatus.DRIVER_ASSIGNED,
@@ -195,7 +193,7 @@ export class EnhancedDeliveryService {
       throw new Error('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, orderId, {
         status: OrderStatus.CANCELLED,
         paymentStatus: PaymentStatus.FAILED,
@@ -203,7 +201,7 @@ export class EnhancedDeliveryService {
 
        const driver = await manager.findOne(DriverEntity, { where: { id: driverId } });
        if (driver && reasonDetails !== 'customer_unavailable') {
-         const newFailureCount = driver.failureCount + 1;
+         const newFailureCount = (driver.failureCount || 0) + 1;
          await manager.update(DriverEntity, driverId, {
            failureCount: newFailureCount,
            isFraudSuspicious: newFailureCount >= 3,
@@ -231,7 +229,7 @@ export class EnhancedDeliveryService {
     if (recentNoShows >= 2) {
       await this.driverRepo.update(driverId, {
         isFraudSuspicious: true,
-        fraudFlags: { ...driver.fraudFlags, noShowRisk: 0.8 } as any,
+        fraudFlags: { ...(driver.fraudFlags || {}), noShowRisk: 0.8 } as any,
       });
       this.logger.warn(`Driver ${driverId} flagged for no-shows`);
     }
@@ -311,7 +309,7 @@ export class EnhancedDeliveryService {
   }
 
   async handleDriverNoShowAutomatic(driverId: string, orderId: string, assignmentId: string): Promise<void> {
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.driverRepo.manager.transaction(async (manager) => {
       const driver = await manager.findOne(DriverEntity, { where: { id: driverId } });
       if (driver) {
         await manager.update(DriverEntity, driverId, {
@@ -361,14 +359,15 @@ export class EnhancedDeliveryService {
     const breakdown: { [key: string]: number } = {};
     let totalIncentive = 0;
 
+    const completedToday = await this.driverAssignmentRepo.count({
+      where: { status: 'delivered' as any },
+    });
+
     for (const rule of rules) {
       if (!rule.active) continue;
 
       switch (rule.type) {
         case 'bonus_per_order':
-          const completedToday = await this.driverAssignmentRepo.count({
-            where: { status: 'delivered' as any },
-          });
           if ((!rule.conditions.minDeliveries || completedToday >= rule.conditions.minDeliveries)) {
             breakdown[rule.id] = rule.value * completedToday;
             totalIncentive += breakdown[rule.id];

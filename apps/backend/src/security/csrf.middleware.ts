@@ -4,12 +4,11 @@ import * as crypto from 'crypto';
 
 export function csrfProtection() {
   return (req: Request, res: Response, next: NextFunction) => {
-    const ignoredMethods = ['GET', 'HEAD', 'OPTIONS'];
-    if (ignoredMethods.includes(req.method)) {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
       return next();
     }
 
-    const ignoredPaths = ['/api/webhook', '/payments/webhook'];
+    const ignoredPaths = ['/api/webhook', '/payments/webhook', '/auth/login', '/auth/register'];
     if (ignoredPaths.some(path => req.path.startsWith(path))) {
       return next();
     }
@@ -28,25 +27,39 @@ export function csrfProtection() {
         return res.status(403).json({ error: 'CSRF token mismatch' });
       }
       try {
-        const decoded = JSON.parse(Buffer.from(tokenFromHeader.split('.')[1], 'base64').toString());
+        const parts = tokenFromHeader.split('.');
+        if (parts.length < 2 || !parts[1]) {
+          throw new Error('Malformed token');
+        }
+        const decoded = JSON.parse(Buffer.from(parts[1], 'base64').toString());
         const now = Math.floor(Date.now() / 1000);
         if (decoded.exp && decoded.exp < now) {
           return res.status(403).json({ error: 'CSRF token expired' });
         }
       } catch {
-        if (tokenFromHeader.length < 32 || !/^[a-zA-Z0-9+/=]+$/.test(tokenFromHeader)) {
+        if (tokenFromHeader.length < 32 || !/^[a-zA-Z0-9+/=.]+$/.test(tokenFromHeader)) {
           return res.status(403).json({ error: 'CSRF token invalid format' });
         }
       }
     }
 
-    res.header('X-CSRF-Token', tokenFromHeader || generateCsrfToken());
+    const csrfToken = tokenFromHeader || generateCsrfToken();
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie(csrfTokenCookie, csrfToken, {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: isProduction,
+      path: '/',
+    });
+    res.header('X-CSRF-Token', csrfToken);
     next();
   };
 }
 
 export function generateCsrfToken(): string {
-  return crypto.randomBytes(32).toString('base64');
+  const token = crypto.randomBytes(32).toString('base64');
+  const payload = Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64');
+  return `${token}.${payload}`;
 }
 
 @Injectable()

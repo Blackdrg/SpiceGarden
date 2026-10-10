@@ -1,0 +1,38 @@
+{
+  "1": {
+    "n": 1,
+    "totalMs": 60,
+    "avgQTimeMs": 0,
+    "throughputOpsSec": 16.67
+  },
+  "10": {
+    "n": 10,
+    "totalMs": 543,
+    "avgQTimeMs": 125.6,
+    "throughputOpsSec": 18.42
+  },
+  "50": {
+    "n": 50,
+    "totalMs": 2110,
+    "avgQTimeMs": 995.64,
+    "throughputOpsSec": 23.7
+  },
+  "100": {
+    "n": 100,
+    "totalMs": 3589,
+    "avgQTimeMs": 1722.66,
+    "throughputOpsSec": 27.86
+  },
+  "500": {
+    "n": 500,
+    "totalMs": 15121,
+    "avgQTimeMs": 7431.74,
+    "throughputOpsSec": 33.07
+  },
+  "1000": {
+    "n": 1000,
+    "totalMs": 29091,
+    "avgQTimeMs": 14590.87,
+    "throughputOpsSec": 34.37
+  }
+}

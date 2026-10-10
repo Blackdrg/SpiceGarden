@@ -1,0 +1,19 @@
+{
+  "totalEnqueued": 8876,
+  "totalProcessed": 8876,
+  "totalRetried": 40,
+  "totalDlq": 0,
+  "duplicateJobsDeduplicated": 0,
+  "queueDepths": {
+    "order-events": 0,
+    "payment-events": 0,
+    "notification-events": 0,
+    "tracking-events": 0,
+    "inventory-events": 0,
+    "analytics-events": 0,
+    "delivery-events": 0
+  },
+  "p50ProcessingLatencyMs": 0.02570000000014261,
+  "p95ProcessingLatencyMs": 3.813299999999799,
+  "p99ProcessingLatencyMs": 31.94129999999859
+}

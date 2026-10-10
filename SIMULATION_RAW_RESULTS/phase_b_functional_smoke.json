@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "workflow": "Authentication (JWT)",
+    "category": "Auth",
+    "iterations": 25,
+    "avgLatencyMs": 0.05,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 2,
+    "workflow": "User / Session Handling",
+    "category": "Auth",
+    "iterations": 25,
+    "avgLatencyMs": 0.01,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 3,
+    "workflow": "Tenant Isolation",
+    "category": "Security",
+    "iterations": 25,
+    "avgLatencyMs": 0.02,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 4,
+    "workflow": "Restaurant / Menu Retrieval",
+    "category": "Catalog",
+    "iterations": 25,
+    "avgLatencyMs": 0.54,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 5,
+    "workflow": "Search & Filter",
+    "category": "Catalog",
+    "iterations": 25,
+    "avgLatencyMs": 0.73,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 6,
+    "workflow": "Cart Creation",
+    "category": "Cart",
+    "iterations": 25,
+    "avgLatencyMs": 0.05,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 7,
+    "workflow": "Cart Modification",
+    "category": "Cart",
+    "iterations": 25,
+    "avgLatencyMs": 0.1,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 8,
+    "workflow": "Order Creation",
+    "category": "Order",
+    "iterations": 25,
+    "avgLatencyMs": 2.1,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 9,
+    "workflow": "Order Status Lifecycle",
+    "category": "Order",
+    "iterations": 25,
+    "avgLatencyMs": 0.04,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 10,
+    "workflow": "Inventory Reservation & Optimistic Lock",
+    "category": "Inventory",
+    "iterations": 25,
+    "avgLatencyMs": 1.44,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 11,
+    "workflow": "Payment Intent & Capture Boundary",
+    "category": "Payment",
+    "iterations": 25,
+    "avgLatencyMs": 0.05,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 12,
+    "workflow": "Wallet Operations (Ledger Consistency)",
+    "category": "Payment",
+    "iterations": 25,
+    "avgLatencyMs": 0.01,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 13,
+    "workflow": "Delivery Workflow (Driver Assignment)",
+    "category": "Delivery",
+    "iterations": 25,
+    "avgLatencyMs": 0.55,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 14,
+    "workflow": "Restaurant / KDS Workflow",
+    "category": "Kitchen",
+    "iterations": 25,
+    "avgLatencyMs": 0.04,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 15,
+    "workflow": "Admin Operations & Analytics",
+    "category": "Admin",
+    "iterations": 25,
+    "avgLatencyMs": 1.12,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 16,
+    "workflow": "Notifications Dispatch",
+    "category": "Async",
+    "iterations": 25,
+    "avgLatencyMs": 0.02,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 17,
+    "workflow": "Tracking Telemetry",
+    "category": "Tracking",
+    "iterations": 25,
+    "avgLatencyMs": 0.07,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 18,
+    "workflow": "Order Details Relational Composition",
+    "category": "Order",
+    "iterations": 25,
+    "avgLatencyMs": 0.02,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 19,
+    "workflow": "WebSocket / Realtime Fanout",
+    "category": "Realtime",
+    "iterations": 25,
+    "avgLatencyMs": 0.01,
+    "status": "PASS",
+    "errorMsg": null
+  },
+  {
+    "id": 20,
+    "workflow": "Background Jobs & BullMQ Processing",
+    "category": "Async",
+    "iterations": 25,
+    "avgLatencyMs": 0.01,
+    "status": "PASS",
+    "errorMsg": null
+  }
+]

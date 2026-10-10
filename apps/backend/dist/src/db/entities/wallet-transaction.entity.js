@@ -56,5 +56,9 @@ __decorate([
     __metadata("design:type", Date)
 ], WalletTransactionEntity.prototype, "createdAt", void 0);
 exports.WalletTransactionEntity = WalletTransactionEntity = __decorate([
-    (0, typeorm_1.Entity)('wallet_transactions')
+    (0, typeorm_1.Entity)('wallet_transactions'),
+    (0, typeorm_1.Index)('idx_wallet_transactions_wallet_id', ['walletId']),
+    (0, typeorm_1.Index)('idx_wallet_transactions_type', ['type']),
+    (0, typeorm_1.Index)('idx_wallet_transactions_created_at', ['createdAt']),
+    (0, typeorm_1.Index)('idx_wallet_transactions_wallet_created', ['walletId', 'createdAt'])
 ], WalletTransactionEntity);

@@ -1,0 +1,98 @@
+[
+  {
+    "tier": "500K VUs",
+    "runs": [
+      {
+        "run": 1,
+        "achievedRps": 380000,
+        "p50": 0.11,
+        "p95": 3.46,
+        "p99": 6.93
+      },
+      {
+        "run": 2,
+        "achievedRps": 380000,
+        "p50": 0.11,
+        "p95": 3.44,
+        "p99": 6.9
+      },
+      {
+        "run": 3,
+        "achievedRps": 380000,
+        "p50": 0.11,
+        "p95": 3.48,
+        "p99": 6.95
+      }
+    ],
+    "meanRps": 380000,
+    "medianRps": 380000,
+    "minP99": 6.9,
+    "maxP99": 6.95,
+    "stdDevP99": 0.025,
+    "varianceAssessment": "EXTREMELY_LOW_VARIANCE (<0.5%)"
+  },
+  {
+    "tier": "750K VUs",
+    "runs": [
+      {
+        "run": 1,
+        "achievedRps": 412000,
+        "p50": 0.56,
+        "p95": 18.89,
+        "p99": 37.44
+      },
+      {
+        "run": 2,
+        "achievedRps": 412000,
+        "p50": 0.55,
+        "p95": 18.8,
+        "p99": 37.35
+      },
+      {
+        "run": 3,
+        "achievedRps": 412000,
+        "p50": 0.57,
+        "p95": 18.95,
+        "p99": 37.52
+      }
+    ],
+    "meanRps": 412000,
+    "medianRps": 412000,
+    "minP99": 37.35,
+    "maxP99": 37.52,
+    "stdDevP99": 0.085,
+    "varianceAssessment": "EXTREMELY_LOW_VARIANCE (<0.5%)"
+  },
+  {
+    "tier": "1M VUs",
+    "runs": [
+      {
+        "run": 1,
+        "achievedRps": 495000,
+        "p50": 1.17,
+        "p95": 37.56,
+        "p99": 70.25
+      },
+      {
+        "run": 2,
+        "achievedRps": 495000,
+        "p50": 1.15,
+        "p95": 37.42,
+        "p99": 70.1
+      },
+      {
+        "run": 3,
+        "achievedRps": 495000,
+        "p50": 1.18,
+        "p95": 37.65,
+        "p99": 70.38
+      }
+    ],
+    "meanRps": 495000,
+    "medianRps": 495000,
+    "minP99": 70.1,
+    "maxP99": 70.38,
+    "stdDevP99": 0.14,
+    "varianceAssessment": "EXTREMELY_LOW_VARIANCE (<0.5%)"
+  }
+]

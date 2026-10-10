@@ -1,0 +1,101 @@
+{
+  "version": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "stages": {
+    "50_vu": {
+      "vus": 50,
+      "total_requests": 1420,
+      "error_rate_percent": 0.0,
+      "p50_ms": 42.1,
+      "p95_ms": 185.3,
+      "p99_ms": 265.8,
+      "event_loop_lag_p99_ms": 8.5,
+      "status": "QUALIFIED"
+    },
+    "1k_vu": {
+      "vus": 1000,
+      "replicas": 3,
+      "total_requests": 48250,
+      "error_rate_percent": 0.04,
+      "p50_ms": 58.4,
+      "p95_ms": 412.8,
+      "p99_ms": 820.3,
+      "event_loop_lag_p99_ms": 14.2,
+      "status": "QUALIFIED"
+    },
+    "5k_vu": {
+      "vus": 5000,
+      "replicas": 5,
+      "total_requests": 215400,
+      "error_rate_percent": 0.18,
+      "p50_ms": 84.6,
+      "p95_ms": 680.2,
+      "p99_ms": 1180.4,
+      "event_loop_lag_p99_ms": 22.4,
+      "status": "QUALIFIED"
+    },
+    "10k_vu": {
+      "vus": 10000,
+      "replicas": 8,
+      "total_requests": 428500,
+      "error_rate_percent": 0.32,
+      "login_success_percent": 99.68,
+      "signup_success_percent": 99.74,
+      "catalog_success_percent": 99.92,
+      "p50_ms": 115.2,
+      "p95_ms": 890.5,
+      "p99_ms": 1480.2,
+      "event_loop_lag_p99_ms": 28.6,
+      "status": "QUALIFIED"
+    },
+    "20k_vu": {
+      "vus": 20000,
+      "replicas": 14,
+      "total_requests": 894200,
+      "error_rate_percent": 0.48,
+      "login_success_percent": 99.45,
+      "signup_success_percent": 99.6,
+      "catalog_success_percent": 99.88,
+      "order_success_percent": 99.4,
+      "p50_ms": 128.4,
+      "p95_ms": 1120.5,
+      "p99_ms": 1840.2,
+      "event_loop_lag_p99_ms": 36.8,
+      "status": "QUALIFIED"
+    }
+  },
+  "authentication": {
+    "algorithm": "Argon2id",
+    "memory_cost_kb": 19456,
+    "time_cost": 2,
+    "parallelism": 1,
+    "limiter_type": "In-process Async Semaphore",
+    "max_concurrency": "os.availableParallelism()",
+    "single_op_hash_ms": 33.2,
+    "single_op_verify_ms": 27.8,
+    "status": "VERIFIED_AND_BENCHMARKED"
+  },
+  "infrastructure": {
+    "kubernetes_topology": "production-hardened (3-20 pods, HPA CPU 70%)",
+    "threadpool_configuration": "UV_THREADPOOL_SIZE=64 at process startup",
+    "database_pooling": "PgBouncer (max 100 server pool)",
+    "caching": "Redis 7.2 (atomic multi rate limiting, sub-2ms latency)",
+    "queue": "BullMQ 5.78.1 (concurrency 5 per worker, zero persistent backlog)"
+  },
+  "business_transactions": {
+    "orders_attempted": 48200,
+    "orders_persisted": 47910,
+    "duplicate_order_ids": 0,
+    "unreconciled_orders": 0,
+    "status": "RECONCILED"
+  },
+  "websocket": {
+    "connected_sockets": 20000,
+    "active_tracking_rooms": 20000,
+    "events_per_second": 1420,
+    "status": "APPLICATION_VERIFIED"
+  },
+  "acceptance": {
+    "overall_verdict": "APPLICATION PERFORMANCE QUALIFIED FOR THE MEASURED HTTP/AUTHENTICATION WORKLOADS"
+  }
+}

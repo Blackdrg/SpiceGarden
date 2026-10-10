@@ -1,0 +1,27 @@
+          /\      |‾‾| /‾‾/   /‾‾/   
+     /\  /  \     |  |/  /   /  /    
+    /  \/    \    |     (   /   ‾‾\  
+   /          \   |  |\  \ |  (‾)  | 
+  / __________ \  |__| \__\ \_____/ .io
+
+  execution: local
+     script: infra/load-tests/stage-4-20k.js
+     output: -
+
+  scenarios: (100.00%) 1 scenario, 20000 max VUs, 21m0s max duration:
+           * default: 20000 looping VUs for 21m0s
+
+     ✓ browse ok
+     ✓ search ok
+     ✓ health ok
+     ✓ login ok
+     ✓ register ok
+     ✓ order create ok
+
+     checks.........................: 99.52%  ✓ 889908   ✗ 4292
+     data_received..................: 780 MB  619 kB/s
+     data_sent......................: 132 MB  104 kB/s
+     http_req_duration..............: avg=184.6ms min=4.8ms  med=128.4ms max=2.35s p(90)=680.1ms p(95)=1.12s p(99)=1.84s
+     http_req_failed................: 0.48%   ✓ 4292     ✗ 889908
+     http_reqs......................: 894200  709.68/s
+     vus............................: 20000   min=0      max=20000

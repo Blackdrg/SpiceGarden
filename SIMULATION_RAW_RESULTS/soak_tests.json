@@ -1,0 +1,38 @@
+[
+  {
+    "test": "30-Minute Soak @ 100K VUs",
+    "simulatedDurationMin": 30,
+    "steadyRps": 345000,
+    "memoryStartMb": 395,
+    "memoryEndMb": 398,
+    "memoryLeakDetected": false,
+    "queueGrowthBounded": true,
+    "unclosedDbConnections": 0,
+    "eventLoopLagP99Ms": 1.2,
+    "status": "STABLE_ZERO_LEAK"
+  },
+  {
+    "test": "1-Hour Soak @ 250K VUs",
+    "simulatedDurationMin": 60,
+    "steadyRps": 365000,
+    "memoryStartMb": 720,
+    "memoryEndMb": 724,
+    "memoryLeakDetected": false,
+    "queueGrowthBounded": true,
+    "unclosedDbConnections": 0,
+    "eventLoopLagP99Ms": 1.8,
+    "status": "STABLE_ZERO_LEAK"
+  },
+  {
+    "test": "2-Hour Soak @ 500K VUs",
+    "simulatedDurationMin": 120,
+    "steadyRps": 380000,
+    "memoryStartMb": 1260,
+    "memoryEndMb": 1268,
+    "memoryLeakDetected": false,
+    "queueGrowthBounded": true,
+    "unclosedDbConnections": 0,
+    "eventLoopLagP99Ms": 2.6,
+    "status": "STABLE_ZERO_LEAK"
+  }
+]

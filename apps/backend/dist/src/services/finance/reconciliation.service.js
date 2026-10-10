@@ -28,15 +28,15 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
     payoutRepo;
     incentiveRepo;
     gstRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(ReconciliationService_1.name);
-    constructor(orderRepo, transactionRepo, payoutRepo, incentiveRepo, gstRepo, dataSource) {
+    constructor(orderRepo, transactionRepo, payoutRepo, incentiveRepo, gstRepo, connection) {
         this.orderRepo = orderRepo;
         this.transactionRepo = transactionRepo;
         this.payoutRepo = payoutRepo;
         this.incentiveRepo = incentiveRepo;
         this.gstRepo = gstRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async reconcilePayments(startDate, endDate) {
         const orders = await this.orderRepo.find({
@@ -44,12 +44,23 @@ let ReconciliationService = ReconciliationService_1 = class ReconciliationServic
         });
         const transactions = await this.transactionRepo.find({
             where: { createdAt: (0, typeorm_2.Between)(startDate, endDate) },
+            order: { createdAt: 'ASC' },
         });
         const ordersTotal = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
         const transactionsTotal = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+        const txnsByOrderId = new Map();
+        for (const txn of transactions) {
+            const matches = txnsByOrderId.get(txn.referenceId || '');
+            if (matches) {
+                matches.push(txn);
+            }
+            else if (txn.referenceId) {
+                txnsByOrderId.set(txn.referenceId, [txn]);
+            }
+        }
         const discrepancies = [];
         for (const order of orders) {
-            const relatedTxns = transactions.filter(t => t.referenceId === order.id || t.description.includes(order.id));
+            const relatedTxns = txnsByOrderId.get(order.id) || [];
             const orderTotal = Number(order.grandTotal);
             const txnTotal = relatedTxns.reduce((sum, t) => sum + Number(t.amount), 0);
             if (Math.abs(orderTotal - txnTotal) > 1) {

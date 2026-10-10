@@ -150,7 +150,10 @@ export class WebhookService {
       .update(payload.toString())
       .digest('hex');
     
-    if (generatedSignature !== signature) {
+    const generatedBuffer = Buffer.from(generatedSignature, 'utf8');
+    const signatureBuffer = Buffer.from(signature, 'utf8');
+
+    if (generatedBuffer.length !== signatureBuffer.length || !crypto.timingSafeEqual(generatedBuffer, signatureBuffer)) {
       throw new Error('Invalid Razorpay signature');
     }
     

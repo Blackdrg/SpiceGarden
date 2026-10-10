@@ -1,6 +1,7 @@
 ﻿import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { RestaurantService } from './restaurant.service';
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantOpsController } from './restaurant-ops.controller';
@@ -27,7 +28,7 @@ import { KdsGateway } from './kds.gateway';
 
 @Module({
 imports: [
-  LocalRepositoryModule,
+  DbRepositoriesModule,
 ],
 providers: [
   RestaurantService,

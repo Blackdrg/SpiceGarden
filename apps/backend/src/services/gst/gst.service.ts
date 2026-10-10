@@ -42,6 +42,7 @@ export class GSTService {
         where: { id: orderId },
         relations: { 
           items: { 
+            hsnSac: true,
             menuItem: { 
               hsnSac: true 
             } 
@@ -75,8 +76,8 @@ export class GSTService {
       let totalIGST = 0;
 
       // Process each order item
-      for (const item of order.items) {
-        const itemTotal = item.unitPrice * item.quantity;
+      for (const item of (order.items || [])) {
+        const itemTotal = (item.unitPrice || 0) * (item.quantity || 1);
         totalTaxableValue += itemTotal;
 
         // Determine GST rates based on HSN/SAC and location
@@ -85,7 +86,7 @@ export class GSTService {
         let igstRate = 0;
 
         // Get GST rate from HSN/SAC or use default
-        const gstRate = item.hsnSac?.gstRate || 18; // Default to 18% if not specified
+        const gstRate = item.hsnSac?.gstRate || item.menuItem?.hsnSac?.gstRate || 18; // Default to 18% if not specified
 
         // Determine if it's intra-state or inter-state supply
         // For simplicity, we're assuming all supplies are intra-state
@@ -119,20 +120,22 @@ export class GSTService {
         item.totalTax = cgstAmount + sgstAmount + igstAmount;
         item.totalAmount = itemTotal + item.totalTax;
 
-        // Save updated item
-        await this.orderItemRepo.save(item);
-
         // Accumulate totals
         totalCGST += cgstAmount;
         totalSGST += sgstAmount;
         totalIGST += igstAmount;
       }
 
+      // Save updated items in a single batch
+      if (order.items && order.items.length > 0) {
+        await this.orderItemRepo.save(order.items);
+      }
+
       const totalGstAmount = totalCGST + totalSGST + totalIGST;
       const totalAmount = totalTaxableValue + totalGstAmount;
 
       // Create or update GST detail record
-      let gstDetail = await this.gstDetailRepo.findOne({
+      let gstDetail: GSTDetailEntity | null = await this.gstDetailRepo.findOne({
         where: { orderId: order.id },
       });
 
@@ -143,28 +146,30 @@ export class GSTService {
         });
       }
 
-      gstDetail.taxableValue = totalTaxableValue;
-      gstDetail.cgstRate = totalCGST > 0 ? (totalCGST / totalTaxableValue) * 100 : 0;
-      gstDetail.sgstRate = totalSGST > 0 ? (totalSGST / totalTaxableValue) * 100 : 0;
-      gstDetail.igstRate = totalIGST > 0 ? (totalIGST / totalTaxableValue) * 100 : 0;
-      gstDetail.cgstAmount = totalCGST;
-      gstDetail.sgstAmount = totalSGST;
-      gstDetail.igstAmount = totalIGST;
-      gstDetail.totalGstAmount = totalGstAmount;
-      gstDetail.totalAmount = totalAmount;
-      gstDetail.placeOfSupply = restaurantGST.stateCode; // Simplified
-      gstDetail.reverseChargeApplicable = false; // Standard supply
+      const savedGstDetail: GSTDetailEntity = gstDetail;
+
+      savedGstDetail.taxableValue = totalTaxableValue;
+      savedGstDetail.cgstRate = totalTaxableValue > 0 && totalCGST > 0 ? (totalCGST / totalTaxableValue) * 100 : 0;
+      savedGstDetail.sgstRate = totalTaxableValue > 0 && totalSGST > 0 ? (totalSGST / totalTaxableValue) * 100 : 0;
+      savedGstDetail.igstRate = totalTaxableValue > 0 && totalIGST > 0 ? (totalIGST / totalTaxableValue) * 100 : 0;
+      savedGstDetail.cgstAmount = totalCGST;
+      savedGstDetail.sgstAmount = totalSGST;
+      savedGstDetail.igstAmount = totalIGST;
+      savedGstDetail.totalGstAmount = totalGstAmount;
+      savedGstDetail.totalAmount = totalAmount;
+      savedGstDetail.placeOfSupply = restaurantGST.stateCode; // Simplified
+      savedGstDetail.reverseChargeApplicable = false; // Standard supply
 
       // Update order with total tax (for backward compatibility)
       order.tax = totalGstAmount;
       order.grandTotal = totalAmount;
 
       // Save entities
-      await this.gstDetailRepo.save(gstDetail);
+      await this.gstDetailRepo.save(savedGstDetail);
       await this.orderRepo.save(order);
 
       this.logger.log(`GST calculated for order ${orderId}: Total GST = ${totalGstAmount}`);
-      return gstDetail;
+      return savedGstDetail;
     } catch (error) {
       this.logger.error(`Error calculating GST for order ${orderId}`, error);
       throw error;
@@ -250,31 +255,29 @@ export class GSTService {
         
         // Customer details (would come from user/address in real implementation)
         customer: {
-          // In a real implementation, you'd fetch customer details and GSTIN if registered
-          name: 'Customer Name', // Placeholder
-          address: 'Customer Address', // Placeholder
-          // gstin: customerGSTIN, // Only if customer is GST registered
-          stateCode: 'XX', // Placeholder - should be based on delivery address
-          state: 'State Name', // Placeholder
+          name: 'Customer Name',
+          address: 'Customer Address',
+          stateCode: 'XX',
+          state: 'State Name',
         },
         
         // Invoice details
-        items: order.items.map(item => ({
-          description: item.menuItem.name,
-          hsnSacCode: item.hsnSac?.hsnCode || 'NOT_SPECIFIED',
-          quantity: item.quantity,
-          unit: item.menuItem.name.includes('kg') || item.menuItem.name.includes('liter') || item.menuItem.name.includes('ltr') ? 'kg/ltr' : 'pcs',
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
-          gstRate: item.cgstRate + item.sgstRate + item.igstRate,
-          cgstRate: item.cgstRate,
-          sgstRate: item.sgstRate,
-          igstRate: item.igstRate,
-          cgstAmount: item.cgstAmount,
-          sgstAmount: item.sgstAmount,
-          igstAmount: item.igstAmount,
-          totalTax: item.totalTax,
-          totalAmount: item.totalAmount,
+        items: (order.items || []).map(item => ({
+          description: item.menuItem?.name || 'Item',
+          hsnSacCode: item.hsnSac?.hsnCode || item.menuItem?.hsnSac?.hsnCode || 'NOT_SPECIFIED',
+          quantity: item.quantity || 1,
+          unit: ((item.menuItem?.name || '').includes('kg') || (item.menuItem?.name || '').includes('liter') || (item.menuItem?.name || '').includes('ltr')) ? 'kg/ltr' : 'pcs',
+          unitPrice: item.unitPrice || 0,
+          totalPrice: item.totalPrice || 0,
+          gstRate: (item.cgstRate || 0) + (item.sgstRate || 0) + (item.igstRate || 0),
+          cgstRate: item.cgstRate || 0,
+          sgstRate: item.sgstRate || 0,
+          igstRate: item.igstRate || 0,
+          cgstAmount: item.cgstAmount || 0,
+          sgstAmount: item.sgstAmount || 0,
+          igstAmount: item.igstAmount || 0,
+          totalTax: item.totalTax || 0,
+          totalAmount: item.totalAmount || 0,
         })),
         
         // Tax summary

@@ -1,0 +1,352 @@
+[
+  {
+    "userId": "user_load_0001",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_1@spicegarden-test.internal",
+    "role": "tenant_admin",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_1"
+  },
+  {
+    "userId": "user_load_0002",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_2@spicegarden-test.internal",
+    "role": "tenant_admin",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_2"
+  },
+  {
+    "userId": "user_load_0003",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_3@spicegarden-test.internal",
+    "role": "tenant_admin",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_3"
+  },
+  {
+    "userId": "user_load_0004",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_4@spicegarden-test.internal",
+    "role": "tenant_admin",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_4"
+  },
+  {
+    "userId": "user_load_0005",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_5@spicegarden-test.internal",
+    "role": "tenant_admin",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_5"
+  },
+  {
+    "userId": "user_load_0006",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_6@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_6"
+  },
+  {
+    "userId": "user_load_0007",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_7@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_7"
+  },
+  {
+    "userId": "user_load_0008",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_8@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_8"
+  },
+  {
+    "userId": "user_load_0009",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_9@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_9"
+  },
+  {
+    "userId": "user_load_0010",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_10@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_10"
+  },
+  {
+    "userId": "user_load_0011",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_11@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_11"
+  },
+  {
+    "userId": "user_load_0012",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_12@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_12"
+  },
+  {
+    "userId": "user_load_0013",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_13@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_13"
+  },
+  {
+    "userId": "user_load_0014",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_14@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_14"
+  },
+  {
+    "userId": "user_load_0015",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_15@spicegarden-test.internal",
+    "role": "delivery_driver",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_15"
+  },
+  {
+    "userId": "user_load_0016",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_16@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_16"
+  },
+  {
+    "userId": "user_load_0017",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_17@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_17"
+  },
+  {
+    "userId": "user_load_0018",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_18@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_18"
+  },
+  {
+    "userId": "user_load_0019",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_19@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_19"
+  },
+  {
+    "userId": "user_load_0020",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_20@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_20"
+  },
+  {
+    "userId": "user_load_0021",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_21@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_21"
+  },
+  {
+    "userId": "user_load_0022",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_22@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_22"
+  },
+  {
+    "userId": "user_load_0023",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_23@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_23"
+  },
+  {
+    "userId": "user_load_0024",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_24@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_24"
+  },
+  {
+    "userId": "user_load_0025",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_25@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_25"
+  },
+  {
+    "userId": "user_load_0026",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_26@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_26"
+  },
+  {
+    "userId": "user_load_0027",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_27@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_27"
+  },
+  {
+    "userId": "user_load_0028",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_28@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_28"
+  },
+  {
+    "userId": "user_load_0029",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_29@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_29"
+  },
+  {
+    "userId": "user_load_0030",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_30@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_30"
+  },
+  {
+    "userId": "user_load_0031",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_31@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_31"
+  },
+  {
+    "userId": "user_load_0032",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_32@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_32"
+  },
+  {
+    "userId": "user_load_0033",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_33@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_33"
+  },
+  {
+    "userId": "user_load_0034",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_34@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_34"
+  },
+  {
+    "userId": "user_load_0035",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_35@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_35"
+  },
+  {
+    "userId": "user_load_0036",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_36@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_36"
+  },
+  {
+    "userId": "user_load_0037",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_37@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_37"
+  },
+  {
+    "userId": "user_load_0038",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_38@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_38"
+  },
+  {
+    "userId": "user_load_0039",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_39@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_39"
+  },
+  {
+    "userId": "user_load_0040",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_40@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_40"
+  },
+  {
+    "userId": "user_load_0041",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_41@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_41"
+  },
+  {
+    "userId": "user_load_0042",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_42@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_42"
+  },
+  {
+    "userId": "user_load_0043",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_43@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_43"
+  },
+  {
+    "userId": "user_load_0044",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_44@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_44"
+  },
+  {
+    "userId": "user_load_0045",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_45@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_45"
+  },
+  {
+    "userId": "user_load_0046",
+    "tenantId": "tenant_delhi_spice",
+    "email": "loaduser_46@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_46"
+  },
+  {
+    "userId": "user_load_0047",
+    "tenantId": "tenant_mumbai_curry",
+    "email": "loaduser_47@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_47"
+  },
+  {
+    "userId": "user_load_0048",
+    "tenantId": "tenant_bangalore_bistro",
+    "email": "loaduser_48@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_48"
+  },
+  {
+    "userId": "user_load_0049",
+    "tenantId": "tenant_kolkata_kitchen",
+    "email": "loaduser_49@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_49"
+  },
+  {
+    "userId": "user_load_0050",
+    "tenantId": "tenant_chennai_cheffery",
+    "email": "loaduser_50@spicegarden-test.internal",
+    "role": "customer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.synthetic_load_token_50"
+  }
+]

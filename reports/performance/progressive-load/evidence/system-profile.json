@@ -1,0 +1,18 @@
+{
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "branch": "feat/add-react-doctor",
+  "os": "Microsoft Windows 11 Pro 10.0.22635",
+  "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz (2 Cores, 4 Logical Processors)",
+  "ramTotal": "8,022,688 KB (~8.00 GB Physical)",
+  "ramAvailable": "~420 MB Available Physical Memory",
+  "node": "v25.5.0",
+  "npm": "9.9.4",
+  "docker": "Docker version 29.7.2, build a7dcaa6",
+  "k6": "k6.exe v2.2.0 (commit/00a9a1b7f5, go1.26.5, windows/amd64)",
+  "pg": "PostgreSQL 16 (TypeORM 0.3.31, pg 8.11.0)",
+  "redis": "Redis 7.2 (ioredis 5.10.1)",
+  "mongo": "MongoDB 7.0 (Mongoose 9.10.3, mongodb 7.3.0)",
+  "bullmq": "BullMQ 5.78.1",
+  "backend": "NestJS 11.1.27 (v1.0.0-rc1)",
+  "frontend": "Next.js 15.5.27, React 19.2.0, React Native 0.73.0, Expo SDK 57, Electron 42.4.0"
+}

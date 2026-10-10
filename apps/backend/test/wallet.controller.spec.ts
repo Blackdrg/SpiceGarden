@@ -53,6 +53,13 @@ describe('WalletController', () => {
     expect(mocks.walletService.getWalletTransactions).toHaveBeenCalledWith('user-1', 10, 5);
   });
 
+  it('returns transactions with default pagination parameters', async () => {
+    mocks.walletService.getWalletTransactions.mockResolvedValue([{ id: 't1' }]);
+    const result = await mocks.controller.getTransactions(authReq() as any);
+    expect(result).toHaveLength(1);
+    expect(mocks.walletService.getWalletTransactions).toHaveBeenCalledWith('user-1', 20, 0);
+  });
+
   it('credits wallet', async () => {
     mocks.walletService.creditWallet.mockResolvedValue({ id: 't1', type: 'credit' });
     const result = await mocks.controller.creditWallet(

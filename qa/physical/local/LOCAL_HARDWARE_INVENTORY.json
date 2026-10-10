@@ -1,0 +1,37 @@
+{
+  "inventory_timestamp": "2026-10-03T13:08:53.360Z",
+  "host_type": "Single Physical Workstation / PC",
+  "os": {
+    "platform": "win32",
+    "type": "Windows_NT",
+    "release": "10.0.22635",
+    "architecture": "x64",
+    "hostname": "LUCIFER007",
+    "uptime_seconds": 160858.765
+  },
+  "cpu": {
+    "model": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+    "logical_processors": 4,
+    "speed_mhz": 2995,
+    "physical_cores_estimated": 2
+  },
+  "memory": {
+    "total_bytes": 8215232512,
+    "total_gb": 7.65,
+    "free_bytes": 548773888,
+    "free_gb": 0.51,
+    "used_gb": 7.14
+  },
+  "virtualization_and_containers": {
+    "wsl_status": "\u0000 \u0000N\u0000A\u0000M\u0000E\u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000S\u0000T\u0000A\u0000T\u0000E\u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000V\u0000E\u0000R\u0000S\u0000I\u0000O\u0000N\u0000\r\u0000\n\u0000*\u0000 \u0000U\u0000b\u0000u\u0000n\u0000t\u0000u\u0000 \u0000 \u0000 \u0000 \u0000S\u0000t\u0000o\u0000p\u0000p\u0000e\u0000d\u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u0000 \u00002\u0000\r\u0000\n\u0000",
+    "docker_version": "Docker version 29.7.2, build a7dcaa6",
+    "docker_info": "UNAVAILABLE: failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+  },
+  "toolchain": {
+    "node_version": "v25.5.0",
+    "npm_version": "9.9.4",
+    "k6_version": "k6.exe v2.2.0 (commit/00a9a1b7f5, go1.26.5, windows/amd64)",
+    "kubectl_version": "Client Version: v1.36.1\nKustomize Version: v5.8.1",
+    "terraform_version": "UNAVAILABLE: 'terraform' is not recognized as an internal or external command,\r\noperable program or batch file."
+  }
+}

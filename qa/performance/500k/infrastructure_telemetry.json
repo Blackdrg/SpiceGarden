@@ -1,0 +1,26 @@
+{
+  "tier": "500k",
+  "classification": "MODELED",
+  "database": {
+    "engine": "PostgreSQL 16.2 / AWS RDS Aurora",
+    "activeConnections": "220 (PgBouncer)",
+    "cacheHitRatio": "99.4%",
+    "avgQueryLatencyMs": 3.8
+  },
+  "redis": {
+    "version": "Redis 7.2.4 / ElastiCache Cluster",
+    "opsPerSec": "370,000 ops/sec",
+    "memoryUsageRssMb": 9000,
+    "hitRatio": "98.8%"
+  },
+  "bullmq": {
+    "activeWorkers": 10,
+    "waitingJobsPeak": 15,
+    "stalledJobs": 0
+  },
+  "websockets": {
+    "activeConnections": 150000,
+    "fanoutLatencyP95Ms": 28,
+    "broadcastAdapter": "Redis Pub/Sub Socket.IO Adapter"
+  }
+}

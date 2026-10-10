@@ -38,7 +38,7 @@ let MapsController = class MapsController {
             north: Number(north),
             south: Number(south),
             east: Number(east),
-            west: Number(west),
+            west: Number(west)
         }, zoom ? Number(zoom) : 12);
     }
     async getSurgeZones() {

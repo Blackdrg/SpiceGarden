@@ -13,7 +13,7 @@ export class NotificationService {
     private configService: ConfigService,
     @InjectRepository(UserDeviceEntity)
     private readonly userDeviceRepo: Repository<UserDeviceEntity>,
-  ) {}
+  ) { }
 
   async registerDevice(userId: string, fcmToken: string, deviceInfo: { name?: string; type?: string; userAgent?: string; ip?: string }) {
     const existing = await this.userDeviceRepo.findOne({ where: { userId, fcmToken } });
@@ -56,11 +56,15 @@ export class NotificationService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          registration_ids: devices.map(d => d.fcmToken).filter(Boolean),
+          registration_ids: devices.map((d: UserDeviceEntity) => d.fcmToken).filter(Boolean),
           notification: { title, body },
           data: data || {},
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`FCM API error: HTTP ${response.status}`);
+      }
 
       const result = (await response.json()) as { message?: string; sid?: string };
       this.logger.log(`FCM response for user ${userId}: ${JSON.stringify(result)}`);
@@ -95,10 +99,13 @@ export class NotificationService {
         }),
       });
 
-      const result = (await response.json()) as { message?: string; sid?: string };
       if (!response.ok) {
-        throw new Error(result.message || 'Twilio API error');
+        const errJson = await response.json().catch(() => ({}));
+        const errMsg = (errJson as any)?.message || `Twilio API error: HTTP ${response.status}`;
+        throw new Error(errMsg);
       }
+
+      const result = (await response.json()) as { message?: string; sid?: string };
 
       this.logger.log(`SMS sent to ${phone}`);
       return { success: true, sid: result.sid };
@@ -171,7 +178,7 @@ export class NotificationService {
     const devices = await this.userDeviceRepo.find({
       where: { userId, isActive: true },
     });
-    const apnsTokens = devices.filter(d => d.apnsToken).map(d => d.apnsToken!);
+    const apnsTokens = devices.filter((d: UserDeviceEntity) => d.apnsToken).map((d: UserDeviceEntity) => d.apnsToken!);
 
     if (apnsTokens.length === 0) {
       return { success: false, reason: 'No active iOS devices' };
@@ -179,44 +186,41 @@ export class NotificationService {
 
     try {
       const token = this.generateJWT(apnsKeyId, apnsTeamId, apnsKey);
-      const results = [];
-      
-      // Use correct APNs endpoint based on environment
-      const apnsHost = apnsEnv === 'development' 
-        ? 'api.development.push.apple.com' 
-        : 'api.push.apple.com';
+      const payload = {
+        aps: {
+          alert: { title, body },
+          sound: 'default',
+        },
+        ...(data || {}),
+      };
 
-      for (const deviceToken of apnsTokens) {
-        const payload = {
-          aps: {
-            alert: { title, body },
-            sound: 'default',
-          },
-          ...(data || {}),
-        };
+      const results = await Promise.allSettled(
+        apnsTokens.map(async (deviceToken: string) => {
+          const host = apnsEnv === 'development' ? 'api.development.push.apple.com' : 'api.push.apple.com';
+          const response = await fetch(`https://${host}/3/device/${deviceToken}`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'apns-topic': apnsBundleId,
+            },
+            body: JSON.stringify(payload),
+          });
 
-        const response = await fetch(`https://${apnsHost}/3/device/${deviceToken}`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'apns-topic': apnsBundleId,
-          },
-          body: JSON.stringify(payload),
-        });
+          if (!response.ok) {
+            const error = await response.text();
+            this.logger.error(`APNs failed for token ${deviceToken.substring(0, 8)}...: ${response.status} ${error}`);
+            return { token: deviceToken.substring(0, 8), success: false, error };
+          }
 
-        if (!response.ok) {
-          const error = await response.text();
-          this.logger.error(`APNs failed for token ${deviceToken.substring(0, 8)}...: ${response.status} ${error}`);
-          results.push({ token: deviceToken.substring(0, 8), success: false, error });
-        } else {
-          results.push({ token: deviceToken.substring(0, 8), success: true });
-        }
-      }
+          return { token: deviceToken.substring(0, 8), success: true };
+        })
+      );
 
-      const successCount = results.filter(r => r.success).length;
+      const settledResults = results.map((r: PromiseSettledResult<any>) => (r.status === 'fulfilled' ? r.value : { success: false, error: r.reason }));
+      const successCount = settledResults.filter((r: any) => r.success).length;
       this.logger.log(`APNs: ${successCount}/${apnsTokens.length} notifications sent to user ${userId}`);
-      return { success: successCount > 0, sent: successCount, results };
+      return { success: successCount > 0, sent: successCount, results: settledResults };
     } catch (error) {
       this.logger.error(`APNs send failed for user ${userId}:`, error);
       return { success: false, error: (error as Error).message };

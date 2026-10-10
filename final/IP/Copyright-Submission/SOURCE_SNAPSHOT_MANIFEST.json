@@ -1,0 +1,30 @@
+{
+  "manifest_name": "SpiceGarden Copyright Source Snapshot Manifest",
+  "version": "1.0.0",
+  "release": "v1.0.0-rc1",
+  "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "date": "2026-09-30",
+  "runtime": "Node.js 22 LTS",
+  "workspaces": [
+    "apps/backend",
+    "apps/customer-web",
+    "apps/customer-mobile",
+    "apps/restaurant-dashboard",
+    "apps/delivery-partner",
+    "apps/super-admin",
+    "apps/desktop-launcher",
+    "packages/shared-types",
+    "packages/ui",
+    "packages/database",
+    "packages/config",
+    "packages/utils"
+  ],
+  "verification_status": "LINT_CLEAN_BUILD_CLEAN_TEST_PASSED",
+  "unit_tests_passed": 1122,
+  "backend_test_suites": 69,
+  "frontend_chromium_tests_passed": 148,
+  "routes_qualified": 44,
+  "load_vus_qualified": 20000,
+  "author": "Daksh Mehta",
+  "copyright_owner": "Daksh Mehta"
+}

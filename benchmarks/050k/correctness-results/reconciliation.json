@@ -1,0 +1,8 @@
+{
+  "orders_attempted": 993600,
+  "orders_created": 993103,
+  "duplicate_orders_detected": 0,
+  "payment_idempotency_violations": 0,
+  "tenant_boundary_violations": 0,
+  "inventory_discrepancies": 0
+}

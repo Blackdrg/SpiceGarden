@@ -5,11 +5,11 @@ export class AuditLogEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_audit_logs_action')
   @Column()
   action!: string;
 
-  @Index()
+  @Index('idx_audit_logs_performed_by')
   @Column({ nullable: true })
   performedBy!: string; // userId or 'system'
 

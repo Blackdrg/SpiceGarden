@@ -29,32 +29,34 @@ let PayoutService = PayoutService_1 = class PayoutService {
     restaurantRepo;
     commissionRepo;
     gstRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(PayoutService_1.name);
-    constructor(payoutRepo, orderRepo, restaurantRepo, commissionRepo, gstRepo, dataSource) {
+    constructor(payoutRepo, orderRepo, restaurantRepo, commissionRepo, gstRepo, connection) {
         this.payoutRepo = payoutRepo;
         this.orderRepo = orderRepo;
         this.restaurantRepo = restaurantRepo;
         this.commissionRepo = commissionRepo;
         this.gstRepo = gstRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async generatePayoutReport(restaurantId, periodStart, periodEnd) {
-        const orders = await this.orderRepo.find({
-            where: {
-                restaurantId,
-                status: order_interface_1.OrderStatus.DELIVERED,
-                createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
-            },
-            relations: { gstDetail: true },
-        });
+        const [orders, commissionRules] = await Promise.all([
+            this.orderRepo.find({
+                where: {
+                    restaurantId,
+                    status: order_interface_1.OrderStatus.DELIVERED,
+                    createdAt: (0, typeorm_2.Between)(periodStart, periodEnd),
+                },
+                relations: { gstDetail: true },
+            }),
+            this.commissionRepo.find({
+                where: {
+                    restaurantId,
+                    status: commission_rule_entity_1.CommissionStatus.ACTIVE,
+                },
+            }),
+        ]);
         const grossSales = orders.reduce((sum, o) => sum + Number(o.grandTotal), 0);
-        const commissionRules = await this.commissionRepo.find({
-            where: {
-                restaurantId,
-                status: commission_rule_entity_1.CommissionStatus.ACTIVE,
-            },
-        });
         let platformCommission = grossSales * 0.15;
         if (commissionRules.length > 0) {
             const applicableRule = commissionRules[0];
@@ -81,12 +83,12 @@ let PayoutService = PayoutService_1 = class PayoutService {
             status: payout_report_entity_1.PayoutStatus.PENDING,
             orderBreakdown: {
                 totalOrders: orders.length,
-                completedOrders: orders.filter(o => o.status === order_interface_1.OrderStatus.DELIVERED).length,
-                cancelledOrders: orders.filter(o => o.status === order_interface_1.OrderStatus.CANCELLED).length,
-                refundedOrders: orders.filter(o => o.paymentStatus === order_interface_1.PaymentStatus.REFUNDED).length,
+                completedOrders: orders.filter((o) => o.status === order_interface_1.OrderStatus.DELIVERED).length,
+                cancelledOrders: orders.filter((o) => o.status === order_interface_1.OrderStatus.CANCELLED).length,
+                refundedOrders: orders.filter((o) => o.paymentStatus === order_interface_1.PaymentStatus.REFUNDED).length,
             },
             paymentBreakdown: {
-                onlinePayments: orders.filter(o => o.paymentStatus === order_interface_1.PaymentStatus.COMPLETED).length,
+                onlinePayments: orders.filter((o) => o.paymentStatus === order_interface_1.PaymentStatus.COMPLETED).length,
                 codPayments: 0,
                 walletPayments: 0,
             },
@@ -103,14 +105,18 @@ let PayoutService = PayoutService_1 = class PayoutService {
     async processPayout(payoutId, reference) {
         const payout = await this.payoutRepo.findOne({ where: { id: payoutId } });
         if (!payout) {
-            throw new Error('Payout not found');
+            throw new common_1.NotFoundException('Payout not found');
         }
         await this.payoutRepo.update(payoutId, {
             status: payout_report_entity_1.PayoutStatus.PROCESSING,
             payoutReference: reference,
             payoutDate: new Date(),
         });
-        return (await this.payoutRepo.findOne({ where: { id: payoutId } }));
+        const updated = await this.payoutRepo.findOne({ where: { id: payoutId } });
+        if (!updated) {
+            throw new common_1.NotFoundException('Payout not found');
+        }
+        return updated;
     }
     async getPendingPayouts(restaurantId) {
         const where = { status: payout_report_entity_1.PayoutStatus.PENDING };
@@ -137,8 +143,8 @@ let PayoutService = PayoutService_1 = class PayoutService {
             totalCommission: payouts.reduce((sum, p) => sum + Number(p.platformCommission), 0),
             totalGST: payouts.reduce((sum, p) => sum + Number(p.gstAmount), 0),
             totalNetPayout: payouts.reduce((sum, p) => sum + Number(p.netPayout), 0),
-            pendingPayouts: payouts.filter(p => p.status === payout_report_entity_1.PayoutStatus.PENDING).length,
-            paidPayouts: payouts.filter(p => p.status === payout_report_entity_1.PayoutStatus.PAID).length,
+            pendingPayouts: payouts.filter((p) => p.status === payout_report_entity_1.PayoutStatus.PENDING).length,
+            paidPayouts: payouts.filter((p) => p.status === payout_report_entity_1.PayoutStatus.PAID).length,
         };
     }
 };

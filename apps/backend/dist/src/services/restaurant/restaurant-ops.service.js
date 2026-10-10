@@ -30,16 +30,16 @@ let RestaurantOpsService = RestaurantOpsService_1 = class RestaurantOpsService {
     itemRepo;
     categoryRepo;
     userRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(RestaurantOpsService_1.name);
-    constructor(onboardingRepo, restaurantRepo, branchRepo, itemRepo, categoryRepo, userRepo, dataSource) {
+    constructor(onboardingRepo, restaurantRepo, branchRepo, itemRepo, categoryRepo, userRepo, connection) {
         this.onboardingRepo = onboardingRepo;
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
         this.itemRepo = itemRepo;
         this.categoryRepo = categoryRepo;
         this.userRepo = userRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async startOnboarding(userId, restaurantData) {
         const existing = await this.restaurantRepo.findOne({ where: { slug: restaurantData.slug } });

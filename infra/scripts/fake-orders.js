@@ -73,7 +73,7 @@ async function placeOrder(userId, restaurant) {
     deliveryFee: grandTotal * 0.10,
   };
 
-  const result = await makeRequest('/api/orders', 'POST', order);
+  const result = await makeRequest('/orders', 'POST', order);
   return { userId, restaurant: restaurant.name, menuItem, status: result.status };
 }
 

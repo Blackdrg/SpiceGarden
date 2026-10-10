@@ -12,7 +12,7 @@ export class RestaurantService {
     @InjectRepository(RestaurantBranchEntity)
     private readonly branchRepo: Repository<RestaurantBranchEntity>,
     @InjectDataSource()
-    private readonly dataSource: DataSource
+    private readonly connection: DataSource
   ) {}
 
   async getAllRestaurants() {

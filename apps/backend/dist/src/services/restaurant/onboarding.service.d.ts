@@ -4,9 +4,9 @@ import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 export declare class RestaurantOnboardingService {
     private readonly onboardingRepo;
     private readonly restaurantRepo;
-    private readonly dataSource;
+    private readonly connection;
     private readonly logger;
-    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, dataSource: DataSource);
+    constructor(onboardingRepo: Repository<RestaurantOnboardingEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: DataSource);
     private getOnboardingByRestaurantId;
     initializeOnboarding(restaurantId: string): Promise<RestaurantOnboardingEntity>;
     updateStep(onboardingId: string, step: OnboardingStep, data?: any): Promise<RestaurantOnboardingEntity>;

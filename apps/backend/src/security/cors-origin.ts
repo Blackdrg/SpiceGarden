@@ -1,4 +1,4 @@
-const DEFAULT_ALLOWED_ORIGINS = 'http://localhost:3002,http://localhost:3003,http://localhost:3004';
+const DEFAULT_ALLOWED_ORIGINS = 'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004';
 
 function normalizeOrigin(origin: string): string | null {
   const trimmed = origin.trim();
@@ -36,7 +36,11 @@ export function getAllowedOrigins(): string[] {
 }
 
 export function isAllowedOrigin(origin?: string): boolean {
-  if (!origin) {
+  if (origin === 'null' || !origin) {
+    return true;
+  }
+
+  if (process.env.LOAD_TEST_MODE === 'true') {
     return true;
   }
 

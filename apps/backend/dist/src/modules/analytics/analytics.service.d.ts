@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MenuItemEntity } from '../../db/entities/menu-item.entity';
 import { OrderItemEntity } from '../../db/entities/order-item.entity';
 import { OrderEntity } from '../../db/entities/order.entity';
@@ -12,8 +12,7 @@ export declare class AnalyticsService {
     private userRepo;
     private branchRepo;
     private addressRepo;
-    private dataSource;
-    constructor(orderRepo: Repository<OrderEntity>, orderItemRepo: Repository<OrderItemEntity>, menuItemRepo: Repository<MenuItemEntity>, userRepo: Repository<UserEntity>, branchRepo: Repository<RestaurantBranchEntity>, addressRepo: Repository<AddressEntity>, dataSource: DataSource);
+    constructor(orderRepo: Repository<OrderEntity>, orderItemRepo: Repository<OrderItemEntity>, menuItemRepo: Repository<MenuItemEntity>, userRepo: Repository<UserEntity>, branchRepo: Repository<RestaurantBranchEntity>, addressRepo: Repository<AddressEntity>);
     getTopDishes(restaurantId?: string, period?: number): Promise<any>;
     getChurnAnalysis(restaurantId?: string, period?: number): Promise<any>;
     getRepeatUsers(restaurantId?: string, period?: number): Promise<any>;

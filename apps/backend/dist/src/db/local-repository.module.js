@@ -31,13 +31,15 @@ function createRepository(entity) {
             offset: function () { return this; },
             leftJoinAndSelect: function () { return this; },
             innerJoinAndSelect: function () { return this; },
-            setParameters: function () { return this; },
             getMany: async () => rows,
             getOne: async () => rows[0] || null,
+            getRawOne: async () => null,
+            getRawMany: async () => [],
             getManyAndCount: async () => [rows, rows.length],
             getCount: async () => rows.length,
             delete: async () => ({ affected: rows.length }),
             update: async () => ({ affected: rows.length }),
+            execute: async () => ({ affected: rows.length }),
         }),
         find: async () => rows,
         findBy: async () => rows,
@@ -158,6 +160,31 @@ const repositoryDefinitions = [
     require('../db/entities/support-ticket.entity').SupportTicketEntity,
     require('../db/entities/payment-method.entity').PaymentMethodEntity,
 ];
+const typeorm_3 = require("@nestjs/typeorm");
+const mockDataSource = {
+    isInitialized: true,
+    entityMetadatas: [],
+    options: { type: 'postgres' },
+    initialize: async () => undefined,
+    destroy: async () => undefined,
+    getRepository: (entity) => createRepository(entity),
+    getTreeRepository: (entity) => createRepository(entity),
+    getMongoRepository: (entity) => createRepository(entity),
+    createQueryRunner: () => ({
+        connect: async () => undefined,
+        startTransaction: async () => undefined,
+        commitTransaction: async () => undefined,
+        rollbackTransaction: async () => undefined,
+        release: async () => undefined,
+        manager: {
+            save: async (entity, data) => data || entity,
+            findOne: async () => null,
+            find: async () => [],
+        },
+    }),
+    createQuery: () => ({ getRawMany: async () => [], getRawOne: async () => null }),
+    transaction: async (_, work) => (work || _)(undefined),
+};
 let LocalRepositoryModule = class LocalRepositoryModule {
 };
 exports.LocalRepositoryModule = LocalRepositoryModule;
@@ -167,18 +194,27 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
         providers: [
             {
                 provide: DATA_SOURCE_TOKEN,
-                useValue: {
-                    isInitialized: true,
-                    initialize: async () => undefined,
-                    destroy: async () => undefined,
-                    getRepository: (entity) => createRepository(entity),
-                    createQuery: () => ({ getRawMany: async () => [], getRawOne: async () => null }),
-                    transaction: async (_, work) => (work || _)(undefined),
-                },
+                useValue: mockDataSource,
             },
             {
                 provide: typeorm_2.DataSource,
-                useExisting: DATA_SOURCE_TOKEN,
+                useValue: mockDataSource,
+            },
+            {
+                provide: (0, typeorm_3.getDataSourceToken)(),
+                useValue: mockDataSource,
+            },
+            {
+                provide: (0, typeorm_3.getDataSourceToken)('default'),
+                useValue: mockDataSource,
+            },
+            {
+                provide: (0, typeorm_3.getConnectionToken)(),
+                useValue: mockDataSource,
+            },
+            {
+                provide: (0, typeorm_3.getConnectionToken)('default'),
+                useValue: mockDataSource,
             },
             ...repositoryDefinitions.flatMap((entity) => [
                 {
@@ -187,6 +223,14 @@ exports.LocalRepositoryModule = LocalRepositoryModule = __decorate([
                 },
             ]),
         ],
-        exports: [typeorm_2.DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity))],
+        exports: [
+            typeorm_2.DataSource,
+            DATA_SOURCE_TOKEN,
+            (0, typeorm_3.getDataSourceToken)(),
+            (0, typeorm_3.getDataSourceToken)('default'),
+            (0, typeorm_3.getConnectionToken)(),
+            (0, typeorm_3.getConnectionToken)('default'),
+            ...repositoryDefinitions.map((entity) => (0, typeorm_1.getRepositoryToken)(entity)),
+        ],
     })
 ], LocalRepositoryModule);

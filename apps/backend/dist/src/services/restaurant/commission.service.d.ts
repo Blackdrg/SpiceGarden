@@ -1,12 +1,11 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CommissionRuleEntity, CommissionType } from '../../db/entities/commission-rule.entity';
 import { RestaurantEntity } from '../../db/entities/restaurant.entity';
 export declare class CommissionService {
     private commissionRepo;
     private restaurantRepo;
-    private dataSource;
     private readonly logger;
-    constructor(commissionRepo: Repository<CommissionRuleEntity>, restaurantRepo: Repository<RestaurantEntity>, dataSource: DataSource);
+    constructor(commissionRepo: Repository<CommissionRuleEntity>, restaurantRepo: Repository<RestaurantEntity>);
     createCommissionRule(restaurantId: string, ruleData: {
         type: CommissionType;
         value: number;

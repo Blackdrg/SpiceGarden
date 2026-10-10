@@ -131,18 +131,20 @@ export class VaultService implements OnModuleInit {
     const missing: string[] = [];
     const valid: string[] = [];
 
-    for (const secret of requiredSecrets) {
-      try {
-        const value = await this.getSecret(secret, process.env[secret]);
-        if (value && !value.includes('CHANGE_ME') && !value.includes('placeholder')) {
-          valid.push(secret);
-        } else {
+    await Promise.all(
+      requiredSecrets.map(async (secret) => {
+        try {
+          const value = await this.getSecret(secret, process.env[secret]);
+          if (value && !value.includes('CHANGE_ME') && !value.includes('placeholder')) {
+            valid.push(secret);
+          } else {
+            missing.push(secret);
+          }
+        } catch {
           missing.push(secret);
         }
-      } catch {
-        missing.push(secret);
-      }
-    }
+      })
+    );
 
     return { missing, valid };
   }

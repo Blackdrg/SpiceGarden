@@ -1,3 +1,4 @@
+import { BaseEntity } from 'typeorm';
 import { DriverEntity } from './driver.entity';
 export declare enum DocumentType {
     DRIVING_LICENSE = "driving_license",
@@ -12,7 +13,7 @@ export declare enum DocumentStatus {
     VERIFIED = "verified",
     REJECTED = "rejected"
 }
-export declare class DriverDocumentEntity {
+export declare class DriverDocumentEntity extends BaseEntity {
     id: string;
     driverId: string;
     driver: DriverEntity;

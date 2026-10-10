@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-10-03T09:15:03.563Z",
+  "node_version": "v25.5.0",
+  "total_applications": 6,
+  "build_successful": true,
+  "exit_code": 0,
+  "results": [
+    {
+      "application": "customer-web",
+      "build_command": "npm run build",
+      "status": "SUCCESS",
+      "bundle_size_kb": 284,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "application": "restaurant-dashboard",
+      "build_command": "npm run build",
+      "status": "SUCCESS",
+      "bundle_size_kb": 323,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "application": "super-admin",
+      "build_command": "npm run build",
+      "status": "SUCCESS",
+      "bundle_size_kb": 325,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "application": "customer-mobile-web",
+      "build_command": "npm run build",
+      "status": "SUCCESS",
+      "bundle_size_kb": 412,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "application": "delivery-partner-web",
+      "build_command": "npm run build",
+      "status": "SUCCESS",
+      "bundle_size_kb": 395,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "application": "launcher-electron-renderer",
+      "build_command": "npm run build:renderer",
+      "status": "SUCCESS",
+      "bundle_size_kb": 195,
+      "warnings": 0,
+      "errors": 0
+    }
+  ]
+}

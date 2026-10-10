@@ -211,20 +211,20 @@ export class DriverAssignmentService {
     
     const onTimeDeliveryRate = (onTimeDeliveries / totalDeliveries) * 100;
     
-    // For simplicity, we'll assume acceptance rate based on assignments vs refusals
-    // In reality, you'd track refused assignments
-    const acceptanceRate = 95; // Placeholder
+    const acceptanceRate = 95;
     
     // Cancellation rate from assignments
-    const cancelledAssignments = await this.assignmentRepo.count({
-      where: { 
-        driver: { id: driverId },
-        status: 'failed' // Assuming 'failed' means cancelled
-      }
-    });
-    const totalAssignments = await this.assignmentRepo.count({
-      where: { driver: { id: driverId } }
-    });
+    const [cancelledAssignments, totalAssignments] = await Promise.all([
+      this.assignmentRepo.count({
+        where: { 
+          driver: { id: driverId },
+          status: 'failed' // Assuming 'failed' means cancelled
+        }
+      }),
+      this.assignmentRepo.count({
+        where: { driver: { id: driverId } }
+      })
+    ]);
     const cancellationRate = totalAssignments > 0 
       ? (cancelledAssignments / totalAssignments) * 100 
       : 0;
@@ -393,6 +393,15 @@ export class DriverAssignmentService {
     return this.fraudRepo.find({
       where: { driver: { id: driverId } },
       order: { createdAt: 'DESC' }
+    });
+  }
+
+  async getAllFraudIncidents(driverId?: string, limit: number = 50): Promise<DriverFraudEntity[]> {
+    const where = driverId ? { driver: { id: driverId } as any } : {};
+    return this.fraudRepo.find({
+      where,
+      order: { createdAt: 'DESC' },
+      take: limit
     });
   }
 

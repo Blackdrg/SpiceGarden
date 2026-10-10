@@ -1,0 +1,394 @@
+
+> @spicegarden/backend@0.0.0 test:cov
+> jest --coverage --coverageThreshold={\"global\":{\"branches\":80,\"functions\":80,\"lines\":80,\"statements\":80}}
+
+node.exe : PASS test/wallet.controller.spec.ts (10.982 s)
+At line:1 char:1
++ & "C:\Program Files/node.exe" "C:\Users\mehta\AppData\Roaming\npm/nod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS test/walle...c.ts (10.982 s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS test/vault.service.spec.ts (13.691 s)
+PASS test/reliability.failure-recovery.spec.ts
+PASS test/idempotency.service.spec.ts
+PASS test/retry-service.spec.ts
+PASS test/database-failover.service.spec.ts
+PASS test/driver-assignment-uncovered.spec.ts
+PASS test/production-readiness-edge-cases.spec.ts
+PASS test/nnotification.service.spec.ts
+PASS test/tracking.gateway.unit.spec.ts
+PASS test/audit.service.spec.ts
+PASS test/payment-edge-cases.service.spec.ts
+PASS test/loyalty-edge-cases.spec.ts
+PASS test/order.service.spec.ts
+PASS test/eta-intelligence.service.spec.ts
+PASS test/webhook.service.spec.ts
+PASS test/compliance.coverage.spec.ts
+PASS test/order.service.async.spec.ts
+PASS test/rbac-coverage.spec.ts
+PASS test/chargeback.service.spec.ts
+PASS test/payments.service.spec.ts
+PASS test/gateway-factory.service.spec.ts
+PASS test/delivery-edge-cases.spec.ts
+PASS test/driver-assignment.service.spec.ts
+PASS test/production-notification.service.spec.ts
+PASS test/geo.service.spec.ts
+PASS test/wallet-edge-cases.spec.ts
+PASS test/auth.controller.spec.ts
+PASS test/auth.service.spec.ts
+PASS test/notification-preferences.service.spec.ts
+PASS test/compliance.service.spec.ts
+PASS test/tax-reporting.service.spec.ts
+PASS test/order-edge-cases.spec.ts
+PASS test/dispatch-engine.service.spec.ts
+PASS test/refund.service.spec.ts
+PASS test/delivery.service.spec.ts
+PASS test/order.service.flow.spec.ts
+PASS test/security-guards.spec.ts
+PASS test/encryption.service.spec.ts
+PASS test/payment-verification.e2e.spec.ts
+PASS test/ledger.service.spec.ts
+PASS test/razorpay-gateway.spec.ts
+PASS test/stripe-gateway.spec.ts
+PASS test/payments.module.spec.ts
+PASS test/logging.service.spec.ts
+PASS test/csrf.middleware.spec.ts
+PASS test/cod-gateway.spec.ts
+PASS test/missing-env.error.spec.ts
+PASS test/rate-limit-store.coverage.spec.ts
+  ? Console
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:173:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:183:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:193:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:203:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:214:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:228:5)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.coverage.spec.ts:238:5)
+
+PASS test/rate-limit-store.spec.ts
+  ? Console
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/rate-limit-store.spec.ts:12:5)
+
+PASS test/driver-fleet.service.spec.js
+PASS test/loyalty.service.spec.js
+PASS test/e2e.spec.ts
+PASS test/wallet.service.spec.js
+PASS test/security-validation.spec.ts
+  ? Console
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:17:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:23:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:34:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:48:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:59:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:73:7)
+
+    console.warn
+      [rate-limit] Redis unavailable, using process-local fallback: ECONNREFUSED
+
+    [0m [90m 56 |[39m       [36mthis[39m[33m.[39mclient [33m=[39m [36mnull[39m[33m;[39m
+     [90m 57 |[39m       [36mif[39m ([36mthis[39m[33m.[39mfallbackToMemory) {
+    [31m[1m>[22m[39m[90m 58 |[39m         console[33m.[39mwarn([32m`[rate-limit] Redis unavailable, using 
+process-local fallback: ${error instanceof Error ? error.message : String(error)}`[39m)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 59 |[39m       } [36melse[39m {
+     [90m 60 |[39m         [36mthrow[39m error[33m;[39m
+     [90m 61 |[39m       }[0m
+
+      at RedisRateLimitStore.warn (src/security/redis-rate-limit.store.ts:58:17)
+      at Object.<anonymous> (test/security-validation.spec.ts:91:7)
+
+PASS test/maps.service.spec.js
+PASS test/notification.service.spec.js
+PASS test/cors-origin.spec.ts
+PASS test/payment.integration.spec.ts
+PASS test/driver-customer.integration.spec.ts
+PASS test/order-kds.integration.spec.ts
+PASS test/kitchen.service.spec.ts
+PASS test/order-flow.integration.spec.ts
+PASS test/delivery.integration.spec.ts
+PASS test/payment-order.integration.spec.ts
+PASS test/refund-wallet.integration.spec.ts
+PASS test/auth.integration.spec.ts
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------
+All files                             |   91.24 |    81.18 |   91.22 |   91.14 |                                                                                  
+ audit                                |   93.33 |    71.01 |     100 |   93.02 |                                                                                  
+  audit.service.ts                    |   93.33 |    71.01 |     100 |   93.02 | 214,218,229                                                                      
+ common/errors                        |     100 |      100 |     100 |     100 |                                                                                  
+  missing-env.error.ts                |     100 |      100 |     100 |     100 |                                                                                  
+ compliance                           |    97.8 |    88.88 |   85.71 |   97.72 |                                                                                  
+  compliance.service.ts               |    97.8 |    88.88 |   85.71 |   97.72 | 129-134                                                                          
+ db                                   |   93.65 |    92.85 |    92.3 |   93.33 |                                                                                  
+  database-failover.service.ts        |   93.65 |    92.85 |    92.3 |   93.33 | 38,133-136                                                                       
+ infra/queue                          |    87.5 |       75 |     100 |   86.36 |                                                                                  
+  order.processor.ts                  |    87.5 |       75 |     100 |   86.36 | 38-40                                                                            
+ infra/tracking                       |   94.11 |    94.36 |   89.28 |      94 |                                                                                  
+  tracking.gateway.ts                 |   94.11 |    94.36 |   89.28 |      94 | 263,278,315-324                                                                  
+ logging                              |     100 |    73.07 |     100 |     100 |                                                                                  
+  logging.service.ts                  |     100 |    73.07 |     100 |     100 | 49,61-85                                                                         
+ modules/driver-assignment            |   84.69 |     78.4 |      85 |   84.66 |                                                                                  
+  dispatch-engine.service.ts          |   77.19 |       65 |   78.57 |   77.47 | 16-22,29-43,175-177,200-202,230,254-256                                          
+  driver-assignment.service.ts        |   89.51 |    84.44 |   82.35 |   89.34 | 19-35,63,400-401                                                                 
+  eta-intelligence.service.ts         |   89.28 |    78.26 |     100 |   88.88 | 119-129                                                                          
+ modules/ledger                       |   94.73 |    88.88 |   83.33 |   94.11 |                                                                                  
+  ledger.service.ts                   |   94.73 |    88.88 |   83.33 |   94.11 | 112                                                                              
+ security                             |   88.74 |    83.21 |   86.66 |   88.15 |                                                                                  
+  cors-origin.ts                      |     100 |    92.85 |     100 |     100 | 29                                                                               
+  csrf.middleware.ts                  |   97.14 |    93.33 |      80 |   96.87 | 55                                                                               
+  encryption.service.ts               |     100 |       90 |     100 |     100 | 48                                                                               
+  jwt-auth.guard.ts                   |     100 |      100 |     100 |     100 |                                                                                  
+  permission.guard.ts                 |     100 |      100 |     100 |     100 |                                                                                  
+  permissions.decorator.ts            |     100 |      100 |     100 |     100 |                                                                                  
+  permissions.ts                      |     100 |     87.5 |     100 |     100 | 25                                                                               
+  redis-rate-limit.store.ts           |   90.54 |    88.88 |    90.9 |   91.42 | 42-44,50-52                                                                      
+  roles.decorator.ts                  |     100 |      100 |     100 |     100 |                                                                                  
+  roles.guard.ts                      |     100 |      100 |      75 |     100 |                                                                                  
+  vault.service.ts                    |   57.14 |    48.14 |   66.66 |   55.73 | 32-48,61-62,75,86-118,143                                                        
+ services/auth                        |   90.69 |    89.47 |   85.71 |   90.24 |                                                                                  
+  auth.controller.ts                  |   75.75 |       75 |   66.66 |   74.19 | 44-50,77-78,83-84                                                                
+  auth.service.ts                     |     100 |      100 |     100 |     100 |                                                                                  
+ services/delivery                    |    90.9 |     82.6 |    92.3 |    93.3 |                                                                                  
+  delivery.service.ts                 |   80.64 |       92 |      70 |   78.94 | 20-37,113,146                                                                    
+  enhanced-delivery.service.ts        |   94.67 |       80 |     100 |   98.68 | 168-169                                                                          
+ services/finance                     |     100 |    84.37 |     100 |     100 |                                                                                  
+  tax-reporting.service.ts            |     100 |    84.37 |     100 |     100 | 124-156                                                                          
+ services/geo                         |     100 |      100 |     100 |     100 |                                                                                  
+  geo.service.ts                      |     100 |      100 |     100 |     100 |                                                                                  
+ services/loyalty                     |   99.29 |     87.5 |     100 |     100 |                                                                                  
+  loyalty.service.ts                  |   99.29 |     87.5 |     100 |     100 | 76,131-132,151,197,226                                                           
+ services/notifications               |     100 |    93.58 |     100 |     100 |                                                                                  
+  notification-preferences.service.ts |     100 |      100 |     100 |     100 |                                                                                  
+  notification.service.ts             |     100 |    92.68 |     100 |     100 | 100,164,240                                                                      
+  production-notification.service.ts  |     100 |    93.33 |     100 |     100 | 58,111                                                                           
+ services/order                       |   94.75 |    91.96 |     100 |   94.67 |                                                                                  
+  order.service.ts                    |   94.75 |    91.96 |     100 |   94.67 | 54,78,81,84,198,298-299,339-340,374-375,411-412                                  
+ services/payments                    |   99.02 |    84.21 |     100 |   98.94 |                                                                                  
+  gateway-factory.service.ts          |     100 |      100 |     100 |     100 |                                                                                  
+  idempotency.entity.ts               |     100 |      100 |     100 |     100 |                                                                                  
+  idempotency.service.ts              |     100 |    83.33 |     100 |     100 | 67                                                                               
+  payment-event.entity.ts             |     100 |      100 |     100 |     100 |                                                                                  
+  payment-fraud.entity.ts             |     100 |      100 |     100 |     100 |                                                                                  
+  payments.service.ts                 |   98.55 |    81.08 |     100 |    98.5 | 257                                                                              
+  retry.service.ts                    |   98.07 |     87.5 |     100 |   97.91 | 99                                                                               
+ services/payments/chargeback         |   92.07 |    86.44 |   88.88 |   91.91 |                                                                                  
+  chargeback.service.ts               |   92.07 |    86.44 |   88.88 |   91.91 | 15-29                                                                            
+ services/payments/gateways           |   85.38 |       55 |    87.5 |   85.36 |                                                                                  
+  cod-gateway.service.ts              |   84.21 |       50 |   85.71 |   82.35 | 7-10                                                                             
+  razorpay-gateway.service.ts         |   86.95 |    54.83 |      90 |   87.87 | 12,45-47,52-53,89-90                                                             
+  stripe-gateway.service.ts           |   83.33 |    57.14 |   85.71 |    82.5 | 10-14,47-48,137-138                                                              
+ services/payments/webhook            |   54.45 |    46.98 |   47.82 |   53.96 |                                                                                  
+  webhook.service.ts                  |   54.45 |    46.98 |   47.82 |   53.96 | 20-39,62,164-166,168,174-175,181,199-213,225-229,245-246,273,281-387,427,435-499 
+ services/refund                      |   95.97 |     77.5 |     100 |   95.91 |                                                                                  
+  refund.service.ts                   |   95.97 |     77.5 |     100 |   95.91 | 173,214,252,378,429,478                                                          
+ services/wallet                      |   99.35 |     87.5 |     100 |   99.33 |                                                                                  
+  wallet.controller.ts                |     100 |        0 |     100 |     100 | 38-39                                                                            
+  wallet.service.ts                   |   99.18 |     92.1 |     100 |   99.15 | 133                                                                              
+ shared/domain                        |     100 |      100 |     100 |     100 |                                                                                  
+  order.interface.ts                  |     100 |      100 |     100 |     100 |                                                                                  
+  user.interface.ts                   |     100 |      100 |     100 |     100 |                                                                                  
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------
+
+Test Suites: 1 skipped, 67 passed, 67 of 68 total
+Tests:       1 skipped, 1070 passed, 1071 total
+Snapshots:   0 total
+Time:        58.897 s
+Ran all test suites.
+

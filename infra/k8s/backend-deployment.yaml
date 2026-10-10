@@ -20,6 +20,9 @@ spec:
           envFrom:
             - secretRef:
                 name: spicegarden-secrets
+          env:
+            - name: UV_THREADPOOL_SIZE
+              value: "64"
           readinessProbe:
             httpGet:
               path: /health

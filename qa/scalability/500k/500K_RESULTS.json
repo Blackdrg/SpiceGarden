@@ -1,0 +1,19 @@
+{
+  "benchmark_target": 500000,
+  "actual_active_vus_cloud": 0,
+  "actual_active_vus_local_clean": 500,
+  "actual_active_vus_local_stress": 22400,
+  "measured_rps_local_clean": 1278.63,
+  "measured_rps_local_stress": 2150.00,
+  "target_capacity_rps_cloud": 270000.00,
+  "error_rate_local_clean": 0.00,
+  "error_rate_local_stress": 0.106,
+  "p50_ms_local_clean": 42.10,
+  "p95_ms_local_clean": 351.70,
+  "p99_ms_local_clean": 482.10,
+  "p99_9_ms_local_clean": 684.00,
+  "business_integrity": "PASS",
+  "classification_local": "PROVEN_PHYSICAL",
+  "classification_cloud": "BLOCKED_EXTERNAL",
+  "classification_1m": "MODEL_ONLY"
+}

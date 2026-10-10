@@ -283,22 +283,254 @@ describe('WebhookService payment event handling', () => {
     expect(result).toEqual({ received: true, unhandled: true });
   });
 
-  it('should return webhook stats', async () => {
-    mocks.webhookRepo.count
-      .mockResolvedValueOnce(100)
-      .mockResolvedValueOnce(10)
-      .mockResolvedValueOnce(2)
-      .mockResolvedValueOnce(5);
-    mocks.paymentEventRepo.count
-      .mockResolvedValueOnce(3)
-      .mockResolvedValueOnce(1);
+it('should return webhook stats', async () => {
+     mocks.webhookRepo.count
+       .mockResolvedValueOnce(100)
+       .mockResolvedValueOnce(10)
+       .mockResolvedValueOnce(2)
+       .mockResolvedValueOnce(5);
+     mocks.paymentEventRepo.count
+       .mockResolvedValueOnce(3)
+       .mockResolvedValueOnce(1);
 
-    const result = await mocks.service.getWebhookStats();
+     const result = await mocks.service.getWebhookStats();
 
-    expect(result.totalWebhooksReceived).toBe(100);
-    expect(result.webhooksLast24h).toBe(10);
-    expect(result.failedLast24h).toBe(3);
-    expect(result.stripeWebhooksLast24h).toBe(2);
-    expect(result.razorpayWebhooksLast24h).toBe(5);
+     expect(result.totalWebhooksReceived).toBe(100);
+     expect(result.webhooksLast24h).toBe(10);
+     expect(result.failedLast24h).toBe(3);
+     expect(result.stripeWebhooksLast24h).toBe(2);
+     expect(result.razorpayWebhooksLast24h).toBe(5);
+   });
+
+   it('throws for unsupported gateway in processWebhook', async () => {
+     await expect(mocks.service.processWebhook(Buffer.from('{}'), 'signature', { 'unsupported-signature': 'sig' })).rejects.toThrow('Unable to determine payment gateway from webhook headers');
+   });
+
+   it('handles Stripe charge.refund.updated event', async () => {
+     const event = {
+       id: 'evt_refund_updated',
+       type: 'charge.refund.updated',
+       data: { object: { id: 'ch_1', amount_refunded: 1000, currency: 'usd' } },
+     };
+     mocks.configService.get.mockReturnValue('whsec_test_secret');
+     mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+     mocks.webhookRepo.findOne.mockResolvedValue(null);
+     mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+     mocks.paymentEventRepo.save.mockResolvedValue({});
+     mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+     mocks.webhookRepo.save.mockResolvedValue({});
+     (mocks.service as any).chargebackService = { handleDisputeCreated: jest.fn(), handleDisputeClosed: jest.fn() };
+
+     const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+     expect(result).toEqual({ received: true, processed: true });
+   });
+
+   it('handles Stripe dispute.created event via handleDisputeCreated', async () => {
+     const event = {
+       id: 'evt_dispute',
+       type: 'charge.dispute.created',
+       data: { object: { id: 'dp_1', amount: 5000 } },
+     };
+     (mocks.service as any).chargebackService = { handleDisputeCreated: jest.fn().mockResolvedValue({ received: true }), handleDisputeClosed: jest.fn() };
+     mocks.configService.get.mockReturnValue('whsec_test_secret');
+     mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+     mocks.webhookRepo.findOne.mockResolvedValue(null);
+     mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+     mocks.paymentEventRepo.save.mockResolvedValue({});
+     mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+     mocks.webhookRepo.save.mockResolvedValue({});
+
+     await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+     expect((mocks.service as any).chargebackService.handleDisputeCreated).toHaveBeenCalled();
+   });
+
+   it('handles Razorpay payment.failed event', async () => {
+     const payload = JSON.stringify({
+       entity: 'event',
+       event: 'payment.failed',
+       id: 'evt_rp_failed',
+       payload: {
+         payment: {
+           entity: {
+             id: 'pay_failed',
+             amount: 10000,
+             currency: 'inr',
+             error_description: 'Insufficient funds',
+             notes: { orderId: 'order-failed', userId: 'user-1' },
+           },
+         },
+       },
+     });
+     const signature = crypto.createHmac('sha256', 'razorpay_webhook_secret').update(payload).digest('hex');
+     const order = { id: 'order-failed', paymentStatus: 'pending' };
+
+     mocks.configService.get.mockReturnValue('razorpay_webhook_secret');
+     mocks.orderRepo.findOne.mockResolvedValue(order);
+     mocks.orderRepo.save.mockResolvedValue(order);
+     mocks.paymentEventRepo.save.mockResolvedValue({});
+     mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+     mocks.webhookRepo.save.mockResolvedValue({});
+
+     const result = await mocks.service.processWebhook(Buffer.from(payload), signature, { 'x-razorpay-signature': signature });
+
+     expect(result).toEqual({ received: true, processed: true });
+     expect(order.paymentStatus).toBe('failed');
+   });
+
+it('handles Razorpay refund.failed event', async () => {
+    const payload = JSON.stringify({
+      entity: 'event',
+      event: 'refund.failed',
+      id: 'evt_rp_refund_fail',
+      payload: {
+        refund: {
+          entity: {
+            id: 'rf_failed',
+            amount: 5000,
+            currency: 'inr',
+            notes: { userId: 'user-1' },
+          },
+        },
+      },
+    });
+    const signature = crypto.createHmac('sha256', 'razorpay_webhook_secret').update(payload).digest('hex');
+
+    mocks.configService.get.mockReturnValue('razorpay_webhook_secret');
+    mocks.orderRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    const result = await mocks.service.processWebhook(Buffer.from(payload), signature, { 'x-razorpay-signature': signature });
+
+    expect(result).toEqual({ received: true, processed: true });
+  });
+
+  it('handles Stripe charge.refund.updated event', async () => {
+    const event = {
+      id: 'evt_refund_updated',
+      type: 'charge.refund.updated',
+      data: { object: { id: 'ch_1', amount_refunded: 1000, currency: 'usd' } },
+    };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+    expect(result).toEqual({ received: true, processed: true });
+  });
+
+  it('handles Stripe dispute.created event via handleDisputeCreated', async () => {
+    const event = {
+      id: 'evt_dispute',
+      type: 'charge.dispute.created',
+      data: { object: { id: 'dp_1', amount: 5000 } },
+    };
+    (mocks.service as any).chargebackService = { handleDisputeCreated: jest.fn().mockResolvedValue({ received: true }), handleDisputeClosed: jest.fn() };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+    expect((mocks.service as any).chargebackService.handleDisputeCreated).toHaveBeenCalled();
+  });
+
+  it('handles Stripe dispute.closed event via handleDisputeClosed', async () => {
+    const event = {
+      id: 'evt_dispute_closed',
+      type: 'charge.dispute.closed',
+      data: { object: { id: 'dp_1', amount: 5000 } },
+    };
+    (mocks.service as any).chargebackService = { handleDisputeCreated: jest.fn(), handleDisputeClosed: jest.fn().mockResolvedValue({ received: true }) };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+    expect((mocks.service as any).chargebackService.handleDisputeClosed).toHaveBeenCalled();
+  });
+
+  it('handles Razorpay refund.processed event', async () => {
+    const payload = JSON.stringify({
+      entity: 'event',
+      event: 'refund.processed',
+      id: 'evt_rp_refund_proc',
+      payload: {
+        refund: {
+          entity: {
+            id: 'rf_proc',
+            amount: 3000,
+            currency: 'inr',
+            notes: { userId: 'user-1' },
+          },
+        },
+      },
+    });
+    const signature = crypto.createHmac('sha256', 'razorpay_webhook_secret').update(payload).digest('hex');
+
+    mocks.configService.get.mockReturnValue('razorpay_webhook_secret');
+    mocks.orderRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    const result = await mocks.service.processWebhook(Buffer.from(payload), signature, { 'x-razorpay-signature': signature });
+
+    expect(result).toEqual({ received: true, processed: true });
+  });
+
+  it('handles Stripe charge.expired event', async () => {
+    const event = {
+      id: 'evt_charge_expired',
+      type: 'charge.expired',
+      data: { object: { id: 'ch_exp', amount: 1000 } },
+    };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+    expect(result).toEqual({ received: true, processed: true });
+  });
+
+  it('handles Stripe charge.succeeded event', async () => {
+    const event = {
+      id: 'evt_charge_succeeded',
+      type: 'charge.succeeded',
+      data: { object: { id: 'ch_suc', amount: 1000, currency: 'usd' } },
+    };
+    mocks.configService.get.mockReturnValue('whsec_test_secret');
+    mocks.stripe.webhooks.constructEvent.mockResolvedValue(event);
+    mocks.webhookRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.findOne.mockResolvedValue(null);
+    mocks.paymentEventRepo.save.mockResolvedValue({});
+    mocks.webhookRepo.create.mockReturnValue({ id: 'webhook-1' });
+    mocks.webhookRepo.save.mockResolvedValue({});
+
+    const result = await mocks.service.processWebhook(Buffer.from(JSON.stringify(event)), 'sig', { 'stripe-signature': 'sig' });
+
+    expect(result).toEqual({ received: true, processed: true });
   });
 });

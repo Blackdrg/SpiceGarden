@@ -23,6 +23,7 @@ function getStatusColor(status: OrderStatus): string {
 export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: OrderCardProps) {
   const totalItems = calculateTotalItems(order.items);
   const formattedTotal = formatCurrency(order.total, 'INR');
+  const statusColor = getStatusColor(order.status);
 
   return (
     <View
@@ -41,11 +42,11 @@ export const OrderCard = memo(function OrderCard({ order, onReorder, onTrack }: 
             #{order.id}
           </Text>
           <View
-            style={[styles.orderStatusBadge, { backgroundColor: getStatusColor(order.status) + '20' }]}
+            style={[styles.orderStatusBadge, { backgroundColor: statusColor + '20' }]}
             accessible={true}
             accessibilityLabel={`${order.status} status`}
           >
-            <Text style={[styles.orderStatusText, { color: getStatusColor(order.status) }]}>
+            <Text style={[styles.orderStatusText, { color: statusColor }]}>
               {formatOrderStatus(order.status)}
             </Text>
           </View>

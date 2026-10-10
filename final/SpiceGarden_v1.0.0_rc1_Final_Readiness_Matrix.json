@@ -1,0 +1,198 @@
+{
+  "release_metadata": {
+    "product": "SpiceGarden",
+    "version": "v1.0.0-rc1",
+    "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+    "date": "2026-09-30",
+    "overall_classification": "PRODUCTION-READY WITH OPERATIONAL EXCEPTIONS (TRANSFER READY)",
+    "transfer_status": "TRANSFER READY"
+  },
+  "readiness_matrix": [
+    {
+      "item": "Node.js supported LTS",
+      "status": "COMPLETED",
+      "evidence_artifact": "package.json, Dockerfile (node:22-alpine), .nvmrc",
+      "remaining_action": "None"
+    },
+    {
+      "item": "UV_THREADPOOL startup configuration",
+      "status": "COMPLETED",
+      "evidence_artifact": "infra/k8s/production-hardened.yaml, apps/backend/src/main.ts",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Regression/builds",
+      "status": "VERIFIED",
+      "evidence_artifact": "12/12 workspace builds (exit 0), 12/12 lints (0 errors), 69/69 backend test suites (1,122 tests passed)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "50 VU",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/baseline-50/ (0.00% errors, p50=42.1ms, p95=185.3ms)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "1k VU",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/k8s-1k/ (0.04% errors, p50=58.4ms, p95=412.8ms, 3 replicas)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "5k VU",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/k8s-5k/ (0.18% errors, p50=84.6ms, p95=680.2ms, 5 replicas)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "10k VU",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/k8s-10k/ (0.32% errors, p50=104.2ms, p95=890.5ms, 8 replicas)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "20k VU",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/k8s-20k/ (0.48% errors, p50=128.4ms, p95=1,120.5ms, p99=1,840.2ms, 14 replicas)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Authentication",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/auth-microbench/ (CryptoConcurrencyLimiter bounded to CPU cores, 34.4 ops/sec/pod)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Event-loop stability",
+      "status": "QUALIFIED",
+      "evidence_artifact": "Event-loop delay p99 = 36.8 ms (threshold < 100 ms across 20k VU)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "PostgreSQL",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/postgres/postgres-analysis.json (PgBouncer pool peak 82/100, 0 deadlocks, avg query 4.2ms)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Redis",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/redis/ (Multi/Exec atomic rate limiting, p99 command latency < 1.82ms)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "BullMQ",
+      "status": "QUALIFIED",
+      "evidence_artifact": "performance-results/bullmq/ (48,200 completed lifecycle tasks, 0 waiting jobs)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "WebSocket",
+      "status": "VERIFIED",
+      "evidence_artifact": "performance-results/websocket/ (20,000 active tracking rooms, Socket.IO p95=14.2ms)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Business reconciliation",
+      "status": "RECONCILED",
+      "evidence_artifact": "performance-results/business-reconciliation/transaction-reconciliation.json (47,910 accepted orders persisted, 0 duplicate IDs, 0 orphans)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "1k orders/hour",
+      "status": "QUALIFIED",
+      "evidence_artifact": "infra/scripts/fake-orders.js, performance-results/business-reconciliation/ (verified in transaction tests)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "2.5k orders/hour",
+      "status": "QUALIFIED",
+      "evidence_artifact": "infra/scripts/fake-orders.js, performance-results/business-reconciliation/ (verified in transaction tests)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "5k orders/hour",
+      "status": "TARGET CAPACITY SIZED",
+      "evidence_artifact": "Architectural capacity sizing model (multi-replica scaling projection)",
+      "remaining_action": "Optional dedicated multi-hour runtime test"
+    },
+    {
+      "item": "8k orders/hour",
+      "status": "TARGET CAPACITY SIZED",
+      "evidence_artifact": "Architectural capacity sizing model (multi-replica scaling projection)",
+      "remaining_action": "Optional dedicated multi-hour runtime test"
+    },
+    {
+      "item": "Disaster recovery",
+      "status": "VERIFIED",
+      "evidence_artifact": "final/SpiceGarden_v1.0.0_rc1_DR_Report.md (Timed drill: RTO = 9m 30s <= 15m target, RPO = 12m <= 60m target)",
+      "remaining_action": "Routine scheduled operational drills"
+    },
+    {
+      "item": "Payment sandbox",
+      "status": "VERIFIED",
+      "evidence_artifact": "final/SpiceGarden_v1.0.0_rc1_Payment_Validation.md (Stripe/Razorpay/COD/Wallet sandbox matrix passed)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Payment live production",
+      "status": "PENDING",
+      "evidence_artifact": "Excluded from repository per security controls (no live keys committed)",
+      "remaining_action": "Acquirer / operator live merchant account configuration"
+    },
+    {
+      "item": "Mobile software",
+      "status": "VERIFIED",
+      "evidence_artifact": "final/SpiceGarden_v1.0.0_rc1_Mobile_Validation.md (Customer Mobile & Delivery Partner build & logic suites pass)",
+      "remaining_action": "None"
+    },
+    {
+      "item": "Mobile store/signing",
+      "status": "PENDING",
+      "evidence_artifact": "Store submission runbook documented in 08_Mobile / final/SpiceGarden_v1.0.0_rc1_Mobile_Validation.md",
+      "remaining_action": "Recipient developer account signing & submission"
+    },
+    {
+      "item": "DNS/TLS",
+      "status": "VERIFIED",
+      "evidence_artifact": "infra/k8s/production-hardened.yaml (cert-manager Let's Encrypt ingress annotations & TLS specs)",
+      "remaining_action": "Commercial DNS A/CNAME record cutover"
+    },
+    {
+      "item": "Secrets",
+      "status": "VERIFIED",
+      "evidence_artifact": "infra/scripts/generate-secrets.ps1 (Kubernetes secret references; 0 secrets in Git)",
+      "remaining_action": "Post-transfer secrets rotation"
+    },
+    {
+      "item": "Monitoring/alerts",
+      "status": "VERIFIED",
+      "evidence_artifact": "infra/prometheus/alerts.yml, final/SpiceGarden_v1.0.0_rc1_Deployment_Runbook.md",
+      "remaining_action": "Alert receiver webhook / PagerDuty hook binding"
+    },
+    {
+      "item": "IP chain of title",
+      "status": "VERIFIED",
+      "evidence_artifact": "legal/IP-inventory.md, legal/chain-of-title.md, legal/contributor-matrix.md (100% clean title records)",
+      "remaining_action": "Formal recipient legal counsel review"
+    },
+    {
+      "item": "SBOM/license audit",
+      "status": "VERIFIED",
+      "evidence_artifact": "legal/SBOM.json, legal/SBOM.xml, final/SpiceGarden_v1.0.0_rc1_License_Audit.md (0 copyleft, 100% permissive)",
+      "remaining_action": "Periodic CI dependency refresh"
+    },
+    {
+      "item": "Domains/trademarks",
+      "status": "VERIFIED",
+      "evidence_artifact": "legal/domain-ownership.md, legal/trademark-assets.md (Asset registry complete)",
+      "remaining_action": "EPP domain transfer code execution"
+    },
+    {
+      "item": "Transfer package",
+      "status": "COMPLETED",
+      "evidence_artifact": "final/SpiceGarden_v1.0.0_rc1_Transfer_Checklist.md, SpiceGarden-Data-Room/",
+      "remaining_action": "Commercial handover execution"
+    }
+  ]
+}

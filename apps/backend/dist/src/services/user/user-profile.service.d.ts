@@ -17,7 +17,7 @@ export declare class UserProfileService {
             lng: number;
         };
         isDefault?: boolean;
-    }): Promise<AddressEntity>;
+    }): Promise<any>;
     updateAddress(userId: string, id: string, data: Partial<{
         label: string;
         addressLine: string;

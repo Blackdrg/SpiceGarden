@@ -1,0 +1,19 @@
+{
+  "stage": "k8s-5k",
+  "vus": 5000,
+  "replicas": 5,
+  "duration_seconds": 300,
+  "http_reqs": 215400,
+  "http_req_failed_rate": 0.0018,
+  "check_success_rate": 0.9982,
+  "timings": {
+    "min_ms": 3.4,
+    "p50_ms": 84.6,
+    "p90_ms": 410.5,
+    "p95_ms": 680.2,
+    "p99_ms": 1180.4,
+    "max_ms": 1750.0
+  },
+  "event_loop_lag_p99_ms": 22.4,
+  "status": "PASS"
+}

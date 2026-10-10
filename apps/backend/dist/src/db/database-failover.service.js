@@ -37,6 +37,9 @@ let DatabaseFailoverService = class DatabaseFailoverService {
         this.healthCheckInterval = setInterval(async () => {
             await this.performHealthCheck();
         }, 30000);
+        if (this.healthCheckInterval && typeof this.healthCheckInterval.unref === 'function') {
+            this.healthCheckInterval.unref();
+        }
     }
     stopHealthCheck() {
         if (this.healthCheckInterval) {

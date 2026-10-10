@@ -1,0 +1,8 @@
+{
+  "extends": ["webhint", ":recommended"],
+  "ignoredFiles": [
+    "**/coverage/**/*.html",
+    "**/coverage/**/*.css",
+    "**/.next/**/*.html"
+  ]
+}

@@ -10,9 +10,9 @@ export declare class ReconciliationService {
     private payoutRepo;
     private incentiveRepo;
     private gstRepo;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(orderRepo: Repository<OrderEntity>, transactionRepo: Repository<WalletTransactionEntity>, payoutRepo: Repository<PayoutReportEntity>, incentiveRepo: Repository<DriverIncentiveEntity>, gstRepo: Repository<GSTDetailEntity>, dataSource: DataSource);
+    constructor(orderRepo: Repository<OrderEntity>, transactionRepo: Repository<WalletTransactionEntity>, payoutRepo: Repository<PayoutReportEntity>, incentiveRepo: Repository<DriverIncentiveEntity>, gstRepo: Repository<GSTDetailEntity>, connection: DataSource);
     reconcilePayments(startDate: Date, endDate: Date): Promise<any>;
     reconcilePayouts(restaurantId: string, startDate: Date, endDate: Date): Promise<any>;
     reconcileDriverPayments(driverId: string, startDate: Date, endDate: Date): Promise<any>;

@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('subscriptions')
+@Index('idx_subscriptions_user_id', ['userId'])
+@Index('idx_subscriptions_status', ['status'])
 export class SubscriptionEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

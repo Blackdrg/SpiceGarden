@@ -1,0 +1,102 @@
+# infra/k8s/chaos-experiments-500k.yaml
+# ==============================================================================
+# SpiceGarden 500K Chaos Engineering Matrix Experiments (Chaos Mesh / Litmus)
+# Injects 6 critical failure modes into the 500K live cluster topology:
+# 1. Backend Pod Kill (20% rolling kill)
+# 2. PgBouncer Service Disruption
+# 3. Aurora PostgreSQL Primary Node Failover
+# 4. Redis Master Shard Failure
+# 5. EKS Worker Node Drain & Eviction
+# 6. Cross-AZ Network Latency & Packet Loss Injection
+# ==============================================================================
+
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: backend-pod-failure-experiment
+  namespace: spicegarden-prod
+spec:
+  action: pod-failure
+  mode: fixed-percent
+  value: '20'
+  duration: '60s'
+  selector:
+    namespaces:
+      - spicegarden-prod
+    labelSelectors:
+      app: spicegarden-backend
+  scheduler:
+    cron: '@every 10m'
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: pgbouncer-rolling-kill
+  namespace: spicegarden-prod
+spec:
+  action: pod-kill
+  mode: fixed-percent
+  value: '25'
+  selector:
+    namespaces:
+      - spicegarden-prod
+    labelSelectors:
+      app: spicegarden-pgbouncer
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-latency-jitter-experiment
+  namespace: spicegarden-prod
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - spicegarden-prod
+    labelSelectors:
+      app: spicegarden-backend
+  delay:
+    latency: '100ms'
+    jitter: '20ms'
+    correlation: '50'
+  duration: '120s'
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: redis-partition-simulation
+  namespace: spicegarden-prod
+spec:
+  action: partition
+  mode: fixed
+  value: '1'
+  selector:
+    namespaces:
+      - spicegarden-prod
+    labelSelectors:
+      app: spicegarden-redis
+  direction: both
+  duration: '45s'
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: memory-cpu-burn-experiment
+  namespace: spicegarden-prod
+spec:
+  mode: fixed-percent
+  value: '30'
+  selector:
+    namespaces:
+      - spicegarden-prod
+    labelSelectors:
+      app: spicegarden-backend
+  stressors:
+    cpu:
+      workers: 4
+      load: 90
+    memory:
+      workers: 2
+      size: '1GB'
+  duration: '90s'

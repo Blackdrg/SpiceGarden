@@ -6,9 +6,9 @@ export declare class MenuModerationService {
     private moderationRepo;
     private itemRepo;
     private restaurantRepo;
-    private dataSource;
+    private connection;
     private readonly logger;
-    constructor(moderationRepo: Repository<MenuModerationEntity>, itemRepo: Repository<MenuItemEntity>, restaurantRepo: Repository<RestaurantEntity>, dataSource: DataSource);
+    constructor(moderationRepo: Repository<MenuModerationEntity>, itemRepo: Repository<MenuItemEntity>, restaurantRepo: Repository<RestaurantEntity>, connection: DataSource);
     submitForModeration(menuItemId: string, restaurantId: string, action: ModerationAction, data: Record<string, any>, originalData?: Record<string, any>): Promise<MenuModerationEntity>;
     private detectAIFlags;
     private shouldFlagForReview;

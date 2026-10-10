@@ -1,9 +1,10 @@
 module.exports = {
+  preset: 'ts-jest',
   testEnvironment: 'node',
   setupFiles: ['<rootDir>/jest.setup.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transform: {
-    '^.+\\.(js|ts|tsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }],
   },
   transformIgnorePatterns: [
     'node_modules/(?!(react-native|@react-native|expo|@expo|@spicegarden)/)',

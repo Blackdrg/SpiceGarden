@@ -1,12 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { MenuCategoryEntity } from './menu-category.entity'; // if needed for relations later
 
 @Entity('drivers')
 export class DriverEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_drivers_user_id')
   @Column()
   userId!: string;
 
@@ -23,12 +23,15 @@ export class DriverEntity {
   @Column({ nullable: true })
   vehicleType!: string;
 
+  @Index('idx_drivers_kyc_status')
   @Column({ default: 'pending' })
   kycStatus!: string;
 
+  @Index('idx_drivers_is_online')
   @Column({ default: false })
   isOnline!: boolean;
 
+  @Index('idx_drivers_is_available')
   @Column({ default: false })
   isAvailable!: boolean;
 

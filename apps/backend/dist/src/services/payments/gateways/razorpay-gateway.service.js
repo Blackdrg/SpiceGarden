@@ -189,7 +189,9 @@ let RazorpayGateway = RazorpayGateway_1 = class RazorpayGateway {
                 .createHmac('sha256', secret)
                 .update(payload.toString())
                 .digest('hex');
-            if (expectedSignature !== signature) {
+            const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+            const signatureBuffer = Buffer.from(signature, 'utf8');
+            if (expectedBuffer.length !== signatureBuffer.length || !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)) {
                 throw new Error('Invalid webhook signature');
             }
             const parsed = safeParse(payload.toString());

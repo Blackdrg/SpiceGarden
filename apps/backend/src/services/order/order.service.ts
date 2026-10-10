@@ -4,6 +4,9 @@ import { Repository, LessThan, MoreThanOrEqual } from 'typeorm';
 import { Order, OrderStatus, PaymentStatus } from '../../shared/domain/order.interface';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
+import { DriverEntity } from '../../db/entities/driver.entity';
+import { UserEntity } from '../../db/entities/user.entity';
+import { RestaurantBranchEntity } from '../../db/entities/restaurant-branch.entity';
 import { PaymentService } from '../../services/payments/payments.service';
 import { NotificationService } from '../../services/notifications/notification.service';
 import { RetryService } from '../../services/payments/retry.service';
@@ -37,13 +40,19 @@ export class OrderService {
     private readonly orderRepo: Repository<OrderEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private readonly driverAssignmentRepo: Repository<DriverAssignmentEntity>,
+    @InjectRepository(DriverEntity)
+    private readonly driverRepo: Repository<DriverEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepo: Repository<UserEntity>,
+    @InjectRepository(RestaurantBranchEntity)
+    private readonly branchRepo: Repository<RestaurantBranchEntity>,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
     private readonly retryService: RetryService,
     private readonly idempotency: IdempotencyService,
     private readonly productionNotification: ProductionNotificationService,
     private readonly loggingService: LoggingService,
-  ) {}
+  ) { }
 
   validateOrderItems(items: any): void {
     if (!Array.isArray(items) || items.length === 0) {
@@ -167,7 +176,7 @@ export class OrderService {
       userId: data.userId,
       restaurantId: data.restaurantId,
       driverId: data.driverId,
-      orderNumber: `ORD-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${orderId.slice(0,6).toUpperCase()}`,
+      orderNumber: `ORD-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${orderId.slice(0, 6).toUpperCase()}`,
       status: OrderStatus.PLACED,
       paymentStatus: PaymentStatus.PENDING,
       subtotal: Number(data.subtotal) || 0,
@@ -425,22 +434,31 @@ export class OrderService {
 
     const resolvedOrders: Order[] = [];
 
-    for (const order of stuckOrders) {
-      try {
-        order.status = OrderStatus.RESTAURANT_ACCEPTED;
-        order.updatedAt = new Date();
+    const results = await Promise.allSettled(
+      stuckOrders.map(async (order) => {
+        try {
+          order.status = OrderStatus.RESTAURANT_ACCEPTED;
+          order.updatedAt = new Date();
 
-        const savedOrder = await this.orderRepo.save(order);
-        resolvedOrders.push(savedOrder);
+          const savedOrder = await this.orderRepo.save(order);
 
-        await this.notificationService.sendPush(
-          order.userId,
-          'Order Delayed',
-          `Your order #${order.orderNumber} is experiencing delays. We're working on it.`,
-          { orderId: order.id }
-        );
-      } catch (error) {
-        this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', {id: order.id, error}, 'OrderService');
+          await this.notificationService.sendPush(
+            order.userId,
+            'Order Delayed',
+            `Your order #${order.orderNumber} is experiencing delays. We're working on it.`,
+            { orderId: order.id }
+          );
+          return savedOrder;
+        } catch (error) {
+          this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', { id: order.id, error }, 'OrderService');
+          return null;
+        }
+      })
+    );
+
+    for (const res of results) {
+      if (res.status === 'fulfilled' && res.value) {
+        resolvedOrders.push(res.value);
       }
     }
 
@@ -462,7 +480,7 @@ export class OrderService {
   }
 
   async cancelOrderAtomic(orderId: string, actor: string, reason: string): Promise<Order> {
-    return this.orderRepo.manager.transaction(async (manager) => {
+    return this.orderRepo.manager.transaction(async (manager: any) => {
       const order = await manager.findOne(OrderEntity, { where: { id: orderId } });
       if (!order) {
         throw new NotFoundException(`Order ${orderId} not found`);
@@ -555,5 +573,46 @@ export class OrderService {
     }
 
     return order;
+  }
+
+  async getOrderWithDetails(orderId: string): Promise<Order & { driverPhone?: string; branchAddress?: string }> {
+    const order = await this.orderRepo.findOne({
+      where: { id: orderId },
+      relations: { branch: true },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    let driverPhone: string | undefined;
+    let branchAddress: string | undefined;
+
+    if (order.driverId) {
+      const driverPromise = this.driverRepo.findOne({
+        where: { id: order.driverId },
+        relations: { user: true },
+      });
+      const branchPromise = order.branchId
+        ? this.branchRepo.findOne({ where: { id: order.branchId } })
+        : Promise.resolve(null);
+      const [driver, branch] = await Promise.all([driverPromise, branchPromise]);
+      if (driver?.user?.phone) {
+        driverPhone = driver.user.phone;
+      }
+      if (branch?.address) {
+        branchAddress = branch.address;
+      }
+    } else if (order.branchId) {
+      const branch = await this.branchRepo.findOne({ where: { id: order.branchId } });
+      if (branch?.address) {
+        branchAddress = branch.address;
+      }
+    }
+
+    return {
+      ...order,
+      driverPhone,
+      branchAddress,
+    };
   }
 }

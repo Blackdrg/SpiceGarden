@@ -22,12 +22,12 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let RestaurantOnboardingService = RestaurantOnboardingService_1 = class RestaurantOnboardingService {
     onboardingRepo;
     restaurantRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(RestaurantOnboardingService_1.name);
-    constructor(onboardingRepo, restaurantRepo, dataSource) {
+    constructor(onboardingRepo, restaurantRepo, connection) {
         this.onboardingRepo = onboardingRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async getOnboardingByRestaurantId(restaurantId) {
         let onboarding = await this.onboardingRepo.findOne({ where: { restaurantId } });

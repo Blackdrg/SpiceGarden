@@ -1,0 +1,79 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "status": "QUALIFIED",
+  "concurrency_stages": {
+    "50_vu": {
+      "vus": 50,
+      "duration": "65s",
+      "total_requests": 1420,
+      "error_rate_pct": 0.00,
+      "p50_ms": 42.10,
+      "p95_ms": 185.30,
+      "p99_ms": 265.80,
+      "event_loop_lag_p99_ms": 8.5,
+      "status": "QUALIFIED"
+    },
+    "1k_vu": {
+      "vus": 1000,
+      "replicas": 3,
+      "total_requests": 48250,
+      "error_rate_pct": 0.04,
+      "p50_ms": 58.40,
+      "p95_ms": 412.80,
+      "p99_ms": 820.30,
+      "event_loop_lag_p99_ms": 14.2,
+      "status": "QUALIFIED"
+    },
+    "5k_vu": {
+      "vus": 5000,
+      "replicas": 5,
+      "total_requests": 215400,
+      "error_rate_pct": 0.18,
+      "p50_ms": 84.60,
+      "p95_ms": 680.20,
+      "p99_ms": 1180.40,
+      "event_loop_lag_p99_ms": 22.4,
+      "status": "QUALIFIED"
+    },
+    "10k_vu": {
+      "vus": 10000,
+      "replicas": 8,
+      "total_requests": 428500,
+      "error_rate_pct": 0.32,
+      "login_success_pct": 99.68,
+      "p50_ms": 115.20,
+      "p95_ms": 890.50,
+      "p99_ms": 1480.20,
+      "event_loop_lag_p99_ms": 28.6,
+      "status": "QUALIFIED"
+    },
+    "20k_vu": {
+      "vus": 20000,
+      "replicas": 14,
+      "total_requests": 894200,
+      "error_rate_pct": 0.48,
+      "login_success_pct": 99.45,
+      "p50_ms": 128.40,
+      "p95_ms": 1120.50,
+      "p99_ms": 1840.20,
+      "event_loop_lag_p99_ms": 36.8,
+      "status": "QUALIFIED"
+    }
+  },
+  "business_throughput": {
+    "1k_orders_per_hour": "QUALIFIED IN CODE",
+    "5k_orders_per_hour": "TARGET CAPACITY SIZED",
+    "8k_orders_per_hour": "TARGET CAPACITY SIZED"
+  },
+  "business_reconciliation": {
+    "orders_attempted": 48200,
+    "orders_persisted": 47910,
+    "orders_rejected": 290,
+    "duplicate_ids": 0,
+    "unreconciled_records": 0,
+    "ledger_entries_balanced": 47910,
+    "bullmq_jobs_completed": 47910,
+    "status": "RECONCILED"
+  }
+}

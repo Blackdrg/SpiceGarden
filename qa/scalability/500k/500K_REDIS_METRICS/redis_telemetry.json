@@ -1,0 +1,11 @@
+{
+  "redis_cluster": {
+    "shard_count": 6,
+    "nodes_per_shard": 2,
+    "node_instance_type": "cache.r7g.2xlarge",
+    "avg_ops_per_sec": 245000,
+    "avg_cmd_latency_ms": 0.45,
+    "memory_used_pct": 38.2,
+    "evicted_keys": 0
+  }
+}

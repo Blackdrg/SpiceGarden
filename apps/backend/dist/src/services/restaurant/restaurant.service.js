@@ -21,11 +21,11 @@ const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.
 let RestaurantService = class RestaurantService {
     restaurantRepo;
     branchRepo;
-    dataSource;
-    constructor(restaurantRepo, branchRepo, dataSource) {
+    connection;
+    constructor(restaurantRepo, branchRepo, connection) {
         this.restaurantRepo = restaurantRepo;
         this.branchRepo = branchRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async getAllRestaurants() {
         return this.restaurantRepo.find({

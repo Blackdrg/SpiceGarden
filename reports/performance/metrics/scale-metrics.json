@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-10-02T19:18:57.570Z",
+  "system": {
+    "cpu_cores": 4,
+    "total_ram_bytes": 8589934592,
+    "platform": "win32",
+    "arch": "x64",
+    "node_version": "v25.5.0"
+  },
+  "application": {
+    "process_rss_mb": "31.29",
+    "heap_used_mb": "3.68",
+    "heap_total_mb": "4.63",
+    "external_mb": "1.24"
+  },
+  "measured_peak": {
+    "highest_physical_vus": 16850,
+    "highest_physical_rps": 1942,
+    "highest_sla_compliant_vus": 10000,
+    "highest_observed_vus": 22400
+  }
+}

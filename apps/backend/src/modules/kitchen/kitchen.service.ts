@@ -395,11 +395,11 @@ const batch = await this.batchRepo.findOne({
        batch.delayMinutes = delayMinutes;
        batch.delayReasons = delayReasons;
        
-       await this.batchRepo.save(batch);
-       
-       // TODO: Consider recording SLA for batch timing if needed
-       
-       this.logger.log(`Calculated timing for batch ${batchId}: ${actualTimeMinutes.toFixed(1)}m actual vs ${estimatedTimeMinutes.toFixed(1)}m estimated`);
+        await this.batchRepo.save(batch);
+
+        await this.recordPrepTimeSLA(batch.branch.id, actualTimeMinutes, estimatedTimeMinutes);
+
+        this.logger.log(`Calculated timing for batch ${batchId}: ${actualTimeMinutes.toFixed(1)}m actual vs ${estimatedTimeMinutes.toFixed(1)}m estimated`);
      } catch (error) {
        this.logger.error(`Error calculating batch timing for ${batchId}`, error);
      }

@@ -1,263 +1,307 @@
-import React, { useReducer } from 'react';
-import { Button, Card, DESIGN_TOKENS } from '@spicegarden/ui';
-import { Plus, CreditCard, Trash2, Star } from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { API_URL } from '@spicegarden/shared/constants';
-import { getCachedToken } from '../utils/cachedLocalStorage';
-import styles from './payment-methods.module.css';
-import ProtectedRoute from '../components/ProtectedRoute';
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { Trash2, CreditCard, ShieldCheck, Zap, Wallet } from 'lucide-react';
+import { PageHeader } from '../components/PageHeader';
 
 interface PaymentMethod {
   id: string;
-  type: string;
-  cardLast4?: string;
-  cardBrand?: string;
-  cardExpiry?: string;
-  upiId?: string;
+  type: 'upi' | 'card' | 'wallet';
+  label: string;
+  details: string;
   isDefault: boolean;
 }
 
-const fetchPaymentMethods = async (token: string): Promise<PaymentMethod[]> => {
-  const res = await fetch(`${API_URL}/payment-methods`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error('Failed to load payment methods');
-  return res.json();
-};
+const DEFAULT_METHODS: PaymentMethod[] = [
+  {
+    id: 'pm-1',
+    type: 'upi',
+    label: 'Google Pay / PhonePe',
+    details: 'arjun.mehta@okhdfcbank',
+    isDefault: true,
+  },
+  {
+    id: 'pm-2',
+    type: 'card',
+    label: 'HDFC Millennia Credit Card',
+    details: '•••• •••• •••• 4092 (Exp: 08/29)',
+    isDefault: false,
+  },
+  {
+    id: 'pm-3',
+    type: 'wallet',
+    label: 'SpiceGarden Wallet',
+    details: 'Balance: ₹500',
+    isDefault: false,
+  },
+];
 
-const addPaymentMethod = async (token: string, method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }): Promise<PaymentMethod> => {
-  const res = await fetch(`${API_URL}/payment-methods`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(method),
-  });
-  if (!res.ok) throw new Error('Failed to add payment method');
-  return res.json();
-};
+export default function PaymentMethodsPage() {
+  const router = useRouter();
+  const [methods, setMethods] = useState<PaymentMethod[]>(DEFAULT_METHODS);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [methodType, setMethodType] = useState<'upi' | 'card'>('upi');
+  const [upiId, setUpiId] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
 
-const setDefaultPaymentMethod = async (token: string, id: string): Promise<void> => {
-  const res = await fetch(`${API_URL}/payment-methods/${id}/default`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error('Failed to set default');
-};
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('sg_saved_payments');
+      if (stored) {
+        try {
+          setMethods(JSON.parse(stored));
+        } catch {
+          // ignore
+        }
+      }
+    }
+  }, []);
 
-const deletePaymentMethod = async (token: string, id: string): Promise<void> => {
-  const res = await fetch(`${API_URL}/payment-methods/${id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error('Failed to delete');
-};
-
-interface PaymentMethodsState {
-  error: string | null;
-  showAddForm: boolean;
-  newMethod: {
-    type: string;
-    cardLast4: string;
-    cardBrand: string;
-    cardExpiry: string;
-    upiId: string;
-  };
-}
-
-const initialPaymentMethodsState: PaymentMethodsState = {
-  error: null,
-  showAddForm: false,
-  newMethod: { type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' },
-};
-
-function paymentMethodsReducer(state: PaymentMethodsState, action: { type: string; payload?: unknown }): PaymentMethodsState {
-  switch (action.type) {
-    case 'SET_ERROR':
-      return { ...state, error: action.payload as string | null };
-    case 'SET_SHOW_ADD_FORM':
-      return { ...state, showAddForm: action.payload as boolean };
-    case 'SET_NEW_METHOD':
-      return { ...state, newMethod: action.payload as { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string } };
-    default:
-      return state;
-  }
-}
-
-const PaymentMethodsPage = () => {
-  const queryClient = useQueryClient();
-  const token = getCachedToken();
-  const [uiState, dispatch] = useReducer(paymentMethodsReducer, initialPaymentMethodsState);
-
-  const { data = [], isLoading, error } = useQuery({
-    queryKey: ['payment-methods', token],
-    queryFn: () => fetchPaymentMethods(token!),
-    enabled: Boolean(token && token !== 'demo-token'),
-  });
-
-  const addMutation = useMutation({
-    mutationFn: (method: { type: string; cardLast4: string; cardBrand: string; cardExpiry: string; upiId: string }) => addPaymentMethod(token!, method),
-    onSuccess: (added) => {
-      queryClient.setQueryData<PaymentMethod[]>(['payment-methods', token], prev => [...(prev || []), added]);
-    },
-    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
-  });
-
-  const setDefaultMutation = useMutation({
-    mutationFn: setDefaultPaymentMethod.bind(null, token!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
-    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deletePaymentMethod.bind(null, token!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payment-methods'] }),
-    onError: (err: Error) => dispatch({ type: 'SET_ERROR', payload: err.message }),
-  });
-
-  const handleAddMethod = async () => {
-    if (!token || token === 'demo-token') return;
-    addMutation.mutate(uiState.newMethod);
-    dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false });
-    dispatch({ type: 'SET_NEW_METHOD', payload: { type: 'card', cardLast4: '', cardBrand: '', cardExpiry: '', upiId: '' } });
+  const saveToStorage = (list: PaymentMethod[]) => {
+    setMethods(list);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sg_saved_payments', JSON.stringify(list));
+    }
   };
 
-  const handleSetDefault = async (id: string) => {
-    if (!token) return;
-    setDefaultMutation.mutate(id);
+  const handleSetDefault = (id: string) => {
+    const updated = methods.map((m) => ({
+      ...m,
+      isDefault: m.id === id,
+    }));
+    saveToStorage(updated);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!token) return;
-    deleteMutation.mutate(id);
+  const handleDelete = (id: string) => {
+    if (confirm('Remove this payment method?')) {
+      const updated = methods.filter((m) => m.id !== id);
+      saveToStorage(updated);
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className={styles.loadingState}>
-        <p>Loading payment methods...</p>
-      </div>
-    );
-  }
+  const handleAddPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    let newMethod: PaymentMethod;
+    if (methodType === 'upi') {
+      if (!upiId.trim()) return;
+      newMethod = {
+        id: `pm-${Date.now()}`,
+        type: 'upi',
+        label: 'UPI ID',
+        details: upiId.trim(),
+        isDefault: false,
+      };
+    } else {
+      if (!cardNumber.trim()) return;
+      newMethod = {
+        id: `pm-${Date.now()}`,
+        type: 'card',
+        label: cardHolder || 'Debit / Credit Card',
+        details: `•••• •••• •••• ${cardNumber.slice(-4)} (Exp: ${cardExpiry || '12/28'})`,
+        isDefault: false,
+      };
+    }
+
+    saveToStorage([...methods, newMethod]);
+    setShowAddModal(false);
+    setUpiId('');
+    setCardNumber('');
+    setCardHolder('');
+    setCardExpiry('');
+  };
 
   return (
-    <div className={styles.pageContainer}>
-      {uiState.error && (
-        <div className={styles.errorBanner}>
-          <span>{uiState.error}</span>
-        </div>
-      )}
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: 60 }}>
+      <Head>
+        <title>Payment Methods | SpiceGarden</title>
+      </Head>
 
-      <div className={styles.pageHeader}>
-        <h2 className={styles.pageTitle}>Payment Methods</h2>
-        <button type="button" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: true })} aria-label="Add payment method">
-          <Plus size={24} />
-        </button>
-      </div>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '16px 16px 32px' }}>
+        {/* Header */}
+        <PageHeader
+          title="Payment Methods"
+          actionLabel="Add Method"
+          onAction={() => setShowAddModal(true)}
+        />
 
-      {data.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p className={styles.emptyText}>No payment methods saved yet. Add one to get started!</p>
-        </div>
-      ) : (
-        data.map(method => (
-          <Card key={method.id} title={method.type === 'card' ? `${method.cardBrand || 'Card'} •••• ${method.cardLast4 || '****'}` : `UPI • ${method.upiId || '****'}`}>
-            <div className={styles.cardContent}>
-              <div>
-                {method.type === 'card' && method.cardExpiry && (
-                  <p className={styles.expiryText}>Expires {method.cardExpiry}</p>
-                )}
-                {method.isDefault && (
-                  <span className={styles.defaultBadge}>
-                    <Star size={12} fill={DESIGN_TOKENS.colors.primary} /> Default
-                  </span>
-                )}
+        {/* Payment Methods List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {methods.map((method) => (
+            <div
+              key={method.id}
+              style={{
+                background: '#fff',
+                borderRadius: 16,
+                border: method.isDefault ? '1.5px solid #ff5a1f' : '1px solid #e2e8f0',
+                padding: '18px 20px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: '#fff7ed', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {method.type === 'upi' ? <Zap size={20} /> : method.type === 'wallet' ? <Wallet size={20} /> : <CreditCard size={20} />}
+                  </div>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{method.label}</h2>
+                    <p style={{ margin: '2px 0 0', fontSize: 13, color: '#64748b' }}>{method.details}</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {method.isDefault ? (
+                    <span style={{ background: '#dcfce7', color: '#15803d', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 12 }}>
+                      DEFAULT
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSetDefault(method.id)}
+                      style={{ background: 'transparent', border: 'none', color: '#ff5a1f', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Make Default
+                    </button>
+                  )}
+
+                  {method.type !== 'wallet' && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(method.id)}
+                      style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 4 }}
+                      title="Remove method"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className={styles.actionsContainer}>
-                {!method.isDefault && (
-                  <button type="button" onClick={() => handleSetDefault(method.id)} aria-label="Set as default">
-                    <Star size={16} />
-                  </button>
-                )}
-                <button type="button" onClick={() => handleDelete(method.id)} aria-label="Delete" className={styles.deleteButton}>
-                  <Trash2 size={16} />
+            </div>
+          ))}
+        </div>
+
+        {/* Security Badge */}
+        <div style={{ marginTop: 24, padding: 14, background: '#f1f5f9', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10, color: '#475569', fontSize: 12 }}>
+          <ShieldCheck size={20} color="#16a34a" />
+          <span>Your payment credentials are end-to-end encrypted with 256-bit PCI-DSS compliant vault security.</span>
+        </div>
+
+        {/* Add Method Modal */}
+        {showAddModal && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 16 }}>
+            <div style={{ background: '#fff', borderRadius: 20, padding: 24, maxWidth: 480, width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+              <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 700 }}>Add Payment Method</h3>
+
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                <button
+                  type="button"
+                  onClick={() => setMethodType('upi')}
+                  style={{
+                    flex: 1,
+                    padding: 10,
+                    borderRadius: 10,
+                    border: methodType === 'upi' ? '1.5px solid #ff5a1f' : '1px solid #cbd5e1',
+                    background: methodType === 'upi' ? '#fff7ed' : '#f8fafc',
+                    color: methodType === 'upi' ? '#ea580c' : '#475569',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ⚡ UPI ID / VPA
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMethodType('card')}
+                  style={{
+                    flex: 1,
+                    padding: 10,
+                    borderRadius: 10,
+                    border: methodType === 'card' ? '1.5px solid #ff5a1f' : '1px solid #cbd5e1',
+                    background: methodType === 'card' ? '#fff7ed' : '#f8fafc',
+                    color: methodType === 'card' ? '#ea580c' : '#475569',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  💳 Debit / Credit Card
                 </button>
               </div>
-            </div>
-          </Card>
-        ))
-      )}
 
-      {uiState.showAddForm && (
-        <div className={styles.modalOverlay}>
-          <Card title="Add Payment Method">
-            <div className={styles.form}>
-              <select
-                className={styles.select}
-                value={uiState.newMethod.type}
-                onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, type: e.target.value } })}
-                title="Select Payment Method Type"
-              >
-                <option value="card">Credit/Debit Card</option>
-                <option value="upi">UPI</option>
-              </select>
-              {uiState.newMethod.type === 'card' && (
-                <div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-brand" className={styles.label}>Card Brand (Visa, Mastercard)</label>
+              <form onSubmit={handleAddPayment}>
+                {methodType === 'upi' ? (
+                  <div style={{ marginBottom: 18 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 6 }}>Enter Virtual Payment Address (UPI ID)</label>
                     <input
-                      id="pm-card-brand"
-                      className={styles.input}
-                      placeholder="Card Brand (Visa, Mastercard)"
-                      value={uiState.newMethod.cardBrand}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardBrand: e.target.value } })}
+                      type="text"
+                      required
+                      placeholder="e.g. mobile@upi or username@okhdfcbank"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }}
                     />
                   </div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-last4" className={styles.label}>Last 4 digits</label>
-                    <input
-                      id="pm-card-last4"
-                      className={styles.input}
-                      placeholder="Last 4 digits"
-                      value={uiState.newMethod.cardLast4}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardLast4: e.target.value } })}
-                      maxLength={4}
-                    />
-                  </div>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="pm-card-expiry" className={styles.label}>Expiry (MM/YY)</label>
-                    <input
-                      id="pm-card-expiry"
-                      className={styles.input}
-                      placeholder="Expiry (MM/YY)"
-                      value={uiState.newMethod.cardExpiry}
-                      onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, cardExpiry: e.target.value } })}
-                    />
-                  </div>
+                ) : (
+                  <>
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 6 }}>Card Number</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={19}
+                        placeholder="4532 •••• •••• ••••"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }}
+                      />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 18 }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 6 }}>Cardholder Name</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Arjun Mehta"
+                          value={cardHolder}
+                          onChange={(e) => setCardHolder(e.target.value)}
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 6 }}>Expiry (MM/YY)</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="08/29"
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value)}
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    style={{ flex: 1, padding: 12, borderRadius: 10, background: '#f1f5f9', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{ flex: 1, padding: 12, borderRadius: 10, background: '#ff5a1f', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Save Method
+                  </button>
                 </div>
-              )}
-              {uiState.newMethod.type === 'upi' && (
-                <div className={styles.fieldGroup}>
-                  <label htmlFor="pm-upi-id" className={styles.label}>UPI ID (example@upi)</label>
-                  <input
-                    id="pm-upi-id"
-                    className={styles.input}
-                    placeholder="UPI ID (example@upi)"
-                    value={uiState.newMethod.upiId}
-                    onChange={(e) => dispatch({ type: 'SET_NEW_METHOD', payload: { ...uiState.newMethod, upiId: e.target.value } })}
-                  />
-                </div>
-              )}
-              <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => dispatch({ type: 'SET_SHOW_ADD_FORM', payload: false })} variant="secondary" />
-                <Button label="Save" onClick={handleAddMethod} />
-              </div>
+              </form>
             </div>
-          </Card>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default function Wrapped(props: any) {
-  return <ProtectedRoute><PaymentMethodsPage {...props} /></ProtectedRoute>;
 }

@@ -1,0 +1,13 @@
+{
+  "release": "v1.0.0-rc1",
+  "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "timestamp": "2026-10-03T09:15:03.558Z",
+  "node_version": "v25.5.0",
+  "node_target": "Node.js 22 LTS (Production Target Runtime)",
+  "os_platform": "win32",
+  "os_arch": "x64",
+  "browser_engine": "Chromium (Playwright Automation Engine)",
+  "playwright_version": "1.58.0",
+  "test_isolation": "Isolated In-Memory Browser Contexts with Clean Storage State",
+  "status": "READY"
+}

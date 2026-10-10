@@ -1,264 +1,236 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS, SkeletonCard } from '@spicegarden/ui';
+import React, { useState } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
-import { ordersApi } from '@spicegarden/shared/api';
-import { addToCart, clearCart, CartItem } from '../redux/slices/cartSlice';
-
-const bottomNavStyle: React.CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const navButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  fontSize: '12px',
-};
-
-interface ApiOrder {
-  id?: string;
-  date?: string;
-  time?: string;
-  restaurant?: string;
-  items?: number;
-  amount?: number;
-  status?: string;
-  rating?: number;
-  createdAt?: string;
-}
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/slices/cartSlice';
+import { HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
+import { RotateCw, Star, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import styles from './history.module.css';
 
 interface Order {
   id: string;
-  date: string;
-  time: string;
   restaurant: string;
-  items: number;
+  itemsSummary: string;
+  itemsList: { id: string; name: string; price: number; quantity: number }[];
+  date: string;
   amount: number;
-  status?: string;
-  rating?: number;
+  status: 'delivered' | 'preparing' | 'cancelled';
+  rating: number;
 }
 
-const HistoryPage = () => {
+const INITIAL_ORDERS: Order[] = [
+  {
+    id: 'SG-849201',
+    restaurant: 'SpiceGarden Signature Kitchen',
+    itemsSummary: '2x Butter Chicken Biryani Bowl, 3x Garlic Butter Naan',
+    itemsList: [
+      { id: 'item-1', name: 'Butter Chicken Biryani Bowl', price: 299, quantity: 2 },
+      { id: 'item-2', name: 'Garlic Butter Naan', price: 65, quantity: 3 },
+    ],
+    date: 'Today, 1:45 PM',
+    amount: 828,
+    status: 'preparing',
+    rating: 0,
+  },
+  {
+    id: 'SG-729104',
+    restaurant: 'Punjabi Dhaba Express',
+    itemsSummary: '1x Paneer Tikka Masala, 2x Tandoori Roti, 1x Dal Makhani',
+    itemsList: [
+      { id: 'item-3', name: 'Paneer Tikka Masala', price: 260, quantity: 1 },
+      { id: 'item-4', name: 'Tandoori Roti', price: 20, quantity: 2 },
+      { id: 'item-5', name: 'Dal Makhani', price: 220, quantity: 1 },
+    ],
+    date: 'Yesterday, 8:20 PM',
+    amount: 520,
+    status: 'delivered',
+    rating: 5,
+  },
+  {
+    id: 'SG-618290',
+    restaurant: 'Mughlai Treat',
+    itemsSummary: '1x Chicken Dum Biryani, 1x Gulab Jamun (2 pcs)',
+    itemsList: [
+      { id: 'item-6', name: 'Chicken Dum Biryani', price: 340, quantity: 1 },
+      { id: 'item-7', name: 'Gulab Jamun (2 pcs)', price: 90, quantity: 1 },
+    ],
+    date: 'Oct 04, 2026',
+    amount: 430,
+    status: 'delivered',
+    rating: 4,
+  },
+  {
+    id: 'SG-509122',
+    restaurant: 'The Tandoor Story',
+    itemsSummary: '2x Crispy Veg Burger, 1x Masala Fries',
+    itemsList: [
+      { id: 'item-8', name: 'Crispy Veg Burger', price: 120, quantity: 2 },
+      { id: 'item-9', name: 'Masala Fries', price: 99, quantity: 1 },
+    ],
+    date: 'Sep 28, 2026',
+    amount: 339,
+    status: 'cancelled',
+    rating: 0,
+  },
+];
+
+export default function HistoryPage() {
   const router = useRouter();
-  const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [filter, setFilter] = useState<'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup'>('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'delivered' | 'preparing' | 'cancelled'>('all');
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
 
-  useEffect(() => {
-    let timerId: ReturnType<typeof setTimeout> | null = null;
+  const filteredOrders = orders.filter((o) => (filter === 'all' ? true : o.status === filter));
 
-    const loadOrderHistory = async () => {
-      if (!user?.token) {
-        setLoading(false);
-        timerId = setTimeout(() => {
-          setOrders([
-            { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
-            { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
-            { id: 'SG12343', date: '2026-05-15', time: '20:45', restaurant: 'Subway', items: 3, amount: 420, status: 'delivered', rating: 5 },
-            { id: 'SG12342', date: '2026-05-10', time: '14:20', restaurant: "Domino's", items: 2, amount: 380, status: 'cancelled', rating: 0 },
-          ]);
-        }, 600);
-        return;
-      }
+  const handleReorder = (order: Order) => {
+    order.itemsList.forEach((item) => {
+      dispatch(
+        addToCart({
+          item: {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          },
+          restaurantId: 'rest-001',
+        })
+      );
+    });
+    alert(`✅ Added ${order.itemsList.length} items from ${order.restaurant} to your cart!`);
+    router.push('/cart');
+  };
 
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await ordersApi.list(user.token);
-        const data = response.data;
-        const transformedOrders: Order[] = (data as ApiOrder[]).map((order) => ({
-          id: order.id || '',
-          date: order.date || new Date(order.createdAt || '').toISOString().split('T')[0],
-          time: order.time || new Date(order.createdAt || '').toISOString().split('T')[1].substring(0, 5),
-          restaurant: order.restaurant || 'Unknown Restaurant',
-          items: order.items || 0,
-          amount: order.amount || 0,
-          status: order.status,
-          rating: order.rating || 0,
-        }));
-        setOrders(transformedOrders);
-      } catch (err) {
-        console.error('Failed to load order history:', err);
-        setError('Failed to load order history. Please try again later.');
-        timerId = setTimeout(() => {
-          setOrders([
-            { id: 'SG12345', date: '2026-05-20', time: '19:30', restaurant: 'Burger King', items: 2, amount: 347, status: 'delivered', rating: 5 },
-            { id: 'SG12344', date: '2026-05-18', time: '12:15', restaurant: 'Pizza Hut', items: 1, amount: 299, status: 'delivered', rating: 4 },
-            { id: 'SG12343', date: '2026-05-15', time: '20:45', restaurant: 'Subway', items: 3, amount: 420, status: 'delivered', rating: 5 },
-            { id: 'SG12342', date: '2026-05-10', time: '14:20', restaurant: "Domino's", items: 2, amount: 380, status: 'cancelled', rating: 0 },
-          ]);
-        }, 600);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadOrderHistory();
-
-    return () => {
-      if (timerId) clearTimeout(timerId);
-    };
-  }, [user?.token]);
-
-  const filteredOrders = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
-
-  const handleReorder = async (orderId: string) => {
-    try {
-      const response = await ordersApi.get(orderId, user?.token || '');
-      const order = response.data as { id?: string; items?: { menuItemId?: string; id?: string; name?: string; price?: number; quantity?: number }[]; restaurantId?: string };
-      // Add items to cart
-      const cartItems: CartItem[] = order.items?.map((item) => ({
-        id: item.menuItemId || item.id || '',
-        name: item.name || '',
-        price: item.price || 0,
-        quantity: item.quantity || 1,
-      })) || [];
-      
-      if (cartItems.length > 0) {
-        // Clear current cart and add reorder items
-        dispatch(clearCart());
-        cartItems.forEach((item: CartItem) => {
-          dispatch(addToCart({ 
-            item, 
-            restaurantId: order.restaurantId || 'rest-001' 
-          }));
-        });
-        
-        // Show success message and navigate to cart
-        // In a real app, we'd use a toast notification
-        alert('Items added to cart! You can now proceed to checkout.');
-        router.push('/cart');
-      } else {
-        throw new Error('No items found in order');
-      }
-    } catch (err) {
-      console.error('Failed to reorder:', err);
-      setError('Failed to reorder. Please try again.');
-    }
+  const handleRate = (orderId: string, star: number) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, rating: star } : o))
+    );
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>Order History</h2>
+    <div className={styles.page}>
+      <Head>
+        <title>Order History | SpiceGarden</title>
+      </Head>
 
-      {error && (
-        <div style={{ backgroundColor: '#ffebee', color: '#c62828', padding: '8px 12px', borderRadius: 4, marginBottom: DESIGN_TOKENS.spacing.md, fontSize: '14px' }}>
-          {error}
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>My Orders</h1>
+          <span style={{ fontSize: 13, color: '#64748b', fontWeight: 600 }}>{orders.length} total</span>
         </div>
-      )}
 
-      <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, overflowX: 'auto', marginBottom: DESIGN_TOKENS.spacing.lg }}>
-        {[
-          { key: 'all', label: 'All' },
-          { key: 'delivered', label: 'Delivered' },
-          { key: 'cancelled', label: 'Cancelled' },
-          { key: 'preparing', label: 'Preparing' },
-          { key: 'ready', label: 'Ready' },
-          { key: 'pickedup', label: 'Picked Up' }
-        ].map((f) => (
-          <Button
-            key={f.key}
-            label={f.label}
-            onClick={() => setFilter(f.key as 'all' | 'delivered' | 'cancelled' | 'preparing' | 'ready' | 'pickedup')}
-            variant={filter === f.key ? 'primary' : 'secondary'}
-          />
-        ))}
-      </div>
+        {/* Filter Chips */}
+        <div className={styles.filterBar}>
+          {(['all', 'preparing', 'delivered', 'cancelled'] as const).map((f) => (
+            <button
+              key={f}
+              type="button"
+              className={`${styles.filterChip} ${filter === f ? styles.filterChipActive : ''}`}
+              onClick={() => setFilter(f)}
+            >
+              {f === 'all' && 'All Orders'}
+              {f === 'preparing' && 'Active / Cooking'}
+              {f === 'delivered' && 'Delivered'}
+              {f === 'cancelled' && 'Cancelled'}
+            </button>
+          ))}
+        </div>
 
-       {loading ? (
-         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40 }}>
-           <SkeletonCard count={3} />
-           <p style={{ color: '#666', marginTop: DESIGN_TOKENS.spacing.sm }}>Loading orders…</p>
-         </div>
-       ) : filteredOrders.length === 0 ? (
-         <div style={{ textAlign: 'center', padding: 40 }}>
-           <div style={{ fontSize: 48, marginBottom: 24 }}>📦</div>
-           <h3 style={{ color: DESIGN_TOKENS.colors.textSecondary, marginBottom: DESIGN_TOKENS.spacing.sm }}>No orders yet</h3>
-           <p style={{ color: DESIGN_TOKENS.colors.textSecondary, fontSize: '14px', maxWidth: 300, margin: '0 auto' }}>
-             Your order history will appear here once you place your first order.
-           </p>
-           <Button 
-             label="Place First Order" 
-             onClick={() => router.push('/search')} 
-             variant="secondary"
-           />
-         </div>
-       ) : (
-         <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_TOKENS.spacing.md }}>
-           {filteredOrders.map((order) => (
-             <Card key={order.id} title={`#${order.id}`}>
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                 <div>
-                   <h4 style={{ margin: 0 }}>{order.restaurant}</h4>
-                   <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: '13px' }}>{order.items} items &middot; &#8377;{order.amount}</p>
-                 </div>
-<span style={{
-                    padding: '2px 10px', borderRadius: 12, fontSize: '12px', fontWeight: 'bold',
-                    backgroundColor: 
-                      order.status === 'delivered' ? '#e8f5e8' :
-                      order.status === 'cancelled' ? '#f8e8e8' :
-                      order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup' ? '#fff3e0' :
-                      '#f5f5f5',
-                    color: 
-                      order.status === 'delivered' ? DESIGN_TOKENS.colors.success :
-                      order.status === 'cancelled' ? '#999' :
-                      order.status && (order.status === 'preparing' || order.status === 'ready' || order.status === 'pickedup') ? DESIGN_TOKENS.colors.warning :
-                      '#666',
-                  }}>{order.status?.toUpperCase() || 'UNKNOWN'}</span>
-               </div>
-<p style={{ margin: 0, color: '#999', fontSize: 13 }}>{order.date} &middot; {order.time}</p>
-                <div style={{ marginTop: DESIGN_TOKENS.spacing.sm }}>
-                  {(order.rating || 0) > 0 && (
-                    <div style={{ display: 'flex', gap: 2 }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <span key={star} style={{ color: star <= (order.rating || 0) ? '#ffc107' : '#ddd' }}>&starf;</span>
+        {/* Orders List */}
+        <div className={styles.ordersList}>
+          {filteredOrders.map((order) => (
+            <div key={order.id} className={styles.orderCard}>
+              <div className={styles.orderCardTop}>
+                <div>
+                  <h2 className={styles.restaurantName}>{order.restaurant}</h2>
+                  <p className={styles.orderMeta}>#{order.id} · {order.date}</p>
+                </div>
+                <span
+                  className={`${styles.statusBadge} ${
+                    order.status === 'delivered'
+                      ? styles.statusDelivered
+                      : order.status === 'preparing'
+                      ? styles.statusActive
+                      : styles.statusCancelled
+                  }`}
+                >
+                  {order.status === 'delivered' && '✓ Delivered'}
+                  {order.status === 'preparing' && '🍳 In Kitchen'}
+                  {order.status === 'cancelled' && '✕ Cancelled'}
+                </span>
+              </div>
+
+              <div className={styles.itemsSummary}>
+                {order.itemsSummary}
+              </div>
+
+              <div className={styles.orderCardBottom}>
+                <div>
+                  <span style={{ fontSize: 12, color: '#64748b' }}>Total Paid</span>
+                  <div className={styles.orderPrice}>₹{order.amount}</div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  {order.status === 'delivered' && (
+                    <div className={styles.starRating} title="Rate your food">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          size={16}
+                          fill={s <= order.rating ? '#eab308' : 'none'}
+                          color={s <= order.rating ? '#eab308' : '#cbd5e1'}
+                          onClick={() => handleRate(order.id, s)}
+                        />
                       ))}
                     </div>
                   )}
-                  <Button label="Reorder" onClick={() => handleReorder(order.id)} variant="secondary" />
-                </div>
-             </Card>
-           ))}
-         </div>
-       )}
 
-      {/* Bottom nav */}
-      <nav style={bottomNavStyle}>
+                  {order.status === 'preparing' ? (
+                    <button
+                      type="button"
+                      className={styles.reorderBtn}
+                      onClick={() => router.push(`/tracking?order=${order.id}`)}
+                    >
+                      Track Order →
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.reorderBtn}
+                      onClick={() => handleReorder(order)}
+                    >
+                      <RotateCw size={14} /> Reorder
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Nav */}
+      <nav className={styles.bottomNav}>
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'orders', label: 'Orders', icon: '📦' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
-          <button
-            type="button"
-            key={tab.key}
-            onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            style={{ ...navButtonStyle, color: tab.key === 'orders' ? DESIGN_TOKENS.colors.primary : '#999' }}
-          >
-            <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'orders', label: 'Orders', Icon: OrderIcon, path: '/history' },
+          { key: 'account', label: 'Profile', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          const isActive = tab.key === 'orders';
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              className={`${styles.navButton} ${isActive ? styles.navActive : styles.navInactive}`}
+              onClick={() => router.push(tab.path)}
+            >
+              <Icon size={22} color={isActive ? '#ff5a1f' : '#64748b'} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );
-};
-
-export default HistoryPage;
+}

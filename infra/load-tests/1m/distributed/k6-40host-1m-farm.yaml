@@ -1,0 +1,50 @@
+# infra/load-tests/1m/distributed/k6-40host-1m-farm.yaml
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: spicegarden-1m-40host-farm
+  namespace: load-testing
+spec:
+  parallelism: 40
+  script:
+    configMap:
+      name: spicegarden-1m-scenario-cm
+      file: scenario.js
+  arguments: --out json=/tmp/results.json --system-tags status,method,url,name,error,error_code,scenario,group
+  runner:
+    image: grafana/k6:latest
+    nodeSelector:
+      role: k6-load-generator
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "load-generator"
+        effect: "NoSchedule"
+    env:
+      - name: K6_VUS_PER_RUNNER
+        value: "25000"
+      - name: K6_TOTAL_VUS
+        value: "1000000"
+      - name: TARGET_RPS
+        value: "585000"
+      - name: API_BASE_URL
+        value: "http://spicegarden-alb-ingress.spicegarden-prod.svc.cluster.local:80"
+      - name: WS_BASE_URL
+        value: "ws://spicegarden-alb-ingress.spicegarden-prod.svc.cluster.local:80"
+    resources:
+      requests:
+        cpu: "6000m"
+        memory: "12Gi"
+      limits:
+        cpu: "7800m"
+        memory: "15Gi"
+    securityContext:
+      sysctls:
+        - name: net.ipv4.ip_local_port_range
+          value: "1024 65535"
+        - name: net.ipv4.tcp_tw_reuse
+          value: "1"
+        - name: net.core.somaxconn
+          value: "65535"
+        - name: net.ipv4.tcp_max_syn_backlog
+          value: "65535"

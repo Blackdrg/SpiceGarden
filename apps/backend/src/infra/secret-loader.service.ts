@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Buffer } from 'buffer';
 
 @Injectable()
 export class SecretLoaderService implements OnModuleInit {
@@ -41,7 +42,14 @@ export class SecretLoaderService implements OnModuleInit {
     for (const [secretName, envVarName] of Object.entries(secretFiles)) {
       const filePath = path.join(this.secretsDir, `${secretName}.txt`);
       if (fs.existsSync(filePath)) {
-        const value = fs.readFileSync(filePath, 'utf8').trim();
+        const buffer = fs.readFileSync(filePath);
+        let value = '';
+        if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+          value = (buffer as any).toString('utf16le');
+        } else {
+          value = (buffer as any).toString('utf8');
+        }
+        value = value.replace(/^\uFEFF/, '').trim();
         if (value && !value.includes('CHANGE_ME')) {
           process.env[envVarName] = value;
           this.logger.debug(`Loaded secret: ${envVarName}`);
@@ -57,7 +65,14 @@ export class SecretLoaderService implements OnModuleInit {
       if (key.endsWith('_FILE') && value) {
         const filePath = value;
         if (fs.existsSync(filePath)) {
-          const secretValue = fs.readFileSync(filePath, 'utf8').trim();
+          const buffer = fs.readFileSync(filePath);
+          let secretValue = '';
+          if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+            secretValue = (buffer as any).toString('utf16le');
+          } else {
+            secretValue = (buffer as any).toString('utf8');
+          }
+          secretValue = secretValue.replace(/^\uFEFF/, '').trim();
           const envVarName = key.replace('_FILE', '');
           process.env[envVarName] = secretValue;
           this.logger.debug(`Loaded ${envVarName} from ${filePath}`);
@@ -73,7 +88,14 @@ export class SecretLoaderService implements OnModuleInit {
     const filePath = path.join(secretsDir, `${secretName}.txt`);
 
     if (fs.existsSync(filePath)) {
-      const value = fs.readFileSync(filePath, 'utf8').trim();
+      const buffer = fs.readFileSync(filePath);
+      let value = '';
+      if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+        value = (buffer as any).toString('utf16le');
+      } else {
+        value = (buffer as any).toString('utf8');
+      }
+      value = value.replace(/^\uFEFF/, '').trim();
       if (value && !value.includes('CHANGE_ME')) {
         return value;
       }

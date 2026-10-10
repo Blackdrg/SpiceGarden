@@ -1,0 +1,42 @@
+[
+  {
+    "generatorCount": 8,
+    "vusPerHost": 125000,
+    "totalVus": 1000000,
+    "cpuPerHostPercent": 88.5,
+    "memPerHostPercent": 78.2,
+    "netGbpsPerHost": 3.2,
+    "droppedIters": 120,
+    "status": "GENERATOR_NEAR_SATURATION"
+  },
+  {
+    "generatorCount": 16,
+    "vusPerHost": 62500,
+    "totalVus": 1000000,
+    "cpuPerHostPercent": 54.2,
+    "memPerHostPercent": 46,
+    "netGbpsPerHost": 1.8,
+    "droppedIters": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "generatorCount": 32,
+    "vusPerHost": 31250,
+    "totalVus": 1000000,
+    "cpuPerHostPercent": 28.5,
+    "memPerHostPercent": 25.1,
+    "netGbpsPerHost": 0.9,
+    "droppedIters": 0,
+    "status": "HIGH_HEADROOM"
+  },
+  {
+    "generatorCount": 64,
+    "vusPerHost": 31250,
+    "totalVus": 2000000,
+    "cpuPerHostPercent": 31,
+    "memPerHostPercent": 26.5,
+    "netGbpsPerHost": 1,
+    "droppedIters": 0,
+    "status": "MASSIVE_SCALE_HEADROOM"
+  }
+]

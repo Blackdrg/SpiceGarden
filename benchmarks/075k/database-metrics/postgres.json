@@ -1,0 +1,7 @@
+{
+  "pool_utilization": "78/100 (PgBouncer)",
+  "cpu_percent": "52.0%",
+  "active_queries_p95": 83,
+  "query_latency_p95_ms": 3.4,
+  "cache_hit_ratio": "99.2%"
+}

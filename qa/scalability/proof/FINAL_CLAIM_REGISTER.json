@@ -1,0 +1,122 @@
+[
+  {
+    "id": "CLM-001",
+    "claim": "Monorepo Build Integrity",
+    "scope": "12/12 packages build with exit code 0",
+    "classification": "PROVEN_AUTOMATED",
+    "evidence": "npm run build output, task-20 log",
+    "status": "PROVEN_AUTOMATED"
+  },
+  {
+    "id": "CLM-002",
+    "claim": "ESLint Zero Errors",
+    "scope": "0 errors across all 12 workspaces",
+    "classification": "PROVEN_AUTOMATED",
+    "evidence": "npm run lint output, task-20 log",
+    "status": "PROVEN_AUTOMATED"
+  },
+  {
+    "id": "CLM-003",
+    "claim": "Backend Unit & Integration Test Suite",
+    "scope": "73 test suites passed, 1,142 tests passed, 0 failed",
+    "classification": "PROVEN_AUTOMATED",
+    "evidence": "apps/backend jest test output, task-58 log",
+    "status": "PROVEN_AUTOMATED"
+  },
+  {
+    "id": "CLM-004",
+    "claim": "WebSocket Multi-Pod Scaling",
+    "scope": "RedisIoAdapter (@socket.io/redis-adapter) pub/sub broadcast",
+    "classification": "PROVEN_CODE",
+    "evidence": "apps/backend/src/infra/tracking/redis-io.adapter.ts",
+    "status": "PROVEN_CODE"
+  },
+  {
+    "id": "CLM-005",
+    "claim": "Atomic Wallet Debit & Concurrency Invariant",
+    "scope": "Atomic SQL decrement `balance = balance - :amount WHERE balance >= :amount`",
+    "classification": "PROVEN_CODE",
+    "evidence": "apps/backend/src/services/wallet/wallet.service.ts",
+    "status": "PROVEN_CODE"
+  },
+  {
+    "id": "CLM-006",
+    "claim": "Payment Idempotency Protection",
+    "scope": "Unique compound key constraint on {key, operation} with conflict resolution",
+    "classification": "PROVEN_CODE",
+    "evidence": "apps/backend/src/services/payments/idempotency.service.ts",
+    "status": "PROVEN_CODE"
+  },
+  {
+    "id": "CLM-007",
+    "claim": "Live Single-Host Measured Concurrency (250 VUs SLA Pass)",
+    "scope": "250 VUs @ 1,278.63 RPS, P50 138.53ms, P95 351.70ms, P99 588.91ms, 0% errors",
+    "classification": "PROVEN_PHYSICAL",
+    "evidence": "qa/scalability/proof/L2_FINAL_PHYSICAL_RESULTS.json, k6_ladder_250.json",
+    "status": "PROVEN_PHYSICAL"
+  },
+  {
+    "id": "CLM-008",
+    "claim": "Historical Single-Host Tested Concurrency (10K VUs SLA Pass)",
+    "scope": "10,000 VUs @ 1,373.30 RPS, P50 215.00ms, P95 492.00ms, P99 780.00ms, 1.15% errors",
+    "classification": "PROVEN_PHYSICAL",
+    "evidence": "reports/performance/100K_PHYSICAL_VALIDATION_REPORT.md",
+    "status": "PROVEN_PHYSICAL"
+  },
+  {
+    "id": "CLM-009",
+    "claim": "Single-Host Peak Saturation (16,850 VUs) & Breaking Point (22,400 VUs)",
+    "scope": "16,850 VUs peak (P95 1,840ms); 22,400 VUs breaking via Winsock WSAENOBUFS",
+    "classification": "PROVEN_PHYSICAL",
+    "evidence": "reports/performance/PHYSICAL-SCALE-JOURNEY.md, BREAKPOINT-HISTORY.md",
+    "status": "PROVEN_PHYSICAL"
+  },
+  {
+    "id": "CLM-010",
+    "claim": "Distributed Staging Deployment Readiness",
+    "scope": "Multi-pod Kubernetes staging deployment manifest verified",
+    "classification": "READY_NOT_EXECUTED",
+    "evidence": "infra/k8s/staging.yaml, infra/k8s/configmap.yaml",
+    "status": "READY_NOT_EXECUTED"
+  },
+  {
+    "id": "CLM-011",
+    "claim": "AWS Physical Deployment & Provisioning",
+    "scope": "Terraform EKS, Aurora, ElastiCache, ALB topology ready; AWS CLI/credentials unauth",
+    "classification": "BLOCKED_EXTERNAL",
+    "evidence": "infra/terraform/, aws sts get-caller-identity check",
+    "status": "BLOCKED_EXTERNAL"
+  },
+  {
+    "id": "CLM-012",
+    "claim": "1,000,000 Virtual Users Concurrency",
+    "scope": "Modeled for 40x c6i.2xlarge generators + 160-240 backend pods + Aurora db.r6g.16xlarge",
+    "classification": "SIMULATION_ONLY",
+    "evidence": "qa/final/1M_SIMULATION_BENCHMARK_FINAL_REPORT.md, qa/performance/1000k/",
+    "status": "SIMULATION_ONLY"
+  },
+  {
+    "id": "CLM-013",
+    "claim": "585,000 RPS Peak Throughput Target",
+    "scope": "Theoretical upper bound target across 240 backend pods",
+    "classification": "MODEL_ONLY",
+    "evidence": "qa/scalability/1M_CODEBASE_ARCHITECTURE_AUDIT.md",
+    "status": "MODEL_ONLY"
+  },
+  {
+    "id": "CLM-014",
+    "claim": "Automated Security Vulnerability Assessments",
+    "scope": "SQLi (SECURE), XSS (SECURE), Auth Bypass (SECURE), Path Traversal (SECURE)",
+    "classification": "PROVEN_AUTOMATED",
+    "evidence": "infra/scripts/security-tests.js, infra/scripts/penetration-tests.js",
+    "status": "PROVEN_AUTOMATED"
+  },
+  {
+    "id": "CLM-015",
+    "claim": "External 3rd-Party Penetration Test",
+    "scope": "Accredited external security vendor penetration audit",
+    "classification": "NOT_EXECUTED",
+    "evidence": "N/A",
+    "status": "NOT_EXECUTED"
+  }
+]

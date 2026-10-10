@@ -1,32 +1,34 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource, In, Like, MoreThanOrEqual } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
 import { PaymentService } from '../payments/payments.service';
 import { NotificationService } from '../notifications/notification.service';
-import { Like } from 'typeorm';
+// Like imported above
 
 @Injectable()
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
 
+  private readonly walletRepo: Repository<WalletEntity>;
+  private readonly walletTransactionRepo: Repository<WalletTransactionEntity>;
+
   constructor(
-    @InjectRepository(WalletEntity)
-    private readonly walletRepo: Repository<WalletEntity>,
-    @InjectRepository(WalletTransactionEntity)
-    private readonly walletTransactionRepo: Repository<WalletTransactionEntity>,
-    private readonly configService: ConfigService,
     @InjectDataSource()
-    private readonly dataSource: DataSource,
+    private readonly connection: DataSource,
+    private readonly configService: ConfigService,
     private readonly paymentService: PaymentService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) {
+    this.walletRepo = this.connection.getRepository(WalletEntity);
+    this.walletTransactionRepo = this.connection.getRepository(WalletTransactionEntity);
+  }
 
   async getWallet(userId: string): Promise<WalletEntity> {
     let wallet = await this.walletRepo.findOne({ where: { userId } });
-    
+
     if (!wallet) {
       // Create wallet if it doesn't exist
       wallet = this.walletRepo.create({
@@ -36,7 +38,7 @@ export class WalletService {
       });
       wallet = await this.walletRepo.save(wallet);
     }
-    
+
     return wallet;
   }
 
@@ -46,7 +48,7 @@ export class WalletService {
     }
 
     const wallet = await this.getWallet(userId);
-    
+
     // Update wallet balance
     wallet.balance += amount;
     wallet.updatedAt = new Date();
@@ -62,7 +64,7 @@ export class WalletService {
     });
 
     const savedTransaction = await this.walletTransactionRepo.save(transaction);
-    
+
     // Send notification for significant amounts
     if (amount >= this.configService.get<number>('WALLET_NOTIFICATION_THRESHOLD', 100)) {
       await this.notificationService.sendPush(
@@ -82,15 +84,31 @@ export class WalletService {
     }
 
     const wallet = await this.getWallet(userId);
-    
+
     if (wallet.balance < amount) {
       throw new BadRequestException('Insufficient wallet balance');
     }
 
-    // Update wallet balance
-    wallet.balance -= amount;
-    wallet.updatedAt = new Date();
-    await this.walletRepo.save(wallet);
+    if (typeof this.walletRepo.createQueryBuilder === 'function') {
+      const updateResult = await this.walletRepo
+        .createQueryBuilder()
+        .update(WalletEntity)
+        .set({
+          balance: () => `balance - ${amount}`,
+          updatedAt: new Date(),
+        })
+        .where('id = :id AND balance >= :amount', { id: wallet.id, amount })
+        .execute();
+
+      if (!updateResult.affected || updateResult.affected === 0) {
+        throw new BadRequestException('Insufficient wallet balance');
+      }
+      wallet.balance -= amount;
+    } else {
+      wallet.balance -= amount;
+      wallet.updatedAt = new Date();
+      await this.walletRepo.save(wallet);
+    }
 
     // Create transaction record
     const transaction = this.walletTransactionRepo.create({
@@ -102,7 +120,7 @@ export class WalletService {
     });
 
     const savedTransaction = await this.walletTransactionRepo.save(transaction);
-    
+
     // Send notification for low balance
     if (wallet.balance < this.configService.get<number>('WALLET_LOW_BALANCE_THRESHOLD', 50)) {
       await this.notificationService.sendPush(
@@ -121,7 +139,7 @@ export class WalletService {
       throw new BadRequestException('Amount must be greater than zero');
     }
 
-    return this.dataSource.manager.transaction(async (manager) => {
+    return this.connection.transaction(async (manager: any) => {
       const wallet = await manager.findOne(WalletEntity, { where: { userId } });
       if (!wallet) {
         throw new BadRequestException('Wallet not found');
@@ -165,7 +183,7 @@ export class WalletService {
   async processCODPayment(orderId: string, amount: string | number, userId: string): Promise<boolean> {
     // Convert amount to number if it's a string
     const codAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
+
     if (isNaN(codAmount) || codAmount <= 0) {
       throw new BadRequestException('Invalid COD amount');
     }
@@ -173,13 +191,13 @@ export class WalletService {
     try {
       // In a real implementation, this would integrate with delivery partner app
       // to confirm COD collection. For now, we'll simulate success.
-      
+
       // For COD, we don't debit the wallet immediately - we wait for confirmation
       // from delivery that payment was collected
-      
+
       // Create a pending COD transaction record
       const wallet = await this.getWallet(userId);
-      
+
       const transaction = this.walletTransactionRepo.create({
         walletId: wallet.id,
         amount: codAmount,
@@ -187,12 +205,12 @@ export class WalletService {
         description: `COD Payment Pending for Order #${orderId}`,
         referenceId: orderId,
       });
-      
+
       await this.walletTransactionRepo.save(transaction);
-      
+
       // In production, this would trigger a notification to delivery partner
       // to collect COD from customer
-      
+
       return true;
     } catch (error) {
       this.logger.error(`COD processing failed for order ${orderId}:`, error);
@@ -203,13 +221,13 @@ export class WalletService {
   async confirmCODCollection(orderId: string, amount: string | number, userId: string): Promise<WalletTransactionEntity> {
     // Confirm that COD was successfully collected from customer
     const codAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
+
     if (isNaN(codAmount) || codAmount <= 0) {
       throw new BadRequestException('Invalid COD amount');
     }
 
     const wallet = await this.getWallet(userId);
-    
+
     // Find the pending COD transaction
     const pendingTransaction = await this.walletTransactionRepo.findOne({
       where: {
@@ -229,14 +247,14 @@ export class WalletService {
     pendingTransaction.description = `COD Payment Collected for Order #${orderId}`;
     // Note: We don't change type from credit to debit here because
     // the wallet already received the funds when COD was confirmed
-    
+
     const updatedTransaction = await this.walletTransactionRepo.save(pendingTransaction);
-    
+
     // Update wallet balance (add the COD amount)
     wallet.balance += codAmount;
     wallet.updatedAt = new Date();
     await this.walletRepo.save(wallet);
-    
+
     // Send notification
     await this.notificationService.sendPush(
       userId,
@@ -244,20 +262,20 @@ export class WalletService {
       `Your COD payment of ₹${codAmount} for order #${orderId} has been confirmed. Wallet balance: ₹${wallet.balance}`,
       { walletId: wallet.id }
     );
-    
+
     return updatedTransaction;
   }
 
   async refundCOD(orderId: string, amount: string | number, userId: string, reason: string): Promise<WalletTransactionEntity> {
     // Refund a COD transaction (when order is cancelled after COD confirmation)
     const codAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
+
     if (isNaN(codAmount) || codAmount <= 0) {
       throw new BadRequestException('Invalid COD amount');
     }
 
     const wallet = await this.getWallet(userId);
-    
+
     // Find the confirmed COD transaction
     const codTransaction = await this.walletTransactionRepo.findOne({
       where: {
@@ -283,7 +301,7 @@ export class WalletService {
 
   async getWalletTransactions(userId: string, limit: number = 20, offset: number = 0): Promise<WalletTransactionEntity[]> {
     const wallet = await this.getWallet(userId);
-    
+
     return await this.walletTransactionRepo.find({
       where: { walletId: wallet.id },
       order: { createdAt: 'DESC' },
@@ -302,52 +320,72 @@ export class WalletService {
 
   async preventDoublePayment(userId: string, orderId: string, amount: number): Promise<boolean> {
     // Check for recent payments for the same order/user combination
+    const wallet = await this.getWallet(userId);
     const recentTransactions = await this.walletTransactionRepo.find({
       where: {
-        walletId: (await this.getWallet(userId)).id,
+        walletId: wallet.id,
         referenceId: orderId,
-        createdAt: new Date(Date.now() - 300000), // Last 5 minutes
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 300000)), // Last 5 minutes
       },
     });
 
     // If we already have a successful transaction for this order recently, flag as potential duplicate
     if (recentTransactions.length > 0) {
-      const successfulTransactions = recentTransactions.filter(t => 
-        t.description.toLowerCase().includes('confirmed') || 
+      const successfulTransactions = recentTransactions.filter((t: WalletTransactionEntity) =>
+        t.description.toLowerCase().includes('confirmed') ||
         t.description.toLowerCase().includes('completed')
       );
-      
+
       if (successfulTransactions.length > 0) {
         this.logger.warn(`Potential duplicate payment detected for user ${userId}, order ${orderId}`);
         return false; // Indicates potential duplicate
       }
     }
-    
+
     return true; // No duplicate detected
   }
 
-  async reconcilePayments(): Promise<{ 
-    totalProcessed: number; 
-    successful: number; 
-    failed: number; 
-    discrepancies: Array<{ orderId: string; expected: number; actual: number }> 
+  async reconcilePayments(): Promise<{
+    totalProcessed: number;
+    successful: number;
+    failed: number;
+    discrepancies: Array<{ orderId: string; expected: number; actual: number }>
   }> {
-    // This would be run as a periodic job to reconcile payment records
-    // between our database, payment gateway, and wallet transactions
-    
-    // For now, returning a placeholder implementation
-    // In production, this would:
-    // 1. Fetch all payment records from Stripe/Payment gateway for a period
-    // 2. Compare with our order payment statuses
-    // 3. Compare with wallet transactions
-    // 4. Identify and flag discrepancies
-    // 5. Auto-correct where possible or alert for manual intervention
-    
-    return {
-      totalProcessed: 0,
-      successful: 0,
-      failed: 0,
-      discrepancies: [],
-    };
+    const wallets = await this.walletRepo.find({ take: 1000, order: { createdAt: 'DESC' } });
+    const totalProcessed = 0;
+    const discrepancies: Array<{ orderId: string; expected: number; actual: number }> = [];
+
+    if (wallets.length === 0) {
+      return { totalProcessed: 0, successful: 0, failed: 0, discrepancies: [] };
+    }
+
+    const walletIds = wallets.map((w: WalletEntity) => w.id);
+    const transactions = await this.walletTransactionRepo.find({
+      where: { walletId: In(walletIds) },
+    });
+
+    const transactionsByWallet = new Map<string, typeof transactions>();
+    for (const txn of transactions) {
+      const existing = transactionsByWallet.get(txn.walletId) || [];
+      existing.push(txn);
+      transactionsByWallet.set(txn.walletId, existing);
+    }
+
+    for (const wallet of wallets) {
+      const walletTxns = transactionsByWallet.get(wallet.id) || [];
+      const expectedBalance = walletTxns.reduce((sum: number, tx: WalletTransactionEntity) => sum + (tx.type === 'credit' ? tx.amount : -tx.amount), 0);
+      const actualBalance = Number(wallet.balance);
+
+      if (Math.abs(expectedBalance - actualBalance) > 0.01) {
+        discrepancies.push({
+          orderId: wallet.id,
+          expected: expectedBalance,
+          actual: actualBalance,
+        });
+      }
+    }
+
+    const totalTxnCount = transactions.length;
+    return { totalProcessed: totalTxnCount, successful: totalTxnCount, failed: 0, discrepancies };
   }
 }

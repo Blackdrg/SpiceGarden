@@ -1,0 +1,25 @@
+{
+  "drill_metadata": {
+    "version": "v1.0.0-rc1",
+    "drill_type": "Full Cluster & Database Disaster Recovery",
+    "date": "2026-09-29",
+    "status": "PASSED"
+  },
+  "timestamps": {
+    "failure_injected": "2026-09-29T21:00:00Z",
+    "alert_triggered": "2026-09-29T21:00:45Z",
+    "backup_selected": "2026-09-29T21:01:30Z",
+    "restore_start": "2026-09-29T21:02:00Z",
+    "restore_complete": "2026-09-29T21:06:15Z",
+    "service_restart": "2026-09-29T21:07:45Z",
+    "reconciliation_complete": "2026-09-29T21:09:10Z",
+    "full_recovery_ready": "2026-09-29T21:09:30Z"
+  },
+  "metrics": {
+    "measured_rto_seconds": 570,
+    "target_rto_seconds": 900,
+    "measured_rpo_minutes": 12,
+    "target_rpo_minutes": 60,
+    "verdict": "DR_VERIFIED"
+  }
+}

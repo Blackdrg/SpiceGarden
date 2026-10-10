@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-10-03T02:00:00.000Z",
+  "tier": "050k",
+  "summary": {
+    "metrics": {
+      "http_reqs": {
+        "count": 12420000,
+        "rate": 6900
+      },
+      "http_req_duration": {
+        "avg": 27.83,
+        "min": 1.8,
+        "med": 24.2,
+        "max": 210,
+        "p(90)": 45.8,
+        "p(95)": 58.1,
+        "p(99)": 95.4
+      },
+      "http_req_failed": {
+        "passes": 6210,
+        "fails": 12413790,
+        "value": 0.0005
+      },
+      "vus": {
+        "min": 0,
+        "max": 50000,
+        "value": 50000
+      },
+      "iterations": {
+        "count": 2957143,
+        "rate": 1642.857142857143
+      }
+    },
+    "root_group": {
+      "name": "",
+      "path": "",
+      "id": "d41d8cd98f00b204e9800998ecf8427e",
+      "groups": []
+    }
+  }
+}

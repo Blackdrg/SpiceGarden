@@ -1,0 +1,13 @@
+{
+  "activeConnections": 5640,
+  "totalConnected": 6940,
+  "totalDisconnected": 1300,
+  "totalMessagesSent": 63410,
+  "totalBroadcasts": 12880,
+  "droppedMessages": 0,
+  "reconnectCount": 0,
+  "estimatedMemoryMb": 2.26,
+  "p50MessageLatencyMs": 0.002300000000104774,
+  "p95MessageLatencyMs": 0.007799999999406282,
+  "p99MessageLatencyMs": 0.01510000000052969
+}

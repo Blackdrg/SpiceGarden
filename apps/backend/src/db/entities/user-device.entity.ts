@@ -2,11 +2,11 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Up
 import { UserEntity } from './user.entity';
 
 @Entity('user_devices')
+@Index('idx_user_devices_user_active', ['userId', 'isActive'])
 export class UserDeviceEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
   @Column()
   userId!: string;
 

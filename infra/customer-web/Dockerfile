@@ -1,19 +1,16 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
 COPY apps/customer-web/package*.json ./apps/customer-web/
-COPY packages/*/package*.json ./packages/
-RUN npm ci
-COPY apps/customer-web ./apps/customer-web
-COPY packages ./packages
-RUN npm --workspace @spicegarden/customer-web run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/apps/customer-web/.next ./.next
-COPY --from=builder /app/apps/customer-web/public ./public
-COPY --from=builder /app/apps/customer-web/package*.json ./
+COPY packages/shared/package*.json ./packages/shared/
+COPY apps/customer-mobile/package*.json ./apps/customer-mobile/
+RUN npm config set fetch-retries 5 && npm config set fetch-retry-mintimeout 20000 && npm config set fetch-retry-maxtimeout 120000 && npm install --legacy-peer-deps
+COPY apps/customer-web/ ./apps/customer-web/
+COPY apps/customer-mobile/ ./apps/customer-mobile/
+COPY packages/shared/ ./packages/shared/
+COPY packages/ui/package*.json ./packages/ui/
+COPY packages/api-types/package*.json ./packages/api-types/
+RUN npm --workspace @spicegarden/shared run build && npm --workspace @spicegarden/customer-web run build
 ENV NODE_ENV=production
 EXPOSE 3000
-ENV PORT=3000
-CMD ["node", "server.js"]
+CMD ["node", "node_modules/.bin/next", "start"]

@@ -102,5 +102,6 @@ __decorate([
     __metadata("design:type", Date)
 ], InventoryItemEntity.prototype, "updatedAt", void 0);
 exports.InventoryItemEntity = InventoryItemEntity = __decorate([
-    (0, typeorm_1.Entity)('inventory_items')
+    (0, typeorm_1.Entity)('inventory_items'),
+    (0, typeorm_1.Index)('idx_inventory_items_low_stock_threshold', ['lowStockThreshold'])
 ], InventoryItemEntity);

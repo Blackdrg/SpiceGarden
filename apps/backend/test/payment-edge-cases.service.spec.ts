@@ -7,6 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common';
 import { PaymentGateway } from '../src/services/payments/gateways/payment-gateway.interface';
 import { PaymentIntent, PaymentResult, RefundResult, GatewayEvent } from '../src/services/payments/payment.types';
+import { WalletEntity } from '../src/db/entities/wallet.entity';
+import { WalletTransactionEntity } from '../src/db/entities/wallet-transaction.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -51,6 +54,38 @@ describe('PaymentService', () => {
       }),
     } as any;
 
+    const mockWalletRepo = {
+      findOne: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+      find: jest.fn(),
+      count: jest.fn(),
+      createQueryBuilder: jest.fn(() => ({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn(),
+        getMany: jest.fn(),
+      })),
+    };
+
+    const mockWalletTransactionRepo = {
+      findOne: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      find: jest.fn(),
+      count: jest.fn(),
+      createQueryBuilder: jest.fn(() => ({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        getMany: jest.fn(),
+        getCount: jest.fn(),
+      })),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentService,
@@ -58,6 +93,8 @@ describe('PaymentService', () => {
         { provide: AuditService, useValue: auditService },
         { provide: LedgerService, useValue: ledgerService },
         { provide: ConfigService, useValue: configService },
+        { provide: getRepositoryToken(WalletEntity), useValue: mockWalletRepo },
+        { provide: getRepositoryToken(WalletTransactionEntity), useValue: mockWalletTransactionRepo },
       ],
     }).compile();
 

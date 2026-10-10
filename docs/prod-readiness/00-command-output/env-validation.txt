@@ -1,0 +1,41 @@
+========================================
+SPICEGARDEN ENVIRONMENT VALIDATION
+========================================
+
+=== API URL CONSISTENCY CHECK ===
+
+
+=== STRIPE/RAZORPAY KEY ISOLATION CHECK ===
+
+Development keys: sk_test_* ?, rzp_test_* ?
+Production Stripe: Uses file reference ? (secrets/production/stripe_secret_key.txt)
+Staging Stripe: Uses staging file reference ? (secrets/staging/stripe_secret_key.txt)
+
+=== FRONTEND ENVIRONMENT FILES CHECK ===
+
+
+DEVELOPMENT Frontend Envs:
+  ? customer-web: api=http://localhost:3001, socket=http://localhost:3001
+  ? restaurant-dashboard: api=http://localhost:3001, socket=http://localhost:3001
+  ? super-admin: api=http://localhost:3001, socket=http://localhost:3001
+
+STAGING Frontend Envs:
+  ? customer-web: api=https://staging-api.spicegarden.com, socket=https://staging-api.spicegarden.com
+  ? restaurant-dashboard: api=https://staging-api.spicegarden.com, socket=https://staging-api.spicegarden.com
+  ? super-admin: api=https://staging-api.spicegarden.com, socket=https://staging-api.spicegarden.com
+
+PRODUCTION Frontend Envs:
+  ? customer-web: api=https://api.spicegarden.com, socket=https://api.spicegarden.com
+  ? restaurant-dashboard: api=https://api.spicegarden.com, socket=https://api.spicegarden.com
+  ? super-admin: api=https://api.spicegarden.com, socket=https://api.spicegarden.com
+
+=== SECRETS INJECTION CHECK ===
+
+? jwt_secret.txt exists and configured
+? encryption_secret.txt exists and configured
+? db_password.txt exists and configured
+
+========================================
+SUMMARY
+========================================
+? All environment configurations are valid

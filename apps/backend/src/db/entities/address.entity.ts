@@ -29,7 +29,7 @@ export class AddressEntity {
 
   @Column({ type: 'point', transformer: {
     from: (v: any) => v as { lat: number; lng: number },
-    to: (v: { lat: number; lng: number }) => `(${v.lng} ${v.lat})`,
+    to: (v: { lat: number; lng: number }) => `(${v.lng},${v.lat})`,
   }})
   location!: { lat: number; lng: number };
 

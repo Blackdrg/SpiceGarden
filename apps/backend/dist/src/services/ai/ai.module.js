@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const ai_service_1 = require("./ai.service");
 const ai_controller_1 = require("./ai.controller");
 let AiServiceModule = class AiServiceModule {
@@ -17,7 +17,7 @@ exports.AiServiceModule = AiServiceModule;
 exports.AiServiceModule = AiServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
         ],
         providers: [ai_service_1.AiService],
         controllers: [ai_controller_1.AiController],

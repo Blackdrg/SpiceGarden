@@ -71,7 +71,7 @@ class DeliveryApiService {
   private driverId: string | null = null;
 
   async login(email: string, password: string): Promise<{ token: string; driverId: string; profile: DriverProfile }> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -83,7 +83,7 @@ class DeliveryApiService {
 
     const data = await response.json();
     this.token = data.access_token;
-    this.driverId = data.driverId as string;
+    this.driverId = (data.driverId || data.user?.id) as string;
     
     if (this.token && this.driverId) {
       await Promise.all([
@@ -104,7 +104,7 @@ class DeliveryApiService {
     vehicleType: string;
     vehicleNumber: string;
   }): Promise<DriverProfile> {
-    const response = await fetch(`${API_BASE_URL}/api/drivers/onboarding`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/onboarding`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ class DeliveryApiService {
 
   async getProfile(): Promise<DriverProfile> {
     const token = await this.getStoredToken();
-    const response = await fetch(`${API_BASE_URL}/api/drivers/me`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/me`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -145,7 +145,7 @@ class DeliveryApiService {
       this.socket.emit('updateLocation', { driverId: id, lat, lng });
     }
 
-    await fetch(`${API_BASE_URL}/api/drivers/${id}/location`, {
+    await fetch(`${API_BASE_URL}/drivers/${id}/location`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    await fetch(`${API_BASE_URL}/api/drivers/${id}/availability`, {
+    await fetch(`${API_BASE_URL}/drivers/${id}/availability`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/drivers/${id}/earnings`, {
+    const response = await fetch(`${API_BASE_URL}/drivers/${id}/earnings`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
 
@@ -194,7 +194,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/accept`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/accept`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    await fetch(`${API_BASE_URL}/api/orders/${orderId}/reject`, {
+    await fetch(`${API_BASE_URL}/orders/${orderId}/reject`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ class DeliveryApiService {
   ): Promise<DeliveryOrder> {
     const token = await this.getStoredToken();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
       method: 'PUT',
       headers: { 
         'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ class DeliveryApiService {
     const token = await this.getStoredToken();
     const id = driverId || await this.getStoredDriverId();
 
-    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/verify-otp`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/verify-otp`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -261,13 +261,18 @@ class DeliveryApiService {
       body: JSON.stringify({ otp, driverId: id }),
     });
 
-    return response.ok;
+    if (!response.ok) {
+      return false;
+    }
+
+    const data = await response.json().catch(() => ({ valid: false }));
+    return Boolean(data.valid);
   }
 
   async reportIssue(orderId: string, issue: string, details: string): Promise<void> {
     const token = await this.getStoredToken();
 
-    await fetch(`${API_BASE_URL}/api/orders/${orderId}/issues`, {
+    await fetch(`${API_BASE_URL}/orders/${orderId}/issues`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -287,6 +292,9 @@ class DeliveryApiService {
 
     this.socket.on('connect', () => {
       console.log('WebSocket connected');
+      if (this.driverId) {
+        this.socket?.emit('join', { room: `driver:${this.driverId}` });
+      }
     });
 
     this.socket.on('orderAssigned', (order: DeliveryOrder) => {

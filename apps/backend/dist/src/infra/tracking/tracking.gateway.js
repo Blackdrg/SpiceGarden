@@ -27,6 +27,8 @@ const WS_RATE_LIMIT_MAX = Number(process.env.WS_RATE_LIMIT_MAX || 10);
 const WS_RATE_LIMIT_WINDOW_MS = Number(process.env.WS_RATE_LIMIT_WINDOW_MS || 60000);
 const ROOM_PATTERN = /^[a-zA-Z0-9:_-]{1,128}$/;
 const DRIVER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+const MAX_ACK_MESSAGES_PER_CLIENT = 500;
+const MSG_QUEUE_TTL_MS = Number(process.env.WS_MSG_QUEUE_TTL_MS || 60000);
 var SocketNamespace;
 (function (SocketNamespace) {
     SocketNamespace["TRACKING"] = "/tracking";
@@ -44,10 +46,34 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
     messageQueue = new Map();
     pendingAcks = new Map();
     ackTimeoutMs;
+    cleanupAttemptsInterval = null;
+    cleanupQueueInterval = null;
     constructor(configService, notificationRepo) {
         this.configService = configService;
         this.notificationRepo = notificationRepo;
         this.ackTimeoutMs = this.configService.get('WS_ACK_TIMEOUT_MS', 5000);
+        this.cleanupAttemptsInterval = setInterval(() => this.cleanupStaleConnectionAttempts(), WS_RATE_LIMIT_WINDOW_MS);
+        if (this.cleanupAttemptsInterval && typeof this.cleanupAttemptsInterval.unref === 'function') {
+            this.cleanupAttemptsInterval.unref();
+        }
+        this.cleanupQueueInterval = setInterval(() => this.cleanupStaleMessageQueue(), MSG_QUEUE_TTL_MS);
+        if (this.cleanupQueueInterval && typeof this.cleanupQueueInterval.unref === 'function') {
+            this.cleanupQueueInterval.unref();
+        }
+    }
+    onModuleDestroy() {
+        if (this.cleanupAttemptsInterval) {
+            clearInterval(this.cleanupAttemptsInterval);
+        }
+        if (this.cleanupQueueInterval) {
+            clearInterval(this.cleanupQueueInterval);
+        }
+        for (const pending of this.pendingAcks.values()) {
+            if (pending.timeout) {
+                clearTimeout(pending.timeout);
+            }
+        }
+        this.pendingAcks.clear();
     }
     handleConnection(client) {
         if (!this.isConnectionAllowed(client)) {
@@ -124,6 +150,12 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         if (!conn)
             return { error: 'Not connected' };
         data.timestamp = new Date();
+        if (conn.acknowledgedMessages.size >= MAX_ACK_MESSAGES_PER_CLIENT) {
+            const oldestKey = conn.acknowledgedMessages.keys().next().value;
+            if (oldestKey) {
+                conn.acknowledgedMessages.delete(oldestKey);
+            }
+        }
         conn.acknowledgedMessages.set(data.id, data);
         if (data.ack) {
             const ackResult = await new Promise((resolve, reject) => {
@@ -234,11 +266,43 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         });
     }
     cleanupPendingAcks(clientId) {
-        for (const [messageId, pending] of this.pendingAcks.entries()) {
-            clearTimeout(pending.timeout);
-            pending.reject(new Error('Client disconnected'));
+        const conn = this.connectedClients.get(clientId);
+        if (!conn)
+            return;
+        for (const [messageId, message] of conn.acknowledgedMessages.entries()) {
+            if (!message.ack) {
+                conn.acknowledgedMessages.delete(messageId);
+            }
+            const pending = this.pendingAcks.get(messageId);
+            if (pending) {
+                clearTimeout(pending.timeout);
+                this.pendingAcks.delete(messageId);
+            }
         }
-        this.pendingAcks.clear();
+    }
+    cleanupStaleConnectionAttempts() {
+        const now = Date.now();
+        for (const [key, entry] of this.connectionAttempts.entries()) {
+            if (now >= entry.resetAt) {
+                this.connectionAttempts.delete(key);
+            }
+        }
+    }
+    cleanupStaleMessageQueue() {
+        const now = Date.now();
+        for (const [driverId, queue] of this.messageQueue.entries()) {
+            const filtered = queue.filter((msg) => {
+                if (!msg.timestamp)
+                    return false;
+                return now - msg.timestamp.getTime() < MSG_QUEUE_TTL_MS;
+            });
+            if (filtered.length === 0) {
+                this.messageQueue.delete(driverId);
+            }
+            else {
+                this.messageQueue.set(driverId, filtered);
+            }
+        }
     }
     async getQueuedMessages(driverId) {
         return this.messageQueue.get(driverId) || [];
@@ -247,8 +311,9 @@ let TrackingGateway = TrackingGateway_1 = class TrackingGateway {
         const queue = this.messageQueue.get(driverId) || [];
         const conn = this.connectedClients.get(driverId);
         if (conn) {
+            const messageIdSet = new Set(messageIds);
             const undelivered = Array.from(conn.acknowledgedMessages.values())
-                .filter(m => messageIds.includes(m.id) && !m.ack);
+                .filter(m => messageIdSet.has(m.id) && !m.ack);
             queue.push(...undelivered);
             this.messageQueue.set(driverId, queue);
         }

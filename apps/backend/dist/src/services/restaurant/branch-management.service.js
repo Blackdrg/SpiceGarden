@@ -22,12 +22,12 @@ const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let BranchManagementService = BranchManagementService_1 = class BranchManagementService {
     branchRepo;
     restaurantRepo;
-    dataSource;
+    connection;
     logger = new common_1.Logger(BranchManagementService_1.name);
-    constructor(branchRepo, restaurantRepo, dataSource) {
+    constructor(branchRepo, restaurantRepo, connection) {
         this.branchRepo = branchRepo;
         this.restaurantRepo = restaurantRepo;
-        this.dataSource = dataSource;
+        this.connection = connection;
     }
     async createBranch(restaurantId, branchData) {
         const restaurant = await this.restaurantRepo.findOne({ where: { id: restaurantId } });

@@ -1,0 +1,23 @@
+{
+  "idleCpuPercent": 2.1,
+  "idleMemoryMb": 182,
+  "dbConnections": 10,
+  "dbMaxConnections": 500,
+  "dbPoolUtilizationPercent": 2,
+  "redisConnections": 8,
+  "redisMemoryMb": 14.2,
+  "podCount": 6,
+  "startupTimeMs": 1420,
+  "healthCheckLatencyP50Ms": 0.8,
+  "healthCheckLatencyP95Ms": 1.4,
+  "healthCheckLatencyP99Ms": 2.1,
+  "apiBaselineLatencyP50Ms": 1.2,
+  "apiBaselineLatencyP95Ms": 2.8,
+  "apiBaselineLatencyP99Ms": 4.5,
+  "errorRatePercent": 0,
+  "eventLoopLagMs": 0.18,
+  "queueDepth": 0,
+  "postgresQueryLatencyMs": 0.65,
+  "redisCommandLatencyMs": 0.22,
+  "status": "PASS"
+}

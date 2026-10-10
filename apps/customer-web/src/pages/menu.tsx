@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, DESIGN_TOKENS, Skeleton } from '@spicegarden/ui';
+import { Button, Card, DESIGN_TOKENS, Skeleton, BurgerIcon, PizzaIcon, DrinkIcon, PackageIcon, HomeIcon, SearchIcon, CartIcon, ProfileIcon } from '@spicegarden/ui';
 import { useRouter } from 'next/router';
 import styles from './menu.module.css';
 
@@ -8,7 +8,6 @@ interface MenuItem {
   name: string;
   desc: string;
   price: number;
-  image: string;
   category: string;
 }
 
@@ -27,18 +26,18 @@ const categories: Category[] = [
 ];
 
 const menuItems: MenuItem[] = [
-  { id: 1, name: 'Classic Burger', desc: 'Lettuce, tomato, onion', price: 129, image: '🍔', category: 'burgers' },
-  { id: 2, name: 'Cheese Burger', desc: 'With extra cheese', price: 149, image: '🍔', category: 'burgers' },
-  { id: 3, name: 'Veggie Burger', desc: 'Plant-based patty', price: 139, image: '🍔', category: 'burgers' },
-  { id: 4, name: 'Margherita Pizza', desc: 'Tomato, mozzarella, basil', price: 249, image: '🍕', category: 'pizza' },
-  { id: 5, name: 'Pepperoni Pizza', desc: 'With spicy pepperoni', price: 279, image: '🍕', category: 'pizza' },
-  { id: 6, name: 'Veggie Pizza', desc: 'Bell peppers, olives, onions', price: 259, image: '🍕', category: 'pizza' },
-  { id: 7, name: 'French Fries', desc: 'Crispy golden fries', price: 99, image: '🍟', category: 'sides' },
-  { id: 8, name: 'Onion Rings', desc: 'Battered and fried', price: 109, image: '🧅', category: 'sides' },
-  { id: 9, name: 'Garlic Bread', desc: 'With herbs and cheese', price: 119, image: '🥖', category: 'sides' },
-  { id: 10, name: 'Coca Cola', desc: '500ml Bottle', price: 49, image: '🥤', category: 'drinks' },
-  { id: 11, name: 'Sprite', desc: '500ml Bottle', price: 49, image: '🥤', category: 'drinks' },
-  { id: 12, name: 'Iced Tea', desc: 'Lemon flavored', price: 39, image: '🧃', category: 'drinks' },
+  { id: 1, name: 'Classic Burger', desc: 'Lettuce, tomato, onion', price: 129, category: 'burgers' },
+  { id: 2, name: 'Cheese Burger', desc: 'With extra cheese', price: 149, category: 'burgers' },
+  { id: 3, name: 'Veggie Burger', desc: 'Plant-based patty', price: 139, category: 'burgers' },
+  { id: 4, name: 'Margherita Pizza', desc: 'Tomato, mozzarella, basil', price: 249, category: 'pizza' },
+  { id: 5, name: 'Pepperoni Pizza', desc: 'With spicy pepperoni', price: 279, category: 'pizza' },
+  { id: 6, name: 'Veggie Pizza', desc: 'Bell peppers, olives, onions', price: 259, category: 'pizza' },
+  { id: 7, name: 'French Fries', desc: 'Crispy golden fries', price: 99, category: 'sides' },
+  { id: 8, name: 'Onion Rings', desc: 'Battered and fried', price: 109, category: 'sides' },
+  { id: 9, name: 'Garlic Bread', desc: 'With herbs and cheese', price: 119, category: 'sides' },
+  { id: 10, name: 'Coca Cola', desc: '500ml Bottle', price: 49, category: 'drinks' },
+  { id: 11, name: 'Sprite', desc: '500ml Bottle', price: 49, category: 'drinks' },
+  { id: 12, name: 'Iced Tea', desc: 'Lemon flavored', price: 39, category: 'drinks' },
 ];
 
 const MenuPage = () => {
@@ -47,12 +46,10 @@ const MenuPage = () => {
   const [cart, setCart] = useState<Array<MenuItem & { quantity: number }>>([]);
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading effect for demo purposes
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
-    
     return () => clearTimeout(timer);
   }, []);
 
@@ -93,41 +90,44 @@ const MenuPage = () => {
         ))}
       </div>
 
-       <div className={styles.itemsList}>
-         {loading ? (
-           <div className={styles.itemsList}>
-             {Array.from({ length: 6 }).map((_, index) => (
-               <div key={index} className={styles.skeletonItem}>
-                  <div className={styles.skeletonHeader}>
-                    <Skeleton width={48} height={48} variant="circular" />
-                    <div>
-                      <Skeleton height={16} width="70%" style={{ marginBottom: 4 }} />
-                      <Skeleton height={14} width="40%" />
-                    </div>
+      <div className={styles.itemsList}>
+        {loading ? (
+          <div className={styles.itemsList}>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className={styles.skeletonItem}>
+                <div className={styles.skeletonHeader}>
+                  <Skeleton width={48} height={48} variant="circular" />
+                  <div>
+                    <Skeleton height={16} width="70%" style={{ marginBottom: 4 }} />
+                    <Skeleton height={14} width="40%" />
                   </div>
-                  <Skeleton height={12} style={{ marginTop: 8 }} />
-                  <Skeleton height={12} width="80%" />
-                  <Skeleton height={12} width="60%" />
-               </div>
-             ))}
-           </div>
-         ) : filteredItems.length === 0 ? (
-           <div className={styles.emptyContainer}>
-             <p className={styles.emptyIcon}>🍽️</p>
-             <p className={styles.emptyText}>No items found</p>
-             <p className={styles.emptyHelpText}>
-               Try selecting a different category or check back later for new items.
-             </p>
-             <Button 
-               label="Explore More" 
-               onClick={() => setActiveCategory('all')}
-               variant="outline"
-             />
-           </div>
-         ) : filteredItems.map((item) => (
-           <div key={item.id} className={styles.menuItem}>
+                </div>
+                <Skeleton height={12} style={{ marginTop: 8 }} />
+                <Skeleton height={12} width="80%" />
+                <Skeleton height={12} width="60%" />
+              </div>
+            ))}
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <p className={styles.emptyText}>No items found</p>
+            <p className={styles.emptyHelpText}>
+              Try selecting a different category or check back later for new items.
+            </p>
+            <Button 
+              label="Explore More" 
+              onClick={() => setActiveCategory('all')} 
+              variant="outline"
+            />
+          </div>
+        ) : filteredItems.map((item) => {
+          const Icon = item.category === 'burgers' ? BurgerIcon : item.category === 'pizza' ? PizzaIcon : item.category === 'drinks' ? DrinkIcon : PackageIcon;
+          return (
+            <div key={item.id} className={styles.menuItem}>
               <div className={styles.itemHeader}>
-                <div className={styles.itemImage}>{item.image}</div>
+                <div className={styles.itemImage} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon size={24} color="#f04e31" />
+                </div>
                 <div>
                   <span className={styles.priceText}>₹{item.price}</span>
                   <Button 
@@ -140,9 +140,10 @@ const MenuPage = () => {
               <div className={styles.itemDesc}>
                 {item.desc}
               </div>
-           </div>
-         ))}
-       </div>
+            </div>
+          );
+        })}
+      </div>
 
       {cart.length > 0 && (
         <div className={styles.cartContainer}>
@@ -179,22 +180,26 @@ const MenuPage = () => {
       {/* Bottom nav */}
       <nav className={styles.bottomNav}>
         {[
-          { key: 'home', label: 'Home', icon: '🏠', path: '/' },
-          { key: 'search', label: 'Search', icon: '🔍', path: '/search' },
-          { key: 'menu', label: 'Menu', icon: '📋' },
-          { key: 'account', label: 'Account', icon: '👤', path: '/profile' },
-        ].map((tab) => (
-          <button
-            type="button"
-            key={tab.key}
-            onClick={() => tab.path && router.push(tab.path)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-            className={`${styles.navButton} ${tab.key === 'menu' ? styles.navButtonActive : ''}`}
-          >
-            <span className={styles.navIcon}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'menu', label: 'Menu', Icon: CartIcon, path: '/menu' },
+          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          const isActive = tab.key === 'menu';
+          return (
+            <button
+              type="button"
+              key={tab.key}
+              onClick={() => tab.path && router.push(tab.path)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
+              className={`${styles.navButton} ${isActive ? styles.navButtonActive : ''}`}
+            >
+              <span className={styles.navIcon}><Icon size={20} color={isActive ? DESIGN_TOKENS.colors.primary : '#888'} /></span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

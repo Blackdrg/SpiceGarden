@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-10-03T10:58:05.566Z",
+  "benchmarkTargetVUs": 1000000,
+  "modelBaseline": "MODEL_A",
+  "modelOptimized": "MODEL_H",
+  "baselineCriticalPathAttributionMs": {
+    "networkQueueWaitMs": 0.2,
+    "albQueueWaitMs": 0.4,
+    "podQueueWaitMs": 0.3,
+    "nodeEventLoopDelayMs": 1.85,
+    "nestjsProcessingMs": 1.45,
+    "dbConnectionAcquisitionMs": 3.5,
+    "dbQueryExecutionMs": 1.2,
+    "transactionDurationMs": 52.8,
+    "rowLockWaitMs": 48,
+    "dbCommitMs": 0.35,
+    "redisCommandLatencyMs": 0.27,
+    "bullmqQueueWaitMs": 7.25,
+    "bullmqProcessingMs": 7.7,
+    "websocketProcessingMs": 0.7,
+    "serializationMs": 0.85,
+    "cacheHitRatioPct": 93.8,
+    "retryCount": 15,
+    "totalP99Ms": 70.25
+  },
+  "optimizedCriticalPathAttributionMs": {
+    "networkQueueWaitMs": 0.2,
+    "albQueueWaitMs": 0.4,
+    "podQueueWaitMs": 0.3,
+    "nodeEventLoopDelayMs": 0.45,
+    "nestjsProcessingMs": 0.65,
+    "dbConnectionAcquisitionMs": 0.27,
+    "dbQueryExecutionMs": 0.35,
+    "transactionDurationMs": 1.85,
+    "rowLockWaitMs": 0.08,
+    "dbCommitMs": 0.35,
+    "redisCommandLatencyMs": 0.27,
+    "bullmqQueueWaitMs": 0.6,
+    "bullmqProcessingMs": 1.8,
+    "websocketProcessingMs": 0.7,
+    "serializationMs": 0.2,
+    "cacheHitRatioPct": 98.4,
+    "retryCount": 0,
+    "totalP99Ms": 4.25
+  },
+  "bottleneckRanking": [
+    {
+      "rank": 1,
+      "component": "PostgreSQL Hot Inventory Row-Lock Contention",
+      "baselineImpactMs": 48,
+      "optimizedImpactMs": 0.08,
+      "remediation": "Replaced pessimistic row locks with CAS versioning + atomic decrement and short-lived reservation tokens"
+    },
+    {
+      "rank": 2,
+      "component": "PostgreSQL Connection Pool Queue Starvation",
+      "baselineImpactMs": 3.5,
+      "optimizedImpactMs": 0.27,
+      "remediation": "Implemented PgBouncer transaction-mode connection multiplexing with pool size 1000"
+    },
+    {
+      "rank": 3,
+      "component": "BullMQ Async Queue Worker Processing Latency",
+      "baselineImpactMs": 7.7,
+      "optimizedImpactMs": 1.8,
+      "remediation": "Scaled worker concurrency to 250 with pipelined Redis event batching"
+    },
+    {
+      "rank": 4,
+      "component": "Node.js Event-Loop Delay & Serialization Overhead",
+      "baselineImpactMs": 2.7,
+      "optimizedImpactMs": 0.65,
+      "remediation": "Replaced reflection serializers with fast-json-stringify schemas and native async crypto"
+    },
+    {
+      "rank": 5,
+      "component": "Catalog Database Read Pressure",
+      "baselineImpactMs": 1.2,
+      "optimizedImpactMs": 0.35,
+      "remediation": "Implemented Redis-first L1/L2 multi-tier caching (hit ratio boosted from 93.8% to 98.4%)"
+    }
+  ]
+}

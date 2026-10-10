@@ -1,0 +1,27 @@
+{
+  "stage": "k8s-10k",
+  "kubernetes": {
+    "desired_replicas": 8,
+    "current_replicas": 8,
+    "available_replicas": 8,
+    "pod_cpu_avg_percent": 64.2,
+    "pod_cpu_peak_percent": 72.8,
+    "pod_memory_avg_mb": 268.0,
+    "pod_memory_peak_mb": 312.5
+  },
+  "database": {
+    "active_connections": 68,
+    "pool_max": 100,
+    "query_p95_ms": 24.2
+  },
+  "redis": {
+    "command_p99_ms": 1.45,
+    "connected_clients": 48,
+    "memory_used_mb": 245.0
+  },
+  "bullmq": {
+    "active_jobs": 5,
+    "waiting_jobs": 0,
+    "completed_jobs": 19400
+  }
+}

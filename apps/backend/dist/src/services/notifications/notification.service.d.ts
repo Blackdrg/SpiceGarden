@@ -87,15 +87,7 @@ export declare class NotificationService {
     } | {
         success: boolean;
         sent: number;
-        results: ({
-            token: string;
-            success: boolean;
-            error: string;
-        } | {
-            token: string;
-            success: boolean;
-            error?: undefined;
-        })[];
+        results: any[];
         reason?: undefined;
         error?: undefined;
     } | {

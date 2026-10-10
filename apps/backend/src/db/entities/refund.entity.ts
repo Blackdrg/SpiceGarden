@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { OrderEntity } from './order.entity';
 import { UserEntity } from './user.entity';
 
@@ -21,12 +21,14 @@ export class RefundEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index('idx_refunds_order_id')
   @Column()
   orderId!: string;
 
   @ManyToOne(() => OrderEntity)
   order!: OrderEntity;
 
+  @Index('idx_refunds_user_id')
   @Column()
   requestedBy!: string;
 
@@ -39,6 +41,7 @@ export class RefundEntity {
   @Column('decimal', { precision: 10, scale: 2 })
   amount!: number;
 
+  @Index('idx_refunds_status')
   @Column({ type: 'enum', enum: RefundStatus, default: RefundStatus.REQUESTED })
   status!: RefundStatus;
 

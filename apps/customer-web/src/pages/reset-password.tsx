@@ -64,8 +64,9 @@ const ResetPasswordPage = () => {
           dispatch({ type: 'SET_STEP', payload: 'code' });
           dispatch({ type: 'SET_SUCCESS_MESSAGE', payload: "If your email exists in our system, we have sent a reset code to it." });
         } else {
-          const errorData = await res.json();
-          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Failed to send reset code' });
+          const errorData = await res.json().catch(() => ({}));
+          const msg = Array.isArray(errorData.message) ? errorData.message.join(', ') : errorData.message;
+          dispatch({ type: 'SET_ERROR', payload: msg || 'Failed to send reset code' });
         }
       } else if (state.step === 'code') {
         if (!state.formData.code) {
@@ -82,8 +83,9 @@ const ResetPasswordPage = () => {
         if (res.ok) {
           dispatch({ type: 'SET_STEP', payload: 'password' });
         } else {
-          const errorData = await res.json();
-          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Invalid or expired code' });
+          const errorData = await res.json().catch(() => ({}));
+          const msg = Array.isArray(errorData.message) ? errorData.message.join(', ') : errorData.message;
+          dispatch({ type: 'SET_ERROR', payload: msg || 'Invalid or expired code' });
         }
       } else if (state.step === 'password') {
         if (!state.formData.password) {
@@ -117,8 +119,9 @@ const ResetPasswordPage = () => {
             router.push('/auth');
           }, 2000);
         } else {
-          const errorData = await res.json();
-          dispatch({ type: 'SET_ERROR', payload: errorData.message || 'Failed to reset password' });
+          const errorData = await res.json().catch(() => ({}));
+          const msg = Array.isArray(errorData.message) ? errorData.message.join(', ') : errorData.message;
+          dispatch({ type: 'SET_ERROR', payload: msg || 'Failed to reset password' });
         }
       }
     } catch {

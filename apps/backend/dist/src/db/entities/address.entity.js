@@ -62,7 +62,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'point', transformer: {
             from: (v) => v,
-            to: (v) => `(${v.lng} ${v.lat})`,
+            to: (v) => `(${v.lng},${v.lat})`,
         } }),
     __metadata("design:type", Object)
 ], AddressEntity.prototype, "location", void 0);

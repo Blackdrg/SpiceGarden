@@ -8,6 +8,8 @@ interface JwtPayload {
 }
 interface JwtUser {
     id: string;
+    sub: string;
+    userId: string;
     email: string;
     role: UserRole;
     status: UserStatus;

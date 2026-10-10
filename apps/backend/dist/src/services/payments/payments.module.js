@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentServiceModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const payments_service_1 = require("./payments.service");
 const payments_controller_1 = require("./payments.controller");
 const payment_hardening_service_1 = require("./payment-hardening.service");
@@ -18,6 +18,7 @@ const idempotency_service_1 = require("./idempotency.service");
 const gateway_factory_service_1 = require("./gateway-factory.service");
 const stripe_gateway_service_1 = require("./gateways/stripe-gateway.service");
 const razorpay_gateway_service_1 = require("./gateways/razorpay-gateway.service");
+const cod_gateway_service_1 = require("./gateways/cod-gateway.service");
 const audit_module_1 = require("../../audit/audit.module");
 const ledger_module_1 = require("../../modules/ledger/ledger.module");
 const gst_module_1 = require("../../services/gst/gst.module");
@@ -29,7 +30,7 @@ exports.PaymentServiceModule = PaymentServiceModule;
 exports.PaymentServiceModule = PaymentServiceModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
             audit_module_1.AuditModule,
             ledger_module_1.LedgerModule,
             gst_module_1.GSTModule,
@@ -44,6 +45,7 @@ exports.PaymentServiceModule = PaymentServiceModule = __decorate([
             gateway_factory_service_1.PaymentGatewayFactory,
             stripe_gateway_service_1.StripeGateway,
             razorpay_gateway_service_1.RazorpayGateway,
+            cod_gateway_service_1.CashOnDeliveryGateway,
             chargeback_service_1.ChargebackService
         ],
         controllers: [payments_controller_1.PaymentsController],

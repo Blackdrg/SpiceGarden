@@ -26,25 +26,27 @@ let SearchService = class SearchService {
         this.restaurantRepo = restaurantRepo;
     }
     async search(query) {
-        const restaurants = await this.restaurantRepo.find({
-            where: [
-                { name: (0, typeorm_2.Like)(`%${query}%`) },
-                { description: (0, typeorm_2.Like)(`%${query}%`) },
-            ],
-        });
-        const items = await this.menuRepo.find({
-            where: [
-                { name: (0, typeorm_2.Like)(`%${query}%`) },
-                { description: (0, typeorm_2.Like)(`%${query}%`) },
-            ],
-            relations: {
-                category: {
-                    branch: {
-                        restaurant: true
+        const [restaurants, items] = await Promise.all([
+            this.restaurantRepo.find({
+                where: [
+                    { name: (0, typeorm_2.Like)(`%${query}%`) },
+                    { description: (0, typeorm_2.Like)(`%${query}%`) },
+                ],
+            }),
+            this.menuRepo.find({
+                where: [
+                    { name: (0, typeorm_2.Like)(`%${query}%`) },
+                    { description: (0, typeorm_2.Like)(`%${query}%`) },
+                ],
+                relations: {
+                    category: {
+                        branch: {
+                            restaurant: true
+                        }
                     }
-                }
-            },
-        });
+                },
+            }),
+        ]);
         return { restaurants, items };
     }
     async getTrending() {

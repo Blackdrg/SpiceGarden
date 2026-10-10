@@ -1,0 +1,25 @@
+{
+  "aurora_writer": {
+    "instance": "db.r6g.16xlarge",
+    "cpu_utilization_pct": 68.5,
+    "write_latency_ms": 2.4,
+    "active_server_connections": 800
+  },
+  "aurora_readers": [
+    {
+      "instance": "db.r6g.8xlarge-01",
+      "cpu_utilization_pct": 54.2,
+      "read_latency_ms": 1.1
+    },
+    {
+      "instance": "db.r6g.8xlarge-02",
+      "cpu_utilization_pct": 53.8,
+      "read_latency_ms": 1.2
+    }
+  ],
+  "pgbouncer": {
+    "replica_count": 8,
+    "client_connections_active": 10000,
+    "avg_client_wait_time_ms": 0.8
+  }
+}

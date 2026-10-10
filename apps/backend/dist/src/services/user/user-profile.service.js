@@ -32,11 +32,9 @@ let UserProfileService = class UserProfileService {
         if (data.isDefault) {
             await this.addressRepo.update({ userId }, { isDefault: false });
         }
-        const address = this.addressRepo.create({
-            userId,
-            ...data,
-        });
-        return this.addressRepo.save(address);
+        const point = `(${data.location.lng},${data.location.lat})`;
+        const rows = await this.addressRepo.query('INSERT INTO user_addresses("userId", label, "addressLine", city, state, "postalCode", location, "isDefault") VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [userId, data.label, data.addressLine, data.city, data.state, data.postalCode, point, data.isDefault || false]);
+        return rows[0];
     }
     async updateAddress(userId, id, data) {
         const address = await this.addressRepo.findOne({ where: { id, userId } });

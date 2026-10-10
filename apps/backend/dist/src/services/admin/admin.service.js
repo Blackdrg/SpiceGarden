@@ -20,16 +20,24 @@ const order_entity_1 = require("../../db/entities/order.entity");
 const user_entity_1 = require("../../db/entities/user.entity");
 const driver_entity_1 = require("../../db/entities/driver.entity");
 const audit_log_entity_1 = require("../../db/entities/audit-log.entity");
+const restaurant_branch_entity_1 = require("../../db/entities/restaurant-branch.entity");
+const restaurant_entity_1 = require("../../db/entities/restaurant.entity");
 let AdminService = class AdminService {
+    connection;
     orderRepo;
     userRepo;
     driverRepo;
     auditRepo;
-    constructor(orderRepo, userRepo, driverRepo, auditRepo) {
-        this.orderRepo = orderRepo;
-        this.userRepo = userRepo;
-        this.driverRepo = driverRepo;
-        this.auditRepo = auditRepo;
+    branchRepo;
+    restaurantRepo;
+    constructor(connection) {
+        this.connection = connection;
+        this.orderRepo = this.connection.getRepository(order_entity_1.OrderEntity);
+        this.userRepo = this.connection.getRepository(user_entity_1.UserEntity);
+        this.driverRepo = this.connection.getRepository(driver_entity_1.DriverEntity);
+        this.auditRepo = this.connection.getRepository(audit_log_entity_1.AuditLogEntity);
+        this.branchRepo = this.connection.getRepository(restaurant_branch_entity_1.RestaurantBranchEntity);
+        this.restaurantRepo = this.connection.getRepository(restaurant_entity_1.RestaurantEntity);
     }
     async getDashboardStats(branchId) {
         const today = new Date();
@@ -39,32 +47,32 @@ let AdminService = class AdminService {
             where = { ...where, restaurantId: branchId };
         }
         try {
-            const [ordersToday, totalRevenue] = await Promise.all([
+            const [ordersToday, totalRevenue, activeDrivers, activeRestaurants, branches, revenueData, disputeCount, refundCount,] = await Promise.all([
                 this.orderRepo.count({ where }),
                 this.orderRepo.createQueryBuilder('order')
                     .select('SUM(order.grandTotal)', 'total')
                     .where('order.createdAt >= :today', { today })
                     .getRawOne(),
+                this.driverRepo.count({ where: { isOnline: true } }),
+                this.restaurantRepo.count({ where: { status: 'active' } }),
+                this.getBranchStats(),
+                this.getRevenueData(),
+                this.getDisputeCount(today),
+                this.getRefundCount(today),
             ]);
-            const activeDrivers = await this.driverRepo.count({ where: { isOnline: true } });
             return {
                 stats: {
-                    revenue: totalRevenue?.total || 0,
+                    revenue: Number(totalRevenue?.total) || 0,
                     orders: ordersToday,
                     driversOnline: activeDrivers,
-                    complaints: 0,
-                    refunds: 0,
+                    complaints: disputeCount,
+                    refunds: refundCount,
                     fraudAlerts: 0,
-                    activeBranches: 3,
+                    activeBranches: activeRestaurants,
                     pendingWithdrawals: 0,
                 },
-                revenueData: this.generateMockRevenueData(),
-                branches: [
-                    { name: 'Downtown', status: 'operational', orderCount: 12, avgPrepMins: 15, driversAssigned: 8 },
-                    { name: 'Mall Road', status: 'operational', orderCount: 8, avgPrepMins: 12, driversAssigned: 6 },
-                    { name: 'Gulshan', status: 'operational', orderCount: 5, avgPrepMins: 10, driversAssigned: 4 },
-                ],
-                tickets: [],
+                revenueData,
+                branches,
             };
         }
         catch (e) {
@@ -76,25 +84,59 @@ let AdminService = class AdminService {
                     complaints: 0,
                     refunds: 0,
                     fraudAlerts: 0,
-                    activeBranches: 3,
+                    activeBranches: 0,
                     pendingWithdrawals: 0,
                 },
-                revenueData: this.generateMockRevenueData(),
-                branches: [
-                    { name: 'Downtown', status: 'operational', orderCount: 0, avgPrepMins: 15, driversAssigned: 0 },
-                    { name: 'Mall Road', status: 'operational', orderCount: 0, avgPrepMins: 12, driversAssigned: 0 },
-                    { name: 'Gulshan', status: 'operational', orderCount: 0, avgPrepMins: 10, driversAssigned: 0 },
-                ],
-                tickets: [],
+                revenueData: [],
+                branches: [],
             };
         }
     }
-    generateMockRevenueData() {
-        const now = new Date();
-        return Array.from({ length: 24 }, (_, i) => ({
-            t: `${String(i).padStart(2, '0')}:00`,
-            revenue: Math.floor(Math.random() * 2000) + 500,
-            orders: Math.floor(Math.random() * 20) + 5,
+    async getDisputeCount(since) {
+        return this.connection
+            .createQueryBuilder()
+            .select('COUNT(*)', 'count')
+            .from('disputes', 'd')
+            .where('d.createdAt >= :since', { since })
+            .getRawOne()
+            .then((result) => Number(result?.count) || 0);
+    }
+    async getRefundCount(since) {
+        return this.connection
+            .createQueryBuilder()
+            .select('COUNT(*)', 'count')
+            .from('refunds', 'r')
+            .where('r.createdAt >= :since', { since })
+            .getRawOne()
+            .then((result) => Number(result?.count) || 0);
+    }
+    async getBranchStats() {
+        const branches = await this.branchRepo?.find?.() || [];
+        return branches.map(branch => ({
+            name: branch.branchName || 'Branch',
+            status: 'operational',
+            orderCount: 0,
+            avgPrepMins: 15,
+            driversAssigned: 0,
+        }));
+    }
+    async getRevenueData() {
+        const result = await this.orderRepo
+            .createQueryBuilder('order')
+            .select([
+            `DATE_TRUNC('hour', order.createdAt) as hour`,
+            'SUM(order.grandTotal) as revenue',
+            'COUNT(*) as orders',
+        ])
+            .where('order.createdAt >= :today', { today: new Date(new Date().setHours(0, 0, 0, 0)) })
+            .groupBy('DATE_TRUNC(\'hour\', order.createdAt)')
+            .orderBy('hour', 'ASC')
+            .limit(24)
+            .getRawMany();
+        return result.map((row) => ({
+            t: new Date(row.hour).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            revenue: Number(row.revenue) || 0,
+            orders: Number(row.orders) || 0,
         }));
     }
     async logAction(action, userId, entityType, entityId, metadata) {
@@ -122,12 +164,6 @@ let AdminService = class AdminService {
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __param(2, (0, typeorm_1.InjectRepository)(driver_entity_1.DriverEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLogEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectDataSource)()),
+    __metadata("design:paramtypes", [typeorm_2.DataSource])
 ], AdminService);

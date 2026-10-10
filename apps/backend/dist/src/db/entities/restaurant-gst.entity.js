@@ -36,6 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], RestaurantGSTEntity.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Index)('idx_restaurant_gst_restaurant_id'),
     (0, typeorm_1.ManyToOne)(() => restaurant_entity_1.RestaurantEntity, restaurant => restaurant.gstDetail),
     __metadata("design:type", restaurant_entity_1.RestaurantEntity)
 ], RestaurantGSTEntity.prototype, "restaurant", void 0);

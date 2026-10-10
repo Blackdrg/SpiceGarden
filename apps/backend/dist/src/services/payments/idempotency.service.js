@@ -31,19 +31,34 @@ let IdempotencyService = IdempotencyService_1 = class IdempotencyService {
         const existing = await this.idempotencyRepo.findOne({
             where: { key, operation }
         });
-        if (existing?.isCompleted) {
-            this.logger.warn(`Duplicate request detected for operation ${operation} with key ${key}`);
+        if (existing) {
+            if (existing.isCompleted) {
+                this.logger.warn(`Duplicate request detected for operation ${operation} with key ${key}`);
+                return { isDuplicate: true, response: existing.responsePayload };
+            }
             return { isDuplicate: true, response: existing.responsePayload };
         }
-        const newKey = this.idempotencyRepo.create({
-            key,
-            operation,
-            userId: userId || 'anonymous',
-            requestPayload,
-            isCompleted: false,
-        });
-        await this.idempotencyRepo.save(newKey);
-        return { isDuplicate: false };
+        try {
+            const newKey = this.idempotencyRepo.create({
+                key,
+                operation,
+                userId: userId || 'anonymous',
+                requestPayload,
+                isCompleted: false,
+            });
+            await this.idempotencyRepo.save(newKey);
+            return { isDuplicate: false };
+        }
+        catch (err) {
+            const duplicateRecord = await this.idempotencyRepo.findOne({
+                where: { key, operation },
+            });
+            if (duplicateRecord) {
+                this.logger.warn(`Concurrent duplicate request resolved for operation ${operation} with key ${key}`);
+                return { isDuplicate: true, response: duplicateRecord.responsePayload };
+            }
+            throw err;
+        }
     }
     async complete(key, operation, responsePayload, statusCode = 200) {
         await this.idempotencyRepo.update({ key, operation }, {

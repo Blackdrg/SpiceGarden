@@ -9,9 +9,48 @@ import { UserEntity } from '../../db/entities/user.entity';
 import { SessionEntity } from '../../db/entities/session.entity';
 import { UserRole, UserStatus } from '../../shared/domain/user.interface';
 
+import * as os from 'os';
+
+class CryptoConcurrencyLimiter {
+  private active = 0;
+  private queue: (() => void)[] = [];
+  private readonly maxConcurrency: number;
+
+  constructor(maxConcurrency?: number) {
+    this.maxConcurrency = maxConcurrency || Math.max(2, (os.availableParallelism ? os.availableParallelism() : os.cpus().length) || 4);
+  }
+
+  async run<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.active >= this.maxConcurrency) {
+      await new Promise<void>((resolve) => this.queue.push(resolve));
+    }
+    this.active++;
+    try {
+      return await fn();
+    } finally {
+      this.active--;
+      if (this.queue.length > 0) {
+        const next = this.queue.shift();
+        if (next) next();
+      }
+    }
+  }
+
+  get queueDepth(): number {
+    return this.queue.length;
+  }
+
+  get activeCount(): number {
+    return this.active;
+  }
+}
+
+const cryptoLimiter = new CryptoConcurrencyLimiter();
+
 export interface AuthenticatedUser {
   id: string;
   email: string;
+  fullName: string;
   role: UserRole;
   status: UserStatus;
   passwordHash?: string;
@@ -34,11 +73,18 @@ export class AuthService {
   ) {}
 
   async hashPassword(password: string): Promise<string> {
-    return argon2.hash(password);
+    return cryptoLimiter.run(() =>
+      argon2.hash(password, {
+        type: argon2.argon2id,
+        memoryCost: 19456, // 19 MB (OWASP recommended)
+        timeCost: 2,
+        parallelism: 1,
+      })
+    );
   }
 
   async verifyPassword(password: string, hash: string): Promise<boolean> {
-    return argon2.verify(hash, password);
+    return cryptoLimiter.run(() => argon2.verify(hash, password));
   }
 
   async createSession(userId: string, deviceInfo: { name: string; type: string; ip: string }, refreshToken = '') {
@@ -59,7 +105,10 @@ export class AuthService {
       throw new UnauthorizedException('Credentials required');
     }
 
-    const user = await this.userRepo.findOne({ where: { email } });
+    const user = await this.userRepo.findOne({
+      where: { email },
+      select: ['id', 'email', 'fullName', 'role', 'status', 'passwordHash'],
+    });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
@@ -73,7 +122,7 @@ export class AuthService {
   }
 
   async login(user: AuthenticatedUser, deviceInfo: { name: string; type: string; ip: string }): Promise<LoginTokenResponse> {
-    const payload = { email: user.email, sub: user.id, role: user.role, status: user.status };
+    const payload = { email: user.email, fullName: user.fullName, sub: user.id, role: user.role, status: user.status };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = crypto.randomBytes(Number(this.configService.get<number>('REFRESH_TOKEN_LENGTH', 40))).toString('hex');
     
@@ -125,5 +174,39 @@ export class AuthService {
     session.isActive = false;
     session.lastActiveAt = new Date();
     await this.sessionRepo.save(session);
+  }
+
+  async loginWithSocial(profile: {
+    email: string;
+    fullName: string;
+    socialId: string;
+    socialProvider: string;
+  }): Promise<LoginTokenResponse> {
+    if (!profile || !profile.email || typeof profile.email !== 'string') {
+      throw new UnauthorizedException('Social profile email is required');
+    }
+    const normalizedEmail = profile.email.trim().toLowerCase();
+    let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
+
+    if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+      const passwordHash = await this.hashPassword(randomPassword);
+      user = this.userRepo.create({
+        email: normalizedEmail,
+        fullName: profile.fullName,
+        phone: `social-${profile.socialId}`,
+        passwordHash,
+        role: UserRole.CUSTOMER,
+        status: UserStatus.ACTIVE,
+      });
+      await this.userRepo.save(user);
+    }
+
+    const { passwordHash, ...authenticatedUser } = user;
+    return this.login(authenticatedUser as AuthenticatedUser, {
+      name: 'social',
+      type: profile.socialProvider,
+      ip: '0.0.0.0',
+    });
   }
 }

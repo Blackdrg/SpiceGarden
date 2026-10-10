@@ -27,7 +27,7 @@ var DocumentStatus;
     DocumentStatus["VERIFIED"] = "verified";
     DocumentStatus["REJECTED"] = "rejected";
 })(DocumentStatus || (exports.DocumentStatus = DocumentStatus = {}));
-let DriverDocumentEntity = class DriverDocumentEntity {
+let DriverDocumentEntity = class DriverDocumentEntity extends typeorm_1.BaseEntity {
     id;
     driverId;
     driver;

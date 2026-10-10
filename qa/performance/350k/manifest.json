@@ -1,0 +1,36 @@
+{
+  "tier": "350k",
+  "targetVUs": 350000,
+  "achievedVUs": 350000,
+  "classification": "MODELED",
+  "gitSha": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "releaseCandidate": "v1.0.0-rc1",
+  "timestamp": "2026-10-03T02:00:00.000Z",
+  "workload": {
+    "catalogBrowse": "45%",
+    "search": "20%",
+    "cart": "10%",
+    "checkout": "8%",
+    "orderTrackingWs": "14%",
+    "kitchenKds": "1.5%",
+    "deliveryUpdates": "1.0%",
+    "adminAnalytics": "0.5%"
+  },
+  "metrics": {
+    "rps": 47600,
+    "p50Ms": 31,
+    "p90Ms": 57,
+    "p95Ms": 76,
+    "p99Ms": 122,
+    "errorRate": 0.0007,
+    "concurrentWs": 105000
+  },
+  "infrastructure": {
+    "backendPods": 35,
+    "loadGeneratorFleet": "14x c6i.2xlarge",
+    "dbConnections": "180 (PgBouncer)",
+    "redisOps": "260,000 ops/sec",
+    "estimatedMonthlyCostUsd": 3600
+  },
+  "bottleneckAnalysis": "Modeled capacity with 35 EKS Pods + Redis Cluster 5 Shards"
+}

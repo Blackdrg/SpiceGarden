@@ -73,6 +73,8 @@ const loyalty_module_1 = require("./services/loyalty/loyalty.module");
 const driver_fleet_module_1 = require("./services/driver-fleet/driver-fleet.module");
 const analytics_module_1 = require("./modules/analytics/analytics.module");
 const review_module_1 = require("./services/review/review.module");
+const user_profile_module_1 = require("./services/user/user-profile.module");
+const menu_customization_module_1 = require("./services/menu-customization/menu-customization.module");
 const apis_module_1 = require("./apis.module");
 let AppModule = class AppModule {
 };
@@ -93,6 +95,7 @@ exports.AppModule = AppModule = __decorate([
             order_module_1.OrderServiceModule,
             payments_module_1.PaymentServiceModule,
             restaurant_module_1.RestaurantServiceModule,
+            menu_customization_module_1.MenuCustomizationModule,
             search_module_1.SearchServiceModule,
             delivery_module_1.DeliveryServiceModule,
             driver_ops_module_1.DriverOpsModule,
@@ -112,6 +115,7 @@ exports.AppModule = AppModule = __decorate([
             driver_fleet_module_1.DriverFleetModule,
             analytics_module_1.AnalyticsModule,
             review_module_1.ReviewServiceModule,
+            user_profile_module_1.UserProfileModule,
             apis_module_1.ApisModule,
         ],
         controllers: [app_controller_1.AppController],

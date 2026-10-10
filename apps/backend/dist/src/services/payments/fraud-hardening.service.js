@@ -188,7 +188,7 @@ let FraudHardeningService = FraudHardeningService_1 = class FraudHardeningServic
                 .where('f.isBlocked = :blocked', { blocked: true })
                 .andWhere('f.blockedAt >= :since', { since: twentyFourHoursAgo })
                 .getRawOne()
-                .then(r => Number(r?.count || 0)),
+                .then((r) => Number(r?.count || 0)),
             this.fraudFlagRepo.count({
                 where: { createdAt: (0, typeorm_2.MoreThanOrEqual)(twentyFourHoursAgo) }
             }),
@@ -209,6 +209,6 @@ exports.FraudHardeningService = FraudHardeningService = FraudHardeningService_1 
     (0, common_1.Injectable)(),
     __param(2, (0, typeorm_1.InjectRepository)(payment_fraud_entity_1.PaymentFraudFlagEntity)),
     __metadata("design:paramtypes", [config_1.ConfigService,
-    audit_service_1.AuditService,
-    typeorm_2.Repository])
+        audit_service_1.AuditService,
+        typeorm_2.Repository])
 ], FraudHardeningService);

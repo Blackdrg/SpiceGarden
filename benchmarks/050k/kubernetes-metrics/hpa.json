@@ -1,0 +1,6 @@
+{
+  "desired_replicas": 6,
+  "current_replicas": 6,
+  "target_cpu_percent": 65,
+  "current_cpu_percent": 62
+}

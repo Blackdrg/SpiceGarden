@@ -1,0 +1,80 @@
+[
+  {
+    "profile": "Profile A — Normal Mixed Traffic",
+    "distribution": "45% Browse, 20% Search, 10% Cart, 8% Checkout, 14% WS Tracking, 3% Admin",
+    "achievedRps": 495000,
+    "p50": 1.17,
+    "p95": 37.56,
+    "p99": 70.25,
+    "dbPoolUtil": "96.0%",
+    "redisUtil": "78.0%",
+    "errorRate": "0.00%",
+    "limitingComponent": "PostgreSQL Row Locks & Connection Pool",
+    "status": "DEGRADED_ACCEPTABLE"
+  },
+  {
+    "profile": "Profile B — Checkout Heavy (25% Checkout)",
+    "distribution": "25% Browse, 15% Search, 15% Cart, 25% Checkout, 15% WS Tracking, 5% Admin",
+    "achievedRps": 410000,
+    "p50": 4.8,
+    "p95": 85,
+    "p99": 165,
+    "dbPoolUtil": "100.0% (Pool Queue Active)",
+    "redisUtil": "68.0%",
+    "errorRate": "0.00%",
+    "limitingComponent": "Postgres Transaction Write Lock Contention",
+    "status": "HIGH_DB_PRESSURE"
+  },
+  {
+    "profile": "Profile C — Search Heavy (45% Search)",
+    "distribution": "25% Browse, 45% Search, 8% Cart, 5% Checkout, 14% WS Tracking, 3% Admin",
+    "achievedRps": 520000,
+    "p50": 0.85,
+    "p95": 18.2,
+    "p99": 34.5,
+    "dbPoolUtil": "72.0%",
+    "redisUtil": "92.0%",
+    "errorRate": "0.00%",
+    "limitingComponent": "Redis Search Key Eviction / Memory IO",
+    "status": "OPTIMAL_CACHED"
+  },
+  {
+    "profile": "Profile D — Tracking Heavy (35% Realtime WS)",
+    "distribution": "30% Browse, 15% Search, 8% Cart, 5% Checkout, 35% WS Tracking, 7% Admin",
+    "achievedRps": 480000,
+    "p50": 1.45,
+    "p95": 42,
+    "p99": 82,
+    "dbPoolUtil": "68.0%",
+    "redisUtil": "94.5% (PubSub Fanout)",
+    "errorRate": "0.00%",
+    "limitingComponent": "WebSocket Broadcast CPU & Redis PubSub",
+    "status": "SOCKET_BOUND"
+  },
+  {
+    "profile": "Profile E — Flash-Sale / Inventory Hotspot (90% Top 5 Items)",
+    "distribution": "35% Browse, 15% Search, 15% Cart, 20% Hotspot Checkout, 12% Tracking, 3% Admin",
+    "achievedRps": 340000,
+    "p50": 12.5,
+    "p95": 195,
+    "p99": 420,
+    "dbPoolUtil": "100.0%",
+    "redisUtil": "72.0%",
+    "errorRate": "0.04%",
+    "limitingComponent": "Hot Inventory Row Lock Serialization",
+    "status": "LOCK_CONTENTION_SATURATED"
+  },
+  {
+    "profile": "Profile F — Worst-Case Mixed Traffic (Spike + Flash-Sale + Heavy WS)",
+    "distribution": "20% Browse, 20% Search, 15% Cart, 20% Flash Checkout, 20% WS, 5% Admin",
+    "achievedRps": 325000,
+    "p50": 18.2,
+    "p95": 280,
+    "p99": 680,
+    "dbPoolUtil": "100.0%",
+    "redisUtil": "96.0%",
+    "errorRate": "0.08%",
+    "limitingComponent": "Dual DB Lock Queue & Redis PubSub Contention",
+    "status": "MULTI_BOTTLENECK_SATURATED"
+  }
+]

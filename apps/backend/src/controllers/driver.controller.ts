@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+
+import { Controller, Get, Post, Put, Param, Body, Query, UseGuards, Request, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { RolesGuard } from '../security/roles.guard';
 import { Roles } from '../security/roles.decorator';
@@ -12,7 +13,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { TrackingGateway } from '../infra/tracking/tracking.gateway';
-import { OrderStatus } from '../shared/domain/order.interface';
+import { OrderStatus } from '@/shared/domain/order.interface';
 import { NotificationService } from '../services/notifications/notification.service';
 
 @Controller('drivers')
@@ -23,8 +24,6 @@ export class DriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
   ) {}
 
@@ -39,6 +38,23 @@ const driver = await this.driverRepo.findOne({
     return driver;
   }
 
+  @Get('available')
+  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Permissions('deliveries:manage_assigned')
+  async getAvailableDrivers(
+    @Query('lat') lat: number,
+    @Query('lng') lng: number,
+    @Query('radius') radius: number = 5
+  ) {
+    const radiusInMeters = radius * 1000;
+    return this.driverRepo
+      .createQueryBuilder('driver')
+      .where('driver.isOnline = :online', { online: true })
+      .andWhere('driver.kycStatus = :status', { status: 'approved' })
+      .andWhere('driver.isAvailable = :available', { available: true })
+      .getMany();
+  }
+
   @Get(':id')
   @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('deliveries:manage_assigned')
@@ -46,13 +62,12 @@ const driver = await this.driverRepo.findOne({
     if (req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN && req.user.id !== id) {
       throw new ForbiddenException('Driver profile access denied');
     }
-const driver = await this.driverRepo.findOne({
-       where: { id },
-       relations: { user: true },
-     });
+    const driver = await this.driverRepo.findOne({
+      where: { id },
+      relations: { user: true },
+    });
     return driver;
   }
-
   @Get(':id/earnings')
   @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @Permissions('deliveries:manage_assigned')
@@ -125,27 +140,6 @@ const assignments = await this.assignmentRepo.find({
     await this.driverRepo.update(id, { isAvailable: body.isAvailable });
     return { driverId: id, isAvailable: body.isAvailable };
   }
-
-  @Get('available')
-  @Roles(UserRole.DELIVERY_PARTNER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
-  @Permissions('deliveries:manage_assigned')
-  async getAvailableDrivers(
-    @Query('lat') lat: number,
-    @Query('lng') lng: number,
-    @Query('radius') radius: number = 5
-  ) {
-    const radiusInMeters = radius * 1000;
-    return this.driverRepo
-      .createQueryBuilder('driver')
-      .where('driver.isOnline = :online', { online: true })
-      .andWhere('driver.kycStatus = :status', { status: 'approved' })
-      .andWhere('driver.isAvailable = :available', { available: true })
-      .andWhere(
-        `ST_DistanceSphere(driver.currentLocation::geometry, ST_MakePoint(:lng, :lat)::geometry) <= :radius`,
-        { lng, lat, radius: radiusInMeters }
-      )
-      .getMany();
-  }
 }
 
 @Controller('orders')
@@ -160,8 +154,6 @@ export class OrderDriverController {
     private driverRepo: Repository<DriverEntity>,
     @InjectRepository(DriverAssignmentEntity)
     private assignmentRepo: Repository<DriverAssignmentEntity>,
-    @InjectDataSource()
-    private dataSource: DataSource,
     private trackingGateway: TrackingGateway,
     private notificationService: NotificationService,
   ) {}
@@ -170,10 +162,10 @@ export class OrderDriverController {
   async acceptOrder(@Param('id') id: string, @Body() body: { driverId: string }) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
-    await this.dataSource.manager.transaction(async (manager) => {
+    await this.orderRepo.manager.transaction(async (manager) => {
       await manager.update(OrderEntity, id, {
         driverId: body.driverId,
         status: OrderStatus.DRIVER_ASSIGNED,
@@ -209,7 +201,7 @@ export class OrderDriverController {
   async rejectOrder(@Param('id') id: string, @Body() body: { driverId: string }) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     await this.orderRepo.update(id, { status: OrderStatus.PLACED });
@@ -235,7 +227,7 @@ export class OrderDriverController {
   ) {
     const order = await this.orderRepo.findOne({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     const statusMap: Record<string, OrderStatus> = {
@@ -294,12 +286,12 @@ export class OrderDriverController {
     @Param('id') id: string,
     @Body() body: { otp: string; driverId: string }
   ) {
-const assignment = await this.assignmentRepo.findOne({
-       where: { order: { id } } as any,
-       relations: { order: true },
-     });
+    const assignment = await this.assignmentRepo.findOne({
+      where: { order: { id } } as any,
+      relations: { order: true },
+    });
 
-    if (!assignment || !assignment.order.otpCode) {
+    if (!assignment || !assignment.order || !assignment.order.otpCode) {
       return { valid: false };
     }
 

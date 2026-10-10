@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding: 48px;
+  background: #f8fafc;
+  padding: 48px 24px;
 }
 
 .container {
@@ -10,22 +10,23 @@
 }
 
 .title {
-  color: #fff;
+  color: #0f172a;
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .description {
-  color: #a1a1aa;
+  color: #64748b;
   font-size: 16px;
-  margin-bottom: 48px;
+  margin-bottom: 40px;
 }
 
 .stepper {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 48px;
+  margin-bottom: 40px;
 }
 
 .step {
@@ -48,32 +49,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   margin-bottom: 8px;
 }
 
 .stepDotActive {
-  background: #f97316;
-  color: #fff;
+  background: #ff5a1f;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(255, 90, 31, 0.35);
 }
 
 .stepDotInactive {
-  background: #27272a;
-  color: #71717a;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
 }
 
 .stepTitle {
   font-size: 12px;
   text-align: center;
+  font-weight: 600;
 }
 
 .stepTitleActive {
-  color: #fff;
+  color: #0f172a;
 }
 
 .stepTitleInactive {
-  color: #71717a;
+  color: #94a3b8;
 }
 
 .stepLine {
@@ -84,30 +88,32 @@
 }
 
 .stepLineActive {
-  background: #f97316;
+  background: #ff5a1f;
 }
 
 .stepLineInactive {
-  background: #27272a;
+  background: #e2e8f0;
 }
 
 .card {
-  background: #171717;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 32px;
-  border: 1px solid #27272a;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
 .cardTitle {
-  color: #fff;
+  color: #0f172a;
   font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .cardText {
-  color: #a1a1aa;
+  color: #64748b;
   margin-bottom: 24px;
+  line-height: 1.6;
 }
 
 .actions {

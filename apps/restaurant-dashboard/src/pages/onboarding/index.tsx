@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
 import styles from './index.module.css';
 
@@ -14,6 +14,7 @@ const STEPS = [
 
 export default function OnboardingIndex() {
   const [currentStep, setCurrentStep] = useState(1);
+  const toast = useToast();
 
   return (
     <div className={styles.page}>
@@ -62,7 +63,7 @@ export default function OnboardingIndex() {
                   setCurrentStep((s) => s + 1);
                   window.location.href = STEPS[currentStep].href;
                 } else {
-                  alert('Onboarding complete! Your restaurant will be reviewed shortly.');
+                  toast.showToast({ message: 'Onboarding complete! Your restaurant will be reviewed shortly.', type: 'success', duration: 0 });
                 }
               }}
             >

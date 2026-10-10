@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { DriverShiftEntity } from '../../db/entities/driver-shift.entity';
 import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
@@ -14,9 +14,8 @@ export declare class DriverFleetService {
     private incentiveRepo;
     private orderRepo;
     private assignmentRepo;
-    private dataSource;
     private readonly logger;
-    constructor(driverRepo: Repository<DriverEntity>, shiftRepo: Repository<DriverShiftEntity>, scoreRepo: Repository<DriverScoreEntity>, penaltyRepo: Repository<DriverPenaltyEntity>, incentiveRepo: Repository<DriverIncentiveEntity>, orderRepo: Repository<OrderEntity>, assignmentRepo: Repository<DriverAssignmentEntity>, dataSource: DataSource);
+    constructor(driverRepo: Repository<DriverEntity>, shiftRepo: Repository<DriverShiftEntity>, scoreRepo: Repository<DriverScoreEntity>, penaltyRepo: Repository<DriverPenaltyEntity>, incentiveRepo: Repository<DriverIncentiveEntity>, orderRepo: Repository<OrderEntity>, assignmentRepo: Repository<DriverAssignmentEntity>);
     startShift(driverId: string): Promise<DriverShiftEntity>;
     endShift(driverId: string, shiftId: string): Promise<DriverShiftEntity>;
     getShifts(driverId: string, limit?: number): Promise<DriverShiftEntity[]>;

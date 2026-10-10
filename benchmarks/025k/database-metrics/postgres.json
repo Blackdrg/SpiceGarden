@@ -1,0 +1,7 @@
+{
+  "pool_utilization": "20/20 maxed",
+  "cpu_percent": "98.5%",
+  "active_queries_p95": 17,
+  "query_latency_p95_ms": 48,
+  "cache_hit_ratio": "99.2%"
+}

@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationQueueModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../../db/local-repository.module");
+const db_repositories_module_1 = require("../../../db/db-repositories.module");
 const notification_queue_service_1 = require("./notification-queue.service");
 const notification_queue_controller_1 = require("./notification-queue.controller");
 const notification_module_1 = require("../notification.module");
@@ -18,7 +18,7 @@ exports.NotificationQueueModule = NotificationQueueModule;
 exports.NotificationQueueModule = NotificationQueueModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            local_repository_module_1.LocalRepositoryModule,
+            db_repositories_module_1.DbRepositoriesModule,
             (0, common_1.forwardRef)(() => notification_module_1.NotificationModule),
         ],
         providers: [notification_queue_service_1.NotificationQueueService],

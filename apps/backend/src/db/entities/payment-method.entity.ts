@@ -6,7 +6,7 @@ export class PaymentMethodEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
+  @Index('idx_payment_methods_user_id')
   @Column()
   userId!: string;
 

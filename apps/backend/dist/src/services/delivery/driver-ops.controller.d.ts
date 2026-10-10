@@ -4,19 +4,19 @@ export declare class DriverOpsController {
     private onboardingService;
     private payoutService;
     constructor(onboardingService: DriverOnboardingService, payoutService: DriverPayoutService);
-    startOnboarding(body: any): Promise<import("../../db/entities/driver.entity").DriverEntity>;
+    startOnboarding(body: any): Promise<import("../../db/entities").DriverEntity>;
     uploadDocument(body: {
         driverId: string;
         type: string;
         url: string;
         expiryDate?: string;
-    }): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity>;
-    getDocuments(driverId: string): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity[]>;
+    }): Promise<import("../../db/entities").DriverDocumentEntity>;
+    getDocuments(driverId: string): Promise<import("../../db/entities").DriverDocumentEntity[]>;
     verifyDocument(id: string, body: {
         status: string;
         notes?: string;
         verifierId?: string;
-    }): Promise<import("../../db/entities/driver-document.entity").DriverDocumentEntity>;
+    }): Promise<import("../../db/entities").DriverDocumentEntity>;
     getOnboardingStatus(id: string): Promise<any>;
     calculateIncentives(body: {
         driverId: string;

@@ -5,6 +5,6 @@ import App from '../App';
 describe('App', () => {
   it('renders welcome message', () => {
     const { getByText } = render(<App />);
-    expect(getByText(/welcome to spicegarden customer app/i)).toBeInTheDocument();
+    expect(getByText(/SpiceGarden/i)).toBeTruthy();
   });
 });

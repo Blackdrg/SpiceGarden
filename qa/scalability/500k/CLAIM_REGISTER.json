@@ -1,0 +1,19 @@
+{
+  "target_vus": 500000,
+  "actual_active_vus": 0,
+  "configured_vus": 0,
+  "achieved_rps": 0,
+  "p95_ms": 0,
+  "p99_ms": 0,
+  "p99_9_ms": 0,
+  "error_rate": 0,
+  "duration_minutes": 0,
+  "environment": "Distributed AWS EKS (Target: 20x c6i.4xlarge, 40x c6i.2xlarge generators)",
+  "commit": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "classification": "BLOCKED_EXTERNAL",
+  "limitations": [
+    "AWS live distributed deployment requires external AWS cloud credentials and billing account.",
+    "Single-host Windows local dev environment reaches physical OS socket buffer limit (WSAENOBUFS 10055) under high concurrency.",
+    "Theoretical capacity model (500K active VUs / 270k RPS) is mathematically verified and IaC ready, but cloud physical execution is classified as BLOCKED_EXTERNAL."
+  ]
+}

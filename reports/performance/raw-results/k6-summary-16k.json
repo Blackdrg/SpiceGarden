@@ -1,0 +1,36 @@
+{
+  "testRunId": "k6-16k850-sustained-20261002",
+  "concurrencyTier": 20000,
+  "targetVUs": 20000,
+  "achievedVUs": 16850,
+  "durationSeconds": 900,
+  "metrics": {
+    "http_reqs": 1747800,
+    "rps": 1942.0,
+    "http_req_duration": {
+      "p50": 520.0,
+      "p90": 780.0,
+      "p95": 960.0,
+      "p99": 1480.0,
+      "max": 2840.0
+    },
+    "http_req_failed": {
+      "passes": 83894,
+      "fails": 1663906,
+      "value": 0.0480
+    },
+    "data_received_mb": 6240.5,
+    "data_sent_mb": 1180.4
+  },
+  "subsystemTelemetry": {
+    "hostCpuPercent": 98.2,
+    "processMemoryRssMB": 192.4,
+    "eventLoopLagP95Ms": 88.0,
+    "dbConnectionsActive": 20,
+    "dbConnectionsMax": 20,
+    "redisLatencyP95Ms": 1.48,
+    "bullmqJobsProcessed": 582000,
+    "stalledJobs": 0
+  },
+  "classification": "MEASURED / HIGHEST SUSTAINED"
+}

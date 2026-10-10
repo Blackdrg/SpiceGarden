@@ -1,0 +1,36 @@
+{
+  "testRunId": "k6-22k400-observed-ceiling-20261002",
+  "concurrencyTier": 30000,
+  "targetVUs": 30000,
+  "achievedVUs": 22400,
+  "durationSeconds": 600,
+  "metrics": {
+    "http_reqs": 1290000,
+    "rps": 2150.0,
+    "http_req_duration": {
+      "p50": 890.0,
+      "p90": 1420.0,
+      "p95": 1850.0,
+      "p99": 2900.0,
+      "max": 5400.0
+    },
+    "http_req_failed": {
+      "passes": 136740,
+      "fails": 1153260,
+      "value": 0.1060
+    },
+    "data_received_mb": 4910.0,
+    "data_sent_mb": 920.0
+  },
+  "subsystemTelemetry": {
+    "hostCpuPercent": 100.0,
+    "processMemoryRssMB": 242.0,
+    "eventLoopLagP95Ms": 240.0,
+    "dbConnectionsActive": 20,
+    "dbConnectionsMax": 20,
+    "redisLatencyP95Ms": 2.10,
+    "stalledJobs": 0,
+    "limitingError": "WSAENOBUFS (Windows OS ephemeral port exhaustion at 16,384 sockets)"
+  },
+  "classification": "MEASURED WITH LIMITATIONS / OBSERVED CEILING"
+}

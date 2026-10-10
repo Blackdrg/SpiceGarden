@@ -1,0 +1,157 @@
+{
+  "model": "MODEL_H",
+  "vus": 1000000,
+  "sustainableRps": 585000,
+  "p50LatencyMs": 0.14,
+  "p95LatencyMs": 2,
+  "p99LatencyMs": 4.25,
+  "errorRatePercent": 0,
+  "dbPoolUtilizationPercent": 12.6,
+  "dbActiveConnections": 126,
+  "dbMaxConnections": 1000,
+  "dbLockWaitMs": 0.03,
+  "dbQueueWaitMs": 0.12,
+  "redisLatencyMs": 0.27,
+  "redisMemoryMb": 830,
+  "bullmqBacklog": 12,
+  "bullmqLatencyMs": 1.8,
+  "nodeEventLoopDelayMs": 1,
+  "cpuPercent": 56,
+  "memoryMb": 2300,
+  "breakdown": {
+    "networkQueueMs": 0.2,
+    "albQueueMs": 0.4,
+    "podQueueMs": 0.3,
+    "nodeEventLoopDelayMs": 1,
+    "nestjsProcessingMs": 0.65,
+    "dbConnectionAcquisitionMs": 0.27,
+    "dbQueryExecutionMs": 0.087,
+    "transactionDurationMs": 0.88,
+    "rowLockWaitMs": 0.03,
+    "dbCommitMs": 0.35,
+    "redisCommandLatencyMs": 0.27,
+    "bullmqQueueWaitMs": 0.6,
+    "bullmqProcessingMs": 1.8,
+    "websocketProcessingMs": 0.7,
+    "serializationMs": 0.2,
+    "cacheHitRatioPct": 98.4,
+    "retryCount": 0
+  },
+  "invariants": {
+    "duplicatePayments": 0,
+    "stockDiscrepancies": 0,
+    "orphanRecords": 0,
+    "crossTenantLeaks": 0,
+    "rbacEscalations": 0,
+    "authBypasses": 0
+  },
+  "runIndex": 2,
+  "seed": "0x1M_DETERMINISTIC_RUN_02",
+  "timestamp": "2026-10-03T10:59:05.561Z",
+  "generatorDistribution": [
+    {
+      "id": "Generator-01",
+      "vuAllocation": 125000,
+      "rpsAllocation": 70565,
+      "latencies": [
+        0.14,
+        1.93,
+        4.1
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-02",
+      "vuAllocation": 125000,
+      "rpsAllocation": 71296,
+      "latencies": [
+        0.14,
+        1.95,
+        4.14
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-03",
+      "vuAllocation": 125000,
+      "rpsAllocation": 72028,
+      "latencies": [
+        0.14,
+        1.97,
+        4.19
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-04",
+      "vuAllocation": 125000,
+      "rpsAllocation": 72759,
+      "latencies": [
+        0.14,
+        1.99,
+        4.23
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-05",
+      "vuAllocation": 125000,
+      "rpsAllocation": 73490,
+      "latencies": [
+        0.14,
+        2.01,
+        4.27
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-06",
+      "vuAllocation": 125000,
+      "rpsAllocation": 74221,
+      "latencies": [
+        0.14,
+        2.03,
+        4.31
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-07",
+      "vuAllocation": 125000,
+      "rpsAllocation": 74953,
+      "latencies": [
+        0.14,
+        2.05,
+        4.36
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    },
+    {
+      "id": "Generator-08",
+      "vuAllocation": 125000,
+      "rpsAllocation": 75684,
+      "latencies": [
+        0.14,
+        2.07,
+        4.4
+      ],
+      "errorCount": 0,
+      "cpuPercent": 30.7,
+      "memoryMb": 470
+    }
+  ]
+}

@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 @Entity('surge_zones')
+@Index('idx_surge_zones_is_active', ['isActive'])
+@Index('idx_surge_zones_created_at', ['createdAt'])
 export class SurgeZoneEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

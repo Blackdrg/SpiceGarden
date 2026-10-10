@@ -30,6 +30,10 @@ export default ({ config }) => ({
   },
   web: {
     favicon: './assets/favicon.png',
+    path: './web',
+    build: {
+      output: 'server',
+    },
   },
   extra: {
     apiUrl: process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || (() => {

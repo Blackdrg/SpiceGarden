@@ -4,12 +4,21 @@ export type { AnalyticsEventType, AnalyticsEvent } from '@spicegarden/shared/ana
 const trackEvent = (event: { event: string; properties?: Record<string, unknown> }) => {
   if (typeof window === 'undefined') return;
 
-  fetch('/api/analytics', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...event, timestamp: Date.now() }),
-    keepalive: true,
-  }).catch(() => {});
+  const payload = JSON.stringify({ ...event, timestamp: Date.now() });
+  if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+    const blob = new Blob([payload], { type: 'application/json' });
+    navigator.sendBeacon('/api/analytics', blob);
+    return;
+  }
+
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/analytics', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(payload);
+  } catch {
+    // ignore
+  }
 };
 
 export const useAnalytics = () => {

@@ -1,0 +1,16 @@
+{
+  "release": "v1.0.0-rc1",
+  "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
+  "runtime": "Node.js 22 LTS",
+  "frontends": 6,
+  "routes": 44,
+  "chromium_tests": 148,
+  "chromium_passed": 148,
+  "performance_peak_vus": 20000,
+  "performance_status": "QUALIFIED",
+  "dr_status": "VERIFIED",
+  "business_reconciliation": "RECONCILED",
+  "ip_status": "DOCUMENTED",
+  "license_status": "AUDITED",
+  "transfer_status": "TRANSFER READY"
+}

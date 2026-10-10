@@ -14,7 +14,7 @@ export class BranchManagementService {
     @InjectRepository(RestaurantEntity)
     private restaurantRepo: Repository<RestaurantEntity>,
     @InjectDataSource()
-    private dataSource: DataSource,
+    private connection: DataSource,
   ) {}
 
   async createBranch(restaurantId: string, branchData: {

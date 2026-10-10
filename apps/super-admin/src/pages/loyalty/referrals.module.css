@@ -1,0 +1,84 @@
+.container {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: #171717;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.cardLabel {
+  font-size: 13px;
+  color: #a1a1aa;
+  margin-bottom: 4px;
+}
+
+.cardValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f97316;
+}
+
+.sectionHeader {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.referralContainer {
+  background: #171717;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.referralItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid #27272a;
+  display: flex;
+  justify-content: space-between;
+}
+
+.referralCode {
+  font-weight: 500;
+}
+
+.referralReward {
+  color: #a1a1aa;
+  margin-left: 12px;
+  font-size: 13px;
+}
+
+.referralStatus {
+  font-size: 12px;
+  color: #facc15;
+}
+
+.loadingText {
+  color: #71717a;
+}
+
+.backLink {
+  color: #f97316;
+  text-decoration: none;
+  margin-top: 16px;
+  display: inline-block;
+}

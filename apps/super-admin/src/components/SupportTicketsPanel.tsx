@@ -1,6 +1,7 @@
 import type { DisputeTicket } from './types';
 import { AdminButton } from './AdminButton';
 import { DashboardCard } from './DashboardCard';
+import { ShieldIcon, HeadphonesIcon, WalletIcon } from '@spicegarden/ui';
 
 const SEVERITY_COLORS: Record<DisputeTicket['severity'], string> = {
   low: '#2196f3',
@@ -9,11 +10,12 @@ const SEVERITY_COLORS: Record<DisputeTicket['severity'], string> = {
   critical: '#9c27b0',
 };
 
-const TICKET_TYPE_ICONS: Record<DisputeTicket['type'], string> = {
-  refund: '💸',
-  support: '🎧',
-  fraud: '🛡️',
-};
+function TicketTypeIcon({ type, size = 16 }: { type: DisputeTicket['type']; size?: number }) {
+  if (type === 'refund') return <WalletIcon size={size} color="#f04e31" />;
+  if (type === 'support') return <HeadphonesIcon size={size} color="#2196f3" />;
+  if (type === 'fraud') return <ShieldIcon size={size} color="#e91e63" />;
+  return null;
+}
 
 export function SupportTicketsPanel({
   tickets,
@@ -27,12 +29,12 @@ export function SupportTicketsPanel({
   onClose: (id: string) => void;
 }) {
   return (
-    <DashboardCard title={`🧾 Support Tickets — ${tickets.length} items`} sub="sorted by urgency">
+    <DashboardCard title={`Support Tickets — ${tickets.length} items`} sub="sorted by urgency">
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {(['all', 'refund', 'support', 'fraud'] as const).map((filter) => (
           <AdminButton
             key={filter}
-            label={filter === 'all' ? 'All' : `${TICKET_TYPE_ICONS[filter]} ${filter.charAt(0).toUpperCase() + filter.slice(1)}`}
+            label={filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
             onClick={() => onFilterChange(filter)}
             variant={ticketFilter === filter ? 'primary' : 'secondary'}
             style={{ padding: '4px 12px', fontSize: 12 }}
@@ -44,7 +46,7 @@ export function SupportTicketsPanel({
           <div key={ticket.id} style={{ padding: '12px 0', borderBottom: '1px solid #f0f0f0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ fontSize: 16 }}>{TICKET_TYPE_ICONS[ticket.type]}</span>
+                <TicketTypeIcon type={ticket.type} size={16} />
                 <span style={{ fontWeight: 600, fontSize: 13 }}>{ticket.id}</span>
                 <span style={{ padding: '2px 8px', borderRadius: 8, fontSize: 12, fontWeight: 'bold', background: `${SEVERITY_COLORS[ticket.severity]}22`, color: SEVERITY_COLORS[ticket.severity] }}>
                   {ticket.severity.toUpperCase()}

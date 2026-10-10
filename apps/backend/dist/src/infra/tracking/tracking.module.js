@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrackingModule = void 0;
 const common_1 = require("@nestjs/common");
-const local_repository_module_1 = require("../../db/local-repository.module");
+const db_repositories_module_1 = require("../../db/db-repositories.module");
 const tracking_gateway_1 = require("./tracking.gateway");
 let TrackingModule = class TrackingModule {
 };
@@ -16,7 +16,7 @@ exports.TrackingModule = TrackingModule;
 exports.TrackingModule = TrackingModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [local_repository_module_1.LocalRepositoryModule],
+        imports: [db_repositories_module_1.DbRepositoriesModule],
         providers: [tracking_gateway_1.TrackingGateway],
         exports: [tracking_gateway_1.TrackingGateway],
     })

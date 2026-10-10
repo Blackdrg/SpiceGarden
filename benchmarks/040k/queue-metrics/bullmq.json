@@ -1,0 +1,7 @@
+{
+  "jobs_per_sec": 440,
+  "waiting_jobs_avg": 12,
+  "active_jobs_avg": 45,
+  "failed_jobs_count": 0,
+  "stalled_jobs_count": 0
+}

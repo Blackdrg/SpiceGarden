@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalRepositoryModule } from '../../db/local-repository.module';
+import { DbRepositoriesModule } from '../../db/db-repositories.module';
+
 import { TaxReportingService } from './tax-reporting.service';
 import { ReconciliationService } from './reconciliation.service';
 import { FinanceController } from './finance.controller';
@@ -15,7 +16,7 @@ import { DriverIncentiveEntity } from '../../db/entities/driver-incentive.entity
 
 @Module({
   imports: [
-    LocalRepositoryModule,
+    DbRepositoriesModule,
   ],
   providers: [TaxReportingService, ReconciliationService],
   controllers: [FinanceController],

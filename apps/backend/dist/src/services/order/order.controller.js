@@ -30,6 +30,9 @@ let OrderController = class OrderController {
     async healthCheck() {
         return { status: 'ok', timestamp: new Date().toISOString() };
     }
+    async getOrder(orderId) {
+        return this.orderService.getOrderWithDetails(orderId);
+    }
 };
 exports.OrderController = OrderController;
 __decorate([
@@ -47,6 +50,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "healthCheck", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.CUSTOMER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN, user_interface_1.UserRole.DELIVERY_PARTNER),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "getOrder", null);
 exports.OrderController = OrderController = __decorate([
     (0, common_1.Controller)('orders'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

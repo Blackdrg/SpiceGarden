@@ -1,4 +1,5 @@
 import { DriverAssignmentService } from './driver-assignment.service';
+import { ETAIntelligenceService } from './eta-intelligence.service';
 import { DriverAssignmentEntity } from '../../db/entities/driver-assignment.entity';
 import { DriverEntity } from '../../db/entities/driver.entity';
 import { DriverScoreEntity } from '../../db/entities/driver-score.entity';
@@ -6,7 +7,8 @@ import { DeliverySLAEntity } from '../../db/entities/delivery-sla.entity';
 import { DriverFraudEntity } from '../../db/entities/driver-fraud.entity';
 export declare class DriverAssignmentController {
     private readonly driverAssignmentService;
-    constructor(driverAssignmentService: DriverAssignmentService);
+    private readonly etaIntelligence;
+    constructor(driverAssignmentService: DriverAssignmentService, etaIntelligence: ETAIntelligenceService);
     assignDriverToOrder(orderId: string): Promise<DriverAssignmentEntity>;
     assignBatchDelivery(orderIds: string[], driverId: string): Promise<DriverAssignmentEntity[]>;
     reassignOrder(assignmentId: string, newDriverId: string, reason?: string): Promise<DriverAssignmentEntity>;
@@ -33,23 +35,7 @@ export declare class DriverAssignmentController {
     calculateETA(orderId: string, driverId: string): Promise<{
         etaMinutes: number;
         confidence: number;
-        factors: {
-            distance: number;
-            trafficConditions: {
-                multiplier: number;
-                level: string;
-            };
-            kitchenDelay: {
-                delayMinutes: number;
-                confidence: number;
-            };
-            driverExperience: number;
-            timeOfDay: number;
-            weatherImpact: {
-                multiplier: number;
-                condition: string;
-            };
-        };
+        factors: Record<string, any>;
     }>;
     recordDeliverySLA(data: {
         driverId: string;
@@ -71,5 +57,5 @@ export declare class DriverAssignmentController {
         severity: 'low' | 'medium' | 'high';
     }): Promise<DriverFraudEntity>;
     getDriverFraudHistory(driverId: string): Promise<DriverFraudEntity[]>;
-    getAllFraudIncidents(driverId?: string, limit?: number): Promise<never[]>;
+    getAllFraudIncidents(driverId?: string, limit?: number): Promise<DriverFraudEntity[]>;
 }

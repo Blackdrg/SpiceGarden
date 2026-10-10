@@ -1,725 +1,673 @@
-import { useEffect, useReducer, useMemo } from 'react';
-import type { HTMLAttributes } from 'react';
-import { Button } from '@spicegarden/ui';
-import type { Socket } from 'socket.io-client';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import Head from 'next/head';
+import {
+  Flame,
+  Volume2,
+  VolumeX,
+  Plus,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Package,
+  Layers,
+  ShoppingBag,
+  Utensils,
+  ChevronRight,
+  X,
+  ArrowRight,
+  TrendingUp,
+} from 'lucide-react';
 import styles from './index.module.css';
 
-type OrderItem = {
+type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+type ServiceType = 'delivery' | 'dine-in' | 'takeaway';
+
+interface OrderItem {
   id: string;
   name: string;
   qty: number;
   modifiers?: string[];
   note?: string;
-};
+}
 
-type InventoryItem = {
-  id: string;
-  name: string;
-  inStock: number;
-  threshold: number;
-};
-
-type Order = {
+interface Order {
   id: string;
   orderNumber: string;
   diner: string;
-  table: string;
+  table?: string;
   serviceType: ServiceType;
   items: OrderItem[];
   createdAt: Date;
   status: OrderStatus;
   estPrepMins: number;
   prepStartedAt?: Date;
-};
-
-type OrderStatus = 'new' | 'accepted' | 'preparing' | 'ready' | 'pickedup' | 'delivered' | 'cancelled' | 'delayed' | 'completed';
-type ServiceType = 'delivery' | 'dine-in' | 'dine_in' | 'takeaway';
-type Tab = 'kitchen' | 'inventory';
-
-type DashboardState = {
-  orders: Order[];
-  batchMode: boolean;
-  inventory: InventoryItem[];
-  activeTab: Tab;
-  audioEnabled: boolean;
-  activeSounds: string[];
-  lastAction: string;
-};
-
-type DashboardAction =
-  | { type: 'order-received'; order: Order }
-  | { type: 'order-transitioned'; orderId: string; status: OrderStatus }
-  | { type: 'inventory-initialized'; inventory: InventoryItem[] }
-  | { type: 'inventory-alert'; item: InventoryItem }
-  | { type: 'inventory-stock-added'; amount: number }
-  | { type: 'low-stock-used'; amount: number }
-  | { type: 'active-tab-changed'; tab: Tab }
-  | { type: 'batch-mode-toggled' }
-  | { type: 'audio-toggled' }
-  | { type: 'active-sound-added'; id: string }
-  | { type: 'active-sound-dismissed'; id: string }
-  | { type: 'last-action-set'; message: string }
-  | { type: 'last-action-cleared' };
-
-const statuses: OrderStatus[] = ['new', 'accepted', 'preparing', 'ready', 'delayed', 'completed'];
-const statusLabels = {
-  new: 'NEW', accepted: 'ACKD', preparing: 'COOKING', ready: 'READY', delayed: 'DELAYED', completed: 'DONE', pickedup: 'PICKED', delivered: 'DONE', cancelled: 'CANCELLED',
-} as const satisfies Record<OrderStatus, string>;
-
-const DEMO_ITEMS: OrderItem[] = [
-  { id: 'i1', name: 'Zinger Burger', qty: 1, modifiers: ['Extra Spicy'], note: 'Less onions' },
-  { id: 'i2', name: 'Large Fries', qty: 1 },
-  { id: 'i3', name: 'Coke', qty: 1, modifiers: ['Less Ice'] },
-];
-
-const seedInventory: InventoryItem[] = [
-  { id: 'inv-1', name: 'Burger Buns', inStock: 3, threshold: 20 },
-  { id: 'inv-2', name: 'Cheese Slices', inStock: 8, threshold: 50 },
-  { id: 'inv-3', name: 'Tomato', inStock: 2, threshold: 15 },
-  { id: 'inv-4', name: 'Ice Cream', inStock: 1, threshold: 10 },
-];
-
-const tryPlay = (base64: string) => {
-  const el = new Audio(`data:audio/wav;base64,${base64}`);
-  el.play().catch(() => null);
-};
-
-const now = () => new Date();
-
-function createInitialState(): DashboardState {
-  return {
-    orders: [
-      demoOrder('a1', { status: 'preparing', prepStartedAt: new Date(+now() - 17 * 60000), estPrepMins: 14 }),
-      demoOrder('b2', { status: 'accepted', estPrepMins: 10 }),
-      demoOrder('c3', { status: 'ready', estPrepMins: 8 }),
-      demoOrder('d4', { status: 'new', estPrepMins: 12 }),
-    ],
-    batchMode: false,
-    inventory: seedInventory.map((item) => ({ ...item })),
-    activeTab: 'kitchen',
-    audioEnabled: true,
-    activeSounds: [],
-    lastAction: '',
-  };
 }
 
-function dashboardReducer(state: DashboardState, action: DashboardAction): DashboardState {
-  switch (action.type) {
-    case 'order-received': {
-      const order = normalizeOrder(action.order);
-      return {
-        ...state,
-        orders: [order, ...state.orders],
-        lastAction: `New order #${order.orderNumber} received`,
-      };
-    }
-    case 'order-transitioned':
-      return {
-        ...state,
-        orders: updateOrderStatus(state.orders, action.orderId, action.status),
-        lastAction: `Order #${action.orderId.slice(-6)} → ${action.status.toUpperCase()}`,
-      };
-    case 'inventory-initialized':
-      return { ...state, inventory: action.inventory };
-    case 'inventory-alert':
-      return {
-        ...state,
-        inventory: state.inventory.map((item) => item.id === action.item.id ? { ...item, inStock: Math.max(0, item.inStock - 1) } : item),
-      };
-    case 'inventory-stock-added':
-      return { ...state, inventory: state.inventory.map((item) => ({ ...item, inStock: item.inStock + action.amount })) };
-    case 'low-stock-used':
-      return {
-        ...state,
-        inventory: state.inventory.map((item) => item.inStock <= item.threshold ? { ...item, inStock: Math.max(0, item.inStock - action.amount) } : item),
-      };
-    case 'active-tab-changed':
-      return { ...state, activeTab: action.tab };
-    case 'batch-mode-toggled':
-      return { ...state, batchMode: !state.batchMode };
-    case 'audio-toggled':
-      return { ...state, audioEnabled: !state.audioEnabled };
-    case 'active-sound-added':
-      return { ...state, activeSounds: [action.id, ...state.activeSounds] };
-    case 'active-sound-dismissed':
-      return { ...state, activeSounds: state.activeSounds.filter((x) => x !== action.id) };
-    case 'last-action-set':
-      return { ...state, lastAction: action.message };
-    case 'last-action-cleared':
-      return { ...state, lastAction: '' };
-    default:
-      return state;
-  }
+interface InventoryItem {
+  id: string;
+  name: string;
+  inStock: number;
+  threshold: number;
+  unit: string;
 }
 
-function elapsedMins(startedAt: Date) {
-  return Math.max(0, Math.floor((+now() - +startedAt) / 60000));
-}
-
-function orderElapsed(order: Order) {
-  return order.prepStartedAt ? elapsedMins(order.prepStartedAt) : 0;
-}
-
-function isDelayed(order: Order) {
-  return order.status === 'preparing' && orderElapsed(order) > order.estPrepMins;
-}
-
-function demoOrder(id: string, overrides: Partial<Order> = {}): Order {
-  return {
-    id,
-    orderNumber: `SG-${id.slice(-6).toUpperCase()}`,
-    diner: 'Guest',
-    table: 'T-0' + id.length,
+const INITIAL_ORDERS: Order[] = [
+  {
+    id: 'ord-101',
+    orderNumber: 'SG-849201',
+    diner: 'Arjun Mehta',
+    table: 'Sector 17 Delivery',
     serviceType: 'delivery',
-    items: DEMO_ITEMS.map((i) => ({ ...i, id: `${id}-${i.id}` })),
-    createdAt: now(),
+    items: [
+      { id: 'i1', name: 'Special Handi Chicken Biryani', qty: 2, modifiers: ['Extra Spicy', 'Mint Raita'] },
+      { id: 'i2', name: 'Garlic Butter Naan (Clay Oven)', qty: 3 },
+    ],
+    createdAt: new Date(Date.now() - 4 * 60000),
+    status: 'preparing',
+    prepStartedAt: new Date(Date.now() - 4 * 60000),
+    estPrepMins: 15,
+  },
+  {
+    id: 'ord-102',
+    orderNumber: 'SG-849202',
+    diner: 'Table 4 (Dine-In)',
+    table: 'Table 4',
+    serviceType: 'dine-in',
+    items: [
+      { id: 'i3', name: 'Mughlai Butter Chicken Boneless', qty: 1, modifiers: ['Mild Spicy'] },
+      { id: 'i4', name: 'Dal Makhani Slow-Simmered', qty: 1, note: 'Extra Butter on top' },
+      { id: 'i5', name: 'Tandoori Roti', qty: 4 },
+    ],
+    createdAt: new Date(Date.now() - 1 * 60000),
     status: 'new',
-    estPrepMins: 14,
-    ...overrides,
-  };
-}
+    estPrepMins: 18,
+  },
+  {
+    id: 'ord-103',
+    orderNumber: 'SG-849199',
+    diner: 'Simran Kaur (Pickup)',
+    table: 'Takeaway Counter',
+    serviceType: 'takeaway',
+    items: [
+      { id: 'i6', name: 'Artisan Burrata Truffle Pizza', qty: 1, note: 'Cut into 6 slices' },
+      { id: 'i7', name: 'Kesar Pista Rasmalai Bowl', qty: 2 },
+    ],
+    createdAt: new Date(Date.now() - 14 * 60000),
+    status: 'ready',
+    estPrepMins: 12,
+  },
+  {
+    id: 'ord-104',
+    orderNumber: 'SG-849195',
+    diner: 'Rohan Sharma',
+    table: 'Phase 8 Mohali',
+    serviceType: 'delivery',
+    items: [
+      { id: 'i8', name: 'Double Truffle Smash Burger', qty: 2, modifiers: ['Extra Cheese'] },
+      { id: 'i9', name: 'Loaded Peri Peri Fries', qty: 1 },
+    ],
+    createdAt: new Date(Date.now() - 25 * 60000),
+    status: 'completed',
+    estPrepMins: 15,
+  },
+];
 
-function normalizeOrder(order: Order): Order {
-  const createdAt = order.createdAt instanceof Date ? order.createdAt : new Date(order.createdAt as unknown as string | number);
-  return {
-    ...order,
-    createdAt: Number.isNaN(+createdAt) ? now() : createdAt,
-  };
-}
-
-function updateOrderStatus(orders: Order[], orderId: string, status: OrderStatus) {
-  return orders.map((order) => {
-    if (order.id !== orderId) return order;
-    const updated: Order = { ...order, status };
-    if (status === 'preparing') updated.prepStartedAt = now();
-    if (status === 'ready') updated.prepStartedAt = undefined;
-    return updated;
-  });
-}
+const INITIAL_INVENTORY: InventoryItem[] = [
+  { id: 'inv-1', name: 'Basmati Rice (Aged Biryani Grade)', inStock: 45, threshold: 20, unit: 'kg' },
+  { id: 'inv-2', name: 'Fresh Boneless Chicken Thighs', inStock: 18, threshold: 15, unit: 'kg' },
+  { id: 'inv-3', name: 'Pure White Amul Butter', inStock: 4, threshold: 10, unit: 'kg' },
+  { id: 'inv-4', name: 'Fresh Dairy Paneer Blocks', inStock: 6, threshold: 12, unit: 'kg' },
+  { id: 'inv-5', name: 'Sourdough Pizza Dough Balls', inStock: 28, threshold: 15, unit: 'pcs' },
+  { id: 'inv-6', name: 'Saffron (Kesar) Strands', inStock: 12, threshold: 5, unit: 'gm' },
+];
 
 export default function KitchenDashboard() {
-  const [state, dispatch] = useReducer(dashboardReducer, undefined, createInitialState);
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+  const [inventory, setInventory] = useState<InventoryItem[]>(INITIAL_INVENTORY);
+  const [activeTab, setActiveTab] = useState<'all' | 'new' | 'preparing' | 'ready' | 'inventory'>('all');
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [currentTime, setCurrentTime] = useState('');
+  const [showNewOrderModal, setShowNewOrderModal] = useState(false);
+  const [newDiner, setNewDiner] = useState('Table 2');
+  const [newServiceType, setNewServiceType] = useState<ServiceType>('dine-in');
+  const [newDishName, setNewDishName] = useState('Special Handi Chicken Biryani');
+  const [newDishQty, setNewDishQty] = useState(1);
 
+  // Digital live clock
   useEffect(() => {
-    let cancelled = false;
-    let socket: Socket | null = null;
-
-    import('socket.io-client').then(({ io }) => {
-      if (cancelled) return;
-      socket = io('http://localhost:3001', {
-        path: '/socket.io/',
-        transports: ['websocket', 'polling'],
-      });
-
-      socket.on('connect', () => console.log('[KDS] connected:', socket?.id));
-      socket.on('disconnect', () => console.log('[KDS] disconnected'));
-      socket.on('newOrder', (order: Order) => dispatch({ type: 'order-received', order }));
-      socket.on('inventoryAlert', (item: InventoryItem) => dispatch({ type: 'inventory-alert', item }));
-    });
-
-    return () => {
-      cancelled = true;
-      socket?.disconnect();
+    const updateTime = () => {
+      const d = new Date();
+      setCurrentTime(d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  const transition = (orderId: string, status: OrderStatus) => {
-    dispatch({ type: 'order-transitioned', orderId, status });
+  const counts = useMemo(() => {
+    return {
+      all: orders.filter((o) => o.status !== 'completed' && o.status !== 'cancelled').length,
+      new: orders.filter((o) => o.status === 'new').length,
+      preparing: orders.filter((o) => o.status === 'preparing').length,
+      ready: orders.filter((o) => o.status === 'ready').length,
+      completed: orders.filter((o) => o.status === 'completed').length,
+    };
+  }, [orders]);
+
+  const filteredOrders = useMemo(() => {
+    if (activeTab === 'all') return orders.filter((o) => o.status !== 'completed' && o.status !== 'cancelled');
+    if (activeTab === 'new') return orders.filter((o) => o.status === 'new');
+    if (activeTab === 'preparing') return orders.filter((o) => o.status === 'preparing');
+    if (activeTab === 'ready') return orders.filter((o) => o.status === 'ready');
+    return [];
+  }, [orders, activeTab]);
+
+  const updateOrderStatus = (id: string, nextStatus: OrderStatus) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== id) return o;
+        const updated = { ...o, status: nextStatus };
+        if (nextStatus === 'preparing') updated.prepStartedAt = new Date();
+        return updated;
+      })
+    );
   };
 
-  const accept = (id: string) => transition(id, 'accepted');
-  const startPrep = (id: string) => transition(id, 'preparing');
-  const markReady = (id: string) => transition(id, 'ready');
-  const markDelayed = (id: string) => transition(id, 'delayed');
-  const served = (id: string) => transition(id, 'completed');
+  const handleCreateOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newOrd: Order = {
+      id: `ord-${Date.now()}`,
+      orderNumber: `SG-${Math.floor(100000 + Math.random() * 900000)}`,
+      diner: newDiner,
+      table: newDiner,
+      serviceType: newServiceType,
+      items: [{ id: `i-${Date.now()}`, name: newDishName, qty: newDishQty }],
+      createdAt: new Date(),
+      status: 'new',
+      estPrepMins: 15,
+    };
+    setOrders((prev) => [newOrd, ...prev]);
+    setShowNewOrderModal(false);
+  };
 
-  const counts = useMemo(() => Object.fromEntries(statuses.map((s) => [s, state.orders.filter((order) => order.status === s).length])) as Record<OrderStatus, number>, [state.orders]);
+  const handleAdjustStock = (id: string, delta: number) => {
+    setInventory((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, inStock: Math.max(0, item.inStock + delta) } : item))
+    );
+  };
+
+  const getElapsedMins = (order: Order) => {
+    const start = order.prepStartedAt || order.createdAt;
+    return Math.max(0, Math.floor((Date.now() - new Date(start).getTime()) / 60000));
+  };
 
   return (
     <div className={styles.rootContainer}>
-      <DashboardHeader
-        orderCount={state.orders.length}
-        batchMode={state.batchMode}
-        audioEnabled={state.audioEnabled}
-        activeSoundCount={state.activeSounds.length}
-        onToggleBatch={() => dispatch({ type: 'batch-mode-toggled' })}
-        onToggleAudio={() => dispatch({ type: 'audio-toggled' })}
-        onDismissSound={() => dispatch({ type: 'active-sound-dismissed', id: 'toggle' })}
-        onUndo={() => dispatch({ type: 'last-action-cleared' })}
-      />
+      <Head>
+        <title>SpiceGarden | Kitchen Display &amp; POS Station</title>
+      </Head>
 
-      <StatusRibbon counts={counts} />
-
-      <SoundOverlay activeSounds={state.activeSounds} />
-
-      {state.lastAction && (
-        <div className={styles.lastActionToast}>
-          {state.lastAction}
-        </div>
-      )}
-
-      <TabBar activeTab={state.activeTab} onTabChange={(tab) => dispatch({ type: 'active-tab-changed', tab })} />
-
-      {state.activeTab === 'kitchen' && (
-        <KitchenOrdersView
-          orders={state.orders}
-          batchMode={state.batchMode}
-          counts={counts}
-          onAccept={accept}
-          onStartPrep={startPrep}
-          onReady={markReady}
-          onDelay={markDelayed}
-          onServed={served}
-          onPark={(orderNumber) => dispatch({ type: 'last-action-set', message: `#${orderNumber} parked` })}
-        />
-      )}
-
-      {state.activeTab === 'inventory' && (
-        <InventoryView
-          inventory={state.inventory}
-          onAddStock={() => dispatch({ type: 'inventory-stock-added', amount: 10 })}
-          onUseLowStock={() => {
-            if (confirm('Deduct 1 from all low-stock items?')) {
-              dispatch({ type: 'low-stock-used', amount: 1 });
-            }
-          }}
-        />
-      )}
-
-      <BottomNav activeTab={state.activeTab} onTabChange={(tab) => dispatch({ type: 'active-tab-changed', tab })} />
-
-      <style>{`
-        @keyframes kdsPulse {
-          0%, 100% { transform: scale(1); }
-          50%       { transform: scale(1.04); }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function DashboardHeader({
-  orderCount,
-  batchMode,
-  audioEnabled,
-  activeSoundCount,
-  onToggleBatch,
-  onToggleAudio,
-  onDismissSound,
-  onUndo,
-}: {
-  orderCount: number;
-  batchMode: boolean;
-  audioEnabled: boolean;
-  activeSoundCount: number;
-  onToggleBatch: () => void;
-  onToggleAudio: () => void;
-  onDismissSound: () => void;
-  onUndo: () => void;
-}) {
-  return (
-    <div className={styles.headerBar}>
-      <h1 className={styles.headerTitle}>🔥 KITCHEN DISPLAY</h1>
-      <div className={styles.headerControls}>
-        <button
-          type="button"
-          onClick={() => audioEnabled ? onDismissSound() : onToggleAudio()}
-          title={audioEnabled ? 'Mute alerts' : 'Unmute alerts'}
-          className={`${styles.audioToggleButton} ${audioEnabled ? styles.unmutedButton : styles.mutedButton}`}
-        >
-          {audioEnabled ? '🔊' : '🔇'}
-        </button>
-        <div className={styles.orderCountBadge}>
-          {orderCount} orders{activeSoundCount > 0 ? ` · ${activeSoundCount} alert${activeSoundCount === 1 ? '' : 's'}` : ''}
-        </div>
-        <Button label={batchMode ? '□ Batch' : '⊞ Batch'} onClick={onToggleBatch} className={styles.batchButton} />
-        <Button label="↩ Undo" onClick={onUndo} variant="secondary" className={styles.undoButton} />
-      </div>
-    </div>
-  );
-}
-
-function StatusRibbon({ counts }: { counts: Record<OrderStatus, number> }) {
-  return (
-    <div className={styles.statusRibbon}>
-      {statuses.map((status) => (
-        <span key={status} className={`${styles.statusBadge} ${styles[`statusBadge${statusClassSuffix(status)}`]}`}>
-          {statusLabels[status]} ({counts[status]})
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function SoundOverlay({ activeSounds }: { activeSounds: string[] }) {
-  if (activeSounds.length === 0) return null;
-
-  return (
-    <div className={styles.soundContainer}>
-      {activeSounds.map((id) => (
-        <button
-          key={id}
-          type="button"
-          onClick={() => { tryPlay('UklGRl9vT19XQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YU9vT18='); }}
-          className={styles.soundButton}
-        >
-          🚨 NEW ORDER — Tap to dismiss
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function TabBar({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab: Tab) => void }) {
-  return (
-    <div className={styles.tabBar}>
-      {(['kitchen', 'inventory'] as const).map((tab) => (
-        <button
-          type="button"
-          key={tab}
-          onClick={() => onTabChange(tab)}
-          className={`${styles.tabButton} ${activeTab === tab ? styles.tabActive : styles.tabInactive}`}
-        >
-          {tab === 'kitchen' ? '🔥 Kitchen' : '📦 Inventory'}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function KitchenOrdersView({
-  orders,
-  batchMode,
-  counts,
-  onAccept,
-  onStartPrep,
-  onReady,
-  onDelay,
-  onServed,
-  onPark,
-}: {
-  orders: Order[];
-  batchMode: boolean;
-  counts: Record<OrderStatus, number>;
-  onAccept: (id: string) => void;
-  onStartPrep: (id: string) => void;
-  onReady: (id: string) => void;
-  onDelay: (id: string) => void;
-  onServed: (id: string) => void;
-  onPark: (orderNumber: string) => void;
-}) {
-  return (
-    <>
-      <StatsRow counts={counts} />
-      {batchMode ? (
-        <BatchOrderSections
-          orders={orders}
-          onAccept={onAccept}
-          onStartPrep={onStartPrep}
-          onReady={onReady}
-          onDelay={onDelay}
-          onServed={onServed}
-          onPark={onPark}
-        />
-      ) : (
-        <FlatOrderGrid orders={orders} onAccept={onAccept} onStartPrep={onStartPrep} onReady={onReady} onDelay={onDelay} onServed={onServed} onPark={onPark} />
-      )}
-    </>
-  );
-}
-
-function StatsRow({ counts }: { counts: Record<OrderStatus, number> }) {
-  return (
-    <div className={styles.statsGrid}>
-      {statuses.map((status) => (
-        <div key={status} className={styles.statsCard}>
-          <div className={`${styles.statsCount} ${styles[`statsCount${statusClassSuffix(status)}`]}`}>{counts[status]}</div>
-          <div className={styles.statsLabel}>{statusLabels[status]}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function BatchOrderSections({
-  orders,
-  onAccept,
-  onStartPrep,
-  onReady,
-  onDelay,
-  onServed,
-  onPark,
-}: {
-  orders: Order[];
-  onAccept: (id: string) => void;
-  onStartPrep: (id: string) => void;
-  onReady: (id: string) => void;
-  onDelay: (id: string) => void;
-  onServed: (id: string) => void;
-  onPark: (orderNumber: string) => void;
-}) {
-  return (
-    <>
-      {statuses.map((status) => {
-        const group = orders.filter((order) => order.status === status);
-        if (group.length === 0) return null;
-        const overdue = group.filter((order) => status === 'preparing' && isDelayed(order)).length;
-        return (
-          <div key={status} className={styles.batchSectionPadding}>
-            <div className={`${styles.batchGroupHeader} ${styles[`batchGroupHeader${statusClassSuffix(status)}`]}`}>
-              <span className={styles.statusIndicator} />
-              <span>
-                {statusLabels[status]} — {group.length} orders
-              </span>
-              {overdue > 0 && <span className={styles.delayedWarning}>&#9888; {overdue} DELAYED</span>}
-            </div>
-            <div className={styles.ordersGrid}>
-              {group.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  onAccept={() => onAccept(order.id)}
-                  onStartPrep={() => onStartPrep(order.id)}
-                  onReady={() => onReady(order.id)}
-                  onDelay={() => onDelay(order.id)}
-                  onServed={() => onServed(order.id)}
-                  onPark={() => onPark(order.orderNumber)}
-                />
-              ))}
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-}
-
-function FlatOrderGrid({
-  orders,
-  onAccept,
-  onStartPrep,
-  onReady,
-  onDelay,
-  onServed,
-  onPark,
-}: {
-  orders: Order[];
-  onAccept: (id: string) => void;
-  onStartPrep: (id: string) => void;
-  onReady: (id: string) => void;
-  onDelay: (id: string) => void;
-  onServed: (id: string) => void;
-  onPark: (orderNumber: string) => void;
-}) {
-  return (
-    <div className={styles.ordersGridPadded}>
-      {orders.map((order) => (
-        <OrderCard
-          key={order.id}
-          order={order}
-          onAccept={() => onAccept(order.id)}
-          onStartPrep={() => onStartPrep(order.id)}
-          onReady={() => onReady(order.id)}
-          onDelay={() => onDelay(order.id)}
-          onServed={() => onServed(order.id)}
-          onPark={() => onPark(order.orderNumber)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function InventoryView({
-  inventory,
-  onAddStock,
-  onUseLowStock,
-}: {
-  inventory: InventoryItem[];
-  onAddStock: () => void;
-  onUseLowStock: () => void;
-}) {
-  return (
-    <div className={styles.inventoryContainer}>
-      <div className={styles.inventoryHeader}>
-        <h3 className={styles.inventoryTitle}>📦 Stock Levels</h3>
-        <span className={styles.lowStockCount}>{inventory.filter((item) => item.inStock <= item.threshold).length} low</span>
-      </div>
-      <div className={styles.inventoryGrid}>
-        {inventory.map((item) => {
-          const pct = Math.min(100, (item.inStock / item.threshold) * 100);
-          const isLow = item.inStock <= item.threshold;
-          const stockWidthClassName = stockWidthClass(pct);
-          return (
-            <div key={item.id} className={`${styles.inventoryItem} ${isLow ? styles.inventoryItemLow : styles.inventoryItemNormal}`}>
-              <div className={styles.inventoryItemName}>{item.name}</div>
-              <div className={`${styles.inventoryItemCount} ${isLow ? styles.inventoryItemCountLow : styles.inventoryItemCountNormal}`}>
-                {item.inStock} <span className={styles.inventoryUnit}>units</span>
-              </div>
-              <div className={styles.inventoryThreshold}>
-                Threshold: {item.threshold}
-              </div>
-              <div className={styles.stockProgressBar} />
-              <div className={`${styles.stockProgressFill} ${stockWidthClassName}`} />
-              {isLow && (
-                <div className={styles.lowStockWarning}>
-                  &#9888; LOW STOCK — Restock urgently
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className={styles.inventoryControls}>
-        <Button label="+ Add Stock" onClick={onAddStock} />
-        <Button label="− Use Stock" onClick={onUseLowStock} variant="secondary" />
-      </div>
-    </div>
-  );
-}
-
-const bottomNavItems: { key: Tab; label: string; emoji: string }[] = [
-  { key: 'kitchen', label: 'Kitchen', emoji: '🔥' },
-  { key: 'inventory', label: 'Inventory', emoji: '📦' },
-];
-
-function BottomNav({ activeTab, onTabChange }: { activeTab: Tab; onTabChange: (tab: Tab) => void }) {
-  return (
-    <nav className={styles.navBar}>
-      {bottomNavItems.map((tab) => (
-        <button
-          key={tab.key}
-          type="button"
-          onClick={() => onTabChange(tab.key)}
-          className={`${styles.navItem} ${activeTab === tab.key ? styles.navItemActive : styles.navItemInactive}`}
-        >
-          <span className={styles.navIcon}>{tab.emoji}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-interface OrderCardProps extends HTMLAttributes<HTMLDivElement> {
-  order: Order;
-  onAccept: () => void;
-  onStartPrep: () => void;
-  onReady: () => void;
-  onDelay: () => void;
-  onServed: () => void;
-  onPark: () => void;
-}
-
-const SERVICE_LABEL: Record<ServiceType, string> = {
-  dine_in: 'DINE IN', 'dine-in': 'DINE IN', takeaway: 'TAKEAWAY', delivery: 'DELIVERY',
-};
-
-function statusClassSuffix(status: OrderStatus): string {
-  return status.charAt(0).toUpperCase() + status.slice(1);
-}
-
-function serviceClassSuffix(serviceType: ServiceType): string {
-  if (serviceType === 'dine-in' || serviceType === 'dine_in') return 'DineIn';
-  return serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
-}
-
-function progressWidthClass(value: number): string {
-  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
-  return styles[`progressFill${bucket}`];
-}
-
-function stockWidthClass(value: number): string {
-  const bucket = Math.round(Math.min(value, 100) / 5) * 5;
-  return styles[`stockProgressFill${bucket}`];
-}
-
-function OrderCard({ order, onAccept, onStartPrep, onReady, onDelay, onServed, onPark }: OrderCardProps) {
-  const mins = orderElapsed(order);
-  const ots = (order.estPrepMins * 60000) - (mins * 60000);
-  const delay = !!(order.status === 'preparing' && mins > order.estPrepMins);
-  const progress = Math.min(100, Math.round((mins / order.estPrepMins) * 100));
-
-  const orderCardClassName = `${styles.orderCard} ${delay ? styles.orderCardDelayed : styles[`orderCard${statusClassSuffix(order.status)}`]}`;
-  const serviceLabelClassName = `${styles.serviceLabel} ${styles[`serviceLabel${serviceClassSuffix(order.serviceType)}`]}`;
-  const progressWidthClassName = progressWidthClass(progress);
-
-  return (
-    <div className={orderCardClassName}>
-      <div className={styles.orderCardHeader}>
-        <div>
-          <div className={styles.orderNumber}>#{order.orderNumber}</div>
-          <div className={styles.orderTime}>
-            {order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      {/* Top Header */}
+      <header className={styles.headerBar}>
+        <div className={styles.brandGroup}>
+          <h1 className={styles.headerTitle}>
+            <Flame size={22} color="#FF5A1F" />
+            <span>KITCHEN COMMAND</span>
+          </h1>
+          <div className={styles.branchStatusBadge}>
+            <div className={styles.statusDot} />
+            <span>Kitchen #1 (Online)</span>
           </div>
         </div>
-        <span className={serviceLabelClassName}>
-          {SERVICE_LABEL[order.serviceType]}
-        </span>
+
+        <div className={styles.clockDisplay}>{currentTime || '12:00:00 PM'}</div>
+
+        <div className={styles.headerControls}>
+          <button
+            type="button"
+            className={styles.newOrderBtn}
+            onClick={() => setShowNewOrderModal(true)}
+          >
+            <Plus size={16} /> + New Order
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.controlBtn} ${audioEnabled ? styles.controlBtnActive : ''}`}
+            onClick={() => setAudioEnabled((prev) => !prev)}
+            title={audioEnabled ? 'Mute Kitchen Bell' : 'Unmute Kitchen Bell'}
+          >
+            {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            <span>{audioEnabled ? 'Sound ON' : 'Muted'}</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Filter & Secondary Tabs */}
+      <div className={styles.filterTabBar}>
+        <div className={styles.tabGroup}>
+          <button
+            type="button"
+            className={`${styles.tabItem} ${activeTab === 'all' ? styles.tabItemActive : ''}`}
+            onClick={() => setActiveTab('all')}
+          >
+            <span>Live Kitchen</span>
+            <span className={styles.tabCountBadge}>{counts.all}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.tabItem} ${activeTab === 'new' ? styles.tabItemActive : ''}`}
+            onClick={() => setActiveTab('new')}
+          >
+            <span>New Incoming</span>
+            <span className={styles.tabCountBadge}>{counts.new}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.tabItem} ${activeTab === 'preparing' ? styles.tabItemActive : ''}`}
+            onClick={() => setActiveTab('preparing')}
+          >
+            <span>Cooking Now</span>
+            <span className={styles.tabCountBadge}>{counts.preparing}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.tabItem} ${activeTab === 'ready' ? styles.tabItemActive : ''}`}
+            onClick={() => setActiveTab('ready')}
+          >
+            <span>Ready for Pickup</span>
+            <span className={styles.tabCountBadge}>{counts.ready}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles.tabItem} ${activeTab === 'inventory' ? styles.tabItemActive : ''}`}
+            onClick={() => setActiveTab('inventory')}
+          >
+            <Package size={14} />
+            <span>Pantry Inventory</span>
+            <span className={styles.tabCountBadge}>{inventory.filter((i) => i.inStock <= i.threshold).length} low</span>
+          </button>
+        </div>
       </div>
 
-      {order.table && (
-        <div className={styles.dinerInfo}>Guest: {order.diner} &middot; {order.table}</div>
-      )}
+      {/* Main Content Area */}
+      <main className={styles.mainContent}>
+        {/* KPI Overview Grid */}
+        <div className={styles.kpiGrid}>
+          <div className={styles.kpiCard}>
+            <div>
+              <div className={styles.kpiLabel}>INCOMING NEW</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueOrange}`}>{counts.new}</div>
+            </div>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconOrange}`}>
+              <AlertCircle size={20} />
+            </div>
+          </div>
 
-      <div className={styles.itemsList}>
-        {order.items.map((item) => (
-          <div key={item.id} className={styles.itemRow}>
-            <span className={styles.itemQty}>{item.qty}x</span>
-            <span className={styles.itemName}>{item.name}</span>
-            {item.modifiers?.length ? (
-              <span className={styles.itemModifiers}>&#x2022; {item.modifiers.join(', ')}</span>
-            ) : null}
-            {item.note && (
-              <span className={styles.itemNote}>&#x1F4DD; {item.note}</span>
+          <div className={styles.kpiCard}>
+            <div>
+              <div className={styles.kpiLabel}>ON STOVE / PREP</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueBlue}`}>{counts.preparing}</div>
+            </div>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconBlue}`}>
+              <Flame size={20} />
+            </div>
+          </div>
+
+          <div className={styles.kpiCard}>
+            <div>
+              <div className={styles.kpiLabel}>READY AT PASS</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueGreen}`}>{counts.ready}</div>
+            </div>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconGreen}`}>
+              <CheckCircle size={20} />
+            </div>
+          </div>
+
+          <div className={styles.kpiCard}>
+            <div>
+              <div className={styles.kpiLabel}>SERVED TODAY</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueGray}`}>{counts.completed}</div>
+            </div>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconGray}`}>
+              <TrendingUp size={20} />
+            </div>
+          </div>
+        </div>
+
+        {/* Live Orders View */}
+        {activeTab !== 'inventory' && (
+          <div className={styles.ordersGrid}>
+            {filteredOrders.length === 0 ? (
+              <div className={styles.emptyQueueCard}>
+                <CheckCircle size={40} color="#10B981" className={styles.emptyQueueIcon} />
+                <h3 className={styles.emptyQueueTitle}>No active orders in this queue</h3>
+                <p className={styles.emptyQueueText}>All kitchen tickets are up to date and dispatched.</p>
+              </div>
+            ) : (
+              filteredOrders.map((order) => {
+                const elapsed = getElapsedMins(order);
+                const isDelayed = order.status === 'preparing' && elapsed > order.estPrepMins;
+                const progressPct = Math.min(100, Math.round((elapsed / order.estPrepMins) * 100));
+
+                return (
+                  <div
+                    key={order.id}
+                    className={`${styles.orderCard} ${
+                      isDelayed
+                        ? styles.orderCardDelayed
+                        : order.status === 'new'
+                        ? styles.orderCardNew
+                        : order.status === 'preparing'
+                        ? styles.orderCardCooking
+                        : styles.orderCardReady
+                    }`}
+                  >
+                    {/* Header */}
+                    <div className={styles.orderCardHeader}>
+                      <div>
+                        <h2 className={styles.orderNumber}>#{order.orderNumber}</h2>
+                        <p className={styles.orderTimeAgo}>
+                          {order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({elapsed}m ago)
+                        </p>
+                      </div>
+
+                      <span
+                        className={`${styles.serviceBadge} ${
+                          order.serviceType === 'delivery'
+                            ? styles.serviceDelivery
+                            : order.serviceType === 'dine-in'
+                            ? styles.serviceDineIn
+                            : styles.serviceTakeaway
+                        }`}
+                      >
+                        {order.serviceType === 'delivery' ? '🛵 DELIVERY' : order.serviceType === 'dine-in' ? '🍽️ DINE-IN' : '🛍️ TAKEAWAY'}
+                      </span>
+                    </div>
+
+                    {/* Diner Info */}
+                    <div className={styles.dinerRow}>
+                      <Utensils size={14} color="#94A3B8" />
+                      <span>{order.diner}</span>
+                    </div>
+
+                    {/* Items List */}
+                    <div className={styles.itemsContainer}>
+                      {order.items.map((item) => (
+                        <div key={item.id} className={styles.itemRow}>
+                          <div className={styles.itemTop}>
+                            <span className={styles.itemName}>
+                              <span className={styles.itemQty}>{item.qty}x</span> {item.name}
+                            </span>
+                          </div>
+                          {item.modifiers && item.modifiers.length > 0 && (
+                            <p className={styles.itemModifier}>+ {item.modifiers.join(', ')}</p>
+                          )}
+                          {item.note && <p className={styles.itemNote}>📝 {item.note}</p>}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Prep Progress */}
+                    {order.status === 'preparing' && (
+                      <div className={styles.timerSection}>
+                        <div className={styles.timerHeader}>
+                          <span className={isDelayed ? styles.timerTextDelayed : styles.timerTextActive}>
+                            ⏱ Prep: {elapsed}m / ~{order.estPrepMins}m
+                          </span>
+                          {isDelayed ? (
+                            <span className={styles.timerTextDelayed}>⚠️ DELAYED</span>
+                          ) : (
+                            <span className={styles.timerTextLeft}>{Math.max(0, order.estPrepMins - elapsed)}m left</span>
+                          )}
+                        </div>
+                        <div className={styles.timerProgressTrack}>
+                          <div
+                            className={`${styles.timerProgressBar} ${isDelayed ? styles.timerProgressBarDelayed : ''}`}
+                            style={{ width: `${progressPct}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Bar */}
+                    <div className={styles.actionBar}>
+                      {order.status === 'new' && (
+                        <button
+                          type="button"
+                          className={`${styles.actionBtn} ${styles.btnAccept}`}
+                          onClick={() => updateOrderStatus(order.id, 'accepted')}
+                        >
+                          ✓ Accept Order
+                        </button>
+                      )}
+
+                      {order.status === 'accepted' && (
+                        <button
+                          type="button"
+                          className={`${styles.actionBtn} ${styles.btnStartPrep}`}
+                          onClick={() => updateOrderStatus(order.id, 'preparing')}
+                        >
+                          ⏱ Start Cooking
+                        </button>
+                      )}
+
+                      {order.status === 'preparing' && (
+                        <>
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.btnReady}`}
+                            onClick={() => updateOrderStatus(order.id, 'ready')}
+                          >
+                            ✓ Mark Ready
+                          </button>
+                          {isDelayed && (
+                            <button
+                              type="button"
+                              className={`${styles.actionBtn} ${styles.btnDelay}`}
+                              onClick={() => {
+                                setOrders((prev) =>
+                                  prev.map((o) => (o.id === order.id ? { ...o, estPrepMins: o.estPrepMins + 5 } : o))
+                                );
+                              }}
+                            >
+                              +5m Delay
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {order.status === 'ready' && (
+                        <button
+                          type="button"
+                          className={`${styles.actionBtn} ${styles.btnReady}`}
+                          onClick={() => updateOrderStatus(order.id, 'completed')}
+                        >
+                          ✅ Hand Over &amp; Clear
+                        </button>
+                      )}
+
+                      {order.status === 'new' && (
+                        <button
+                          type="button"
+                          className={`${styles.actionBtn} ${styles.btnPark}`}
+                          onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                          title="Reject ticket"
+                        >
+                          ✕ Reject
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
             )}
           </div>
-        ))}
-      </div>
+        )}
 
-      {(order.status === 'preparing' || order.status === 'delayed') && (
-        <div>
-          <div className={styles.timerSection}>
-            <span className={delay ? styles.timerDelay : styles.timerNormal}>
-              &#9200; {mins}m / ~{order.estPrepMins}m &nbsp;
-              {delay && <span className={styles.delayBadge}>&#x26A0; DELAYED</span>}
-              {!delay && <span>{ots > 0 ? `${Math.ceil(ots / 60000)}m left` : 'Nearing done'}</span>}
-            </span>
+        {/* Inventory View Tab */}
+        {activeTab === 'inventory' && (
+          <div className={styles.inventoryCard}>
+            <div className={styles.inventoryTopRow}>
+              <h2 className={styles.inventoryTitle}>
+                <Package size={20} color="#FF5A1F" />
+                <span>Pantry &amp; Kitchen Raw Ingredients</span>
+              </h2>
+              <button
+                type="button"
+                className={styles.newOrderBtn}
+                onClick={() => {
+                  setInventory((prev) => prev.map((item) => ({ ...item, inStock: item.threshold + 20 })));
+                  alert('⚡ Restocked all pantry items above safety threshold!');
+                }}
+              >
+                Restock All Items
+              </button>
+            </div>
+
+            <table className={styles.inventoryTable}>
+              <thead>
+                <tr>
+                  <th>Item Description</th>
+                  <th>Safety Threshold</th>
+                  <th>Current Stock</th>
+                  <th>Status</th>
+                  <th className={styles.thRight}>Quick Adjust</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventory.map((item) => {
+                  const isLow = item.inStock <= item.threshold;
+                  return (
+                    <tr key={item.id}>
+                      <td className={styles.tdName}>{item.name}</td>
+                      <td className={styles.tdThreshold}>{item.threshold} {item.unit}</td>
+                      <td>
+                        <span className={`${styles.stockCountBadge} ${isLow ? styles.stockLow : styles.stockNormal}`}>
+                          {item.inStock} {item.unit}
+                        </span>
+                      </td>
+                      <td>
+                        {isLow ? (
+                          <span className={styles.badgeLowStock}>
+                            ⚠️ LOW STOCK
+                          </span>
+                        ) : (
+                          <span className={styles.badgeAdequateStock}>
+                            ✓ Adequate
+                          </span>
+                        )}
+                      </td>
+                      <td className={styles.tdRight}>
+                        <div className={styles.stockStepperWrap}>
+                          <button
+                            type="button"
+                            className={styles.stockStepperBtn}
+                            onClick={() => handleAdjustStock(item.id, -1)}
+                            title="Deduct 1 unit"
+                          >
+                            −
+                          </button>
+                          <button
+                            type="button"
+                            className={`${styles.stockStepperBtn} ${styles.stockStepperBtnAdd}`}
+                            onClick={() => handleAdjustStock(item.id, 5)}
+                            title="Add 5 units"
+                          >
+                            +5
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-          <div className={styles.progressBar}>
-            <div className={`${styles.progressFill} ${delay ? styles.progressFillDelayed : styles.progressFillNormal} ${progressWidthClassName}`} />
+        )}
+      </main>
+
+      {/* New Order Creation Modal */}
+      {showNewOrderModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalBox}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Create Offline / Dine-In Order</h3>
+              <button
+                type="button"
+                onClick={() => setShowNewOrderModal(false)}
+                className={styles.modalCloseBtn}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateOrder}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Table / Customer Reference</label>
+                <input
+                  type="text"
+                  required
+                  value={newDiner}
+                  onChange={(e) => setNewDiner(e.target.value)}
+                  className={styles.formInput}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Order Type</label>
+                <div className={styles.serviceTypeGroup}>
+                  {(['dine-in', 'takeaway', 'delivery'] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setNewServiceType(type)}
+                      className={`${styles.serviceTypeBtn} ${newServiceType === type ? styles.serviceTypeBtnActive : ''}`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.formGroupLarge}>
+                <label className={styles.formLabel}>Dish Item</label>
+                <select
+                  value={newDishName}
+                  onChange={(e) => setNewDishName(e.target.value)}
+                  className={styles.formInput}
+                >
+                  <option>Special Handi Chicken Biryani</option>
+                  <option>Mughlai Butter Chicken Boneless</option>
+                  <option>Dal Makhani Slow-Simmered</option>
+                  <option>Artisan Burrata Truffle Pizza</option>
+                  <option>Double Truffle Smash Burger</option>
+                </select>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  type="button"
+                  onClick={() => setShowNewOrderModal(false)}
+                  className={styles.modalCancelBtn}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={styles.modalSubmitBtn}
+                >
+                  Send to Kitchen Pass
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
-
-      <div className={styles.actionButtons}>
-        {order.status === 'new' && (
-          <div className={styles.fullWidthButton}>
-            <Button label="✓ Accept" onClick={onAccept} />
-          </div>
-        )}
-        {order.status === 'accepted' && (
-          <div className={styles.wideButton}>
-            <Button label="⏱ Start Prep" onClick={onStartPrep} />
-          </div>
-        )}
-        {order.status === 'preparing' && (
-          <>
-            {delay && <div className={styles.wideButton}><Button label="⏰ Still Cooking" onClick={onDelay} variant="secondary" /></div>}
-            <div className={styles.fullWidthButton}><Button label="✓ Ready" onClick={onReady} /></div>
-          </>
-        )}
-        {order.status === 'ready' && (
-          <div className={styles.fullWidthButton}>
-            <Button label="✅ Served" onClick={onServed} />
-          </div>
-        )}
-        {(order.status === 'new' || order.status === 'accepted') && (
-          <div className={styles.parkButton}>
-            <Button label="✕ Park" onClick={onPark} variant="secondary" />
-          </div>
-        )}
-      </div>
     </div>
   );
 }

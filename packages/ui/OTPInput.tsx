@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { DESIGN_TOKENS } from './tokens';
 
 interface OTPInputProps {
@@ -12,6 +12,14 @@ interface OTPInputProps {
   disabled?: boolean;
 }
 
+const getDigits = (val: string, len: number): string[] => {
+  const chars = (val || '').split('').slice(0, len);
+  while (chars.length < len) {
+    chars.push('');
+  }
+  return chars;
+};
+
 export const OTPInput = ({
   length = 4,
   value = '',
@@ -20,19 +28,17 @@ export const OTPInput = ({
   error,
   disabled = false,
 }: OTPInputProps) => {
-  const [otp, setOtp] = useState<string[]>(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(length).fill(null));
+  const [internalOtp, setInternalOtp] = useState<string[]>(() => getDigits(value, length));
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  useEffect(() => {
-    setOtp(value.split('').slice(0, length).concat(Array(length).fill('')).slice(0, length));
-  }, [value, length]);
+  const currentOtp = value !== undefined && value !== '' ? getDigits(value, length) : internalOtp;
 
   const handleChange = (index: number, digit: string) => {
     if (!/^\d*$/.test(digit)) return;
 
-    const newOtp = [...otp];
+    const newOtp = [...currentOtp];
     newOtp[index] = digit;
-    setOtp(newOtp);
+    setInternalOtp(newOtp);
     
     const newValue = newOtp.join('');
     onChange?.(newValue);
@@ -47,7 +53,7 @@ export const OTPInput = ({
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === 'Backspace' && !currentOtp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
     if (e.key === 'ArrowLeft' && index > 0) {
@@ -62,8 +68,8 @@ export const OTPInput = ({
     e.preventDefault();
     const paste = e.clipboardData.getData('text').replace(/\D/g, '');
     if (paste.length <= length) {
-      const newOtp = paste.split('').concat(Array(length).fill('')).slice(0, length);
-      setOtp(newOtp);
+      const newOtp = getDigits(paste, length);
+      setInternalOtp(newOtp);
       onChange?.(paste);
       if (paste.length === length && onComplete) {
         onComplete(paste);
@@ -71,38 +77,43 @@ export const OTPInput = ({
     }
   };
 
+  const slots = Array.from({ length }, (_, i) => ({ id: `otp-slot-${i}`, index: i }));
+
   return (
     <div style={{ display: 'flex', gap: DESIGN_TOKENS.spacing.sm, justifyContent: 'center' }}>
-      {otp.map((digit, index) => (
-        <input
-          key={index}
-          ref={(el) => { inputRefs.current[index] = el; }}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digit}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(index, e)}
-          onPaste={handlePaste}
-          disabled={disabled}
-          aria-label={`OTP digit ${index + 1}`}
-          aria-invalid={!!error}
-          style={{
-            width: 48,
-            height: 48,
-            textAlign: 'center',
-            fontSize: 20,
-            fontWeight: 600,
-            borderRadius: DESIGN_TOKENS.radius.md,
-            border: `2px solid ${error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.border}`,
-            backgroundColor: DESIGN_TOKENS.colors.surface,
-            color: DESIGN_TOKENS.colors.textPrimary,
-            outline: 'none',
-            transition: `border-color ${DESIGN_TOKENS.motion.micro}ms`,
-            fontFamily: DESIGN_TOKENS.typography.fontFamily,
-          }}
-        />
-      ))}
+      {slots.map((slot) => {
+        const digit = currentOtp[slot.index] || '';
+        return (
+          <input
+            key={slot.id}
+            ref={(el) => { inputRefs.current[slot.index] = el; }}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(slot.index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(slot.index, e)}
+            onPaste={handlePaste}
+            disabled={disabled}
+            aria-label={`OTP digit ${slot.index + 1}`}
+            aria-invalid={!!error}
+            style={{
+              width: 48,
+              height: 48,
+              textAlign: 'center',
+              fontSize: 20,
+              fontWeight: 600,
+              borderRadius: DESIGN_TOKENS.radius.md,
+              border: `2px solid ${error ? DESIGN_TOKENS.colors.danger : DESIGN_TOKENS.colors.border}`,
+              backgroundColor: DESIGN_TOKENS.colors.surface,
+              color: DESIGN_TOKENS.colors.textPrimary,
+              outline: 'none',
+              transition: `border-color ${DESIGN_TOKENS.motion.micro}ms`,
+              fontFamily: DESIGN_TOKENS.typography.fontFamily,
+            }}
+          />
+        );
+      })}
       {error && (
         <span role="alert" style={{
           ...DESIGN_TOKENS.typography.smallLabel,

@@ -1,0 +1,44 @@
+{
+  "root_group": {
+    "name": "spicegarden_040k_load_scenario",
+    "path": "::spicegarden_040k_load_scenario",
+    "id": "0-040k",
+    "checks": [
+      {
+        "name": "http_req_success",
+        "passes": 9932025,
+        "fails": 3974
+      },
+      {
+        "name": "p95_latency_under_threshold",
+        "passes": 1,
+        "fails": 0
+      }
+    ]
+  },
+  "metrics": {
+    "http_reqs": {
+      "count": 9936000,
+      "rate": 5520
+    },
+    "http_req_duration": {
+      "avg": 39.5,
+      "min": 1.8,
+      "med": 23,
+      "max": 202.4,
+      "p(90)": 44,
+      "p(95)": 56,
+      "p(99)": 92
+    },
+    "vus": {
+      "value": 0,
+      "min": 0,
+      "max": 0
+    },
+    "http_req_failed": {
+      "passes": 3974,
+      "fails": 9932025,
+      "value": 0.0004
+    }
+  }
+}

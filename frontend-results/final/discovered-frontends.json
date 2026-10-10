@@ -1,0 +1,66 @@
+{
+  "generated_from_repository": true,
+  "total_frontends": 6,
+  "applications": [
+    {
+      "name": "customer-web",
+      "path": "apps/customer-web",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "browser_testable": true,
+      "build_command": "npm run build",
+      "start_command": "next start -p 3002",
+      "port": 3002,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "restaurant-dashboard",
+      "path": "apps/restaurant-dashboard",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "browser_testable": true,
+      "build_command": "npm run build",
+      "start_command": "next start -p 3003",
+      "port": 3003,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "super-admin",
+      "path": "apps/super-admin",
+      "framework": "Next.js 15.5.18 (Pages Router)",
+      "browser_testable": true,
+      "build_command": "npm run build",
+      "start_command": "next start -p 3004",
+      "port": 3004,
+      "type": "SSR / Next.js Web App"
+    },
+    {
+      "name": "customer-mobile-web",
+      "path": "apps/customer-mobile",
+      "framework": "React Native Web / Expo 56",
+      "browser_testable": true,
+      "build_command": "npm run build",
+      "start_command": "npx serve dist-web -p 3005",
+      "port": 3005,
+      "type": "Static SPA (Expo Web)"
+    },
+    {
+      "name": "delivery-partner-web",
+      "path": "apps/delivery-partner",
+      "framework": "React Native Web / Expo 56",
+      "browser_testable": true,
+      "build_command": "npm run build",
+      "start_command": "npx expo start --web --port 3006",
+      "port": 3006,
+      "type": "Expo Web / SPA"
+    },
+    {
+      "name": "launcher-electron-renderer",
+      "path": "apps/launcher",
+      "framework": "React 19 / Webpack 5 (Electron Renderer)",
+      "browser_testable": true,
+      "build_command": "npm run build:renderer",
+      "start_command": "npx serve dist/renderer -p 3007",
+      "port": 3007,
+      "type": "Webpack Static Bundle"
+    }
+  ]
+}

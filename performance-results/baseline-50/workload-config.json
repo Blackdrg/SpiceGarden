@@ -1,0 +1,7 @@
+{
+  "test_script": "apps/backend/test/load/50-users.js",
+  "target_vus": 50,
+  "stage_duration": "60s",
+  "base_url": "http://localhost:3001",
+  "endpoints": ["/health", "/restaurants", "/restaurants/search", "/auth/login"]
+}

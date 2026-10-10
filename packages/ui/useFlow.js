@@ -1,15 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useFlow = void 0;
-const react_1 = require("react");
-const analytics_1 = require("./analytics");
-const useFlow = ({ flowId, steps, onComplete, onError }) => {
-    const [state, setState] = (0, react_1.useState)('idle');
-    const [completedSteps, setCompletedSteps] = (0, react_1.useState)([]);
-    const [currentStep, setCurrentStep] = (0, react_1.useState)(0);
-    const [error, setFlowError] = (0, react_1.useState)(null);
-    (0, react_1.useEffect)(() => {
-        (0, analytics_1.trackEvent)({
+import { useState, useEffect, useCallback } from 'react';
+import { trackEvent } from './analytics';
+export const useFlow = ({ flowId, steps, onComplete, onError }) => {
+    const [state, setState] = useState('idle');
+    const [completedSteps, setCompletedSteps] = useState([]);
+    const [currentStep, setCurrentStep] = useState(0);
+    const [error, setFlowError] = useState(null);
+    useEffect(() => {
+        trackEvent({
             event: 'flow_started',
             properties: {
                 flowId,
@@ -17,10 +14,10 @@ const useFlow = ({ flowId, steps, onComplete, onError }) => {
             }
         });
     }, [flowId, steps.length]);
-    const next = (0, react_1.useCallback)(() => {
+    const next = useCallback(() => {
         setCompletedSteps(prev => [...prev, steps[currentStep].id]);
         const newStep = currentStep + 1;
-        (0, analytics_1.trackEvent)({
+        trackEvent({
             event: 'flow_step_completed',
             properties: {
                 flowId,
@@ -30,7 +27,7 @@ const useFlow = ({ flowId, steps, onComplete, onError }) => {
         });
         if (newStep >= steps.length) {
             setState('success');
-            (0, analytics_1.trackEvent)({
+            trackEvent({
                 event: 'flow_completed',
                 properties: {
                     flowId,
@@ -43,15 +40,15 @@ const useFlow = ({ flowId, steps, onComplete, onError }) => {
             setCurrentStep(newStep);
         }
     }, [currentStep, flowId, steps, onComplete]);
-    const back = (0, react_1.useCallback)(() => {
+    const back = useCallback(() => {
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
         }
     }, [currentStep]);
-    const fail = (0, react_1.useCallback)((errorMessage) => {
+    const fail = useCallback((errorMessage) => {
         setState('error');
         setFlowError(errorMessage);
-        (0, analytics_1.trackEvent)({
+        trackEvent({
             event: 'flow_error',
             properties: {
                 flowId,
@@ -71,4 +68,3 @@ const useFlow = ({ flowId, steps, onComplete, onError }) => {
         setState,
     };
 };
-exports.useFlow = useFlow;

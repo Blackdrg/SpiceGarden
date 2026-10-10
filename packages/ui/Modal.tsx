@@ -34,28 +34,53 @@ export const Modal = ({
   const maxWidth = size === 'sm' ? 400 : size === 'lg' ? 700 : 500;
 
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
+      aria-label={title ? undefined : 'Modal dialog'}
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
+        width: '100%',
+        height: '100%',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        border: 'none',
+        padding: 0,
+        margin: 0,
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 10000,
-        animation: `fadeIn ${DESIGN_TOKENS.motion.page}ms ${MOTION_EASING.easeInOut}`,
       }}
-      onClick={onClose}
     >
       <div
-        onClick={(e) => e.stopPropagation()}
+        aria-hidden="true"
+        onClick={onClose}
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 1,
+          animation: `fadeIn ${DESIGN_TOKENS.motion.page}ms ${MOTION_EASING.easeInOut}`,
+        }}
+      />
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
           background: DESIGN_TOKENS.colors.surface,
           borderRadius: DESIGN_TOKENS.radius.card,
           padding: DESIGN_TOKENS.spacing.lg,
@@ -83,6 +108,7 @@ export const Modal = ({
             </h2>
             {showCloseButton && (
               <button
+                type="button"
                 onClick={onClose}
                 aria-label="Close modal"
                 style={{
@@ -104,7 +130,7 @@ export const Modal = ({
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
-    </div>
+    </dialog>
   );
 };
 
@@ -131,26 +157,52 @@ export const BottomSheet = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-modal="true"
+      aria-labelledby={title ? 'bottom-sheet-title' : undefined}
+      aria-label={title ? undefined : 'Bottom sheet'}
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'rgba(0,0,0,0.5)',
+        width: '100%',
+        height: '100%',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        border: 'none',
+        padding: 0,
+        margin: 0,
+        background: 'transparent',
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
         zIndex: 10000,
       }}
-      onClick={onClose}
     >
       <div
-        onClick={(e) => e.stopPropagation()}
+        aria-hidden="true"
+        onClick={onClose}
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 1,
+        }}
+      />
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
           background: DESIGN_TOKENS.colors.surface,
           borderTopLeftRadius: DESIGN_TOKENS.radius.card,
           borderTopRightRadius: DESIGN_TOKENS.radius.card,
@@ -171,7 +223,7 @@ export const BottomSheet = ({
           margin: '0 auto 16px',
         }} />
         {title && (
-          <h2 style={{
+          <h2 id="bottom-sheet-title" style={{
             margin: '0 0 16px 0',
             ...DESIGN_TOKENS.typography.headingM,
             color: DESIGN_TOKENS.colors.textPrimary,
@@ -182,6 +234,7 @@ export const BottomSheet = ({
         {children}
         {showCloseButton && (
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close sheet"
             style={{
@@ -200,6 +253,6 @@ export const BottomSheet = ({
           </button>
         )}
       </div>
-    </div>
+    </dialog>
   );
 };

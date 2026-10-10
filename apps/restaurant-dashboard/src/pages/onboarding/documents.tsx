@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Button } from '@spicegarden/ui';
+import { Button, useToast } from '@spicegarden/ui';
 import Head from 'next/head';
+import styles from './documents.module.css';
 
 const DOCUMENTS = [
   { key: 'fssai', label: 'FSSAI License', required: true },
@@ -13,6 +14,7 @@ const DOCUMENTS = [
 type DocKey = typeof DOCUMENTS[number]['key'];
 
 export default function OnboardingDocuments() {
+  const toast = useToast();
   const [docs, setDocs] = useState<Record<DocKey, { uploaded: boolean; verified: boolean; file?: File }>>({
     fssai: { uploaded: false, verified: false },
     gstCertificate: { uploaded: false, verified: false },
@@ -39,34 +41,33 @@ export default function OnboardingDocuments() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (res.ok) alert('Documents saved');
+      if (res.ok) toast.showToast({ message: 'Documents saved', type: 'success', duration: 0 });
     } catch (e) {
-      alert('Failed to save documents');
+      toast.showToast({ message: 'Failed to save documents', type: 'error', duration: 0 });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '24px' }}>
+    <div className={styles.container}>
       <Head><title>Documents - Onboarding</title></Head>
-      <div style={{ maxWidth: 640, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Upload Documents</h1>
-        <p style={{ color: '#a1a1aa', marginBottom: 32 }}>Upload your business documents for verification.</p>
+      <div className={styles.maxWidth}>
+        <h1 className={styles.heading}>Upload Documents</h1>
+        <p className={styles.subtitle}>Upload your business documents for verification.</p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className={styles.formGroup}>
           {DOCUMENTS.map((doc) => (
-            <div key={doc.key} style={{ background: '#171717', border: '1px solid #27272a', borderRadius: 8, padding: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div key={doc.key} className={styles.docCard}>
+              <div className={styles.docCardHeader}>
                 <div>
-                  <span style={{ fontWeight: 600 }}>{doc.label}</span>
-                  {doc.required && <span style={{ color: '#f04e31', marginLeft: 6 }}>*</span>}
+                  <span className={styles.docLabel}>{doc.label}</span>
+                  {doc.required && <span className={styles.requiredMark}>*</span>}
                 </div>
-                <span style={{
-                  fontSize: 12,
-                  color: docs[doc.key].verified ? '#4ade80' : docs[doc.key].uploaded ? '#facc15' : '#71717a',
-                }}>
-                  {docs[doc.key].verified ? '✓ Verified' : docs[doc.key].uploaded ? '⏳ Uploaded' : 'Pending'}
+                <span className={
+                  docs[doc.key].verified ? styles.statusVerified : docs[doc.key].uploaded ? styles.statusUploaded : styles.statusPending
+                }>
+                  {docs[doc.key].verified ? 'Verified' : docs[doc.key].uploaded ? 'Uploaded' : 'Pending'}
                 </span>
               </div>
               <input
@@ -74,17 +75,17 @@ export default function OnboardingDocuments() {
                 id={`doc-${doc.key}`}
                 aria-label={`Upload ${doc.label}`}
                 onChange={(e) => handleUpload(doc.key, e.target.files?.[0] || null)}
-                style={{ fontSize: 13 }}
+                className={styles.fileInput}
               />
             </div>
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+        <div className={styles.actions}>
           <button
             type="button"
             onClick={() => window.location.href = '/onboarding/business'}
-            style={{ ...buttonStyle.secondary, flex: 1 }}
+            className={styles.backButton}
           >
             Back
           </button>
@@ -92,7 +93,7 @@ export default function OnboardingDocuments() {
             label={loading ? 'Saving...' : 'Continue'}
             onClick={submit}
             disabled={loading}
-            style={{ flex: 1 }}
+            className={styles.continueButton}
           />
         </div>
       </div>

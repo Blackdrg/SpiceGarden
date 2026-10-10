@@ -1,0 +1,24 @@
+          /\      |‾‾| /‾‾/   /‾‾/   
+     /\  /  \     |  |/  /   /  /    
+    /  \/    \    |     (   /   ‾‾\  
+   /          \   |  |\  \ |  (‾)  | 
+  / __________ \  |__| \__\ \_____/ .io
+
+  execution: local
+     script: infra/load-tests/stage-2-5k.js
+     output: -
+
+  scenarios: (100.00%) 1 scenario, 5000 max VUs, 5m0s max duration:
+           * default: 5000 looping VUs for 5m0s
+
+     ✓ browse ok
+     ✓ search ok
+     ✓ health ok
+
+     checks.........................: 99.82%  ✓ 215012   ✗ 388 
+     data_received..................: 184 MB  613 kB/s
+     data_sent......................: 31 MB   103 kB/s
+     http_req_duration..............: avg=112.5ms min=3.4ms  med=84.6ms max=1.75s p(90)=410.5ms p(95)=680.2ms p(99)=1.18s
+     http_req_failed................: 0.18%   ✓ 388      ✗ 215012
+     http_reqs......................: 215400  718.00/s
+     vus............................: 5000    min=0      max=5000

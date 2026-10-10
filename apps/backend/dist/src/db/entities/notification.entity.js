@@ -101,5 +101,10 @@ __decorate([
     __metadata("design:type", Date)
 ], NotificationEntity.prototype, "updatedAt", void 0);
 exports.NotificationEntity = NotificationEntity = __decorate([
-    (0, typeorm_1.Entity)('notifications')
+    (0, typeorm_1.Entity)('notifications'),
+    (0, typeorm_1.Index)('idx_notifications_recipient_id', ['recipientId']),
+    (0, typeorm_1.Index)('idx_notifications_status', ['status']),
+    (0, typeorm_1.Index)('idx_notifications_recipient_status', ['recipientId', 'status']),
+    (0, typeorm_1.Index)('idx_notifications_next_attempt', ['nextAttemptAt']),
+    (0, typeorm_1.Index)('idx_notifications_created_at', ['createdAt'])
 ], NotificationEntity);

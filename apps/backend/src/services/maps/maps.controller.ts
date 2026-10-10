@@ -49,11 +49,11 @@ export class MapsController {
     @Query('west') west: string,
     @Query('zoom') zoom?: string
   ): Promise<HeatmapPoint[]> {
-    return this.mapsService.getHeatmapData({
+return this.mapsService.getHeatmapData({
       north: Number(north),
       south: Number(south),
       east: Number(east),
-      west: Number(west),
+      west: Number(west)
     }, zoom ? Number(zoom) : 12);
   }
 

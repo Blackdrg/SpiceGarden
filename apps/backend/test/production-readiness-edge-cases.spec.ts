@@ -128,6 +128,8 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
+        { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
 
       await expect(service.createPaymentIntent(101, 'usd', 'user-1')).rejects.toThrow(BadRequestException);
@@ -152,6 +154,8 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
+        { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
 
       const result = await service.confirmPayment('pi_1', 'user-1');
@@ -175,6 +179,8 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
+        { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
 
       await expect(service.refundPayment('pi_1', 30, 'user-1')).rejects.toThrow(BadRequestException);
@@ -187,6 +193,8 @@ describe('Production-readiness backend edge coverage', () => {
         auditService as any,
         ledgerService as any,
         paymentGatewayFactory,
+        { findOne: jest.fn().mockReturnValue(Promise.resolve(null)) } as any,
+        { createQueryBuilder: jest.fn().mockReturnValue({ where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockReturnValue(Promise.resolve({ total: '0' })) }) } as any,
       );
 
       await service.constructEvent(
@@ -354,11 +362,17 @@ describe('Production-readiness backend edge coverage', () => {
       manager: { transaction: jest.fn(async (cb: any) => cb(orderEntity({ id: 'order-1' }))) },
     } as any;
     const driverAssignmentRepo = { findOne: jest.fn(), save: jest.fn() } as unknown as Repository<DriverAssignmentEntity>;
+    const driverRepo = { findOne: jest.fn() } as any;
+    const userRepo = { findOne: jest.fn() } as any;
+    const branchRepo = { findOne: jest.fn() } as any;
 
     it('rejects invalid order totals before placement', async () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -374,6 +388,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -390,6 +407,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,
@@ -406,6 +426,9 @@ describe('Production-readiness backend edge coverage', () => {
       const service = new OrderService(
         orderRepo,
         driverAssignmentRepo,
+        driverRepo,
+        userRepo,
+        branchRepo,
         paymentService as any,
         notificationService as any,
         retryService,

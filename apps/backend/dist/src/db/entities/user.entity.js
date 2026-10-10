@@ -81,5 +81,9 @@ __decorate([
     __metadata("design:type", Date)
 ], UserEntity.prototype, "deletedAt", void 0);
 exports.UserEntity = UserEntity = __decorate([
-    (0, typeorm_1.Entity)('users')
+    (0, typeorm_1.Entity)('users'),
+    (0, typeorm_1.Index)('idx_users_role', ['role']),
+    (0, typeorm_1.Index)('idx_users_status', ['status']),
+    (0, typeorm_1.Index)('idx_users_email_verified', ['emailVerified']),
+    (0, typeorm_1.Index)('idx_users_created_at', ['createdAt'])
 ], UserEntity);

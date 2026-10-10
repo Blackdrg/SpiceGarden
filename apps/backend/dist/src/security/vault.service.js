@@ -124,7 +124,7 @@ let VaultService = VaultService_1 = class VaultService {
         ];
         const missing = [];
         const valid = [];
-        for (const secret of requiredSecrets) {
+        await Promise.all(requiredSecrets.map(async (secret) => {
             try {
                 const value = await this.getSecret(secret, process.env[secret]);
                 if (value && !value.includes('CHANGE_ME') && !value.includes('placeholder')) {
@@ -137,7 +137,7 @@ let VaultService = VaultService_1 = class VaultService {
             catch {
                 missing.push(secret);
             }
-        }
+        }));
         return { missing, valid };
     }
     isVaultConfigured() {

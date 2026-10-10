@@ -21,7 +21,9 @@ let RolesGuard = class RolesGuard {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const requiredRoles = this.reflector.get('roles', context.getHandler());
+        const requiredRoles = typeof this.reflector.getAllAndOverride === 'function'
+            ? (this.reflector.getAllAndOverride('roles', [context.getHandler(), context.getClass()]) || this.reflector.get('roles', context.getHandler()))
+            : this.reflector.get('roles', context.getHandler());
         if (!requiredRoles || requiredRoles.length === 0) {
             return true;
         }
