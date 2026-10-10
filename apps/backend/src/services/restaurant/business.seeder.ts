@@ -124,31 +124,34 @@ export class BusinessSeederService {
     const userRepo = this.dataSource.getRepository(UserEntity);
 
     const driverNames = ['Raj Kumar', 'Amit Singh', 'Priya Sharma'];
+    const defaultPasswordHash = await argon2.hash('SpiceGarden@2024');
 
-    for (let i = 0; i < 3; i++) {
-      const savedUser = await userRepo.save({
-        id: randomUUID(),
-        fullName: driverNames[i],
-        email: `${driverNames[i].toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
-        phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-        passwordHash: await argon2.hash('SpiceGarden@2024'),
-        role: UserRole.DELIVERY_PARTNER,
-        status: UserStatus.ACTIVE,
-      } as any) as unknown as UserEntity;
+    await Promise.all(
+      driverNames.map(async (name, i) => {
+        const savedUser = await userRepo.save({
+          id: randomUUID(),
+          fullName: name,
+          email: `${name.toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
+          phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+          passwordHash: defaultPasswordHash,
+          role: UserRole.DELIVERY_PARTNER,
+          status: UserStatus.ACTIVE,
+        } as any) as unknown as UserEntity;
 
-      await driverRepo.save({
-        id: randomUUID(),
-        userId: savedUser.id,
-        licenseNumber: `DL${String(i + 1).padStart(3, '0')}`,
-        vehicleNumber: `CAR-${1000 + i}`,
-        vehicleType: 'motorcycle',
-        kycStatus: 'approved',
-        isOnline: true,
-        isAvailable: true,
-        currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
-        rating: 4.5 + Math.random() * 0.5,
-      } as any);
-    }
+        await driverRepo.save({
+          id: randomUUID(),
+          userId: savedUser.id,
+          licenseNumber: `DL${String(i + 1).padStart(3, '0')}`,
+          vehicleNumber: `CAR-${1000 + i}`,
+          vehicleType: 'motorcycle',
+          kycStatus: 'approved',
+          isOnline: true,
+          isAvailable: true,
+          currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
+          rating: 4.5 + Math.random() * 0.5,
+        } as any);
+      })
+    );
 
     console.log('[BusinessSeeder] Seeded 3 drivers');
   }

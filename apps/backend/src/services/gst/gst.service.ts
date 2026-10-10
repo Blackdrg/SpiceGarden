@@ -120,13 +120,15 @@ export class GSTService {
         item.totalTax = cgstAmount + sgstAmount + igstAmount;
         item.totalAmount = itemTotal + item.totalTax;
 
-        // Save updated item
-        await this.orderItemRepo.save(item);
-
         // Accumulate totals
         totalCGST += cgstAmount;
         totalSGST += sgstAmount;
         totalIGST += igstAmount;
+      }
+
+      // Save updated items in a single batch
+      if (order.items && order.items.length > 0) {
+        await this.orderItemRepo.save(order.items);
       }
 
       const totalGstAmount = totalCGST + totalSGST + totalIGST;

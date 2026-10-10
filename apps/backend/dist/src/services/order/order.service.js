@@ -375,16 +375,22 @@ let OrderService = class OrderService {
             },
         });
         const resolvedOrders = [];
-        for (const order of stuckOrders) {
+        const results = await Promise.allSettled(stuckOrders.map(async (order) => {
             try {
                 order.status = order_interface_1.OrderStatus.RESTAURANT_ACCEPTED;
                 order.updatedAt = new Date();
                 const savedOrder = await this.orderRepo.save(order);
-                resolvedOrders.push(savedOrder);
                 await this.notificationService.sendPush(order.userId, 'Order Delayed', `Your order #${order.orderNumber} is experiencing delays. We're working on it.`, { orderId: order.id });
+                return savedOrder;
             }
             catch (error) {
                 this.loggingService.secureError('[OrderService] Failed to resolve stuck preparing state for order', { id: order.id, error }, 'OrderService');
+                return null;
+            }
+        }));
+        for (const res of results) {
+            if (res.status === 'fulfilled' && res.value) {
+                resolvedOrders.push(res.value);
             }
         }
         return resolvedOrders;

@@ -124,8 +124,9 @@ export class MenuModerationService {
     );
 
     const moderations = await this.moderationRepo.findBy({ id: In(moderationIds) });
-    for (const m of moderations) {
-      await this.itemRepo.update(m.menuItemId, { status: 'available' });
+    const menuItemIds = moderations.map(m => m.menuItemId).filter(Boolean);
+    if (menuItemIds.length > 0) {
+      await this.itemRepo.update({ id: In(menuItemIds) as any }, { status: 'available' });
     }
   }
 

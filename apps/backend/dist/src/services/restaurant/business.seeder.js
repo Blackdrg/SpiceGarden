@@ -139,13 +139,14 @@ class BusinessSeederService {
         const driverRepo = this.dataSource.getRepository(driver_entity_1.DriverEntity);
         const userRepo = this.dataSource.getRepository(user_entity_1.UserEntity);
         const driverNames = ['Raj Kumar', 'Amit Singh', 'Priya Sharma'];
-        for (let i = 0; i < 3; i++) {
+        const defaultPasswordHash = await argon2.hash('SpiceGarden@2024');
+        await Promise.all(driverNames.map(async (name, i) => {
             const savedUser = await userRepo.save({
                 id: (0, crypto_1.randomUUID)(),
-                fullName: driverNames[i],
-                email: `${driverNames[i].toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
+                fullName: name,
+                email: `${name.toLowerCase().replace(' ', '.')}@driver.spicegarden.com`,
                 phone: `+92${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-                passwordHash: await argon2.hash('SpiceGarden@2024'),
+                passwordHash: defaultPasswordHash,
                 role: user_interface_1.UserRole.DELIVERY_PARTNER,
                 status: user_interface_1.UserStatus.ACTIVE,
             });
@@ -161,7 +162,7 @@ class BusinessSeederService {
                 currentLocation: { lat: 30.73 + i * 0.01, lng: 76.77 + i * 0.01 },
                 rating: 4.5 + Math.random() * 0.5,
             });
-        }
+        }));
         console.log('[BusinessSeeder] Seeded 3 drivers');
     }
 }

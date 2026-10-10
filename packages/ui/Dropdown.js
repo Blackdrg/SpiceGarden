@@ -39,8 +39,11 @@ const react_1 = __importStar(require("react"));
 const tokens_1 = require("./tokens");
 const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, error, disabled = false, }) => {
     const [isOpen, setIsOpen] = (0, react_1.useState)(false);
-    const [selected, setSelected] = (0, react_1.useState)(options.find(opt => opt.value === value) || null);
+    const [selected, setSelected] = (0, react_1.useState)(() => {
+        return options.find(opt => opt.value === value) || null;
+    });
     const dropdownRef = (0, react_1.useRef)(null);
+    const dropdownId = label ? `dropdown-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : 'custom-dropdown';
     (0, react_1.useEffect)(() => {
         setSelected(options.find(opt => opt.value === value) || null);
     }, [value, options]);
@@ -61,13 +64,18 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
         }
     };
     return (react_1.default.createElement("div", { ref: dropdownRef, style: { marginBottom: label ? tokens_1.DESIGN_TOKENS.spacing.sm : 0 } },
-        label && (react_1.default.createElement("label", { style: {
+        label && (react_1.default.createElement("label", { htmlFor: dropdownId, style: {
                 display: 'block',
                 marginBottom: tokens_1.DESIGN_TOKENS.spacing.xs,
                 ...tokens_1.DESIGN_TOKENS.typography.smallLabel,
                 color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
             } }, label)),
-        react_1.default.createElement("div", { onClick: () => !disabled && setIsOpen(!isOpen), "aria-label": label || 'Dropdown', "aria-haspopup": "listbox", "aria-expanded": isOpen, style: {
+        react_1.default.createElement("div", { id: dropdownId, role: "button", tabIndex: disabled ? -1 : 0, onClick: () => !disabled && setIsOpen(!isOpen), onKeyDown: (e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+                    e.preventDefault();
+                    setIsOpen(!isOpen);
+                }
+            }, "aria-label": label || 'Dropdown', "aria-haspopup": "listbox", "aria-expanded": isOpen, style: {
                 position: 'relative',
                 padding: `${tokens_1.DESIGN_TOKENS.spacing.md}px`,
                 borderRadius: `${tokens_1.DESIGN_TOKENS.radius.input}px`,
@@ -87,7 +95,7 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
                     transform: 'translateY(-50%)',
                     color: tokens_1.DESIGN_TOKENS.colors.textSecondary,
                 } }, "\u25BC"),
-            isOpen && (react_1.default.createElement("div", { style: {
+            isOpen && (react_1.default.createElement("div", { role: "listbox", style: {
                     position: 'absolute',
                     top: '100%',
                     left: 0,
@@ -100,12 +108,18 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
                     zIndex: 1000,
                     maxHeight: 200,
                     overflowY: 'auto',
-                } }, options.map((option) => (react_1.default.createElement("div", { key: option.value, onClick: () => handleSelect(option), role: "option", "aria-selected": selected?.value === option.value, style: {
+                } }, options.map((option) => (react_1.default.createElement("div", { key: option.value, onClick: () => handleSelect(option), onKeyDown: (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelect(option);
+                    }
+                }, role: "option", tabIndex: option.disabled ? -1 : 0, "aria-selected": selected?.value === option.value, style: {
                     padding: `${tokens_1.DESIGN_TOKENS.spacing.md}px`,
                     cursor: option.disabled ? 'not-allowed' : 'pointer',
                     backgroundColor: selected?.value === option.value ? tokens_1.DESIGN_TOKENS.colors.elevated : 'transparent',
                     color: option.disabled ? tokens_1.DESIGN_TOKENS.colors.textSecondary : tokens_1.DESIGN_TOKENS.colors.textPrimary,
                     opacity: option.disabled ? 0.5 : 1,
+                    outline: 'none',
                 } }, option.label)))))),
         error && (react_1.default.createElement("span", { role: "alert", style: {
                 ...tokens_1.DESIGN_TOKENS.typography.smallLabel,

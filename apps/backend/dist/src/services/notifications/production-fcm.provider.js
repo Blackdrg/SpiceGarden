@@ -40,8 +40,11 @@ let ProductionFCMProvider = ProductionFCMProvider_1 = class ProductionFCMProvide
         let totalFailure = 0;
         const invalidTokens = [];
         const messageIds = [];
+        const batches = [];
         for (let i = 0; i < validTokens.length; i += batchSize) {
-            const batchTokens = validTokens.slice(i, i + batchSize);
+            batches.push(validTokens.slice(i, i + batchSize));
+        }
+        await Promise.all(batches.map(async (batchTokens) => {
             try {
                 const response = await fetch('https://fcm.googleapis.com/fcm/send', {
                     method: 'POST',
@@ -86,7 +89,7 @@ let ProductionFCMProvider = ProductionFCMProvider_1 = class ProductionFCMProvide
                 this.logger.error(`FCM batch send error: ${err.message}`);
                 totalFailure += batchTokens.length;
             }
-        }
+        }));
         return {
             success: totalFailure === 0 || totalSuccess > 0,
             successCount: totalSuccess,

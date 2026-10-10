@@ -171,42 +171,50 @@ export class NotificationEngineService {
     const channelResults: Record<string, any> = {};
 
     // 5. Channel Execution with Retries & Exponential Backoff
-    for (const channel of req.channels) {
-      if (channel === 'sms' && allowSMS && req.phone) {
-        channelResults.sms = await this.executeWithRetry(async () => {
-          return await this.smsProvider.sendSMS({
-            to: req.phone!,
-            message: `${renderedTitle}: ${renderedBody}`,
-            tenantId: req.tenantId
-          });
-        }, 'sms');
-      }
-
-      if (channel === 'push' && allowPush && req.deviceTokens) {
-        channelResults.push = {};
-        if (req.deviceTokens.fcm && req.deviceTokens.fcm.length > 0) {
-          channelResults.push.fcm = await this.executeWithRetry(async () => {
-            return await this.fcmProvider.sendMulticast({
-              tokens: req.deviceTokens!.fcm!,
-              title: renderedTitle,
-              body: renderedBody,
-              data: req.templateData ? Object.fromEntries(Object.entries(req.templateData).map(([k, v]) => [k, String(v)])) : {}
+    await Promise.all(
+      req.channels.map(async (channel) => {
+        if (channel === 'sms' && allowSMS && req.phone) {
+          channelResults.sms = await this.executeWithRetry(async () => {
+            return await this.smsProvider.sendSMS({
+              to: req.phone!,
+              message: `${renderedTitle}: ${renderedBody}`,
+              tenantId: req.tenantId
             });
-          }, 'push');
+          }, 'sms');
         }
 
-        if (req.deviceTokens.apns && req.deviceTokens.apns.length > 0) {
-          channelResults.push.apns = await this.executeWithRetry(async () => {
-            return await this.apnsProvider.sendPush({
-              deviceTokens: req.deviceTokens!.apns!,
-              title: renderedTitle,
-              body: renderedBody,
-              data: req.templateData
-            });
-          }, 'push');
+        if (channel === 'push' && allowPush && req.deviceTokens) {
+          channelResults.push = {};
+          const pushPromises: Promise<void>[] = [];
+          if (req.deviceTokens.fcm && req.deviceTokens.fcm.length > 0) {
+            pushPromises.push(
+              this.executeWithRetry(async () => {
+                return await this.fcmProvider.sendMulticast({
+                  tokens: req.deviceTokens!.fcm!,
+                  title: renderedTitle,
+                  body: renderedBody,
+                  data: req.templateData ? Object.fromEntries(Object.entries(req.templateData).map(([k, v]) => [k, String(v)])) : {}
+                });
+              }, 'push').then(res => { channelResults.push.fcm = res; })
+            );
+          }
+
+          if (req.deviceTokens.apns && req.deviceTokens.apns.length > 0) {
+            pushPromises.push(
+              this.executeWithRetry(async () => {
+                return await this.apnsProvider.sendPush({
+                  deviceTokens: req.deviceTokens!.apns!,
+                  title: renderedTitle,
+                  body: renderedBody,
+                  data: req.templateData
+                });
+              }, 'push').then(res => { channelResults.push.apns = res; })
+            );
+          }
+          await Promise.all(pushPromises);
         }
-      }
-    }
+      })
+    );
 
     // Cache for Deduplication
     this.deduplicationCache.set(dedupKey, { timestamp: Date.now(), result: channelResults });

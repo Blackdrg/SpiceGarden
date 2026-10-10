@@ -52,54 +52,60 @@ export class ProductionFCMProvider {
     const invalidTokens: string[] = [];
     const messageIds: string[] = [];
 
+    const batches: string[][] = [];
     for (let i = 0; i < validTokens.length; i += batchSize) {
-      const batchTokens = validTokens.slice(i, i + batchSize);
-      try {
-        const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-          method: 'POST',
-          headers: {
-            'Authorization': `key=${fcmServerKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            registration_ids: batchTokens,
-            priority: msg.priority || 'high',
-            collapse_key: msg.collapseKey,
-            time_to_live: msg.ttlSeconds || 3600,
-            notification: {
-              title: msg.title,
-              body: msg.body,
-              sound: 'default'
-            },
-            data: msg.data || {},
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`FCM request failed with HTTP ${response.status}`);
-        }
-
-        const resData = (await response.json()) as any;
-        if (resData && resData.results) {
-          totalSuccess += resData.success || 0;
-          totalFailure += resData.failure || 0;
-
-          resData.results.forEach((res: any, idx: number) => {
-            if (res.message_id) {
-              messageIds.push(res.message_id);
-            }
-            if (res.error === 'NotRegistered' || res.error === 'InvalidRegistration') {
-              invalidTokens.push(batchTokens[idx]);
-            }
-          });
-        } else {
-          totalSuccess += batchTokens.length;
-        }
-      } catch (err: any) {
-        this.logger.error(`FCM batch send error: ${err.message}`);
-        totalFailure += batchTokens.length;
-      }
+      batches.push(validTokens.slice(i, i + batchSize));
     }
+
+    await Promise.all(
+      batches.map(async (batchTokens) => {
+        try {
+          const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+              'Authorization': `key=${fcmServerKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              registration_ids: batchTokens,
+              priority: msg.priority || 'high',
+              collapse_key: msg.collapseKey,
+              time_to_live: msg.ttlSeconds || 3600,
+              notification: {
+                title: msg.title,
+                body: msg.body,
+                sound: 'default'
+              },
+              data: msg.data || {},
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`FCM request failed with HTTP ${response.status}`);
+          }
+
+          const resData = (await response.json()) as any;
+          if (resData && resData.results) {
+            totalSuccess += resData.success || 0;
+            totalFailure += resData.failure || 0;
+
+            resData.results.forEach((res: any, idx: number) => {
+              if (res.message_id) {
+                messageIds.push(res.message_id);
+              }
+              if (res.error === 'NotRegistered' || res.error === 'InvalidRegistration') {
+                invalidTokens.push(batchTokens[idx]);
+              }
+            });
+          } else {
+            totalSuccess += batchTokens.length;
+          }
+        } catch (err: any) {
+          this.logger.error(`FCM batch send error: ${err.message}`);
+          totalFailure += batchTokens.length;
+        }
+      })
+    );
 
     return {
       success: totalFailure === 0 || totalSuccess > 0,

@@ -143,13 +143,9 @@ let TaxReportingService = TaxReportingService_1 = class TaxReportingService {
         };
     }
     async getMonthlyTaxSummary(restaurantId, months = 12) {
-        const summaries = [];
         const now = new Date();
-        for (let i = 0; i < months; i++) {
-            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            summaries.push(await this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear()));
-        }
-        return summaries;
+        const monthDates = Array.from({ length: months }, (_, i) => new Date(now.getFullYear(), now.getMonth() - i, 1));
+        return Promise.all(monthDates.map((date) => this.generateGSTReport(restaurantId, date.getMonth() + 1, date.getFullYear())));
     }
 };
 exports.TaxReportingService = TaxReportingService;

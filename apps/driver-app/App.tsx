@@ -24,10 +24,10 @@ interface Order {
 const DriverApp = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [isOnline, setIsOnline] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(true);
+  const isAvailableRef = useRef(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [route, setRoute] = useState<Location[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [eta, setEta] = useState(0);
   const mapRef = useRef<MapView>(null);
   const orderRef = useRef<Order | null>(null);
@@ -42,7 +42,7 @@ const DriverApp = () => {
     const socketInstance = io('http://localhost:3001', {
       transports: ['websocket'],
     });
-    setSocket(socketInstance);
+    socketRef.current = socketInstance;
 
     const handleConnect = () => {
       console.log('Connected to tracking server');
@@ -68,6 +68,7 @@ const DriverApp = () => {
       socketInstance.off('orderAssigned', handleOrderAssigned);
       socketInstance.off('etaUpdate', handleEtaUpdate);
       socketInstance.disconnect();
+      socketRef.current = null;
       if (watchIdRef.current !== null && Platform.OS === 'android') {
         Geolocation.clearWatch(watchIdRef.current);
       }
@@ -75,10 +76,10 @@ const DriverApp = () => {
   }, []);
 
   useEffect(() => {
-    if (location && order && isOnline && socket) {
+    if (location && order && isOnline) {
       // Send location update every 5 seconds
       const interval = setInterval(() => {
-        socket.emit('updateLocation', {
+        socketRef.current?.emit('updateLocation', {
           driverId: 'driver-' + Date.now(), // In real app, use actual driver ID
           lat: location.latitude,
           lng: location.longitude,
@@ -90,7 +91,7 @@ const DriverApp = () => {
 
       return () => clearInterval(interval);
     }
-  }, [location, order, isOnline, socket]);
+  }, [location, order, isOnline]);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -144,27 +145,27 @@ const DriverApp = () => {
 
   const goOnline = () => {
     setIsOnline(true);
-    setIsAvailable(true);
-    socket?.emit('driverOnline', { driverId: 'driver-' + Date.now() });
+    isAvailableRef.current = true;
+    socketRef.current?.emit('driverOnline', { driverId: 'driver-' + Date.now() });
   };
 
   const goOffline = () => {
     setIsOnline(false);
-    setIsAvailable(false);
-    socket?.emit('driverOffline', { driverId: 'driver-' + Date.now() });
+    isAvailableRef.current = false;
+    socketRef.current?.emit('driverOffline', { driverId: 'driver-' + Date.now() });
   };
 
   const acceptOrder = () => {
     if (order) {
       setOrder({ ...order, status: 'picked_up' });
-      socket?.emit('orderAccepted', { orderId: order.id });
+      socketRef.current?.emit('orderAccepted', { orderId: order.id });
     }
   };
 
   const updateDeliveryStatus = (status: Order['status']) => {
     if (order) {
       setOrder({ ...order, status });
-      socket?.emit('deliveryStatusUpdate', { orderId: order.id, status });
+      socketRef.current?.emit('deliveryStatusUpdate', { orderId: order.id, status });
     }
   };
 

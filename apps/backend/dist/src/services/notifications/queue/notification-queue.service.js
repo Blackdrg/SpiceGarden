@@ -59,14 +59,14 @@ let NotificationQueueService = NotificationQueueService_1 = class NotificationQu
             order: { createdAt: 'ASC' },
             take: 10
         });
-        for (const notification of notifications) {
+        await Promise.allSettled(notifications.map(async (notification) => {
             try {
                 await this.processNotification(notification);
             }
             catch (error) {
                 this.logger.error(`Failed to process notification ${notification.id}:`, error);
             }
-        }
+        }));
     }
     async processNotification(notification) {
         notification.status = notification_status_enum_1.NotificationStatus.PROCESSING;

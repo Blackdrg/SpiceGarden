@@ -29,10 +29,11 @@ export const Dropdown = ({
   disabled = false,
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<DropdownOption | null>(
-    options.find(opt => opt.value === value) || null
-  );
+  const [selected, setSelected] = useState<DropdownOption | null>(() => {
+    return options.find(opt => opt.value === value) || null;
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownId = label ? `dropdown-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : 'custom-dropdown';
 
   useEffect(() => {
     setSelected(options.find(opt => opt.value === value) || null);
@@ -59,17 +60,29 @@ export const Dropdown = ({
   return (
     <div ref={dropdownRef} style={{ marginBottom: label ? DESIGN_TOKENS.spacing.sm : 0 }}>
       {label && (
-        <label style={{
-          display: 'block',
-          marginBottom: DESIGN_TOKENS.spacing.xs,
-          ...DESIGN_TOKENS.typography.smallLabel,
-          color: DESIGN_TOKENS.colors.textPrimary,
-        }}>
+        <label
+          htmlFor={dropdownId}
+          style={{
+            display: 'block',
+            marginBottom: DESIGN_TOKENS.spacing.xs,
+            ...DESIGN_TOKENS.typography.smallLabel,
+            color: DESIGN_TOKENS.colors.textPrimary,
+          }}
+        >
           {label}
         </label>
       )}
       <div
+        id={dropdownId}
+        role="button"
+        tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
         aria-label={label || 'Dropdown'}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -99,25 +112,35 @@ export const Dropdown = ({
           ▼
         </span>
         {isOpen && (
-          <div style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            marginTop: DESIGN_TOKENS.spacing.xs,
-            backgroundColor: DESIGN_TOKENS.colors.surface,
-            border: `1px solid ${DESIGN_TOKENS.colors.border}`,
-            borderRadius: DESIGN_TOKENS.radius.md,
-            boxShadow: DESIGN_TOKENS.shadows.medium,
-            zIndex: 1000,
-            maxHeight: 200,
-            overflowY: 'auto',
-          }}>
+          <div
+            role="listbox"
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              marginTop: DESIGN_TOKENS.spacing.xs,
+              backgroundColor: DESIGN_TOKENS.colors.surface,
+              border: `1px solid ${DESIGN_TOKENS.colors.border}`,
+              borderRadius: DESIGN_TOKENS.radius.md,
+              boxShadow: DESIGN_TOKENS.shadows.medium,
+              zIndex: 1000,
+              maxHeight: 200,
+              overflowY: 'auto',
+            }}
+          >
             {options.map((option) => (
               <div
                 key={option.value}
                 onClick={() => handleSelect(option)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelect(option);
+                  }
+                }}
                 role="option"
+                tabIndex={option.disabled ? -1 : 0}
                 aria-selected={selected?.value === option.value}
                 style={{
                   padding: `${DESIGN_TOKENS.spacing.md}px`,
@@ -125,6 +148,7 @@ export const Dropdown = ({
                   backgroundColor: selected?.value === option.value ? DESIGN_TOKENS.colors.elevated : 'transparent',
                   color: option.disabled ? DESIGN_TOKENS.colors.textSecondary : DESIGN_TOKENS.colors.textPrimary,
                   opacity: option.disabled ? 0.5 : 1,
+                  outline: 'none',
                 }}
               >
                 {option.label}

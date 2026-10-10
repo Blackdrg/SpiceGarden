@@ -8,6 +8,7 @@ exports.Stepper = void 0;
 const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const Stepper = ({ value, onChange, min = 1, max = 99, step = 1, label, disabled = false, }) => {
+    const stepperId = label ? `stepper-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : 'stepper-control';
     const increment = () => {
         if (!disabled && value < max) {
             onChange(value + step);
@@ -19,11 +20,11 @@ const Stepper = ({ value, onChange, min = 1, max = 99, step = 1, label, disabled
         }
     };
     return (react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', gap: tokens_1.DESIGN_TOKENS.spacing.md } },
-        label && (react_1.default.createElement("label", { style: {
+        label && (react_1.default.createElement("label", { htmlFor: stepperId, style: {
                 ...tokens_1.DESIGN_TOKENS.typography.body,
                 color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
             } }, label)),
-        react_1.default.createElement("div", { style: {
+        react_1.default.createElement("div", { id: stepperId, role: "group", "aria-label": label || 'Stepper', style: {
                 display: 'flex',
                 alignItems: 'center',
                 border: `1px solid ${tokens_1.DESIGN_TOKENS.colors.border}`,

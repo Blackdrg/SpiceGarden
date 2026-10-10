@@ -113,9 +113,7 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
         const unassignedTickets = await this.ticketRepo.find({
             where: { status: support_ticket_entity_1.TicketStatus.OPEN },
         });
-        for (const ticket of unassignedTickets) {
-            await this.routeTicket(ticket.id);
-        }
+        await Promise.all(unassignedTickets.map(ticket => this.routeTicket(ticket.id)));
     }
     async getQueueStats() {
         const [openTickets, inProgress, awaitingCustomer, byPriority,] = await Promise.all([
@@ -132,10 +130,12 @@ let TicketRoutingService = TicketRoutingService_1 = class TicketRoutingService {
         };
     }
     async getTicketsByPriority() {
+        const priorities = Object.values(support_ticket_entity_1.TicketPriority);
+        const countResults = await Promise.all(priorities.map(priority => this.ticketRepo.count({ where: { priority } })));
         const counts = {};
-        for (const priority of Object.values(support_ticket_entity_1.TicketPriority)) {
-            counts[priority] = await this.ticketRepo.count({ where: { priority } });
-        }
+        priorities.forEach((priority, i) => {
+            counts[priority] = countResults[i];
+        });
         return counts;
     }
     async getOverdueTickets() {

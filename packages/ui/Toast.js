@@ -62,7 +62,8 @@ const ToastProvider = ({ children }) => {
     const hideToast = (0, react_1.useCallback)((id) => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
     }, []);
-    return (react_1.default.createElement(ToastContext.Provider, { value: { showToast, hideToast } },
+    const contextValue = (0, react_1.useMemo)(() => ({ showToast, hideToast }), [showToast, hideToast]);
+    return (react_1.default.createElement(ToastContext.Provider, { value: contextValue },
         children,
         react_1.default.createElement("div", { style: {
                 position: 'fixed',

@@ -103,10 +103,12 @@ let GSTService = GSTService_1 = class GSTService {
                 item.igstAmount = igstAmount;
                 item.totalTax = cgstAmount + sgstAmount + igstAmount;
                 item.totalAmount = itemTotal + item.totalTax;
-                await this.orderItemRepo.save(item);
                 totalCGST += cgstAmount;
                 totalSGST += sgstAmount;
                 totalIGST += igstAmount;
+            }
+            if (order.items && order.items.length > 0) {
+                await this.orderItemRepo.save(order.items);
             }
             const totalGstAmount = totalCGST + totalSGST + totalIGST;
             const totalAmount = totalTaxableValue + totalGstAmount;

@@ -406,8 +406,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
     const conn = this.connectedClients.get(driverId);
     
     if (conn) {
+      const messageIdSet = new Set(messageIds);
       const undelivered = Array.from(conn.acknowledgedMessages.values())
-        .filter(m => messageIds.includes(m.id) && !m.ack);
+        .filter(m => messageIdSet.has(m.id) && !m.ack);
       
       queue.push(...undelivered);
       this.messageQueue.set(driverId, queue);
