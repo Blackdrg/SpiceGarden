@@ -9,7 +9,12 @@ const react_1 = __importDefault(require("react"));
 const tokens_1 = require("./tokens");
 const FoodCard = ({ image, title, price, rating, offerBadge, isVeg, spiceLevel, onPress, style, }) => {
     const spiceLabels = { 1: '🌶️ Mild', 2: '🌶️🌶️ Medium', 3: '🌶️🌶️🌶️ Hot' };
-    return (react_1.default.createElement("div", { onClick: onPress, role: onPress ? 'button' : undefined, tabIndex: onPress ? 0 : undefined, style: {
+    return (react_1.default.createElement("div", { onClick: onPress, onKeyDown: (e) => {
+            if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                onPress();
+            }
+        }, role: onPress ? 'button' : undefined, tabIndex: onPress ? 0 : undefined, style: {
             display: 'flex',
             gap: tokens_1.DESIGN_TOKENS.spacing.md,
             backgroundColor: tokens_1.DESIGN_TOKENS.colors.surface,
@@ -87,7 +92,12 @@ const MenuCard = ({ title, description, price, image, variant = 'item', onPress,
                 } }, description))));
     }
     if (variant === 'combo') {
-        return (react_1.default.createElement("div", { onClick: onPress, role: onPress ? 'button' : undefined, style: {
+        return (react_1.default.createElement("div", { onClick: onPress, onKeyDown: (e) => {
+                if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    onPress();
+                }
+            }, role: onPress ? 'button' : undefined, tabIndex: onPress ? 0 : undefined, style: {
                 display: 'flex',
                 gap: tokens_1.DESIGN_TOKENS.spacing.md,
                 backgroundColor: '#fff8f0',
@@ -116,7 +126,12 @@ const MenuCard = ({ title, description, price, image, variant = 'item', onPress,
                 price)));
     }
     // Default item variant
-    return (react_1.default.createElement("div", { onClick: onPress, role: onPress ? 'button' : undefined, style: {
+    return (react_1.default.createElement("div", { onClick: onPress, onKeyDown: (e) => {
+            if (onPress && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                onPress();
+            }
+        }, role: onPress ? 'button' : undefined, tabIndex: onPress ? 0 : undefined, style: {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -281,7 +296,13 @@ const ReviewCard = ({ orderId, onSubmit }) => {
                 border: 'none',
                 cursor: 'pointer',
             } }, "\u2605")))),
-        react_1.default.createElement("textarea", { placeholder: "Your review...", value: review, onChange: (e) => setReview(e.target.value), style: {
+        react_1.default.createElement("label", { htmlFor: "rating-card-review", style: {
+                display: 'block',
+                marginBottom: tokens_1.DESIGN_TOKENS.spacing.xs,
+                ...tokens_1.DESIGN_TOKENS.typography.smallLabel,
+                color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
+            } }, "Write a review (optional)"),
+        react_1.default.createElement("textarea", { id: "rating-card-review", placeholder: "Share details of your experience...", value: review, onChange: (e) => setReview(e.target.value), style: {
                 width: '100%',
                 minHeight: 100,
                 padding: tokens_1.DESIGN_TOKENS.spacing.md,

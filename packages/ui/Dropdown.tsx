@@ -72,21 +72,17 @@ export const Dropdown = ({
           {label}
         </label>
       )}
-      <div
+      <button
+        type="button"
         id={dropdownId}
-        role="button"
-        tabIndex={disabled ? -1 : 0}
+        disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        onKeyDown={(e) => {
-          if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-            e.preventDefault();
-            setIsOpen(!isOpen);
-          }
-        }}
         aria-label={label || 'Dropdown'}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         style={{
+          width: '100%',
+          textAlign: 'left',
           position: 'relative',
           padding: `${DESIGN_TOKENS.spacing.md}px`,
           borderRadius: `${DESIGN_TOKENS.radius.input}px`,
@@ -94,6 +90,7 @@ export const Dropdown = ({
           backgroundColor: disabled ? DESIGN_TOKENS.colors.elevated : DESIGN_TOKENS.colors.surface,
           cursor: disabled ? 'not-allowed' : 'pointer',
           fontFamily: DESIGN_TOKENS.typography.fontFamily,
+          display: 'block',
         }}
       >
         <span style={{
@@ -130,19 +127,21 @@ export const Dropdown = ({
             }}
           >
             {options.map((option) => (
-              <div
+              <button
+                type="button"
                 key={option.value}
-                onClick={() => handleSelect(option)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleSelect(option);
-                  }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelect(option);
                 }}
                 role="option"
-                tabIndex={option.disabled ? -1 : 0}
+                disabled={option.disabled}
                 aria-selected={selected?.value === option.value}
                 style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  border: 'none',
+                  display: 'block',
                   padding: `${DESIGN_TOKENS.spacing.md}px`,
                   cursor: option.disabled ? 'not-allowed' : 'pointer',
                   backgroundColor: selected?.value === option.value ? DESIGN_TOKENS.colors.elevated : 'transparent',
@@ -152,11 +151,11 @@ export const Dropdown = ({
                 }}
               >
                 {option.label}
-              </div>
+              </button>
             ))}
           </div>
         )}
-      </div>
+      </button>
       {error && (
         <span role="alert" style={{
           ...DESIGN_TOKENS.typography.smallLabel,

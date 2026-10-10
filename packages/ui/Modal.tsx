@@ -34,16 +34,24 @@ export const Modal = ({
   const maxWidth = size === 'sm' ? 400 : size === 'lg' ? 700 : 500;
 
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
+      aria-label={title ? undefined : 'Modal dialog'}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
+        width: '100%',
+        height: '100%',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        border: 'none',
+        padding: 0,
+        margin: 0,
         background: 'rgba(0,0,0,0.5)',
         display: 'flex',
         alignItems: 'center',
@@ -104,7 +112,7 @@ export const Modal = ({
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
-    </div>
+    </dialog>
   );
 };
 
@@ -131,15 +139,24 @@ export const BottomSheet = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-modal="true"
+      aria-labelledby={title ? 'bottom-sheet-title' : undefined}
+      aria-label={title ? undefined : 'Bottom sheet'}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
+        width: '100%',
+        height: '100%',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        border: 'none',
+        padding: 0,
+        margin: 0,
         background: 'rgba(0,0,0,0.5)',
         display: 'flex',
         alignItems: 'flex-end',
@@ -171,7 +188,7 @@ export const BottomSheet = ({
           margin: '0 auto 16px',
         }} />
         {title && (
-          <h2 style={{
+          <h2 id="bottom-sheet-title" style={{
             margin: '0 0 16px 0',
             ...DESIGN_TOKENS.typography.headingM,
             color: DESIGN_TOKENS.colors.textPrimary,
@@ -200,6 +217,6 @@ export const BottomSheet = ({
           </button>
         )}
       </div>
-    </div>
+    </dialog>
   );
 };

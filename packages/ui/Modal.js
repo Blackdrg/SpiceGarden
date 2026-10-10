@@ -49,12 +49,19 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showCloseButton 
     if (!isOpen)
         return null;
     const maxWidth = size === 'sm' ? 400 : size === 'lg' ? 700 : 500;
-    return (react_1.default.createElement("div", { role: "dialog", "aria-modal": "true", "aria-labelledby": title ? 'modal-title' : undefined, style: {
+    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'modal-title' : undefined, "aria-label": title ? undefined : 'Modal dialog', style: {
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
+            width: '100%',
+            height: '100%',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            border: 'none',
+            padding: 0,
+            margin: 0,
             background: 'rgba(0,0,0,0.5)',
             display: 'flex',
             alignItems: 'center',
@@ -109,12 +116,19 @@ const BottomSheet = ({ isOpen, onClose, title, children, showCloseButton = true,
     }, [isOpen]);
     if (!isOpen)
         return null;
-    return (react_1.default.createElement("div", { role: "dialog", "aria-modal": "true", style: {
+    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'bottom-sheet-title' : undefined, "aria-label": title ? undefined : 'Bottom sheet', style: {
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
+            width: '100%',
+            height: '100%',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            border: 'none',
+            padding: 0,
+            margin: 0,
             background: 'rgba(0,0,0,0.5)',
             display: 'flex',
             alignItems: 'flex-end',
@@ -140,7 +154,7 @@ const BottomSheet = ({ isOpen, onClose, title, children, showCloseButton = true,
                     borderRadius: 2,
                     margin: '0 auto 16px',
                 } }),
-            title && (react_1.default.createElement("h2", { style: {
+            title && (react_1.default.createElement("h2", { id: "bottom-sheet-title", style: {
                     margin: '0 0 16px 0',
                     ...tokens_1.DESIGN_TOKENS.typography.headingM,
                     color: tokens_1.DESIGN_TOKENS.colors.textPrimary,

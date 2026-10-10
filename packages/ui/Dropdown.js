@@ -70,12 +70,9 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
                 ...tokens_1.DESIGN_TOKENS.typography.smallLabel,
                 color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
             } }, label)),
-        react_1.default.createElement("div", { id: dropdownId, role: "button", tabIndex: disabled ? -1 : 0, onClick: () => !disabled && setIsOpen(!isOpen), onKeyDown: (e) => {
-                if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-                    e.preventDefault();
-                    setIsOpen(!isOpen);
-                }
-            }, "aria-label": label || 'Dropdown', "aria-haspopup": "listbox", "aria-expanded": isOpen, style: {
+        react_1.default.createElement("button", { type: "button", id: dropdownId, disabled: disabled, onClick: () => !disabled && setIsOpen(!isOpen), "aria-label": label || 'Dropdown', "aria-haspopup": "listbox", "aria-expanded": isOpen, style: {
+                width: '100%',
+                textAlign: 'left',
                 position: 'relative',
                 padding: `${tokens_1.DESIGN_TOKENS.spacing.md}px`,
                 borderRadius: `${tokens_1.DESIGN_TOKENS.radius.input}px`,
@@ -83,6 +80,7 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
                 backgroundColor: disabled ? tokens_1.DESIGN_TOKENS.colors.elevated : tokens_1.DESIGN_TOKENS.colors.surface,
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 fontFamily: tokens_1.DESIGN_TOKENS.typography.fontFamily,
+                display: 'block',
             } },
             react_1.default.createElement("span", { style: {
                     ...tokens_1.DESIGN_TOKENS.typography.body,
@@ -108,12 +106,14 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select...', label, 
                     zIndex: 1000,
                     maxHeight: 200,
                     overflowY: 'auto',
-                } }, options.map((option) => (react_1.default.createElement("div", { key: option.value, onClick: () => handleSelect(option), onKeyDown: (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleSelect(option);
-                    }
-                }, role: "option", tabIndex: option.disabled ? -1 : 0, "aria-selected": selected?.value === option.value, style: {
+                } }, options.map((option) => (react_1.default.createElement("button", { type: "button", key: option.value, onClick: (e) => {
+                    e.stopPropagation();
+                    handleSelect(option);
+                }, role: "option", disabled: option.disabled, "aria-selected": selected?.value === option.value, style: {
+                    width: '100%',
+                    textAlign: 'left',
+                    border: 'none',
+                    display: 'block',
                     padding: `${tokens_1.DESIGN_TOKENS.spacing.md}px`,
                     cursor: option.disabled ? 'not-allowed' : 'pointer',
                     backgroundColor: selected?.value === option.value ? tokens_1.DESIGN_TOKENS.colors.elevated : 'transparent',
