@@ -26,20 +26,22 @@ async function testAll() {
     { name: 'Kitchen: /kitchen/inventory/low-stock/branch_mum_01', url: '/kitchen/inventory/low-stock/branch_mum_01', headers: { Authorization: 'Bearer ' + kitchenToken } }
   ];
 
-  for (const ep of endpoints) {
-    try {
-      const res = await axios({
-        method: ep.method || 'GET',
-        url: base + ep.url,
-        headers: ep.headers,
-        data: ep.data,
-        validateStatus: () => true
-      });
-      console.log(`[STATUS ${res.status}] ${ep.name} -> ` + JSON.stringify(res.data).slice(0, 100));
-    } catch (err) {
-      console.log(`[ERR] ${ep.name}: ${err.message}`);
-    }
-  }
+  await Promise.all(
+    endpoints.map(async (ep) => {
+      try {
+        const res = await axios({
+          method: ep.method || 'GET',
+          url: base + ep.url,
+          headers: ep.headers,
+          data: ep.data,
+          validateStatus: () => true
+        });
+        console.log(`[STATUS ${res.status}] ${ep.name} -> ` + JSON.stringify(res.data).slice(0, 100));
+      } catch (err) {
+        console.log(`[ERR] ${ep.name}: ${err.message}`);
+      }
+    })
+  );
 }
 
 testAll();

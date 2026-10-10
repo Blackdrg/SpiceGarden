@@ -58,9 +58,16 @@ export class ProcessManager {
 
     await this.delay(5000);
 
-    for (const service of this.services.filter(s => s.type === 'node')) {
-      const result = await this.startService(service.name);
-      results[service.name] = result.success ? true : result.error || 'failed';
+    const nodeServices = this.services.filter(s => s.type === 'node');
+    const startResults = await Promise.all(
+      nodeServices.map(async (service) => ({
+        name: service.name,
+        result: await this.startService(service.name),
+      }))
+    );
+
+    for (const { name, result } of startResults) {
+      results[name] = result.success ? true : result.error || 'failed';
     }
 
     return { success: Object.values(results).every(r => r === true), results };
@@ -91,13 +98,13 @@ export class ProcessManager {
   }
 
   async getStatus(): Promise<ServiceStatus[]> {
-    const statuses: ServiceStatus[] = [];
+    const dockerStatuses = await this.dockerManager.getStatus();
 
-    for (const service of this.services) {
+    return this.services.map((service) => {
       const status: ServiceStatus = {
         name: service.name,
         status: 'stopped',
-        port: service.port
+        port: service.port,
       };
 
       const proc = this.processes.get(service.name);
@@ -105,17 +112,14 @@ export class ProcessManager {
         status.status = 'running';
         status.pid = proc.pid;
       } else if (service.type === 'docker') {
-        const dockerStatuses = await this.dockerManager.getStatus();
         const dockerStatus = dockerStatuses.find(s => s.name === service.name.toLowerCase());
         if (dockerStatus) {
           status.status = dockerStatus.status;
         }
       }
 
-      statuses.push(status);
-    }
-
-    return statuses;
+      return status;
+    });
   }
 
   private async startService(serviceName: string): Promise<{ success: boolean; error?: string }> {

@@ -49,7 +49,10 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showCloseButton 
     if (!isOpen)
         return null;
     const maxWidth = size === 'sm' ? 400 : size === 'lg' ? 700 : 500;
-    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'modal-title' : undefined, "aria-label": title ? undefined : 'Modal dialog', style: {
+    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'modal-title' : undefined, "aria-label": title ? undefined : 'Modal dialog', onCancel: (e) => {
+            e.preventDefault();
+            onClose();
+        }, style: {
             position: 'fixed',
             top: 0,
             left: 0,
@@ -62,14 +65,25 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showCloseButton 
             border: 'none',
             padding: 0,
             margin: 0,
-            background: 'rgba(0,0,0,0.5)',
+            background: 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10000,
-            animation: `fadeIn ${tokens_1.DESIGN_TOKENS.motion.page}ms ${tokens_1.MOTION_EASING.easeInOut}`,
-        }, onClick: onClose },
-        react_1.default.createElement("div", { onClick: (e) => e.stopPropagation(), style: {
+        } },
+        react_1.default.createElement("div", { "aria-hidden": "true", onClick: onClose, style: {
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.5)',
+                zIndex: 1,
+                animation: `fadeIn ${tokens_1.DESIGN_TOKENS.motion.page}ms ${tokens_1.MOTION_EASING.easeInOut}`,
+            } }),
+        react_1.default.createElement("div", { style: {
+                position: 'relative',
+                zIndex: 2,
                 background: tokens_1.DESIGN_TOKENS.colors.surface,
                 borderRadius: tokens_1.DESIGN_TOKENS.radius.card,
                 padding: tokens_1.DESIGN_TOKENS.spacing.lg,
@@ -91,7 +105,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showCloseButton 
                         ...tokens_1.DESIGN_TOKENS.typography.headingM,
                         color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
                     } }, title),
-                showCloseButton && (react_1.default.createElement("button", { onClick: onClose, "aria-label": "Close modal", style: {
+                showCloseButton && (react_1.default.createElement("button", { type: "button", onClick: onClose, "aria-label": "Close modal", style: {
                         border: 'none',
                         background: 'transparent',
                         color: tokens_1.DESIGN_TOKENS.colors.textSecondary,
@@ -116,7 +130,10 @@ const BottomSheet = ({ isOpen, onClose, title, children, showCloseButton = true,
     }, [isOpen]);
     if (!isOpen)
         return null;
-    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'bottom-sheet-title' : undefined, "aria-label": title ? undefined : 'Bottom sheet', style: {
+    return (react_1.default.createElement("dialog", { open: true, "aria-modal": "true", "aria-labelledby": title ? 'bottom-sheet-title' : undefined, "aria-label": title ? undefined : 'Bottom sheet', onCancel: (e) => {
+            e.preventDefault();
+            onClose();
+        }, style: {
             position: 'fixed',
             top: 0,
             left: 0,
@@ -129,13 +146,24 @@ const BottomSheet = ({ isOpen, onClose, title, children, showCloseButton = true,
             border: 'none',
             padding: 0,
             margin: 0,
-            background: 'rgba(0,0,0,0.5)',
+            background: 'transparent',
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'center',
             zIndex: 10000,
-        }, onClick: onClose },
-        react_1.default.createElement("div", { onClick: (e) => e.stopPropagation(), style: {
+        } },
+        react_1.default.createElement("div", { "aria-hidden": "true", onClick: onClose, style: {
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.5)',
+                zIndex: 1,
+            } }),
+        react_1.default.createElement("div", { style: {
+                position: 'relative',
+                zIndex: 2,
                 background: tokens_1.DESIGN_TOKENS.colors.surface,
                 borderTopLeftRadius: tokens_1.DESIGN_TOKENS.radius.card,
                 borderTopRightRadius: tokens_1.DESIGN_TOKENS.radius.card,
@@ -160,7 +188,7 @@ const BottomSheet = ({ isOpen, onClose, title, children, showCloseButton = true,
                     color: tokens_1.DESIGN_TOKENS.colors.textPrimary,
                 } }, title)),
             children,
-            showCloseButton && (react_1.default.createElement("button", { onClick: onClose, "aria-label": "Close sheet", style: {
+            showCloseButton && (react_1.default.createElement("button", { type: "button", onClick: onClose, "aria-label": "Close sheet", style: {
                     marginTop: tokens_1.DESIGN_TOKENS.spacing.lg,
                     width: '100%',
                     padding: `${tokens_1.DESIGN_TOKENS.spacing.md}px`,

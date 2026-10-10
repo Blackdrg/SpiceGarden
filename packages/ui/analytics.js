@@ -3,23 +3,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useWebVitals = exports.useAnalytics = exports.trackEvent = void 0;
 const react_1 = require("react");
 const ANALYTICS_ENDPOINT = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics';
+const eventQueue = [];
+let isFlushing = false;
+const flushQueue = () => {
+    if (typeof window === 'undefined' || eventQueue.length === 0 || isFlushing)
+        return;
+    isFlushing = true;
+    const events = eventQueue.splice(0);
+    for (const event of events) {
+        const payload = JSON.stringify({ ...event, timestamp: Date.now() });
+        if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+            const blob = new Blob([payload], { type: 'application/json' });
+            navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+        }
+        else {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', ANALYTICS_ENDPOINT, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(payload);
+            }
+            catch {
+                // ignore
+            }
+        }
+    }
+    isFlushing = false;
+};
 const trackEvent = (event) => {
     if (typeof window === 'undefined')
         return;
-    const payload = JSON.stringify({ ...event, timestamp: Date.now() });
-    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
-        const blob = new Blob([payload], { type: 'application/json' });
-        navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
-        return;
+    eventQueue.push(event);
+    if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(flushQueue);
     }
-    try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', ANALYTICS_ENDPOINT, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(payload);
-    }
-    catch {
-        // ignore
+    else {
+        setTimeout(flushQueue, 0);
     }
 };
 exports.trackEvent = trackEvent;

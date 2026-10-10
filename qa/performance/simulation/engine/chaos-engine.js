@@ -23,21 +23,25 @@ class ChaosEngine {
     this.postgres.setChaosMode({ latencyMs: 50 });
     let start = performance.now();
     let errors = 0;
-    for (let i = 0; i < 500; i++) {
-      try {
-        await this.scenarioEngine.executeBrowse({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` });
-      } catch (e) { errors++; }
-    }
+    const browseRuns50 = Array.from({ length: 500 }, (_, i) => i);
+    const results50 = await Promise.allSettled(
+      browseRuns50.map((i) =>
+        this.scenarioEngine.executeBrowse({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` })
+      )
+    );
+    errors += results50.filter((r) => r.status === 'rejected').length;
     let duration50 = performance.now() - start;
     this.postgres.resetChaosMode();
 
     this.postgres.setChaosMode({ latencyMs: 200 });
     start = performance.now();
-    for (let i = 0; i < 500; i++) {
-      try {
-        await this.scenarioEngine.executeBrowse({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` });
-      } catch (e) { errors++; }
-    }
+    const browseRuns200 = Array.from({ length: 500 }, (_, i) => i);
+    const results200 = await Promise.allSettled(
+      browseRuns200.map((i) =>
+        this.scenarioEngine.executeBrowse({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` })
+      )
+    );
+    errors += results200.filter((r) => r.status === 'rejected').length;
     let duration200 = performance.now() - start;
     this.postgres.resetChaosMode();
 
@@ -51,12 +55,13 @@ class ChaosEngine {
     // 2. DB Deadlock & Connection Pool Exhaustion Simulation
     console.log('[Chaos] Testing DB Deadlock & Pool Exhaustion...');
     this.postgres.setChaosMode({ deadlockRate: 0.05, timeoutRate: 0.02 });
-    let deadlockErrors = 0;
-    for (let i = 0; i < 500; i++) {
-      try {
-        await this.scenarioEngine.executeCheckout({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}`, customerId: `cust_${i}` });
-      } catch (e) { deadlockErrors++; }
-    }
+    const checkoutRuns = Array.from({ length: 500 }, (_, i) => i);
+    const checkoutResults = await Promise.allSettled(
+      checkoutRuns.map((i) =>
+        this.scenarioEngine.executeCheckout({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}`, customerId: `cust_${i}` })
+      )
+    );
+    const deadlockErrors = checkoutResults.filter((r) => r.status === 'rejected').length;
     this.postgres.resetChaosMode();
     results.push({
       experiment: 'DB Deadlocks & Timeouts',
@@ -68,12 +73,13 @@ class ChaosEngine {
     // 3. Redis Partial Failure & Timeouts
     console.log('[Chaos] Testing Redis Partial Failure & Slowdowns...');
     this.redis.setFailureMode('partial_failure');
-    let redisErrors = 0;
-    for (let i = 0; i < 500; i++) {
-      try {
-        await this.scenarioEngine.executeSearch({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` });
-      } catch (e) { redisErrors++; }
-    }
+    const searchRuns = Array.from({ length: 500 }, (_, i) => i);
+    const searchResults = await Promise.allSettled(
+      searchRuns.map((i) =>
+        this.scenarioEngine.executeSearch({ tenantId: `tenant-${String((i % 500) + 1).padStart(3, '0')}` })
+      )
+    );
+    const redisErrors = searchResults.filter((r) => r.status === 'rejected').length;
     this.redis.setFailureMode('normal');
     results.push({
       experiment: 'Redis Cluster Node Failure',
@@ -85,12 +91,13 @@ class ChaosEngine {
     // 4. BullMQ Queue Worker Backpressure & Retry Storm
     console.log('[Chaos] Testing Queue Worker Slowdown & Retry Storm...');
     this.queue.setChaosMode({ slowdownMs: 15, failureRate: 0.1 });
-    let qErrors = 0;
-    for (let i = 0; i < 300; i++) {
-      try {
-        await this.queue.add('order-events', { test: true, i }, { jobId: `chaos_job_${i}` });
-      } catch (e) { qErrors++; }
-    }
+    const queueRuns = Array.from({ length: 300 }, (_, i) => i);
+    const queueResults = await Promise.allSettled(
+      queueRuns.map((i) =>
+        this.queue.add('order-events', { test: true, i }, { jobId: `chaos_job_${i}` })
+      )
+    );
+    const qErrors = queueResults.filter((r) => r.status === 'rejected').length;
     this.queue.resetChaosMode();
     results.push({
       experiment: 'Queue Saturation & Retry Storm',
@@ -102,12 +109,13 @@ class ChaosEngine {
     // 5. Payment Gateway Timeouts & Declines
     console.log('[Chaos] Testing Payment Gateway Timeouts & Declines...');
     this.paymentGateway.setChaosMode('decline_rate', 0.20);
-    let payDeclines = 0;
-    for (let i = 0; i < 200; i++) {
-      try {
-        await this.scenarioEngine.executeCheckout({ tenantId: `tenant-001`, customerId: `cust_chaos_${i}` });
-      } catch (e) { payDeclines++; }
-    }
+    const paymentRuns = Array.from({ length: 200 }, (_, i) => i);
+    const paymentResults = await Promise.allSettled(
+      paymentRuns.map((i) =>
+        this.scenarioEngine.executeCheckout({ tenantId: `tenant-001`, customerId: `cust_chaos_${i}` })
+      )
+    );
+    const payDeclines = paymentResults.filter((r) => r.status === 'rejected').length;
     this.paymentGateway.resetChaosMode();
     results.push({
       experiment: 'Payment Gateway 20% Decline Invariant',
@@ -135,12 +143,11 @@ class ChaosEngine {
     const retryStormResults = [];
     for (const failPct of [10, 25, 50]) {
       this.postgres.setChaosMode({ timeoutRate: failPct / 100 });
-      let retriesTriggered = 0;
-      for (let i = 0; i < 200; i++) {
-        try {
-          await this.scenarioEngine.executeBrowse({ tenantId: 'tenant-001' });
-        } catch (e) { retriesTriggered++; }
-      }
+      const browseRuns = Array.from({ length: 200 }, (_, i) => i);
+      const retryResults = await Promise.allSettled(
+        browseRuns.map(() => this.scenarioEngine.executeBrowse({ tenantId: 'tenant-001' }))
+      );
+      const retriesTriggered = retryResults.filter((r) => r.status === 'rejected').length;
       this.postgres.resetChaosMode();
       retryStormResults.push({ failurePercent: failPct, retriesTriggered, amplificationFactor: parseFloat((retriesTriggered / 200).toFixed(2)) });
     }
@@ -155,15 +162,12 @@ class ChaosEngine {
     console.log('[Chaos] Testing Cache Failure Hit-Rate Degradation (100% -> 0%)...');
     const cacheSensitivity = [];
     for (const hitRate of [100, 75, 50, 25, 0]) {
-      let dbLoad = 0;
-      for (let i = 0; i < 100; i++) {
-        const hit = (Math.random() * 100) < hitRate;
-        if (!hit) {
-          await this.postgres.query('restaurants', { tenant_id: 'tenant-001' }, 10);
-          dbLoad++;
-        }
-      }
-      cacheSensitivity.push({ configuredHitRate: `${hitRate}%`, dbQueriesGenerated: dbLoad });
+      const misses = Array.from({ length: 100 }, () => (Math.random() * 100) >= hitRate);
+      const dbQueryPromises = misses.filter(Boolean).map(() =>
+        this.postgres.query('restaurants', { tenant_id: 'tenant-001' }, 10)
+      );
+      await Promise.all(dbQueryPromises);
+      cacheSensitivity.push({ configuredHitRate: `${hitRate}%`, dbQueriesGenerated: dbQueryPromises.length });
     }
     results.push({
       experiment: 'Cache Hit-Rate Degradation Analysis',

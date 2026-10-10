@@ -67,12 +67,12 @@ class DockerManager {
             { name: 'grafana', status: 'stopped', port: 3000 },
             { name: 'alertmanager', status: 'stopped', port: 9093 }
         ];
-        for (const service of services) {
+        await Promise.all(services.map(async (service) => {
             const actualStatus = await this.getContainerStatus(service.name);
             service.status = actualStatus.status;
             service.containerId = actualStatus.containerId;
             service.health = actualStatus.health;
-        }
+        }));
         return services;
     }
     async getContainerStatus(serviceName) {
