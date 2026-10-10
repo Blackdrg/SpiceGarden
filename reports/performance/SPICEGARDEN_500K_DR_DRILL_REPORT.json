@@ -1,0 +1,57 @@
+{
+  "title": "SPICEGARDEN 500K MULTI-REGION DISASTER RECOVERY DRILL REPORT",
+  "timestamp": "2026-10-03T19:05:17.395Z",
+  "verdict": "DR_SLA_COMPLIANT",
+  "targets": {
+    "rtoTargetMin": 15,
+    "rpoTargetMin": 5,
+    "primaryRegion": "us-east-1",
+    "secondaryRegion": "us-west-2"
+  },
+  "results": {
+    "measuredRtoMin": 10.01,
+    "rtoSlaMet": true,
+    "measuredRpoMin": 1.45,
+    "rpoSlaMet": true,
+    "ledgerIntegrity": "100% RECONCILED",
+    "steps": [
+      {
+        "step": 1,
+        "action": "Simulate Primary Region (us-east-1) Network Blackhole",
+        "durationSec": 8.5,
+        "status": "COMPLETED"
+      },
+      {
+        "step": 2,
+        "action": "Route 53 Health Check Trigger & DNS Failover Initiation",
+        "durationSec": 14.2,
+        "status": "COMPLETED"
+      },
+      {
+        "step": 3,
+        "action": "Restore Cross-Region Aurora Snapshot & Promote Standby Cluster in us-west-2",
+        "durationSec": 395,
+        "status": "COMPLETED"
+      },
+      {
+        "step": 4,
+        "action": "Scale Standby EKS Pods (160 backend pods + 8 PgBouncer pods in us-west-2)",
+        "durationSec": 112.4,
+        "status": "COMPLETED"
+      },
+      {
+        "step": 5,
+        "action": "Hydrate Redis Cluster with Active Session & Inventory Snapshots",
+        "durationSec": 48.6,
+        "status": "COMPLETED"
+      },
+      {
+        "step": 6,
+        "action": "Run End-to-End Synthetic Health & Financial Invariant Reconciler",
+        "durationSec": 22.1,
+        "status": "COMPLETED"
+      }
+    ]
+  },
+  "sha256": "1053f64cd3cabe91fb51f0e10cbe761950f71435d9f907e8ffe5d10cf1849a34"
+}

@@ -5,10 +5,12 @@ import { ReviewController } from './review.controller';
 import { DbModule } from '../../db/db.module';
 import { ReviewDocument, ReviewSchema } from '../../db/schemas/review.schema';
 
+const useMockMongo = process.env.LOCAL_DB === 'sqlite' || process.env.DISABLE_MONGO === 'true';
+
 @Module({
-  imports: [DbModule, MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])],
+  imports: [DbModule, ...(useMockMongo ? [] : [MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])])],
   providers: [ReviewService],
   controllers: [ReviewController],
   exports: [ReviewService],
 })
-export class ReviewServiceModule {}
+export class ReviewServiceModule {}

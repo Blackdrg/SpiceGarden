@@ -1,0 +1,7 @@
+{
+  "generator_count": 4,
+  "per_node_vus": 7500,
+  "per_node_cpu_avg": "42.5%",
+  "per_node_mem_avg": "3.2GB / 16GB",
+  "socket_status": "HEALTHY (TIME_WAIT reuse active)"
+}

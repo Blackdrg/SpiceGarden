@@ -186,7 +186,10 @@ let AuthService = class AuthService {
         await this.sessionRepo.save(session);
     }
     async loginWithSocial(profile) {
-        const normalizedEmail = profile.email.toLowerCase();
+        if (!profile || !profile.email || typeof profile.email !== 'string') {
+            throw new common_1.UnauthorizedException('Social profile email is required');
+        }
+        const normalizedEmail = profile.email.trim().toLowerCase();
         let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
         if (!user) {
             const randomPassword = crypto.randomBytes(32).toString('hex');

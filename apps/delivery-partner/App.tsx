@@ -104,9 +104,9 @@ interface DetailRowProps {
 
 function DetailRow({ label, value }: DetailRowProps) {
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomColor: '#333', borderBottomWidth: 1 }}>
-      <Text style={{ color: '#888', fontSize: 13, flex: 1 }}>{label}</Text>
-      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '500', flex: 2, textAlign: 'right' }}>{value}</Text>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomColor: '#f1f5f9', borderBottomWidth: 1 }}>
+      <Text style={{ color: '#64748b', fontSize: 13, flex: 1 }}>{label}</Text>
+      <Text style={{ color: '#0f172a', fontSize: 13, fontWeight: '600', flex: 2, textAlign: 'right' }}>{value}</Text>
     </View>
   );
 }
@@ -121,10 +121,10 @@ function EarnRow({ label, value, pct }: EarnRowProps) {
   return (
     <View style={{ marginBottom: 10 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: '#888', fontSize: 13 }}>{label}</Text>
-        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '500' }}>{value}</Text>
+        <Text style={{ color: '#64748b', fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: '#0f172a', fontSize: 13, fontWeight: '600' }}>{value}</Text>
       </View>
-      <View style={{ height: 6, backgroundColor: '#333', borderRadius: 3, overflow: 'hidden' }}>
+      <View style={{ height: 6, backgroundColor: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
         <View style={{ height: '100%', width: `${pct}%`, backgroundColor: DESIGN_TOKENS.colors.success, borderRadius: 3 }} />
       </View>
     </View>
@@ -649,40 +649,42 @@ function EarningsScreen({ earnings, shift }: { earnings: DailyEarnings; shift: S
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#121212' },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
-    padding: 16, backgroundColor: '#1a1a1a', borderBottomWidth: 1, borderBottomColor: '#333',
+    padding: 16, backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e2e8f0',
   },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary },
-  subtitle: { color: '#888', fontSize: 13, marginTop: 2 },
-  vehicleTag: { color: '#555', fontSize: 11, marginTop: 1 },
+  subtitle: { color: '#64748b', fontSize: 13, marginTop: 2 },
+  vehicleTag: { color: '#94a3b8', fontSize: 11, marginTop: 1 },
   shiftTag: { color: DESIGN_TOKENS.colors.warning, fontSize: 11, marginTop: 4 },
-  STATUS_LABEL: { color: '#fff', fontSize: 14, marginTop: 4 },
+  STATUS_LABEL: { color: '#0f172a', fontSize: 14, marginTop: 4 },
   onlineToggle: { flexDirection: 'row', alignItems: 'center' },
   onlineText: { color: DESIGN_TOKENS.colors.success, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
   offlineText: { color: DESIGN_TOKENS.colors.danger, marginRight: 8, fontWeight: 'bold', fontSize: 14 },
 
   statsRow: { flexDirection: 'row', padding: 12, gap: 10 },
   statCard: {
-    flex: 1, backgroundColor: '#1e1e1e', borderRadius: 10, padding: 12,
-    alignItems: 'center',
+    flex: 1, backgroundColor: '#ffffff', borderRadius: 12, padding: 12,
+    alignItems: 'center', borderWidth: 1, borderColor: '#e2e8f0',
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
   },
-  statLabel: { fontSize: 11, color: '#888', textTransform: 'uppercase' },
-  statValue: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginVertical: 2 },
-  statSub: { fontSize: 11, color: '#555' },
+  statLabel: { fontSize: 11, color: '#64748b', textTransform: 'uppercase', fontWeight: '600' },
+  statValue: { fontSize: 18, fontWeight: 'bold', color: '#0f172a', marginVertical: 2 },
+  statSub: { fontSize: 11, color: '#94a3b8' },
 
-  tabRow: { flexDirection: 'row', paddingHorizontal: 12, gap: 8, backgroundColor: '#161616' },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 6, alignItems: 'center' },
-  tabActive: { backgroundColor: '#2a2a4a', borderBottomWidth: 2, borderBottomColor: DESIGN_TOKENS.colors.primary },
-  tabLabel: { color: '#666', fontSize: 13 },
+  tabRow: { flexDirection: 'row', paddingHorizontal: 12, gap: 8, backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e2e8f0' },
+  tab: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
+  tabActive: { backgroundColor: 'rgba(255, 90, 31, 0.08)', borderBottomWidth: 2, borderBottomColor: DESIGN_TOKENS.colors.primary },
+  tabLabel: { color: '#64748b', fontSize: 13 },
   tabLabelActive: { color: DESIGN_TOKENS.colors.primary, fontWeight: 'bold' },
 
   content: { flex: 1 },
 
   incomingCard: {
-    margin: 14, backgroundColor: '#1e1a1a', borderRadius: 14,
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.primary, overflow: 'hidden',
+    margin: 14, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1.5, borderColor: DESIGN_TOKENS.colors.primary, overflow: 'hidden',
+    shadowColor: '#ff5a1f', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 2,
   },
   alertBanner: {
     backgroundColor: DESIGN_TOKENS.colors.primary, paddingVertical: 8, alignItems: 'center',
@@ -690,16 +692,18 @@ const styles = StyleSheet.create({
   alertBannerText: { color: 'white', fontWeight: 'bold', fontSize: 13, letterSpacing: 1.5 },
 
   activeCard: {
-    margin: 14, backgroundColor: '#1a1e1a', borderRadius: 14,
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.success, padding: 16,
+    margin: 14, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1.5, borderColor: DESIGN_TOKENS.colors.success, padding: 16,
+    shadowColor: '#10b981', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 2,
   },
 
   idleCard: {
-    margin: 20, backgroundColor: '#1a1e2e', borderRadius: 14,
-    borderWidth: 1, borderColor: '#2a3a5a', alignItems: 'center', padding: 32,
+    margin: 20, backgroundColor: '#ffffff', borderRadius: 16,
+    borderWidth: 1, borderColor: '#e2e8f0', alignItems: 'center', padding: 32,
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1,
   },
   idleIcon: { fontSize: 48, marginBottom: 12 },
-  idleText: { color: '#666', marginBottom: 20, fontSize: 15 },
+  idleText: { color: '#64748b', marginBottom: 20, fontSize: 15 },
   locationWarning: { color: DESIGN_TOKENS.colors.danger, fontSize: 12, marginTop: 8 },
 
   progressContainer: {
@@ -710,27 +714,27 @@ const styles = StyleSheet.create({
     width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', zIndex: 2,
   },
   progressDotActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-  progressDotInactive: { backgroundColor: '#333' },
+  progressDotInactive: { backgroundColor: '#e2e8f0' },
   progressDotText: { fontSize: 11, color: 'white', fontWeight: 'bold' },
-  progressLine: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 4 },
+  progressLine: { flex: 1, height: 3, backgroundColor: '#e2e8f0', marginHorizontal: 4 },
   progressLineActive: { backgroundColor: DESIGN_TOKENS.colors.success },
-  progressLabel: { fontSize: 10, textAlign: 'center', color: '#666', marginTop: 3, maxWidth: 50 },
-  etaText: { color: '#4caf50', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+  progressLabel: { fontSize: 10, textAlign: 'center', color: '#64748b', marginTop: 3, maxWidth: 50 },
+  etaText: { color: '#059669', fontSize: 14, textAlign: 'center', marginBottom: 8, fontWeight: 'bold' },
 
   contextCards: { flexDirection: 'row', gap: 10, marginVertical: 12 },
   contextCard: {
-    flex: 1, backgroundColor: '#222', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#333',
+    flex: 1, backgroundColor: '#f8fafc', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  contextLabel: { fontSize: 10, color: '#888', textTransform: 'uppercase', marginBottom: 4 },
-  contextName: { fontSize: 14, fontWeight: 'bold', color: '#fff', marginBottom: 2 },
-  contextAddr: { fontSize: 12, color: '#aaa' },
-  contextPhone: { fontSize: 12, color: DESIGN_TOKENS.colors.success, marginTop: 4 },
+  contextLabel: { fontSize: 10, color: '#64748b', textTransform: 'uppercase', marginBottom: 4, fontWeight: '700' },
+  contextName: { fontSize: 14, fontWeight: 'bold', color: '#0f172a', marginBottom: 2 },
+  contextAddr: { fontSize: 12, color: '#64748b' },
+  contextPhone: { fontSize: 12, color: '#059669', marginTop: 4, fontWeight: '600' },
   navInlineBtn: { position: 'absolute', right: 8, top: 8 },
   navInlineText: { fontSize: 16 },
 
-  btnSecondary: { backgroundColor: '#444', borderRadius: 6, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4 },
-  btnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-  navBtn: { backgroundColor: '#2196f3', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
+  btnSecondary: { backgroundColor: '#f1f5f9', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 12, alignItems: 'center', marginVertical: 4, borderWidth: 1, borderColor: '#e2e8f0' },
+  btnText: { color: '#0f172a', fontSize: 14, fontWeight: 'bold' },
+  navBtn: { backgroundColor: '#2563eb', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
   navBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 
   arriveBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 8 },
@@ -740,68 +744,70 @@ const styles = StyleSheet.create({
 
   otpRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 12 },
   otpSlot: {
-    width: 40, height: 48, borderRadius: 6, backgroundColor: '#1e1e1e',
-    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#444',
+    width: 40, height: 48, borderRadius: 8, backgroundColor: '#f8fafc',
+    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#cbd5e1',
   },
   otpChar: { fontSize: 18, fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary },
   otpError: { color: DESIGN_TOKENS.colors.danger, textAlign: 'center', fontSize: 13 },
 
   issueSection: {
-    marginHorizontal: 14, marginBottom: 14, backgroundColor: '#1e1a1a',
-    borderRadius: 10, borderWidth: 1, borderColor: '#333',
+    marginHorizontal: 14, marginBottom: 14, backgroundColor: '#ffffff',
+    borderRadius: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
   issueToggle: {
     flexDirection: 'row', justifyContent: 'space-between', padding: 14,
-    alignItems: 'center', backgroundColor: '#2a1a1a',
-    borderTopLeftRadius: 10, borderTopRightRadius: 10,
-    borderBottomWidth: 1, borderBottomColor: '#333',
+    alignItems: 'center', backgroundColor: '#fff7ed',
+    borderTopLeftRadius: 12, borderTopRightRadius: 12,
+    borderBottomWidth: 1, borderBottomColor: '#ffedd5',
   },
-  issueToggleText: { color: DESIGN_TOKENS.colors.warning, fontWeight: 'bold', fontSize: 14 },
-  issueChevron: { color: DESIGN_TOKENS.colors.warning, fontSize: 12, marginLeft: 8 },
+  issueToggleText: { color: '#ea580c', fontWeight: 'bold', fontSize: 14 },
+  issueChevron: { color: '#ea580c', fontSize: 12, marginLeft: 8 },
   issueGrid: { flexDirection: 'row', flexWrap: 'wrap', padding: 10, gap: 8 },
   issueBtn: {
-    backgroundColor: '#2a2a2a', borderRadius: 8,
-    alignItems: 'center', paddingVertical: 10,
+    backgroundColor: '#f8fafc', borderRadius: 8,
+    alignItems: 'center', paddingVertical: 10, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  issueLabel: { color: '#ccc', fontSize: 11, marginTop: 4, textAlign: 'center' },
+  issueLabel: { color: '#475569', fontSize: 11, marginTop: 4, textAlign: 'center', fontWeight: '500' },
 
   logCard: {
-    margin: 14, padding: 14, backgroundColor: '#1a1e2a',
-    borderRadius: 10, borderWidth: 1, borderColor: '#2a3a5a',
+    margin: 14, padding: 14, backgroundColor: '#ffffff',
+    borderRadius: 12, borderWidth: 1, borderColor: '#e2e8f0',
   },
-  logTitle: { color: '#aaa', fontSize: 12, marginBottom: 8, fontWeight: 'bold', textTransform: 'uppercase' },
-  logEntry: { color: '#666', fontSize: 11, fontFamily: 'monospace', paddingVertical: 1 },
-  logEntryNew: { color: DESIGN_TOKENS.colors.success },
+  logTitle: { color: '#64748b', fontSize: 12, marginBottom: 8, fontWeight: 'bold', textTransform: 'uppercase' },
+  logEntry: { color: '#64748b', fontSize: 11, fontFamily: 'monospace', paddingVertical: 1 },
+  logEntryNew: { color: DESIGN_TOKENS.colors.success, fontWeight: 'bold' },
 
   earnBigCard: {
-    margin: 14, padding: 24, borderRadius: 14, alignItems: 'center',
-    backgroundColor: '#1e3a1e',
-    borderWidth: 2, borderColor: DESIGN_TOKENS.colors.success,
+    margin: 14, padding: 24, borderRadius: 16, alignItems: 'center',
+    backgroundColor: '#ecfdf5',
+    borderWidth: 1.5, borderColor: '#a7f3d0',
   },
-  earnLabel: { color: '#888', fontSize: 14, textTransform: 'uppercase' },
-  earnAmount: { fontSize: 48, fontWeight: 'bold', color: DESIGN_TOKENS.colors.success, marginVertical: 8 },
-  earnSub: { color: '#aaa', fontSize: 14 },
+  earnLabel: { color: '#047857', fontSize: 14, textTransform: 'uppercase', fontWeight: '700' },
+  earnAmount: { fontSize: 48, fontWeight: 'bold', color: '#059669', marginVertical: 8 },
+  earnSub: { color: '#065f46', fontSize: 14 },
   earnGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14, gap: 10, paddingBottom: 14 },
 
   card: {
-    margin: 14, padding: 16, backgroundColor: '#1e1e1e', borderRadius: 12, borderWidth: 1, borderColor: '#333',
+    margin: 14, padding: 16, backgroundColor: '#ffffff', borderRadius: 14, borderWidth: 1, borderColor: '#e2e8f0',
+    shadowColor: '#0f172a', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
   },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  cardSubtitle: { fontSize: 13, color: '#888', marginBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#0f172a' },
+  cardSubtitle: { fontSize: 13, color: '#64748b', marginBottom: 12 },
   shiftInfo: { gap: 8 },
-  shiftInfoText: { color: '#ccc', fontSize: 14 },
+  shiftInfoText: { color: '#475569', fontSize: 14 },
   shiftEndBtn: { backgroundColor: DESIGN_TOKENS.colors.warning, padding: 8, borderRadius: 6, alignItems: 'center', marginTop: 8 },
   shiftEndText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
   cardTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   amountBadge: {
-    backgroundColor: '#1e3a1e', color: DESIGN_TOKENS.colors.success,
+    backgroundColor: '#ecfdf5', color: '#059669',
     paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, fontSize: 16, fontWeight: 'bold',
+    borderWidth: 1, borderColor: '#a7f3d0',
   },
 
   actionRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnAccept: { backgroundColor: DESIGN_TOKENS.colors.primary, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
   btnReject: { backgroundColor: DESIGN_TOKENS.colors.danger, flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
-  timeInfo: { color: '#ccc', fontSize: 12, marginTop: 4 },
+  timeInfo: { color: '#64748b', fontSize: 12, marginTop: 4 },
 
 });
 

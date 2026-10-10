@@ -1,0 +1,72 @@
+{
+  "architecture": {
+    "generatorFleet": "40x AWS EC2 c6i.2xlarge (320 vCPU, 640 GB RAM)",
+    "ingressALB": "4x AWS Application Load Balancers (Pre-warmed)",
+    "backendPods": "160 Pods across 20x c6i.4xlarge nodes",
+    "pgBouncer": "8 Pods (Transaction Pooling Mode)",
+    "database": "AWS Aurora PostgreSQL db.r6g.16xlarge (64 vCPU, 512 GB RAM)",
+    "cache": "12-Node AWS ElastiCache Redis 7.2 Cluster (cache.r7g.2xlarge)"
+  },
+  "trafficMix": {
+    "browse": 0.45,
+    "search": 0.2,
+    "cart": 0.1,
+    "checkout": 0.08,
+    "websocket": 0.14,
+    "admin": 0.03
+  },
+  "targetVUs": 1000000,
+  "targetRPS": 585000,
+  "scaleLadder": [
+    {
+      "tier": "1K",
+      "vus": 1000,
+      "targetRps": 1500
+    },
+    {
+      "tier": "5K",
+      "vus": 5000,
+      "targetRps": 7500
+    },
+    {
+      "tier": "10K",
+      "vus": 10000,
+      "targetRps": 15000
+    },
+    {
+      "tier": "25K",
+      "vus": 25000,
+      "targetRps": 37500
+    },
+    {
+      "tier": "50K",
+      "vus": 50000,
+      "targetRps": 75000
+    },
+    {
+      "tier": "100K",
+      "vus": 100000,
+      "targetRps": 150000
+    },
+    {
+      "tier": "250K",
+      "vus": 250000,
+      "targetRps": 275000
+    },
+    {
+      "tier": "500K",
+      "vus": 500000,
+      "targetRps": 380000
+    },
+    {
+      "tier": "750K",
+      "vus": 750000,
+      "targetRps": 450000
+    },
+    {
+      "tier": "1M",
+      "vus": 1000000,
+      "targetRps": 585000
+    }
+  ]
+}

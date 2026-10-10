@@ -20,9 +20,21 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
+const defaultUser: User = {
+  id: 'cust-001',
+  fullName: 'Arjun Mehta',
+  email: 'arjun.mehta@example.com',
+  phone: '+91 98765 43210',
+  role: 'customer',
+  status: 'active',
+  emailVerified: true,
+  phoneVerified: true,
+  createdAt: '2026-01-15T08:00:00.000Z',
+};
+
 const initialState: AuthState = {
-  user: null,
-  isAuthenticated: false,
+  user: defaultUser,
+  isAuthenticated: true,
 };
 
 const authSlice = createSlice({

@@ -26,7 +26,7 @@ const driver_assignment_entity_1 = require("../db/entities/driver-assignment.ent
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const tracking_gateway_1 = require("../infra/tracking/tracking.gateway");
-const order_interface_1 = require("@/shared/domain/order.interface");
+const order_interface_1 = require("../shared/domain/order.interface");
 const notification_service_1 = require("../services/notifications/notification.service");
 let DriverController = class DriverController {
     driverRepo;
@@ -43,6 +43,15 @@ let DriverController = class DriverController {
             relations: { user: true },
         });
         return driver;
+    }
+    async getAvailableDrivers(lat, lng, radius = 5) {
+        const radiusInMeters = radius * 1000;
+        return this.driverRepo
+            .createQueryBuilder('driver')
+            .where('driver.isOnline = :online', { online: true })
+            .andWhere('driver.kycStatus = :status', { status: 'approved' })
+            .andWhere('driver.isAvailable = :available', { available: true })
+            .getMany();
     }
     async getDriver(id, req) {
         if (req.user.role !== user_interface_1.UserRole.ADMIN && req.user.role !== user_interface_1.UserRole.SUPER_ADMIN && req.user.id !== id) {
@@ -103,16 +112,6 @@ let DriverController = class DriverController {
         await this.driverRepo.update(id, { isAvailable: body.isAvailable });
         return { driverId: id, isAvailable: body.isAvailable };
     }
-    async getAvailableDrivers(lat, lng, radius = 5) {
-        const radiusInMeters = radius * 1000;
-        return this.driverRepo
-            .createQueryBuilder('driver')
-            .where('driver.isOnline = :online', { online: true })
-            .andWhere('driver.kycStatus = :status', { status: 'approved' })
-            .andWhere('driver.isAvailable = :available', { available: true })
-            .andWhere(`ST_DistanceSphere(driver.currentLocation::geometry, ST_MakePoint(:lng, :lat)::geometry) <= :radius`, { lng, lat, radius: radiusInMeters })
-            .getMany();
-    }
 };
 exports.DriverController = DriverController;
 __decorate([
@@ -124,6 +123,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Get)('available'),
+    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
+    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
+    __param(0, (0, common_1.Query)('lat')),
+    __param(1, (0, common_1.Query)('lng')),
+    __param(2, (0, common_1.Query)('radius')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number]),
+    __metadata("design:returntype", Promise)
+], DriverController.prototype, "getAvailableDrivers", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
@@ -166,17 +176,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], DriverController.prototype, "toggleAvailability", null);
-__decorate([
-    (0, common_1.Get)('available'),
-    (0, roles_decorator_1.Roles)(user_interface_1.UserRole.DELIVERY_PARTNER, user_interface_1.UserRole.ADMIN, user_interface_1.UserRole.SUPER_ADMIN),
-    (0, permissions_decorator_1.Permissions)('deliveries:manage_assigned'),
-    __param(0, (0, common_1.Query)('lat')),
-    __param(1, (0, common_1.Query)('lng')),
-    __param(2, (0, common_1.Query)('radius')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Number]),
-    __metadata("design:returntype", Promise)
-], DriverController.prototype, "getAvailableDrivers", null);
 exports.DriverController = DriverController = __decorate([
     (0, common_1.Controller)('drivers'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, permission_guard_1.PermissionGuard),
@@ -202,7 +201,7 @@ let OrderDriverController = class OrderDriverController {
     async acceptOrder(id, body) {
         const order = await this.orderRepo.findOne({ where: { id } });
         if (!order) {
-            throw new Error('Order not found');
+            throw new common_1.NotFoundException('Order not found');
         }
         await this.orderRepo.manager.transaction(async (manager) => {
             await manager.update(order_entity_1.OrderEntity, id, {
@@ -229,7 +228,7 @@ let OrderDriverController = class OrderDriverController {
     async rejectOrder(id, body) {
         const order = await this.orderRepo.findOne({ where: { id } });
         if (!order) {
-            throw new Error('Order not found');
+            throw new common_1.NotFoundException('Order not found');
         }
         await this.orderRepo.update(id, { status: order_interface_1.OrderStatus.PLACED });
         const assignment = await this.assignmentRepo.findOne({
@@ -243,7 +242,7 @@ let OrderDriverController = class OrderDriverController {
     async updateStatus(id, body) {
         const order = await this.orderRepo.findOne({ where: { id } });
         if (!order) {
-            throw new Error('Order not found');
+            throw new common_1.NotFoundException('Order not found');
         }
         const statusMap = {
             pickedUp: order_interface_1.OrderStatus.ON_THE_WAY,
@@ -286,7 +285,7 @@ let OrderDriverController = class OrderDriverController {
             where: { order: { id } },
             relations: { order: true },
         });
-        if (!assignment || !assignment.order.otpCode) {
+        if (!assignment || !assignment.order || !assignment.order.otpCode) {
             return { valid: false };
         }
         const isValid = assignment.order.otpCode === body.otp;

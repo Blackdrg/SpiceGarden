@@ -6,6 +6,8 @@ import { store } from '../redux/store';
 import { trackEvent, ToastProvider } from '@spicegarden/ui';
 import * as Sentry from '@sentry/nextjs';
 
+import '../styles/globals.css';
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || 'https://example-sentry-dsn.com',
   tracesSampleRate: 0.0,

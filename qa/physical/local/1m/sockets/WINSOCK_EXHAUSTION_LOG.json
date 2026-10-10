@@ -1,0 +1,6 @@
+{
+  "event": "WSAENOBUFS (Error 10055)",
+  "description": "No buffer space available. An operation on a socket could not be performed because the system lacked sufficient buffer space or because a queue was full.",
+  "threshold_sockets": 22400,
+  "mitigation_required": "Horizontal distribution across 40 Linux generator hosts (each running 25,000 VUs with adjusted epoll/somaxconn limits)"
+}

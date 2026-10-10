@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, In, Like } from 'typeorm';
+import { Repository, DataSource, In, Like, MoreThanOrEqual } from 'typeorm';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
 import { ConfigService } from '@nestjs/config';
@@ -89,10 +89,26 @@ export class WalletService {
       throw new BadRequestException('Insufficient wallet balance');
     }
 
-    // Update wallet balance
-    wallet.balance -= amount;
-    wallet.updatedAt = new Date();
-    await this.walletRepo.save(wallet);
+    if (typeof this.walletRepo.createQueryBuilder === 'function') {
+      const updateResult = await this.walletRepo
+        .createQueryBuilder()
+        .update(WalletEntity)
+        .set({
+          balance: () => `balance - ${amount}`,
+          updatedAt: new Date(),
+        })
+        .where('id = :id AND balance >= :amount', { id: wallet.id, amount })
+        .execute();
+
+      if (!updateResult.affected || updateResult.affected === 0) {
+        throw new BadRequestException('Insufficient wallet balance');
+      }
+      wallet.balance -= amount;
+    } else {
+      wallet.balance -= amount;
+      wallet.updatedAt = new Date();
+      await this.walletRepo.save(wallet);
+    }
 
     // Create transaction record
     const transaction = this.walletTransactionRepo.create({
@@ -304,11 +320,12 @@ export class WalletService {
 
   async preventDoublePayment(userId: string, orderId: string, amount: number): Promise<boolean> {
     // Check for recent payments for the same order/user combination
+    const wallet = await this.getWallet(userId);
     const recentTransactions = await this.walletTransactionRepo.find({
       where: {
-        walletId: (await this.getWallet(userId)).id,
+        walletId: wallet.id,
         referenceId: orderId,
-        createdAt: new Date(Date.now() - 300000), // Last 5 minutes
+        createdAt: MoreThanOrEqual(new Date(Date.now() - 300000)), // Last 5 minutes
       },
     });
 

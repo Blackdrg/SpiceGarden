@@ -143,13 +143,23 @@ const entities = [
     support_ticket_entity_1.SupportTicketEntity,
     payment_method_entity_1.PaymentMethodEntity,
 ];
+const useMockMongo = process.env.LOCAL_DB === 'sqlite' || process.env.DISABLE_MONGO === 'true';
 let DbRepositoriesModule = class DbRepositoriesModule {
 };
 exports.DbRepositoriesModule = DbRepositoriesModule;
 exports.DbRepositoriesModule = DbRepositoriesModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature(entities), mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }])],
-        exports: [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature(entities),
+            ...(useMockMongo
+                ? []
+                : [
+                    mongoose_1.MongooseModule.forFeature([
+                        { name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema },
+                    ]),
+                ]),
+        ],
+        exports: [typeorm_1.TypeOrmModule, ...(useMockMongo ? [] : [mongoose_1.MongooseModule])],
     })
 ], DbRepositoriesModule);

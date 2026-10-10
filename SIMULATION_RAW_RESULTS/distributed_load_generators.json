@@ -1,0 +1,90 @@
+[
+  {
+    "host": "host-load-01.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 64.2,
+    "memoryPercent": 52.1,
+    "netThroughputGbps": 1.82,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-02.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 65,
+    "memoryPercent": 53,
+    "netThroughputGbps": 1.84,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-03.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 63.8,
+    "memoryPercent": 51.9,
+    "netThroughputGbps": 1.81,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-04.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 64.5,
+    "memoryPercent": 52.5,
+    "netThroughputGbps": 1.83,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-05.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 65.1,
+    "memoryPercent": 53.2,
+    "netThroughputGbps": 1.85,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-06.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 64,
+    "memoryPercent": 52,
+    "netThroughputGbps": 1.82,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-07.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 63.5,
+    "memoryPercent": 51.8,
+    "netThroughputGbps": 1.8,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  },
+  {
+    "host": "host-load-08.sim.spicegarden.internal",
+    "assignedVus": 62500,
+    "achievedRps": 47500,
+    "cpuPercent": 64.7,
+    "memoryPercent": 52.7,
+    "netThroughputGbps": 1.83,
+    "droppedIters": 0,
+    "connErrors": 0,
+    "status": "OPTIMAL"
+  }
+]

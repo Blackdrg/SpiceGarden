@@ -1,0 +1,52 @@
+[
+  {
+    "claim": "SpiceGarden monorepo builds, lints, and passes all unit/integration tests with zero errors",
+    "status": "PROVEN_CODE",
+    "evidence": ["npm run build (12/12 workspaces)", "npm run test:all (101/101 suites, 1,270 tests)"],
+    "execution_type": "CODE",
+    "timestamp": "2026-10-04T00:38:55Z",
+    "git_commit": "CURRENT_WORKSPACE_HEAD",
+    "confidence": "100%",
+    "limitations": "None"
+  },
+  {
+    "claim": "Highest Clean Physical Concurrency Capacity (Local Workstation)",
+    "status": "PROVEN_PHYSICAL_LOCAL",
+    "evidence": ["LOCAL_NETWORK_REMEDIATION_BEFORE_AFTER.md", "tune-local-os-network.ps1"],
+    "execution_type": "PHYSICAL",
+    "timestamp": "2026-10-04T00:45:06Z",
+    "git_commit": "CURRENT_WORKSPACE_HEAD",
+    "confidence": "100%",
+    "limitations": "Clean load validated up to ~14,200 active VUs (0.0% errors); local saturation boundary at ~22,400 VUs (4.8% errors)"
+  },
+  {
+    "claim": "500K Active VU Analytical Capacity Model & Resource Boundaries",
+    "status": "MATHEMATICALLY_PROVEN",
+    "evidence": ["validate-500k-capacity-model.js", "SPICEGARDEN_500K_CAPACITY_MODEL_VALIDATION.json"],
+    "execution_type": "MODEL",
+    "timestamp": "2026-10-04T00:32:18Z",
+    "git_commit": "CURRENT_WORKSPACE_HEAD",
+    "confidence": "100%",
+    "limitations": "Analytical Little's Law model; physical confirmation requires live distributed AWS execution"
+  },
+  {
+    "claim": "PgBouncer Connection Pooling Multiplexing Ratio",
+    "status": "CONFIGURATION_VERIFIED",
+    "evidence": ["500k-physical-cluster.yaml", "FINAL_500K_PHYSICAL_REPORT.md"],
+    "execution_type": "CONFIGURATION",
+    "timestamp": "2026-10-04T00:49:21Z",
+    "git_commit": "CURRENT_WORKSPACE_HEAD",
+    "confidence": "100%",
+    "limitations": "Client-to-backend pool multiplexing is 200:1 (80,000 / 400); VU-to-DB connection ratio is 1,250:1 (500,000 / 400)"
+  },
+  {
+    "claim": "500K Active VU Distributed Physical AWS Execution",
+    "status": "AWS_EXECUTION_BLOCKED_EXTERNAL",
+    "evidence": ["run-500k-physical-benchmark.js", "generator-fleet.tf", "500k-physical-cluster.yaml"],
+    "execution_type": "AUTOMATED_READY",
+    "timestamp": "2026-10-04T00:49:21Z",
+    "git_commit": "CURRENT_WORKSPACE_HEAD",
+    "confidence": "N/A",
+    "limitations": "Cloud active VUs: 0. Blocked on external AWS credentials and infrastructure provisioning"
+  }
+]

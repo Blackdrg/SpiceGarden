@@ -17,7 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!response.ok) {
-      throw new Error(`Backend returned ${response.status}`);
+      const errorBody = await response.json().catch(() => ({}));
+      return res.status(response.status).json(errorBody.message ? { error: errorBody.message } : { error: `Backend returned ${response.status}` });
     }
 
     const orders = await response.json();
@@ -32,8 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }));
 
     res.status(200).json(transformedOrders);
-  } catch (error) {
-    res.status(502).json({ error: 'Failed to fetch orders from backend service' });
+  } catch (error: any) {
+    res.status(502).json({ error: error?.message || 'Failed to fetch orders from backend service' });
   }
 }
 

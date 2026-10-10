@@ -79,9 +79,26 @@ let WalletService = WalletService_1 = class WalletService {
         if (wallet.balance < amount) {
             throw new common_1.BadRequestException('Insufficient wallet balance');
         }
-        wallet.balance -= amount;
-        wallet.updatedAt = new Date();
-        await this.walletRepo.save(wallet);
+        if (typeof this.walletRepo.createQueryBuilder === 'function') {
+            const updateResult = await this.walletRepo
+                .createQueryBuilder()
+                .update(wallet_entity_1.WalletEntity)
+                .set({
+                balance: () => `balance - ${amount}`,
+                updatedAt: new Date(),
+            })
+                .where('id = :id AND balance >= :amount', { id: wallet.id, amount })
+                .execute();
+            if (!updateResult.affected || updateResult.affected === 0) {
+                throw new common_1.BadRequestException('Insufficient wallet balance');
+            }
+            wallet.balance -= amount;
+        }
+        else {
+            wallet.balance -= amount;
+            wallet.updatedAt = new Date();
+            await this.walletRepo.save(wallet);
+        }
         const transaction = this.walletTransactionRepo.create({
             walletId: wallet.id,
             amount,
@@ -213,11 +230,12 @@ let WalletService = WalletService_1 = class WalletService {
         };
     }
     async preventDoublePayment(userId, orderId, amount) {
+        const wallet = await this.getWallet(userId);
         const recentTransactions = await this.walletTransactionRepo.find({
             where: {
-                walletId: (await this.getWallet(userId)).id,
+                walletId: wallet.id,
                 referenceId: orderId,
-                createdAt: new Date(Date.now() - 300000),
+                createdAt: (0, typeorm_2.MoreThanOrEqual)(new Date(Date.now() - 300000)),
             },
         });
         if (recentTransactions.length > 0) {

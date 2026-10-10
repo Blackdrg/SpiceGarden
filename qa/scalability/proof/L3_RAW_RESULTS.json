@@ -1,0 +1,18 @@
+{
+  "status": "READY_NOT_EXECUTED",
+  "timestamp": "2026-10-03T22:25:00.000Z",
+  "reason": "Remote staging Kubernetes cluster not connected in current execution session",
+  "manifestsValidated": [
+    "infra/k8s/staging.yaml",
+    "infra/k8s/configmap.yaml",
+    "infra/k8s/postgres-ha.yaml",
+    "infra/k8s/redis-cluster.yaml"
+  ],
+  "executableTiersReady": [
+    "10k",
+    "25k",
+    "50k",
+    "100k",
+    "250k"
+  ]
+}

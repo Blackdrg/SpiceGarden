@@ -1,0 +1,7 @@
+{
+  "ops_per_sec": 12500,
+  "connected_clients": 50,
+  "cpu_percent": "22.5%",
+  "memory_used_mb": 1420,
+  "hit_ratio": "94.8%"
+}

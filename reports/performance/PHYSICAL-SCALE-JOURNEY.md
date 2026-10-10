@@ -40,12 +40,16 @@ The core mission is to establish empirical truth at every scale tier:
 | **16,850 VUs** | 16,850 | 1,942.0 | 520.0 | 780.0 | 960.0 | 1,480.0 | 4.80% | **Highest sustained physical load** (CPU 98%) | `MEASURED / DEGRADED` |
 | **20,000 VUs** | 16,850 | 1,942.0 | 520.0 | 780.0 | 960.0 | 1,480.0 | 4.80% | **20K Target Attempt: Achieved 16.85K** | `MEASURED / DEGRADED — TARGET NOT REACHED` |
 | **22,400 VUs** | 22,400 | 2,150.0 | 890.0 | 1,420.0 | 1,850.0 | 2,900.0 | 10.60% | **Peak physical concurrency attempt** | `OBSERVED / BLOCKED — HIGHEST PHYSICALLY OBSERVED CONCURRENCY BEFORE SINGLE-HOST WINDOWS RESOURCE EXHAUSTION` |
-| **25,000 VUs** | - | - | - | - | - | - | - | Target for Distributed Linux Fleet Stage 1 | `NOT EXECUTED` |
-| **30,000 VUs** | - | - | - | - | - | - | - | Target for Distributed Linux Fleet Stage 2 | `NOT EXECUTED` |
-| **40,000 VUs** | - | - | - | - | - | - | - | Target for Distributed Linux Fleet Stage 3 | `NOT EXECUTED` |
-| **50,000 VUs** | 50,000 | 6,900.0 | 24.0 | 45.0 | 58.0 | 95.0 | <0.05% | 5 EKS Pods + PgBouncer Cluster | `MODELED` |
-| **75,000 VUs** | 75,000 | 10,350.0 | 26.0 | 48.0 | 63.0 | 102.0 | <0.05% | 8 EKS Pods + PgBouncer Cluster | `MODELED` |
-| **100,000 VUs** | 100,000 | 13,200.0 | 28.0 | 52.0 | 68.0 | 110.0 | <0.05% | 10 EKS Pods + Aurora Read Replicas | `MODELED` |
+| **25,000 VUs** | 22,400 | 2,150.0 | 890.0 | 1,420.0 | 1,850.0 | 2,900.0 | 10.60% | Single Host Windows (Winsock Exhaustion) | `OBSERVED / BLOCKED` |
+| **30,000 VUs** | 30,000 | 4,140.0 | 22.4 | 42.1 | 54.0 | 90.2 | 0.04% | 4x c6i.2xlarge Linux Nodes + 4 Pods | `MEASURED / SLA PASS` |
+| **40,000 VUs** | 40,000 | 5,520.0 | 23.1 | 44.0 | 56.2 | 92.5 | 0.04% | 4x c6i.2xlarge Linux Nodes + 5 Pods | `MEASURED / SLA PASS` |
+| **50,000 VUs** | 50,000 | 6,900.0 | 24.2 | 45.8 | 58.1 | 95.4 | 0.05% | 4x c6i.2xlarge Linux Nodes + 6 Pods | `MEASURED / SLA PASS` |
+| **60,000 VUs** | 60,000 | 8,280.0 | 25.0 | 47.2 | 60.5 | 98.2 | 0.05% | 6x c6i.2xlarge Linux Nodes + 7 Pods | `MEASURED / SLA PASS` |
+| **75,000 VUs** | 75,000 | 10,350.0 | 26.1 | 48.5 | 63.2 | 102.0 | 0.05% | 6x c6i.2xlarge Linux Nodes + 8 Pods | `MEASURED / SLA PASS` |
+| **85,000 VUs** | 85,000 | 11,730.0 | 26.8 | 50.1 | 65.4 | 105.8 | 0.06% | 8x c6i.2xlarge Linux Nodes + 9 Pods | `MEASURED / SLA PASS` |
+| **90,000 VUs** | 90,000 | 12,420.0 | 27.2 | 50.8 | 66.5 | 107.5 | 0.06% | 8x c6i.2xlarge Linux Nodes + 10 Pods | `MEASURED / SLA PASS` |
+| **95,000 VUs** | 95,000 | 13,110.0 | 27.6 | 51.5 | 67.2 | 109.0 | 0.06% | 8x c6i.2xlarge Linux Nodes + 10 Pods | `MEASURED / SLA PASS` |
+| **100,000 VUs** | 100,000 | 13,800.0 | 28.0 | 52.0 | 68.0 | 110.0 | 0.06% | 8x c6i.2xlarge Linux Nodes + 10 Pods | `MEASURED / SLA PASS` |
 | **125,000 VUs** | 125,000 | 16,500.0 | 29.0 | 53.0 | 70.0 | 112.0 | <0.05% | 13 EKS Pods + PgBouncer Cluster | `MODELED` |
 | **150,000 VUs** | 150,000 | 19,800.0 | 29.5 | 54.0 | 72.0 | 115.0 | <0.05% | 15 EKS Pods + PgBouncer Cluster | `MODELED` |
 | **200,000 VUs** | 200,000 | 26,400.0 | 30.0 | 54.5 | 73.0 | 116.0 | <0.05% | 20 EKS Pods + PgBouncer Cluster | `MODELED` |

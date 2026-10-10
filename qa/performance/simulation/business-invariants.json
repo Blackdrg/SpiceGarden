@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-03T09:01:35.045Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "Orders In Valid State",
+      "passed": true,
+      "details": {
+        "totalOrders": 4353,
+        "validStates": 4353,
+        "invalidStates": 0
+      }
+    },
+    {
+      "name": "Payment State Integrity",
+      "passed": true,
+      "details": {
+        "totalPayments": 4353,
+        "validPaymentStateCount": 4353,
+        "invalidPaymentStateCount": 0
+      }
+    },
+    {
+      "name": "No Duplicate Payment Captures",
+      "passed": true,
+      "details": {
+        "doubleCapturePrevented": 0
+      }
+    },
+    {
+      "name": "Non-Negative Inventory",
+      "passed": true,
+      "details": {
+        "totalInventoryRecords": 25000,
+        "negativeInventoryCount": 0
+      }
+    },
+    {
+      "name": "No Orphan Payments",
+      "passed": true,
+      "details": {
+        "orphanPaymentCount": 0
+      }
+    },
+    {
+      "name": "Tenant Data Isolation",
+      "passed": true,
+      "details": {
+        "crossTenantFkCollisions": 0
+      }
+    },
+    {
+      "name": "WebSocket Session State Validity",
+      "passed": true,
+      "details": {
+        "totalSessions": 5640,
+        "corruptedWsSessions": 0
+      }
+    },
+    {
+      "name": "Queue DLQ Ratio Acceptable",
+      "passed": true,
+      "details": {
+        "totalEnqueued": 8876,
+        "dlqCount": 0,
+        "dlqRatio": 0
+      }
+    }
+  ],
+  "violations": []
+}

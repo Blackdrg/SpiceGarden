@@ -1,162 +1,328 @@
-/* tracking.module.css */
-/* Modern, glassmorphism-inspired styles for the Tracking page */
+.page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding-bottom: 80px;
+}
 
-/* Container with subtle glass effect */
 .container {
-  padding: var(--spacing-md, 1rem);
-  min-height: 100vh;
-  background: rgba(255, 255, 255, 0.7);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg, 1.5rem);
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 16px 32px;
 }
 
-.title {
-  margin-bottom: var(--spacing-lg, 1.5rem);
-  font-size: 2rem;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.backBtn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--color-primary, #ff6f61);
-}
-
-.loadingContainer {
-  padding: var(--spacing-md, 1rem);
-  min-height: 100vh;
-  background: rgba(250, 250, 250, 0.8);
+  color: #334155;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.statusContainer {
+.orderBadge {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Status Hero Banner */
+.statusHero {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: 20px;
+  padding: 24px 20px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.statusHeroTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statusHeroEta {
+  font-size: 14px;
+  color: #cbd5e1;
+  margin: 0 0 20px 0;
+}
+
+.etaHighlight {
+  color: #fb923c;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 10px;
+}
+
+.stepperLine {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  height: 3px;
+  background: #334155;
+  z-index: 1;
+}
+
+.stepperProgress {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  height: 3px;
+  background: linear-gradient(90deg, #ff5a1f, #f97316);
+  z-index: 2;
+  transition: width 0.4s ease;
+}
+
+.stepNode {
+  position: relative;
+  z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs, 0.5rem);
-  margin-bottom: var(--spacing-xl, 2rem);
-}
-
-.statusStep {
-  display: flex;
   align-items: center;
+  gap: 6px;
+  width: 70px;
 }
 
-.iconDone {
-  width: 24px;
-  height: 24px;
+.stepIcon {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: var(--color-success, #4caf50);
+  background: #1e293b;
+  border: 2px solid #475569;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  font-size: 13px;
+  color: #94a3b8;
+  transition: all 0.3s ease;
 }
 
-.iconPending {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
+.stepIconActive {
+  background: #ff5a1f;
+  border-color: #ffedd5;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 90, 31, 0.8);
+}
+
+.stepIconDone {
+  background: #16a34a;
+  border-color: #bbf7d0;
+  color: #ffffff;
 }
 
 .stepLabel {
-  margin-left: var(--spacing-sm, 0.75rem);
-  font-weight: 500;
-}
-
-.liveTrackingCard {
-  background: rgba(255, 255, 255, 0.85);
--webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: var(--spacing-lg, 1.5rem);
-  margin-top: var(--spacing-lg, 1.5rem);
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.driverInfo {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
   text-align: center;
-  margin-bottom: var(--spacing-lg, 1.5rem);
 }
 
-.vehicleIcon {
-  font-size: 64px;
+.stepLabelActive {
+  color: #fb923c;
+  font-weight: 700;
+}
+
+/* Map Simulation Card */
+.mapCard {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.mapVisual {
+  height: 180px;
+  background: #e2e8f0;
+  background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px), radial-gradient(#cbd5e1 1.5px, #f1f5f9 1.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapPulsePin {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 90, 31, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+.mapPinInner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ff5a1f;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 90, 31, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 15px rgba(255, 90, 31, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 90, 31, 0); }
+}
+
+/* Driver Card */
+.driverCard {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.driverDetails {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.driverAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffedd5;
+  color: #ea580c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
 }
 
 .driverName {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 8px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px 0;
 }
 
-.eta {
-  color: var(--color-primary, #ff6f61);
+.driverVehicle {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+.driverActions {
+  display: flex;
+  gap: 8px;
+}
+
+.driverCallBtn {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
 }
 
-.locationInfo {
+/* Order Summary Card */
+.summaryCard {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.summaryTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+}
+
+.summaryItem {
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--spacing-sm, 0.75rem);
+  font-size: 14px;
+  color: #475569;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.buttonGroup {
-  margin-top: var(--spacing-md, 1rem);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm, 0.75rem);
-}
-
-.fullWidthButton {
-  width: 100%;
-}
-
-.secondaryButton {
-  width: 100%;
-  margin-top: var(--spacing-sm, 0.75rem);
-}
-
-.orderDetailsCard {
-  background: rgba(255, 255, 255, 0.85);
--webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+.stageControls {
+  background: #f1f5f9;
   border-radius: 12px;
-  padding: var(--spacing-lg, 1.5rem);
-  margin-top: var(--spacing-lg, 1.5rem);
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.detailsContent {
+  padding: 12px 16px;
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm, 0.75rem);
-}
-
-.itemRow {
-  display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-sm, 0.75rem);
-  border-bottom: 1px solid #eee;
+  gap: 8px;
 }
 
-.totalRow {
-  display: flex;
-  justify-content: space-between;
+.stageLabel {
+  font-size: 12px;
   font-weight: 600;
-  margin-top: var(--spacing-sm, 0.75rem);
+  color: #64748b;
 }
 
-.contactRestaurantDiv {
-  margin-top: var(--spacing-lg, 1.5rem);
-  text-align: center;
+.stageBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
 }
 
-/* Simple fade‑in animation for cards */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.stageBtnActive {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
 }

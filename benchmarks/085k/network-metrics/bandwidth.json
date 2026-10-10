@@ -1,0 +1,5 @@
+{
+  "ingress_mbps": "164.95",
+  "egress_mbps": "384.89",
+  "tcp_retrans_rate": "<0.001%"
+}

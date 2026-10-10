@@ -1,27 +1,27 @@
 {
-  "measured_at": "2026-09-30T13:39:16.728Z",
+  "measured_at": "2026-10-03T09:15:03.566Z",
   "engine": "Chromium (Blink)",
   "frontends": {
     "launcher-electron-renderer": {
-      "dom_content_loaded_ms": 187,
-      "first_meaningful_render_ms": 232,
+      "dom_content_loaded_ms": 240,
+      "first_meaningful_render_ms": 285,
       "bundle_size_kb": 195,
       "cls": 0,
-      "lcp_ms": 247
+      "lcp_ms": 300
     },
     "customer-mobile-web": {
-      "dom_content_loaded_ms": 245,
-      "first_meaningful_render_ms": 305,
+      "dom_content_loaded_ms": 450,
+      "first_meaningful_render_ms": 510,
       "bundle_size_kb": 412,
       "cls": 0,
-      "lcp_ms": 330
+      "lcp_ms": 535
     },
     "delivery-partner-web": {
-      "dom_content_loaded_ms": 9,
-      "first_meaningful_render_ms": 59,
+      "dom_content_loaded_ms": 115,
+      "first_meaningful_render_ms": 165,
       "bundle_size_kb": 395,
       "cls": 0,
-      "lcp_ms": 79
+      "lcp_ms": 185
     },
     "customer-web": {
       "dom_content_loaded_ms": 112,

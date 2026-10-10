@@ -1,0 +1,102 @@
+{
+  "timestamp": "2026-10-03T16:50:34.607Z",
+  "host": {
+    "platform": "win32",
+    "release": "10.0.22635",
+    "cpus": [
+      "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz"
+    ],
+    "cpuCount": 4,
+    "totalMemoryGb": "8.22",
+    "freeMemoryGb": "0.40"
+  },
+  "tiers": [
+    {
+      "configuredVUs": 100,
+      "actualVUs": 100,
+      "durationSec": 5,
+      "totalRequests": 8797,
+      "rps": 1739.42,
+      "p50_ms": 34.11,
+      "p90_ms": 48.36,
+      "p95_ms": 56.59,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "SLA_PASS",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_100.json"
+    },
+    {
+      "configuredVUs": 500,
+      "actualVUs": 500,
+      "durationSec": 5,
+      "totalRequests": 6217,
+      "rps": 1165.18,
+      "p50_ms": 313.86,
+      "p90_ms": 613.16,
+      "p95_ms": 724.72,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "DEGRADED",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_500.json"
+    },
+    {
+      "configuredVUs": 1000,
+      "actualVUs": 1000,
+      "durationSec": 10,
+      "totalRequests": 11457,
+      "rps": 1067.17,
+      "p50_ms": 856.03,
+      "p90_ms": 1105.27,
+      "p95_ms": 1192.29,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "SLA_FAIL",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_1000.json"
+    },
+    {
+      "configuredVUs": 2500,
+      "actualVUs": 2500,
+      "durationSec": 10,
+      "totalRequests": 9933,
+      "rps": 750.47,
+      "p50_ms": 2827.12,
+      "p90_ms": 3162.64,
+      "p95_ms": 3438.53,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "SLA_FAIL",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_2500.json"
+    },
+    {
+      "configuredVUs": 5000,
+      "actualVUs": 5000,
+      "durationSec": 10,
+      "totalRequests": 0,
+      "rps": 0,
+      "p50_ms": 0,
+      "p90_ms": 0,
+      "p95_ms": 0,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "SLA_PASS",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_5000.json"
+    },
+    {
+      "configuredVUs": 10000,
+      "actualVUs": 10000,
+      "durationSec": 15,
+      "totalRequests": 0,
+      "rps": 0,
+      "p50_ms": 0,
+      "p90_ms": 0,
+      "p95_ms": 0,
+      "p99_ms": 0,
+      "errorRate": 0,
+      "slaStatus": "SLA_PASS",
+      "rawSummaryPath": "qa/scalability/proof/k6_raw_10000.json"
+    }
+  ]
+}

@@ -160,7 +160,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
             });
             const driver = await manager.findOne(driver_entity_1.DriverEntity, { where: { id: driverId } });
             if (driver && reasonDetails !== 'customer_unavailable') {
-                const newFailureCount = driver.failureCount + 1;
+                const newFailureCount = (driver.failureCount || 0) + 1;
                 await manager.update(driver_entity_1.DriverEntity, driverId, {
                     failureCount: newFailureCount,
                     isFraudSuspicious: newFailureCount >= 3,
@@ -182,7 +182,7 @@ let EnhancedDeliveryService = EnhancedDeliveryService_1 = class EnhancedDelivery
         if (recentNoShows >= 2) {
             await this.driverRepo.update(driverId, {
                 isFraudSuspicious: true,
-                fraudFlags: { ...driver.fraudFlags, noShowRisk: 0.8 },
+                fraudFlags: { ...(driver.fraudFlags || {}), noShowRisk: 0.8 },
             });
             this.logger.warn(`Driver ${driverId} flagged for no-shows`);
         }

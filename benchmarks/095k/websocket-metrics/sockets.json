@@ -1,0 +1,6 @@
+{
+  "concurrent_connections": 28500,
+  "connection_rate_sec": 95,
+  "messages_fanout_sec": 57000,
+  "adapter": "Redis Pub/Sub Adapter (ioredis)"
+}

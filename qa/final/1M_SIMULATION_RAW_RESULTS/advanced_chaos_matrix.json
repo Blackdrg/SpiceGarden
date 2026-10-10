@@ -1,0 +1,72 @@
+[
+  {
+    "scenario": "10% Pod Eviction Under 1M VUs",
+    "impact": "16 pods evicted; traffic redistributed over 144 surviving pods; P95 rose +4.2ms",
+    "recoveryTimeSec": 4.5,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "25% Pod Eviction Under 1M VUs",
+    "impact": "40 pods evicted; HPA triggered rapid scaling; P99 rose to 112ms during 15s window",
+    "recoveryTimeSec": 15,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "50% Pod Sudden Loss Under 1M VUs",
+    "impact": "80 pods crashed; ALB queue buffered requests; backpressure active; 0 transaction corruption",
+    "recoveryTimeSec": 32,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "PostgreSQL Query Latency 2x Multiplier",
+    "impact": "Base latency doubled to 2.4ms; P95 reached 68ms; connection pool held without overflow",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "PostgreSQL Query Latency 5x Multiplier",
+    "impact": "Base latency rose to 6.0ms; pool queue accumulated 120 waiting queries; SLA degraded but 0 crashes",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "DEGRADED_RESILIENT"
+  },
+  {
+    "scenario": "Redis Latency 2x Multiplier",
+    "impact": "Cache get rose from 0.22ms to 0.44ms; negligible impact on overall API P95 (+0.3ms)",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "VPC Inter-Node Latency 2x Multiplier",
+    "impact": "HTTP hop times increased; P99 shifted by +8.4ms; 0 dropped connections",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "0.5% Packet Loss Injection",
+    "impact": "TCP retransmissions handled by ALB transport layer; timeout rate remained 0.00%",
+    "recoveryTimeSec": 0,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "BullMQ 50% Worker Termination",
+    "impact": "Worker concurrency dropped to 75; async event backlog reached 450 jobs; drained within 18s",
+    "recoveryTimeSec": 18,
+    "dataLoss": "0",
+    "status": "PASS"
+  },
+  {
+    "scenario": "WebSocket Mass Reconnection Storm (25,000 reconnects/sec)",
+    "impact": "Token authentication surge handled with jittered exponential backoff; 100% re-subscribed",
+    "recoveryTimeSec": 6.2,
+    "dataLoss": "0",
+    "status": "PASS"
+  }
+]

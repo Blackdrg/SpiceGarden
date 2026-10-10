@@ -1,0 +1,92 @@
+{
+  "document_id": "REG-BLOCKER-PHYSICAL-001",
+  "timestamp": "2026-10-03T13:03:22.012Z",
+  "git_sha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "overall_status": "PHYSICAL VALIDATION BLOCKED — EXTERNAL AWS AUTHORIZATION REQUIRED",
+  "blockers": [
+    {
+      "id": "BLK-001",
+      "category": "TOOLCHAIN",
+      "description": "Terraform binary missing / not configured in system PATH",
+      "severity": "HIGH",
+      "root_cause": "Host workstation did not have Terraform installed in default system environment",
+      "whether_locally_fixable": true,
+      "required_external_action": "None",
+      "proposed_fix": "Install HashiCorp Terraform v1.16.4 via WinGet package manager and verify executable path",
+      "status": "FIXED",
+      "evidence": "Terraform v1.16.4 verified installed at C:\\Users\\mehta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Hashicorp.Terraform_Microsoft.Winget.Source_8wekyb3d8bbwe\\terraform.exe"
+    },
+    {
+      "id": "BLK-002",
+      "category": "IAC_CONFIGURATION",
+      "description": "Terraform infrastructure module formatting and syntax validation",
+      "severity": "HIGH",
+      "root_cause": "Terraform files in infra/terraform needed canonical formatting, module download, and provider schema validation",
+      "whether_locally_fixable": true,
+      "required_external_action": "None",
+      "proposed_fix": "Execute terraform fmt, terraform init, and terraform validate on infra/terraform",
+      "status": "FIXED",
+      "evidence": "terraform fmt -check returned 0; terraform init downloaded AWS & Kubernetes modules; terraform validate returned \"Success! The configuration is valid.\""
+    },
+    {
+      "id": "BLK-003",
+      "category": "AWS_ACCESS_CREDENTIALS",
+      "description": "AWS credentials unavailable on host environment",
+      "severity": "CRITICAL",
+      "root_cause": "No AWS access keys, session tokens, or SSO profiles configured in ~/.aws or environment variables",
+      "whether_locally_fixable": false,
+      "required_external_action": "User / Account Administrator must configure AWS credentials via `aws configure` or set environment variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN",
+      "proposed_fix": "Authenticate to target AWS account with sufficient IAM permissions (EKS, EC2, RDS, ElastiCache, VPC, ALB)",
+      "status": "BLOCKED_EXTERNAL",
+      "evidence": "terraform plan probe failed with: \"Error: No valid credential sources found\" and ~/.aws directory is empty"
+    },
+    {
+      "id": "BLK-004",
+      "category": "AWS_SERVICE_QUOTAS",
+      "description": "High-scale vCPU quotas and cloud budget allocation required for 1M VU physical topology",
+      "severity": "CRITICAL",
+      "root_cause": "640 vCPUs (20x c6i.4xlarge + 40x c6i.2xlarge) exceed standard default AWS account vCPU limits (standard limit is 32-64 vCPUs)",
+      "whether_locally_fixable": false,
+      "required_external_action": "Submit AWS Service Quotas increase for \"Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances\" to >= 640 vCPUs and authorize test execution budget (~$650)",
+      "proposed_fix": "Approve Service Quota increase and allocate cloud execution budget",
+      "status": "BLOCKED_EXTERNAL",
+      "evidence": "Audited in qa/physical/aws/SERVICE_QUOTA_AUDIT.md requiring 640 EC2 vCPUs, 128 Aurora vCPUs, and 96 ElastiCache vCPUs"
+    },
+    {
+      "id": "BLK-005",
+      "category": "LOAD_GENERATOR_FARM",
+      "description": "Distributed 40-node EC2 Linux load generator fleet unprovisioned",
+      "severity": "CRITICAL",
+      "root_cause": "Requires AWS credential authorization and quota approval to provision via Terraform",
+      "whether_locally_fixable": false,
+      "required_external_action": "Provision via `terraform apply` after resolving BLK-003 and BLK-004",
+      "proposed_fix": "Deploy 40x c6i.2xlarge load generator worker instances in private subnets with k6 distributed runner",
+      "status": "BLOCKED_EXTERNAL",
+      "evidence": "Local host is a single Windows machine bounded at 22,400 Winsock sockets; 0 EC2 generator instances active"
+    },
+    {
+      "id": "BLK-006",
+      "category": "CLOUD_APPLICATION_STACK",
+      "description": "Physical EKS cluster, ALB ingress, Aurora PostgreSQL cluster, and ElastiCache Redis cluster unprovisioned",
+      "severity": "CRITICAL",
+      "root_cause": "Requires AWS cloud infrastructure deployment via Terraform",
+      "whether_locally_fixable": false,
+      "required_external_action": "Provision cloud resources via `terraform apply` after resolving BLK-003 and BLK-004",
+      "proposed_fix": "Deploy full infrastructure blueprint from infra/terraform/",
+      "status": "BLOCKED_EXTERNAL",
+      "evidence": "0 active cloud nodes; kubectl connection refused against local stub"
+    },
+    {
+      "id": "BLK-007",
+      "category": "LOCAL_HOST_LIMITATION",
+      "description": "Local Windows workstation socket buffer ceiling (WSAENOBUFS 10055)",
+      "severity": "MEDIUM",
+      "root_cause": "Windows OS ephemeral Winsock memory pool limit restricts single-host concurrent socket count to 22,400",
+      "whether_locally_fixable": true,
+      "required_external_action": "None for local scale; resolved at high scale by distributing load across 40 Linux EC2 generator nodes",
+      "proposed_fix": "Maintain validated single-host threshold at 10,000 VUs / 1,373.3 RPS; distribute 1M VU load across 40 Linux EC2 instances (25K VUs/node)",
+      "status": "VERIFIED",
+      "evidence": "Host benchmark verified 10,000 VUs passing SLA; >22,400 VUs triggers OS socket buffer exhaustion"
+    }
+  ]
+}

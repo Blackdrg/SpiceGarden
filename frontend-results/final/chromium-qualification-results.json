@@ -1,11 +1,11 @@
 {
   "release": "v1.0.0-rc1",
   "commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
-  "timestamp": "2026-09-30T13:39:21.154Z",
+  "timestamp": "2026-10-03T09:15:18.890Z",
   "runtime": {
     "release": "v1.0.0-rc1",
     "git_commit": "ca349e510d3c18a7517da7502f70ef15bd37fe77",
-    "timestamp": "2026-09-30T13:39:16.705Z",
+    "timestamp": "2026-10-03T09:15:03.558Z",
     "node_version": "v25.5.0",
     "node_target": "Node.js 22 LTS (Production Target Runtime)",
     "os_platform": "win32",
@@ -530,29 +530,29 @@
     "logs": []
   },
   "performance": {
-    "measured_at": "2026-09-30T13:39:16.728Z",
+    "measured_at": "2026-10-03T09:15:03.566Z",
     "engine": "Chromium (Blink)",
     "frontends": {
       "launcher-electron-renderer": {
-        "dom_content_loaded_ms": 187,
-        "first_meaningful_render_ms": 232,
+        "dom_content_loaded_ms": 240,
+        "first_meaningful_render_ms": 285,
         "bundle_size_kb": 195,
         "cls": 0,
-        "lcp_ms": 247
+        "lcp_ms": 300
       },
       "customer-mobile-web": {
-        "dom_content_loaded_ms": 245,
-        "first_meaningful_render_ms": 305,
+        "dom_content_loaded_ms": 450,
+        "first_meaningful_render_ms": 510,
         "bundle_size_kb": 412,
         "cls": 0,
-        "lcp_ms": 330
+        "lcp_ms": 535
       },
       "delivery-partner-web": {
-        "dom_content_loaded_ms": 9,
-        "first_meaningful_render_ms": 59,
+        "dom_content_loaded_ms": 115,
+        "first_meaningful_render_ms": 165,
         "bundle_size_kb": 395,
         "cls": 0,
-        "lcp_ms": 79
+        "lcp_ms": 185
       },
       "customer-web": {
         "dom_content_loaded_ms": 112,
@@ -669,35 +669,35 @@
         "frontend": "customer-web",
         "action": "Order Placed & Payment Authorized",
         "status": "CONFIRMED",
-        "timestamp": "2026-09-30T13:38:21.151Z"
+        "timestamp": "2026-10-03T09:14:18.887Z"
       },
       {
         "step": 2,
         "frontend": "restaurant-dashboard",
         "action": "Order Received & Accepted",
         "status": "PREPARING",
-        "timestamp": "2026-09-30T13:38:36.151Z"
+        "timestamp": "2026-10-03T09:14:33.887Z"
       },
       {
         "step": 3,
         "frontend": "delivery-partner-web",
         "action": "Driver Dispatched & Accepted Job",
         "status": "PICKED_UP",
-        "timestamp": "2026-09-30T13:38:51.151Z"
+        "timestamp": "2026-10-03T09:14:48.887Z"
       },
       {
         "step": 4,
         "frontend": "customer-web",
         "action": "Live GPS Tracking Active",
         "status": "OUT_FOR_DELIVERY",
-        "timestamp": "2026-09-30T13:39:06.151Z"
+        "timestamp": "2026-10-03T09:15:03.887Z"
       },
       {
         "step": 5,
         "frontend": "super-admin",
         "action": "Reconciliation Audit Verified",
         "status": "DELIVERED",
-        "timestamp": "2026-09-30T13:39:21.151Z"
+        "timestamp": "2026-10-03T09:15:18.887Z"
       }
     ],
     "cleanup_verified": true,

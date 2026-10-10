@@ -1,0 +1,44 @@
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: spicegarden-500k-distributed
+  namespace: load-testing
+spec:
+  parallelism: 25
+  script:
+    configMap:
+      name: k6-500k-workload
+      file: main.js
+  arguments: -o experimental-prometheus-rw
+  runner:
+    image: grafana/k6:latest
+    env:
+      - name: BASE_URL
+        value: "http://spicegarden-alb.production.internal"
+      - name: WS_URL
+        value: "ws://spicegarden-alb.production.internal"
+      - name: TARGET_VUS
+        value: "20000"
+      - name: RAMP_UP
+        value: "10m"
+      - name: SUSTAIN
+        value: "20m"
+      - name: RAMP_DOWN
+        value: "5m"
+    resources:
+      requests:
+        cpu: "3500m"
+        memory: "7Gi"
+      limits:
+        cpu: "7500m"
+        memory: "14Gi"
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - k6
+            topologyKey: "kubernetes.io/hostname"

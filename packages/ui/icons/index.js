@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VolumeMuteIcon = exports.VolumeIcon = exports.FileTextIcon = exports.GiftIcon = exports.CheckCircleIcon = exports.AlertCircleIcon = exports.PackageIcon = exports.ClockIcon = exports.StoreIcon = exports.HeadphonesIcon = exports.ShieldIcon = exports.UsersIcon = exports.DashboardIcon = exports.HealthyIcon = exports.DessertIcon = exports.DrinkIcon = exports.PizzaIcon = exports.BurgerIcon = exports.CartIcon = exports.OrderIcon = exports.PaymentIcon = exports.WalletIcon = exports.DeliveryIcon = exports.Flame = exports.KitchenIcon = exports.HomeIcon = exports.ProfileIcon = exports.SearchIcon = exports.LocationIcon = exports.NotificationIcon = exports.RatingIcon = void 0;
+exports.UserIcon = exports.VolumeMuteIcon = exports.VolumeIcon = exports.FileTextIcon = exports.GiftIcon = exports.CheckCircleIcon = exports.AlertCircleIcon = exports.PackageIcon = exports.ClockIcon = exports.StoreIcon = exports.HeadphonesIcon = exports.ShieldIcon = exports.UsersIcon = exports.DashboardIcon = exports.HealthyIcon = exports.DessertIcon = exports.DrinkIcon = exports.PizzaIcon = exports.BurgerIcon = exports.CartIcon = exports.OrderIcon = exports.PaymentIcon = exports.WalletIcon = exports.DeliveryIcon = exports.Flame = exports.KitchenIcon = exports.HomeIcon = exports.ProfileIcon = exports.SearchIcon = exports.LocationIcon = exports.NotificationIcon = exports.RatingIcon = void 0;
 const RatingIcon_1 = require("./system/RatingIcon");
 Object.defineProperty(exports, "RatingIcon", { enumerable: true, get: function () { return RatingIcon_1.RatingIcon; } });
 const NotificationIcon_1 = require("./system/NotificationIcon");
@@ -11,6 +11,7 @@ const SearchIcon_1 = require("./navigation/SearchIcon");
 Object.defineProperty(exports, "SearchIcon", { enumerable: true, get: function () { return SearchIcon_1.SearchIcon; } });
 const ProfileIcon_1 = require("./navigation/ProfileIcon");
 Object.defineProperty(exports, "ProfileIcon", { enumerable: true, get: function () { return ProfileIcon_1.ProfileIcon; } });
+Object.defineProperty(exports, "UserIcon", { enumerable: true, get: function () { return ProfileIcon_1.ProfileIcon; } });
 const HomeIcon_1 = require("./navigation/HomeIcon");
 Object.defineProperty(exports, "HomeIcon", { enumerable: true, get: function () { return HomeIcon_1.HomeIcon; } });
 const KitchenIcon_1 = require("./kitchen/KitchenIcon");

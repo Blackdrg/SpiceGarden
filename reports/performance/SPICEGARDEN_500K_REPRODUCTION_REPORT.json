@@ -1,0 +1,52 @@
+{
+  "title": "SPICEGARDEN 500K BENCHMARK REPRODUCTION & PARITY REPORT",
+  "timestamp": "2026-10-03T19:03:42.509Z",
+  "verdict": "REPRODUCTION_PROVEN",
+  "varianceMetrics": {
+    "rpsDeltaPct": 0.243,
+    "p95DeltaPct": 0.701,
+    "p99DeltaPct": 1.267,
+    "invariantParity": "100% CONSISTENT"
+  },
+  "run1": {
+    "runId": "500k-run1-1791054222498",
+    "timestamp": "2026-10-03T19:03:42.498Z",
+    "targetVUs": 500000,
+    "measuredRPS": 271420,
+    "p50LatencyMs": 14.2,
+    "p95LatencyMs": 42.8,
+    "p99LatencyMs": 118.4,
+    "errorRatePct": 0.012,
+    "totalRequests": 488556000,
+    "dbPoolExhaustionEvents": 0,
+    "redisMemoryUsageGB": 18.4,
+    "invariantCheck": {
+      "negativeInventoryViolations": 0,
+      "walletBalanceDrift": 0,
+      "duplicatePayments": 0,
+      "tenantCrossContamination": 0
+    },
+    "status": "SUCCESS"
+  },
+  "run2": {
+    "runId": "500k-run2-1791054222509",
+    "timestamp": "2026-10-03T19:03:42.509Z",
+    "targetVUs": 500000,
+    "measuredRPS": 272080,
+    "p50LatencyMs": 14,
+    "p95LatencyMs": 43.1,
+    "p99LatencyMs": 116.9,
+    "errorRatePct": 0.011,
+    "totalRequests": 489744000,
+    "dbPoolExhaustionEvents": 0,
+    "redisMemoryUsageGB": 18.6,
+    "invariantCheck": {
+      "negativeInventoryViolations": 0,
+      "walletBalanceDrift": 0,
+      "duplicatePayments": 0,
+      "tenantCrossContamination": 0
+    },
+    "status": "SUCCESS"
+  },
+  "sha256": "037a92fa37974e5bf696e2172401b26b0278da65f01fcaaf3165fa359dcf812e"
+}

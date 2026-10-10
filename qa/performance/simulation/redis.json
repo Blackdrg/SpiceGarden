@@ -1,0 +1,41 @@
+{
+  "totalOps": 145893,
+  "gets": 72702,
+  "sets": 73191,
+  "dels": 0,
+  "hits": 63264,
+  "misses": 9438,
+  "hitRatePercent": 87.02,
+  "evictions": 0,
+  "memoryBytes": 26256180,
+  "maxMemoryBytes": 1073741824,
+  "lockAttempts": 4380,
+  "lockAcquisitions": 4380,
+  "lockContention": 0,
+  "pubSubMessages": 0,
+  "hotKeys": [
+    {
+      "key": "cache:restaurants:tenant-001",
+      "accesses": 649
+    },
+    {
+      "key": "evt:order:undefined",
+      "accesses": 300
+    },
+    {
+      "key": "cache:restaurant:rest_tenant-001_4",
+      "accesses": 139
+    },
+    {
+      "key": "cache:restaurant:rest_tenant-001_1",
+      "accesses": 137
+    },
+    {
+      "key": "cache:restaurant:rest_tenant-001_2",
+      "accesses": 137
+    }
+  ],
+  "p50LatencyMs": 0.15,
+  "p95LatencyMs": 0.15,
+  "p99LatencyMs": 0.15
+}

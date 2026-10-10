@@ -1,0 +1,7 @@
+{
+  "pod_count": 8,
+  "avg_cpu_percent": "62.0%",
+  "avg_memory_mb": 480,
+  "event_loop_lag_p95_ms": 4.2,
+  "http_rps": 10350
+}

@@ -23,6 +23,15 @@ let AppController = class AppController {
     healthCheck() {
         return { status: 'ok', timestamp: new Date().toISOString() };
     }
+    liveness() {
+        return { status: 'live', uptime: process.uptime(), timestamp: Date.now() };
+    }
+    readiness() {
+        return { status: 'ready', timestamp: Date.now() };
+    }
+    startup() {
+        return { status: 'started', timestamp: Date.now() };
+    }
 };
 exports.AppController = AppController;
 __decorate([
@@ -37,6 +46,24 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "healthCheck", null);
+__decorate([
+    (0, common_1.Get)('liveness'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "liveness", null);
+__decorate([
+    (0, common_1.Get)('readiness'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "readiness", null);
+__decorate([
+    (0, common_1.Get)('startup'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "startup", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])

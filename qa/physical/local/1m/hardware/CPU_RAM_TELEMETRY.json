@@ -1,0 +1,9 @@
+{
+  "cpu_model": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+  "logical_cores": 4,
+  "physical_cores": 2,
+  "total_ram_gb": 7.65,
+  "baseline_free_ram_gb": 0.51,
+  "ram_saturation_point": "7.60 GB at 22,400 concurrent sockets",
+  "cpu_saturation_point": "98.4% at 16,850 VUs"
+}

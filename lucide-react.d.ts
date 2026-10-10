@@ -44,8 +44,25 @@ declare module 'lucide-react' {
   export const X: FC<LucideIconProps>;
   export const Store: FC<LucideIconProps>;
   export const Clock: FC<LucideIconProps>;
-  export const Utensils: FC<LucideIconProps>;
-  export const AlertTriangle: FC<LucideIconProps>;
+  export const Minus: FC<LucideIconProps>;
+  export const SlidersHorizontal: FC<LucideIconProps>;
+  export const ChevronLeft: FC<LucideIconProps>;
+  export const ChevronRight: FC<LucideIconProps>;
+  export const Sparkles: FC<LucideIconProps>;
+  export const ShieldCheck: FC<LucideIconProps>;
+  export const Tag: FC<LucideIconProps>;
+  export const ArrowRight: FC<LucideIconProps>;
+  export const ArrowUpRight: FC<LucideIconProps>;
+  export const ArrowDownLeft: FC<LucideIconProps>;
+  export const RotateCw: FC<LucideIconProps>;
+  export const Phone: FC<LucideIconProps>;
+  export const MessageSquare: FC<LucideIconProps>;
+  export const Navigation: FC<LucideIconProps>;
+  export const Layers: FC<LucideIconProps>;
+  export const ShoppingBag: FC<LucideIconProps>;
+  export const TrendingUp: FC<LucideIconProps>;
+  export const CheckCircle2: FC<LucideIconProps>;
+  export const Zap: FC<LucideIconProps>;
 }
 
 export {};

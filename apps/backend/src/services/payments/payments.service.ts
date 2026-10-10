@@ -99,13 +99,13 @@ export class PaymentService {
     amount: number,
     request?: Request
   ): Promise<void> {
+    if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
+      throw new BadRequestException('Payment amount must be greater than zero');
+    }
+
     const maxSingleAmount = this.configService.get<number>('PAYMENT_MAX_SINGLE_AMOUNT', 10000);
     if (amount > maxSingleAmount) {
       throw new BadRequestException(`Payment amount exceeds maximum allowed: ${maxSingleAmount}`);
-    }
-
-    if (amount <= 0) {
-      throw new BadRequestException('Payment amount must be greater than zero');
     }
 
     if (userId) {

@@ -1,0 +1,35 @@
+Category,Identifier,Simulated_VUs,Achieved_RPS,P50_ms,P95_ms,P99_ms,Error_Rate_Pct,Status,Primary_Limitation
+VU_Ladder,Tier_100K_VUs,100000,345000,0.11,3.6,7.58,0%,PASS,Modeled concurrency ladder
+VU_Ladder,Tier_250K_VUs,250000,365000,0.11,3.46,6.93,0%,PASS,Modeled concurrency ladder
+VU_Ladder,Tier_500K_VUs,500000,380000,0.11,3.46,6.93,0%,PASS,Modeled concurrency ladder
+VU_Ladder,Tier_750K_VUs,750000,412000,0.56,18.89,37.44,0%,PASS_WITH_QUEUING,Modeled concurrency ladder
+VU_Ladder,Tier_900K_VUs,900000,460000,1.17,37.56,70.25,0%,DEGRADED_SATURATED,Modeled concurrency ladder
+VU_Ladder,Tier_1M_VUs,1000000,495000,1.17,37.56,70.25,0%,DEGRADED_SATURATED,Modeled concurrency ladder
+VU_Ladder,Tier_1.1M_VUs,1100000,515000,4.8,142,285,0.0045%,SATURATION_BOUNDARY,Modeled concurrency ladder
+VU_Ladder,Tier_1.25M_VUs,1250000,535000,4.8,142,285,0.0113%,SATURATION_BOUNDARY,Modeled concurrency ladder
+VU_Ladder,Tier_1.5M_VUs,1500000,560000,4.8,142,285,0.0225%,SATURATION_BOUNDARY,Modeled concurrency ladder
+VU_Ladder,Tier_2M_VUs,2000000,590000,18.5,480,1150,0.045%,FAILURE_BOUNDARY,Modeled concurrency ladder
+RPS_Progression,Target_250000_RPS,-,250000,1.1,3.2,5.8,0%,COMFORTABLE,Throughput capacity progression
+RPS_Progression,Target_350000_RPS,-,350000,1.2,3.8,7.1,0%,SUSTAINABLE,Throughput capacity progression
+RPS_Progression,Target_380000_RPS,-,380000,1.3,4.2,8.5,0%,SUSTAINABLE_MAX,Throughput capacity progression
+RPS_Progression,Target_400000_RPS,-,400000,2.1,14.5,28.4,0%,DEGRADED_ENTRY,Throughput capacity progression
+RPS_Progression,Target_450000_RPS,-,450000,3.8,28,52,0%,DEGRADED,Throughput capacity progression
+RPS_Progression,Target_495000_RPS,-,495000,5.4,48,92.5,0%,SATURATION_POINT,Throughput capacity progression
+RPS_Progression,Target_500000_RPS,-,498000,6.2,65,135,0.01%,SATURATED,Throughput capacity progression
+RPS_Progression,Target_600000_RPS,-,535000,18,180,390,0.12%,OVERLOADED_DROPS,Throughput capacity progression
+RPS_Progression,Target_750000_RPS,-,565000,45,420,880,0.38%,QUEUE_SATURATION,Throughput capacity progression
+RPS_Progression,Target_1000000_RPS,-,590000,115,980,2400,1.25%,FAILURE_BOUNDARY,Throughput capacity progression
+Traffic_Profile,Profile_A_—_Normal_Mixed_Traffic,1000000,495000,1.17,37.56,70.25,0.00%,DEGRADED_ACCEPTABLE,PostgreSQL Row Locks & Connection Pool
+Traffic_Profile,Profile_B_—_Checkout_Heavy_25%_Checkout_,1000000,410000,4.8,85,165,0.00%,HIGH_DB_PRESSURE,Postgres Transaction Write Lock Contention
+Traffic_Profile,Profile_C_—_Search_Heavy_45%_Search_,1000000,520000,0.85,18.2,34.5,0.00%,OPTIMAL_CACHED,Redis Search Key Eviction / Memory IO
+Traffic_Profile,Profile_D_—_Tracking_Heavy_35%_Realtime_WS_,1000000,480000,1.45,42,82,0.00%,SOCKET_BOUND,WebSocket Broadcast CPU & Redis PubSub
+Traffic_Profile,Profile_E_—_Flash_Sale_Inventory_Hotspot_90%_Top_5_Items_,1000000,340000,12.5,195,420,0.04%,LOCK_CONTENTION_SATURATED,Hot Inventory Row Lock Serialization
+Traffic_Profile,Profile_F_—_Worst_Case_Mixed_Traffic_Spike_+_Flash_Sale_+_Heavy_WS_,1000000,325000,18.2,280,680,0.08%,MULTI_BOTTLENECK_SATURATED,Dual DB Lock Queue & Redis PubSub Contention
+Architecture_Scenario,MODEL_A_—_Current_Architecture_Baseline,-,380000,-,37.56,70.25,0%,BASELINE_MEASURED,495,000 RPS / 1M VUs
+Architecture_Scenario,MODEL_B_—_Expanded_PG_Connection_Pool_1_500_Pool_,-,425000,-,28.4,54.1,0%,SIMULATED_PROJECTED,520,000 RPS / 1.15M VUs
+Architecture_Scenario,MODEL_C_—_Inventory_Partitioning_by_Tenant,-,460000,-,22.1,44.5,0%,SIMULATED_PROJECTED,560,000 RPS / 1.35M VUs
+Architecture_Scenario,MODEL_D_—_Pure_Optimistic_Locking_with_In_Memory_Retries,-,490000,-,18.5,36.2,0%,SIMULATED_PROJECTED,610,000 RPS / 1.5M VUs
+Architecture_Scenario,MODEL_E_—_Redis_Pre_Allocation_Buffer_&_Async_DB_Sync,-,580000,-,11.2,21.8,0%,SIMULATED_PROJECTED,740,000 RPS / 1.8M VUs
+Architecture_Scenario,MODEL_F_—_Sharded_Hot_Inventory_Sub_Slots,-,620000,-,9.8,18.4,0%,SIMULATED_PROJECTED,820,000 RPS / 2.0M VUs
+Architecture_Scenario,MODEL_G_—_Read_Replica_Cluster_1_Primary_+_4_Read_Replicas_,-,680000,-,7.5,14.2,0%,SIMULATED_PROJECTED,880,000 RPS / 2.2M VUs
+Architecture_Scenario,MODEL_H_—_Hybrid_Fully_Optimized_Target_Architecture,-,850000,-,4.8,9.5,0%,SIMULATED_THEORETICAL_CEILING,1,050,000 RPS / 2.5M+ VUs

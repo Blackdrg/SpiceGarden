@@ -1,0 +1,18 @@
+{
+  "totalQueries": 109702,
+  "reads": 25132,
+  "writes": 84570,
+  "transactions": 4380,
+  "committedTransactions": 4353,
+  "rolledBackTransactions": 27,
+  "transactionConflicts": 0,
+  "lockWaits": 0,
+  "deadlocks": 76,
+  "poolExhaustions": 0,
+  "activeConnections": 0,
+  "maxPoolSize": 500,
+  "p50LatencyMs": 1.2112000000008265,
+  "p95LatencyMs": 3.09020000000005,
+  "p99LatencyMs": 3.8724000000012895,
+  "p999LatencyMs": 5.873400000001493
+}

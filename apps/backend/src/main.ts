@@ -1,4 +1,7 @@
 import './reflect-metadata';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config({ path: [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), '../../.env'), path.resolve(__dirname, '../../../.env')] });
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
@@ -17,6 +20,20 @@ import { RedisRateLimitStore } from "./security/redis-rate-limit.store";
 import { requireSecrets, MissingEnvError } from "./common/errors/missing-env.error";
 import { csrfProtection } from "./security/csrf.middleware";
 import { Counter, Histogram, Registry, collectDefaultMetrics } from "prom-client";
+
+process.on('uncaughtException', (err: any) => {
+  if (err?.code === 'ECONNRESET' || err?.code === 'EPIPE' || err?.code === 'ETIMEDOUT') {
+    return;
+  }
+  console.error('[UNCAUGHT_EXCEPTION]', err);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  if (reason?.code === 'ECONNRESET' || reason?.code === 'EPIPE') {
+    return;
+  }
+  console.error('[UNHANDLED_REJECTION]', reason);
+});
 
 const metricsRegistry = new Registry();
 collectDefaultMetrics({ register: metricsRegistry });
@@ -277,6 +294,29 @@ const dsn = configService.get<string>("SENTRY_DSN");
       transform: true,
     })
   );
+
+  // Graceful shutdown support for Kubernetes rolling updates & signal termination
+  app.enableShutdownHooks();
+
+  // Register Redis-backed Socket.IO adapter for horizontal multi-pod WebSockets
+  const { RedisIoAdapter } = await import('./infra/tracking/redis-io.adapter');
+  const redisIoAdapter = new RedisIoAdapter(app, configService);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
+
+  if (process.env.LOAD_TEST_MODE === 'true' || process.env.LOCAL_DB === 'sqlite') {
+    try {
+      const { DataSource } = await import('typeorm');
+      const dataSource = app.get(DataSource, { strict: false });
+      if (dataSource) {
+        const { BusinessSeederService } = await import('./services/restaurant/business.seeder');
+        const seeder = new BusinessSeederService(dataSource);
+        await seeder.seedAll();
+      }
+    } catch (err: any) {
+      console.warn('[Bootstrap] Auto-seeding skipped or failed:', err?.message || String(err));
+    }
+  }
 
   console.log(`[bootstrap] Node Runtime: ${process.version}, PID: ${process.pid}, UV_THREADPOOL_SIZE: ${process.env.UV_THREADPOOL_SIZE || 'default(4)'}`);
 

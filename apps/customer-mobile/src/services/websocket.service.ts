@@ -191,22 +191,18 @@ subscribe<T = unknown>(event: string, callback: (data: T) => void) {
     });
   }
 
-  async joinRoom(room: string) {
-    return this.sendMessage({
-      id: this.generateMessageId(),
-      event: 'join',
-      data: { room },
-      timestamp: Date.now(),
-    });
+  async joinRoom(room: string): Promise<{ status: string; room: string }> {
+    if (this.socket?.connected) {
+      this.socket.emit('join', { room });
+    }
+    return { status: 'joined', room };
   }
 
-  async sendAcknowledgement(messageId: string) {
-    return this.sendMessage({
-      id: this.generateMessageId(),
-      event: 'ack',
-      data: { messageId },
-      timestamp: Date.now(),
-    });
+  async sendAcknowledgement(messageId: string): Promise<{ status: string; messageId: string }> {
+    if (this.socket?.connected) {
+      this.socket.emit('ack', { messageId });
+    }
+    return { status: 'ack_sent', messageId };
   }
 
   isSocketConnected(): boolean {

@@ -11,4 +11,17 @@ export declare class AppController {
         status: string;
         timestamp: string;
     };
+    liveness(): {
+        status: string;
+        uptime: number;
+        timestamp: number;
+    };
+    readiness(): {
+        status: string;
+        timestamp: number;
+    };
+    startup(): {
+        status: string;
+        timestamp: number;
+    };
 }

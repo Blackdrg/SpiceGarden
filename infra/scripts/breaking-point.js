@@ -87,7 +87,7 @@ function generateBreakingOrder(scenario, index) {
     return base;
   }
 
-  if (scenario === 'NEGATIVE') {
+  if (scenario === 'NEGATIVE' || scenario === 'NEGATIVEVALUES') {
     base.items = [{ name: 'Test Item', quantity: -5 }];
     base.grandTotal = -1000;
     return base;

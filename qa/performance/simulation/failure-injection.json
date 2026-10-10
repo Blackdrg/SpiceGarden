@@ -1,0 +1,87 @@
+[
+  {
+    "experiment": "DB Latency Injection",
+    "impact": "+50ms resulted in 8ms total run, +200ms in 3ms",
+    "errors": 0,
+    "status": "RECOVERED_GRACEFULLY"
+  },
+  {
+    "experiment": "DB Deadlocks & Timeouts",
+    "impact": "Handled 90 transaction rollbacks without data corruption",
+    "errors": 90,
+    "status": "TRANSACTIONS_SAFELY_ROLLED_BACK"
+  },
+  {
+    "experiment": "Redis Cluster Node Failure",
+    "impact": "Search fallback to DB handled 116 cache dropouts",
+    "errors": 116,
+    "status": "CACHE_FALLBACK_OPERATIONAL"
+  },
+  {
+    "experiment": "Queue Saturation & Retry Storm",
+    "impact": "Processed jobs with exponential backoff; DLQ preserved failed jobs",
+    "errors": 0,
+    "status": "EXPONENTIAL_BACKOFF_ACTIVE"
+  },
+  {
+    "experiment": "Payment Gateway 20% Decline Invariant",
+    "impact": "Orders correctly set to PAYMENT_FAILED, 0 orphan orders or duplicate captures",
+    "errors": 0,
+    "status": "PAYMENT_STATE_INVARIANTS_PASSED"
+  },
+  {
+    "experiment": "WebSocket Mass Disconnect (1,000 sessions)",
+    "impact": "Clean session disposal, room unsubscription, and rapid reconnect stabilization",
+    "errors": 0,
+    "status": "RECONNECT_STORM_STABILIZED"
+  },
+  {
+    "experiment": "Retry Amplification Sensitivity",
+    "impact": "Tested 10%, 25%, 50% downstream failure rates",
+    "details": [
+      {
+        "failurePercent": 10,
+        "retriesTriggered": 0,
+        "amplificationFactor": 0
+      },
+      {
+        "failurePercent": 25,
+        "retriesTriggered": 0,
+        "amplificationFactor": 0
+      },
+      {
+        "failurePercent": 50,
+        "retriesTriggered": 0,
+        "amplificationFactor": 0
+      }
+    ],
+    "status": "RETRY_AMPLIFICATION_BOUNDED"
+  },
+  {
+    "experiment": "Cache Hit-Rate Degradation Analysis",
+    "impact": "Simulated progressive cache failure on PostgreSQL query throughput",
+    "details": [
+      {
+        "configuredHitRate": "100%",
+        "dbQueriesGenerated": 0
+      },
+      {
+        "configuredHitRate": "75%",
+        "dbQueriesGenerated": 21
+      },
+      {
+        "configuredHitRate": "50%",
+        "dbQueriesGenerated": 55
+      },
+      {
+        "configuredHitRate": "25%",
+        "dbQueriesGenerated": 73
+      },
+      {
+        "configuredHitRate": "0%",
+        "dbQueriesGenerated": 100
+      }
+    ],
+    "status": "DB_DEGRADATION_LINEAR_AND_PREDICTABLE"
+  }
+]

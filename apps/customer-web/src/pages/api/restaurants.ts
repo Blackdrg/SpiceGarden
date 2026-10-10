@@ -4,7 +4,7 @@ const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL |
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await fetch(`${BACKEND_URL}/business/restaurants`, {
+    const response = await fetch(`${BACKEND_URL}/restaurants`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

@@ -54,12 +54,12 @@ let PaymentService = PaymentService_1 = class PaymentService {
         }
     }
     async validatePaymentLimits(userId, amount, request) {
+        if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
+            throw new common_1.BadRequestException('Payment amount must be greater than zero');
+        }
         const maxSingleAmount = this.configService.get('PAYMENT_MAX_SINGLE_AMOUNT', 10000);
         if (amount > maxSingleAmount) {
             throw new common_1.BadRequestException(`Payment amount exceeds maximum allowed: ${maxSingleAmount}`);
-        }
-        if (amount <= 0) {
-            throw new common_1.BadRequestException('Payment amount must be greater than zero');
         }
         if (userId) {
             const dailyLimit = this.configService.get('PAYMENT_DAILY_LIMIT_PER_USER', 50000);

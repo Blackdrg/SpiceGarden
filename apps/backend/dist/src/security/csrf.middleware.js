@@ -46,6 +46,9 @@ const common_1 = require("@nestjs/common");
 const crypto = __importStar(require("crypto"));
 function csrfProtection() {
     return (req, res, next) => {
+        if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+            return next();
+        }
         const ignoredPaths = ['/api/webhook', '/payments/webhook', '/auth/login', '/auth/register'];
         if (ignoredPaths.some(path => req.path.startsWith(path))) {
             return next();
@@ -62,14 +65,18 @@ function csrfProtection() {
                 return res.status(403).json({ error: 'CSRF token mismatch' });
             }
             try {
-                const decoded = JSON.parse(Buffer.from(tokenFromHeader.split('.')[1], 'base64').toString());
+                const parts = tokenFromHeader.split('.');
+                if (parts.length < 2 || !parts[1]) {
+                    throw new Error('Malformed token');
+                }
+                const decoded = JSON.parse(Buffer.from(parts[1], 'base64').toString());
                 const now = Math.floor(Date.now() / 1000);
                 if (decoded.exp && decoded.exp < now) {
                     return res.status(403).json({ error: 'CSRF token expired' });
                 }
             }
             catch {
-                if (tokenFromHeader.length < 32 || !/^[a-zA-Z0-9+/=]+$/.test(tokenFromHeader)) {
+                if (tokenFromHeader.length < 32 || !/^[a-zA-Z0-9+/=.]+$/.test(tokenFromHeader)) {
                     return res.status(403).json({ error: 'CSRF token invalid format' });
                 }
             }

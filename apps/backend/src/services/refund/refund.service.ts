@@ -1,4 +1,4 @@
-﻿
+
 import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan } from 'typeorm';
@@ -80,6 +80,14 @@ export class RefundService {
        throw new BadRequestException('There is already a pending refund request for this order');
      }
 
+     if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
+       throw new BadRequestException('Refund amount must be a positive number');
+     }
+
+     if (typeof order.grandTotal === 'number' && order.grandTotal > 0 && amount > order.grandTotal) {
+       throw new BadRequestException('Refund amount cannot exceed order grand total');
+     }
+
     // Determine if manager approval is required based on amount
     const managerApprovalThreshold = this.configService.get<number>('REFUND_MANAGER_APPROVAL_THRESHOLD', 1000);
     const requiresManagerApproval = amount >= managerApprovalThreshold;
@@ -115,7 +123,10 @@ export class RefundService {
      notes?: string
    ): Promise<RefundApprovalEntity> {
      // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+     const approval = await this.refundApprovalRepo.findOne({ 
+       where: { id: approvalId },
+       relations: { order: true }
+     });
      if (!approval) {
        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
      }
@@ -162,7 +173,10 @@ export class RefundService {
      reason: string
    ): Promise<RefundApprovalEntity> {
      // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+     const approval = await this.refundApprovalRepo.findOne({ 
+       where: { id: approvalId },
+       relations: { order: true }
+     });
      if (!approval) {
        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
      }
@@ -203,7 +217,10 @@ export class RefundService {
     gatewayName?: string
   ): Promise<{ refund: RefundEntity; approval: RefundApprovalEntity }> {
     // Find the approval request
-     const approval = await this.refundApprovalRepo.findOne({ where: { id: approvalId } });
+     const approval = await this.refundApprovalRepo.findOne({ 
+       where: { id: approvalId },
+       relations: { order: true }
+     });
      if (!approval) {
        throw new NotFoundException(`Refund approval not found: ${approvalId}`);
      }
@@ -225,9 +242,13 @@ export class RefundService {
         }
 
       // Get the order
-      const order = await this.orderRepo.findOne({ where: { id: approval.order.id } });
+      const orderIdToFind = approval.order?.id;
+      if (!orderIdToFind) {
+        throw new NotFoundException('Associated order not found on approval');
+      }
+      const order = await this.orderRepo.findOne({ where: { id: orderIdToFind } });
       if (!order) {
-        throw new NotFoundException(`Order not found: ${approval.order.id}`);
+        throw new NotFoundException(`Order not found: ${orderIdToFind}`);
       }
 
      // Check if order already refunded
@@ -387,13 +408,13 @@ return await this.refundApprovalRepo.find({
     try {
         await this.productionNotification.sendPaymentNotification(
           'system',
-          approval.order.paymentIntentId || `refund-request-${approval.id}`,
+          approval.order?.paymentIntentId || `refund-request-${approval.id}`,
           {
            type: 'refund_initiated',
            severity: 'medium',
-           orderId: approval.order.id,
+           orderId: approval.order?.id || '',
            amount: approval.refundAmount,
-           message: `New refund request of ${approval.refundAmount} for order #${approval.order.id}. Reason: ${approval.reason}`,
+           message: `New refund request of ${approval.refundAmount} for order #${approval.order?.id || 'unknown'}. Reason: ${approval.reason}`,
            metadata: {
              approvalId: approval.id,
              requestedBy: approval.requestedBy,
@@ -412,13 +433,13 @@ return await this.refundApprovalRepo.find({
       try {
          await this.productionNotification.sendPaymentNotification(
            'system',
-           approval.order.paymentIntentId || `refund-approval-${approval.id}`,
+           approval.order?.paymentIntentId || `refund-approval-${approval.id}`,
            {
             type: 'refund_initiated',
             severity: 'medium',
-            orderId: approval.order.id,
+            orderId: approval.order?.id || '',
             amount: approval.refundAmount,
-            message: `Refund request approved for ${approval.refundAmount} for order #${approval.order.id}`,
+            message: `Refund request approved for ${approval.refundAmount} for order #${approval.order?.id || 'unknown'}`,
             metadata: {
               approvalId: approval.id,
               approverId: approval.approverId
@@ -435,13 +456,13 @@ return await this.refundApprovalRepo.find({
       try {
         await this.productionNotification.sendPaymentNotification(
           approval.requestedBy,
-          approval.order.paymentIntentId || `refund-rejection-${approval.id}`,
+          approval.order?.paymentIntentId || `refund-rejection-${approval.id}`,
           {
             type: 'refund_initiated',
             severity: 'medium',
-            orderId: approval.order.id,
+            orderId: approval.order?.id || '',
             amount: 0,
-            message: `Your refund request for order #${approval.order.id} has been rejected. Reason: ${approval.rejectionReason}`,
+            message: `Your refund request for order #${approval.order?.id || 'unknown'} has been rejected. Reason: ${approval.rejectionReason}`,
             metadata: {
               approvalId: approval.id,
               rejectionReason: approval.rejectionReason

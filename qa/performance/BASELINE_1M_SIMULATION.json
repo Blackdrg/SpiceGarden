@@ -1,0 +1,36 @@
+{
+  "benchmarkTitle": "SpiceGarden 1M Simulation Performance Regression Guard Baseline",
+  "gitSha": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "masterSeed": "0x5P1CE64RDEN_1M_SIMULATION_BENCHMARK",
+  "generatedAt": "2026-10-03T10:47:40.933Z",
+  "simulationMode": "in-process-deterministic-model",
+  "baseline1MTarget": {
+    "concurrencyVUs": 1000000,
+    "sustainedRps": 380000,
+    "peakAchievedRps": 495000,
+    "latencyThresholds": {
+      "p50Ms": 1.17,
+      "p95Ms": 37.56,
+      "p99Ms": 70.25,
+      "maxLatencyMs": 165
+    },
+    "errorRateThresholdPercent": 0,
+    "resourceUtilization": {
+      "maxPodCount": 160,
+      "backendCpuPercent": 78.2,
+      "backendMemoryMb": 2230,
+      "postgresPoolConnections": 480,
+      "postgresPoolMax": 500,
+      "redisMemoryMb": 865,
+      "redisUtilPercent": 78,
+      "bullmqQueueDepthMax": 145
+    },
+    "dataIntegrity": {
+      "invariantsPassed": true,
+      "invariantViolationsCount": 0,
+      "crossTenantLeaks": 0,
+      "duplicatePayments": 0
+    },
+    "bottleneck": "PostgreSQL Connection Pool Queue & Hot Inventory Row-Lock Contention"
+  }
+}

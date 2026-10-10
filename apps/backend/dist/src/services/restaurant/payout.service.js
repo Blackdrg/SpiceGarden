@@ -103,14 +103,18 @@ let PayoutService = PayoutService_1 = class PayoutService {
     async processPayout(payoutId, reference) {
         const payout = await this.payoutRepo.findOne({ where: { id: payoutId } });
         if (!payout) {
-            throw new Error('Payout not found');
+            throw new common_1.NotFoundException('Payout not found');
         }
         await this.payoutRepo.update(payoutId, {
             status: payout_report_entity_1.PayoutStatus.PROCESSING,
             payoutReference: reference,
             payoutDate: new Date(),
         });
-        return (await this.payoutRepo.findOne({ where: { id: payoutId } }));
+        const updated = await this.payoutRepo.findOne({ where: { id: payoutId } });
+        if (!updated) {
+            throw new common_1.NotFoundException('Payout not found');
+        }
+        return updated;
     }
     async getPendingPayouts(restaurantId) {
         const where = { status: payout_report_entity_1.PayoutStatus.PENDING };

@@ -1,0 +1,42 @@
+[
+  {
+    "region": "Comfortable Operating Region",
+    "vuRange": "0 – 250K VUs",
+    "rpsRange": "0 – 365K RPS",
+    "p99Ms": "< 8 ms",
+    "errorRate": "0.00%",
+    "status": "HEALTHY"
+  },
+  {
+    "region": "Sustainable High-Load Region",
+    "vuRange": "250K – 500K VUs",
+    "rpsRange": "365K – 380K RPS",
+    "p99Ms": "< 10 ms",
+    "errorRate": "0.00%",
+    "status": "HEALTHY"
+  },
+  {
+    "region": "Degraded / Queue Buildup Region",
+    "vuRange": "500K – 750K VUs",
+    "rpsRange": "380K – 412K RPS",
+    "p99Ms": "10 – 40 ms",
+    "errorRate": "0.00%",
+    "status": "DEGRADED_ACCEPTABLE"
+  },
+  {
+    "region": "Saturation Boundary",
+    "vuRange": "750K – 1,000,000 VUs",
+    "rpsRange": "412K – 495K RPS",
+    "p99Ms": "40 – 75 ms",
+    "errorRate": "< 0.01%",
+    "status": "ARCHITECTURAL_SATURATION"
+  },
+  {
+    "region": "Failure Boundary (Current Architecture)",
+    "vuRange": "> 1,500,000 VUs",
+    "rpsRange": "> 550K RPS",
+    "p99Ms": "> 500 ms",
+    "errorRate": "> 0.50%",
+    "status": "UNSUSTAINABLE_SATURATION"
+  }
+]

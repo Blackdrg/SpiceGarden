@@ -1,116 +1,146 @@
-import { useState, CSSProperties } from 'react';
-import { Button, Card, DESIGN_TOKENS, useToast, HomeIcon, SearchIcon, WalletIcon, ProfileIcon } from '@spicegarden/ui';
+import React, { useState } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
+import { Plus, ArrowUpRight, ArrowDownLeft, ShieldCheck, Sparkles } from 'lucide-react';
+import styles from './wallet.module.css';
 
-const bottomNavStyle: CSSProperties = {
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 60,
-  backgroundColor: 'white',
-  borderTop: '1px solid #eee',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-  zIndex: 100,
-};
+interface Transaction {
+  id: string;
+  type: 'credit' | 'debit';
+  amount: number;
+  description: string;
+  date: string;
+}
 
-const navButtonStyle: CSSProperties = {
-  background: 'transparent',
-  border: 'none',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  cursor: 'pointer',
-  padding: '4px 8px',
-  fontSize: '12px',
-};
+const INITIAL_TXNS: Transaction[] = [
+  { id: 'tx-1', type: 'credit', amount: 500, description: 'Welcome Cashback Bonus', date: 'Today, 10:30 AM' },
+  { id: 'tx-2', type: 'debit', amount: 347, description: 'Order #SG-729104 (Punjabi Dhaba)', date: 'Yesterday, 8:22 PM' },
+  { id: 'tx-3', type: 'credit', amount: 100, description: 'Referral Reward (Friend Joined)', date: 'Oct 05, 2026' },
+  { id: 'tx-4', type: 'credit', amount: 250, description: 'Card Top-up', date: 'Oct 01, 2026' },
+];
 
-const WalletPage = () => {
+export default function WalletPage() {
   const router = useRouter();
-  const toast = useToast();
   const [balance, setBalance] = useState(500);
+  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TXNS);
 
-  const handleWithdraw = () => {
-    toast.showToast({ message: 'Withdrawal feature coming soon', type: 'info', duration: 0 });
+  const handleAddMoney = (amount: number) => {
+    setBalance((prev) => prev + amount);
+    const newTxn: Transaction = {
+      id: `tx-${Date.now()}`,
+      type: 'credit',
+      amount,
+      description: 'Quick Balance Top-up',
+      date: 'Just now',
+    };
+    setTransactions((prev) => [newTxn, ...prev]);
+    alert(`🎉 Successfully added ₹${amount} to your SpiceGarden Wallet!`);
   };
-  const [transactionHistory] = useState([
-    { id: 1, type: 'credit' as const, amount: 500, description: 'Welcome Bonus', date: '2026-05-20' },
-    { id: 2, type: 'debit' as const, amount: 347, description: 'Order #SG12345', date: '2026-05-21' },
-    { id: 3, type: 'credit' as const, amount: 100, description: 'Referral Bonus', date: '2026-05-22' },
-    { id: 4, type: 'debit' as const, amount: 30, description: 'Order #SG12344', date: '2026-05-18' },
-    { id: 5, type: 'credit' as const, amount: 200, description: 'Top-up', date: '2026-05-15' },
-  ]);
-  const [activeTab] = useState<'home' | 'search' | 'wallet' | 'account'>('wallet');
 
-  const addMoney = () => {
-    setBalance((prev) => prev + 100);
+  const handlePromptAddMoney = () => {
+    const custom = prompt('Enter amount to add to wallet (₹):', '200');
+    if (custom && !isNaN(Number(custom)) && Number(custom) > 0) {
+      handleAddMoney(Number(custom));
+    }
   };
 
   return (
-    <div style={{ padding: DESIGN_TOKENS.spacing.md, paddingBottom: 80 }}>
-      <h2 style={{ marginBottom: DESIGN_TOKENS.spacing.lg }}>My Wallet</h2>
+    <div className={styles.page}>
+      <Head>
+        <title>My Wallet | SpiceGarden</title>
+      </Head>
 
-      <Card title="Wallet Balance" isElevated>
-        <div style={{
-          textAlign: 'center', padding: `${DESIGN_TOKENS.spacing.lg}px 0`,
-          backgroundColor: '#f0f8ff', borderRadius: DESIGN_TOKENS.radius.md,
-        }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '2.5rem', color: DESIGN_TOKENS.colors.primary }}>&#8377;{balance}</h1>
-          <p style={{ margin: 0, color: '#666' }}>Available balance</p>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>SpiceGarden Wallet</h1>
+          <span style={{ fontSize: 13, color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <ShieldCheck size={16} /> 100% Secure
+          </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: DESIGN_TOKENS.spacing.md, marginTop: DESIGN_TOKENS.spacing.lg }}>
-          <Button label="Add Money" onClick={addMoney} />
-          <Button label="Withdraw" onClick={handleWithdraw} variant="secondary" />
-        </div>
-      </Card>
 
-      <Card title="Transaction History" style={{ marginTop: DESIGN_TOKENS.spacing.lg }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {transactionHistory.map((txn) => (
-            <div
-              key={txn.id}
-              style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: `${DESIGN_TOKENS.spacing.sm}px 0`,
-                borderBottom: '1px solid #f0f0f0',
-              }}
-            >
-              <div>
-                <h4 style={{ margin: 0, fontSize: '14px' }}>{txn.description}</h4>
-                <p style={{ margin: '4px 0 0 0', color: '#999', fontSize: '12px' }}>{txn.date}</p>
+        {/* Hero Card */}
+        <div className={styles.walletHeroCard}>
+          <p className={styles.walletBalanceLabel}>Available Balance</p>
+          <h2 className={styles.walletBalanceAmount}>₹{balance.toLocaleString()}</h2>
+
+          <p style={{ fontSize: 12, color: '#cbd5e1', marginBottom: 10, fontWeight: 600 }}>
+            ⚡ Instant 1-Click Top Up:
+          </p>
+          <div className={styles.quickTopupRow}>
+            {[100, 250, 500, 1000].map((amt) => (
+              <button
+                key={amt}
+                type="button"
+                className={styles.topupChip}
+                onClick={() => handleAddMoney(amt)}
+              >
+                +₹{amt}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.walletActions}>
+            <button type="button" className={styles.addMoneyBtn} onClick={handlePromptAddMoney}>
+              <Plus size={18} /> Add Custom Money
+            </button>
+          </div>
+        </div>
+
+        {/* Transaction History */}
+        <div className={styles.historyCard}>
+          <h3 className={styles.historyTitle}>Recent Activity</h3>
+          <div className={styles.txnList}>
+            {transactions.map((tx) => (
+              <div key={tx.id} className={styles.txnRow}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: tx.type === 'credit' ? '#dcfce7' : '#fee2e2',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: tx.type === 'credit' ? '#15803d' : '#b91c1c',
+                    }}
+                  >
+                    {tx.type === 'credit' ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
+                  </div>
+                  <div>
+                    <h4 className={styles.txnTitle}>{tx.description}</h4>
+                    <p className={styles.txnDate}>{tx.date}</p>
+                  </div>
+                </div>
+
+                <span className={tx.type === 'credit' ? styles.txnCredit : styles.txnDebit}>
+                  {tx.type === 'credit' ? '+' : '-'}₹{tx.amount}
+                </span>
               </div>
-              <span style={{
-                fontWeight: 'bold',
-                color: txn.type === 'credit' ? DESIGN_TOKENS.colors.success : DESIGN_TOKENS.colors.danger,
-              }}>
-                {txn.type === 'credit' ? '+' : '-'}&#8377;{txn.amount}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Bottom nav */}
-      <nav style={bottomNavStyle}>
+      {/* Bottom Nav */}
+      <nav className={styles.bottomNav}>
         {[
           { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
           { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
-          { key: 'wallet', label: 'Wallet', Icon: WalletIcon, path: '/wallet' },
-          { key: 'account', label: 'Account', Icon: ProfileIcon, path: '/profile' },
+          { key: 'orders', label: 'Orders', Icon: OrderIcon, path: '/history' },
+          { key: 'account', label: 'Profile', Icon: ProfileIcon, path: '/profile' },
         ].map((tab) => {
           const Icon = tab.Icon;
-          const isActive = activeTab === tab.key;
+          const isActive = tab.key === 'account';
           return (
             <button
-              type="button"
               key={tab.key}
-              onClick={() => tab.path && router.push(tab.path)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tab.path && router.push(tab.path); } }}
-              style={{ ...navButtonStyle, color: isActive ? DESIGN_TOKENS.colors.primary : '#999' }}
+              type="button"
+              className={`${styles.navButton} ${isActive ? styles.navActive : styles.navInactive}`}
+              onClick={() => router.push(tab.path)}
             >
-              <Icon size={20} color={isActive ? DESIGN_TOKENS.colors.primary : '#999'} />
+              <Icon size={22} color={isActive ? '#ff5a1f' : '#64748b'} />
               <span>{tab.label}</span>
             </button>
           );
@@ -118,6 +148,4 @@ const WalletPage = () => {
       </nav>
     </div>
   );
-};
-
-export default WalletPage;
+}

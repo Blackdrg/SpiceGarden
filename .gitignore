@@ -45,3 +45,8 @@ coverage/
 
 # Expo
 .expo/
+
+# Terraform
+.terraform/
+*.terraform*
+*.exe

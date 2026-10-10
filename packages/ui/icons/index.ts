@@ -64,4 +64,5 @@ export {
   FileTextIcon,
   VolumeIcon,
   VolumeMuteIcon,
+  ProfileIcon as UserIcon,
 };

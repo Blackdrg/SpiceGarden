@@ -1,0 +1,29 @@
+{
+  "unit": "milliseconds",
+  "tiers": {
+    "local_clean_500vu": {
+      "p50": 42.10,
+      "p90": 210.40,
+      "p95": 351.70,
+      "p99": 482.10,
+      "p99_9": 684.00,
+      "sla_tier_1_verdict": "PASS"
+    },
+    "local_stress_22k_vu": {
+      "p50": 145.00,
+      "p90": 680.00,
+      "p95": 920.00,
+      "p99": 1450.00,
+      "p99_9": 2100.00,
+      "sla_tier_1_verdict": "FAIL (Stress Rig Saturation)"
+    },
+    "cloud_500k_target_model": {
+      "p50": 35.00,
+      "p90": 120.00,
+      "p95": 220.00,
+      "p99": 450.00,
+      "p99_9": 850.00,
+      "sla_tier_1_verdict": "MODEL_ONLY"
+    }
+  }
+}

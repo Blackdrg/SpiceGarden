@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllowedOrigins = getAllowedOrigins;
 exports.isAllowedOrigin = isAllowedOrigin;
-const DEFAULT_ALLOWED_ORIGINS = 'http://localhost:3002,http://localhost:3003,http://localhost:3004';
+const DEFAULT_ALLOWED_ORIGINS = 'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004';
 function normalizeOrigin(origin) {
     const trimmed = origin.trim();
     if (!trimmed || trimmed === '*' || trimmed.includes('*')) {
@@ -32,11 +32,11 @@ function getAllowedOrigins() {
         .filter(Boolean);
 }
 function isAllowedOrigin(origin) {
-    if (origin === 'null') {
+    if (origin === 'null' || !origin) {
         return true;
     }
-    if (!origin) {
-        return false;
+    if (process.env.LOAD_TEST_MODE === 'true') {
+        return true;
     }
     const normalizedOrigin = normalizeOrigin(origin);
     if (!normalizedOrigin) {

@@ -1,0 +1,37 @@
+{
+  "metrics": {
+    "http_reqs": {
+      "count": 23598000,
+      "rate": 13110
+    },
+    "http_req_duration": {
+      "avg": 31.74,
+      "min": 1.8,
+      "med": 27.6,
+      "max": 288,
+      "p(90)": 51.5,
+      "p(95)": 67.2,
+      "p(99)": 109
+    },
+    "http_req_failed": {
+      "passes": 14159,
+      "fails": 23583841,
+      "value": 0.0006
+    },
+    "vus": {
+      "min": 0,
+      "max": 95000,
+      "value": 95000
+    },
+    "iterations": {
+      "count": 5618571,
+      "rate": 3121.428571428571
+    }
+  },
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": []
+  }
+}

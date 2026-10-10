@@ -1,0 +1,32 @@
+[
+  {
+    "profile": "Ideal Network",
+    "baseLatencyMs": 0.5,
+    "jitterMs": 0.1,
+    "packetLossPct": 0,
+    "connCostMs": 0.2,
+    "p95At1M": 32.5,
+    "p99At1M": 62,
+    "status": "PASS"
+  },
+  {
+    "profile": "Normal Cloud VPC",
+    "baseLatencyMs": 2,
+    "jitterMs": 0.8,
+    "packetLossPct": 0.01,
+    "connCostMs": 1.2,
+    "p95At1M": 37.56,
+    "p99At1M": 70.25,
+    "status": "PASS"
+  },
+  {
+    "profile": "Degraded Cross-Region / WAN",
+    "baseLatencyMs": 25,
+    "jitterMs": 8.5,
+    "packetLossPct": 0.5,
+    "connCostMs": 15,
+    "p95At1M": 145,
+    "p99At1M": 290,
+    "status": "LATENCY_PENALTY_BOUNDED"
+  }
+]

@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PaymentGateway } from '../src/services/payments/gateways/payment-gateway.interface';
 import { StripeGateway } from '../src/services/payments/gateways/stripe-gateway.service';
 import { RazorpayGateway } from '../src/services/payments/gateways/razorpay-gateway.service';
+import { CashOnDeliveryGateway } from '../src/services/payments/gateways/cod-gateway.service';
 
 const createMockGateway = (name: string): jest.Mocked<PaymentGateway> => ({
   getGatewayName: jest.fn(() => name),
@@ -28,6 +29,7 @@ async function createFactoryModule(primaryGateway: string): Promise<{ module: Te
       { provide: ConfigService, useValue: configService },
       { provide: StripeGateway, useValue: createMockGateway('stripe') },
       { provide: RazorpayGateway, useValue: createMockGateway('razorpay') },
+      { provide: CashOnDeliveryGateway, useValue: createMockGateway('cod') },
     ],
   }).compile();
 
@@ -109,6 +111,7 @@ describe('PaymentGatewayFactory', () => {
 
     expect(gateways).toContain('stripe');
     expect(gateways).toContain('razorpay');
-    expect(gateways.length).toBe(2);
+    expect(gateways).toContain('cod');
+    expect(gateways.length).toBe(3);
   });
 });

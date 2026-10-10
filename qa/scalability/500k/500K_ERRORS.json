@@ -1,0 +1,25 @@
+{
+  "summary": {
+    "local_clean_run_500vu": {
+      "total_requests": 383589,
+      "http_2xx": 383589,
+      "http_4xx": 0,
+      "http_5xx": 0,
+      "error_rate": 0.0000,
+      "sla_compliance": "PASS"
+    },
+    "local_stress_run_22k_vu": {
+      "total_requests": 645000,
+      "http_2xx": 576630,
+      "http_4xx": 0,
+      "http_5xx_and_resets": 68370,
+      "error_rate": 0.1060,
+      "primary_error_type": "WSAENOBUFS (10055) / ECONNRESET",
+      "sla_compliance": "FAIL (Host Kernel Saturation)"
+    },
+    "cloud_500k_target": {
+      "status": "BLOCKED_EXTERNAL",
+      "error_budget_threshold": 0.0010
+    }
+  }
+}

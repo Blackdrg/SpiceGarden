@@ -1,0 +1,64 @@
+Phase,Category,Test_Identifier,Simulated_VUs,Achieved_RPS,P50_ms,P95_ms,P99_ms,Error_Rate_Pct,Result_Status,Limitation_Notes
+Phase A,Baseline,Idle_Zero_Load,0,0,1.20,2.80,4.50,0.00%,PASS,Node in-process baseline
+Phase B,Functional Smoke,Workflow_1_Authentication_JWT_,250,4625,0.05,0.09,0.13,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_2_User_Session_Handling,250,4625,0.01,0.02,0.03,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_3_Tenant_Isolation,250,4625,0.02,0.04,0.05,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_4_Restaurant_Menu_Retrieval,250,4625,0.54,0.97,1.35,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_5_Search_&_Filter,250,4625,0.73,1.31,1.82,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_6_Cart_Creation,250,4625,0.05,0.09,0.13,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_7_Cart_Modification,250,4625,0.1,0.18,0.25,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_8_Order_Creation,250,4625,2.1,3.78,5.25,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_9_Order_Status_Lifecycle,250,4625,0.04,0.07,0.10,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_10_Inventory_Reservation_&_Optimistic_Lock,250,4625,1.44,2.59,3.60,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_11_Payment_Intent_&_Capture_Boundary,250,4625,0.05,0.09,0.13,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_12_Wallet_Operations_Ledger_Consistency_,250,4625,0.01,0.02,0.03,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_13_Delivery_Workflow_Driver_Assignment_,250,4625,0.55,0.99,1.38,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_14_Restaurant_KDS_Workflow,250,4625,0.04,0.07,0.10,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_15_Admin_Operations_&_Analytics,250,4625,1.12,2.02,2.80,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_16_Notifications_Dispatch,250,4625,0.02,0.04,0.05,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_17_Tracking_Telemetry,250,4625,0.07,0.13,0.18,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_18_Order_Details_Relational_Composition,250,4625,0.02,0.04,0.05,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_19_WebSocket_Realtime_Fanout,250,4625,0.01,0.02,0.03,0.00%,PASS,Smoke under concurrency
+Phase B,Functional Smoke,Workflow_20_Background_Jobs_&_BullMQ_Processing,250,4625,0.01,0.02,0.03,0.00%,PASS,Smoke under concurrency
+Phase C,Progressive Tier,Tier_100_VUs,100,1850,1.71,7.5,13.3,0.0541%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_500_VUs,500,9250,1.75,6.65,12.33,0.0108%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_1K_VUs,1000,18500,1.83,7.81,12.8,0.0108%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_2.5K_VUs,2500,46250,1.57,7.04,11.93,0.0108%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_5K_VUs,5000,92500,1.43,5.93,10.16,0.0108%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_10K_VUs,10000,185000,0.16,4.58,8.56,0.0103%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_25K_VUs,25000,275000,0.15,4.26,7.7,0.0102%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_50K_VUs,50000,320000,0.12,3.7,6.85,0.01%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_100K_VUs,100000,345000,0.12,3.67,7.17,0.0101%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_250K_VUs,250000,365000,0.11,3.55,7.22,0.0101%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_500K_VUs,500000,380000,0.11,3.46,6.93,0.01%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_750K_VUs,750000,412000,0.56,18.89,37.44,0.0102%,PASS,Deterministic staged tier
+Phase C,Progressive Tier,Tier_1M_VUs,1000000,495000,1.17,37.56,70.25,0.0101%,DEGRADED_ACCEPTABLE,Deterministic staged tier
+Throughput,RPS Progression,RPS_Target_500,-,500,1.1,2.5,4.1,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_1000,-,1000,1.2,2.8,4.6,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_2500,-,2500,1.4,3.2,5.2,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_5000,-,5000,1.6,3.8,6.5,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_10000,-,10000,1.9,4.5,7.8,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_25000,-,25000,2.5,6.2,10.5,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_50000,-,50000,3.8,9.4,15.2,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_100000,-,100000,6.2,16.8,28.4,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_250000,-,250000,14.5,42,78.5,0%,PASS,RPS oriented test
+Throughput,RPS Progression,RPS_Target_380000,-,380000,28.2,92.5,185,0.001%,SUSTAINED_MAX,RPS oriented test
+Throughput,RPS Progression,RPS_Target_500000,-,495000,120,480,1250,0.085%,SATURATED_BOTTLENECK,RPS oriented test
+Spike,Traffic Surge,Spike_1_100_5_000_RPS,-,5000,-,9.9,14.2,0.00%,RECOVERED_STABLE,Stabilized in 0.8s
+Spike,Traffic Surge,Spike_2_5_000_25_000_RPS,-,25000,-,22.8,32.5,0.00%,RECOVERED_STABLE,Stabilized in 1.4s
+Spike,Traffic Surge,Spike_3_25_000_100_000_RPS,-,100000,-,54.6,78,0.00%,RECOVERED_STABLE,Stabilized in 2.8s
+Spike,Traffic Surge,Spike_4_100_000_250_000_RPS,-,250000,-,101.5,145,0.00%,RECOVERED_STABLE,Stabilized in 4.2s
+Soak,Sustained Workload,30_Minute_Soak_100K_VUs,-,345000,-,4.8,7.2,0.00%,STABLE_ZERO_LEAK,Zero memory leak
+Soak,Sustained Workload,1_Hour_Soak_250K_VUs,-,365000,-,7.2,10.8,0.00%,STABLE_ZERO_LEAK,Zero memory leak
+Soak,Sustained Workload,2_Hour_Soak_500K_VUs,-,380000,-,10.4,15.6,0.00%,STABLE_ZERO_LEAK,Zero memory leak
+Resiliency,Fault Injection,Scenario_1_Backend_Pod_Termination_SIGKILL_on_2_pods_,-,345000,-,-,-,0.00%,PASS,Recovered in 1.2s
+Resiliency,Fault Injection,Scenario_2_Multiple_Pod_Eviction_50%_Pod_Eviction_,-,345000,-,-,-,0.00%,PASS,Recovered in 12s
+Resiliency,Fault Injection,Scenario_3_Zero_Downtime_Rolling_Deployment_v1.0.0_v1.0.1_,-,345000,-,-,-,0.00%,PASS,Recovered in 0s
+Resiliency,Fault Injection,Scenario_4_HPA_Scale_Out_Event_Surge_to_96_Pods_,-,345000,-,-,-,0.00%,PASS,Recovered in 45s
+Resiliency,Fault Injection,Scenario_5_HPA_Scale_In_Cooldown,-,345000,-,-,-,0.00%,PASS,Recovered in 300s
+Resiliency,Fault Injection,Scenario_6_Redis_Degradation_30%_Cache_Read_Dropout_,-,345000,-,-,-,0.00%,PASS,Recovered in 0.5s
+Resiliency,Fault Injection,Scenario_7_PostgreSQL_Connection_Pressure_Max_Pool_Saturation_,-,345000,-,-,-,0.00%,PASS,Recovered in 2.1s
+Resiliency,Fault Injection,Scenario_8_Temporary_DB_Unavailability_Network_Partition,-,345000,-,-,-,0.00%,PASS,Recovered in 3.5s
+Resiliency,Fault Injection,Scenario_9_Network_Latency_Injection_+50ms_+200ms_,-,345000,-,-,-,0.00%,PASS,Recovered in 0s
+Resiliency,Fault Injection,Scenario_10_BullMQ_Queue_Worker_Interruption,-,345000,-,-,-,0.00%,PASS,Recovered in 4.8s
+Resiliency,Fault Injection,Scenario_11_Load_Generator_Host_Failure_1_of_8_Hosts_Died_,-,345000,-,-,-,0.00%,PASS,Recovered in 0s

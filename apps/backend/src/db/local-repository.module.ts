@@ -25,13 +25,15 @@ function createRepository(entity: any) {
       offset: function () { return this; },
       leftJoinAndSelect: function () { return this; },
       innerJoinAndSelect: function () { return this; },
-      setParameters: function () { return this; },
       getMany: async () => rows,
       getOne: async () => rows[0] || null,
+      getRawOne: async () => null,
+      getRawMany: async () => [],
       getManyAndCount: async () => [rows, rows.length],
       getCount: async () => rows.length,
       delete: async () => ({ affected: rows.length }),
       update: async () => ({ affected: rows.length }),
+      execute: async () => ({ affected: rows.length }),
     }),
     find: async () => rows,
     findBy: async () => rows,
@@ -157,23 +159,59 @@ const repositoryDefinitions = [
   require('../db/entities/payment-method.entity').PaymentMethodEntity,
 ];
 
+import { getDataSourceToken, getConnectionToken } from '@nestjs/typeorm';
+
+const mockDataSource = {
+  isInitialized: true,
+  entityMetadatas: [],
+  options: { type: 'postgres' },
+  initialize: async () => undefined,
+  destroy: async () => undefined,
+  getRepository: (entity: any) => createRepository(entity),
+  getTreeRepository: (entity: any) => createRepository(entity),
+  getMongoRepository: (entity: any) => createRepository(entity),
+  createQueryRunner: () => ({
+    connect: async () => undefined,
+    startTransaction: async () => undefined,
+    commitTransaction: async () => undefined,
+    rollbackTransaction: async () => undefined,
+    release: async () => undefined,
+    manager: {
+      save: async (entity: any, data?: any) => data || entity,
+      findOne: async () => null,
+      find: async () => [],
+    },
+  }),
+  createQuery: () => ({ getRawMany: async () => [], getRawOne: async () => null }),
+  transaction: async (_: any, work?: any) => (work || _)(undefined),
+};
+
 @Global()
 @Module({
   providers: [
     {
       provide: DATA_SOURCE_TOKEN,
-      useValue: {
-        isInitialized: true,
-        initialize: async () => undefined,
-        destroy: async () => undefined,
-        getRepository: (entity: any) => createRepository(entity),
-        createQuery: () => ({ getRawMany: async () => [], getRawOne: async () => null }),
-        transaction: async (_: any, work?: any) => (work || _)(undefined),
-      },
+      useValue: mockDataSource,
     },
     {
       provide: DataSource,
-      useExisting: DATA_SOURCE_TOKEN,
+      useValue: mockDataSource,
+    },
+    {
+      provide: getDataSourceToken(),
+      useValue: mockDataSource,
+    },
+    {
+      provide: getDataSourceToken('default'),
+      useValue: mockDataSource,
+    },
+    {
+      provide: getConnectionToken(),
+      useValue: mockDataSource,
+    },
+    {
+      provide: getConnectionToken('default'),
+      useValue: mockDataSource,
     },
     ...repositoryDefinitions.flatMap((entity) => [
       {
@@ -182,6 +220,15 @@ const repositoryDefinitions = [
       },
     ]),
   ],
-  exports: [DataSource, DATA_SOURCE_TOKEN, ...repositoryDefinitions.map((entity) => getRepositoryToken(entity))],
+  exports: [
+    DataSource,
+    DATA_SOURCE_TOKEN,
+    getDataSourceToken(),
+    getDataSourceToken('default'),
+    getConnectionToken(),
+    getConnectionToken('default'),
+    ...repositoryDefinitions.map((entity) => getRepositoryToken(entity)),
+  ],
 })
 export class LocalRepositoryModule {}
+

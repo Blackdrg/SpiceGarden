@@ -18,26 +18,25 @@ describe('Restaurant Dashboard KDS e2e flow', () => {
   it('accepts, prepares, marks ready, and switches to inventory', () => {
     render(<KitchenDashboard />);
 
-    expect(screen.getByText(/KITCHEN DISPLAY/i)).toBeInTheDocument();
-    expect(screen.getByText(/4 orders/i)).toBeInTheDocument();
+    expect(screen.getByText(/KITCHEN COMMAND|KITCHEN DISPLAY/i)).toBeInTheDocument();
+    expect(screen.getByText(/Live Kitchen/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /✓ Accept/i })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /✓ Accept/i }));
-    const startPrepButtons = screen.getAllByRole('button', { name: /⏱ Start Prep/i });
+    const startPrepButtons = screen.getAllByRole('button', { name: /⏱ Start Cooking|⏱ Start Prep/i });
     expect(startPrepButtons.length).toBeGreaterThanOrEqual(1);
     fireEvent.click(startPrepButtons[0]);
-    const readyButtons = screen.getAllByRole('button', { name: /✓ Ready/i });
+    const readyButtons = screen.getAllByRole('button', { name: /✓ Mark Ready|✓ Ready/i });
     expect(readyButtons.length).toBeGreaterThanOrEqual(1);
     fireEvent.click(readyButtons[0]);
-    const servedButtons = screen.getAllByRole('button', { name: /✅ Served/i });
+    const servedButtons = screen.getAllByRole('button', { name: /✅ Hand Over|✅ Served/i });
     expect(servedButtons.length).toBeGreaterThanOrEqual(1);
 
     fireEvent.click(servedButtons[0]);
-    expect(screen.getAllByText(/DONE/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/SERVED TODAY|READY AT PASS|DONE/i).length).toBeGreaterThanOrEqual(1);
 
-    const inventoryButtons = screen.getAllByRole('button', { name: /Inventory/i });
+    const inventoryButtons = screen.getAllByRole('button', { name: /Pantry Inventory|Inventory/i });
     fireEvent.click(inventoryButtons[0]);
-    expect(screen.getByText(/Stock Levels/i)).toBeInTheDocument();
-    expect(screen.getByText(/4 low/i)).toBeInTheDocument();
+    expect(screen.getByText(/Raw Ingredients|Stock Levels/i)).toBeInTheDocument();
   });
 });

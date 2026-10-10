@@ -136,9 +136,20 @@ const entities = [
   PaymentMethodEntity,
 ];
 
+const useMockMongo = process.env.LOCAL_DB === 'sqlite' || process.env.DISABLE_MONGO === 'true';
+
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature(entities), MongooseModule.forFeature([{ name: ReviewDocument.name, schema: ReviewSchema }])],
-  exports: [TypeOrmModule, MongooseModule],
+  imports: [
+    TypeOrmModule.forFeature(entities),
+    ...(useMockMongo
+      ? []
+      : [
+          MongooseModule.forFeature([
+            { name: ReviewDocument.name, schema: ReviewSchema },
+          ]),
+        ]),
+  ],    
+  exports: [TypeOrmModule, ...(useMockMongo ? [] : [MongooseModule])],
 })
 export class DbRepositoriesModule {}

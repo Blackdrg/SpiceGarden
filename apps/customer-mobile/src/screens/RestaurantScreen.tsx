@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Animated, Easing } from 'react-native';
+import { DESIGN_TOKENS } from '@spicegarden/ui';
 
 interface RestaurantInfo {
   id: string;
@@ -34,29 +35,28 @@ const RestaurantScreen = () => {
    useEffect(() => {
      const loadData = async () => {
        try {
-         // Removed fake API delay - directly set data
-         
          const restaurants: Record<string, RestaurantInfo> = {
-           'rest-001': { id: 'rest-001', name: 'Burger King', rating: 4.2, deliveryTime: '25-30 min', address: 'Phase 5, Mohali' },
-           'rest-002': { id: 'rest-002', name: 'Pizza Hut', rating: 4.5, deliveryTime: '30-35 min', address: 'Phase 7, Mohali' },
-           'rest-003': { id: 'rest-003', name: 'Subway', rating: 4.0, deliveryTime: '15-20 min', address: 'Sector 17, Chandigarh' },
+           'rest-001': { id: 'rest-001', name: 'SpiceGarden Signature Kitchen', rating: 4.9, deliveryTime: '20-25 min', address: 'Plot 12, Sector 17, Chandigarh' },
+           'rest-002': { id: 'rest-002', name: 'Punjab Grill & Curry House', rating: 4.8, deliveryTime: '25-30 min', address: 'Phase 7, Mohali' },
+           'rest-003': { id: 'rest-003', name: 'Artisan Woodfired Pizzeria', rating: 4.8, deliveryTime: '20-25 min', address: 'Sector 35, Chandigarh' },
          };
          
-         setRestaurant(restaurants[restaurantId!] || null);
+         setRestaurant(restaurants[restaurantId!] || restaurants['rest-001']);
          
          let items: MenuItem[] = [];
-         if (restaurantId === 'rest-001') {
+         if (restaurantId === 'rest-002') {
            items = [
-             { id: 'item-001', name: 'Whopper', description: 'Flame-grilled beef patty with fresh lettude', price: 149, category: 'burgers', image: 'https://example.com/whopper.jpg' },
-             { id: 'item-002', name: 'Double Whopper', description: 'Two flame-grilled beef patties', price: 199, category: 'burgers', image: 'https://example.com/double-whopper.jpg' },
+             { id: 'item-007', name: 'Mughlai Butter Chicken Boneless', description: 'Tender chicken tikka simmered in creamy makhani gravy', price: 290, category: 'Curries', image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&auto=format&fit=crop&q=80' },
+             { id: 'item-008', name: 'Dal Makhani Slow-Simmered', description: 'Overnight black lentils with fresh churned butter', price: 220, category: 'Curries', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&auto=format&fit=crop&q=80' },
            ];
-         } else if (restaurantId === 'rest-002') {
+         } else if (restaurantId === 'rest-003') {
            items = [
-             { id: 'item-007', name: 'Margherita Pizza', description: 'Fresh mozzarella & tomatoes', price: 299, category: 'pizza', image: 'https://example.com/margherita.jpg' },
+             { id: 'item-013', name: 'Artisan Burrata Truffle Pizza', description: 'Sourdough crust, fresh burrata, San Marzano tomatoes, truffle glaze', price: 499, category: 'Pizza', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80' },
            ];
          } else {
            items = [
-             { id: 'item-013', name: 'Chicken Teriyaki', description: 'Grilled chicken with teriyaki sauce', price: 249, category: 'sandwiches', image: 'https://example.com/chicken-teriyaki.jpg' },
+             { id: 'item-001', name: 'Special Handi Chicken Biryani', description: 'Slow-cooked in clay pot with aged basmati rice, saffron & spiced chicken', price: 320, category: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80' },
+             { id: 'item-002', name: 'Garlic Butter Naan (Clay Oven)', description: 'Traditional clay-tandoor baked soft flatbread with roasted garlic', price: 65, category: 'Breads', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&auto=format&fit=crop&q=80' },
            ];
          }
          
@@ -86,7 +86,7 @@ const RestaurantScreen = () => {
     if (loading) {
       return (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#f97316" />
+          <ActivityIndicator size="large" color={DESIGN_TOKENS.colors.primary} />
           <Text style={styles.loadingText}>Loading menu...</Text>
         </View>
       );
@@ -133,17 +133,17 @@ const RestaurantScreen = () => {
 export default RestaurantScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#121212' },
+  container: { flex: 1, backgroundColor: DESIGN_TOKENS.colors.background },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { color: '#888', marginTop: 12 },
-  errorText: { color: '#ff4444' },
-  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#333' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  subtitle: { color: '#888', marginTop: 4 },
+  loadingText: { color: DESIGN_TOKENS.colors.textSecondary, marginTop: 12 },
+  errorText: { color: DESIGN_TOKENS.colors.danger },
+  header: { padding: 16, backgroundColor: DESIGN_TOKENS.colors.surface, borderBottomWidth: 1, borderBottomColor: DESIGN_TOKENS.colors.border },
+  title: { fontSize: 24, fontWeight: 'bold', color: DESIGN_TOKENS.colors.textPrimary },
+  subtitle: { color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4 },
   menuContainer: { padding: 16 },
-  menuItem: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#333' },
-  itemName: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  itemDescription: { color: '#888', marginTop: 4 },
-  itemPrice: { color: '#f97316', marginTop: 8, fontWeight: 'bold' },
-  addedIndicator: { color: '#4caf50', marginTop: 8 },
+  menuItem: { padding: 16, backgroundColor: DESIGN_TOKENS.colors.surface, borderRadius: DESIGN_TOKENS.radius.md, borderWidth: 1, borderColor: DESIGN_TOKENS.colors.border, marginBottom: 12 },
+  itemName: { fontSize: 16, fontWeight: 'bold', color: DESIGN_TOKENS.colors.textPrimary },
+  itemDescription: { color: DESIGN_TOKENS.colors.textSecondary, marginTop: 4 },
+  itemPrice: { color: DESIGN_TOKENS.colors.primary, marginTop: 8, fontWeight: 'bold' },
+  addedIndicator: { color: DESIGN_TOKENS.colors.success, marginTop: 8, fontWeight: '600' },
 });

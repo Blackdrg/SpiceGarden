@@ -1,0 +1,22 @@
+{
+  "bullmq_queues": {
+    "order_processing": {
+      "waiting_jobs": 120,
+      "active_jobs": 450,
+      "failed_jobs": 0,
+      "processing_latency_p95_ms": 45.0
+    },
+    "driver_dispatch": {
+      "waiting_jobs": 45,
+      "active_jobs": 280,
+      "failed_jobs": 0,
+      "processing_latency_p95_ms": 32.0
+    },
+    "notification_delivery": {
+      "waiting_jobs": 310,
+      "active_jobs": 600,
+      "failed_jobs": 0,
+      "processing_latency_p95_ms": 58.0
+    }
+  }
+}

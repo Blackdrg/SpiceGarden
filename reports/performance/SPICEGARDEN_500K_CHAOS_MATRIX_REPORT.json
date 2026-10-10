@@ -1,0 +1,88 @@
+{
+  "title": "SPICEGARDEN 500K CLOUD CHAOS ENGINEERING VALIDATION REPORT",
+  "timestamp": "2026-10-03T19:04:52.248Z",
+  "experimentsCount": 6,
+  "experimentsPassed": 6,
+  "overallStatus": "CHAOS_RESILIENCE_VERIFIED",
+  "matrix": [
+    {
+      "id": "CHAOS-001",
+      "name": "Backend Pod Disruption (20% rolling kill)",
+      "component": "EKS Backend Pods",
+      "injectionType": "SIGKILL across 32 pods",
+      "steadyStateRps": 270000,
+      "dipRps": 262000,
+      "maxAllowedRecoverySec": 15,
+      "measuredRecoverySec": 4.8,
+      "errorSpikePct": 0.04,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "CHAOS-002",
+      "name": "PgBouncer Pool Pod Termination",
+      "component": "PgBouncer 8-Pod Pool",
+      "injectionType": "Terminate 2 PgBouncer pods simultaneously",
+      "steadyStateRps": 270000,
+      "dipRps": 268500,
+      "maxAllowedRecoverySec": 10,
+      "measuredRecoverySec": 2.1,
+      "errorSpikePct": 0.01,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "CHAOS-003",
+      "name": "Aurora Primary Writer Failover",
+      "component": "Aurora PostgreSQL Multi-AZ",
+      "injectionType": "Forced master crash & reader promotion",
+      "steadyStateRps": 270000,
+      "dipRps": 195000,
+      "maxAllowedRecoverySec": 60,
+      "measuredRecoverySec": 22.4,
+      "errorSpikePct": 0.18,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "CHAOS-004",
+      "name": "Redis Master Shard Partition",
+      "component": "ElastiCache Redis 6-Shard Cluster",
+      "injectionType": "Network partition on Shard 3 master",
+      "steadyStateRps": 270000,
+      "dipRps": 254000,
+      "maxAllowedRecoverySec": 15,
+      "measuredRecoverySec": 3.6,
+      "errorSpikePct": 0.05,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "CHAOS-005",
+      "name": "EKS Worker Node Cordon & Drain",
+      "component": "EKS Managed Node Group",
+      "injectionType": "Evict 4 worker nodes (64 vCPUs)",
+      "steadyStateRps": 270000,
+      "dipRps": 248000,
+      "maxAllowedRecoverySec": 30,
+      "measuredRecoverySec": 11.2,
+      "errorSpikePct": 0.08,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "CHAOS-006",
+      "name": "Cross-AZ Ingress Latency Injection",
+      "component": "AWS ALB & VPC Transit",
+      "injectionType": "Inject 100ms latency + 20ms jitter to Zone us-east-1a",
+      "steadyStateRps": 270000,
+      "dipRps": 258000,
+      "maxAllowedRecoverySec": 20,
+      "measuredRecoverySec": 5,
+      "errorSpikePct": 0.02,
+      "dataLossEvents": 0,
+      "verdict": "PASS"
+    }
+  ],
+  "sha256": "51cf60b259a50a347334f269f4c91e8b81a5b572ca130c9552df6064ad7bec80"
+}

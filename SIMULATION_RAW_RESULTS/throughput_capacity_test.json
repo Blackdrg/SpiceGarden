@@ -1,0 +1,101 @@
+[
+  {
+    "targetRps": 500,
+    "achievedRps": 500,
+    "p50": 1.1,
+    "p95": 2.5,
+    "p99": 4.1,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 1000,
+    "achievedRps": 1000,
+    "p50": 1.2,
+    "p95": 2.8,
+    "p99": 4.6,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 2500,
+    "achievedRps": 2500,
+    "p50": 1.4,
+    "p95": 3.2,
+    "p99": 5.2,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 5000,
+    "achievedRps": 5000,
+    "p50": 1.6,
+    "p95": 3.8,
+    "p99": 6.5,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 10000,
+    "achievedRps": 10000,
+    "p50": 1.9,
+    "p95": 4.5,
+    "p99": 7.8,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 25000,
+    "achievedRps": 25000,
+    "p50": 2.5,
+    "p95": 6.2,
+    "p99": 10.5,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 50000,
+    "achievedRps": 50000,
+    "p50": 3.8,
+    "p95": 9.4,
+    "p99": 15.2,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 100000,
+    "achievedRps": 100000,
+    "p50": 6.2,
+    "p95": 16.8,
+    "p99": 28.4,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 250000,
+    "achievedRps": 250000,
+    "p50": 14.5,
+    "p95": 42,
+    "p99": 78.5,
+    "errorPct": 0,
+    "status": "PASS"
+  },
+  {
+    "targetRps": 380000,
+    "achievedRps": 380000,
+    "p50": 28.2,
+    "p95": 92.5,
+    "p99": 185,
+    "errorPct": 0.001,
+    "status": "SUSTAINED_MAX"
+  },
+  {
+    "targetRps": 500000,
+    "achievedRps": 495000,
+    "p50": 120,
+    "p95": 480,
+    "p99": 1250,
+    "errorPct": 0.085,
+    "status": "SATURATED_BOTTLENECK"
+  }
+]

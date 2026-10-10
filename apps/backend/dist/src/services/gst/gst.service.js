@@ -49,6 +49,7 @@ let GSTService = GSTService_1 = class GSTService {
                 where: { id: orderId },
                 relations: {
                     items: {
+                        hsnSac: true,
                         menuItem: {
                             hsnSac: true
                         }
@@ -73,13 +74,13 @@ let GSTService = GSTService_1 = class GSTService {
             let totalCGST = 0;
             let totalSGST = 0;
             let totalIGST = 0;
-            for (const item of order.items) {
-                const itemTotal = item.unitPrice * item.quantity;
+            for (const item of (order.items || [])) {
+                const itemTotal = (item.unitPrice || 0) * (item.quantity || 1);
                 totalTaxableValue += itemTotal;
                 let cgstRate = 0;
                 let sgstRate = 0;
                 let igstRate = 0;
-                const gstRate = item.hsnSac?.gstRate || 18;
+                const gstRate = item.hsnSac?.gstRate || item.menuItem?.hsnSac?.gstRate || 18;
                 const isIntraState = true;
                 if (isIntraState) {
                     cgstRate = gstRate / 2;
@@ -118,23 +119,24 @@ let GSTService = GSTService_1 = class GSTService {
                     order: order,
                 });
             }
-            gstDetail.taxableValue = totalTaxableValue;
-            gstDetail.cgstRate = totalCGST > 0 ? (totalCGST / totalTaxableValue) * 100 : 0;
-            gstDetail.sgstRate = totalSGST > 0 ? (totalSGST / totalTaxableValue) * 100 : 0;
-            gstDetail.igstRate = totalIGST > 0 ? (totalIGST / totalTaxableValue) * 100 : 0;
-            gstDetail.cgstAmount = totalCGST;
-            gstDetail.sgstAmount = totalSGST;
-            gstDetail.igstAmount = totalIGST;
-            gstDetail.totalGstAmount = totalGstAmount;
-            gstDetail.totalAmount = totalAmount;
-            gstDetail.placeOfSupply = restaurantGST.stateCode;
-            gstDetail.reverseChargeApplicable = false;
+            const savedGstDetail = gstDetail;
+            savedGstDetail.taxableValue = totalTaxableValue;
+            savedGstDetail.cgstRate = totalTaxableValue > 0 && totalCGST > 0 ? (totalCGST / totalTaxableValue) * 100 : 0;
+            savedGstDetail.sgstRate = totalTaxableValue > 0 && totalSGST > 0 ? (totalSGST / totalTaxableValue) * 100 : 0;
+            savedGstDetail.igstRate = totalTaxableValue > 0 && totalIGST > 0 ? (totalIGST / totalTaxableValue) * 100 : 0;
+            savedGstDetail.cgstAmount = totalCGST;
+            savedGstDetail.sgstAmount = totalSGST;
+            savedGstDetail.igstAmount = totalIGST;
+            savedGstDetail.totalGstAmount = totalGstAmount;
+            savedGstDetail.totalAmount = totalAmount;
+            savedGstDetail.placeOfSupply = restaurantGST.stateCode;
+            savedGstDetail.reverseChargeApplicable = false;
             order.tax = totalGstAmount;
             order.grandTotal = totalAmount;
-            await this.gstDetailRepo.save(gstDetail);
+            await this.gstDetailRepo.save(savedGstDetail);
             await this.orderRepo.save(order);
             this.logger.log(`GST calculated for order ${orderId}: Total GST = ${totalGstAmount}`);
-            return gstDetail;
+            return savedGstDetail;
         }
         catch (error) {
             this.logger.error(`Error calculating GST for order ${orderId}`, error);
@@ -204,22 +206,22 @@ let GSTService = GSTService_1 = class GSTService {
                     stateCode: 'XX',
                     state: 'State Name',
                 },
-                items: order.items.map(item => ({
-                    description: item.menuItem.name,
-                    hsnSacCode: item.hsnSac?.hsnCode || 'NOT_SPECIFIED',
-                    quantity: item.quantity,
-                    unit: item.menuItem.name.includes('kg') || item.menuItem.name.includes('liter') || item.menuItem.name.includes('ltr') ? 'kg/ltr' : 'pcs',
-                    unitPrice: item.unitPrice,
-                    totalPrice: item.totalPrice,
-                    gstRate: item.cgstRate + item.sgstRate + item.igstRate,
-                    cgstRate: item.cgstRate,
-                    sgstRate: item.sgstRate,
-                    igstRate: item.igstRate,
-                    cgstAmount: item.cgstAmount,
-                    sgstAmount: item.sgstAmount,
-                    igstAmount: item.igstAmount,
-                    totalTax: item.totalTax,
-                    totalAmount: item.totalAmount,
+                items: (order.items || []).map(item => ({
+                    description: item.menuItem?.name || 'Item',
+                    hsnSacCode: item.hsnSac?.hsnCode || item.menuItem?.hsnSac?.hsnCode || 'NOT_SPECIFIED',
+                    quantity: item.quantity || 1,
+                    unit: ((item.menuItem?.name || '').includes('kg') || (item.menuItem?.name || '').includes('liter') || (item.menuItem?.name || '').includes('ltr')) ? 'kg/ltr' : 'pcs',
+                    unitPrice: item.unitPrice || 0,
+                    totalPrice: item.totalPrice || 0,
+                    gstRate: (item.cgstRate || 0) + (item.sgstRate || 0) + (item.igstRate || 0),
+                    cgstRate: item.cgstRate || 0,
+                    sgstRate: item.sgstRate || 0,
+                    igstRate: item.igstRate || 0,
+                    cgstAmount: item.cgstAmount || 0,
+                    sgstAmount: item.sgstAmount || 0,
+                    igstAmount: item.igstAmount || 0,
+                    totalTax: item.totalTax || 0,
+                    totalAmount: item.totalAmount || 0,
                 })),
                 taxSummary: {
                     taxableValue: gstDetail.taxableValue,

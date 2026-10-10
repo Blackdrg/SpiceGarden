@@ -10,6 +10,7 @@ import '../analytics';
 import { useAnalytics } from '../analytics';
 import { useMotion } from '../hooks/useMotion';
 import { useEffect, useState } from 'react';
+import '../styles/globals.css';
 import styles from './_app.module.css';
 
 const queryClient = new QueryClient();

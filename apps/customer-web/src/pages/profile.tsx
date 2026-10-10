@@ -1,293 +1,174 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
-import { Button, Card, ProfileIcon } from '@spicegarden/ui';
-import Image from 'next/image';
+import React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
-import { logout, setUser } from '../redux/slices/authSlice';
-import ProtectedRoute from '../components/ProtectedRoute';
-import { api } from '@spicegarden/shared/api';
+import { logout } from '../redux/slices/authSlice';
+import { HomeIcon, SearchIcon, OrderIcon, ProfileIcon } from '@spicegarden/ui';
+import { MapPin, CreditCard, Bell, Tag, LifeBuoy, ChevronRight, LogOut, ShieldCheck, Heart, User } from 'lucide-react';
 import styles from './profile.module.css';
 
-interface ProfileData {
-  fullName?: string;
-  email?: string;
-  phone?: string;
-  profileImage?: string | null;
-  emailVerified?: boolean;
-  phoneVerified?: boolean;
-  createdAt?: string;
-}
-
-interface ProfileState {
-  profileData: ProfileData | null;
-  loading: boolean;
-  error: string | null;
-  isEditing: boolean;
-  editFormData: {
-    fullName: string;
-    email: string;
-    phone: string;
-  };
-}
-
-const initialProfileState: ProfileState = {
-  profileData: null,
-  loading: true,
-  error: null,
-  isEditing: false,
-  editFormData: { fullName: '', email: '', phone: '' },
-};
-
-function profileReducer(state: ProfileState, action: { type: string; payload?: unknown }): ProfileState {
-  switch (action.type) {
-    case 'SET_PROFILE_DATA':
-      return { ...state, profileData: action.payload as ProfileData | null };
-    case 'SET_LOADING':
-      return { ...state, loading: action.payload as boolean };
-    case 'SET_ERROR':
-      return { ...state, error: action.payload as string | null };
-    case 'SET_IS_EDITING':
-      return { ...state, isEditing: action.payload as boolean };
-    case 'SET_EDIT_FORM_DATA':
-      return { ...state, editFormData: action.payload as { fullName: string; email: string; phone: string } };
-    default:
-      return state;
-  }
-}
-
-const ProfilePage = () => {
+export default function ProfilePage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const [state, dispatchState] = useReducer(profileReducer, initialProfileState);
-
-  const loadProfile = useCallback(async () => {
-    try {
-      dispatchState({ type: 'SET_LOADING', payload: true });
-      dispatchState({ type: 'SET_ERROR', payload: null });
-      
-      if (!user) {
-        dispatchState({ type: 'SET_PROFILE_DATA', payload: null });
-        dispatchState({ type: 'SET_LOADING', payload: false });
-        return;
-      }
-
-      dispatchState({ type: 'SET_PROFILE_DATA', payload: {
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        profileImage: user.profileImage || null,
-        emailVerified: user.emailVerified || false,
-        phoneVerified: user.phoneVerified || false,
-        createdAt: user.createdAt || new Date().toISOString(),
-      } });
-      dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: {
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-      } });
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-      dispatchState({ type: 'SET_ERROR', payload: 'Failed to load profile. Please try again later.' });
-    } finally {
-      dispatchState({ type: 'SET_LOADING', payload: false });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
-
-  const handleSaveProfile = async () => {
-    try {
-      dispatchState({ type: 'SET_LOADING', payload: true });
-      dispatchState({ type: 'SET_ERROR', payload: null });
-      dispatchState({ type: 'SET_PROFILE_DATA', payload: state.editFormData });
-      dispatchState({ type: 'SET_IS_EDITING', payload: false });
-    } catch (err) {
-      console.error('Failed to save profile:', err);
-      dispatchState({ type: 'SET_ERROR', payload: 'Failed to save profile. Please try again later.' });
-    } finally {
-      dispatchState({ type: 'SET_LOADING', payload: false });
-    }
+  const user = useSelector((state: RootState) => state.auth.user) || {
+    fullName: 'Arjun Mehta',
+    email: 'arjun.mehta@example.com',
+    phone: '+91 98765 43210',
   };
 
-  const handleLogout = async () => {
-    try {
-      await api('/auth/logout', { method: 'POST' });
-    } catch {
-      // proceed with logout even if API call fails
+  const handleLogout = () => {
+    if (confirm('Are you sure you want to sign out?')) {
+      dispatch(logout());
+      router.push('/auth');
     }
-    dispatch(logout());
-    router.push('/auth');
   };
-
-  if (state.loading && !state.profileData) {
-    return (
-      <div className={styles.loadingState}>
-        <p>Loading profile...</p>
-      </div>
-    );
-  }
 
   return (
-    <div className={styles.pageContainer}>
-      {state.error && (
-        <div className={styles.errorBanner}>
-          {state.error}
-        </div>
-      )}
-      <div className={styles.profileHeader}>
-        <div className={styles.avatar}>
-          {state.profileData?.profileImage ? (
-            <Image
-              src={state.profileData.profileImage}
-              alt="Profile"
-              width={80}
-              height={80}
-              className={styles.avatarImage}
-            />
-          ) : (
-            <ProfileIcon size={40} color="#888" />
-          )}
-        </div>
-        <h2 className={styles.profileName}>{state.isEditing ? state.editFormData.fullName : state.profileData?.fullName || 'User'}</h2>
-        <p className={styles.profileEmail}>{state.isEditing ? state.editFormData.email : state.profileData?.email || ''}</p>
-        <p className={styles.profilePhone}>{state.isEditing ? state.editFormData.phone : state.profileData?.phone || ''}</p>
+    <div className={styles.page}>
+      <Head>
+        <title>My Profile | SpiceGarden</title>
+      </Head>
 
-        {!state.isEditing && (
-          <div className={styles.editButtonWrapper}>
-            <Button
-              label="Edit Profile"
-              onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: true })}
-              variant="secondary"
-            />
+      <div className={styles.container}>
+        {/* Profile Card */}
+        <div className={styles.profileCard}>
+          <div className={styles.profileCardTop}>
+            <div className={styles.avatar}>
+              {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div>
+              <h1 className={styles.name}>{user.fullName || 'Foodie'}</h1>
+              <p className={styles.meta}>{user.email || 'user@spicegarden.com'}</p>
+              <p className={styles.meta}>{user.phone || '+91 98765 43210'}</p>
+            </div>
           </div>
-        )}
+
+          <div className={styles.statsRow}>
+            <div className={styles.statBox} onClick={() => router.push('/wallet')}>
+              <div className={styles.statVal}>₹500</div>
+              <div className={styles.statLabel}>Spice Wallet Balance →</div>
+            </div>
+            <div className={styles.statBox} onClick={() => router.push('/offers')}>
+              <div className={styles.statVal}>4 Active</div>
+              <div className={styles.statLabel}>Coupons &amp; Deals →</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Menu */}
+        <div className={styles.menuSection}>
+          <div className={styles.menuItem} onClick={() => router.push('/addresses')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <MapPin size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>Saved Addresses</h2>
+                <p className={styles.menuSub}>Home, Work, Other addresses</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+
+          <div className={styles.menuItem} onClick={() => router.push('/payment-methods')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <CreditCard size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>Payment Methods</h2>
+                <p className={styles.menuSub}>Cards, UPI Handles, Wallets</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+
+          <div className={styles.menuItem} onClick={() => router.push('/notifications')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <Bell size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>Notifications</h2>
+                <p className={styles.menuSub}>Order alerts, offers, SMS</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+
+          <div className={styles.menuItem} onClick={() => router.push('/history')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <OrderIcon size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>Order History &amp; Receipts</h2>
+                <p className={styles.menuSub}>View past meals and reorder</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+        </div>
+
+        {/* Support & Legal */}
+        <div className={styles.menuSection}>
+          <div className={styles.menuItem} onClick={() => alert('📞 Customer Care Helpline: +91 1800 200 400 (Available 24x7)')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <LifeBuoy size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>24x7 Support &amp; Help Center</h2>
+                <p className={styles.menuSub}>Instant chat, order issues, refunds</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+
+          <div className={styles.menuItem} onClick={() => router.push('/legal/privacy')}>
+            <div className={styles.menuLeft}>
+              <div className={styles.menuIconBox}>
+                <ShieldCheck size={18} />
+              </div>
+              <div>
+                <h2 className={styles.menuTitle}>Privacy &amp; Security Policy</h2>
+                <p className={styles.menuSub}>Data protection &amp; encryption terms</p>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#94a3b8" />
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
+          <LogOut size={16} /> Sign Out
+        </button>
       </div>
 
-      {state.isEditing && (
-        <>
-          <Card title="Edit Profile">
-            <div className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="fullName" className={styles.label}>
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  className={styles.input}
-                  type="text"
-                  value={state.editFormData.fullName}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, fullName: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="email" className={styles.label}>
-                  Email
-                </label>
-                <input
-                  id="email"
-                  className={styles.input}
-                  type="email"
-                  value={state.editFormData.email}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, email: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="phone" className={styles.label}>
-                  Phone
-                </label>
-                <input
-                  id="phone"
-                  className={styles.input}
-                  type="tel"
-                  value={state.editFormData.phone}
-                  onChange={(e) => dispatchState({ type: 'SET_EDIT_FORM_DATA', payload: { ...state.editFormData, phone: e.target.value } })}
-                />
-              </div>
-
-              <div className={styles.formActions}>
-                <Button label="Cancel" onClick={() => dispatchState({ type: 'SET_IS_EDITING', payload: false })} variant="secondary" />
-                <Button label="Save Changes" onClick={handleSaveProfile} />
-              </div>
-            </div>
-          </Card>
-        </>
-      )}
-
-      {!state.isEditing && (
-        <>
-          <Card title="Account Information">
-            <div className={styles.infoList}>
-              <div className={styles.infoRow}>
-                <span>Email Verified</span>
-                <span>{state.profileData?.emailVerified ? '✓ Yes' : '✗ No'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span>PhoneVerified</span>
-                <span>{state.profileData?.phoneVerified ? '✓ Yes' : '✗ No'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span>Member Since</span>
-                <span>{state.profileData?.createdAt ? new Date(state.profileData.createdAt).toLocaleDateString() : 'Not available'}</span>
-              </div>
-            </div>
-          </Card>
-
-          <Card title="Security">
-            <div className={styles.infoList}>
-              <Button
-                label="Change Password"
-                onClick={() => {}}
-                variant="secondary"
-              />
-              <Button
-                label="Manage Devices"
-                onClick={() => {}}
-                variant="secondary"
-              />
-            </div>
-          </Card>
-
-          <Card title="Address Management">
-            <div className={styles.infoList}>
-              <Button
-                label="Manage Addresses"
-                onClick={() => router.push('/addresses')}
-                variant="secondary"
-              />
-              <p className={styles.helperText}>
-                Saved addresses will appear here
-              </p>
-            </div>
-          </Card>
-
-          <Card title="Payment Methods">
-            <div className={styles.infoList}>
-              <Button
-                label="Manage Payment Methods"
-                onClick={() => router.push('/payment-methods')}
-                variant="secondary"
-              />
-              <p className={styles.helperText}>
-                Saved payment methods will appear here
-              </p>
-            </div>
-          </Card>
-
-          <div className={styles.logoutWrapper}>
-            <Button label="Sign Out" onClick={handleLogout} variant="secondary" style={{ width: '100%' }} />
-          </div>
-        </>
-      )}
+      {/* Bottom Nav */}
+      <nav className={styles.bottomNav}>
+        {[
+          { key: 'home', label: 'Home', Icon: HomeIcon, path: '/' },
+          { key: 'search', label: 'Search', Icon: SearchIcon, path: '/search' },
+          { key: 'orders', label: 'Orders', Icon: OrderIcon, path: '/history' },
+          { key: 'account', label: 'Profile', Icon: ProfileIcon, path: '/profile' },
+        ].map((tab) => {
+          const Icon = tab.Icon;
+          const isActive = tab.key === 'account';
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              className={`${styles.navButton} ${isActive ? styles.navActive : styles.navInactive}`}
+              onClick={() => router.push(tab.path)}
+            >
+              <Icon size={22} color={isActive ? '#ff5a1f' : '#64748b'} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
-};
-
-export default function Wrapped(props: any) {
-  return <ProtectedRoute><ProfilePage {...props} /></ProtectedRoute>;
 }

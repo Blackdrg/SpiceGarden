@@ -182,7 +182,10 @@ export class AuthService {
     socialId: string;
     socialProvider: string;
   }): Promise<LoginTokenResponse> {
-    const normalizedEmail = profile.email.toLowerCase();
+    if (!profile || !profile.email || typeof profile.email !== 'string') {
+      throw new UnauthorizedException('Social profile email is required');
+    }
+    const normalizedEmail = profile.email.trim().toLowerCase();
     let user = await this.userRepo.findOne({ where: { email: normalizedEmail } });
 
     if (!user) {

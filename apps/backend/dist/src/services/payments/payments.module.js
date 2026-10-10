@@ -18,6 +18,7 @@ const idempotency_service_1 = require("./idempotency.service");
 const gateway_factory_service_1 = require("./gateway-factory.service");
 const stripe_gateway_service_1 = require("./gateways/stripe-gateway.service");
 const razorpay_gateway_service_1 = require("./gateways/razorpay-gateway.service");
+const cod_gateway_service_1 = require("./gateways/cod-gateway.service");
 const audit_module_1 = require("../../audit/audit.module");
 const ledger_module_1 = require("../../modules/ledger/ledger.module");
 const gst_module_1 = require("../../services/gst/gst.module");
@@ -44,6 +45,7 @@ exports.PaymentServiceModule = PaymentServiceModule = __decorate([
             gateway_factory_service_1.PaymentGatewayFactory,
             stripe_gateway_service_1.StripeGateway,
             razorpay_gateway_service_1.RazorpayGateway,
+            cod_gateway_service_1.CashOnDeliveryGateway,
             chargeback_service_1.ChargebackService
         ],
         controllers: [payments_controller_1.PaymentsController],

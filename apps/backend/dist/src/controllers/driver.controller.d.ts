@@ -15,6 +15,7 @@ export declare class DriverController {
             id: string;
         };
     }): Promise<DriverEntity | null>;
+    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<DriverEntity[]>;
     getDriver(id: string, req: {
         user: {
             id: string;
@@ -57,7 +58,6 @@ export declare class DriverController {
         driverId: string;
         isAvailable: boolean;
     }>;
-    getAvailableDrivers(lat: number, lng: number, radius?: number): Promise<DriverEntity[]>;
 }
 export declare class OrderDriverController {
     private orderRepo;
@@ -84,7 +84,7 @@ export declare class OrderDriverController {
         failureReason?: string;
     }): Promise<{
         orderId: string;
-        status: "failed" | "pickedUp" | "onTheWay" | "delivered";
+        status: "failed" | "delivered" | "pickedUp" | "onTheWay";
     }>;
     verifyOTP(id: string, body: {
         otp: string;

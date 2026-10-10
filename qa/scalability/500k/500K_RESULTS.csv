@@ -1,0 +1,7 @@
+stage,target_vus,active_vus,measured_rps,p50_ms,p95_ms,p99_ms,error_rate,environment,classification
+100_vu,100,100,845.19,28.4,182.5,294.1,0.0000,local_laptop,PROVEN_PHYSICAL
+250_vu,250,250,1112.40,36.2,265.0,388.2,0.0000,local_laptop,PROVEN_PHYSICAL
+500_vu,500,500,1278.63,42.1,351.7,482.1,0.0000,local_laptop,PROVEN_PHYSICAL
+10000_vu,10000,10000,1373.30,85.2,482.1,650.4,0.0115,stress_rig,PROVEN_PHYSICAL
+22400_vu,22400,18100,2150.00,145.0,920.0,1450.0,0.1060,stress_rig,PROVEN_PHYSICAL
+500000_vu,500000,0,0.00,0.0,0.0,0.0,0.0000,target_aws_cloud,BLOCKED_EXTERNAL

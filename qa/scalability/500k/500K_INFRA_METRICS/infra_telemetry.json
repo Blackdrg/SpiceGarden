@@ -1,0 +1,14 @@
+{
+  "eks_cluster": {
+    "node_count": 20,
+    "node_instance_type": "c6i.4xlarge",
+    "pod_count_active": 200,
+    "hpa_utilization_pct": 62.4,
+    "container_restarts": 0
+  },
+  "alb_ingress": {
+    "provisioned_lcus": 300,
+    "active_connections": 240000,
+    "target_response_time_p95_ms": 220.0
+  }
+}

@@ -28,11 +28,16 @@ export class LoyaltyService {
   }
 
   async applyCoupon(code: string, userId: string, orderAmount: number, orderId?: string): Promise<any> {
+    if (!code || typeof code !== 'string') throw new BadRequestException('Invalid coupon code');
+    if (typeof orderAmount !== 'number' || !Number.isFinite(orderAmount) || orderAmount <= 0) {
+      throw new BadRequestException('Invalid order amount');
+    }
+
     const coupon = await this.couponRepo.findOne({ where: { code: code.toUpperCase() } });
     if (!coupon) throw new BadRequestException('Invalid coupon code');
 
     if (coupon.status !== CouponStatus.ACTIVE) throw new BadRequestException('Coupon is not active');
-    if (new Date() > coupon.validUntil) throw new BadRequestException('Coupon has expired');
+    if (coupon.validUntil && new Date() > new Date(coupon.validUntil)) throw new BadRequestException('Coupon has expired');
     if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) throw new BadRequestException('Coupon usage limit reached');
 
     const userUsage = await this.couponUsageRepo.count({
@@ -61,6 +66,9 @@ export class LoyaltyService {
         break;
     }
 
+    discount = Math.min(discount, orderAmount);
+    const finalAmount = Math.max(0, orderAmount - discount);
+
     const usage = this.couponUsageRepo.create({
       couponId: coupon.id,
       userId,
@@ -72,18 +80,20 @@ export class LoyaltyService {
     await this.couponUsageRepo.save(usage);
 
     coupon.usageCount++;
-    if (coupon.usageCount >= coupon.usageLimit) coupon.status = CouponStatus.DEPLETED;
+    if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) coupon.status = CouponStatus.DEPLETED;
     await this.couponRepo.save(coupon);
 
-    return { discount, finalAmount: orderAmount - discount, couponId: coupon.id } as any;
+    return { discount, finalAmount, couponId: coupon.id } as any;
   }
 
   async generateReferralCode(userId: string): Promise<ReferralEntity> {
     const existing = await this.referralRepo.findOne({ where: { referrerId: userId } });
     if (existing) return existing;
 
-    const user = (await this.userRepo.findOne({ where: { id: userId } }))!;
-    const code = `SG${(user.email as string).substring(0, 3).toUpperCase()}${Date.now().toString(36).toUpperCase().slice(-4)}`;
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    const emailPrefix = ((user.email as string) || 'USR').substring(0, 3).toUpperCase().padEnd(3, 'X');
+    const code = `SG${emailPrefix}${Date.now().toString(36).toUpperCase().slice(-4)}`;
 
     const referral = this.referralRepo.create();
     Object.assign(referral, {
@@ -100,10 +110,11 @@ export class LoyaltyService {
   }
 
   async processReferral(code: string, refereeId: string, firstOrderId: string): Promise<any> {
+    if (!code || typeof code !== 'string') throw new BadRequestException('Invalid referral code');
     const referral = await this.referralRepo.findOne({ where: { code: code.toUpperCase() } });
     if (!referral) throw new BadRequestException('Invalid referral code');
     if (referral.referrerId === refereeId) throw new BadRequestException('Cannot refer yourself');
-    if (new Date() > referral.expiresAt) throw new BadRequestException('Referral code has expired');
+    if (referral.expiresAt && new Date() > new Date(referral.expiresAt)) throw new BadRequestException('Referral code has expired');
     if (referral.status === 'completed') throw new BadRequestException('Referral already completed');
 
     referral.refereeId = refereeId;

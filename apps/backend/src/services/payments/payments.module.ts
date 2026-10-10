@@ -1,4 +1,4 @@
-﻿
+
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbRepositoriesModule } from '../../db/db-repositories.module';
@@ -12,6 +12,7 @@ import { IdempotencyService } from './idempotency.service';
 import { PaymentGatewayFactory } from './gateway-factory.service';
 import { StripeGateway } from './gateways/stripe-gateway.service';
 import { RazorpayGateway } from './gateways/razorpay-gateway.service';
+import { CashOnDeliveryGateway } from './gateways/cod-gateway.service';
 import { OrderEntity } from '../../db/entities/order.entity';
 import { WalletEntity } from '../../db/entities/wallet.entity';
 import { WalletTransactionEntity } from '../../db/entities/wallet-transaction.entity';
@@ -45,6 +46,7 @@ import { ChargebackService } from './chargeback/chargeback.service';
     PaymentGatewayFactory,
     StripeGateway,
     RazorpayGateway,
+    CashOnDeliveryGateway,
     ChargebackService
   ],
   controllers: [PaymentsController],

@@ -149,7 +149,7 @@ export class DriverFleetService {
   }
 
   async getPerformanceRanking(driverId?: string): Promise<any> {
-    let query = this.scoreRepo.createQueryBuilder('score');
+    let query = this.scoreRepo.createQueryBuilder('score').leftJoinAndSelect('score.driver', 'driver');
     if (driverId) {
       query = query.where('score.driverId = :driverId', { driverId });
     }
@@ -160,7 +160,7 @@ export class DriverFleetService {
 
     const rankings = scores.map((s, idx) => ({
       rank: idx + 1,
-      driverId: (s.driver as any).id,
+      driverId: (s.driver as any)?.id || (s as any).driverId || '',
       overallScore: s.overallScore,
       onTimeRate: s.onTimeDeliveryRate,
       acceptanceRate: s.acceptanceRate,
@@ -173,8 +173,8 @@ export class DriverFleetService {
     return {
       rankings,
       totalDrivers: rankings.length,
-      driverRank,
-      percentile: driverRank ? Math.round((1 - driverRank / rankings.length) * 100) : null,
+      driverRank: driverRank && driverRank > 0 ? driverRank : null,
+      percentile: driverRank && driverRank > 0 ? Math.round((1 - driverRank / rankings.length) * 100) : null,
     };
   }
 

@@ -37,6 +37,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./reflect-metadata");
+const dotenv = __importStar(require("dotenv"));
+const path = __importStar(require("path"));
+dotenv.config({ path: [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), '../../.env'), path.resolve(__dirname, '../../../.env')] });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const config_1 = require("@nestjs/config");
@@ -53,6 +56,18 @@ const redis_rate_limit_store_1 = require("./security/redis-rate-limit.store");
 const missing_env_error_1 = require("./common/errors/missing-env.error");
 const csrf_middleware_1 = require("./security/csrf.middleware");
 const prom_client_1 = require("prom-client");
+process.on('uncaughtException', (err) => {
+    if (err?.code === 'ECONNRESET' || err?.code === 'EPIPE' || err?.code === 'ETIMEDOUT') {
+        return;
+    }
+    console.error('[UNCAUGHT_EXCEPTION]', err);
+});
+process.on('unhandledRejection', (reason) => {
+    if (reason?.code === 'ECONNRESET' || reason?.code === 'EPIPE') {
+        return;
+    }
+    console.error('[UNHANDLED_REJECTION]', reason);
+});
 const metricsRegistry = new prom_client_1.Registry();
 (0, prom_client_1.collectDefaultMetrics)({ register: metricsRegistry });
 const httpRequestCounter = new prom_client_1.Counter({
@@ -269,6 +284,25 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
         transform: true,
     }));
+    app.enableShutdownHooks();
+    const { RedisIoAdapter } = await Promise.resolve().then(() => __importStar(require('./infra/tracking/redis-io.adapter')));
+    const redisIoAdapter = new RedisIoAdapter(app, configService);
+    await redisIoAdapter.connectToRedis();
+    app.useWebSocketAdapter(redisIoAdapter);
+    if (process.env.LOAD_TEST_MODE === 'true' || process.env.LOCAL_DB === 'sqlite') {
+        try {
+            const { DataSource } = await Promise.resolve().then(() => __importStar(require('typeorm')));
+            const dataSource = app.get(DataSource, { strict: false });
+            if (dataSource) {
+                const { BusinessSeederService } = await Promise.resolve().then(() => __importStar(require('./services/restaurant/business.seeder')));
+                const seeder = new BusinessSeederService(dataSource);
+                await seeder.seedAll();
+            }
+        }
+        catch (err) {
+            console.warn('[Bootstrap] Auto-seeding skipped or failed:', err?.message || String(err));
+        }
+    }
     console.log(`[bootstrap] Node Runtime: ${process.version}, PID: ${process.pid}, UV_THREADPOOL_SIZE: ${process.env.UV_THREADPOOL_SIZE || 'default(4)'}`);
     await app.listen(3001);
 }

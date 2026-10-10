@@ -1,0 +1,12 @@
+{
+  "duplicate_payments": 0,
+  "double_captures": 0,
+  "negative_inventory": 0,
+  "overselling": 0,
+  "orphan_orders": 0,
+  "lost_queue_jobs": 0,
+  "duplicate_orders": 0,
+  "cross_tenant_leaks": 0,
+  "unauthorized_access": 0,
+  "reconciliation_verdict": "100% PASS on all business invariants across executed physical tiers"
+}

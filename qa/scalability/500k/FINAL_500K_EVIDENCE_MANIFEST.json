@@ -1,0 +1,60 @@
+{
+  "manifest_version": "1.0.0",
+  "tier": "500K_PHYSICAL_BENCHMARK",
+  "generated_at": "2026-10-04T01:21:00+05:30",
+  "project_status": "AWS_EXECUTION_BLOCKED_EXTERNAL",
+  "git_commit": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "branch": "perf/1m-real-capacity",
+  "artifacts": [
+    {
+      "file": "qa/scalability/500k/FINAL_500K_PHYSICAL_BENCHMARK_REPORT.md",
+      "type": "REPORT",
+      "status": "AUTHORITATIVE"
+    },
+    {
+      "file": "qa/scalability/500k/FINAL_500K_SCORECARD.md",
+      "type": "SCORECARD",
+      "status": "AUTHORITATIVE"
+    },
+    {
+      "file": "qa/scalability/500k/FINAL_500K_RUNTIME_INVENTORY.json",
+      "type": "RUNTIME_INVENTORY",
+      "status": "AUTHORITATIVE"
+    },
+    {
+      "file": "qa/scalability/500k/aws-preflight.ps1",
+      "type": "PREFLIGHT_GATE",
+      "status": "BLOCKED_AT_PREFLIGHT"
+    },
+    {
+      "file": "infra/terraform/generator-fleet.tf",
+      "type": "IAC_TERRAFORM",
+      "status": "BLUEPRINT_READY"
+    },
+    {
+      "file": "infra/k8s/500k-physical-cluster.yaml",
+      "type": "IAC_KUBERNETES",
+      "status": "CONFIGURATION_READY"
+    },
+    {
+      "file": "infra/load-tests/500k/scenarios/500k-clean-hold.js",
+      "type": "LOAD_TEST_SCENARIO",
+      "status": "AUTOMATION_READY"
+    },
+    {
+      "file": "infra/scripts/run-500k-reproduction-suite.js",
+      "type": "PARITY_RUNNER",
+      "status": "AUTOMATION_READY"
+    },
+    {
+      "file": "infra/scripts/run-500k-cloud-chaos-matrix.js",
+      "type": "CHAOS_RUNNER",
+      "status": "CHAOS_HARNESS_READY"
+    },
+    {
+      "file": "infra/scripts/run-500k-dr-drill.js",
+      "type": "DR_RUNNER",
+      "status": "DR_HARNESS_READY"
+    }
+  ]
+}

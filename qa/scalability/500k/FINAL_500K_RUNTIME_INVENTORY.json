@@ -1,0 +1,69 @@
+{
+  "inventory_version": "1.0.0",
+  "generated_at": "2026-10-04T01:27:40+05:30",
+  "git_commit": "d55af75f6039cb158c9a6823a46d1de170cd2567",
+  "branch": "perf/1m-real-capacity",
+  "status": "AWS_EXECUTION_BLOCKED_EXTERNAL",
+  "preflight": {
+    "status": "AWS_PREFLIGHT_BLOCKED",
+    "aws_cli_detected": true,
+    "aws_cli_path": "C:\\Program Files\\Amazon\\AWSCLIV2\\aws.exe",
+    "aws_cli_version": "2.37.9",
+    "terraform_cli_detected": true,
+    "terraform_cli_path": "C:\\Users\\mehta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Hashicorp.Terraform_Microsoft.Winget.Source_8wekyb3d8bbwe\\terraform.exe",
+    "terraform_cli_version": "1.16.4",
+    "kubectl_detected": true,
+    "kubectl_path": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\kubectl.exe",
+    "k6_detected": true,
+    "k6_path": "C:\\Program Files\\k6\\k6.exe",
+    "blocker_reason": "AWS STS authentication failed (no active AWS access keys, SSO session, or IAM role configured in ~/.aws/credentials or environment variables)."
+  },
+  "runtime_resources": {
+    "aws_account_id": "UNAVAILABLE",
+    "primary_region": "us-east-1",
+    "standby_region": "us-west-2",
+    "vpc_id": "PENDING_PROVISIONING",
+    "eks_cluster_name": "spicegarden-500k-eks",
+    "generator_asg": "spicegarden-500k-generator-fleet",
+    "alb_dns_name": "PENDING_PROVISIONING",
+    "aurora_endpoint": "PENDING_PROVISIONING",
+    "redis_endpoints": "PENDING_PROVISIONING",
+    "s3_evidence_bucket": "PENDING_PROVISIONING",
+    "cloudwatch_log_group": "/aws/eks/spicegarden-500k/cluster"
+  },
+  "topology_target": {
+    "generators": {
+      "instance_type": "c6i.2xlarge",
+      "count": 40,
+      "vu_target_per_node": 12500,
+      "total_vu_target": 500000,
+      "status": "CONFIGURATION_READY"
+    },
+    "eks_nodes": {
+      "instance_type": "c6i.4xlarge",
+      "count": 20,
+      "backend_pod_range": "160-240",
+      "status": "CONFIGURATION_READY"
+    },
+    "pgbouncer": {
+      "pod_count": 8,
+      "client_connections_max": 80000,
+      "backend_db_connections": 400,
+      "pool_multiplexing_ratio": "200:1",
+      "vu_to_db_connection_ratio": "1250:1",
+      "status": "CONFIGURATION_READY"
+    },
+    "aurora": {
+      "writer": "1 x db.r6g.16xlarge",
+      "readers": "2 x db.r6g.8xlarge",
+      "shared_buffers": "128GB",
+      "status": "CONFIGURATION_READY"
+    },
+    "redis": {
+      "shards": 6,
+      "nodes_per_shard": 2,
+      "instance_type": "cache.r7g.2xlarge",
+      "status": "CONFIGURATION_READY"
+    }
+  }
+}

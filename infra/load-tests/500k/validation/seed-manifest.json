@@ -1,0 +1,132 @@
+{
+  "version": "1.0.0",
+  "datasetId": "ds_500k_1791015842034",
+  "generatedAt": "2026-10-03T08:24:02.034Z",
+  "restaurants": [
+    {
+      "id": "rest_mumbai_spice_01",
+      "name": "Mumbai Spice Kitchen",
+      "slug": "mumbai-spice-kitchen",
+      "city": "Mumbai",
+      "branchId": "branch_mum_01",
+      "lat": 19.076,
+      "lng": 72.8777
+    },
+    {
+      "id": "rest_delhi_darbar_02",
+      "name": "Delhi Darbar Bistro",
+      "slug": "delhi-darbar-bistro",
+      "city": "Delhi",
+      "branchId": "branch_del_01",
+      "lat": 28.6139,
+      "lng": 77.209
+    },
+    {
+      "id": "rest_bangalore_tiffin_03",
+      "name": "Bangalore Tiffin House",
+      "slug": "bangalore-tiffin-house",
+      "city": "Bangalore",
+      "branchId": "branch_blr_01",
+      "lat": 12.9716,
+      "lng": 77.5946
+    },
+    {
+      "id": "rest_hyderabad_biryani_04",
+      "name": "Hyderabad Nawabi Biryani",
+      "slug": "hyderabad-nawabi-biryani",
+      "city": "Hyderabad",
+      "branchId": "branch_hyd_01",
+      "lat": 17.385,
+      "lng": 78.4867
+    },
+    {
+      "id": "rest_punjab_grill_05",
+      "name": "Royal Punjab Grill",
+      "slug": "royal-punjab-grill",
+      "city": "Punjab",
+      "branchId": "branch_pun_01",
+      "lat": 31.1471,
+      "lng": 75.3412
+    },
+    {
+      "id": "rest_chennai_cheftable_06",
+      "name": "Chennai Coastal Spice",
+      "slug": "chennai-coastal-spice",
+      "city": "Chennai",
+      "branchId": "branch_chn_01",
+      "lat": 13.0823,
+      "lng": 80.2707
+    },
+    {
+      "id": "rest_kolkata_rolls_07",
+      "name": "Kolkata Flavour Street",
+      "slug": "kolkata-flavour-street",
+      "city": "Kolkata",
+      "branchId": "branch_kol_01",
+      "lat": 22.5726,
+      "lng": 88.3639
+    },
+    {
+      "id": "rest_pune_bhojanalay_08",
+      "name": "Pune Heritage Bhoj",
+      "slug": "pune-heritage-bhoj",
+      "city": "Pune",
+      "branchId": "branch_pne_01",
+      "lat": 18.5204,
+      "lng": 73.8567
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "item_hyderabadi_biryani_01",
+      "name": "Royal Hyderabadi Dum Biryani",
+      "price": 349,
+      "category": "Main Course"
+    },
+    {
+      "id": "item_butter_chicken_02",
+      "name": "Classic Butter Chicken Makhani",
+      "price": 389,
+      "category": "Curries"
+    },
+    {
+      "id": "item_paneer_tikka_03",
+      "name": "Tandoori Paneer Tikka Platter",
+      "price": 299,
+      "category": "Starters"
+    },
+    {
+      "id": "item_masala_dosa_04",
+      "name": "Ghee Podi Masala Dosa",
+      "price": 179,
+      "category": "South Indian"
+    },
+    {
+      "id": "item_garlic_naan_05",
+      "name": "Butter Garlic Naan (2 pcs)",
+      "price": 99,
+      "category": "Breads"
+    },
+    {
+      "id": "item_dal_makhani_06",
+      "name": "Slow Cooked Dal Makhani",
+      "price": 249,
+      "category": "Curries"
+    },
+    {
+      "id": "item_gulab_jamun_07",
+      "name": "Warm Gulab Jamun (4 pcs)",
+      "price": 129,
+      "category": "Desserts"
+    },
+    {
+      "id": "item_chicken_tikka_08",
+      "name": "Angara Chicken Tikka Kebab",
+      "price": 329,
+      "category": "Starters"
+    }
+  ],
+  "userPoolSize": 500000,
+  "driverPoolSize": 10000,
+  "kitchenPoolSize": 500
+}

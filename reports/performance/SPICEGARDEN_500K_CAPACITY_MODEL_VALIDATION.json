@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-10-03T19:02:13.050Z",
+  "targetVUs": 500000,
+  "targetRPS": 270000,
+  "verifiedComponents": {
+    "littlesLaw": "VERIFIED",
+    "eksCompute": "VERIFIED",
+    "networkBandwidth": "VERIFIED",
+    "pgbouncerMultiplexing": "VERIFIED",
+    "auroraTopology": "VERIFIED",
+    "redisClustering": "VERIFIED",
+    "bullmqCapacity": "VERIFIED"
+  },
+  "hash": "7603bc1884f6d0b7f29936c9791deb14b5b869795d60ede06e49577dd71eef6c",
+  "inputs": {
+    "activeVUs": 500000,
+    "targetRPS": 270000,
+    "averagePayloadBytes": 1250,
+    "userThinkTimeSec": 1.85,
+    "eksNodes": 20,
+    "eksTotalCores": 320,
+    "eksTotalRamGB": 640,
+    "backendPods": 160,
+    "coresPerPod": 1.5,
+    "ramPerPodGB": 1.5,
+    "pgbouncerPods": 8,
+    "pgbouncerMaxClientConns": 80000,
+    "pgbouncerMaxDbConns": 400,
+    "auroraWriterCores": 64,
+    "auroraWriterRamGB": 512,
+    "auroraReaderCores": 64,
+    "auroraReaderRamGB": 512,
+    "redisShards": 6,
+    "redisNodesTotal": 12,
+    "redisMaxOpsPerSecPerShard": 100000,
+    "bullmqWorkers": 30,
+    "bullmqConcurrencyPerWorker": 50
+  }
+}

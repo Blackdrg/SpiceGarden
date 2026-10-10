@@ -1,0 +1,6 @@
+{
+  "cpuEstimated": 75.2,
+  "memoryMb": 1080,
+  "dbPoolSize": 500,
+  "redisMemoryMb": 124.5
+}

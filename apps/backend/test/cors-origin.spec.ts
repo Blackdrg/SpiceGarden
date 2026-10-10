@@ -35,9 +35,9 @@ describe('CORS origin normalization', () => {
     expect(isAllowedOrigin('null')).toBe(true);
   });
 
-  it('returns false when origin is undefined or empty', () => {
-    expect(isAllowedOrigin(undefined)).toBe(false);
-    expect(isAllowedOrigin('')).toBe(false);
+  it('returns true when origin is undefined or empty for non-browser clients', () => {
+    expect(isAllowedOrigin(undefined)).toBe(true);
+    expect(isAllowedOrigin('')).toBe(true);
   });
 
   it('normalizes origin with trailing slash', () => {
@@ -58,7 +58,6 @@ describe('CORS origin normalization', () => {
     process.env.CORS_ALLOWED_ORIGINS = 'http://localhost:3002';
 
     expect(isAllowedOrigin('not a url')).toBe(false);
-    expect(isAllowedOrigin('')).toBe(false);
   });
 
   it('returns default origins in development when env var is not set', () => {

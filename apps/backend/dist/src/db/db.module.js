@@ -129,63 +129,94 @@ const entities = [
     payment_fraud_entity_1.PaymentFraudFlagEntity,
     payment_event_entity_1.PaymentEventEntity,
 ];
+const mongoose_2 = require("@nestjs/mongoose");
 const localSqlite = process.env.LOCAL_DB === 'sqlite';
-function localReviewModelProvider() {
-    const store = [];
-    return {
-        provide: (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name),
-        useValue: {
-            create: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-            new: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
-            findOne: async () => store[0] || null,
-            find: async () => store,
-            aggregate: async () => [],
-        },
+function localMongooseProviders() {
+    const mockModel = {
+        create: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+        new: (data) => ({ ...data, save: async () => ({ ...data, id: data.id || crypto.randomUUID() }) }),
+        findOne: async () => null,
+        find: async () => [],
+        aggregate: async () => [],
     };
+    const mockConnection = {
+        model: () => mockModel,
+        models: new Proxy({}, {
+            get: () => mockModel,
+        }),
+    };
+    return [
+        {
+            provide: (0, mongoose_2.getConnectionToken)(),
+            useValue: mockConnection,
+        },
+        {
+            provide: (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name),
+            useValue: mockModel,
+        },
+    ];
 }
+const typeOrmModuleAsync = typeorm_1.TypeOrmModule.forRootAsync({
+    imports: [config_1.ConfigModule],
+    useFactory: (configService) => {
+        const isSqlite = configService.get('LOCAL_DB') === 'sqlite' || process.env.LOCAL_DB === 'sqlite';
+        if (isSqlite) {
+            return {
+                type: 'sqlite',
+                database: ':memory:',
+                entities,
+                synchronize: true,
+                logging: false,
+            };
+        }
+        return {
+            type: 'postgres',
+            host: configService.get('DB_HOST') || 'localhost',
+            port: configService.get('DB_PORT', 5432),
+            username: configService.get('DB_USER') || 'spicegarden',
+            password: configService.get('DB_PASS') || 'spicegarden_dev',
+            database: configService.get('DB_NAME') || 'spicegarden',
+            entities,
+            synchronize: false,
+            migrations: ['dist/db/migrations/*.js'],
+            migrationsRun: true,
+            poolSize: configService.get('DB_POOL_SIZE', 20),
+            connectionTimeoutMillis: 5000,
+            idleTimeoutMillis: 30000,
+            maxQueryExecutionTime: 1000,
+            keepAlive: true,
+            statementTimeout: 30000,
+            logging: configService.get('DB_LOGGING', 'false') === 'true',
+        };
+    },
+    inject: [config_1.ConfigService],
+});
+const useMockMongo = localSqlite || process.env.DISABLE_MONGO === 'true';
 const imports = localSqlite
     ? [local_repository_module_1.LocalRepositoryModule]
     : [
-        typeorm_1.TypeOrmModule.forRootAsync({
-            imports: [config_1.ConfigModule],
-            useFactory: (configService) => ({
-                type: "postgres",
-                host: configService.get("DB_HOST") || "localhost",
-                port: configService.get("DB_PORT", 5432),
-                username: configService.get("DB_USER") || "spicegarden",
-                password: configService.get("DB_PASS") || "spicegarden_dev",
-                database: configService.get("DB_NAME") || "spicegarden",
-                entities,
-                synchronize: false,
-                migrations: ["dist/db/migrations/*.js"],
-                migrationsRun: true,
-                poolSize: configService.get("DB_POOL_SIZE", 20),
-                connectionTimeoutMillis: 5000,
-                idleTimeoutMillis: 30000,
-                maxQueryExecutionTime: 1000,
-                keepAlive: true,
-                statementTimeout: 30000,
-                logging: configService.get("DB_LOGGING", "false") === "true",
-            }),
-            inject: [config_1.ConfigService],
-        }),
-        mongoose_1.MongooseModule.forRootAsync({
-            imports: [config_1.ConfigModule],
-            useFactory: (configService) => ({
-                uri: configService.get("MONGO_URI") || "mongodb://localhost:27017/spicegarden",
-                connectionFactory: (connection) => {
-                    connection.on('error', (err) => {
-                        console.error('MongoDB connection error:', err);
-                    });
-                    connection.on('connected', () => {
-                        console.log('MongoDB connected successfully');
-                    });
-                    return connection;
-                },
-            }),
-            inject: [config_1.ConfigService],
-        }),
-        mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }]),
+        typeOrmModuleAsync,
+        ...(useMockMongo
+            ? []
+            : [
+                mongoose_1.MongooseModule.forRootAsync({
+                    imports: [config_1.ConfigModule],
+                    useFactory: (configService) => ({
+                        uri: configService.get('MONGO_URI') || 'mongodb://localhost:27017/spicegarden',
+                        connectionFactory: (connection) => {
+                            connection.on('error', (err) => {
+                                console.error('MongoDB connection error:', err);
+                            });
+                            connection.on('connected', () => {
+                                console.log('MongoDB connected successfully');
+                            });
+                            return connection;
+                        },
+                    }),
+                    inject: [config_1.ConfigService],
+                }),
+                mongoose_1.MongooseModule.forFeature([{ name: review_schema_1.ReviewDocument.name, schema: review_schema_1.ReviewSchema }]),
+            ]),
     ];
 let DbModule = class DbModule {
 };
@@ -194,7 +225,11 @@ exports.DbModule = DbModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports,
-        providers: [...(localSqlite ? [localReviewModelProvider()] : [])],
-        exports: localSqlite ? [local_repository_module_1.LocalRepositoryModule, (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)] : [typeorm_1.TypeOrmModule, mongoose_1.MongooseModule],
+        providers: [...(useMockMongo ? localMongooseProviders() : [])],
+        exports: [
+            ...(localSqlite
+                ? [local_repository_module_1.LocalRepositoryModule, (0, mongoose_2.getConnectionToken)(), (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)]
+                : [typeorm_1.TypeOrmModule, ...(useMockMongo ? [(0, mongoose_2.getConnectionToken)(), (0, mongoose_1.getModelToken)(review_schema_1.ReviewDocument.name)] : [mongoose_1.MongooseModule])]),
+        ],
     })
 ], DbModule);

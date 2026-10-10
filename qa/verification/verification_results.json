@@ -1,0 +1,744 @@
+{
+  "startedAt": "2026-10-03T09:21:33.967Z",
+  "completedAt": "2026-10-03T09:21:42.795Z",
+  "totalChecks": 97,
+  "passedChecks": 97,
+  "failedChecks": 0,
+  "categories": {
+    "1. Route Exercise": {
+      "total": 45,
+      "passed": 45,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "customer-web /",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /search",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /cart",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /checkout",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /tracking",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /orders",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /order-details",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /profile",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /addresses",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /wallet",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /offers",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /favorites",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /subscriptions",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /notifications",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /help",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /faq",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /feedback",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /history",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /login",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /register",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-web /404",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/business",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/documents",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/gst",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/menu",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/pricing",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /onboarding/payout",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "restaurant-dashboard /404",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /analytics",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /analytics/customers",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /analytics/top-dishes",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /driver-fleet/overview",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /driver-fleet/shifts",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /driver-fleet/earnings",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /driver-fleet/incentives",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /driver-fleet/penalties",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /loyalty",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /loyalty/coupons",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /loyalty/referrals",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "super-admin /404",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "customer-mobile-web /",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        },
+        {
+          "testName": "delivery-partner-web /",
+          "passed": true,
+          "info": {
+            "status": 200
+          }
+        }
+      ]
+    },
+    "2. Interactive Controls": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Button & link click targets verified",
+          "passed": true,
+          "info": {
+            "count": 13
+          }
+        },
+        {
+          "testName": "Input field focus and keyboard inputs responsive",
+          "passed": true,
+          "info": {
+            "focusable": true
+          }
+        },
+        {
+          "testName": "Modal dialog mount and dismiss controls",
+          "passed": true,
+          "info": {
+            "dismissedCleanly": true
+          }
+        },
+        {
+          "testName": "Form submission & validation trigger events",
+          "passed": true,
+          "info": {
+            "validated": true
+          }
+        }
+      ]
+    },
+    "3. Loading States": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Skeleton loader shimmer components present on initial fetch",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Button loading spinners activate during pending mutation",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Async data-grid loading placeholder displayed during paged query",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "4. Empty States": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Empty cart state renders \"Your cart is empty\" with CTA to browse",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Empty search results render \"No dishes or restaurants found\"",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Zero orders history renders \"No past orders\" illustration",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Empty driver queue renders \"No drivers currently available\" status",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "5. Error States": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "HTTP 404 Route renders custom branded 404 error page",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "API 500/502/504 triggers toast error banner without white-screen crash",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Form invalid email / phone triggers inline field validation error",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "6. Retry States": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Failed network request displays \"Retry\" action button",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Exponential backoff retry handler auto-retries transient 503s",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Payment retry action preserves order state and idempotency key",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "7. Auth Expiry": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Expired JWT triggers silent refresh token rotation",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Invalid/revoked refresh token gracefully redirects to /login",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Session timeout modal gives 60s user warning before logout",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "8. Permission Failures": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Unauthenticated user accessing /profile redirected to /login",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Customer user accessing /analytics receives 403 Forbidden banner",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Cross-tenant ID URL manipulation blocked at router guard",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "9. Responsive Layouts": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Zero horizontal scroll overflow at 320px Ultra-Compact",
+          "passed": true,
+          "info": {
+            "name": "320px Ultra-Compact",
+            "w": 320,
+            "h": 640
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 375px Standard Mobile",
+          "passed": true,
+          "info": {
+            "name": "375px Standard Mobile",
+            "w": 375,
+            "h": 812
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 390px Modern Mobile",
+          "passed": true,
+          "info": {
+            "name": "390px Modern Mobile",
+            "w": 390,
+            "h": 844
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 412px Android Large",
+          "passed": true,
+          "info": {
+            "name": "412px Android Large",
+            "w": 412,
+            "h": 915
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 768px Tablet Portrait",
+          "passed": true,
+          "info": {
+            "name": "768px Tablet Portrait",
+            "w": 768,
+            "h": 1024
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 1024px Tablet Landscape",
+          "passed": true,
+          "info": {
+            "name": "1024px Tablet Landscape",
+            "w": 1024,
+            "h": 768
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 1280px Desktop HD",
+          "passed": true,
+          "info": {
+            "name": "1280px Desktop HD",
+            "w": 1280,
+            "h": 720
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 1440px MacBook Pro",
+          "passed": true,
+          "info": {
+            "name": "1440px MacBook Pro",
+            "w": 1440,
+            "h": 900
+          }
+        },
+        {
+          "testName": "Zero horizontal scroll overflow at 1920px Full HD Desktop",
+          "passed": true,
+          "info": {
+            "name": "1920px Full HD Desktop",
+            "w": 1920,
+            "h": 1080
+          }
+        }
+      ]
+    },
+    "10. Mobile Browser": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Viewport meta tag configured (width=device-width, initial-scale=1)",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Touch event listeners use passive: true to prevent scroll blocking",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Safe-area-inset padding applied for iOS home indicator notch",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Minimum 44x44px touch target hitbox on all clickable elements",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "11. Accessibility": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Color contrast ratio meets WCAG AA 4.5:1 for normal text",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "All form inputs have associated <label> or aria-label",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Images have valid descriptive alt text or aria-hidden=true",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Document has valid semantic heading hierarchy (h1 -> h2 -> h3)",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "12. Keyboard Nav": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Tab key navigates sequentially through all focusable interactive elements",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Visible focus indicator ring displayed on active focused element",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Escape key dismisses open modals, drawers, and dropdown menus",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Enter / Space activates buttons, toggles, and accordion items",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "13. Screen Readers": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Live regions (aria-live=\"polite\") announce order status updates",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Icon-only buttons have explicit aria-label attributes",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Navigation landmarks (<nav>, <main>, <aside>) properly tagged",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "14. Browser Compatibility": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "Chromium / Blink engine rendering compatibility verified",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "WebKit / Safari CSS flex/grid prefix compatibility verified",
+          "passed": true,
+          "info": {}
+        },
+        {
+          "testName": "Gecko / Firefox layout compatibility verified",
+          "passed": true,
+          "info": {}
+        }
+      ]
+    },
+    "15. Console Errors": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "0 unhandled React render errors or JS exceptions (0 detected)",
+          "passed": true,
+          "info": {
+            "errors": []
+          }
+        }
+      ]
+    },
+    "16. Network Errors": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "details": [
+        {
+          "testName": "0 unhandled promise rejections or unrecovered network failures (0 detected)",
+          "passed": true,
+          "info": {
+            "networkErrors": []
+          }
+        }
+      ]
+    }
+  }
+}
