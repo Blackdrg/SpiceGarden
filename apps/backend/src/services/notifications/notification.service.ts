@@ -100,7 +100,9 @@ export class NotificationService {
       });
 
       if (!response.ok) {
-        throw new Error(`Twilio API error: HTTP ${response.status}`);
+        const errJson = await response.json().catch(() => ({}));
+        const errMsg = (errJson as any)?.message || `Twilio API error: HTTP ${response.status}`;
+        throw new Error(errMsg);
       }
 
       const result = (await response.json()) as { message?: string; sid?: string };

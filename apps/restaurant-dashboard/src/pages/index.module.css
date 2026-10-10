@@ -632,3 +632,175 @@
   box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15);
   color: #0f172a;
 }
+
+/* KPI Themes */
+.kpiValueOrange { color: #ff5a1f; }
+.kpiIconOrange { background: rgba(255, 90, 31, 0.15); color: #ff5a1f; }
+.kpiValueBlue { color: #3b82f6; }
+.kpiIconBlue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.kpiValueGreen { color: #10b981; }
+.kpiIconGreen { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.kpiValueGray { color: #94a3b8; }
+.kpiIconGray { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+/* Empty Queue State */
+.emptyQueueCard {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+.emptyQueueIcon {
+  margin-bottom: 12px;
+}
+
+.emptyQueueTitle {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.emptyQueueText {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+
+/* Timer Text Variants */
+.timerTextActive { color: #60a5fa; }
+.timerTextDelayed { color: #ef4444; }
+.timerTextLeft { color: #94a3b8; }
+
+/* Inventory Table Extras */
+.thRight { text-align: right; }
+.tdRight { text-align: right; }
+.tdName { font-weight: 700; color: #0f172a; }
+.tdThreshold { color: #64748b; }
+.badgeLowStock {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.badgeAdequateStock {
+  color: #059669;
+  font-weight: 700;
+  font-size: 12px;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.stockStepperWrap { display: inline-flex; gap: 6px; }
+.stockStepperBtnAdd {
+  background: #ff5a1f;
+  border-color: #ff5a1f;
+  color: #ffffff;
+}
+
+/* Modal Form Styles */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.formGroup {
+  margin-bottom: 12px;
+}
+
+.formGroupLarge {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.serviceTypeGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.serviceTypeBtn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.serviceTypeBtnActive {
+  border: 1.5px solid #ff5a1f;
+  background: #ff5a1f;
+  color: #ffffff;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+}
+
+.modalCancelBtn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalSubmitBtn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  background: #ff5a1f;
+  border: none;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}

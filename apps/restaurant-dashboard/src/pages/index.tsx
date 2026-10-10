@@ -301,9 +301,9 @@ export default function KitchenDashboard() {
           <div className={styles.kpiCard}>
             <div>
               <div className={styles.kpiLabel}>INCOMING NEW</div>
-              <div className={styles.kpiValue} style={{ color: '#FF5A1F' }}>{counts.new}</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueOrange}`}>{counts.new}</div>
             </div>
-            <div className={styles.kpiIconWrapper} style={{ background: 'rgba(255,90,31,0.15)', color: '#FF5A1F' }}>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconOrange}`}>
               <AlertCircle size={20} />
             </div>
           </div>
@@ -311,9 +311,9 @@ export default function KitchenDashboard() {
           <div className={styles.kpiCard}>
             <div>
               <div className={styles.kpiLabel}>ON STOVE / PREP</div>
-              <div className={styles.kpiValue} style={{ color: '#3B82F6' }}>{counts.preparing}</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueBlue}`}>{counts.preparing}</div>
             </div>
-            <div className={styles.kpiIconWrapper} style={{ background: 'rgba(59,130,246,0.15)', color: '#3B82F6' }}>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconBlue}`}>
               <Flame size={20} />
             </div>
           </div>
@@ -321,9 +321,9 @@ export default function KitchenDashboard() {
           <div className={styles.kpiCard}>
             <div>
               <div className={styles.kpiLabel}>READY AT PASS</div>
-              <div className={styles.kpiValue} style={{ color: '#10B981' }}>{counts.ready}</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueGreen}`}>{counts.ready}</div>
             </div>
-            <div className={styles.kpiIconWrapper} style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981' }}>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconGreen}`}>
               <CheckCircle size={20} />
             </div>
           </div>
@@ -331,9 +331,9 @@ export default function KitchenDashboard() {
           <div className={styles.kpiCard}>
             <div>
               <div className={styles.kpiLabel}>SERVED TODAY</div>
-              <div className={styles.kpiValue} style={{ color: '#94A3B8' }}>{counts.completed}</div>
+              <div className={`${styles.kpiValue} ${styles.kpiValueGray}`}>{counts.completed}</div>
             </div>
-            <div className={styles.kpiIconWrapper} style={{ background: 'rgba(148,163,184,0.15)', color: '#94A3B8' }}>
+            <div className={`${styles.kpiIconWrapper} ${styles.kpiIconGray}`}>
               <TrendingUp size={20} />
             </div>
           </div>
@@ -343,10 +343,10 @@ export default function KitchenDashboard() {
         {activeTab !== 'inventory' && (
           <div className={styles.ordersGrid}>
             {filteredOrders.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', color: '#64748B' }}>
-                <CheckCircle size={40} color="#10B981" style={{ marginBottom: 12 }} />
-                <h3 style={{ margin: 0, color: '#0F172A', fontSize: 18, fontWeight: 700 }}>No active orders in this queue</h3>
-                <p style={{ margin: '4px 0 0', fontSize: 13 }}>All kitchen tickets are up to date and dispatched.</p>
+              <div className={styles.emptyQueueCard}>
+                <CheckCircle size={40} color="#10B981" className={styles.emptyQueueIcon} />
+                <h3 className={styles.emptyQueueTitle}>No active orders in this queue</h3>
+                <p className={styles.emptyQueueText}>All kitchen tickets are up to date and dispatched.</p>
               </div>
             ) : (
               filteredOrders.map((order) => {
@@ -416,13 +416,13 @@ export default function KitchenDashboard() {
                     {order.status === 'preparing' && (
                       <div className={styles.timerSection}>
                         <div className={styles.timerHeader}>
-                          <span style={{ color: isDelayed ? '#EF4444' : '#60A5FA' }}>
+                          <span className={isDelayed ? styles.timerTextDelayed : styles.timerTextActive}>
                             ⏱ Prep: {elapsed}m / ~{order.estPrepMins}m
                           </span>
                           {isDelayed ? (
-                            <span style={{ color: '#EF4444' }}>⚠️ DELAYED</span>
+                            <span className={styles.timerTextDelayed}>⚠️ DELAYED</span>
                           ) : (
-                            <span style={{ color: '#94A3B8' }}>{Math.max(0, order.estPrepMins - elapsed)}m left</span>
+                            <span className={styles.timerTextLeft}>{Math.max(0, order.estPrepMins - elapsed)}m left</span>
                           )}
                         </div>
                         <div className={styles.timerProgressTrack}>
@@ -536,7 +536,7 @@ export default function KitchenDashboard() {
                   <th>Safety Threshold</th>
                   <th>Current Stock</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Quick Adjust</th>
+                  <th className={styles.thRight}>Quick Adjust</th>
                 </tr>
               </thead>
               <tbody>
@@ -544,8 +544,8 @@ export default function KitchenDashboard() {
                   const isLow = item.inStock <= item.threshold;
                   return (
                     <tr key={item.id}>
-                      <td style={{ fontWeight: 700, color: '#0F172A' }}>{item.name}</td>
-                      <td style={{ color: '#64748B' }}>{item.threshold} {item.unit}</td>
+                      <td className={styles.tdName}>{item.name}</td>
+                      <td className={styles.tdThreshold}>{item.threshold} {item.unit}</td>
                       <td>
                         <span className={`${styles.stockCountBadge} ${isLow ? styles.stockLow : styles.stockNormal}`}>
                           {item.inStock} {item.unit}
@@ -553,17 +553,17 @@ export default function KitchenDashboard() {
                       </td>
                       <td>
                         {isLow ? (
-                          <span style={{ color: '#EF4444', fontWeight: 700, fontSize: 12, background: 'rgba(239,68,68,0.12)', padding: '3px 8px', borderRadius: 6 }}>
+                          <span className={styles.badgeLowStock}>
                             ⚠️ LOW STOCK
                           </span>
                         ) : (
-                          <span style={{ color: '#059669', fontWeight: 700, fontSize: 12, background: 'rgba(16,185,129,0.12)', padding: '3px 8px', borderRadius: 6 }}>
+                          <span className={styles.badgeAdequateStock}>
                             ✓ Adequate
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: 6 }}>
+                      <td className={styles.tdRight}>
+                        <div className={styles.stockStepperWrap}>
                           <button
                             type="button"
                             className={styles.stockStepperBtn}
@@ -574,10 +574,9 @@ export default function KitchenDashboard() {
                           </button>
                           <button
                             type="button"
-                            className={styles.stockStepperBtn}
+                            className={`${styles.stockStepperBtn} ${styles.stockStepperBtnAdd}`}
                             onClick={() => handleAdjustStock(item.id, 5)}
                             title="Add 5 units"
-                            style={{ background: '#FF5A1F', borderColor: '#FF5A1F', color: '#FFF' }}
                           >
                             +5
                           </button>
@@ -596,49 +595,38 @@ export default function KitchenDashboard() {
       {showNewOrderModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalBox}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#0F172A' }}>Create Offline / Dine-In Order</h3>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Create Offline / Dine-In Order</h3>
               <button
                 type="button"
                 onClick={() => setShowNewOrderModal(false)}
-                style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer' }}
+                className={styles.modalCloseBtn}
               >
                 <X size={20} />
               </button>
             </div>
 
             <form onSubmit={handleCreateOrder}>
-              <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>Table / Customer Reference</label>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Table / Customer Reference</label>
                 <input
                   type="text"
                   required
                   value={newDiner}
                   onChange={(e) => setNewDiner(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: 14 }}
+                  className={styles.formInput}
                 />
               </div>
 
-              <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>Order Type</label>
-                <div style={{ display: 'flex', gap: 8 }}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Order Type</label>
+                <div className={styles.serviceTypeGroup}>
                   {(['dine-in', 'takeaway', 'delivery'] as const).map((type) => (
                     <button
                       key={type}
                       type="button"
                       onClick={() => setNewServiceType(type)}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        borderRadius: 8,
-                        border: newServiceType === type ? '1.5px solid #FF5A1F' : '1px solid #E2E8F0',
-                        background: newServiceType === type ? '#FF5A1F' : '#F1F5F9',
-                        color: newServiceType === type ? '#FFFFFF' : '#475569',
-                        fontWeight: 700,
-                        fontSize: 12,
-                        textTransform: 'capitalize',
-                        cursor: 'pointer',
-                      }}
+                      className={`${styles.serviceTypeBtn} ${newServiceType === type ? styles.serviceTypeBtnActive : ''}`}
                     >
                       {type}
                     </button>
@@ -646,12 +634,12 @@ export default function KitchenDashboard() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>Dish Item</label>
+              <div className={styles.formGroupLarge}>
+                <label className={styles.formLabel}>Dish Item</label>
                 <select
                   value={newDishName}
                   onChange={(e) => setNewDishName(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: 14 }}
+                  className={styles.formInput}
                 >
                   <option>Special Handi Chicken Biryani</option>
                   <option>Mughlai Butter Chicken Boneless</option>
@@ -661,17 +649,17 @@ export default function KitchenDashboard() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div className={styles.modalActions}>
                 <button
                   type="button"
                   onClick={() => setShowNewOrderModal(false)}
-                  style={{ flex: 1, padding: 12, borderRadius: 10, background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#475569', fontWeight: 600, cursor: 'pointer' }}
+                  className={styles.modalCancelBtn}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  style={{ flex: 1, padding: 12, borderRadius: 10, background: '#FF5A1F', border: 'none', color: '#FFF', fontWeight: 700, cursor: 'pointer' }}
+                  className={styles.modalSubmitBtn}
                 >
                   Send to Kitchen Pass
                 </button>

@@ -134,6 +134,8 @@ describe('Coverage Hardening: Push Providers, Maps & Gateways', () => {
 
     it('handles live multicast push with fetch mock', async () => {
       const mockFetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
         json: async () => ({
           success: 1,
           failure: 1,

@@ -137,7 +137,9 @@ let NotificationService = NotificationService_1 = class NotificationService {
                 }),
             });
             if (!response.ok) {
-                throw new Error(`Twilio API error: HTTP ${response.status}`);
+                const errJson = await response.json().catch(() => ({}));
+                const errMsg = errJson?.message || `Twilio API error: HTTP ${response.status}`;
+                throw new Error(errMsg);
             }
             const result = (await response.json());
             this.logger.log(`SMS sent to ${phone}`);
